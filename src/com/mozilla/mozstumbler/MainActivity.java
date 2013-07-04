@@ -297,13 +297,13 @@ public class MainActivity extends Activity implements LocationListener {
                         out.flush();
                     } catch (JSONException jsonex) {
                         Log.e(LOGTAG, "error wrapping data as a batch", jsonex);
-                    } catch (IOException ioex) {
-                        Log.e(LOGTAG, "error submitting data", ioex);
+                    } catch (Exception ex) {
+                        Log.e(LOGTAG, "error submitting data", ex);
                     } finally {
                         urlConnection.disconnect();
                     }
-                } catch (IOException ioex) {
-                    Log.e(LOGTAG, "error submitting data", ioex);
+                } catch (Exception ex) {
+                    Log.e(LOGTAG, "error submitting data", ex);
                 }
             }
         }

@@ -43,23 +43,13 @@ import android.net.wifi.WifiManager;
 
 public class MainActivity extends Activity implements LocationListener {
 
-
 	private static final String LOGTAG = "Mozilla Stumbler";
-	protected static final String LOCATION_URL = "http://localhost";
+	protected static final String LOCATION_URL = "https://location.services.mozilla.com/v1/submit";
 	
 	private boolean mIsScanning = false;
 	
-    TextView mText;
-    WifiManager mWifi;
-    List<ScanResult> wifiList;
-    StringBuilder _sb = new StringBuilder();
-
-    
     private int mSignalStrenth;
     private PhoneStateListener mPhoneStateListener = null;
-    private boolean mShouldReportGeoData = true;
-
-    
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,8 +72,6 @@ public class MainActivity extends Activity implements LocationListener {
         	LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
             if (mIsScanning) {
-        		Location l = new Location("");
-        		onLocationChanged(l);
         		
                 Criteria criteria = new Criteria();
                 criteria.setSpeedRequired(false);
@@ -118,7 +106,7 @@ public class MainActivity extends Activity implements LocationListener {
     
     
     public LocationListener getLocationListener() {
-        if (mShouldReportGeoData && mPhoneStateListener == null) {
+        if (mPhoneStateListener == null) {
             mPhoneStateListener = new PhoneStateListener() {
                 public void onSignalStrengthsChanged(SignalStrength signalStrength) {
                     setCurrentSignalStrenth(signalStrength);
@@ -156,12 +144,9 @@ public class MainActivity extends Activity implements LocationListener {
         }
     }
 
- // Geolocation.
     @Override
     public void onLocationChanged(Location location) {
-        // No logging here: user-identifying information.
-        if (mShouldReportGeoData)
-            collectAndReportLocInfo(location);
+    	collectAndReportLocInfo(location);
     }
 
     public void setCurrentSignalStrenth(SignalStrength ss) {
@@ -175,6 +160,8 @@ public class MainActivity extends Activity implements LocationListener {
             return TelephonyManager.PHONE_TYPE_NONE;
         List<NeighboringCellInfo> cells = tm.getNeighboringCellInfo();
         CellLocation cl = tm.getCellLocation();
+        if (cl == null)
+        	return TelephonyManager.PHONE_TYPE_NONE;
         String mcc = "", mnc = "";
         if (cl instanceof GsmCellLocation) {
             JSONObject obj = new JSONObject();
@@ -249,8 +236,6 @@ public class MainActivity extends Activity implements LocationListener {
             int radioType = getCellInfo(cellInfo);
             if (radioType == TelephonyManager.PHONE_TYPE_GSM)
                 locInfo.put("radio", "gsm");
-            else
-                return; // we don't care about other radio types for now
            
             locInfo.put("lon", location.getLongitude());
             locInfo.put("lat", location.getLatitude());

@@ -1,7 +1,10 @@
 package com.mozilla.mozstumbler;
 
+import android.annotation.TargetApi;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Looper;
+import android.os.StrictMode;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.telephony.CellLocation;
@@ -53,6 +56,8 @@ public class MainActivity extends Activity implements LocationListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        enableStrictMode();
+
         setContentView(R.layout.activity_main);
 
         Button scanningBtn = (Button) findViewById(R.id.toggle_scanning);
@@ -323,5 +328,22 @@ public class MainActivity extends Activity implements LocationListener {
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {
         // TODO Auto-generated method stub
+    }
+
+    @TargetApi(9)
+    private void enableStrictMode() {
+        if (Build.VERSION.SDK_INT < 9) {
+            return;
+        }
+
+        StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
+                                                              .detectAll()
+                                                              .penaltyLog()
+                                                              .build());
+
+        StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
+                                                      .detectAll()
+                                                      .penaltyLog()
+                                                      .build());
     }
 }

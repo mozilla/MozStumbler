@@ -25,7 +25,6 @@ import java.util.Date;
 class Reporter {
     private static final String LOGTAG = "Reporter";
     private static final String LOCATION_URL = "https://location.services.mozilla.com/v1/submit";
-    private static final String OPTOUT_SSID_SUFFIX = "_nomap";
 
     private final MessageDigest mSHA1;
 
@@ -111,13 +110,8 @@ class Reporter {
         }).start();
     }
 
-    private static boolean shouldLog(final ScanResult sr) {
-        if (BSSIDBlockList.contains(sr)) {
-            return false;
-        } else if (sr.SSID != null && sr.SSID.endsWith(OPTOUT_SSID_SUFFIX)) {
-            return false;
-        } else {
-            return true;
-        }
+    private static boolean shouldLog(ScanResult scanResult) {
+        return !BSSIDBlockList.contains(scanResult) &&
+               !SSIDBlockList.contains(scanResult);
     }
 }

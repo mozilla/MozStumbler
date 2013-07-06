@@ -19,22 +19,12 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 
 class Reporter {
     private static final String LOGTAG = "Reporter";
     private static final String LOCATION_URL = "https://location.services.mozilla.com/v1/submit";
-
-    // copied from
-    // http://code.google.com/p/sensor-data-collection-library/source/browse/src/main/java/TextFileSensorLog.java#223,
-    // which is apache licensed
-    private static final Set<Character> AD_HOC_HEX_VALUES = new HashSet<Character>(
-            Arrays.asList('2', '6', 'a', 'e', 'A', 'E'));
-
     private static final String OPTOUT_SSID_SUFFIX = "_nomap";
 
     private final MessageDigest mSHA1;
@@ -122,20 +112,8 @@ class Reporter {
     }
 
     private static boolean shouldLog(final ScanResult sr) {
-        // We filter out any ad-hoc devices. Ad-hoc devices are identified by
-        // having a
-        // 2,6,a or e in the second nybble.
-        // See http://en.wikipedia.org/wiki/MAC_address -- ad hoc networks
-        // have the last two bits of the second nybble set to 10.
-        // Only apply this test if we have exactly 17 character long BSSID which
-        // should
-        // be the case.
-        final char secondNybble = sr.BSSID.length() == 17 ? sr.BSSID.charAt(1)
-                : ' ';
-
-        if (AD_HOC_HEX_VALUES.contains(secondNybble)) {
+        if (BSSIDBlockList.contains(sr)) {
             return false;
-
         } else if (sr.SSID != null && sr.SSID.endsWith(OPTOUT_SSID_SUFFIX)) {
             return false;
         } else {

@@ -74,7 +74,9 @@ class Scanner implements LocationListener {
 
     @Override
     public void onLocationChanged(Location location) {
-        collectAndReportLocInfo(location);
+        if (!LocationBlockList.contains(location)) {
+            collectAndReportLocInfo(location);
+        }
     }
 
     private int getCellInfo(JSONArray cellInfo) {

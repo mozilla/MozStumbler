@@ -4,11 +4,14 @@ import android.net.wifi.ScanResult;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 final class BSSIDBlockList {
     private static final String NULL_BSSID = "00:00:00:00:00:00";
     private static final String WILDCARD_BSSID = "ff:ff:ff:ff:ff:ff";
+    private static final Pattern BSSID_PATTERN = Pattern.compile("([0-9a-f]{2}:){5}[0-9a-f]{2}");
 
     // copied from
     // http://code.google.com/p/sensor-data-collection-library/source/browse/src/main/java/TextFileSensorLog.java#223,
@@ -25,6 +28,20 @@ final class BSSIDBlockList {
                isAdHocBSSID(BSSID) ||
                NULL_BSSID.equals(BSSID) ||
                WILDCARD_BSSID.equals(BSSID);
+    }
+
+    static String canonicalizeBSSID(String BSSID) {
+        if (BSSID == null || isCanonicalBSSID(BSSID)) {
+            return BSSID;
+        }
+
+        // Some devices may return BSSIDs with '-' or '.' delimiters.
+        BSSID = BSSID.toLowerCase(Locale.US).replace('-', ':').replace('.', ':');
+        return isCanonicalBSSID(BSSID) ? BSSID : null;
+    }
+
+    private static boolean isCanonicalBSSID(String BSSID) {
+        return BSSID_PATTERN.matcher(BSSID).matches();
     }
 
     private static boolean isAdHocBSSID(String BSSID) {

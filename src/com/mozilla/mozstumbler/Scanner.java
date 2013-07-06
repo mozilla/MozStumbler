@@ -159,6 +159,12 @@ class Scanner implements LocationListener {
         WifiManager wm = getWifiManager();
         wm.startScan();
         Collection<ScanResult> scanResults = wm.getScanResults();
+        if (scanResults != null) {
+            for (ScanResult scanResult : scanResults) {
+                scanResult.BSSID = BSSIDBlockList.canonicalizeBSSID(scanResult.BSSID);
+            }
+        }
+
         mReporter.reportLocation(location, scanResults, radioType, cellInfo);
     }
 

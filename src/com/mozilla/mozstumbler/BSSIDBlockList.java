@@ -2,22 +2,14 @@ package com.mozilla.mozstumbler;
 
 import android.net.wifi.ScanResult;
 
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Locale;
-import java.util.Set;
 import java.util.regex.Pattern;
 
 final class BSSIDBlockList {
     private static final String NULL_BSSID = "00:00:00:00:00:00";
     private static final String WILDCARD_BSSID = "ff:ff:ff:ff:ff:ff";
     private static final Pattern BSSID_PATTERN = Pattern.compile("([0-9a-f]{2}:){5}[0-9a-f]{2}");
-
-    // copied from
-    // http://code.google.com/p/sensor-data-collection-library/source/browse/src/main/java/TextFileSensorLog.java#223,
-    // which is Apache licensed.
-    private static final Set<Character> AD_HOC_HEX_VALUES = new HashSet<Character>(
-            Arrays.asList('2', '6', 'a', 'e', 'A', 'E'));
+    private static final String AD_HOC_HEX_VALUES = "26aeAE";
 
     private BSSIDBlockList() {
     }
@@ -26,6 +18,7 @@ final class BSSIDBlockList {
         String BSSID = scanResult.BSSID;
         return BSSID == null ||
                isAdHocBSSID(BSSID) ||
+               !isCanonicalBSSID(BSSID) ||
                NULL_BSSID.equals(BSSID) ||
                WILDCARD_BSSID.equals(BSSID);
     }
@@ -49,9 +42,7 @@ final class BSSIDBlockList {
         // having a 2,6,a or e in the second nybble.
         // See http://en.wikipedia.org/wiki/MAC_address -- ad hoc networks
         // have the last two bits of the second nybble set to 10.
-        // Only apply this test if we have exactly 17 character long BSSID which
-        // should be the case.
         char secondNybble = BSSID.charAt(1);
-        return AD_HOC_HEX_VALUES.contains(secondNybble);
+        return AD_HOC_HEX_VALUES.indexOf(secondNybble) != -1;
     }
 }

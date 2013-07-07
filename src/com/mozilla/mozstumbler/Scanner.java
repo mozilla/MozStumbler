@@ -16,6 +16,7 @@ import android.telephony.PhoneStateListener;
 import android.telephony.SignalStrength;
 import android.telephony.TelephonyManager;
 import android.telephony.gsm.GsmCellLocation;
+import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -24,6 +25,7 @@ import org.json.JSONObject;
 import java.util.Collection;
 
 class Scanner implements LocationListener {
+    private static final String LOGTAG = "Scanner";
     private static final long MIN_UPDATE_TIME = 1000; // milliseconds
     private static final float MIN_UPDATE_DISTANCE = .5f; // meters
 
@@ -38,6 +40,7 @@ class Scanner implements LocationListener {
     }
 
     void startScanning() {
+        Log.d(LOGTAG, "Scanning started...");
         LocationManager lm = getLocationManager();
         Criteria criteria = new Criteria();
         criteria.setSpeedRequired(false);
@@ -52,6 +55,7 @@ class Scanner implements LocationListener {
     }
 
     void stopScanning() {
+        Log.d(LOGTAG, "Scanning stopped");
         LocationManager lm = getLocationManager();
         lm.removeUpdates(getLocationListener());
     }
@@ -61,6 +65,8 @@ class Scanner implements LocationListener {
             mPhoneStateListener = new PhoneStateListener() {
                 public void onSignalStrengthsChanged(SignalStrength ss) {
                     if (ss.isGsm()) {
+                        Log.d(LOGTAG, "GSM signal strength: " + mSignalStrength
+                                      + " -> " + ss.getGsmSignalStrength());
                         mSignalStrength = ss.getGsmSignalStrength();
                     }
                 }
@@ -74,7 +80,10 @@ class Scanner implements LocationListener {
 
     @Override
     public void onLocationChanged(Location location) {
-        if (!LocationBlockList.contains(location)) {
+        if (LocationBlockList.contains(location)) {
+            Log.w(LOGTAG, "Blocked location: " + location);
+        } else {
+            Log.d(LOGTAG, "New location: " + location);
             collectAndReportLocInfo(location);
         }
     }
@@ -107,6 +116,10 @@ class Scanner implements LocationListener {
                 case TelephonyManager.NETWORK_TYPE_HSPAP:
                     obj.put("radio", "umts");
                     break;
+                default:
+                    Log.w(LOGTAG, "", new IllegalStateException("Unexpected NetworkType: "
+                                                                + tm.getNetworkType()));
+                    break;
                 }
                 String mcc_mnc = tm.getNetworkOperator();
                 if (mcc_mnc.length() > 3) {
@@ -116,9 +129,10 @@ class Scanner implements LocationListener {
                     obj.put("mnc", mnc);
                 }
                 obj.put("asu", mSignalStrength);
+                cellInfo.put(obj);
             } catch (JSONException jsonex) {
+                Log.e(LOGTAG, "", jsonex);
             }
-            cellInfo.put(obj);
         }
         if (cells != null) {
             for (NeighboringCellInfo nci : cells) {
@@ -142,11 +156,16 @@ class Scanner implements LocationListener {
                     case TelephonyManager.NETWORK_TYPE_HSPAP:
                         obj.put("radio", "umts");
                         break;
+                    default:
+                        Log.w(LOGTAG, "", new IllegalStateException("Unexpected NetworkType: "
+                                                                    + tm.getNetworkType()));
+                        break;
                     }
 
                     obj.put("asu", nci.getRssi());
                     cellInfo.put(obj);
                 } catch (JSONException jsonex) {
+                    Log.e(LOGTAG, "", jsonex);
                 }
             }
         }
@@ -163,7 +182,12 @@ class Scanner implements LocationListener {
         Collection<ScanResult> scanResults = wm.getScanResults();
         if (scanResults != null) {
             for (ScanResult scanResult : scanResults) {
-                scanResult.BSSID = BSSIDBlockList.canonicalizeBSSID(scanResult.BSSID);
+                String BSSID = BSSIDBlockList.canonicalizeBSSID(scanResult.BSSID);
+                if (BSSID == null) {
+                    Log.e(LOGTAG, "", new IllegalArgumentException("Unexpected BSSID: "
+                                                                   + scanResult.BSSID));
+                }
+                scanResult.BSSID = BSSID;
             }
         }
 

@@ -68,6 +68,10 @@ class Reporter {
                         obj.put("frequency", ap.frequency);
                         obj.put("signal", ap.level);
                         wifiInfo.put(obj);
+
+                        Log.v(LOGTAG, "Reporting: BSSID=" + ap.BSSID
+                                      + ", SSID=\"" + ap.SSID
+                                      + "\", Signal=" + ap.level);
                     } catch (UnsupportedEncodingException uee) {
                         Log.w(LOGTAG, "can't encode the key", uee);
                     }
@@ -111,7 +115,14 @@ class Reporter {
     }
 
     private static boolean shouldLog(ScanResult scanResult) {
-        return !BSSIDBlockList.contains(scanResult) &&
-               !SSIDBlockList.contains(scanResult);
+        if (BSSIDBlockList.contains(scanResult)) {
+            Log.w(LOGTAG, "Blocked BSSID: " + scanResult);
+            return false;
+        }
+        if (SSIDBlockList.contains(scanResult)) {
+            Log.w(LOGTAG, "Blocked SSID: " + scanResult);
+            return false;
+        }
+        return true;
     }
 }

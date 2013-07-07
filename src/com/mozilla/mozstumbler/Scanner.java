@@ -58,6 +58,11 @@ class Scanner implements LocationListener {
         Log.d(LOGTAG, "Scanning stopped");
         LocationManager lm = getLocationManager();
         lm.removeUpdates(getLocationListener());
+        if (mPhoneStateListener != null) {
+            TelephonyManager tm = getTelephonyManager();
+            tm.listen(mPhoneStateListener, PhoneStateListener.LISTEN_NONE);
+            mPhoneStateListener = null;
+        }
     }
 
     private LocationListener getLocationListener() {

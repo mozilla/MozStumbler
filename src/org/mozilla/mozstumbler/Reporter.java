@@ -94,12 +94,16 @@ class Reporter {
                         batch.put(locInfo);
                         JSONObject wrapper = new JSONObject();
                         wrapper.put("items", batch);
-                        byte[] bytes = wrapper.toString().getBytes();
+                        String data = wrapper.toString();
+                        byte[] bytes = data.getBytes();
                         urlConnection.setFixedLengthStreamingMode(bytes.length);
                         OutputStream out = new BufferedOutputStream(
                                 urlConnection.getOutputStream());
                         out.write(bytes);
                         out.flush();
+
+                        Log.d(LOGTAG, "uploaded data: " + data + " to " + LOCATION_URL);
+
                     } catch (JSONException jsonex) {
                         Log.e(LOGTAG, "error wrapping data as a batch", jsonex);
                     } catch (Exception ex) {

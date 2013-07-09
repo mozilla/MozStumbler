@@ -2,14 +2,12 @@ package org.mozilla.mozstumbler;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
-import android.os.Looper;
 import android.telephony.CellLocation;
 import android.telephony.NeighboringCellInfo;
 import android.telephony.PhoneStateListener;
@@ -27,7 +25,7 @@ import java.util.Collection;
 class Scanner implements LocationListener {
     private static final String LOGTAG = "Scanner";
     private static final long MIN_UPDATE_TIME = 1000; // milliseconds
-    private static final float MIN_UPDATE_DISTANCE = .5f; // meters
+    private static final float MIN_UPDATE_DISTANCE = 0.5f; // meters
 
     private final Context mContext;
     private int mSignalStrength;
@@ -42,16 +40,7 @@ class Scanner implements LocationListener {
     void startScanning() {
         Log.d(LOGTAG, "Scanning started...");
         LocationManager lm = getLocationManager();
-        Criteria criteria = new Criteria();
-        criteria.setSpeedRequired(false);
-        criteria.setBearingRequired(false);
-        criteria.setAltitudeRequired(false);
-        criteria.setAccuracy(Criteria.ACCURACY_FINE);
-        criteria.setPowerRequirement(Criteria.POWER_HIGH); // hmm.
-
-        String provider = lm.getBestProvider(criteria, true);
-        lm.requestLocationUpdates(provider, MIN_UPDATE_TIME, MIN_UPDATE_DISTANCE,
-                getLocationListener(), Looper.getMainLooper());
+        lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, MIN_UPDATE_TIME, MIN_UPDATE_DISTANCE, getLocationListener());
     }
 
     void stopScanning() {

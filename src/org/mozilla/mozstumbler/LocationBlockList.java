@@ -1,4 +1,4 @@
-package com.mozilla.mozstumbler;
+package org.mozilla.mozstumbler;
 
 import android.location.Location;
 

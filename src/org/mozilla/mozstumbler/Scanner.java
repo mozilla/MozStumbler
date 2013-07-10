@@ -25,7 +25,7 @@ import java.util.Collection;
 class Scanner implements LocationListener {
     private static final String LOGTAG = "Scanner";
     private static final long MIN_UPDATE_TIME = 1000; // milliseconds
-    private static final float MIN_UPDATE_DISTANCE = 0.5f; // meters
+    private static final float MIN_UPDATE_DISTANCE = 10; // meters
 
     private final Context mContext;
     private int mSignalStrength;

@@ -39,6 +39,7 @@ class Scanner implements LocationListener {
 
     void startScanning() {
         Log.d(LOGTAG, "Scanning started...");
+        deleteAidingData();
         LocationManager lm = getLocationManager();
         lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, MIN_UPDATE_TIME, MIN_UPDATE_DISTANCE, getLocationListener());
     }
@@ -201,6 +202,17 @@ class Scanner implements LocationListener {
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {
         // TODO Auto-generated method stub
+    }
+
+    private void deleteAidingData() {
+        LocationManager lm = getLocationManager();
+
+        // Delete cached A-GPS aiding data to force GPS cold start.
+        lm.sendExtraCommand(LocationManager.GPS_PROVIDER, "delete_aiding_data", null);
+        lm.sendExtraCommand(LocationManager.GPS_PROVIDER, "force_xtra_injection", null);
+
+        // Force NTP resync.
+        lm.sendExtraCommand(LocationManager.GPS_PROVIDER, "force_time_injection", null);
     }
 
     private LocationManager getLocationManager() {

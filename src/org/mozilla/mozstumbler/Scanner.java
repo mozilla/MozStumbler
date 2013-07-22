@@ -32,7 +32,7 @@ class Scanner implements LocationListener {
     private PhoneStateListener mPhoneStateListener;
     private Reporter mReporter;
 
-    public boolean mIsScanning = false;
+    private boolean mIsScanning;
     
     Scanner(Context context) {
         mContext = context;

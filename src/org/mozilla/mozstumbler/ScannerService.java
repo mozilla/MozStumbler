@@ -10,7 +10,6 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
-import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
@@ -20,25 +19,19 @@ import android.util.Log;
 public class ScannerService extends Service {
 
 	private static final String LOGTAG = ScannerService.class.getName();
-	private static final int NOTIFICATION = 0;
+	private static final int NOTIFICATION_ID = 0;
 	private static final int WAKE_TIMEOUT = 5 * 1000;
 	private Scanner mScanner = null;
 	private LooperThread mLooper = null;
 	private PendingIntent mWakeIntent = null;
 
-	class LooperThread extends Thread {
+	public class LooperThread extends Thread {
 		public Handler mHandler;
 
 		public void run() {
 			Looper.prepare();
 			mHandler = new Handler();
 			Looper.loop();
-		}
-	}
-
-	public class ScannerServiceBinder extends Binder {
-		ScannerService getService() {
-			return ScannerService.this;
 		}
 	}
 
@@ -62,7 +55,7 @@ public class ScannerService extends Service {
 		mScanner = null;
 
 		NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-		nm.cancel(NOTIFICATION);
+		nm.cancel(NOTIFICATION_ID);
 
 		// TODO Toast.makeText(this, R.string.local_service_stopped,
 		// Toast.LENGTH_SHORT).show();
@@ -81,10 +74,12 @@ public class ScannerService extends Service {
 				Context ctx = getApplicationContext();
 				Intent notificationIntent = new Intent(ctx, MainActivity.class);
 				PendingIntent contentIntent = PendingIntent.getActivity(ctx,
-						NOTIFICATION, notificationIntent,
+						NOTIFICATION_ID, notificationIntent,
 						PendingIntent.FLAG_CANCEL_CURRENT);
 
 				Resources res = ctx.getResources();
+				// TODO - Do something compat w/ older os's
+				// See https://github.com/dougt/MozStumbler/pull/26#commitcomment-3689527
 				Notification.Builder builder = new Notification.Builder(ctx);
 
 				builder.setContentIntent(contentIntent)
@@ -96,7 +91,7 @@ public class ScannerService extends Service {
 								res.getString(R.string.service_scanning));
 				Notification n = builder.build();
 
-				nm.notify(NOTIFICATION, n);
+				nm.notify(NOTIFICATION_ID, n);
 			}
 		});
 	}
@@ -120,7 +115,7 @@ public class ScannerService extends Service {
 
 			@Override
 			public void startScanning() throws RemoteException {
-				if (mScanner.isScanning() == true) {
+				if (mScanner.isScanning()) {
 					return;
 				}
 
@@ -147,7 +142,7 @@ public class ScannerService extends Service {
 			@Override
 			public void stopScanning() throws RemoteException {
 
-				if (mScanner.isScanning() == false) {
+				if (! mScanner.isScanning()) {
 					return;
 				}
 
@@ -158,7 +153,7 @@ public class ScannerService extends Service {
 						alarm.cancel(mWakeIntent);
 
 						NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-						nm.cancel(NOTIFICATION);
+						nm.cancel(NOTIFICATION_ID);
 
 						mScanner.stopScanning();
 					}

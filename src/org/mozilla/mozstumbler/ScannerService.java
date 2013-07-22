@@ -19,7 +19,7 @@ import android.util.Log;
 
 public class ScannerService extends Service {
 
-	private static final String LOGTAG = "BackgroundService";
+	private static final String LOGTAG = ScannerService.class.getName();
 	private static final int NOTIFICATION = 0;
 	private static final int WAKE_TIMEOUT = 5 * 1000;
 	private Scanner mScanner = null;

@@ -18,7 +18,7 @@ import android.widget.Button;
 
 public class MainActivity extends Activity {
 
-	private static final String LOGTAG = "MainActivity";
+	private static final String LOGTAG = MainActivity.class.getName();
 
 	private ScannerServiceInterface mConnectionRemote;
 	private ServiceConnection mConnection = new ServiceConnection() {

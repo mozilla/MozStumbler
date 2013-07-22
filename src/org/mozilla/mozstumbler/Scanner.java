@@ -32,19 +32,28 @@ class Scanner implements LocationListener {
     private PhoneStateListener mPhoneStateListener;
     private Reporter mReporter;
 
+    public boolean mIsScanning = false;
+    
     Scanner(Context context) {
         mContext = context;
         mReporter = new Reporter();
     }
 
     void startScanning() {
+    	if (mIsScanning) {
+          return;
+    	}
         Log.d(LOGTAG, "Scanning started...");
         deleteAidingData();
         LocationManager lm = getLocationManager();
         lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, MIN_UPDATE_TIME, MIN_UPDATE_DISTANCE, getLocationListener());
+        mIsScanning = true;
     }
 
     void stopScanning() {
+    	if (mIsScanning == false) {
+            return;
+      	}
         Log.d(LOGTAG, "Scanning stopped");
         LocationManager lm = getLocationManager();
         lm.removeUpdates(getLocationListener());
@@ -53,6 +62,11 @@ class Scanner implements LocationListener {
             tm.listen(mPhoneStateListener, PhoneStateListener.LISTEN_NONE);
             mPhoneStateListener = null;
         }
+        mIsScanning = false;
+    }
+    
+    boolean isScanning() {
+    	return mIsScanning;
     }
 
     private LocationListener getLocationListener() {

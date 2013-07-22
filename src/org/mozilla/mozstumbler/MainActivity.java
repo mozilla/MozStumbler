@@ -2,16 +2,45 @@ package org.mozilla.mozstumbler;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.IBinder;
+import android.os.RemoteException;
 import android.os.StrictMode;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 
 public class MainActivity extends Activity {
-    private Scanner mScanner;
 
+	private static final String LOGTAG = "MainActivity";
+
+	private ScannerServiceInterface mConnectionRemote;
+	private ServiceConnection mConnection = new ServiceConnection() {
+
+      	public void onServiceConnected(ComponentName className, IBinder binder) {
+      		mConnectionRemote = ScannerServiceInterface.Stub.asInterface((IBinder) binder);
+  			Log.d(LOGTAG, "Service connected");
+  			
+  			UpdateUI();
+  		}
+  		
+  		public void onServiceDisconnected(ComponentName className) {
+  			mConnectionRemote = null;
+  			Log.d(LOGTAG, "Service disconnected", new Exception());
+  		}
+  	};
+  	
+  	protected void onNewIntent(Intent intent){
+  	    super.onNewIntent(intent);
+  	    Log.d(LOGTAG, "New intent with flags " + intent.getFlags());
+  	}
+  	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -19,27 +48,79 @@ public class MainActivity extends Activity {
 
         setContentView(R.layout.activity_main);
 
-        Button scanningBtn = (Button) findViewById(R.id.toggle_scanning);
-        scanningBtn.setText(R.string.start_scanning);
+        Intent intent = new Intent(this, ScannerService.class);
+        startService(intent); 
+		bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+		
+		Log.e(LOGTAG, "onCreate");
     }
 
-    public void onBtnClicked(View v) {
+    @Override
+    protected void onDestroy() {
+    	super.onDestroy();
+		Log.d(LOGTAG, "onDestory");
+    }
+   
+	@Override
+	protected void onStop() {
+		super.onStop();
+
+		try {
+			if (mConnectionRemote.isScanning() == true) {
+				mConnectionRemote.showNotification();
+			}
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+    	unbindService(mConnection);
+    	mConnection = null;
+    	mConnectionRemote = null;
+    	
+		Log.d(LOGTAG, "onStop");
+	}
+
+	protected void UpdateUI() {
+		Log.d(LOGTAG, "Updating UI");
+		
+		boolean scanning = false;
+		try {
+			scanning = mConnectionRemote.isScanning();
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		int buttonText;
+		if (scanning == true) {
+			buttonText = R.string.stop_scanning;
+		} else {
+			buttonText = R.string.start_scanning;
+		}
+
+		Button scanningBtn = (Button) findViewById(R.id.toggle_scanning);
+		scanningBtn.setText(buttonText);
+	}
+	
+    public void onBtnClicked(View v) throws RemoteException {
+    	
         if (v.getId() == R.id.toggle_scanning) {
 
-            // handle the click here
-            Button b = (Button) v;
-            int buttonText;
+    		boolean scanning = mConnectionRemote.isScanning();
+    		Log.d(LOGTAG, "Connection remote return: isScanning() = " + scanning);
 
-            if (mScanner == null) {
-                mScanner = new Scanner(this);
-                mScanner.startScanning();
-                buttonText = R.string.stop_scanning;
+    		int buttonText;
+            
+            if (scanning == true) {
+            	mConnectionRemote.stopScanning();
+                buttonText = R.string.start_scanning;    
             } else {
-                mScanner.stopScanning();
-                mScanner = null;
-                buttonText = R.string.start_scanning;
+            	mConnectionRemote.startScanning();
+                buttonText = R.string.stop_scanning;
             }
-
+            
+            Button b = (Button) v;
             b.setText(buttonText);
         }
     }

@@ -23,7 +23,7 @@ import java.util.Collection;
 import java.util.Date;
 
 class Reporter {
-    private static final String LOGTAG = "Reporter";
+    private static final String LOGTAG = Reporter.class.getName();
     private static final String LOCATION_URL = "https://location.services.mozilla.com/v1/submit";
 
     private final MessageDigest mSHA1;

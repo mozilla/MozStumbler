@@ -7,9 +7,9 @@ import android.util.Log;
 import java.util.UUID;
 
 final class Prefs {
-    private static final String LOGTAG = Prefs.class.getName();
-    private static final String PREFS_FILE = Prefs.class.getName();
-    private static final String TOKEN_PREF = "token";
+    private static final String     LOGTAG     = Prefs.class.getName();
+    private static final String     PREFS_FILE = Prefs.class.getName();
+    private static final String     TOKEN_PREF = "token";
 
     private final SharedPreferences mPrefs;
 

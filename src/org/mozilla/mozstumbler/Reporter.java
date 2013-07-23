@@ -23,10 +23,10 @@ import java.util.Collection;
 import java.util.Date;
 
 class Reporter {
-    private static final String LOGTAG = Reporter.class.getName();
+    private static final String LOGTAG       = Reporter.class.getName();
     private static final String LOCATION_URL = "https://location.services.mozilla.com/v1/submit";
 
-    private final Prefs mPrefs;
+    private final Prefs         mPrefs;
     private final MessageDigest mSHA1;
 
     Reporter(Prefs prefs) {
@@ -62,8 +62,7 @@ class Reporter {
                         continue;
                     StringBuilder sb = new StringBuilder();
                     try {
-                        byte[] result = mSHA1.digest((ap.BSSID + ap.SSID)
-                                .getBytes("UTF-8"));
+                        byte[] result = mSHA1.digest((ap.BSSID + ap.SSID).getBytes("UTF-8"));
                         for (byte b : result)
                             sb.append(String.format("%02X", b));
 
@@ -73,9 +72,7 @@ class Reporter {
                         obj.put("signal", ap.level);
                         wifiInfo.put(obj);
 
-                        Log.v(LOGTAG, "Reporting: BSSID=" + ap.BSSID
-                                      + ", SSID=\"" + ap.SSID
-                                      + "\", Signal=" + ap.level);
+                        Log.v(LOGTAG, "Reporting: BSSID=" + ap.BSSID + ", SSID=\"" + ap.SSID + "\", Signal=" + ap.level);
                     } catch (UnsupportedEncodingException uee) {
                         Log.w(LOGTAG, "can't encode the key", uee);
                     }
@@ -90,8 +87,7 @@ class Reporter {
             public void run() {
                 try {
                     URL url = new URL(LOCATION_URL);
-                    HttpURLConnection urlConnection = (HttpURLConnection) url
-                            .openConnection();
+                    HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
                     try {
                         urlConnection.setDoOutput(true);
                         JSONArray batch = new JSONArray();
@@ -101,8 +97,7 @@ class Reporter {
                         String data = wrapper.toString();
                         byte[] bytes = data.getBytes();
                         urlConnection.setFixedLengthStreamingMode(bytes.length);
-                        OutputStream out = new BufferedOutputStream(
-                                urlConnection.getOutputStream());
+                        OutputStream out = new BufferedOutputStream(urlConnection.getOutputStream());
                         out.write(bytes);
                         out.flush();
 

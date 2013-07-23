@@ -18,139 +18,137 @@ import android.widget.Button;
 
 public class MainActivity extends Activity {
 
-	private static final String LOGTAG = MainActivity.class.getName();
+    private static final String LOGTAG = MainActivity.class.getName();
 
-	private ScannerServiceInterface mConnectionRemote;
-	private ServiceConnection mConnection;
-	
-	protected void onNewIntent(Intent intent) {
-		super.onNewIntent(intent);
-		Log.d(LOGTAG, "New intent with flags " + intent.getFlags());
-	}
+    private ScannerServiceInterface mConnectionRemote;
+    private ServiceConnection mConnection;
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		enableStrictMode();
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        Log.d(LOGTAG, "New intent with flags " + intent.getFlags());
+    }
 
-		setContentView(R.layout.activity_main);
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        enableStrictMode();
 
-		Log.e(LOGTAG, "onCreate");
-	}
+        setContentView(R.layout.activity_main);
 
-	@Override
-	protected void onStart() {
-		super.onStart();
-		
-		mConnection = new ServiceConnection() {
+        Log.d(LOGTAG, "onCreate");
+    }
 
-			public void onServiceConnected(ComponentName className, IBinder binder) {
-				mConnectionRemote = ScannerServiceInterface.Stub
-						.asInterface(binder);
-				Log.d(LOGTAG, "Service connected");
+    @Override
+    protected void onStart() {
+        super.onStart();
 
-				updateUI();
-			}
+        mConnection = new ServiceConnection() {
+            public void onServiceConnected(ComponentName className, IBinder binder) {
+                mConnectionRemote = ScannerServiceInterface.Stub.asInterface(binder);
+                Log.d(LOGTAG, "Service connected");
+                updateUI();
+            }
 
-			public void onServiceDisconnected(ComponentName className) {
-				mConnectionRemote = null;
-				Log.d(LOGTAG, "Service disconnected", new Exception());
-			}
-		};
-		
-		Intent intent = new Intent(this, ScannerService.class);
-		startService(intent);
-		bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
-	}
-	
-	@Override
-	protected void onStop() {
-		super.onStop();
+            public void onServiceDisconnected(ComponentName className) {
+                mConnectionRemote = null;
+                Log.d(LOGTAG, "Service disconnected", new Exception());
+            }
+        };
 
-		try {
-			if (mConnectionRemote.isScanning()) {
-				mConnectionRemote.showNotification();
-			}
-		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+        Intent intent = new Intent(this, ScannerService.class);
+        startService(intent);
+        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
 
-		unbindService(mConnection);
-		mConnection = null;
-		mConnectionRemote = null;
+        Log.d(LOGTAG, "onStart");
+    }
 
-		Log.d(LOGTAG, "onStop");
-	}
-	
-	@Override
-	protected void onDestroy() {
-		super.onDestroy();
-		Log.d(LOGTAG, "onDestory");
-	}
-	
-	protected void updateUI() {
-		Log.d(LOGTAG, "Updating UI");
+    @Override
+    protected void onStop() {
+        super.onStop();
 
-		boolean scanning = false;
-		try {
-			scanning = mConnectionRemote.isScanning();
-		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+        try {
+            if (mConnectionRemote.isScanning()) {
+                mConnectionRemote.showNotification();
+            }
+        } catch (RemoteException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
 
-		int buttonText;
-		if (scanning) {
-			buttonText = R.string.stop_scanning;
-		} else {
-			buttonText = R.string.start_scanning;
-		}
+        unbindService(mConnection);
+        mConnection = null;
+        mConnectionRemote = null;
 
-		Button scanningBtn = (Button) findViewById(R.id.toggle_scanning);
-		scanningBtn.setText(buttonText);
-	}
+        Log.d(LOGTAG, "onStop");
+    }
 
-	public void onBtnClicked(View v) throws RemoteException {
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d(LOGTAG, "onDestroy");
+    }
 
-		if (v.getId() == R.id.toggle_scanning) {
+    protected void updateUI() {
+        Log.d(LOGTAG, "Updating UI");
 
-			boolean scanning = mConnectionRemote.isScanning();
-			Log.d(LOGTAG, "Connection remote return: isScanning() = "
-					+ scanning);
+        boolean scanning = false;
+        try {
+            scanning = mConnectionRemote.isScanning();
+        } catch (RemoteException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
 
-			int buttonText;
+        int buttonText;
+        if (scanning) {
+            buttonText = R.string.stop_scanning;
+        } else {
+            buttonText = R.string.start_scanning;
+        }
 
-			if (scanning) {
-				mConnectionRemote.stopScanning();
-				buttonText = R.string.start_scanning;
-			} else {
-				mConnectionRemote.startScanning();
-				buttonText = R.string.stop_scanning;
-			}
+        Button scanningBtn = (Button) findViewById(R.id.toggle_scanning);
+        scanningBtn.setText(buttonText);
+    }
 
-			Button b = (Button) v;
-			b.setText(buttonText);
-		}
-	}
+    public void onBtnClicked(View v) throws RemoteException {
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main, menu);
-		return true;
-	}
+        if (v.getId() == R.id.toggle_scanning) {
 
-	@TargetApi(9)
-	private void enableStrictMode() {
-		if (Build.VERSION.SDK_INT < 9) {
-			return;
-		}
+            boolean scanning = mConnectionRemote.isScanning();
+            Log.d(LOGTAG, "Connection remote return: isScanning() = " + scanning);
 
-		StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
-				.detectAll().penaltyLog().build());
+            int buttonText;
 
-		StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder().detectAll()
-				.penaltyLog().build());
-	}
+            if (scanning) {
+                mConnectionRemote.stopScanning();
+                buttonText = R.string.start_scanning;
+            } else {
+                mConnectionRemote.startScanning();
+                buttonText = R.string.stop_scanning;
+            }
+
+            Button b = (Button) v;
+            b.setText(buttonText);
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
+
+    @TargetApi(9)
+    private void enableStrictMode() {
+        if (Build.VERSION.SDK_INT < 9) {
+            return;
+        }
+
+        StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
+                  .detectAll().penaltyLog().build());
+
+        StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder().detectAll()
+                  .penaltyLog().build());
+    }
 }

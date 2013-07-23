@@ -2,6 +2,7 @@ package org.mozilla.mozstumbler;
 
 import java.util.Calendar;
 
+import android.annotation.TargetApi;
 import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -18,152 +19,153 @@ import android.util.Log;
 
 public class ScannerService extends Service {
 
-	private static final String LOGTAG = ScannerService.class.getName();
-	private static final int NOTIFICATION_ID = 0;
-	private static final int WAKE_TIMEOUT = 5 * 1000;
-	private Scanner mScanner = null;
-	private LooperThread mLooper = null;
-	private PendingIntent mWakeIntent = null;
+    private static final String LOGTAG = ScannerService.class.getName();
+    private static final int NOTIFICATION_ID = 0;
+    private static final int WAKE_TIMEOUT = 5 * 1000;
+    private Scanner mScanner = null;
+    private LooperThread mLooper = null;
+    private PendingIntent mWakeIntent = null;
 
-	public class LooperThread extends Thread {
-		public Handler mHandler;
+    public class LooperThread extends Thread {
+        public Handler mHandler;
 
-		public void run() {
-			Looper.prepare();
-			mHandler = new Handler();
-			Looper.loop();
-		}
-	}
+        public void run() {
+            Looper.prepare();
+            mHandler = new Handler();
+            Looper.loop();
+        }
+    }
 
-	@Override
-	public void onCreate() {
-		super.onCreate();
-		Log.d(LOGTAG, "onCreate");
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        Log.d(LOGTAG, "onCreate");
 
-		mScanner = new Scanner(this);
-		mLooper = new LooperThread();
-		mLooper.start();
-	}
+        Prefs prefs = new Prefs(this);
+        Reporter reporter = new Reporter(prefs);
+        mScanner = new Scanner(this, reporter);
+        mLooper = new LooperThread();
+        mLooper.start();
+    }
 
-	@Override
-	public void onDestroy() {
-		super.onDestroy();
-		Log.d(LOGTAG, "onDestroy");
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.d(LOGTAG, "onDestroy");
 
-		mLooper.interrupt();
-		mLooper = null;
-		mScanner = null;
+        mLooper.interrupt();
+        mLooper = null;
+        mScanner = null;
 
-		NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-		nm.cancel(NOTIFICATION_ID);
+        NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        nm.cancel(NOTIFICATION_ID);
 
-		// TODO Toast.makeText(this, R.string.local_service_stopped,
-		// Toast.LENGTH_SHORT).show();
-	}
+        // TODO Toast.makeText(this, R.string.local_service_stopped,
+        // Toast.LENGTH_SHORT).show();
+    }
 
-	public void postNotification() {
+    @TargetApi(11)
+    public void postNotification() {
+        if (mLooper.mHandler == null)
+            return;
 
-		if (mLooper.mHandler == null)
-			return;
+        mLooper.mHandler.post(new Runnable() {
+            @Override
+            public void run() {
 
-		mLooper.mHandler.post(new Runnable() {
-			@Override
-			public void run() {
+                NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+                Context ctx = getApplicationContext();
+                Intent notificationIntent = new Intent(ctx, MainActivity.class);
+                PendingIntent contentIntent = PendingIntent.getActivity(ctx,
+                        NOTIFICATION_ID, notificationIntent,
+                        PendingIntent.FLAG_CANCEL_CURRENT);
 
-				NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-				Context ctx = getApplicationContext();
-				Intent notificationIntent = new Intent(ctx, MainActivity.class);
-				PendingIntent contentIntent = PendingIntent.getActivity(ctx,
-						NOTIFICATION_ID, notificationIntent,
-						PendingIntent.FLAG_CANCEL_CURRENT);
+                Resources res = ctx.getResources();
+                // TODO - Do something compat w/ older os's
+                // See https://github.com/dougt/MozStumbler/pull/26#commitcomment-3689527
+                Notification.Builder builder = new Notification.Builder(ctx);
 
-				Resources res = ctx.getResources();
-				// TODO - Do something compat w/ older os's
-				// See https://github.com/dougt/MozStumbler/pull/26#commitcomment-3689527
-				Notification.Builder builder = new Notification.Builder(ctx);
+                builder.setContentIntent(contentIntent)
+                        .setSmallIcon(R.drawable.ic_launcher)
+                        .setOngoing(true)
+                        .setAutoCancel(false)
+                        .setContentTitle(res.getString(R.string.service_name))
+                        .setContentText(
+                                res.getString(R.string.service_scanning));
+                Notification n = builder.build();
 
-				builder.setContentIntent(contentIntent)
-						.setSmallIcon(R.drawable.ic_launcher)
-						.setOngoing(true)
-						.setAutoCancel(false)
-						.setContentTitle(res.getString(R.string.service_name))
-						.setContentText(
-								res.getString(R.string.service_scanning));
-				Notification n = builder.build();
+                nm.notify(NOTIFICATION_ID, n);
+            }
+        });
+    }
 
-				nm.notify(NOTIFICATION_ID, n);
-			}
-		});
-	}
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        // keep running!
+        return Service.START_STICKY;
+    }
 
-	@Override
-	public int onStartCommand(Intent intent, int flags, int startId) {
-		// keep running!
-		return Service.START_STICKY;
-	}
+    @Override
+    public IBinder onBind(Intent intent) {
+        Log.d(LOGTAG, "onBind");
 
-	@Override
-	public IBinder onBind(Intent intent) {
-		Log.d(LOGTAG, "onBind");
+        return new ScannerServiceInterface.Stub() {
 
-		return new ScannerServiceInterface.Stub() {
+            @Override
+            public boolean isScanning() throws RemoteException {
+                return mScanner.isScanning();
+            };
 
-			@Override
-			public boolean isScanning() throws RemoteException {
-				return mScanner.isScanning();
-			};
+            @Override
+            public void startScanning() throws RemoteException {
+                if (mScanner.isScanning()) {
+                    return;
+                }
 
-			@Override
-			public void startScanning() throws RemoteException {
-				if (mScanner.isScanning()) {
-					return;
-				}
+                mLooper.mHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        mScanner.startScanning();
 
-				mLooper.mHandler.post(new Runnable() {
-					@Override
-					public void run() {
-						mScanner.startScanning();
+                        // keep us awake.
+                        Context cxt = getApplicationContext();
+                        Calendar cal = Calendar.getInstance();
+                        Intent intent = new Intent(cxt, ScannerService.class);
+                        mWakeIntent = PendingIntent.getService(cxt, 0, intent,
+                                0);
+                        AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+                        alarm.setRepeating(AlarmManager.RTC_WAKEUP,
+                                cal.getTimeInMillis(), WAKE_TIMEOUT,
+                                mWakeIntent);
 
-						// keep us awake.
-						Context cxt = getApplicationContext();
-						Calendar cal = Calendar.getInstance();
-						Intent intent = new Intent(cxt, ScannerService.class);
-						mWakeIntent = PendingIntent.getService(cxt, 0, intent,
-								0);
-						AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-						alarm.setRepeating(AlarmManager.RTC_WAKEUP,
-								cal.getTimeInMillis(), WAKE_TIMEOUT,
-								mWakeIntent);
+                    }
+                });
+            };
 
-					}
-				});
-			};
+            @Override
+            public void stopScanning() throws RemoteException {
+                if (!mScanner.isScanning()) {
+                    return;
+                }
 
-			@Override
-			public void stopScanning() throws RemoteException {
+                mLooper.mHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+                        alarm.cancel(mWakeIntent);
 
-				if (! mScanner.isScanning()) {
-					return;
-				}
+                        NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+                        nm.cancel(NOTIFICATION_ID);
 
-				mLooper.mHandler.post(new Runnable() {
-					@Override
-					public void run() {
-						AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-						alarm.cancel(mWakeIntent);
+                        mScanner.stopScanning();
+                    }
+                });
+            }
 
-						NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-						nm.cancel(NOTIFICATION_ID);
-
-						mScanner.stopScanning();
-					}
-				});
-			}
-
-			@Override
-			public void showNotification() throws RemoteException {
-				postNotification();
-			};
-		};
-	}
+            @Override
+            public void showNotification() throws RemoteException {
+                postNotification();
+            }
+        };
+    }
 }

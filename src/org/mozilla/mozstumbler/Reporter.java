@@ -26,9 +26,12 @@ class Reporter {
     private static final String LOGTAG = Reporter.class.getName();
     private static final String LOCATION_URL = "https://location.services.mozilla.com/v1/submit";
 
+    private final Prefs mPrefs;
     private final MessageDigest mSHA1;
 
-    Reporter() {
+    Reporter(Prefs prefs) {
+        mPrefs = prefs;
+
         try {
             mSHA1 = MessageDigest.getInstance("SHA-1");
         } catch (NoSuchAlgorithmException e) {
@@ -46,6 +49,7 @@ class Reporter {
             locInfo.put("lat", location.getLatitude());
             locInfo.put("accuracy", (int) location.getAccuracy());
             locInfo.put("altitude", (int) location.getAltitude());
+            locInfo.put("token", mPrefs.getToken());
 
             locInfo.put("cell", cellInfo);
             if (radioType == TelephonyManager.PHONE_TYPE_GSM)

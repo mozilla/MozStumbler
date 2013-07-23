@@ -2,7 +2,7 @@ package org.mozilla.mozstumbler;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
-import android.content.BroadcastReceiver; 
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -17,14 +17,14 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast; 
+import android.widget.Toast;
 
 public class MainActivity extends Activity {
 
-    private static final String LOGTAG = MainActivity.class.getName();
+    private static final String      LOGTAG = MainActivity.class.getName();
 
-    private ScannerServiceInterface mConnectionRemote;
-    private ServiceConnection mConnection;
+    private ScannerServiceInterface  mConnectionRemote;
+    private ServiceConnection        mConnection;
 
     private ServiceBroadcastReceiver mReceiver;
 
@@ -32,43 +32,41 @@ public class MainActivity extends Activity {
         private boolean mReceiverIsRegistered;
 
         public void register() {
-          if (!mReceiverIsRegistered) {
-            registerReceiver(this, new IntentFilter(ScannerService.MESSAGE_TOPIC));
-            mReceiverIsRegistered = true;
-          }
+            if (!mReceiverIsRegistered) {
+                registerReceiver(this, new IntentFilter(ScannerService.MESSAGE_TOPIC));
+                mReceiverIsRegistered = true;
+            }
         }
-    
+
         public void unregister() {
-          if (mReceiverIsRegistered) {
-            unregisterReceiver(this);
-            mReceiverIsRegistered = false;
-          }
+            if (mReceiverIsRegistered) {
+                unregisterReceiver(this);
+                mReceiverIsRegistered = false;
+            }
         }
-    
+
         @Override
         public void onReceive(Context context, Intent intent) {
-          String action = intent.getAction();
-          if (!action.equals(ScannerService.MESSAGE_TOPIC)) {
-            Log.e(LOGTAG, "Received an unknown intent");
-            return;
-          }
-    
-          String subject = intent.getStringExtra(Intent.EXTRA_SUBJECT);
-          if (subject.equals("Notification")) {
-            String text = intent.getStringExtra(Intent.EXTRA_TEXT);
-            Toast.makeText(getApplicationContext(), (CharSequence) text,
-                           Toast.LENGTH_SHORT).show();
-    
-            Log.d(LOGTAG, "Received a notification intent and showing: "
-                  + text);
-            return;
-          } else {
-            Log.e(LOGTAG, "Received an unknown notification intent");
-            return;
-          }
+            String action = intent.getAction();
+            if (!action.equals(ScannerService.MESSAGE_TOPIC)) {
+                Log.e(LOGTAG, "Received an unknown intent");
+                return;
+            }
+
+            String subject = intent.getStringExtra(Intent.EXTRA_SUBJECT);
+            if (subject.equals("Notification")) {
+                String text = intent.getStringExtra(Intent.EXTRA_TEXT);
+                Toast.makeText(getApplicationContext(), (CharSequence) text, Toast.LENGTH_SHORT).show();
+
+                Log.d(LOGTAG, "Received a notification intent and showing: " + text);
+                return;
+            } else {
+                Log.e(LOGTAG, "Received an unknown notification intent");
+                return;
+            }
         }
     }
-    
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -82,7 +80,7 @@ public class MainActivity extends Activity {
         super.onStart();
 
         mReceiver = new ServiceBroadcastReceiver();
-        mReceiver.register(); 
+        mReceiver.register();
 
         mConnection = new ServiceConnection() {
             public void onServiceConnected(ComponentName className, IBinder binder) {
@@ -120,7 +118,7 @@ public class MainActivity extends Activity {
         mConnection = null;
         mConnectionRemote = null;
         mReceiver.unregister();
-        mReceiver = null; 
+        mReceiver = null;
         Log.d(LOGTAG, "onStop");
     }
 
@@ -136,9 +134,9 @@ public class MainActivity extends Activity {
 
         Button scanningBtn = (Button) findViewById(R.id.toggle_scanning);
         if (scanning) {
-          scanningBtn.setText(R.string.stop_scanning);
+            scanningBtn.setText(R.string.stop_scanning);
         } else {
-          scanningBtn.setText(R.string.start_scanning);
+            scanningBtn.setText(R.string.start_scanning);
         }
     }
 
@@ -171,10 +169,8 @@ public class MainActivity extends Activity {
             return;
         }
 
-        StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
-                  .detectAll().penaltyLog().build());
+        StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().detectAll().penaltyLog().build());
 
-        StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder().detectAll()
-                  .penaltyLog().build());
+        StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder().detectAll().penaltyLog().build());
     }
 }

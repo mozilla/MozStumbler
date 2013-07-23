@@ -19,14 +19,14 @@ import android.util.Log;
 
 public class ScannerService extends Service {
 
-    public static final String MESSAGE_TOPIC = "org.mozilla.mozstumbler.serviceMessage";
+    public static final String  MESSAGE_TOPIC   = "org.mozilla.mozstumbler.serviceMessage";
 
-    private static final String LOGTAG = ScannerService.class.getName();
-    private static final int NOTIFICATION_ID = 0;
-    private static final int WAKE_TIMEOUT = 5 * 1000;
-    private Scanner mScanner = null;
-    private LooperThread mLooper = null;
-    private PendingIntent mWakeIntent = null;
+    private static final String LOGTAG          = ScannerService.class.getName();
+    private static final int    NOTIFICATION_ID = 0;
+    private static final int    WAKE_TIMEOUT    = 5 * 1000;
+    private Scanner             mScanner        = null;
+    private LooperThread        mLooper         = null;
+    private PendingIntent       mWakeIntent     = null;
 
     public class LooperThread extends Thread {
         public Handler mHandler;
@@ -75,8 +75,7 @@ public class ScannerService extends Service {
                 NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
                 Context ctx = getApplicationContext();
                 Intent notificationIntent = new Intent(ctx, MainActivity.class);
-                PendingIntent contentIntent = PendingIntent.getActivity(ctx,
-                        NOTIFICATION_ID, notificationIntent,
+                PendingIntent contentIntent = PendingIntent.getActivity(ctx, NOTIFICATION_ID, notificationIntent,
                         PendingIntent.FLAG_CANCEL_CURRENT);
 
                 Resources res = ctx.getResources();
@@ -84,13 +83,9 @@ public class ScannerService extends Service {
                 // See https://github.com/dougt/MozStumbler/pull/26#commitcomment-3689527
                 Notification.Builder builder = new Notification.Builder(ctx);
 
-                builder.setContentIntent(contentIntent)
-                        .setSmallIcon(R.drawable.ic_launcher)
-                        .setOngoing(true)
-                        .setAutoCancel(false)
-                        .setContentTitle(res.getString(R.string.service_name))
-                        .setContentText(
-                                res.getString(R.string.service_scanning));
+                builder.setContentIntent(contentIntent).setSmallIcon(R.drawable.ic_launcher).setOngoing(true)
+                        .setAutoCancel(false).setContentTitle(res.getString(R.string.service_name))
+                        .setContentText(res.getString(R.string.service_scanning));
                 Notification n = builder.build();
 
                 nm.notify(NOTIFICATION_ID, n);
@@ -130,16 +125,13 @@ public class ScannerService extends Service {
                         Context cxt = getApplicationContext();
                         Calendar cal = Calendar.getInstance();
                         Intent intent = new Intent(cxt, ScannerService.class);
-                        mWakeIntent = PendingIntent.getService(cxt, 0, intent,
-                                0);
+                        mWakeIntent = PendingIntent.getService(cxt, 0, intent, 0);
                         AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-                        alarm.setRepeating(AlarmManager.RTC_WAKEUP,
-                                cal.getTimeInMillis(), WAKE_TIMEOUT,
-                                mWakeIntent);
+                        alarm.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), WAKE_TIMEOUT, mWakeIntent);
                         Intent i = new Intent(MESSAGE_TOPIC);
                         i.putExtra(Intent.EXTRA_SUBJECT, "Notification");
                         i.putExtra(Intent.EXTRA_TEXT, R.string.start_scanning);
-                        sendBroadcast(i); 
+                        sendBroadcast(i);
                     }
                 });
             };
@@ -164,7 +156,7 @@ public class ScannerService extends Service {
                         Intent i = new Intent(MESSAGE_TOPIC);
                         i.putExtra(Intent.EXTRA_SUBJECT, "Notification");
                         i.putExtra(Intent.EXTRA_TEXT, R.string.stop_scanning);
-                        sendBroadcast(i); 
+                        sendBroadcast(i);
                     }
                 });
             }

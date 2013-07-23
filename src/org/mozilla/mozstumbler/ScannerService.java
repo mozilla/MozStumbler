@@ -19,6 +19,8 @@ import android.util.Log;
 
 public class ScannerService extends Service {
 
+    public static final String MESSAGE_TOPIC = "org.mozilla.mozstumbler.serviceMessage";
+
     private static final String LOGTAG = ScannerService.class.getName();
     private static final int NOTIFICATION_ID = 0;
     private static final int WAKE_TIMEOUT = 5 * 1000;
@@ -59,9 +61,6 @@ public class ScannerService extends Service {
 
         NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         nm.cancel(NOTIFICATION_ID);
-
-        // TODO Toast.makeText(this, R.string.local_service_stopped,
-        // Toast.LENGTH_SHORT).show();
     }
 
     @TargetApi(11)
@@ -137,7 +136,10 @@ public class ScannerService extends Service {
                         alarm.setRepeating(AlarmManager.RTC_WAKEUP,
                                 cal.getTimeInMillis(), WAKE_TIMEOUT,
                                 mWakeIntent);
-
+                        Intent i = new Intent(MESSAGE_TOPIC);
+                        i.putExtra(Intent.EXTRA_SUBJECT, "Notification");
+                        i.putExtra(Intent.EXTRA_TEXT, R.string.start_scanning);
+                        sendBroadcast(i); 
                     }
                 });
             };
@@ -158,6 +160,11 @@ public class ScannerService extends Service {
                         nm.cancel(NOTIFICATION_ID);
 
                         mScanner.stopScanning();
+
+                        Intent i = new Intent(MESSAGE_TOPIC);
+                        i.putExtra(Intent.EXTRA_SUBJECT, "Notification");
+                        i.putExtra(Intent.EXTRA_TEXT, R.string.stop_scanning);
+                        sendBroadcast(i); 
                     }
                 });
             }

@@ -2,9 +2,11 @@ package org.mozilla.mozstumbler;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Build;
 import android.os.Bundle;
@@ -15,32 +17,70 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 public class MainActivity extends Activity {
 
-    private static final String LOGTAG = MainActivity.class.getName();
+    private static final String      LOGTAG = MainActivity.class.getName();
 
-    private ScannerServiceInterface mConnectionRemote;
-    private ServiceConnection mConnection;
+    private ScannerServiceInterface  mConnectionRemote;
+    private ServiceConnection        mConnection;
 
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        Log.d(LOGTAG, "New intent with flags " + intent.getFlags());
+    private ServiceBroadcastReceiver mReceiver;
+
+    private class ServiceBroadcastReceiver extends BroadcastReceiver {
+        private boolean mReceiverIsRegistered;
+
+        public void register() {
+            if (!mReceiverIsRegistered) {
+                registerReceiver(this, new IntentFilter(ScannerService.MESSAGE_TOPIC));
+                mReceiverIsRegistered = true;
+            }
+        }
+
+        public void unregister() {
+            if (mReceiverIsRegistered) {
+                unregisterReceiver(this);
+                mReceiverIsRegistered = false;
+            }
+        }
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            if (!action.equals(ScannerService.MESSAGE_TOPIC)) {
+                Log.e(LOGTAG, "Received an unknown intent");
+                return;
+            }
+
+            String subject = intent.getStringExtra(Intent.EXTRA_SUBJECT);
+            if (subject.equals("Notification")) {
+                String text = intent.getStringExtra(Intent.EXTRA_TEXT);
+                Toast.makeText(getApplicationContext(), (CharSequence) text, Toast.LENGTH_SHORT).show();
+
+                Log.d(LOGTAG, "Received a notification intent and showing: " + text);
+                return;
+            } else {
+                Log.e(LOGTAG, "Received an unknown notification intent");
+                return;
+            }
+        }
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         enableStrictMode();
-
         setContentView(R.layout.activity_main);
-
         Log.d(LOGTAG, "onCreate");
     }
 
     @Override
     protected void onStart() {
         super.onStart();
+
+        mReceiver = new ServiceBroadcastReceiver();
+        mReceiver.register();
 
         mConnection = new ServiceConnection() {
             public void onServiceConnected(ComponentName className, IBinder binder) {
@@ -65,7 +105,6 @@ public class MainActivity extends Activity {
     @Override
     protected void onStop() {
         super.onStop();
-
         try {
             if (mConnectionRemote.isScanning()) {
                 mConnectionRemote.showNotification();
@@ -78,19 +117,13 @@ public class MainActivity extends Activity {
         unbindService(mConnection);
         mConnection = null;
         mConnectionRemote = null;
-
+        mReceiver.unregister();
+        mReceiver = null;
         Log.d(LOGTAG, "onStop");
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Log.d(LOGTAG, "onDestroy");
     }
 
     protected void updateUI() {
         Log.d(LOGTAG, "Updating UI");
-
         boolean scanning = false;
         try {
             scanning = mConnectionRemote.isScanning();
@@ -99,36 +132,27 @@ public class MainActivity extends Activity {
             e.printStackTrace();
         }
 
-        int buttonText;
-        if (scanning) {
-            buttonText = R.string.stop_scanning;
-        } else {
-            buttonText = R.string.start_scanning;
-        }
-
         Button scanningBtn = (Button) findViewById(R.id.toggle_scanning);
-        scanningBtn.setText(buttonText);
+        if (scanning) {
+            scanningBtn.setText(R.string.stop_scanning);
+        } else {
+            scanningBtn.setText(R.string.start_scanning);
+        }
     }
 
     public void onBtnClicked(View v) throws RemoteException {
-
         if (v.getId() == R.id.toggle_scanning) {
-
             boolean scanning = mConnectionRemote.isScanning();
             Log.d(LOGTAG, "Connection remote return: isScanning() = " + scanning);
 
-            int buttonText;
-
+            Button b = (Button) v;
             if (scanning) {
                 mConnectionRemote.stopScanning();
-                buttonText = R.string.start_scanning;
+                b.setText(R.string.start_scanning);
             } else {
                 mConnectionRemote.startScanning();
-                buttonText = R.string.stop_scanning;
+                b.setText(R.string.stop_scanning);
             }
-
-            Button b = (Button) v;
-            b.setText(buttonText);
         }
     }
 
@@ -145,10 +169,8 @@ public class MainActivity extends Activity {
             return;
         }
 
-        StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
-                  .detectAll().penaltyLog().build());
+        StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().detectAll().penaltyLog().build());
 
-        StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder().detectAll()
-                  .penaltyLog().build());
+        StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder().detectAll().penaltyLog().build());
     }
 }

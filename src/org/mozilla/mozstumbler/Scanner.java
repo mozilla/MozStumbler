@@ -23,15 +23,15 @@ import org.json.JSONObject;
 import java.util.Collection;
 
 class Scanner implements LocationListener {
-    private static final String LOGTAG = Scanner.class.getName();
-    private static final long MIN_UPDATE_TIME = 1000; // milliseconds
-    private static final float MIN_UPDATE_DISTANCE = 10; // meters
+    private static final String LOGTAG              = Scanner.class.getName();
+    private static final long   MIN_UPDATE_TIME     = 1000;                   // milliseconds
+    private static final float  MIN_UPDATE_DISTANCE = 10;                     // meters
 
-    private final Context mContext;
-    private int mSignalStrength;
-    private PhoneStateListener mPhoneStateListener;
-    private final Reporter mReporter;
-    private boolean mIsScanning;
+    private final Context       mContext;
+    private int                 mSignalStrength;
+    private PhoneStateListener  mPhoneStateListener;
+    private final Reporter      mReporter;
+    private boolean             mIsScanning;
 
     Scanner(Context context, Reporter reporter) {
         mContext = context;
@@ -40,12 +40,13 @@ class Scanner implements LocationListener {
 
     void startScanning() {
         if (mIsScanning) {
-          return;
+            return;
         }
         Log.d(LOGTAG, "Scanning started...");
         deleteAidingData();
         LocationManager lm = getLocationManager();
-        lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, MIN_UPDATE_TIME, MIN_UPDATE_DISTANCE, getLocationListener());
+        lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, MIN_UPDATE_TIME, MIN_UPDATE_DISTANCE,
+                getLocationListener());
         mIsScanning = true;
     }
 
@@ -73,15 +74,13 @@ class Scanner implements LocationListener {
             mPhoneStateListener = new PhoneStateListener() {
                 public void onSignalStrengthsChanged(SignalStrength ss) {
                     if (ss.isGsm()) {
-                        Log.d(LOGTAG, "GSM signal strength: " + mSignalStrength
-                                      + " -> " + ss.getGsmSignalStrength());
+                        Log.d(LOGTAG, "GSM signal strength: " + mSignalStrength + " -> " + ss.getGsmSignalStrength());
                         mSignalStrength = ss.getGsmSignalStrength();
                     }
                 }
             };
             TelephonyManager tm = getTelephonyManager();
-            tm.listen(mPhoneStateListener,
-                    PhoneStateListener.LISTEN_SIGNAL_STRENGTHS);
+            tm.listen(mPhoneStateListener, PhoneStateListener.LISTEN_SIGNAL_STRENGTHS);
         }
         return this;
     }
@@ -113,21 +112,20 @@ class Scanner implements LocationListener {
                 obj.put("cid", gcl.getCid());
                 obj.put("psc", gcl.getPsc());
                 switch (tm.getNetworkType()) {
-                case TelephonyManager.NETWORK_TYPE_GPRS:
-                case TelephonyManager.NETWORK_TYPE_EDGE:
-                    obj.put("radio", "gsm");
-                    break;
-                case TelephonyManager.NETWORK_TYPE_UMTS:
-                case TelephonyManager.NETWORK_TYPE_HSDPA:
-                case TelephonyManager.NETWORK_TYPE_HSUPA:
-                case TelephonyManager.NETWORK_TYPE_HSPA:
-                case TelephonyManager.NETWORK_TYPE_HSPAP:
-                    obj.put("radio", "umts");
-                    break;
-                default:
-                    Log.w(LOGTAG, "", new IllegalStateException("Unexpected NetworkType: "
-                                                                + tm.getNetworkType()));
-                    break;
+                    case TelephonyManager.NETWORK_TYPE_GPRS:
+                    case TelephonyManager.NETWORK_TYPE_EDGE:
+                        obj.put("radio", "gsm");
+                        break;
+                    case TelephonyManager.NETWORK_TYPE_UMTS:
+                    case TelephonyManager.NETWORK_TYPE_HSDPA:
+                    case TelephonyManager.NETWORK_TYPE_HSUPA:
+                    case TelephonyManager.NETWORK_TYPE_HSPA:
+                    case TelephonyManager.NETWORK_TYPE_HSPAP:
+                        obj.put("radio", "umts");
+                        break;
+                    default:
+                        Log.w(LOGTAG, "", new IllegalStateException("Unexpected NetworkType: " + tm.getNetworkType()));
+                        break;
                 }
                 String mcc_mnc = tm.getNetworkOperator();
                 if (mcc_mnc.length() > 3) {
@@ -153,21 +151,21 @@ class Scanner implements LocationListener {
                     obj.put("mnc", mnc);
 
                     switch (nci.getNetworkType()) {
-                    case TelephonyManager.NETWORK_TYPE_GPRS:
-                    case TelephonyManager.NETWORK_TYPE_EDGE:
-                        obj.put("radio", "gsm");
-                        break;
-                    case TelephonyManager.NETWORK_TYPE_UMTS:
-                    case TelephonyManager.NETWORK_TYPE_HSDPA:
-                    case TelephonyManager.NETWORK_TYPE_HSUPA:
-                    case TelephonyManager.NETWORK_TYPE_HSPA:
-                    case TelephonyManager.NETWORK_TYPE_HSPAP:
-                        obj.put("radio", "umts");
-                        break;
-                    default:
-                        Log.w(LOGTAG, "", new IllegalStateException("Unexpected NetworkType: "
-                                                                    + tm.getNetworkType()));
-                        break;
+                        case TelephonyManager.NETWORK_TYPE_GPRS:
+                        case TelephonyManager.NETWORK_TYPE_EDGE:
+                            obj.put("radio", "gsm");
+                            break;
+                        case TelephonyManager.NETWORK_TYPE_UMTS:
+                        case TelephonyManager.NETWORK_TYPE_HSDPA:
+                        case TelephonyManager.NETWORK_TYPE_HSUPA:
+                        case TelephonyManager.NETWORK_TYPE_HSPA:
+                        case TelephonyManager.NETWORK_TYPE_HSPAP:
+                            obj.put("radio", "umts");
+                            break;
+                        default:
+                            Log.w(LOGTAG, "",
+                                    new IllegalStateException("Unexpected NetworkType: " + tm.getNetworkType()));
+                            break;
                     }
 
                     obj.put("asu", nci.getRssi());
@@ -192,8 +190,7 @@ class Scanner implements LocationListener {
             for (ScanResult scanResult : scanResults) {
                 String BSSID = BSSIDBlockList.canonicalizeBSSID(scanResult.BSSID);
                 if (BSSID == null) {
-                    Log.e(LOGTAG, "", new IllegalArgumentException("Unexpected BSSID: "
-                                                                   + scanResult.BSSID));
+                    Log.e(LOGTAG, "", new IllegalArgumentException("Unexpected BSSID: " + scanResult.BSSID));
                 }
                 scanResult.BSSID = BSSID;
             }

@@ -30,12 +30,12 @@ class Scanner implements LocationListener {
     private final Context mContext;
     private int mSignalStrength;
     private PhoneStateListener mPhoneStateListener;
-    private Reporter mReporter;
+    private final Reporter mReporter;
     private boolean mIsScanning;
 
-    Scanner(Context context) {
+    Scanner(Context context, Reporter reporter) {
         mContext = context;
-        mReporter = new Reporter();
+        mReporter = reporter;
     }
 
     void startScanning() {

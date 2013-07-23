@@ -41,7 +41,9 @@ public class ScannerService extends Service {
         super.onCreate();
         Log.d(LOGTAG, "onCreate");
 
-        mScanner = new Scanner(this);
+        Prefs prefs = new Prefs(this);
+        Reporter reporter = new Reporter(prefs);
+        mScanner = new Scanner(this, reporter);
         mLooper = new LooperThread();
         mLooper.start();
     }

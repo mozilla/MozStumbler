@@ -2,6 +2,7 @@ package org.mozilla.mozstumbler;
 
 import java.util.Calendar;
 
+import android.annotation.TargetApi;
 import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -61,8 +62,8 @@ public class ScannerService extends Service {
         // Toast.LENGTH_SHORT).show();
     }
 
+    @TargetApi(11)
     public void postNotification() {
-
         if (mLooper.mHandler == null)
             return;
 
@@ -162,7 +163,7 @@ public class ScannerService extends Service {
             @Override
             public void showNotification() throws RemoteException {
                 postNotification();
-            };
+            }
         };
     }
 }

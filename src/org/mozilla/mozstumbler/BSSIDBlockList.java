@@ -6,6 +6,7 @@ import java.util.Locale;
 import java.util.regex.Pattern;
 
 final class BSSIDBlockList {
+
     private static final String  NULL_BSSID        = "00:00:00:00:00:00";
     private static final String  WILDCARD_BSSID    = "ff:ff:ff:ff:ff:ff";
     private static final Pattern BSSID_PATTERN     = Pattern.compile("([0-9a-f]{2}:){5}[0-9a-f]{2}");

@@ -40,6 +40,8 @@ android {
         }
 
         release {
+            runProguard true
+            proguardFile 'proguard.cfg'
             signingConfig signingConfigs.debug // FIXME: Use a real certificate
         }
     }

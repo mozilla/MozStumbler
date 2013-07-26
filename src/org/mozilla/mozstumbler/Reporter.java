@@ -25,6 +25,7 @@ import java.util.Date;
 class Reporter {
     private static final String LOGTAG       = Reporter.class.getName();
     private static final String LOCATION_URL = "https://location.services.mozilla.com/v1/submit";
+    private static final String NICKNAME_HEADER = "X-Nickname";
     private static final String TOKEN_HEADER = "X-Token";
 
     private final Prefs         mPrefs;
@@ -87,11 +88,13 @@ class Reporter {
 
         new Thread(new Runnable() {
             public void run() {
+                String nickname = mPrefs.getNickname();
                 try {
                     URL url = new URL(LOCATION_URL);
                     HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
                     try {
                         urlConnection.setDoOutput(true);
+                        urlConnection.setRequestProperty(NICKNAME_HEADER, nickname);
                         urlConnection.setRequestProperty(TOKEN_HEADER, token);
 
                         JSONArray batch = new JSONArray();

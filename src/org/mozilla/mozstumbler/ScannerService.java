@@ -130,7 +130,7 @@ public class ScannerService extends Service {
                         alarm.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), WAKE_TIMEOUT, mWakeIntent);
                         Intent i = new Intent(MESSAGE_TOPIC);
                         i.putExtra(Intent.EXTRA_SUBJECT, "Notification");
-                        i.putExtra(Intent.EXTRA_TEXT, R.string.start_scanning);
+                        i.putExtra(Intent.EXTRA_TEXT, getString(R.string.start_scanning));
                         sendBroadcast(i);
                     }
                 });
@@ -155,7 +155,7 @@ public class ScannerService extends Service {
 
                         Intent i = new Intent(MESSAGE_TOPIC);
                         i.putExtra(Intent.EXTRA_SUBJECT, "Notification");
-                        i.putExtra(Intent.EXTRA_TEXT, R.string.stop_scanning);
+                        i.putExtra(Intent.EXTRA_TEXT, getString(R.string.stop_scanning));
                         sendBroadcast(i);
                     }
                 });

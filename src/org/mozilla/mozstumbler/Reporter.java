@@ -25,6 +25,7 @@ import java.util.Date;
 class Reporter {
     private static final String LOGTAG       = Reporter.class.getName();
     private static final String LOCATION_URL = "https://location.services.mozilla.com/v1/submit";
+    private static final String TOKEN_HEADER = "X-Token";
 
     private final Prefs         mPrefs;
     private final MessageDigest mSHA1;
@@ -41,6 +42,7 @@ class Reporter {
 
     @SuppressLint("SimpleDateFormat")
     void reportLocation(Location location, Collection<ScanResult> scanResults, int radioType, JSONArray cellInfo) {
+        final String token = mPrefs.getToken().toString();
         final JSONObject locInfo = new JSONObject();
         try {
             DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
@@ -49,7 +51,7 @@ class Reporter {
             locInfo.put("lat", location.getLatitude());
             locInfo.put("accuracy", (int) location.getAccuracy());
             locInfo.put("altitude", (int) location.getAltitude());
-            locInfo.put("token", mPrefs.getToken());
+            locInfo.put("token", token); // FIXME: Remove "token" property after server support X-Token header (ichnaea issue #9).
 
             locInfo.put("cell", cellInfo);
             if (radioType == TelephonyManager.PHONE_TYPE_GSM)
@@ -90,6 +92,8 @@ class Reporter {
                     HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
                     try {
                         urlConnection.setDoOutput(true);
+                        urlConnection.setRequestProperty(TOKEN_HEADER, token);
+
                         JSONArray batch = new JSONArray();
                         batch.put(locInfo);
                         JSONObject wrapper = new JSONObject();
@@ -102,7 +106,6 @@ class Reporter {
                         out.flush();
 
                         Log.d(LOGTAG, "uploaded data: " + data + " to " + LOCATION_URL);
-
                     } catch (JSONException jsonex) {
                         Log.e(LOGTAG, "error wrapping data as a batch", jsonex);
                     } catch (Exception ex) {

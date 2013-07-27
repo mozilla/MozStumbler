@@ -6,4 +6,6 @@ interface ScannerServiceInterface {
     void stopScanning();
     
     void showNotification();
+    
+    int numberOfReportedLocations();
 }

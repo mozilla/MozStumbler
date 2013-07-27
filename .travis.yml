@@ -4,6 +4,14 @@ jdk: oraclejdk7
 before_script:
     - sudo apt-get update -qq
     - if [ `uname -m` = x86_64 ]; then sudo apt-get install -qq --force-yes libgd2-xpm ia32-libs ia32-libs-multiarch; fi
+
+    # Install Gradle
+    - wget http://services.gradle.org/distributions/gradle-1.6-bin.zip
+    - unzip gradle-1.6-bin.zip
+    - export GRADLE_HOME=$PWD/gradle-1.6
+    - export PATH=$GRADLE_HOME/bin:$PATH
+
+    # Install Android SDK
     - wget http://dl.google.com/android/android-sdk_r21.0.1-linux.tgz
     - tar -xzf android-sdk_r21.0.1-linux.tgz
     - export ANDROID_HOME=$PWD/android-sdk-linux
@@ -12,5 +20,5 @@ before_script:
     - android update project --path . --name MozStumbler --target android-17
 
 script: 
-    - ant clean
-    - ant debug
+    - gradle clean
+    - gradle build

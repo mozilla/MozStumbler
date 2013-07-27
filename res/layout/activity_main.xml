@@ -9,11 +9,21 @@
     tools:context=".MainActivity" >
 
        <Button
-        android:id="@+id/toggle_scanning"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="14dp"
-        android:onClick="onBtnClicked" />
+           android:id="@+id/toggle_scanning"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:layout_centerHorizontal="true"
+           android:layout_centerVertical="true"
+           android:onClick="onBtnClicked" />
+
+       <TextView
+           android:id="@+id/reportedTextView"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:layout_alignParentBottom="true"
+           android:layout_centerHorizontal="true"
+           android:layout_marginBottom="22dp"
+           android:text="@string/none_reported"
+           android:textAppearance="?android:attr/textAppearanceLarge" />
        
 </RelativeLayout>

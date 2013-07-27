@@ -1,6 +1,7 @@
 package org.mozilla.mozstumbler;
 
 import android.location.Location;
+import android.util.Log;
 
 final class LocationBlockList {
     private static final String LOGTAG = LocationBlockList.class.getName();
@@ -23,9 +24,45 @@ final class LocationBlockList {
         final long timestamp = location.getTime();
         final long tomorrow = System.currentTimeMillis() + DateTimeUtils.MILLISECONDS_PER_DAY;
 
-        return inaccuracy < 0 || inaccuracy > MAX_INACCURACY || altitude < MIN_ALTITUDE || altitude > MAX_ALTITUDE
-                || bearing < 0 || bearing > 360 || latitude < -180 || latitude > 180 || longitude < -180
-                || longitude > 180 || (latitude == 0 && longitude == 0) || speed < 0 || speed > MAX_SPEED
-                || timestamp < MIN_TIMESTAMP || timestamp > tomorrow;
+        boolean block = false;
+
+        if (latitude == 0 && longitude == 0) {
+           block = true;
+           Log.w(LOGTAG, "Bogus latitude,longitude: 0,0");
+        } else if (latitude < -180 || latitude > 180) {
+           block = true;
+           Log.w(LOGTAG, "Bogus latitude: " + latitude);
+        } else if (longitude < -180 || longitude > 180) {
+           block = true;
+           Log.w(LOGTAG, "Bogus longitude: " + longitude);
+        }
+
+        if (inaccuracy < 0 || inaccuracy > MAX_INACCURACY) {
+           block = true;
+           Log.w(LOGTAG, "Bogus inaccuracy: " + inaccuracy + " meters");
+        }
+
+        if (altitude < MIN_ALTITUDE || altitude > MAX_ALTITUDE) {
+           block = true;
+           Log.w(LOGTAG, "Bogus altitude: " + altitude + " meters");
+        }
+
+        if (bearing < 0 || bearing > 360) {
+           block = true;
+           Log.w(LOGTAG, "Bogus bearing: " + bearing + " degrees");
+        }
+
+        if (speed < 0 || speed > MAX_SPEED) {
+           block = true;
+           Log.w(LOGTAG, "Bogus speed: " + speed + " meters/second");
+        }
+
+        if (timestamp < MIN_TIMESTAMP || timestamp > tomorrow) {
+           block = true;
+           Log.w(LOGTAG, "Bogus timestamp: " + timestamp
+                         + " (" + DateTimeUtils.formatTime(timestamp) + ")");
+        }
+
+        return block;
     }
 }

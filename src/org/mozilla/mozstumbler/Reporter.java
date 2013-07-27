@@ -94,14 +94,17 @@ class Reporter {
 
         new Thread(new Runnable() {
             public void run() {
-                String nickname = mPrefs.getNickname();
                 try {
                     URL url = new URL(LOCATION_URL);
                     HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
                     try {
                         urlConnection.setDoOutput(true);
-                        urlConnection.setRequestProperty(NICKNAME_HEADER, nickname);
-                        urlConnection.setRequestProperty(TOKEN_HEADER, token);
+                            urlConnection.setRequestProperty(TOKEN_HEADER, token);
+
+                        String nickname = mPrefs.getNickname();
+                        if (nickname != null) {
+                            urlConnection.setRequestProperty(NICKNAME_HEADER, nickname);
+                        }
 
                         JSONArray batch = new JSONArray();
                         batch.put(locInfo);

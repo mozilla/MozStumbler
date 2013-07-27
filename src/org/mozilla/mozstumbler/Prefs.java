@@ -3,7 +3,6 @@ package org.mozilla.mozstumbler;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Build;
-import android.os.Build.VERSION;
 import android.util.Log;
 
 import java.util.UUID;
@@ -48,8 +47,9 @@ final class Prefs {
     String getNickname() {
         String nickname = getStringPref(NICKNAME_PREF);
         if (nickname == null) {
-            // Generate a semi-anonymous nickname.
-            nickname = Build.MODEL + " (Android " + VERSION.RELEASE + ")";
+            // TODO: Remove this placeholder nickname and default to null nickname after
+            // we have client UI so users can enter their own nickname (Issue #18).
+            nickname = Build.MODEL; // e.g. "Nexus 4"
             setNickname(nickname);
         }
 

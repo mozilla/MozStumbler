@@ -54,7 +54,7 @@ class Reporter {
             locInfo.put("lat", location.getLatitude());
             locInfo.put("accuracy", (int) location.getAccuracy());
             locInfo.put("altitude", (int) location.getAltitude());
-            locInfo.put("token", token); // FIXME: Remove "token" property after server support X-Token header (ichnaea issue #9).
+            locInfo.put("token", token); // TODO: Remove "token" property after server support X-Token header (ichnaea issue #9).
 
             locInfo.put("cell", cellInfo);
             if (radioType == TelephonyManager.PHONE_TYPE_GSM)
@@ -90,14 +90,17 @@ class Reporter {
 
         new Thread(new Runnable() {
             public void run() {
-                String nickname = mPrefs.getNickname();
                 try {
                     URL url = new URL(LOCATION_URL);
                     HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
                     try {
                         urlConnection.setDoOutput(true);
-                        urlConnection.setRequestProperty(NICKNAME_HEADER, nickname);
-                        urlConnection.setRequestProperty(TOKEN_HEADER, token);
+                            urlConnection.setRequestProperty(TOKEN_HEADER, token);
+
+                        String nickname = mPrefs.getNickname();
+                        if (nickname != null) {
+                            urlConnection.setRequestProperty(NICKNAME_HEADER, nickname);
+                        }
 
                         JSONArray batch = new JSONArray();
                         batch.put(locInfo);

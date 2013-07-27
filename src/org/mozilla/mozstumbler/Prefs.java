@@ -2,6 +2,8 @@ package org.mozilla.mozstumbler;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Build;
+import android.os.Build.VERSION;
 import android.util.Log;
 
 import java.util.UUID;
@@ -9,6 +11,7 @@ import java.util.UUID;
 final class Prefs {
     private static final String     LOGTAG     = Prefs.class.getName();
     private static final String     PREFS_FILE = Prefs.class.getName();
+    private static final String     NICKNAME_PREF = "nickname";
     private static final String     TOKEN_PREF = "token";
 
     private final SharedPreferences mPrefs;
@@ -40,6 +43,30 @@ final class Prefs {
 
     void deleteToken() {
         deleteStringPref(TOKEN_PREF);
+    }
+
+    String getNickname() {
+        String nickname = getStringPref(NICKNAME_PREF);
+        if (nickname == null) {
+            // Generate a semi-anonymous nickname.
+            nickname = Build.MODEL + " (Android " + VERSION.RELEASE + ")";
+            setNickname(nickname);
+        }
+
+        Log.d(LOGTAG, "nickname: " + nickname);
+        return nickname;
+    }
+
+    void setNickname(String nickname) {
+        if (nickname != null) {
+            setStringPref(NICKNAME_PREF, nickname);
+        } else {
+            deleteNickname();
+        }
+    }
+
+    void deleteNickname() {
+        deleteStringPref(NICKNAME_PREF);
     }
 
     private String getStringPref(String key) {

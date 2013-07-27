@@ -178,7 +178,6 @@ class Scanner implements LocationListener {
         return tm.getPhoneType();
     }
 
-    @SuppressLint("SimpleDateFormat")
     private void collectAndReportLocInfo(Location location) {
         JSONArray cellInfo = new JSONArray();
         int radioType = getCellInfo(cellInfo);

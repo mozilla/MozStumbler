@@ -19,8 +19,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
 
@@ -47,13 +45,11 @@ class Reporter {
         }
     }
 
-    @SuppressLint("SimpleDateFormat")
     void reportLocation(Location location, Collection<ScanResult> scanResults, int radioType, JSONArray cellInfo) {
         final String token = mPrefs.getToken().toString();
         final JSONObject locInfo = new JSONObject();
         try {
-            DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
-            locInfo.put("time", df.format(new Date(location.getTime())));
+            locInfo.put("time", DateTimeUtils.formatTime(location.getTime()));
             locInfo.put("lon", location.getLongitude());
             locInfo.put("lat", location.getLatitude());
             locInfo.put("accuracy", (int) location.getAccuracy());

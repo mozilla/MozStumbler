@@ -3,7 +3,7 @@ package org.mozilla.mozstumbler;
 import android.location.Location;
 
 final class LocationBlockList {
-    private static final long   MILLISECONDS_PER_DAY = 86400000; // milliseconds/day
+    private static final String LOGTAG = LocationBlockList.class.getName();
     private static final double MAX_ALTITUDE         = 8848;     // Mount Everest's altitude in meters
     private static final double MIN_ALTITUDE         = -418;     // Dead Sea's altitude in meters
     private static final float  MAX_SPEED            = 340.29f;  // Mach 1 in meters/second
@@ -21,7 +21,7 @@ final class LocationBlockList {
         final double longitude = location.getLongitude();
         final float speed = location.getSpeed();
         final long timestamp = location.getTime();
-        final long tomorrow = System.currentTimeMillis() + MILLISECONDS_PER_DAY;
+        final long tomorrow = System.currentTimeMillis() + DateTimeUtils.MILLISECONDS_PER_DAY;
 
         return inaccuracy < 0 || inaccuracy > MAX_INACCURACY || altitude < MIN_ALTITUDE || altitude > MAX_ALTITUDE
                 || bearing < 0 || bearing > 360 || latitude < -180 || latitude > 180 || longitude < -180

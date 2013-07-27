@@ -17,6 +17,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends Activity {
@@ -48,20 +49,22 @@ public class MainActivity extends Activity {
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
+
             if (!action.equals(ScannerService.MESSAGE_TOPIC)) {
                 Log.e(LOGTAG, "Received an unknown intent");
                 return;
             }
 
             String subject = intent.getStringExtra(Intent.EXTRA_SUBJECT);
+
             if (subject.equals("Notification")) {
                 String text = intent.getStringExtra(Intent.EXTRA_TEXT);
                 Toast.makeText(getApplicationContext(), (CharSequence) text, Toast.LENGTH_SHORT).show();
-
                 Log.d(LOGTAG, "Received a notification intent and showing: " + text);
                 return;
-            } else {
-                Log.e(LOGTAG, "Received an unknown notification intent");
+            } else if (subject.equals("Reporter")) {
+                updateUI();
+                Log.d(LOGTAG, "Received a reporter intent...");
                 return;
             }
         }
@@ -123,6 +126,11 @@ public class MainActivity extends Activity {
     }
 
     protected void updateUI() {
+        
+        // TODO time this to make sure we're not blocking too long on mConnectionRemote
+        // if we care, we can bundle this into one call -- or use android to remember
+        // the state before the rotation.
+        
         Log.d(LOGTAG, "Updating UI");
         boolean scanning = false;
         try {
@@ -137,6 +145,24 @@ public class MainActivity extends Activity {
             scanningBtn.setText(R.string.stop_scanning);
         } else {
             scanningBtn.setText(R.string.start_scanning);
+        }
+        
+        int numberOfReports = 0;
+        try {
+            numberOfReports = mConnectionRemote.numberOfReportedLocations();
+        } catch (RemoteException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        
+        TextView reportedTextView = (TextView) findViewById(R.id.reportedTextView);
+        if (numberOfReports == 0) {
+            String reportedString = getResources().getString(R.string.none_reported);  
+            reportedTextView.setText(reportedString);
+        } else {
+            String reportedString = getResources().getString(R.string.reported_sofar);  
+            reportedString = String.format(reportedString, numberOfReports);  
+            reportedTextView.setText(reportedString);
         }
     }
 

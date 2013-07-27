@@ -184,6 +184,13 @@ class Scanner implements LocationListener {
         int radioType = getCellInfo(cellInfo);
 
         WifiManager wm = getWifiManager();
+        try {
+            wm.setWifiEnabled(true);
+          }
+          catch (SecurityException ex) {
+              Log.e(LOGTAG, "Could not get permission for enabling wifi!");
+          }
+        
         wm.startScan();
         Collection<ScanResult> scanResults = wm.getScanResults();
         if (scanResults != null) {

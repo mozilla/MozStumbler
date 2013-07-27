@@ -8,6 +8,7 @@
     <string name="stop_scanning">Stop Scanning</string>
     <string name="service_name">Mozilla Stumbler</string>
     <string name="service_scanning">Scanning for WiFi and Cellular networks</string>
-    
+    <string name="none_reported">Nothing reported.</string>
+    <string name="reported_sofar">You have reported %1$d locations so far.</string>
     
 </resources>

@@ -25,6 +25,7 @@ public class ScannerService extends Service {
     private static final int    NOTIFICATION_ID = 0;
     private static final int    WAKE_TIMEOUT    = 5 * 1000;
     private Scanner             mScanner        = null;
+    private Reporter            mReporter       = null;
     private LooperThread        mLooper         = null;
     private PendingIntent       mWakeIntent     = null;
 
@@ -44,8 +45,8 @@ public class ScannerService extends Service {
         Log.d(LOGTAG, "onCreate");
 
         Prefs prefs = new Prefs(this);
-        Reporter reporter = new Reporter(prefs);
-        mScanner = new Scanner(this, reporter);
+        mReporter = new Reporter(this, prefs);
+        mScanner = new Scanner(this, mReporter);
         mLooper = new LooperThread();
         mLooper.start();
     }
@@ -165,6 +166,12 @@ public class ScannerService extends Service {
             public void showNotification() throws RemoteException {
                 postNotification();
             }
+            
+            @Override
+            public int numberOfReportedLocations() throws RemoteException {
+                return mReporter.numberOfReportedLocations();
+            }
+            
         };
     }
 }

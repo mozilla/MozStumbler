@@ -1,6 +1,8 @@
 package org.mozilla.mozstumbler;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.Intent;
 import android.location.Location;
 import android.net.wifi.ScanResult;
 import android.telephony.TelephonyManager;
@@ -28,10 +30,14 @@ class Reporter {
     private static final String NICKNAME_HEADER = "X-Nickname";
     private static final String TOKEN_HEADER = "X-Token";
 
+    private final Context       mContext;
     private final Prefs         mPrefs;
     private final MessageDigest mSHA1;
+    
+    private int mReportedLocations;
 
-    Reporter(Prefs prefs) {
+    Reporter(Context context, Prefs prefs) {
+        mContext = context;
         mPrefs = prefs;
 
         try {
@@ -108,6 +114,12 @@ class Reporter {
                         out.write(bytes);
                         out.flush();
 
+                        Intent i = new Intent(ScannerService.MESSAGE_TOPIC);
+                        i.putExtra(Intent.EXTRA_SUBJECT, "Reporter");
+                        mContext.sendBroadcast(i);
+                        
+                        mReportedLocations++;
+                        
                         Log.d(LOGTAG, "uploaded data: " + data + " to " + LOCATION_URL);
                     } catch (JSONException jsonex) {
                         Log.e(LOGTAG, "error wrapping data as a batch", jsonex);
@@ -133,5 +145,9 @@ class Reporter {
             return false;
         }
         return true;
+    }
+    
+    public int numberOfReportedLocations() {
+        return mReportedLocations;
     }
 }

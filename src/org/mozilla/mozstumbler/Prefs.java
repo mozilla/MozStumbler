@@ -36,7 +36,6 @@ final class Prefs {
             setStringPref(TOKEN_PREF, token.toString());
         }
 
-        Log.d(LOGTAG, "token: " + token);
         return token;
     }
 
@@ -53,7 +52,6 @@ final class Prefs {
             setNickname(nickname);
         }
 
-        Log.d(LOGTAG, "nickname: " + nickname);
         return nickname;
     }
 

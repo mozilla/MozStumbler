@@ -178,7 +178,6 @@ class Scanner implements LocationListener {
         return tm.getPhoneType();
     }
 
-    @SuppressLint("SimpleDateFormat")
     private void collectAndReportLocInfo(Location location) {
         JSONArray cellInfo = new JSONArray();
         int radioType = getCellInfo(cellInfo);
@@ -186,10 +185,10 @@ class Scanner implements LocationListener {
         WifiManager wm = getWifiManager();
         try {
             wm.setWifiEnabled(true);
-          }
-          catch (SecurityException ex) {
-              Log.e(LOGTAG, "Could not get permission for enabling wifi!");
-          }
+        }
+        catch (SecurityException ex) {
+            Log.e(LOGTAG, "Could not get permission for enabling wifi!");
+        }
         
         wm.startScan();
         Collection<ScanResult> scanResults = wm.getScanResults();

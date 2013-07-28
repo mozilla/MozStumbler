@@ -19,6 +19,10 @@ before_script:
     - android update sdk --no-ui --force --filter platform-tools,extra-android-support,android-17,sysimg-17,extra-google-google_play_services
     - android update project --path . --name MozStumbler --target android-17
 
+install:
+    - echo "sdk.dir=`pwd`/android-sdk-linux"> local.properties
+    - gradle assemble -q  
+
 script: 
     - gradle clean
     - gradle build

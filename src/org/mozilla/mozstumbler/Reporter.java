@@ -25,16 +25,16 @@ import java.util.Collection;
 import java.util.Date;
 
 class Reporter {
-    private static final String LOGTAG       = Reporter.class.getName();
-    private static final String LOCATION_URL = "https://location.services.mozilla.com/v1/submit";
+    private static final String LOGTAG          = Reporter.class.getName();
+    private static final String LOCATION_URL    = "https://location.services.mozilla.com/v1/submit";
     private static final String NICKNAME_HEADER = "X-Nickname";
-    private static final String TOKEN_HEADER = "X-Token";
+    private static final String TOKEN_HEADER    = "X-Token";
 
     private final Context       mContext;
     private final Prefs         mPrefs;
     private final MessageDigest mSHA1;
-    
-    private int mReportedLocations;
+
+    private int                 mReportedLocations;
 
     Reporter(Context context, Prefs prefs) {
         mContext = context;
@@ -58,7 +58,8 @@ class Reporter {
             locInfo.put("lat", location.getLatitude());
             locInfo.put("accuracy", (int) location.getAccuracy());
             locInfo.put("altitude", (int) location.getAltitude());
-            locInfo.put("token", token); // FIXME: Remove "token" property after server support X-Token header (ichnaea issue #9).
+            locInfo.put("token", token); // FIXME: Remove "token" property after server support X-Token header (ichnaea
+                                         // issue #9).
 
             locInfo.put("cell", cellInfo);
             if (radioType == TelephonyManager.PHONE_TYPE_GSM)
@@ -117,9 +118,9 @@ class Reporter {
                         Intent i = new Intent(ScannerService.MESSAGE_TOPIC);
                         i.putExtra(Intent.EXTRA_SUBJECT, "Reporter");
                         mContext.sendBroadcast(i);
-                        
+
                         mReportedLocations++;
-                        
+
                         Log.d(LOGTAG, "uploaded data: " + data + " to " + LOCATION_URL);
                     } catch (JSONException jsonex) {
                         Log.e(LOGTAG, "error wrapping data as a batch", jsonex);
@@ -146,7 +147,7 @@ class Reporter {
         }
         return true;
     }
-    
+
     public int numberOfReportedLocations() {
         return mReportedLocations;
     }

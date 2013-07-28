@@ -34,7 +34,7 @@ class Scanner implements LocationListener {
     private final Reporter      mReporter;
     private boolean             mIsScanning;
     private WifiLock            mWifiLock;
-    
+
     Scanner(Context context, Reporter reporter) {
         mContext = context;
         mReporter = reporter;
@@ -51,16 +51,16 @@ class Scanner implements LocationListener {
                 getLocationListener());
 
         WifiManager wm = getWifiManager();
-        mWifiLock = wm.createWifiLock(WifiManager.WIFI_MODE_SCAN_ONLY, "MozStumbler");      
-        
-        if (!mWifiLock.isHeld()) { 
+        mWifiLock = wm.createWifiLock(WifiManager.WIFI_MODE_SCAN_ONLY, "MozStumbler");
+
+        if (!mWifiLock.isHeld()) {
             mWifiLock.acquire();
         }
-        
+
         if (!wm.isWifiEnabled()) {
             wm.setWifiEnabled(true);
-        } 
-        
+        }
+
         wm.startScan();
 
         mIsScanning = true;
@@ -78,13 +78,13 @@ class Scanner implements LocationListener {
             tm.listen(mPhoneStateListener, PhoneStateListener.LISTEN_NONE);
             mPhoneStateListener = null;
         }
-        
+
         if (mWifiLock.isHeld()) {
             mWifiLock.release();
         }
-        
+
         mWifiLock = null;
-        
+
         mIsScanning = false;
     }
 

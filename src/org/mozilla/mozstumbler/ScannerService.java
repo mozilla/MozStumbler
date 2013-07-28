@@ -166,12 +166,12 @@ public class ScannerService extends Service {
             public void showNotification() throws RemoteException {
                 postNotification();
             }
-            
+
             @Override
             public int numberOfReportedLocations() throws RemoteException {
                 return mReporter.numberOfReportedLocations();
             }
-            
+
         };
     }
 }

@@ -9,7 +9,6 @@ import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.net.wifi.WifiManager.WifiLock;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.telephony.CellLocation;
 import android.telephony.NeighboringCellInfo;
 import android.telephony.PhoneStateListener;
@@ -50,24 +49,15 @@ class Scanner implements LocationListener {
         LocationManager lm = getLocationManager();
         lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, MIN_UPDATE_TIME, MIN_UPDATE_DISTANCE,
                 getLocationListener());
-        
-        /*
-        @SuppressWarnings("deprecation")
-        boolean putInt = Settings.System.putInt(mContext.getContentResolver(),
-                Settings.System.WIFI_SLEEP_POLICY, 
-                Settings.System.WIFI_SLEEP_POLICY_NEVER);
-        */
-        
 
         WifiManager wm = getWifiManager();
-        mWifiLock = wm.createWifiLock(WifiManager.WIFI_MODE_SCAN_ONLY, "scanOnly");      
+        mWifiLock = wm.createWifiLock(WifiManager.WIFI_MODE_SCAN_ONLY, "MozStumbler");      
         
-        if(!mWifiLock.isHeld()){ 
+        if (!mWifiLock.isHeld()) { 
             mWifiLock.acquire();
-            Log.d(LOGTAG, "Acquire wifi lock");
         }
         
-        if(!wm.isWifiEnabled()){
+        if (!wm.isWifiEnabled()) {
             wm.setWifiEnabled(true);
         } 
         
@@ -107,7 +97,6 @@ class Scanner implements LocationListener {
             mPhoneStateListener = new PhoneStateListener() {
                 public void onSignalStrengthsChanged(SignalStrength ss) {
                     if (ss.isGsm()) {
-                        Log.e(LOGTAG, "GSM signal strength: " + mSignalStrength + " -> " + ss.getGsmSignalStrength());
                         mSignalStrength = ss.getGsmSignalStrength();
                     }
                 }
@@ -216,10 +205,8 @@ class Scanner implements LocationListener {
         int radioType = getCellInfo(cellInfo);
 
         WifiManager wm = getWifiManager();
-        wm.setWifiEnabled(true);
-
-        // TODO: it doesn't look like calling this again is harmful or
-        // not while holding the wifi wake lock.
+        // TODO: I am thinking we may want to calling this
+        // more than every time a new position changes
         wm.startScan();
         Collection<ScanResult> scanResults = wm.getScanResults();
         if (scanResults != null) {

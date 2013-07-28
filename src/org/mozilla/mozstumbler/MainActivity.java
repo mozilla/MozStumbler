@@ -126,11 +126,11 @@ public class MainActivity extends Activity {
     }
 
     protected void updateUI() {
-        
+
         // TODO time this to make sure we're not blocking too long on mConnectionRemote
         // if we care, we can bundle this into one call -- or use android to remember
         // the state before the rotation.
-        
+
         Log.d(LOGTAG, "Updating UI");
         boolean scanning = false;
         try {
@@ -146,7 +146,7 @@ public class MainActivity extends Activity {
         } else {
             scanningBtn.setText(R.string.start_scanning);
         }
-        
+
         int numberOfReports = 0;
         try {
             numberOfReports = mConnectionRemote.numberOfReportedLocations();
@@ -154,14 +154,14 @@ public class MainActivity extends Activity {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        
+
         TextView reportedTextView = (TextView) findViewById(R.id.reportedTextView);
         if (numberOfReports == 0) {
-            String reportedString = getResources().getString(R.string.none_reported);  
+            String reportedString = getResources().getString(R.string.none_reported);
             reportedTextView.setText(reportedString);
         } else {
-            String reportedString = getResources().getString(R.string.reported_sofar);  
-            reportedString = String.format(reportedString, numberOfReports);  
+            String reportedString = getResources().getString(R.string.reported_sofar);
+            reportedString = String.format(reportedString, numberOfReports);
             reportedTextView.setText(reportedString);
         }
     }

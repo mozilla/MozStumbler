@@ -1,7 +1,6 @@
 language: java
-jdk: oraclejdk7
 
-before_script:
+before_install:
     - sudo apt-get update -qq
     - if [ `uname -m` = x86_64 ]; then sudo apt-get install -qq --force-yes libgd2-xpm ia32-libs ia32-libs-multiarch; fi
 
@@ -12,17 +11,31 @@ before_script:
     - export PATH=$GRADLE_HOME/bin:$PATH
 
     # Install Android SDK
-    - wget http://dl.google.com/android/android-sdk_r21.0.1-linux.tgz
-    - tar -xzf android-sdk_r21.0.1-linux.tgz
+    - wget http://dl.google.com/android/android-sdk_r22.0.4-linux.tgz
+    - tar xzf android-sdk_r22.0.4-linux.tgz
     - export ANDROID_HOME=$PWD/android-sdk-linux
     - export PATH=${PATH}:${ANDROID_HOME}/tools:${ANDROID_HOME}/platform-tools:${ANDROID_HOME}/build-tools
-    - android update sdk --no-ui --force --filter platform-tools,extra-android-support,android-17,sysimg-17,extra-google-google_play_services
-    - android update project --path . --name MozStumbler --target android-17
 
-install:
+    # Install android build tools
+    - wget https://dl-ssl.google.com/android/repository/build-tools_r18-linux.zip
+    - unzip build-tools_r18-linux.zip -d $ANDROID_HOME
+    - mkdir -p $ANDROID_HOME/build-tools/
+    - mv $ANDROID_HOME/android-4.3 $ANDROID_HOME/build-tools/18.0.0
+
+    # Update SDK
+    - echo yes | android update sdk --filter platform-tools --no-ui --force > /dev/null
+    - echo yes | android update sdk --filter android-17 --no-ui --force > /dev/null
+    - echo yes | android update sdk --filter android-18 --no-ui --force > /dev/null
+    - echo yes | android update sdk --filter sysimg-18 --no-ui --force > /dev/null
+    - echo yes | android update sdk --filter extra-android-support --no-ui --force > /dev/null
+    - echo yes | android update sdk --filter extra-android-m2repository --no-ui --force > /dev/null
+
+    # The Android plugin for Gradle must be told the location of the Android SDK
     - echo "sdk.dir=`pwd`/android-sdk-linux"> local.properties
+    
+install:
     - gradle assemble -q  
 
-script: 
-    - gradle clean
-    - gradle build
+script:
+    - gradle clean -q
+    - gradle build -q

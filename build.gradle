@@ -30,3 +30,7 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: '*.jar')
 }
+
+tasks.withType(JavaCompile) {
+    options.compilerArgs = ['-Xlint:all,-deprecation', '-Werror']
+}

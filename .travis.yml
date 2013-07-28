@@ -1,16 +1,29 @@
 language: java
 jdk: oraclejdk7
 
-before_script:
+before_install:
+    # Install Android SDK
     - sudo apt-get update -qq
-    - if [ `uname -m` = x86_64 ]; then sudo apt-get install -qq --force-yes libgd2-xpm ia32-libs ia32-libs-multiarch; fi
-    - wget http://dl.google.com/android/android-sdk_r21.0.1-linux.tgz
-    - tar -xzf android-sdk_r21.0.1-linux.tgz
+    - if [ `uname -m` = x86_64 ]; then sudo apt-get install -qq --force-yes libgd2-xpm ia32-libs ia32-libs-multiarch > /dev/null; fi
+    - wget https://dl.google.com/android/android-sdk_r22.0.4-linux.tgz
+    - tar xzf android-sdk_r22.0.4-linux.tgz
     - export ANDROID_HOME=$PWD/android-sdk-linux
-    - export PATH=${PATH}:${ANDROID_HOME}/tools:${ANDROID_HOME}/platform-tools:${ANDROID_HOME}/build-tools
-    - android update sdk --no-ui --force --filter platform-tools,extra-android-support,android-17,sysimg-17,extra-google-google_play_services
-    - android update project --path . --name MozStumbler --target android-17
+    - export PATH=${PATH}:${ANDROID_HOME}/tools:${ANDROID_HOME}/platform-tools
 
-script: 
-    - ant clean
-    - ant debug
+    # Install Android SDK components
+    - echo yes | android update sdk --filter platform-tools,android-18,extra-android-support --no-ui --force > /dev/null
+
+    # Install Android build tools
+    - wget https://dl-ssl.google.com/android/repository/build-tools_r18-linux.zip
+    - unzip build-tools_r18-linux.zip -d $ANDROID_HOME
+    - mkdir -p $ANDROID_HOME/build-tools/
+    - mv $ANDROID_HOME/android-4.3 $ANDROID_HOME/build-tools/18.0.0
+
+    # Install Gradle
+    - wget http://services.gradle.org/distributions/gradle-1.6-bin.zip
+    - unzip gradle-1.6-bin.zip
+    - export GRADLE_HOME=$PWD/gradle-1.6
+    - export PATH=$GRADLE_HOME/bin:$PATH
+
+script:
+    - gradle build -q

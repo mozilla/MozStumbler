@@ -62,6 +62,11 @@ class Scanner implements LocationListener {
         mWifiScanResults = getWifiManager().getScanResults();
         mWifiScanResultsTime = System.currentTimeMillis();
 
+        if (mWifiScanResults == null) {
+          Log.d(LOGTAG, "WifiReceiver found null data");
+          return;
+        }
+
         Log.d(LOGTAG, "WifiReceiver new data at " + mWifiScanResultsTime);
 
         // TODO does this even work?  Aren't we just setting

@@ -30,7 +30,7 @@ import java.util.TimerTask;
 
 class Scanner implements LocationListener {
     private static final String LOGTAG              = Scanner.class.getName();
-    private static final long   GEO_MIN_UPDATE_TIME     = 0;                   // milliseconds
+    private static final long   GEO_MIN_UPDATE_TIME     = 1000;                   // milliseconds
     private static final float  GEO_MIN_UPDATE_DISTANCE = 10;                     // meters
     private static final long   WIFI_MIN_UPDATE_TIME    = 5000;                   // milliseconds
 

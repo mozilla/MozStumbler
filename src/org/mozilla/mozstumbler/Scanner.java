@@ -26,7 +26,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -38,7 +37,7 @@ class Scanner implements LocationListener {
 
     private static final boolean DISABLE_GPS_AIDING = true;
 
-    private ScannerService      mContext;
+    private final Context       mContext;
     private int                 mSignalStrength;
     private PhoneStateListener  mPhoneStateListener;
     private final Reporter      mReporter;
@@ -52,12 +51,12 @@ class Scanner implements LocationListener {
 
     private GpsStatus.Listener mGPSListener;
 
-    Scanner(ScannerService context, Reporter reporter) {
+    Scanner(Context context, Reporter reporter) {
         mContext = context;
         mReporter = reporter;
     }
 
-    class WifiReceiver extends BroadcastReceiver {
+    private class WifiReceiver extends BroadcastReceiver {
       public void onReceive(Context c, Intent intent) {
 
         mWifiScanResults = getWifiManager().getScanResults();
@@ -144,7 +143,7 @@ class Scanner implements LocationListener {
               Log.d(LOGTAG, "WiFi Scanning Timer fired");
               getWifiManager().startScan();
             }
-          }, WIFI_MIN_UPDATE_TIME, WIFI_MIN_UPDATE_TIME);
+          }, 0, WIFI_MIN_UPDATE_TIME);
 
         // start some kind of timer repeating..
         mIsScanning = true;

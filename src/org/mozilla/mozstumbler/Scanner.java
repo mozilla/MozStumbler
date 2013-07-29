@@ -5,6 +5,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.location.GpsSatellite;
+import android.location.GpsStatus;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -25,6 +27,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -33,6 +36,8 @@ class Scanner implements LocationListener {
     private static final long   GEO_MIN_UPDATE_TIME     = 1000;                   // milliseconds
     private static final float  GEO_MIN_UPDATE_DISTANCE = 10;                     // meters
     private static final long   WIFI_MIN_UPDATE_TIME    = 5000;                   // milliseconds
+
+    private static final boolean DISABLE_GPS_AIDING = true;
 
     private ScannerService      mContext;
     private int                 mSignalStrength;
@@ -45,6 +50,8 @@ class Scanner implements LocationListener {
     private Timer                  mWifiScanTimer;
     private long                   mWifiScanResultsTime;
     private Collection<ScanResult> mWifiScanResults;
+
+    private GpsStatus.Listener mGPSListener;
 
     Scanner(ScannerService context, Reporter reporter) {
         mContext = context;
@@ -77,12 +84,39 @@ class Scanner implements LocationListener {
             return;
         }
         Log.d(LOGTAG, "Scanning started...");
-        deleteAidingData();
+
+        if (DISABLE_GPS_AIDING) {
+          deleteAidingData();
+        }
+
         LocationManager lm = getLocationManager();
         lm.requestLocationUpdates(LocationManager.GPS_PROVIDER,
                                   GEO_MIN_UPDATE_TIME,
                                   GEO_MIN_UPDATE_DISTANCE,
                                   getLocationListener());
+  
+        mGPSListener = new GpsStatus.Listener() {
+            public void onGpsStatusChanged(int event) {
+              if (event == GpsStatus.GPS_EVENT_SATELLITE_STATUS) {
+
+                GpsStatus status = getLocationManager().getGpsStatus(null);
+                Iterable<GpsSatellite> sats = status.getSatellites();
+
+                int satellites = 0;
+                int fixes = 0;
+
+                for (GpsSatellite sat : sats) {
+                  satellites++;
+                  if(sat.usedInFix()) {
+                    fixes++;
+                  }
+                }
+                Log.d(LOGTAG, "onGpsStatusChange - satellites: " + satellites + " fixes: " + fixes);
+              }
+            }
+          };
+
+        lm.addGpsStatusListener(mGPSListener);
 
         WifiManager wm = getWifiManager();
         mWifiLock = wm.createWifiLock(WifiManager.WIFI_MODE_SCAN_ONLY,
@@ -119,6 +153,9 @@ class Scanner implements LocationListener {
         Log.d(LOGTAG, "Scanning stopped");
         LocationManager lm = getLocationManager();
         lm.removeUpdates(getLocationListener());
+
+        lm.removeGpsStatusListener(mGPSListener);
+        mGPSListener = null;
 
         if (mPhoneStateListener != null) {
             TelephonyManager tm = getTelephonyManager();
@@ -291,6 +328,8 @@ class Scanner implements LocationListener {
 
     private void deleteAidingData() {
         LocationManager lm = getLocationManager();
+
+        // http://stackoverflow.com/questions/6126257/assistance-data-injection-into-gps
 
         // Delete cached A-GPS aiding data to force GPS cold start.
         lm.sendExtraCommand(LocationManager.GPS_PROVIDER, "delete_aiding_data", null);

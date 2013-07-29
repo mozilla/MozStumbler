@@ -1,7 +1,10 @@
 package org.mozilla.mozstumbler;
 
 import android.annotation.SuppressLint;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -22,22 +25,51 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Collection;
+import java.util.Timer;
+import java.util.TimerTask;
 
 class Scanner implements LocationListener {
     private static final String LOGTAG              = Scanner.class.getName();
-    private static final long   MIN_UPDATE_TIME     = 1000;                   // milliseconds
-    private static final float  MIN_UPDATE_DISTANCE = 10;                     // meters
+    private static final long   GEO_MIN_UPDATE_TIME     = 0;                   // milliseconds
+    private static final float  GEO_MIN_UPDATE_DISTANCE = 10;                     // meters
+    private static final long   WIFI_MIN_UPDATE_TIME    = 5000;                   // milliseconds
 
-    private final Context       mContext;
+    private ScannerService      mContext;
     private int                 mSignalStrength;
     private PhoneStateListener  mPhoneStateListener;
     private final Reporter      mReporter;
     private boolean             mIsScanning;
     private WifiLock            mWifiLock;
+    private WifiReceiver        mWifiReceiver;
 
-    Scanner(Context context, Reporter reporter) {
+    private Timer                  mWifiScanTimer;
+    private long                   mWifiScanResultsTime;
+    private Collection<ScanResult> mWifiScanResults;
+
+    Scanner(ScannerService context, Reporter reporter) {
         mContext = context;
         mReporter = reporter;
+    }
+
+    class WifiReceiver extends BroadcastReceiver {
+      public void onReceive(Context c, Intent intent) {
+
+        mWifiScanResults = getWifiManager().getScanResults();
+        mWifiScanResultsTime = System.currentTimeMillis();
+
+        Log.d(LOGTAG, "WifiReceiver new data at " + mWifiScanResultsTime);
+
+        // TODO does this even work?  Aren't we just setting
+        // a copy (scanResult) to store the correct BSSID?
+
+        for (ScanResult scanResult : mWifiScanResults) {
+          String BSSID = BSSIDBlockList.canonicalizeBSSID(scanResult.BSSID);
+          if (BSSID == null) {
+            Log.e(LOGTAG, "", new IllegalArgumentException("Unexpected BSSID: " + scanResult.BSSID));
+          }
+          scanResult.BSSID = BSSID;
+        }
+      }
     }
 
     void startScanning() {
@@ -47,22 +79,35 @@ class Scanner implements LocationListener {
         Log.d(LOGTAG, "Scanning started...");
         deleteAidingData();
         LocationManager lm = getLocationManager();
-        lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, MIN_UPDATE_TIME, MIN_UPDATE_DISTANCE,
-                getLocationListener());
+        lm.requestLocationUpdates(LocationManager.GPS_PROVIDER,
+                                  GEO_MIN_UPDATE_TIME,
+                                  GEO_MIN_UPDATE_DISTANCE,
+                                  getLocationListener());
 
         WifiManager wm = getWifiManager();
-        mWifiLock = wm.createWifiLock(WifiManager.WIFI_MODE_SCAN_ONLY, "MozStumbler");
-
-        if (!mWifiLock.isHeld()) {
-            mWifiLock.acquire();
-        }
-
+        mWifiLock = wm.createWifiLock(WifiManager.WIFI_MODE_SCAN_ONLY,
+                                      "MozStumbler");      
+        mWifiLock.acquire();
+        
         if (!wm.isWifiEnabled()) {
             wm.setWifiEnabled(true);
-        }
+        } 
+        
+        mWifiReceiver = new WifiReceiver();
+        IntentFilter i = new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
+        mContext.registerReceiver(mWifiReceiver, i);
 
-        wm.startScan();
+        // Ensure that we are constantly scanning for new access points.
+        mWifiScanTimer = new Timer();
+        mWifiScanTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+              Log.d(LOGTAG, "WiFi Scanning Timer fired");
+              getWifiManager().startScan();
+            }
+          }, WIFI_MIN_UPDATE_TIME, WIFI_MIN_UPDATE_TIME);
 
+        // start some kind of timer repeating..
         mIsScanning = true;
     }
 
@@ -70,20 +115,25 @@ class Scanner implements LocationListener {
         if (!mIsScanning) {
             return;
         }
+
         Log.d(LOGTAG, "Scanning stopped");
         LocationManager lm = getLocationManager();
         lm.removeUpdates(getLocationListener());
+
         if (mPhoneStateListener != null) {
             TelephonyManager tm = getTelephonyManager();
             tm.listen(mPhoneStateListener, PhoneStateListener.LISTEN_NONE);
             mPhoneStateListener = null;
         }
-
-        if (mWifiLock.isHeld()) {
-            mWifiLock.release();
-        }
-
+        
+        mWifiLock.release();
         mWifiLock = null;
+
+        mWifiScanTimer.cancel();
+        mWifiScanTimer = null;
+
+        mContext.unregisterReceiver(mWifiReceiver);
+        mWifiReceiver = null;
 
         mIsScanning = false;
     }
@@ -113,18 +163,42 @@ class Scanner implements LocationListener {
             Log.w(LOGTAG, "Blocked location: " + location);
         } else {
             Log.d(LOGTAG, "New location: " + location);
-            collectAndReportLocInfo(location);
+
+            mReporter.reportLocation(location,
+                                     getWifiInfo(),
+                                     getRadioType(),
+                                     getCellInfo());
         }
     }
 
-    private int getCellInfo(JSONArray cellInfo) {
+    private Collection<ScanResult> getWifiInfo() {
+
+        Log.d(LOGTAG, "getWifiInfo() called at " + System.currentTimeMillis());
+        if (System.currentTimeMillis() - mWifiScanResultsTime < 5000 && mWifiScanResults != null) {
+          return mWifiScanResults;
+        }
+        Log.d(LOGTAG, "getWifiInfo() called and there is no (or only old) scan results");
+        return null;
+    }
+
+    private int getRadioType() {
+      TelephonyManager tm = getTelephonyManager();
+      if (tm == null)
+        return TelephonyManager.PHONE_TYPE_NONE;
+      return tm.getPhoneType();
+    }
+
+    private JSONArray getCellInfo() {
+        JSONArray cellInfo = new JSONArray();
+
         TelephonyManager tm = getTelephonyManager();
         if (tm == null)
-            return TelephonyManager.PHONE_TYPE_NONE;
+            return null;
         Collection<NeighboringCellInfo> cells = tm.getNeighboringCellInfo();
         CellLocation cl = tm.getCellLocation();
         if (cl == null)
-            return TelephonyManager.PHONE_TYPE_NONE;
+            return null;
+
         String mcc = "", mnc = "";
         if (cl instanceof GsmCellLocation) {
             JSONObject obj = new JSONObject();
@@ -197,29 +271,7 @@ class Scanner implements LocationListener {
                 }
             }
         }
-        return tm.getPhoneType();
-    }
-
-    private void collectAndReportLocInfo(Location location) {
-        JSONArray cellInfo = new JSONArray();
-        int radioType = getCellInfo(cellInfo);
-
-        WifiManager wm = getWifiManager();
-        // TODO: I am thinking we may want to calling this
-        // more than every time a new position changes
-        wm.startScan();
-        Collection<ScanResult> scanResults = wm.getScanResults();
-        if (scanResults != null) {
-            for (ScanResult scanResult : scanResults) {
-                String BSSID = BSSIDBlockList.canonicalizeBSSID(scanResult.BSSID);
-                if (BSSID == null) {
-                    Log.e(LOGTAG, "", new IllegalArgumentException("Unexpected BSSID: " + scanResult.BSSID));
-                }
-                scanResult.BSSID = BSSID;
-            }
-        }
-
-        mReporter.reportLocation(location, scanResults, radioType, cellInfo);
+        return cellInfo;
     }
 
     @Override

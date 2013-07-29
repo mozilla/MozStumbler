@@ -28,6 +28,7 @@ public class MainActivity extends Activity {
     private ServiceConnection        mConnection;
 
     private ServiceBroadcastReceiver mReceiver;
+    private int mGpsFixes;
 
     private class ServiceBroadcastReceiver extends BroadcastReceiver {
         private boolean mReceiverIsRegistered;
@@ -65,6 +66,12 @@ public class MainActivity extends Activity {
             } else if (subject.equals("Reporter")) {
                 updateUI();
                 Log.d(LOGTAG, "Received a reporter intent...");
+                return;
+            } else if (subject.equals("Scanner")) {
+                int fixes = intent.getIntExtra("fixes", 0);
+                mGpsFixes = fixes;
+                updateUI();
+                Log.d(LOGTAG, "Received a scanner intent...");
                 return;
             }
         }
@@ -164,6 +171,12 @@ public class MainActivity extends Activity {
             reportedString = String.format(reportedString, numberOfReports);
             reportedTextView.setText(reportedString);
         }
+
+        String fixesString = getResources().getString(R.string.gps_fixes);
+        fixesString = String.format(fixesString, mGpsFixes);
+  
+        TextView fixesTextView = (TextView) findViewById(R.id.gps_fixes);
+        fixesTextView.setText(fixesString);
     }
 
     public void onBtnClicked(View v) throws RemoteException {

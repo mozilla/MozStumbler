@@ -39,6 +39,10 @@ public class ScannerService extends Service {
         }
     }
 
+    public Handler getHandler() {
+      return mLooper.mHandler;
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();

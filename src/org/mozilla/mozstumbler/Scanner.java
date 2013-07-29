@@ -1,6 +1,5 @@
 package org.mozilla.mozstumbler;
 
-import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -111,6 +110,12 @@ class Scanner implements LocationListener {
                     fixes++;
                   }
                 }
+
+                Intent i = new Intent(ScannerService.MESSAGE_TOPIC);
+                i.putExtra(Intent.EXTRA_SUBJECT, "Scanner");
+                i.putExtra("fixes", fixes);
+                mContext.sendBroadcast(i);
+
                 Log.d(LOGTAG, "onGpsStatusChange - satellites: " + satellites + " fixes: " + fixes);
               }
             }

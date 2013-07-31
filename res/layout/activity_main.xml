@@ -34,5 +34,5 @@
            android:layout_toLeftOf="@+id/toggle_scanning"
            android:text="@string/gps_fixes"
            android:textAppearance="?android:attr/textAppearanceSmall" />
-       
+
 </RelativeLayout>

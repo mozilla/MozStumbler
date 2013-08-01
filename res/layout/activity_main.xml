@@ -12,8 +12,26 @@
            android:id="@+id/toggle_scanning"
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"
-           android:layout_centerHorizontal="true"
            android:layout_centerVertical="true"
+           android:layout_centerHorizontal="true"
+           android:onClick="onBtnClicked" />
+
+       <Button
+           android:id="@+id/view_leaderboard"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:layout_below="@+id/toggle_scanning"
+           android:layout_centerHorizontal="true"
+           android:text="@string/view_leaderboard"
+           android:onClick="onBtnClicked" />
+
+       <Button
+           android:id="@+id/view_map"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:layout_below="@+id/view_leaderboard"
+           android:layout_centerHorizontal="true"
+           android:text="@string/view_map"
            android:onClick="onBtnClicked" />
 
        <TextView

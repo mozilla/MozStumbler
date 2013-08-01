@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -23,6 +24,8 @@ import android.widget.Toast;
 public class MainActivity extends Activity {
 
     private static final String      LOGTAG = MainActivity.class.getName();
+    private static final String      LEADERBOARD_URL = "https://location.services.mozilla.com/stats";
+    private static final String      MAP_URL = "https://location.services.mozilla.com/map";
 
     private ScannerServiceInterface  mConnectionRemote;
     private ServiceConnection        mConnection;
@@ -192,6 +195,12 @@ public class MainActivity extends Activity {
                 mConnectionRemote.startScanning();
                 b.setText(R.string.stop_scanning);
             }
+        } else if (v.getId() == R.id.view_leaderboard) {
+            Intent openLeaderboard = new Intent(Intent.ACTION_VIEW, Uri.parse(LEADERBOARD_URL));
+            startActivity(openLeaderboard);
+        } else if (v.getId() == R.id.view_map) {
+            Intent openMap = new Intent(Intent.ACTION_VIEW, Uri.parse(MAP_URL));
+            startActivity(openMap);
         }
     }
 

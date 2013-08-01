@@ -6,6 +6,8 @@
     <string name="mozilla_title">Mozilla</string>
     <string name="start_scanning">Start Scanning</string>
     <string name="stop_scanning">Stop Scanning</string>
+    <string name="view_leaderboard">View Leaderboard</string>
+    <string name="view_map">View Scan Map</string>
     <string name="service_name">Mozilla Stumbler</string>
     <string name="service_scanning">Scanning for WiFi and Cellular networks</string>
     <string name="none_reported">Nothing reported.</string>

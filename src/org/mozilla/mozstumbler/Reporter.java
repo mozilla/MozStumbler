@@ -87,6 +87,7 @@ class Reporter {
             locInfo.put("wifi", wifiInfo);
         } catch (JSONException jsonex) {
             Log.w(LOGTAG, "json exception", jsonex);
+            return;
         }
 
         new Thread(new Runnable() {

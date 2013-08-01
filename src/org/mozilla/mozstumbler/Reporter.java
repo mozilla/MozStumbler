@@ -14,7 +14,6 @@ import org.json.JSONObject;
 
 import java.io.BufferedOutputStream;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.MessageDigest;
@@ -65,23 +64,13 @@ class Reporter {
                         continue;
                     }
 
-                    StringBuilder sb = new StringBuilder();
-                    try {
-                        byte[] result = mSHA1.digest((ap.BSSID + ap.SSID).getBytes("UTF-8"));
-                        for (byte b : result) {
-                            sb.append(String.format("%02X", b));
-                        }
+                    JSONObject obj = new JSONObject();
+                    obj.put("key", hashScanResult(ap));
+                    obj.put("frequency", ap.frequency);
+                    obj.put("signal", ap.level);
+                    wifiInfo.put(obj);
 
-                        JSONObject obj = new JSONObject();
-                        obj.put("key", sb.toString());
-                        obj.put("frequency", ap.frequency);
-                        obj.put("signal", ap.level);
-                        wifiInfo.put(obj);
-
-                        Log.v(LOGTAG, "Reporting: BSSID=" + ap.BSSID + ", SSID=\"" + ap.SSID + "\", Signal=" + ap.level);
-                    } catch (UnsupportedEncodingException uee) {
-                        Log.w(LOGTAG, "can't encode the key", uee);
-                    }
+                    Log.v(LOGTAG, "Reporting: BSSID=" + ap.BSSID + ", SSID=\"" + ap.SSID + "\", Signal=" + ap.level);
                 }
             }
             locInfo.put("wifi", wifiInfo);
@@ -150,5 +139,14 @@ class Reporter {
 
     public int numberOfReportedLocations() {
         return mReportedLocations;
+    }
+
+    private String hashScanResult(ScanResult ap) {
+        StringBuilder sb = new StringBuilder();
+        byte[] result = mSHA1.digest((ap.BSSID + ap.SSID).getBytes());
+        for (byte b : result) {
+            sb.append(String.format("%02X", b));
+        }
+        return sb.toString();
     }
 }

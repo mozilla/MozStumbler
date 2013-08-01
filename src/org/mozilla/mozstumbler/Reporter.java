@@ -31,7 +31,6 @@ class Reporter {
     private final Context       mContext;
     private final Prefs         mPrefs;
     private final MessageDigest mSHA1;
-
     private int                 mReportedLocations;
 
     Reporter(Context context, Prefs prefs) {
@@ -55,19 +54,23 @@ class Reporter {
             locInfo.put("accuracy", (int) location.getAccuracy());
             locInfo.put("altitude", (int) location.getAltitude());
             locInfo.put("cell", cellInfo);
-            if (radioType == TelephonyManager.PHONE_TYPE_GSM)
+            if (radioType == TelephonyManager.PHONE_TYPE_GSM) {
                 locInfo.put("radio", "gsm");
+            }
 
             JSONArray wifiInfo = new JSONArray();
             if (scanResults != null) {
                 for (ScanResult ap : scanResults) {
-                    if (!shouldLog(ap))
+                    if (!shouldLog(ap)) {
                         continue;
+                    }
+
                     StringBuilder sb = new StringBuilder();
                     try {
                         byte[] result = mSHA1.digest((ap.BSSID + ap.SSID).getBytes("UTF-8"));
-                        for (byte b : result)
+                        for (byte b : result) {
                             sb.append(String.format("%02X", b));
+                        }
 
                         JSONObject obj = new JSONObject();
                         obj.put("key", sb.toString());

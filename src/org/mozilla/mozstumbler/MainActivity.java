@@ -177,7 +177,7 @@ public class MainActivity extends Activity {
 
         String fixesString = getResources().getString(R.string.gps_fixes);
         fixesString = String.format(fixesString, mGpsFixes);
-  
+
         TextView fixesTextView = (TextView) findViewById(R.id.gps_fixes);
         fixesTextView.setText(fixesString);
     }

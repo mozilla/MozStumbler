@@ -62,11 +62,6 @@ class Scanner implements LocationListener {
         mWifiScanResults = getWifiManager().getScanResults();
         mWifiScanResultsTime = System.currentTimeMillis();
 
-        if (mWifiScanResults == null) {
-          Log.d(LOGTAG, "WifiReceiver found null data");
-          return;
-        }
-
         Log.d(LOGTAG, "WifiReceiver new data at " + mWifiScanResultsTime);
 
         // TODO does this even work?  Aren't we just setting
@@ -97,7 +92,7 @@ class Scanner implements LocationListener {
                                   GEO_MIN_UPDATE_TIME,
                                   GEO_MIN_UPDATE_DISTANCE,
                                   getLocationListener());
-  
+
         mGPSListener = new GpsStatus.Listener() {
             public void onGpsStatusChanged(int event) {
               if (event == GpsStatus.GPS_EVENT_SATELLITE_STATUS) {
@@ -129,13 +124,13 @@ class Scanner implements LocationListener {
 
         WifiManager wm = getWifiManager();
         mWifiLock = wm.createWifiLock(WifiManager.WIFI_MODE_SCAN_ONLY,
-                                      "MozStumbler");      
+                                      "MozStumbler");
         mWifiLock.acquire();
-        
+
         if (!wm.isWifiEnabled()) {
             wm.setWifiEnabled(true);
-        } 
-        
+        }
+
         mWifiReceiver = new WifiReceiver();
         IntentFilter i = new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
         mContext.registerReceiver(mWifiReceiver, i);
@@ -171,7 +166,7 @@ class Scanner implements LocationListener {
             tm.listen(mPhoneStateListener, PhoneStateListener.LISTEN_NONE);
             mPhoneStateListener = null;
         }
-        
+
         mWifiLock.release();
         mWifiLock = null;
 

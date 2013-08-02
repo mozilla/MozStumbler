@@ -54,9 +54,6 @@ class Reporter {
             locInfo.put("lat", location.getLatitude());
             locInfo.put("accuracy", (int) location.getAccuracy());
             locInfo.put("altitude", (int) location.getAltitude());
-            locInfo.put("token", token); // TODO: Remove "token" property after server support X-Token header (ichnaea
-                                         // issue #9).
-
             locInfo.put("cell", cellInfo);
             if (radioType == TelephonyManager.PHONE_TYPE_GSM)
                 locInfo.put("radio", "gsm");

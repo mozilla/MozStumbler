@@ -13,5 +13,5 @@
     <string name="none_reported">Nothing reported.</string>
     <string name="reported_sofar">%1$d locations reported.</string>
     <string name="gps_fixes">gps fixes: %1$d</string>
-    
+
 </resources>

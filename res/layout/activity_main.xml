@@ -13,7 +13,6 @@
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"
            android:layout_alignParentLeft="true"
-           android:layout_toLeftOf="@+id/toggle_scanning"
            android:text="@string/gps_fixes"
            android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -30,17 +29,21 @@
            android:id="@+id/toggle_scanning"
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"
-           android:layout_centerVertical="true"
-           android:layout_centerHorizontal="true"
-           android:onClick="onClick_ToggleScanning" />
+           android:layout_alignParentBottom="true"
+           android:layout_alignParentLeft="true"
+           android:layout_alignParentRight="true"
+           android:layout_below="@+id/view_leaderboard"
+           android:onClick="onClick_ToggleScanning"
+           android:text="@string/start_scanning"
+           android:textAppearance="?android:attr/textAppearanceLarge" />
 
        <Button
            android:id="@+id/view_leaderboard"
-           android:layout_width="wrap_content"
+           android:layout_width="match_parent"
            android:layout_height="wrap_content"
-           android:layout_below="@+id/toggle_scanning"
-           android:layout_centerHorizontal="true"
-           android:text="@string/view_leaderboard"
-           android:onClick="onClick_ViewLeaderboard" />
+           android:layout_alignParentLeft="true"
+           android:layout_below="@+id/reportedTextView"
+           android:onClick="onClick_ViewLeaderboard"
+           android:text="@string/view_leaderboard" />
 
 </RelativeLayout>

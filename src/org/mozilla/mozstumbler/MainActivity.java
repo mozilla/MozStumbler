@@ -166,14 +166,9 @@ public class MainActivity extends Activity {
         }
 
         TextView reportedTextView = (TextView) findViewById(R.id.reportedTextView);
-        if (numberOfReports == 0) {
-            String reportedString = getResources().getString(R.string.none_reported);
-            reportedTextView.setText(reportedString);
-        } else {
-            String reportedString = getResources().getString(R.string.reported_sofar);
-            reportedString = String.format(reportedString, numberOfReports);
-            reportedTextView.setText(reportedString);
-        }
+        String reportedString = getResources().getString(R.string.locations_reported);
+        reportedString = String.format(reportedString, numberOfReports);
+        reportedTextView.setText(reportedString);
 
         String fixesString = getResources().getString(R.string.gps_fixes);
         fixesString = String.format(fixesString, mGpsFixes);

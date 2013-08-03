@@ -17,6 +17,15 @@
            android:text="@string/gps_fixes"
            android:textAppearance="?android:attr/textAppearanceMedium" />
 
+       <TextView
+           android:id="@+id/reportedTextView"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:layout_alignParentLeft="true"
+           android:layout_below="@+id/gps_fixes"
+           android:text="@string/locations_reported"
+           android:textAppearance="?android:attr/textAppearanceMedium" />
+
        <Button
            android:id="@+id/toggle_scanning"
            android:layout_width="wrap_content"
@@ -42,15 +51,5 @@
            android:layout_centerHorizontal="true"
            android:text="@string/view_map"
            android:onClick="onBtnClicked" />
-
-       <TextView
-           android:id="@+id/reportedTextView"
-           android:layout_width="wrap_content"
-           android:layout_height="wrap_content"
-           android:layout_alignParentBottom="true"
-           android:layout_centerHorizontal="true"
-           android:layout_marginBottom="22dp"
-           android:text="@string/none_reported"
-           android:textAppearance="?android:attr/textAppearanceLarge" />
 
 </RelativeLayout>

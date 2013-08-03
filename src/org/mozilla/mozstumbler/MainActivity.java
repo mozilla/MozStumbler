@@ -175,23 +175,23 @@ public final class MainActivity extends Activity {
         fixesTextView.setText(fixesString);
     }
 
-    public void onBtnClicked(View v) throws RemoteException {
-        if (v.getId() == R.id.toggle_scanning) {
-            boolean scanning = mConnectionRemote.isScanning();
-            Log.d(LOGTAG, "Connection remote return: isScanning() = " + scanning);
+    public void onClick_ToggleScanning(View v) throws RemoteException {
+        boolean scanning = mConnectionRemote.isScanning();
+        Log.d(LOGTAG, "Connection remote return: isScanning() = " + scanning);
 
-            Button b = (Button) v;
-            if (scanning) {
-                mConnectionRemote.stopScanning();
-                b.setText(R.string.start_scanning);
-            } else {
-                mConnectionRemote.startScanning();
-                b.setText(R.string.stop_scanning);
-            }
-        } else if (v.getId() == R.id.view_leaderboard) {
-            Intent openLeaderboard = new Intent(Intent.ACTION_VIEW, Uri.parse(LEADERBOARD_URL));
-            startActivity(openLeaderboard);
+        Button b = (Button) v;
+        if (scanning) {
+            mConnectionRemote.stopScanning();
+            b.setText(R.string.start_scanning);
+        } else {
+            mConnectionRemote.startScanning();
+            b.setText(R.string.stop_scanning);
         }
+    }
+
+    public void onClick_ViewLeaderboard(View v) {
+        Intent openLeaderboard = new Intent(Intent.ACTION_VIEW, Uri.parse(LEADERBOARD_URL));
+        startActivity(openLeaderboard);
     }
 
     @Override

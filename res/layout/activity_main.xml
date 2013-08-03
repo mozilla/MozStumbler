@@ -32,7 +32,7 @@
            android:layout_height="wrap_content"
            android:layout_centerVertical="true"
            android:layout_centerHorizontal="true"
-           android:onClick="onBtnClicked" />
+           android:onClick="onClick_ToggleScanning" />
 
        <Button
            android:id="@+id/view_leaderboard"
@@ -41,6 +41,6 @@
            android:layout_below="@+id/toggle_scanning"
            android:layout_centerHorizontal="true"
            android:text="@string/view_leaderboard"
-           android:onClick="onBtnClicked" />
+           android:onClick="onClick_ViewLeaderboard" />
 
 </RelativeLayout>

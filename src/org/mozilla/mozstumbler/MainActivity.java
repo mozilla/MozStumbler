@@ -21,11 +21,9 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class MainActivity extends Activity {
-
-    private static final String      LOGTAG = MainActivity.class.getName();
-    private static final String      LEADERBOARD_URL = "https://location.services.mozilla.com/stats";
-    private static final String      MAP_URL = "https://location.services.mozilla.com/map";
+public final class MainActivity extends Activity {
+    private static final String LOGTAG = MainActivity.class.getName();
+    private static final String LEADERBOARD_URL = "https://location.services.mozilla.com/stats";
 
     private ScannerServiceInterface  mConnectionRemote;
     private ServiceConnection        mConnection;
@@ -193,9 +191,6 @@ public class MainActivity extends Activity {
         } else if (v.getId() == R.id.view_leaderboard) {
             Intent openLeaderboard = new Intent(Intent.ACTION_VIEW, Uri.parse(LEADERBOARD_URL));
             startActivity(openLeaderboard);
-        } else if (v.getId() == R.id.view_map) {
-            Intent openMap = new Intent(Intent.ACTION_VIEW, Uri.parse(MAP_URL));
-            startActivity(openMap);
         }
     }
 

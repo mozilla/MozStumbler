@@ -8,6 +8,15 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".MainActivity" >
 
+       <TextView
+           android:id="@+id/gps_fixes"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:layout_alignParentLeft="true"
+           android:layout_toLeftOf="@+id/toggle_scanning"
+           android:text="@string/gps_fixes"
+           android:textAppearance="?android:attr/textAppearanceMedium" />
+
        <Button
            android:id="@+id/toggle_scanning"
            android:layout_width="wrap_content"
@@ -43,14 +52,5 @@
            android:layout_marginBottom="22dp"
            android:text="@string/none_reported"
            android:textAppearance="?android:attr/textAppearanceLarge" />
-
-       <TextView
-           android:id="@+id/gps_fixes"
-           android:layout_width="wrap_content"
-           android:layout_height="wrap_content"
-           android:layout_alignParentLeft="true"
-           android:layout_toLeftOf="@+id/toggle_scanning"
-           android:text="@string/gps_fixes"
-           android:textAppearance="?android:attr/textAppearanceSmall" />
 
 </RelativeLayout>

@@ -44,15 +44,7 @@ final class Prefs {
     }
 
     String getNickname() {
-        String nickname = getStringPref(NICKNAME_PREF);
-        if (nickname == null) {
-            // TODO: Remove this placeholder nickname and default to null nickname after
-            // we have client UI so users can enter their own nickname (Issue #18).
-            nickname = Build.MODEL; // e.g. "Nexus 4"
-            setNickname(nickname);
-        }
-
-        return nickname;
+        return getStringPref(NICKNAME_PREF);
     }
 
     void setNickname(String nickname) {

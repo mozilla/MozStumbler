@@ -1,6 +1,5 @@
 package org.mozilla.mozstumbler;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
@@ -20,7 +19,6 @@ import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Collection;
-import java.util.Date;
 
 class Reporter {
     private static final String LOGTAG          = Reporter.class.getName();

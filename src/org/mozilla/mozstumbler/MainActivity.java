@@ -15,9 +15,13 @@ import android.os.IBinder;
 import android.os.RemoteException;
 import android.os.StrictMode;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.View;
+import android.view.View.OnFocusChangeListener;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,9 +31,9 @@ public final class MainActivity extends Activity {
 
     private ScannerServiceInterface  mConnectionRemote;
     private ServiceConnection        mConnection;
-
     private ServiceBroadcastReceiver mReceiver;
-    private int mGpsFixes;
+    private Prefs                    mPrefs;
+    private int                      mGpsFixes;
 
     private class ServiceBroadcastReceiver extends BroadcastReceiver {
         private boolean mReceiverIsRegistered;
@@ -83,6 +87,26 @@ public final class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         enableStrictMode();
         setContentView(R.layout.activity_main);
+
+        EditText nicknameEditor = (EditText) findViewById(R.id.edit_nickname);
+
+        mPrefs = new Prefs(this);
+        String nickname = mPrefs.getNickname(); // FIXME: StrictMode violation?
+        if (nickname != null) {
+            nicknameEditor.setText(nickname);
+        }
+
+        nicknameEditor.setOnEditorActionListener(new EditText.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    String newNickname = v.getText().toString().trim();
+                    mPrefs.setNickname(newNickname);
+                }
+                return false;
+            }
+        });
+
         Log.d(LOGTAG, "onCreate");
     }
 

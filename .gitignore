@@ -12,3 +12,5 @@ target/
 *.dex
 *.apk
 *.ap_
+
+gradle.properties

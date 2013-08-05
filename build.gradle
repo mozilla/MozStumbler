@@ -26,17 +26,24 @@ android {
         }
     }
 
+    signingConfigs {
+      release
+    }
+
     buildTypes {
+
         debug {
             jniDebugBuild true
         }
 
         release {
+            debuggable true
             runProguard true
             proguardFile 'proguard.cfg'
-            signingConfig signingConfigs.debug // FIXME: Use a real certificate
+            signingConfig signingConfigs.release
         }
     }
+
 }
 
 dependencies {
@@ -46,3 +53,14 @@ dependencies {
 tasks.withType(JavaCompile) {
     options.compilerArgs = ['-Xlint:all,-deprecation', '-Werror']
 }
+
+
+if (hasProperty('StoreFile')) {
+  android.signingConfigs.release.storeFile = file(StoreFile)
+  android.signingConfigs.release.storePassword = StorePassword
+  android.signingConfigs.release.keyAlias = KeyAlias
+  android.signingConfigs.release.keyPassword = KeyPassword
+} else {
+  android.buildTypes.release.signingConfig = null
+}
+ 

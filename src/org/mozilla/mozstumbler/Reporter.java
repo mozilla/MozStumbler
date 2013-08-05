@@ -13,7 +13,6 @@ import org.json.JSONObject;
 
 import java.io.BufferedOutputStream;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.MessageDigest;
@@ -29,7 +28,6 @@ class Reporter {
     private final Context       mContext;
     private final Prefs         mPrefs;
     private final MessageDigest mSHA1;
-
     private int                 mReportedLocations;
 
     Reporter(Context context, Prefs prefs) {
@@ -53,35 +51,30 @@ class Reporter {
             locInfo.put("accuracy", (int) location.getAccuracy());
             locInfo.put("altitude", (int) location.getAltitude());
             locInfo.put("cell", cellInfo);
-            if (radioType == TelephonyManager.PHONE_TYPE_GSM)
+            if (radioType == TelephonyManager.PHONE_TYPE_GSM) {
                 locInfo.put("radio", "gsm");
+            }
 
             JSONArray wifiInfo = new JSONArray();
             if (scanResults != null) {
                 for (ScanResult ap : scanResults) {
-                    if (!shouldLog(ap))
+                    if (!shouldLog(ap)) {
                         continue;
-                    StringBuilder sb = new StringBuilder();
-                    try {
-                        byte[] result = mSHA1.digest((ap.BSSID + ap.SSID).getBytes("UTF-8"));
-                        for (byte b : result)
-                            sb.append(String.format("%02X", b));
-
-                        JSONObject obj = new JSONObject();
-                        obj.put("key", sb.toString());
-                        obj.put("frequency", ap.frequency);
-                        obj.put("signal", ap.level);
-                        wifiInfo.put(obj);
-
-                        Log.v(LOGTAG, "Reporting: BSSID=" + ap.BSSID + ", SSID=\"" + ap.SSID + "\", Signal=" + ap.level);
-                    } catch (UnsupportedEncodingException uee) {
-                        Log.w(LOGTAG, "can't encode the key", uee);
                     }
+
+                    JSONObject obj = new JSONObject();
+                    obj.put("key", hashScanResult(ap));
+                    obj.put("frequency", ap.frequency);
+                    obj.put("signal", ap.level);
+                    wifiInfo.put(obj);
+
+                    Log.v(LOGTAG, "Reporting: BSSID=" + ap.BSSID + ", SSID=\"" + ap.SSID + "\", Signal=" + ap.level);
                 }
             }
             locInfo.put("wifi", wifiInfo);
         } catch (JSONException jsonex) {
             Log.w(LOGTAG, "json exception", jsonex);
+            return;
         }
 
         new Thread(new Runnable() {
@@ -144,5 +137,14 @@ class Reporter {
 
     public int numberOfReportedLocations() {
         return mReportedLocations;
+    }
+
+    private String hashScanResult(ScanResult ap) {
+        StringBuilder sb = new StringBuilder();
+        byte[] result = mSHA1.digest((ap.BSSID + ap.SSID).getBytes());
+        for (byte b : result) {
+            sb.append(String.format("%02X", b));
+        }
+        return sb.toString();
     }
 }

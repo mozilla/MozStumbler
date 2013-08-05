@@ -23,6 +23,7 @@ public final class ScannerService extends Service {
     private static final String LOGTAG          = ScannerService.class.getName();
     private static final int    NOTIFICATION_ID = 0;
     private static final int    WAKE_TIMEOUT    = 5 * 1000;
+
     private Scanner             mScanner;
     private Reporter            mReporter;
     private LooperThread        mLooper;
@@ -128,10 +129,6 @@ public final class ScannerService extends Service {
                         mWakeIntent = PendingIntent.getService(cxt, 0, intent, 0);
                         AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
                         alarm.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), WAKE_TIMEOUT, mWakeIntent);
-                        Intent i = new Intent(MESSAGE_TOPIC);
-                        i.putExtra(Intent.EXTRA_SUBJECT, "Notification");
-                        i.putExtra(Intent.EXTRA_TEXT, getString(R.string.start_scanning));
-                        sendBroadcast(i);
                     }
                 });
             };
@@ -152,11 +149,6 @@ public final class ScannerService extends Service {
                         nm.cancel(NOTIFICATION_ID);
 
                         mScanner.stopScanning();
-
-                        Intent i = new Intent(MESSAGE_TOPIC);
-                        i.putExtra(Intent.EXTRA_SUBJECT, "Notification");
-                        i.putExtra(Intent.EXTRA_TEXT, getString(R.string.stop_scanning));
-                        sendBroadcast(i);
                     }
                 });
             }
@@ -177,5 +169,12 @@ public final class ScannerService extends Service {
         n.setLatestEventInfo(context, contentTitle, contentText, contentIntent);
         n.flags |= Notification.FLAG_NO_CLEAR | Notification.FLAG_ONGOING_EVENT;
         return n;
+    }
+
+    private void sendToast(String message) {
+        Intent i = new Intent(MESSAGE_TOPIC);
+        i.putExtra(Intent.EXTRA_SUBJECT, "Notification");
+        i.putExtra(Intent.EXTRA_TEXT, message);
+        sendBroadcast(i);
     }
 }

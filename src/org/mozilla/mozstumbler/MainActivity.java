@@ -140,15 +140,6 @@ public final class MainActivity extends Activity {
     @Override
     protected void onStop() {
         super.onStop();
-        try {
-            if (mConnectionRemote.isScanning()) {
-                mConnectionRemote.showNotification();
-            }
-        } catch (RemoteException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-
         unbindService(mConnection);
         mConnection = null;
         mConnectionRemote = null;
@@ -228,9 +219,7 @@ public final class MainActivity extends Activity {
         if (Build.VERSION.SDK_INT < 9) {
             return;
         }
-
         StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().detectAll().penaltyLog().build());
-
         StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder().detectAll().penaltyLog().build());
     }
 }

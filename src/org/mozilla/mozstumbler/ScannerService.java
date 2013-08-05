@@ -67,6 +67,9 @@ public final class ScannerService extends Service {
         mLooper = null;
         mScanner = null;
 
+        mReporter.shutdown();
+        mReporter = null; 
+
         NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         nm.cancel(NOTIFICATION_ID);
     }
@@ -129,6 +132,8 @@ public final class ScannerService extends Service {
                         mWakeIntent = PendingIntent.getService(cxt, 0, intent, 0);
                         AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
                         alarm.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), WAKE_TIMEOUT, mWakeIntent);
+
+                        mReporter.sendReports(false);
                     }
                 });
             };
@@ -169,12 +174,5 @@ public final class ScannerService extends Service {
         n.setLatestEventInfo(context, contentTitle, contentText, contentIntent);
         n.flags |= Notification.FLAG_NO_CLEAR | Notification.FLAG_ONGOING_EVENT;
         return n;
-    }
-
-    private void sendToast(String message) {
-        Intent i = new Intent(MESSAGE_TOPIC);
-        i.putExtra(Intent.EXTRA_SUBJECT, "Notification");
-        i.putExtra(Intent.EXTRA_TEXT, message);
-        sendBroadcast(i);
     }
 }

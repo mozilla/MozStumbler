@@ -17,25 +17,31 @@ import android.os.Looper;
 import android.os.RemoteException;
 import android.util.Log;
 
-public class ScannerService extends Service {
-
+public final class ScannerService extends Service {
     public static final String  MESSAGE_TOPIC   = "org.mozilla.mozstumbler.serviceMessage";
 
     private static final String LOGTAG          = ScannerService.class.getName();
     private static final int    NOTIFICATION_ID = 0;
     private static final int    WAKE_TIMEOUT    = 5 * 1000;
-    private Scanner             mScanner        = null;
-    private Reporter            mReporter       = null;
-    private LooperThread        mLooper         = null;
-    private PendingIntent       mWakeIntent     = null;
+    private Scanner             mScanner;
+    private Reporter            mReporter;
+    private LooperThread        mLooper;
+    private PendingIntent       mWakeIntent;
 
-    public class LooperThread extends Thread {
-        public Handler mHandler;
+    private final class LooperThread extends Thread {
+        private Handler mHandler;
 
+        @Override
         public void run() {
             Looper.prepare();
             mHandler = new Handler();
             Looper.loop();
+        }
+
+        void post(Runnable runnable) {
+            if (mHandler != null) {
+                mHandler.post(runnable);
+            }
         }
     }
 
@@ -65,14 +71,10 @@ public class ScannerService extends Service {
     }
 
     @TargetApi(11)
-    public void postNotification() {
-        if (mLooper.mHandler == null)
-            return;
-
-        mLooper.mHandler.post(new Runnable() {
+    private void postNotification() {
+        mLooper.post(new Runnable() {
             @Override
             public void run() {
-
                 NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
                 Context ctx = getApplicationContext();
                 Intent notificationIntent = new Intent(ctx, MainActivity.class);
@@ -105,7 +107,6 @@ public class ScannerService extends Service {
         Log.d(LOGTAG, "onBind");
 
         return new ScannerServiceInterface.Stub() {
-
             @Override
             public boolean isScanning() throws RemoteException {
                 return mScanner.isScanning();
@@ -117,7 +118,7 @@ public class ScannerService extends Service {
                     return;
                 }
 
-                mLooper.mHandler.post(new Runnable() {
+                mLooper.post(new Runnable() {
                     @Override
                     public void run() {
                         mScanner.startScanning();
@@ -143,7 +144,7 @@ public class ScannerService extends Service {
                     return;
                 }
 
-                mLooper.mHandler.post(new Runnable() {
+                mLooper.post(new Runnable() {
                     @Override
                     public void run() {
                         AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);

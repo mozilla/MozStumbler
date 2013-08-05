@@ -60,6 +60,9 @@ public class ScannerService extends Service {
         mLooper = null;
         mScanner = null;
 
+        mReporter.shutdown();
+        mReporter = null;
+
         NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         nm.cancel(NOTIFICATION_ID);
     }
@@ -133,6 +136,8 @@ public class ScannerService extends Service {
                         i.putExtra(Intent.EXTRA_SUBJECT, "Notification");
                         i.putExtra(Intent.EXTRA_TEXT, getString(R.string.start_scanning));
                         sendBroadcast(i);
+
+                        mReporter.sendReports(false);
                     }
                 });
             };

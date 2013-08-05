@@ -168,6 +168,7 @@ public final class ScannerService extends Service {
         };
     }
 
+    @SuppressWarnings("deprecation")
     private static Notification buildNotification(Context context, int icon,
                                                   String contentTitle,
                                                   String contentText,

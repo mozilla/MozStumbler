@@ -44,5 +44,5 @@ dependencies {
 }
 
 tasks.withType(JavaCompile) {
-    options.compilerArgs = ['-Xlint:all,-deprecation', '-Werror']
+    options.compilerArgs = ['-Xlint:all', '-Werror']
 }

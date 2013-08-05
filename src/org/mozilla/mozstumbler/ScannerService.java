@@ -70,7 +70,6 @@ public final class ScannerService extends Service {
         nm.cancel(NOTIFICATION_ID);
     }
 
-    @TargetApi(11)
     private void postNotification() {
         mLooper.post(new Runnable() {
             @Override
@@ -78,19 +77,17 @@ public final class ScannerService extends Service {
                 NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
                 Context ctx = getApplicationContext();
                 Intent notificationIntent = new Intent(ctx, MainActivity.class);
+                notificationIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_FROM_BACKGROUND);
+
                 PendingIntent contentIntent = PendingIntent.getActivity(ctx, NOTIFICATION_ID, notificationIntent,
                         PendingIntent.FLAG_CANCEL_CURRENT);
 
                 Resources res = ctx.getResources();
-                // TODO - Do something compat w/ older os's
-                // See https://github.com/dougt/MozStumbler/pull/26#commitcomment-3689527
-                Notification.Builder builder = new Notification.Builder(ctx);
+                String title = res.getString(R.string.service_name);
+                String text = res.getString(R.string.service_scanning);
 
-                builder.setContentIntent(contentIntent).setSmallIcon(R.drawable.ic_launcher).setOngoing(true)
-                        .setAutoCancel(false).setContentTitle(res.getString(R.string.service_name))
-                        .setContentText(res.getString(R.string.service_scanning));
-                Notification n = builder.build();
-
+                int icon = R.drawable.ic_launcher;
+                Notification n = buildNotification(ctx, icon, title, text, contentIntent);
                 nm.notify(NOTIFICATION_ID, n);
             }
         });
@@ -121,6 +118,7 @@ public final class ScannerService extends Service {
                 mLooper.post(new Runnable() {
                     @Override
                     public void run() {
+                        postNotification();
                         mScanner.startScanning();
 
                         // keep us awake.
@@ -164,15 +162,19 @@ public final class ScannerService extends Service {
             }
 
             @Override
-            public void showNotification() throws RemoteException {
-                postNotification();
-            }
-
-            @Override
             public int numberOfReportedLocations() throws RemoteException {
                 return mReporter.numberOfReportedLocations();
             }
-
         };
+    }
+
+    private static Notification buildNotification(Context context, int icon,
+                                                  String contentTitle,
+                                                  String contentText,
+                                                  PendingIntent contentIntent) {
+        Notification n = new Notification(icon, contentTitle, 0);
+        n.setLatestEventInfo(context, contentTitle, contentText, contentIntent);
+        n.flags |= Notification.FLAG_NO_CLEAR | Notification.FLAG_ONGOING_EVENT;
+        return n;
     }
 }

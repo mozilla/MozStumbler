@@ -87,7 +87,7 @@ public final class ScannerService extends Service {
                 String title = res.getString(R.string.service_name);
                 String text = res.getString(R.string.service_scanning);
 
-                int icon = R.drawable.ic_launcher;
+                int icon = R.drawable.ic_status_scanning;
                 Notification n = buildNotification(ctx, icon, title, text, contentIntent);
                 nm.notify(NOTIFICATION_ID, n);
             }

@@ -12,6 +12,7 @@ final class Prefs {
     private static final String     PREFS_FILE    = Prefs.class.getName();
     private static final String     NICKNAME_PREF = "nickname";
     private static final String     TOKEN_PREF    = "token";
+    private static final String     REPORTS_PREF  = "reports";
 
     private final SharedPreferences mPrefs;
 
@@ -59,6 +60,14 @@ final class Prefs {
         deleteStringPref(NICKNAME_PREF);
     }
 
+    void setReports(String json) {
+        setStringPref(REPORTS_PREF, json);
+    }
+
+    String getReports() {
+      return getStringPref(REPORTS_PREF);
+    }
+ 
     private String getStringPref(String key) {
         return mPrefs.getString(key, null);
     }

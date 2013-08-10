@@ -24,15 +24,25 @@ class Reporter {
     private static final String LOCATION_URL    = "https://location.services.mozilla.com/v1/submit";
     private static final String NICKNAME_HEADER = "X-Nickname";
     private static final String TOKEN_HEADER    = "X-Token";
+    private static final int RECORD_BATCH_SIZE = 100;
 
     private final Context       mContext;
     private final Prefs         mPrefs;
     private final MessageDigest mSHA1;
-    private int                 mReportedLocations;
+
+    private JSONArray mReports;
 
     Reporter(Context context, Prefs prefs) {
         mContext = context;
         mPrefs = prefs;
+
+        // Attempt to write out mReports
+        String storedReports = mPrefs.getReports();
+        try {
+            mReports = new JSONArray(storedReports);
+        } catch (Exception e) {
+            mReports = new JSONArray();
+        }
 
         try {
             mSHA1 = MessageDigest.getInstance("SHA-1");
@@ -41,9 +51,68 @@ class Reporter {
         }
     }
 
+    void shutdown() {
+      // Attempt to write out mReports
+      mPrefs.setReports(mReports.toString());
+    }
+
+    void sendReports(boolean force) {
+        int count = mReports.length();
+        if (count == 0) {
+          return;
+        }
+
+        if (count < RECORD_BATCH_SIZE && !force) {
+          return;
+        }
+
+        new Thread(new Runnable() {
+            public void run() {
+                try {
+                    URL url = new URL(LOCATION_URL);
+                    HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+                    try {
+                        String token = mPrefs.getToken().toString();
+
+                        urlConnection.setDoOutput(true);
+                        urlConnection.setRequestProperty(TOKEN_HEADER, token);
+
+                        String nickname = mPrefs.getNickname();
+                        if (nickname != null) {
+                            urlConnection.setRequestProperty(NICKNAME_HEADER, nickname);
+                        }
+
+                        JSONArray batch = new JSONArray();
+                        batch.put(mReports);
+                        JSONObject wrapper = new JSONObject();
+                        wrapper.put("items", batch);
+                        String data = wrapper.toString();
+                        byte[] bytes = data.getBytes();
+                        urlConnection.setFixedLengthStreamingMode(bytes.length);
+                        OutputStream out = new BufferedOutputStream(urlConnection.getOutputStream());
+                        out.write(bytes);
+                        out.flush();
+
+                        // clear the reports.
+                        mReports = new JSONArray();
+
+                        Log.d(LOGTAG, "uploaded data: " + data + " to " + LOCATION_URL);
+                    } catch (JSONException jsonex) {
+                        Log.e(LOGTAG, "error wrapping data as a batch", jsonex);
+                    } catch (Exception ex) {
+                        Log.e(LOGTAG, "error submitting data", ex);
+                    } finally {
+                        urlConnection.disconnect();
+                    }
+                } catch (Exception ex) {
+                    Log.e(LOGTAG, "error submitting data", ex);
+                }
+            }
+        }).start();      
+    }
+
     void reportLocation(Location location, Collection<ScanResult> scanResults, int radioType, JSONArray cellInfo) {
-        final String token = mPrefs.getToken().toString();
-        final JSONObject locInfo = new JSONObject();
+        JSONObject locInfo = new JSONObject();
         try {
             locInfo.put("time", DateTimeUtils.formatTime(location.getTime()));
             locInfo.put("lon", location.getLongitude());
@@ -77,50 +146,11 @@ class Reporter {
             return;
         }
 
-        new Thread(new Runnable() {
-            public void run() {
-                try {
-                    URL url = new URL(LOCATION_URL);
-                    HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-                    try {
-                        urlConnection.setDoOutput(true);
-                        urlConnection.setRequestProperty(TOKEN_HEADER, token);
+        mReports.put(locInfo);
 
-                        String nickname = mPrefs.getNickname();
-                        if (nickname != null) {
-                            urlConnection.setRequestProperty(NICKNAME_HEADER, nickname);
-                        }
-
-                        JSONArray batch = new JSONArray();
-                        batch.put(locInfo);
-                        JSONObject wrapper = new JSONObject();
-                        wrapper.put("items", batch);
-                        String data = wrapper.toString();
-                        byte[] bytes = data.getBytes();
-                        urlConnection.setFixedLengthStreamingMode(bytes.length);
-                        OutputStream out = new BufferedOutputStream(urlConnection.getOutputStream());
-                        out.write(bytes);
-                        out.flush();
-
-                        Intent i = new Intent(ScannerService.MESSAGE_TOPIC);
-                        i.putExtra(Intent.EXTRA_SUBJECT, "Reporter");
-                        mContext.sendBroadcast(i);
-
-                        mReportedLocations++;
-
-                        Log.d(LOGTAG, "uploaded data: " + data + " to " + LOCATION_URL);
-                    } catch (JSONException jsonex) {
-                        Log.e(LOGTAG, "error wrapping data as a batch", jsonex);
-                    } catch (Exception ex) {
-                        Log.e(LOGTAG, "error submitting data", ex);
-                    } finally {
-                        urlConnection.disconnect();
-                    }
-                } catch (Exception ex) {
-                    Log.e(LOGTAG, "error submitting data", ex);
-                }
-            }
-        }).start();
+        Intent i = new Intent(ScannerService.MESSAGE_TOPIC);
+        i.putExtra(Intent.EXTRA_SUBJECT, "Reporter");
+        mContext.sendBroadcast(i);
     }
 
     private static boolean shouldLog(ScanResult scanResult) {
@@ -136,7 +166,7 @@ class Reporter {
     }
 
     public int numberOfReportedLocations() {
-        return mReportedLocations;
+        return mReports.length();
     }
 
     private String hashScanResult(ScanResult ap) {

@@ -2,6 +2,8 @@ package org.mozilla.mozstumbler;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.util.Log;
 
@@ -13,10 +15,20 @@ final class Prefs {
     private static final String     NICKNAME_PREF = "nickname";
     private static final String     TOKEN_PREF    = "token";
     private static final String     REPORTS_PREF  = "reports";
+    private static final String     NOTICE_PREF = "notice:";
 
     private final SharedPreferences mPrefs;
+    private int mCurrentVersion;
 
     Prefs(Context context) {
+        try {
+          PackageInfo pi = context.getPackageManager().getPackageInfo(context.getPackageName(),
+                                                                      PackageManager.GET_ACTIVITIES);
+          mCurrentVersion = pi.versionCode;
+        } catch (PackageManager.NameNotFoundException exception) {
+          mCurrentVersion = 0;
+        }
+
         mPrefs = context.getSharedPreferences(PREFS_FILE, Context.MODE_PRIVATE);
     }
 
@@ -65,9 +77,19 @@ final class Prefs {
     }
 
     String getReports() {
-      return getStringPref(REPORTS_PREF);
+        return getStringPref(REPORTS_PREF);
     }
- 
+
+    boolean getHasSeenNotice() {
+        return mPrefs.getBoolean(NOTICE_PREF + ":" + mCurrentVersion, false);
+    }
+
+    void setHasSeenNotice() {
+        SharedPreferences.Editor editor = mPrefs.edit();
+        editor.putBoolean(NOTICE_PREF + ":" + mCurrentVersion, true);
+        editor.commit();
+    }
+
     private String getStringPref(String key) {
         return mPrefs.getString(key, null);
     }

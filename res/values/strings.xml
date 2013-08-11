@@ -13,4 +13,7 @@
     <string name="gps_fixes">GPS fixes: %1$d</string>
     <string name="enter_nickname">Enter Nickname</string>
 
+
+    <string name="notice">blah legal blah blah</string>
+
 </resources>

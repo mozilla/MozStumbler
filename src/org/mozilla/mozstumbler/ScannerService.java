@@ -122,18 +122,24 @@ public final class ScannerService extends Service {
                 mLooper.post(new Runnable() {
                     @Override
                     public void run() {
-                        postNotification();
-                        mScanner.startScanning();
+                        try {
+                            Log.d(LOGTAG, "Running looper...");
 
-                        // keep us awake.
-                        Context cxt = getApplicationContext();
-                        Calendar cal = Calendar.getInstance();
-                        Intent intent = new Intent(cxt, ScannerService.class);
-                        mWakeIntent = PendingIntent.getService(cxt, 0, intent, 0);
-                        AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-                        alarm.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), WAKE_TIMEOUT, mWakeIntent);
+                            postNotification();
+                            mScanner.startScanning();
 
-                        mReporter.sendReports(false);
+                            // keep us awake.
+                            Context cxt = getApplicationContext();
+                            Calendar cal = Calendar.getInstance();
+                            Intent intent = new Intent(cxt, ScannerService.class);
+                            mWakeIntent = PendingIntent.getService(cxt, 0, intent, 0);
+                            AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+                            alarm.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), WAKE_TIMEOUT, mWakeIntent);
+
+                            mReporter.sendReports(false);
+                        } catch (Exception e) {
+                            Log.d(LOGTAG, "looper shat itself : " + e);
+                        }
                     }
                 });
             };
@@ -154,6 +160,8 @@ public final class ScannerService extends Service {
                         nm.cancel(NOTIFICATION_ID);
 
                         mScanner.stopScanning();
+
+                        mReporter.sendReports(true);
                     }
                 });
             }

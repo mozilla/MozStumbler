@@ -110,6 +110,7 @@ class Reporter {
                         while ((line = r.readLine()) != null) {
                           total.append(line);
                         }
+                        r.close();
 
                         Log.d(LOGTAG, "response was: \n" + total + "\n");
 

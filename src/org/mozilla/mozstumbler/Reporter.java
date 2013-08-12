@@ -19,12 +19,17 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Collection;
 
+import java.io.BufferedInputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.BufferedReader;
+
 class Reporter {
     private static final String LOGTAG          = Reporter.class.getName();
     private static final String LOCATION_URL    = "https://location.services.mozilla.com/v1/submit";
     private static final String NICKNAME_HEADER = "X-Nickname";
     private static final String TOKEN_HEADER    = "X-Token";
-    private static final int RECORD_BATCH_SIZE = 100;
+    private static final int RECORD_BATCH_SIZE  = 100;
 
     private final Context       mContext;
     private final Prefs         mPrefs;
@@ -52,23 +57,30 @@ class Reporter {
     }
 
     void shutdown() {
-      // Attempt to write out mReports
-      mPrefs.setReports(mReports.toString());
+        Log.d(LOGTAG, "shutdown");
+
+        // Attempt to write out mReports
+        mPrefs.setReports(mReports.toString());
     }
 
     void sendReports(boolean force) {
+        Log.d(LOGTAG, "sendReports: " + force);
         int count = mReports.length();
         if (count == 0) {
-          return;
+            Log.d(LOGTAG, "no reports to send");
+            return;
         }
 
         if (count < RECORD_BATCH_SIZE && !force) {
-          return;
+            Log.d(LOGTAG, "batch count not reached, and !force");
+            return;
         }
 
         new Thread(new Runnable() {
             public void run() {
                 try {
+                    Log.d(LOGTAG, "sending results...");
+
                     URL url = new URL(LOCATION_URL);
                     HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
                     try {
@@ -82,16 +94,25 @@ class Reporter {
                             urlConnection.setRequestProperty(NICKNAME_HEADER, nickname);
                         }
 
-                        JSONArray batch = new JSONArray();
-                        batch.put(mReports);
                         JSONObject wrapper = new JSONObject();
-                        wrapper.put("items", batch);
+                        wrapper.put("items", mReports);
                         String data = wrapper.toString();
                         byte[] bytes = data.getBytes();
                         urlConnection.setFixedLengthStreamingMode(bytes.length);
                         OutputStream out = new BufferedOutputStream(urlConnection.getOutputStream());
                         out.write(bytes);
                         out.flush();
+
+                        InputStream in = new BufferedInputStream(urlConnection.getInputStream());
+                        BufferedReader r = new BufferedReader(new InputStreamReader(in));
+                        StringBuilder total = new StringBuilder(in.available());
+                        String line;
+                        while ((line = r.readLine()) != null) {
+                          total.append(line);
+                        }
+                        r.close();
+
+                        Log.d(LOGTAG, "response was: \n" + total + "\n");
 
                         // clear the reports.
                         mReports = new JSONArray();
@@ -112,6 +133,7 @@ class Reporter {
     }
 
     void reportLocation(Location location, Collection<ScanResult> scanResults, int radioType, JSONArray cellInfo) {
+        Log.d(LOGTAG, "reportLocation called");
         JSONObject locInfo = new JSONObject();
         try {
             locInfo.put("time", DateTimeUtils.formatTime(location.getTime()));
@@ -148,6 +170,8 @@ class Reporter {
 
         mReports.put(locInfo);
 
+        sendReports(false);
+ 
         Intent i = new Intent(ScannerService.MESSAGE_TOPIC);
         i.putExtra(Intent.EXTRA_SUBJECT, "Reporter");
         mContext.sendBroadcast(i);

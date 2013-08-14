@@ -194,6 +194,10 @@ public final class ScannerService extends Service {
                 try {
                     if (mBinder.isScanning()) {
                         mBinder.stopScanning();
+
+                        String title = getResources().getString(R.string.service_name);
+                        String batteryLowWarning = getResources().getString(R.string.battery_low_warning);
+                        postNotification(title, batteryLowWarning, Notification.FLAG_AUTO_CANCEL);
                     }
                 } catch (RemoteException e) {
                     // TODO Copy-pasted catch block
@@ -230,7 +234,7 @@ public final class ScannerService extends Service {
         nm.cancel(NOTIFICATION_ID);
     }
 
-    private void postNotification() {
+    private void postNotification(final String title, final String text, final int flags) {
         mLooper.post(new Runnable() {
             @Override
             public void run() {
@@ -242,12 +246,8 @@ public final class ScannerService extends Service {
                 PendingIntent contentIntent = PendingIntent.getActivity(ctx, NOTIFICATION_ID, notificationIntent,
                         PendingIntent.FLAG_CANCEL_CURRENT);
 
-                Resources res = ctx.getResources();
-                String title = res.getString(R.string.service_name);
-                String text = res.getString(R.string.service_scanning);
-
                 int icon = R.drawable.ic_status_scanning;
-                Notification n = buildNotification(ctx, icon, title, text, contentIntent);
+                Notification n = buildNotification(ctx, icon, title, text, contentIntent, flags);
                 nm.notify(NOTIFICATION_ID, n);
             }
         });
@@ -269,10 +269,11 @@ public final class ScannerService extends Service {
     private static Notification buildNotification(Context context, int icon,
                                                   String contentTitle,
                                                   String contentText,
-                                                  PendingIntent contentIntent) {
+                                                  PendingIntent contentIntent,
+                                                  int flags) {
         Notification n = new Notification(icon, contentTitle, 0);
         n.setLatestEventInfo(context, contentTitle, contentText, contentIntent);
-        n.flags |= Notification.FLAG_NO_CLEAR | Notification.FLAG_ONGOING_EVENT;
+        n.flags |= flags;
         return n;
     }
 }

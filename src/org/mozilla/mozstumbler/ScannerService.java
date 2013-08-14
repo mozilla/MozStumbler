@@ -8,8 +8,10 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.res.Resources;
 import android.os.Handler;
 import android.os.IBinder;
@@ -28,6 +30,140 @@ public final class ScannerService extends Service {
     private Reporter            mReporter;
     private LooperThread        mLooper;
     private PendingIntent       mWakeIntent;
+    private BroadcastReceiver   mBatteryLowReceiver;
+
+    private final ScannerServiceInterface.Stub mBinder = new ScannerServiceInterface.Stub() {
+        @Override
+        public boolean isScanning() throws RemoteException {
+            return mScanner.isScanning();
+        };
+
+        @Override
+        public void startScanning() throws RemoteException {
+            if (mScanner.isScanning()) {
+                return;
+            }
+
+            mLooper.post(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Log.d(LOGTAG, "Running looper...");
+
+
+                        mScanner.startScanning();
+
+                        // keep us awake.
+                        Context cxt = getApplicationContext();
+                        Calendar cal = Calendar.getInstance();
+                        Intent intent = new Intent(cxt, ScannerService.class);
+                        mWakeIntent = PendingIntent.getService(cxt, 0, intent, 0);
+                        AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+                        alarm.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), WAKE_TIMEOUT, mWakeIntent);
+
+                        mReporter.sendReports(false);
+                    } catch (Exception e) {
+                        Log.d(LOGTAG, "looper shat itself : " + e);
+                    }
+                }
+            });
+        };
+
+        @Override
+        public void stopScanning() throws RemoteException {
+            if (!mScanner.isScanning()) {
+                return;
+            }
+
+            mLooper.post(new Runnable() {
+                @Override
+                public void run() {
+                    AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+                    alarm.cancel(mWakeIntent);
+
+                    NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+                    nm.cancel(NOTIFICATION_ID);
+
+                    mScanner.stopScanning();
+
+                    mReporter.sendReports(true);
+                }
+            });
+        }
+
+        @Override
+        public int numberOfReportedLocations() throws RemoteException {
+            return mReporter.numberOfReportedLocations();
+        }
+    };
+
+    private final ScannerServiceInterface.Stub mBinder = new ScannerServiceInterface.Stub() {
+        @Override
+        public boolean isScanning() throws RemoteException {
+            return mScanner.isScanning();
+        };
+
+        @Override
+        public void startScanning() throws RemoteException {
+            if (mScanner.isScanning()) {
+                return;
+            }
+
+            mLooper.post(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Log.d(LOGTAG, "Running looper...");
+
+                        String title = getResources().getString(R.string.service_name);
+                        String text = getResources().getString(R.string.service_scanning);
+                        postNotification(title, text, Notification.FLAG_NO_CLEAR | Notification.FLAG_ONGOING_EVENT);
+
+                        mScanner.startScanning();
+
+                        // keep us awake.
+                        Context cxt = getApplicationContext();
+                        Calendar cal = Calendar.getInstance();
+                        Intent intent = new Intent(cxt, ScannerService.class);
+                        mWakeIntent = PendingIntent.getService(cxt, 0, intent, 0);
+                        AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+                        alarm.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), WAKE_TIMEOUT, mWakeIntent);
+
+                        mReporter.sendReports(false);
+                    } catch (Exception e) {
+                        Log.d(LOGTAG, "looper shat itself : " + e);
+                    }
+                }
+            });
+        };
+
+        @Override
+        public void stopScanning() throws RemoteException {
+            if (!mScanner.isScanning()) {
+                return;
+            }
+
+            mLooper.post(new Runnable() {
+                @Override
+                public void run() {
+                    AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+                    alarm.cancel(mWakeIntent);
+
+                    NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+                    nm.cancel(NOTIFICATION_ID);
+
+                    mScanner.stopScanning();
+
+                    mReporter.sendReports(true);
+                }
+            });
+        }
+
+        @Override
+        public int numberOfReportedLocations() throws RemoteException {
+            return mReporter.numberOfReportedLocations();
+        }
+    };
 
     private final class LooperThread extends Thread {
         private Handler mHandler;
@@ -51,6 +187,23 @@ public final class ScannerService extends Service {
         super.onCreate();
         Log.d(LOGTAG, "onCreate");
 
+        mBatteryLowReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                Log.d(LOGTAG, "Got battery low broadcast!");
+                try {
+                    if (mBinder.isScanning()) {
+                        mBinder.stopScanning();
+                    }
+                } catch (RemoteException e) {
+                    // TODO Copy-pasted catch block
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        registerReceiver(mBatteryLowReceiver, new IntentFilter(Intent.ACTION_BATTERY_LOW));
+
         Prefs prefs = new Prefs(this);
         mReporter = new Reporter(this, prefs);
         mScanner = new Scanner(this, mReporter);
@@ -62,6 +215,9 @@ public final class ScannerService extends Service {
     public void onDestroy() {
         super.onDestroy();
         Log.d(LOGTAG, "onDestroy");
+
+        unregisterReceiver(mBatteryLowReceiver);
+        mBatteryLowReceiver = null;
 
         mLooper.interrupt();
         mLooper = null;
@@ -106,71 +262,7 @@ public final class ScannerService extends Service {
     @Override
     public IBinder onBind(Intent intent) {
         Log.d(LOGTAG, "onBind");
-
-        return new ScannerServiceInterface.Stub() {
-            @Override
-            public boolean isScanning() throws RemoteException {
-                return mScanner.isScanning();
-            };
-
-            @Override
-            public void startScanning() throws RemoteException {
-                if (mScanner.isScanning()) {
-                    return;
-                }
-
-                mLooper.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            Log.d(LOGTAG, "Running looper...");
-
-                            postNotification();
-                            mScanner.startScanning();
-
-                            // keep us awake.
-                            Context cxt = getApplicationContext();
-                            Calendar cal = Calendar.getInstance();
-                            Intent intent = new Intent(cxt, ScannerService.class);
-                            mWakeIntent = PendingIntent.getService(cxt, 0, intent, 0);
-                            AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-                            alarm.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), WAKE_TIMEOUT, mWakeIntent);
-
-                            mReporter.sendReports(false);
-                        } catch (Exception e) {
-                            Log.d(LOGTAG, "looper shat itself : " + e);
-                        }
-                    }
-                });
-            };
-
-            @Override
-            public void stopScanning() throws RemoteException {
-                if (!mScanner.isScanning()) {
-                    return;
-                }
-
-                mLooper.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-                        alarm.cancel(mWakeIntent);
-
-                        NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-                        nm.cancel(NOTIFICATION_ID);
-
-                        mScanner.stopScanning();
-
-                        mReporter.sendReports(true);
-                    }
-                });
-            }
-
-            @Override
-            public int numberOfReportedLocations() throws RemoteException {
-                return mReporter.numberOfReportedLocations();
-            }
-        };
+        return mBinder;
     }
 
     @SuppressWarnings("deprecation")

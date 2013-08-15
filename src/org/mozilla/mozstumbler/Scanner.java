@@ -147,6 +147,12 @@ class Scanner implements LocationListener {
 
         // start some kind of timer repeating..
         mIsScanning = true;
+
+        // FIXME convey "start" event here?
+        // for now all we want is to update the UI anyway
+        Intent startIntent = new Intent(ScannerService.MESSAGE_TOPIC);
+        startIntent.putExtra(Intent.EXTRA_SUBJECT, "Scanner");
+        mContext.sendBroadcast(startIntent);
     }
 
     void stopScanning() {
@@ -177,6 +183,12 @@ class Scanner implements LocationListener {
         mWifiReceiver = null;
 
         mIsScanning = false;
+
+        // FIXME convey "stop" event here?
+        // for now all we want is to update the UI anyway
+        Intent stopIntent = new Intent(ScannerService.MESSAGE_TOPIC);
+        stopIntent.putExtra(Intent.EXTRA_SUBJECT, "Scanner");
+        mContext.sendBroadcast(stopIntent);
     }
 
     boolean isScanning() {

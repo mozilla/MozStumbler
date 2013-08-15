@@ -12,5 +12,6 @@
     <string name="locations_reported">Locations reported: %1$d</string>
     <string name="gps_fixes">GPS fixes: %1$d</string>
     <string name="enter_nickname">Enter Nickname</string>
+    <string name="battery_low_warning">Battery low, MozStumbler will stop scanning</string>
 
 </resources>

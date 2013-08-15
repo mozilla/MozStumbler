@@ -142,8 +142,10 @@ class Reporter {
             locInfo.put("accuracy", (int) location.getAccuracy());
             locInfo.put("altitude", (int) location.getAltitude());
             locInfo.put("cell", cellInfo);
-            if (radioType == TelephonyManager.PHONE_TYPE_GSM) {
-                locInfo.put("radio", "gsm");
+
+            String radioTypeName = getRadioTypeName(radioType);
+            if (radioTypeName != null) {
+                locInfo.put("radio", radioTypeName);
             }
 
             JSONArray wifiInfo = new JSONArray();
@@ -200,5 +202,24 @@ class Reporter {
             sb.append(String.format("%02X", b));
         }
         return sb.toString();
+    }
+
+    private static String getRadioTypeName(int phoneType) {
+        switch (phoneType) {
+            case TelephonyManager.PHONE_TYPE_CDMA:
+                return "cdma";
+
+            case TelephonyManager.PHONE_TYPE_GSM:
+                return "gsm";
+
+            case TelephonyManager.PHONE_TYPE_NONE:
+            case TelephonyManager.PHONE_TYPE_SIP:
+                // These devices have no radio.
+                return null;
+
+            default:
+                Log.e(LOGTAG, "", new IllegalArgumentException("Unexpected PHONE_TYPE: " + phoneType));
+                return null;
+        }
     }
 }

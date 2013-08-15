@@ -84,13 +84,12 @@ class Reporter {
                     URL url = new URL(LOCATION_URL);
                     HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
                     try {
-                        String token = mPrefs.getToken().toString();
-
                         urlConnection.setDoOutput(true);
-                        urlConnection.setRequestProperty(TOKEN_HEADER, token);
 
                         String nickname = mPrefs.getNickname();
                         if (nickname != null) {
+                            String token = mPrefs.getToken().toString();
+                            urlConnection.setRequestProperty(TOKEN_HEADER, token);
                             urlConnection.setRequestProperty(NICKNAME_HEADER, nickname);
                         }
 

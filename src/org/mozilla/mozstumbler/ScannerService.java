@@ -36,72 +36,7 @@ public final class ScannerService extends Service {
         @Override
         public boolean isScanning() throws RemoteException {
             return mScanner.isScanning();
-        };
-
-        @Override
-        public void startScanning() throws RemoteException {
-            if (mScanner.isScanning()) {
-                return;
-            }
-
-            mLooper.post(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        Log.d(LOGTAG, "Running looper...");
-
-
-                        mScanner.startScanning();
-
-                        // keep us awake.
-                        Context cxt = getApplicationContext();
-                        Calendar cal = Calendar.getInstance();
-                        Intent intent = new Intent(cxt, ScannerService.class);
-                        mWakeIntent = PendingIntent.getService(cxt, 0, intent, 0);
-                        AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-                        alarm.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), WAKE_TIMEOUT, mWakeIntent);
-
-                        mReporter.sendReports(false);
-                    } catch (Exception e) {
-                        Log.d(LOGTAG, "looper shat itself : " + e);
-                    }
-                }
-            });
-        };
-
-        @Override
-        public void stopScanning() throws RemoteException {
-            if (!mScanner.isScanning()) {
-                return;
-            }
-
-            mLooper.post(new Runnable() {
-                @Override
-                public void run() {
-                    AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-                    alarm.cancel(mWakeIntent);
-
-                    NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-                    nm.cancel(NOTIFICATION_ID);
-
-                    mScanner.stopScanning();
-
-                    mReporter.sendReports(true);
-                }
-            });
         }
-
-        @Override
-        public int numberOfReportedLocations() throws RemoteException {
-            return mReporter.numberOfReportedLocations();
-        }
-    };
-
-    private final ScannerServiceInterface.Stub mBinder = new ScannerServiceInterface.Stub() {
-        @Override
-        public boolean isScanning() throws RemoteException {
-            return mScanner.isScanning();
-        };
 
         @Override
         public void startScanning() throws RemoteException {
@@ -135,7 +70,7 @@ public final class ScannerService extends Service {
                     }
                 }
             });
-        };
+        }
 
         @Override
         public void stopScanning() throws RemoteException {

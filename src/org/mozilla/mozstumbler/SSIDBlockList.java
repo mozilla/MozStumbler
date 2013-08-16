@@ -13,7 +13,6 @@ final class SSIDBlockList {
         "Clear Spot",
         "ClearSPOT",
         "ClearSpot",
-        "Ericsson",
         "Galaxy Note",
         "Galaxy S",
         "Galaxy Tab",
@@ -23,6 +22,8 @@ final class SSIDBlockList {
         "Laptop",
         "MIFI",
         "MiFi",
+        "MOBILE",
+        "Mobile",
         "PhoneAP",
         "SAMSUNG",
         "SCH-I",
@@ -30,8 +31,7 @@ final class SSIDBlockList {
         "Samsung",
         "Sprint",
         "Verizon",
-        "VirginMobile MiFi2200",
-        "WaveLAN Network",
+        "VirginMobile",
         "barnacle", // Android Barnacle Wifi Tether
         "docomo",
         "hellomoto",
@@ -42,6 +42,7 @@ final class SSIDBlockList {
         "ipad",
         "laptop",
         "mifi",
+        "mobile",
         "myLGNet",
         "myTouch 4G Hotspot",
         "samsung",
@@ -49,43 +50,34 @@ final class SSIDBlockList {
         "webOS Network",
 
         // Transportation Wi-Fi
+        "AIRBUS FREE WIFI",
+        "AmtrakConnect",
         "GBUS",
         "GBusWifi",
         "SF Shuttle Wireless",
         "SST-PR-1", // Sears Home Service van hotspot?!
         "Shuttle",
         "Trimble ",
-        "VTA Free Wi-Fi", // VTA light rail
+        "VTA Free Wi-Fi",
         "ac_transit_wifi_bus",
         "airbusA380",
         "amtrak_",
         "shuttle",
-
-        // "Viral" SSIDs that infect some Windows laptops
-        "Adhoc",
-        "Free Internet Access",
-        "Free Internet!",
-        "Jet Blue hot spot",
-        "US Airways Free WiFi",
-        "adhoc",
-        "hpsetup",
-        "tsunami",
     };
 
     private static final String[] SUFFIX_LIST = {
         // Mobile devices
         " ASUS",
         "-ASUS",
+        "_ASUS",
         "Laptop",
+        "MIFI",
         "MacBook",
         "MacBook Pro",
-        "MIFI",
         "MiFi",
         "Mifi",
         "MyWi",
         "Tether",
-        "_ASUS",
-
         "iPad",
         "iPhone",
         "ipad",

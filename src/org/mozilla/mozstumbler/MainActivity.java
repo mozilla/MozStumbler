@@ -101,7 +101,10 @@ public final class MainActivity extends Activity {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
                     String newNickname = v.getText().toString().trim();
-                    mPrefs.setNickname(newNickname);
+                    String placeholderText = getResources().getString(R.string.enter_nickname);
+                    if (!newNickname.equals(placeholderText)) {
+                        mPrefs.setNickname(newNickname);
+                    }
                 }
                 return false;
             }

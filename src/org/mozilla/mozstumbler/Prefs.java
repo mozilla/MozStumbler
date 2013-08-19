@@ -45,11 +45,19 @@ final class Prefs {
     }
 
     String getNickname() {
-        return getStringPref(NICKNAME_PREF);
+        String nickname = getStringPref(NICKNAME_PREF);
+
+        // Remove old empty nickname prefs.
+        if (nickname != null && nickname.length() == 0) {
+            deleteNickname();
+            nickname = null;
+        }
+
+        return nickname;
     }
 
     void setNickname(String nickname) {
-        if (nickname != null) {
+        if (nickname != null && nickname.length() > 0) {
             setStringPref(NICKNAME_PREF, nickname);
         } else {
             deleteNickname();
@@ -67,7 +75,7 @@ final class Prefs {
     String getReports() {
       return getStringPref(REPORTS_PREF);
     }
- 
+
     private String getStringPref(String key) {
         return mPrefs.getString(key, null);
     }

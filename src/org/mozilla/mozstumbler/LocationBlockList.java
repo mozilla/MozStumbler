@@ -30,7 +30,7 @@ final class LocationBlockList {
             block = true;
             Log.w(LOGTAG, "Bogus latitude,longitude: 0,0");
         } else {
-            if (latitude < -180 || latitude > 180) {
+            if (latitude < -90 || latitude > 90) {
                 block = true;
                 Log.w(LOGTAG, "Bogus latitude: " + latitude);
             }

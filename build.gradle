@@ -31,7 +31,6 @@ android {
     }
 
     buildTypes {
-
         debug {
             jniDebugBuild true
         }
@@ -54,13 +53,11 @@ tasks.withType(JavaCompile) {
     options.compilerArgs = ['-Xlint:all', '-Werror']
 }
 
-
 if (hasProperty('StoreFile')) {
-  android.signingConfigs.release.storeFile = file(StoreFile)
-  android.signingConfigs.release.storePassword = StorePassword
-  android.signingConfigs.release.keyAlias = KeyAlias
-  android.signingConfigs.release.keyPassword = KeyPassword
+    android.signingConfigs.release.storeFile = file(StoreFile)
+    android.signingConfigs.release.storePassword = StorePassword
+    android.signingConfigs.release.keyAlias = KeyAlias
+    android.signingConfigs.release.keyPassword = KeyPassword
 } else {
-  android.buildTypes.release.signingConfig = null
+    android.buildTypes.release.signingConfig = null
 }
- 

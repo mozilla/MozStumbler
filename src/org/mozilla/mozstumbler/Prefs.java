@@ -2,7 +2,7 @@ package org.mozilla.mozstumbler;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.Build;
+import android.os.Build.VERSION;
 import android.util.Log;
 
 import java.util.UUID;
@@ -14,10 +14,10 @@ final class Prefs {
     private static final String     TOKEN_PREF    = "token";
     private static final String     REPORTS_PREF  = "reports";
 
-    private final SharedPreferences mPrefs;
+    private final Context mContext;
 
     Prefs(Context context) {
-        mPrefs = context.getSharedPreferences(PREFS_FILE, Context.MODE_PRIVATE);
+        mContext = context;
     }
 
     UUID getToken() {
@@ -77,18 +77,30 @@ final class Prefs {
     }
 
     private String getStringPref(String key) {
-        return mPrefs.getString(key, null);
+        return getPrefs().getString(key, null);
     }
 
     private void setStringPref(String key, String value) {
-        SharedPreferences.Editor editor = mPrefs.edit();
+        SharedPreferences.Editor editor = getPrefs().edit();
         editor.putString(key, value);
-        editor.commit();
+        apply(editor);
     }
 
     private void deleteStringPref(String key) {
-        SharedPreferences.Editor editor = mPrefs.edit();
+        SharedPreferences.Editor editor = getPrefs().edit();
         editor.remove(key);
-        editor.commit();
+        apply(editor);
+    }
+
+    private static void apply(SharedPreferences.Editor editor) {
+        if (VERSION.SDK_INT >= 9) {
+            editor.apply();
+        } else if (!editor.commit()) {
+            Log.e(LOGTAG, "", new IllegalStateException("commit() failed?!"));
+        }
+    }
+
+    private SharedPreferences getPrefs() {
+        return mContext.getSharedPreferences(PREFS_FILE, Context.MODE_MULTI_PROCESS | Context.MODE_PRIVATE);
     }
 }

@@ -2,7 +2,7 @@ package org.mozilla.mozstumbler;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.Build;
+import android.os.Build.VERSION;
 import android.util.Log;
 
 import java.util.UUID;
@@ -83,13 +83,21 @@ final class Prefs {
     private void setStringPref(String key, String value) {
         SharedPreferences.Editor editor = getPrefs().edit();
         editor.putString(key, value);
-        editor.commit();
+        apply(editor);
     }
 
     private void deleteStringPref(String key) {
         SharedPreferences.Editor editor = getPrefs().edit();
         editor.remove(key);
-        editor.commit();
+        apply(editor);
+    }
+
+    private static void apply(SharedPreferences.Editor editor) {
+        if (VERSION.SDK_INT >= 9) {
+            editor.apply();
+        } else if (!editor.commit()) {
+            Log.e(LOGTAG, "", new IllegalStateException("commit() failed?!"));
+        }
     }
 
     private SharedPreferences getPrefs() {

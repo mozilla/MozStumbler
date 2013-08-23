@@ -222,7 +222,15 @@ public final class MainActivity extends Activity {
         if (Build.VERSION.SDK_INT < 9) {
             return;
         }
-        StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().detectAll().penaltyLog().build());
-        StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder().detectAll().penaltyLog().build());
+
+        StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
+                                                              .detectAll()
+                                                              .permitDiskReads()
+                                                              .permitDiskWrites()
+                                                              .penaltyLog().build());
+
+        StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
+                                                      .detectAll()
+                                                      .penaltyLog().build());
     }
 }

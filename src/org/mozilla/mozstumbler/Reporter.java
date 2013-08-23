@@ -11,18 +11,17 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Collection;
-
-import java.io.BufferedInputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.BufferedReader;
 
 class Reporter {
     private static final String LOGTAG          = Reporter.class.getName();
@@ -41,7 +40,6 @@ class Reporter {
         mContext = context;
         mPrefs = prefs;
 
-        // Attempt to write out mReports
         String storedReports = mPrefs.getReports();
         try {
             mReports = new JSONArray(storedReports);
@@ -128,7 +126,7 @@ class Reporter {
                     Log.e(LOGTAG, "error submitting data", ex);
                 }
             }
-        }).start();      
+        }).start();
     }
 
     void reportLocation(Location location, Collection<ScanResult> scanResults, int radioType, JSONArray cellInfo) {
@@ -172,7 +170,7 @@ class Reporter {
         mReports.put(locInfo);
 
         sendReports(false);
- 
+
         Intent i = new Intent(ScannerService.MESSAGE_TOPIC);
         i.putExtra(Intent.EXTRA_SUBJECT, "Reporter");
         mContext.sendBroadcast(i);

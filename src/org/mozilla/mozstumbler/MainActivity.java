@@ -152,7 +152,6 @@ public final class MainActivity extends Activity {
     }
 
     protected void updateUI() {
-
         // TODO time this to make sure we're not blocking too long on mConnectionRemote
         // if we care, we can bundle this into one call -- or use android to remember
         // the state before the rotation.

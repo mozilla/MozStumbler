@@ -156,6 +156,11 @@ public final class MainActivity extends Activity {
         // if we care, we can bundle this into one call -- or use android to remember
         // the state before the rotation.
 
+        if (mConnectionRemote == null) {
+            Log.e(LOGTAG, "", new IllegalStateException("mConnectionRemote should be non-null"));
+            return;
+        }
+
         Log.d(LOGTAG, "Updating UI");
         boolean scanning = false;
         try {

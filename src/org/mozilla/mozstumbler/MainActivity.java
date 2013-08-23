@@ -172,17 +172,17 @@ public final class MainActivity extends Activity {
             scanningBtn.setText(R.string.start_scanning);
         }
 
-        int numberOfReports = 0;
+        int APs = 0;
         try {
-            numberOfReports = mConnectionRemote.numberOfReportedLocations();
+            APs = mConnectionRemote.getAPCount();
         } catch (RemoteException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
 
         TextView reportedTextView = (TextView) findViewById(R.id.reportedTextView);
-        String reportedString = getResources().getString(R.string.locations_reported);
-        reportedString = String.format(reportedString, numberOfReports);
+        String reportedString = getResources().getString(R.string.wifi_access_points);
+        reportedString = String.format(reportedString, APs);
         reportedTextView.setText(reportedString);
 
         String fixesString = getResources().getString(R.string.gps_fixes);

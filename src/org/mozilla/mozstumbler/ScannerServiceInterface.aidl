@@ -4,5 +4,5 @@ interface ScannerServiceInterface {
     boolean isScanning();
     void startScanning();
     void stopScanning();
-    int numberOfReportedLocations();
+    int getAPCount();
 }

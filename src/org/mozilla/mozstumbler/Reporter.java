@@ -22,6 +22,8 @@ import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 class Reporter {
     private static final String LOGTAG          = Reporter.class.getName();
@@ -33,6 +35,7 @@ class Reporter {
     private final Context       mContext;
     private final Prefs         mPrefs;
     private final MessageDigest mSHA1;
+    private final Set<String>   mAPs = new HashSet<String>();
 
     private JSONArray mReports;
 
@@ -158,6 +161,9 @@ class Reporter {
                     obj.put("signal", ap.level);
                     wifiInfo.put(obj);
 
+                    // Since mAPs will grow without bound, strip BSSID colons to reduce memory usage.
+                    mAPs.add(ap.BSSID.replace(":", ""));
+
                     Log.v(LOGTAG, "Reporting: BSSID=" + ap.BSSID + ", SSID=\"" + ap.SSID + "\", Signal=" + ap.level);
                 }
             }
@@ -188,8 +194,8 @@ class Reporter {
         return true;
     }
 
-    public int numberOfReportedLocations() {
-        return mReports.length();
+    public int getAPCount() {
+        return mAPs.size();
     }
 
     private String hashScanResult(ScanResult ap) {

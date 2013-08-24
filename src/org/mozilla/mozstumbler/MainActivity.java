@@ -152,10 +152,14 @@ public final class MainActivity extends Activity {
     }
 
     protected void updateUI() {
-
         // TODO time this to make sure we're not blocking too long on mConnectionRemote
         // if we care, we can bundle this into one call -- or use android to remember
         // the state before the rotation.
+
+        if (mConnectionRemote == null) {
+            Log.e(LOGTAG, "", new IllegalStateException("mConnectionRemote should be non-null"));
+            return;
+        }
 
         Log.d(LOGTAG, "Updating UI");
         boolean scanning = false;
@@ -173,17 +177,17 @@ public final class MainActivity extends Activity {
             scanningBtn.setText(R.string.start_scanning);
         }
 
-        int numberOfReports = 0;
+        int APs = 0;
         try {
-            numberOfReports = mConnectionRemote.numberOfReportedLocations();
+            APs = mConnectionRemote.getAPCount();
         } catch (RemoteException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
 
         TextView reportedTextView = (TextView) findViewById(R.id.reportedTextView);
-        String reportedString = getResources().getString(R.string.locations_reported);
-        reportedString = String.format(reportedString, numberOfReports);
+        String reportedString = getResources().getString(R.string.wifi_access_points);
+        reportedString = String.format(reportedString, APs);
         reportedTextView.setText(reportedString);
 
         String fixesString = getResources().getString(R.string.gps_fixes);

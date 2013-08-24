@@ -11,18 +11,19 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Collection;
-
-import java.io.BufferedInputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.BufferedReader;
+import java.util.HashSet;
+import java.util.Set;
 
 class Reporter {
     private static final String LOGTAG          = Reporter.class.getName();
@@ -34,6 +35,7 @@ class Reporter {
     private final Context       mContext;
     private final Prefs         mPrefs;
     private final MessageDigest mSHA1;
+    private final Set<String>   mAPs = new HashSet<String>();
 
     private JSONArray mReports;
 
@@ -41,7 +43,6 @@ class Reporter {
         mContext = context;
         mPrefs = prefs;
 
-        // Attempt to write out mReports
         String storedReports = mPrefs.getReports();
         try {
             mReports = new JSONArray(storedReports);
@@ -128,7 +129,7 @@ class Reporter {
                     Log.e(LOGTAG, "error submitting data", ex);
                 }
             }
-        }).start();      
+        }).start();
     }
 
     void reportLocation(Location location, Collection<ScanResult> scanResults, int radioType, JSONArray cellInfo) {
@@ -160,6 +161,9 @@ class Reporter {
                     obj.put("signal", ap.level);
                     wifiInfo.put(obj);
 
+                    // Since mAPs will grow without bound, strip BSSID colons to reduce memory usage.
+                    mAPs.add(ap.BSSID.replace(":", ""));
+
                     Log.v(LOGTAG, "Reporting: BSSID=" + ap.BSSID + ", SSID=\"" + ap.SSID + "\", Signal=" + ap.level);
                 }
             }
@@ -172,7 +176,7 @@ class Reporter {
         mReports.put(locInfo);
 
         sendReports(false);
- 
+
         Intent i = new Intent(ScannerService.MESSAGE_TOPIC);
         i.putExtra(Intent.EXTRA_SUBJECT, "Reporter");
         mContext.sendBroadcast(i);
@@ -190,8 +194,8 @@ class Reporter {
         return true;
     }
 
-    public int numberOfReportedLocations() {
-        return mReports.length();
+    public int getAPCount() {
+        return mAPs.size();
     }
 
     private String hashScanResult(ScanResult ap) {

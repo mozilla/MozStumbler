@@ -14,4 +14,7 @@
     <string name="enter_nickname">Enter Nickname</string>
     <string name="battery_low_warning">Battery low, MozStumbler will stop scanning</string>
 
+
+    <string name="notice">blah legal blah blah</string>
+
 </resources>

@@ -23,7 +23,7 @@
            android:layout_height="wrap_content"
            android:layout_alignParentLeft="true"
            android:layout_below="@+id/gps_fixes"
-           android:text="@string/locations_reported"
+           android:text="@string/wifi_access_points"
            android:textAppearance="?android:attr/textAppearanceMedium" />
 
        <EditText

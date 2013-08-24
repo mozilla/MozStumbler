@@ -95,8 +95,8 @@ public final class ScannerService extends Service {
         }
 
         @Override
-        public int numberOfReportedLocations() throws RemoteException {
-            return mReporter.numberOfReportedLocations();
+        public int getAPCount() throws RemoteException {
+            return mReporter.getAPCount();
         }
     };
 

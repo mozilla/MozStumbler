@@ -77,6 +77,16 @@ class Reporter {
             return;
         }
 
+        JSONArray reports = mReports;
+        mReports = new JSONArray();
+
+        String nickname = mPrefs.getNickname();
+        String token = mPrefs.getToken().toString();
+        spawnReporterThread(reports, nickname, token);
+    }
+
+    private static void spawnReporterThread(final JSONArray reports, final String nickname,
+                                            final String token) {
         new Thread(new Runnable() {
             public void run() {
                 try {
@@ -87,15 +97,13 @@ class Reporter {
                     try {
                         urlConnection.setDoOutput(true);
 
-                        String nickname = mPrefs.getNickname();
                         if (nickname != null) {
-                            String token = mPrefs.getToken().toString();
                             urlConnection.setRequestProperty(TOKEN_HEADER, token);
                             urlConnection.setRequestProperty(NICKNAME_HEADER, nickname);
                         }
 
                         JSONObject wrapper = new JSONObject();
-                        wrapper.put("items", mReports);
+                        wrapper.put("items", reports);
                         String data = wrapper.toString();
                         byte[] bytes = data.getBytes();
                         urlConnection.setFixedLengthStreamingMode(bytes.length);
@@ -113,10 +121,6 @@ class Reporter {
                         r.close();
 
                         Log.d(LOGTAG, "response was: \n" + total + "\n");
-
-                        // clear the reports.
-                        mReports = new JSONArray();
-
                         Log.d(LOGTAG, "uploaded data: " + data + " to " + LOCATION_URL);
                     } catch (JSONException jsonex) {
                         Log.e(LOGTAG, "error wrapping data as a batch", jsonex);
@@ -174,7 +178,6 @@ class Reporter {
         }
 
         mReports.put(locInfo);
-
         sendReports(false);
 
         Intent i = new Intent(ScannerService.MESSAGE_TOPIC);

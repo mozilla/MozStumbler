@@ -33,7 +33,7 @@ class Scanner implements LocationListener {
     private static final String LOGTAG              = Scanner.class.getName();
     private static final long   GEO_MIN_UPDATE_TIME     = 1000;                   // milliseconds
     private static final float  GEO_MIN_UPDATE_DISTANCE = 10;                     // meters
-    private static final long   WIFI_MIN_UPDATE_TIME    = 5000;                   // milliseconds
+    private static final long   WIFI_MIN_UPDATE_TIME    = 1000;                   // milliseconds
 
     private static final boolean DISABLE_GPS_AIDING = true;
 
@@ -68,6 +68,8 @@ class Scanner implements LocationListener {
         // a copy (scanResult) to store the correct BSSID?
 
         for (ScanResult scanResult : mWifiScanResults) {
+          Log.d(LOGTAG, "   scanResult = " + scanResult.BSSID);
+
           String BSSID = BSSIDBlockList.canonicalizeBSSID(scanResult.BSSID);
           if (BSSID == null) {
             Log.e(LOGTAG, "", new IllegalArgumentException("Unexpected BSSID: " + scanResult.BSSID));

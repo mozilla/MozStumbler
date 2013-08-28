@@ -2,6 +2,9 @@ package org.mozilla.mozstumbler;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.location.Location;
 import android.net.wifi.ScanResult;
 import android.telephony.TelephonyManager;
@@ -30,7 +33,10 @@ class Reporter {
     private static final String LOCATION_URL    = "https://location.services.mozilla.com/v1/submit";
     private static final String NICKNAME_HEADER = "X-Nickname";
     private static final String TOKEN_HEADER    = "X-Token";
+    private static final String USER_AGENT_HEADER = "User-Agent";
     private static final int RECORD_BATCH_SIZE  = 100;
+
+    private static String       MOZSTUMBLER_USER_AGENT_STRING;
 
     private final Context       mContext;
     private final Prefs         mPrefs;
@@ -42,6 +48,8 @@ class Reporter {
     Reporter(Context context, Prefs prefs) {
         mContext = context;
         mPrefs = prefs;
+
+        MOZSTUMBLER_USER_AGENT_STRING = getUserAgentString();
 
         String storedReports = mPrefs.getReports();
         try {
@@ -96,6 +104,7 @@ class Reporter {
                     HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
                     try {
                         urlConnection.setDoOutput(true);
+                        urlConnection.setRequestProperty(USER_AGENT_HEADER, MOZSTUMBLER_USER_AGENT_STRING);
 
                         if (nickname != null) {
                             urlConnection.setRequestProperty(TOKEN_HEADER, token);
@@ -227,5 +236,20 @@ class Reporter {
                 Log.e(LOGTAG, "", new IllegalArgumentException("Unexpected PHONE_TYPE: " + phoneType));
                 return null;
         }
+    }
+
+    private String getUserAgentString() {
+        String appName = mContext.getString(R.string.app_name);
+
+        String versionName;
+        try {
+            PackageManager pm = mContext.getPackageManager();
+            versionName = pm.getPackageInfo("org.mozilla.mozstumbler", 0).versionName;
+        } catch (NameNotFoundException e) {
+            throw new IllegalArgumentException(e);
+        }
+
+        // "MozStumbler/X.Y.Z"
+        return appName + '/' + versionName;
     }
 }

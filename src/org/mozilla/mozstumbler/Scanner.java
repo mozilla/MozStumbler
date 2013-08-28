@@ -221,15 +221,18 @@ class Scanner implements LocationListener {
         } else {
             Log.d(LOGTAG, "New location: " + location);
 
-            mReporter.reportLocation(location,
-                                     getWifiInfo(),
-                                     mRadioType,
-                                     getCellInfo());
+            Collection<ScanResult> scanResults = getWifiInfo();
+            JSONArray cellInfo = getCellInfo();
+
+            if ((scanResults == null || scanResults.size() == 0) && cellInfo == null) {
+                return;
+            }
+
+            mReporter.reportLocation(location, scanResults, mRadioType, cellInfo);
         }
     }
 
     private Collection<ScanResult> getWifiInfo() {
-
         Log.d(LOGTAG, "getWifiInfo() called at " + System.currentTimeMillis());
         if (System.currentTimeMillis() - mWifiScanResultsTime < 5000 && mWifiScanResults != null) {
           return mWifiScanResults;

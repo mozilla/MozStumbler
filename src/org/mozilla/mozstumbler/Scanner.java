@@ -49,11 +49,15 @@ class Scanner implements LocationListener {
     private long                   mWifiScanResultsTime;
     private Collection<ScanResult> mWifiScanResults;
 
-    private GpsStatus.Listener mGPSListener;
+    private GpsStatus.Listener  mGPSListener;
+    private final int           mRadioType;
 
     Scanner(Context context, Reporter reporter) {
         mContext = context;
         mReporter = reporter;
+
+        TelephonyManager tm = getTelephonyManager();
+        mRadioType = (tm != null) ? tm.getPhoneType() : TelephonyManager.PHONE_TYPE_NONE;
     }
 
     private class WifiReceiver extends BroadcastReceiver {
@@ -219,7 +223,7 @@ class Scanner implements LocationListener {
 
             mReporter.reportLocation(location,
                                      getWifiInfo(),
-                                     getRadioType(),
+                                     mRadioType,
                                      getCellInfo());
         }
     }
@@ -232,13 +236,6 @@ class Scanner implements LocationListener {
         }
         Log.d(LOGTAG, "getWifiInfo() called and there is no (or only old) scan results");
         return null;
-    }
-
-    private int getRadioType() {
-      TelephonyManager tm = getTelephonyManager();
-      if (tm == null)
-        return TelephonyManager.PHONE_TYPE_NONE;
-      return tm.getPhoneType();
     }
 
     private JSONArray getCellInfo() {

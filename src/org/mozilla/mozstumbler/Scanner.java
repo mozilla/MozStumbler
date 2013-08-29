@@ -49,11 +49,15 @@ class Scanner implements LocationListener {
     private long                   mWifiScanResultsTime;
     private Collection<ScanResult> mWifiScanResults;
 
-    private GpsStatus.Listener mGPSListener;
+    private GpsStatus.Listener  mGPSListener;
+    private final int           mRadioType;
 
     Scanner(Context context, Reporter reporter) {
         mContext = context;
         mReporter = reporter;
+
+        TelephonyManager tm = getTelephonyManager();
+        mRadioType = (tm != null) ? tm.getPhoneType() : TelephonyManager.PHONE_TYPE_NONE;
     }
 
     private class WifiReceiver extends BroadcastReceiver {
@@ -219,28 +223,24 @@ class Scanner implements LocationListener {
         } else {
             Log.d(LOGTAG, "New location: " + location);
 
-            mReporter.reportLocation(location,
-                                     getWifiInfo(),
-                                     getRadioType(),
-                                     getCellInfo());
+            Collection<ScanResult> scanResults = getWifiInfo();
+            JSONArray cellInfo = getCellInfo();
+
+            if ((scanResults == null || scanResults.size() == 0) && cellInfo == null) {
+                return;
+            }
+
+            mReporter.reportLocation(location, scanResults, mRadioType, cellInfo);
         }
     }
 
     private Collection<ScanResult> getWifiInfo() {
-
         Log.d(LOGTAG, "getWifiInfo() called at " + System.currentTimeMillis());
         if (System.currentTimeMillis() - mWifiScanResultsTime < 5000 && mWifiScanResults != null) {
           return mWifiScanResults;
         }
         Log.d(LOGTAG, "getWifiInfo() called and there is no (or only old) scan results");
         return null;
-    }
-
-    private int getRadioType() {
-      TelephonyManager tm = getTelephonyManager();
-      if (tm == null)
-        return TelephonyManager.PHONE_TYPE_NONE;
-      return tm.getPhoneType();
     }
 
     private JSONArray getCellInfo() {

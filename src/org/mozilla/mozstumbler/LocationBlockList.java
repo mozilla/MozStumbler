@@ -8,7 +8,7 @@ final class LocationBlockList {
     private static final double MAX_ALTITUDE    = 8848;      // Mount Everest's altitude in meters
     private static final double MIN_ALTITUDE    = -418;      // Dead Sea's altitude in meters
     private static final float  MAX_SPEED       = 340.29f;   // Mach 1 in meters/second
-    private static final float  MIN_ACCURACY    = 1000;      // meter radius
+    private static final float  MIN_ACCURACY    = 500;       // meter radius
     private static final long   MIN_TIMESTAMP   = 946684801; // 2000-01-01 00:00:01
 
     private LocationBlockList() {

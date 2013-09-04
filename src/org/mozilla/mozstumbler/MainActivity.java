@@ -168,8 +168,7 @@ public final class MainActivity extends Activity {
         try {
             scanning = mConnectionRemote.isScanning();
         } catch (RemoteException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            Log.e(LOGTAG, "", e);
         }
 
         Button scanningBtn = (Button) findViewById(R.id.toggle_scanning);
@@ -183,8 +182,7 @@ public final class MainActivity extends Activity {
         try {
             APs = mConnectionRemote.getAPCount();
         } catch (RemoteException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            Log.e(LOGTAG, "", e);
         }
 
         TextView reportedTextView = (TextView) findViewById(R.id.reportedTextView);

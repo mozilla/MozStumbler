@@ -184,10 +184,10 @@ public final class MainActivity extends Activity {
             Log.e(LOGTAG, "", e);
         }
 
-        TextView reportedTextView = (TextView) findViewById(R.id.reportedTextView);
-        String reportedString = getResources().getString(R.string.wifi_access_points);
-        reportedString = String.format(reportedString, APs);
-        reportedTextView.setText(reportedString);
+        String APsScannedString = getResources().getString(R.string.wifi_access_points);
+        APsScannedString = String.format(APsScannedString, APs);
+        TextView APsScanned = (TextView) findViewById(R.id.wifi_access_points);
+        APsScanned.setText(APsScannedString);
 
         String fixesString = getResources().getString(R.string.gps_satellites);
         fixesString = String.format(fixesString, mGpsFixes);

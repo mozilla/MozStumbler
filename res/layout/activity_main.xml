@@ -18,7 +18,7 @@
            android:textAppearance="?android:attr/textAppearanceMedium" />
 
        <TextView
-           android:id="@+id/reportedTextView"
+           android:id="@+id/wifi_access_points"
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"
            android:layout_alignParentLeft="true"
@@ -30,7 +30,7 @@
            android:id="@+id/edit_nickname"
            android:layout_width="match_parent"
            android:layout_height="wrap_content"
-           android:layout_below="@+id/reportedTextView"
+           android:layout_below="@+id/wifi_access_points"
            android:inputType="textPersonName"
            android:selectAllOnFocus="true"
            android:text="@string/enter_nickname" >

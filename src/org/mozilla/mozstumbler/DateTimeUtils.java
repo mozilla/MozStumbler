@@ -7,9 +7,9 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
 final class DateTimeUtils {
-    private static final DateFormat mISO8601Format       = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
+    private static final DateFormat mISO8601Format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
 
-    static final long               MILLISECONDS_PER_DAY = 86400000;                                     // milliseconds/day
+    static final long MILLISECONDS_PER_DAY = 86400000;  // milliseconds/day
 
     private DateTimeUtils() {
     }
@@ -21,6 +21,10 @@ final class DateTimeUtils {
 
     static String formatTime(long time) {
         return formatDate(new Date(time));
+    }
+
+    static String formatTimeForLocale(long time) {
+        return DateFormat.getDateTimeInstance().format(time);
     }
 
     static String formatCurrentTime() {

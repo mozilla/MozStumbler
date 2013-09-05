@@ -103,6 +103,11 @@ public final class ScannerService extends Service {
         public int getAPCount() throws RemoteException {
             return mReporter.getAPCount();
         }
+
+        @Override
+        public long getLastUploadTime() throws RemoteException {
+            return mReporter.getLastUploadTime();
+        }
     };
 
     private final class LooperThread extends Thread {

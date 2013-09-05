@@ -35,15 +35,33 @@
            android:text="@string/wifi_access_points"
            android:textAppearance="?android:attr/textAppearanceMedium" />
 
+       <TextView
+           android:id="@+id/last_upload_time"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:layout_alignParentLeft="true"
+           android:layout_below="@+id/wifi_access_points"
+           android:text="@string/last_upload_time"
+           android:textAppearance="?android:attr/textAppearanceMedium" />
+
        <EditText
            android:id="@+id/edit_nickname"
            android:layout_width="match_parent"
            android:layout_height="wrap_content"
-           android:layout_below="@+id/wifi_access_points"
+           android:layout_below="@+id/last_upload_time"
            android:inputType="textPersonName"
            android:selectAllOnFocus="true"
            android:text="@string/enter_nickname" >
        </EditText>
+
+       <Button
+           android:id="@+id/view_leaderboard"
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:layout_alignParentLeft="true"
+           android:layout_below="@+id/edit_nickname"
+           android:onClick="onClick_ViewLeaderboard"
+           android:text="@string/view_leaderboard" />
 
        <Button
            android:id="@+id/toggle_scanning"
@@ -56,14 +74,5 @@
            android:onClick="onClick_ToggleScanning"
            android:text="@string/start_scanning"
            android:textAppearance="?android:attr/textAppearanceLarge" />
-
-       <Button
-           android:id="@+id/view_leaderboard"
-           android:layout_width="match_parent"
-           android:layout_height="wrap_content"
-           android:layout_alignParentLeft="true"
-           android:layout_below="@+id/edit_nickname"
-           android:onClick="onClick_ViewLeaderboard"
-           android:text="@string/view_leaderboard" />
 
 </RelativeLayout>

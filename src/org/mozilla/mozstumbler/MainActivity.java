@@ -179,16 +179,23 @@ public final class MainActivity extends Activity {
 
         int locationsScanned = 0;
         int APs = 0;
+        long lastUploadTime = 0;
         try {
             locationsScanned = mConnectionRemote.getLocationCount();
             APs = mConnectionRemote.getAPCount();
+            lastUploadTime = mConnectionRemote.getLastUploadTime();
         } catch (RemoteException e) {
             Log.e(LOGTAG, "", e);
         }
 
+        String lastUploadTimeString = (lastUploadTime > 0)
+                                      ? DateTimeUtils.formatTimeForLocale(lastUploadTime)
+                                      : "-";
+
         formatTextView(R.id.gps_satellites, R.string.gps_satellites, mGpsFixes);
         formatTextView(R.id.wifi_access_points, R.string.wifi_access_points, APs);
         formatTextView(R.id.locations_scanned, R.string.locations_scanned, locationsScanned);
+        formatTextView(R.id.last_upload_time, R.string.last_upload_time, lastUploadTimeString);
     }
 
     public void onClick_ToggleScanning(View v) throws RemoteException {

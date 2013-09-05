@@ -14,7 +14,6 @@ final class Prefs {
     private static final String     LOGTAG        = Prefs.class.getName();
     private static final String     PREFS_FILE    = Prefs.class.getName();
     private static final String     NICKNAME_PREF = "nickname";
-    private static final String     TOKEN_PREF    = "token";
     private static final String     REPORTS_PREF  = "reports";
     private static final String     NOTICE_PREF   = "notice";
 
@@ -31,30 +30,6 @@ final class Prefs {
             mCurrentVersion = 0;
         }
         mContext = context;
-    }
-
-    UUID getToken() {
-        UUID token = null;
-
-        String pref = getStringPref(TOKEN_PREF);
-        if (pref != null) {
-            try {
-                token = UUID.fromString(pref);
-            } catch (IllegalArgumentException e) {
-                Log.e(LOGTAG, "bad token pref: " + pref, e);
-            }
-        }
-
-        if (token == null) {
-            token = UUID.randomUUID();
-            setStringPref(TOKEN_PREF, token.toString());
-        }
-
-        return token;
-    }
-
-    void deleteToken() {
-        deleteStringPref(TOKEN_PREF);
     }
 
     String getNickname() {

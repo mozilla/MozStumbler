@@ -135,8 +135,7 @@ public final class ScannerService extends Service {
                         postNotification(title, batteryLowWarning, Notification.FLAG_AUTO_CANCEL);
                     }
                 } catch (RemoteException e) {
-                    // TODO Copy-pasted catch block
-                    e.printStackTrace();
+                    Log.e(LOGTAG, "", e);
                 }
             }
         };

@@ -160,7 +160,6 @@ public final class MainActivity extends Activity {
         // the state before the rotation.
 
         if (mConnectionRemote == null) {
-            Log.e(LOGTAG, "", new IllegalStateException("mConnectionRemote should be non-null"));
             return;
         }
 
@@ -169,8 +168,7 @@ public final class MainActivity extends Activity {
         try {
             scanning = mConnectionRemote.isScanning();
         } catch (RemoteException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            Log.e(LOGTAG, "", e);
         }
 
         Button scanningBtn = (Button) findViewById(R.id.toggle_scanning);
@@ -184,8 +182,7 @@ public final class MainActivity extends Activity {
         try {
             APs = mConnectionRemote.getAPCount();
         } catch (RemoteException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            Log.e(LOGTAG, "", e);
         }
 
         TextView reportedTextView = (TextView) findViewById(R.id.reportedTextView);
@@ -201,6 +198,10 @@ public final class MainActivity extends Activity {
     }
 
     public void onClick_ToggleScanning(View v) throws RemoteException {
+        if (mConnectionRemote == null) {
+            return;
+        }
+
         boolean scanning = mConnectionRemote.isScanning();
         Log.d(LOGTAG, "Connection remote return: isScanning() = " + scanning);
 

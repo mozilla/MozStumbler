@@ -41,7 +41,7 @@ class Reporter {
     private final Prefs         mPrefs;
     private final MessageDigest mSHA1;
     private final Set<String>   mAPs = new HashSet<String>();
-
+    private int mLocationCount;
     private JSONArray mReports;
 
     Reporter(Context context, Prefs prefs) {
@@ -182,6 +182,7 @@ class Reporter {
             return;
         }
 
+        mLocationCount++;
         mReports.put(locInfo);
         sendReports(false);
 
@@ -200,6 +201,10 @@ class Reporter {
             return false;
         }
         return true;
+    }
+
+    public int getLocationCount() {
+        return mLocationCount;
     }
 
     public int getAPCount() {

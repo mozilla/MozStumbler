@@ -18,11 +18,20 @@
            android:textAppearance="?android:attr/textAppearanceMedium" />
 
        <TextView
-           android:id="@+id/wifi_access_points"
+           android:id="@+id/locations_scanned"
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"
            android:layout_alignParentLeft="true"
            android:layout_below="@+id/gps_satellites"
+           android:text="@string/locations_scanned"
+           android:textAppearance="?android:attr/textAppearanceMedium" />
+
+       <TextView
+           android:id="@+id/wifi_access_points"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:layout_alignParentLeft="true"
+           android:layout_below="@+id/locations_scanned"
            android:text="@string/wifi_access_points"
            android:textAppearance="?android:attr/textAppearanceMedium" />
 

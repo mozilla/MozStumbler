@@ -177,8 +177,10 @@ public final class MainActivity extends Activity {
             scanningBtn.setText(R.string.start_scanning);
         }
 
+        int locationsScanned = 0;
         int APs = 0;
         try {
+            locationsScanned = mConnectionRemote.getLocationCount();
             APs = mConnectionRemote.getAPCount();
         } catch (RemoteException e) {
             Log.e(LOGTAG, "", e);
@@ -186,6 +188,7 @@ public final class MainActivity extends Activity {
 
         formatTextView(R.id.gps_satellites, R.string.gps_satellites, mGpsFixes);
         formatTextView(R.id.wifi_access_points, R.string.wifi_access_points, APs);
+        formatTextView(R.id.locations_scanned, R.string.locations_scanned, locationsScanned);
     }
 
     public void onClick_ToggleScanning(View v) throws RemoteException {

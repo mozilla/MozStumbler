@@ -184,16 +184,8 @@ public final class MainActivity extends Activity {
             Log.e(LOGTAG, "", e);
         }
 
-        String APsScannedString = getResources().getString(R.string.wifi_access_points);
-        APsScannedString = String.format(APsScannedString, APs);
-        TextView APsScanned = (TextView) findViewById(R.id.wifi_access_points);
-        APsScanned.setText(APsScannedString);
-
-        String fixesString = getResources().getString(R.string.gps_satellites);
-        fixesString = String.format(fixesString, mGpsFixes);
-
-        TextView fixesTextView = (TextView) findViewById(R.id.gps_satellites);
-        fixesTextView.setText(fixesString);
+        formatTextView(R.id.gps_satellites, R.string.gps_satellites, mGpsFixes);
+        formatTextView(R.id.wifi_access_points, R.string.wifi_access_points, APs);
     }
 
     public void onClick_ToggleScanning(View v) throws RemoteException {
@@ -239,5 +231,12 @@ public final class MainActivity extends Activity {
         StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
                                                       .detectAll()
                                                       .penaltyLog().build());
+    }
+
+    private void formatTextView(int textViewId, int stringId, Object... args) {
+        TextView textView = (TextView) findViewById(textViewId);
+        String str = getResources().getString(stringId);
+        str = String.format(str, args);
+        textView.setText(str);
     }
 }

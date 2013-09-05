@@ -10,11 +10,11 @@
     tools:context=".MainActivity" >
 
        <TextView
-           android:id="@+id/gps_fixes"
+           android:id="@+id/gps_satellites"
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"
            android:layout_alignParentLeft="true"
-           android:text="@string/gps_fixes"
+           android:text="@string/gps_satellites"
            android:textAppearance="?android:attr/textAppearanceMedium" />
 
        <TextView
@@ -22,7 +22,7 @@
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"
            android:layout_alignParentLeft="true"
-           android:layout_below="@+id/gps_fixes"
+           android:layout_below="@+id/gps_satellites"
            android:text="@string/wifi_access_points"
            android:textAppearance="?android:attr/textAppearanceMedium" />
 

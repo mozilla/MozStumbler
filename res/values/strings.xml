@@ -10,7 +10,7 @@
     <string name="service_name">Mozilla Stumbler</string>
     <string name="service_scanning">Scanning for WiFi and Cellular networks</string>
     <string name="wifi_access_points">Wi-Fi Access Points: %1$d</string>
-    <string name="gps_fixes">GPS fixes: %1$d</string>
+    <string name="gps_satellites">GPS Satellites Visible: %1$d</string>
     <string name="enter_nickname">Enter Nickname</string>
     <string name="battery_low_warning">Battery low, MozStumbler will stop scanning</string>
 

@@ -73,8 +73,7 @@ public final class MainActivity extends Activity {
                 Log.d(LOGTAG, "Received a reporter intent...");
                 return;
             } else if (subject.equals("Scanner")) {
-                int fixes = intent.getIntExtra("fixes", 0);
-                mGpsFixes = fixes;
+                mGpsFixes = intent.getIntExtra("fixes", 0);
                 updateUI();
                 Log.d(LOGTAG, "Received a scanner intent...");
                 return;
@@ -190,10 +189,10 @@ public final class MainActivity extends Activity {
         reportedString = String.format(reportedString, APs);
         reportedTextView.setText(reportedString);
 
-        String fixesString = getResources().getString(R.string.gps_fixes);
+        String fixesString = getResources().getString(R.string.gps_satellites);
         fixesString = String.format(fixesString, mGpsFixes);
 
-        TextView fixesTextView = (TextView) findViewById(R.id.gps_fixes);
+        TextView fixesTextView = (TextView) findViewById(R.id.gps_satellites);
         fixesTextView.setText(fixesString);
     }
 

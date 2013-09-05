@@ -32,7 +32,6 @@ class Reporter {
     private static final String LOGTAG          = Reporter.class.getName();
     private static final String LOCATION_URL    = "https://location.services.mozilla.com/v1/submit";
     private static final String NICKNAME_HEADER = "X-Nickname";
-    private static final String TOKEN_HEADER    = "X-Token";
     private static final String USER_AGENT_HEADER = "User-Agent";
     private static final int RECORD_BATCH_SIZE  = 100;
 
@@ -89,12 +88,10 @@ class Reporter {
         mReports = new JSONArray();
 
         String nickname = mPrefs.getNickname();
-        String token = mPrefs.getToken().toString();
-        spawnReporterThread(reports, nickname, token);
+        spawnReporterThread(reports, nickname);
     }
 
-    private static void spawnReporterThread(final JSONArray reports, final String nickname,
-                                            final String token) {
+    private static void spawnReporterThread(final JSONArray reports, final String nickname) {
         new Thread(new Runnable() {
             public void run() {
                 try {
@@ -107,7 +104,6 @@ class Reporter {
                         urlConnection.setRequestProperty(USER_AGENT_HEADER, MOZSTUMBLER_USER_AGENT_STRING);
 
                         if (nickname != null) {
-                            urlConnection.setRequestProperty(TOKEN_HEADER, token);
                             urlConnection.setRequestProperty(NICKNAME_HEADER, nickname);
                         }
 

@@ -43,7 +43,7 @@ class Reporter {
     private final Set<String>   mAPs = new HashSet<String>();
     private int mLocationCount;
     private JSONArray mReports;
-    private long mLastUploadTime;
+    private volatile long mLastUploadTime;
 
     Reporter(Context context, Prefs prefs) {
         mContext = context;
@@ -90,7 +90,6 @@ class Reporter {
 
         String nickname = mPrefs.getNickname();
         spawnReporterThread(reports, nickname);
-        mLastUploadTime = System.currentTimeMillis();
     }
 
     private void spawnReporterThread(final JSONArray reports, final String nickname) {
@@ -126,6 +125,9 @@ class Reporter {
                           total.append(line);
                         }
                         r.close();
+
+                        mLastUploadTime = System.currentTimeMillis();
+                        sendUpdateIntent();
 
                         Log.d(LOGTAG, "response was: \n" + total + "\n");
                         Log.d(LOGTAG, "uploaded data: " + data + " to " + LOCATION_URL);
@@ -186,11 +188,9 @@ class Reporter {
 
         mReports.put(locInfo);
         sendReports(false);
-        mLocationCount++;
 
-        Intent i = new Intent(ScannerService.MESSAGE_TOPIC);
-        i.putExtra(Intent.EXTRA_SUBJECT, "Reporter");
-        mContext.sendBroadcast(i);
+        mLocationCount++;
+        sendUpdateIntent();
     }
 
     private static boolean shouldLog(ScanResult scanResult) {
@@ -258,5 +258,11 @@ class Reporter {
 
         // "MozStumbler/X.Y.Z"
         return appName + '/' + versionName;
+    }
+
+    private void sendUpdateIntent() {
+        Intent i = new Intent(ScannerService.MESSAGE_TOPIC);
+        i.putExtra(Intent.EXTRA_SUBJECT, "Reporter");
+        mContext.sendBroadcast(i);
     }
 }

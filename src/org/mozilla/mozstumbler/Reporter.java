@@ -41,8 +41,9 @@ class Reporter {
     private final Prefs         mPrefs;
     private final MessageDigest mSHA1;
     private final Set<String>   mAPs = new HashSet<String>();
-
+    private int mLocationCount;
     private JSONArray mReports;
+    private long mLastUploadTime;
 
     Reporter(Context context, Prefs prefs) {
         mContext = context;
@@ -89,9 +90,10 @@ class Reporter {
 
         String nickname = mPrefs.getNickname();
         spawnReporterThread(reports, nickname);
+        mLastUploadTime = System.currentTimeMillis();
     }
 
-    private static void spawnReporterThread(final JSONArray reports, final String nickname) {
+    private void spawnReporterThread(final JSONArray reports, final String nickname) {
         new Thread(new Runnable() {
             public void run() {
                 try {
@@ -184,6 +186,7 @@ class Reporter {
 
         mReports.put(locInfo);
         sendReports(false);
+        mLocationCount++;
 
         Intent i = new Intent(ScannerService.MESSAGE_TOPIC);
         i.putExtra(Intent.EXTRA_SUBJECT, "Reporter");
@@ -202,8 +205,16 @@ class Reporter {
         return true;
     }
 
+    public int getLocationCount() {
+        return mLocationCount;
+    }
+
     public int getAPCount() {
         return mAPs.size();
+    }
+
+    public long getLastUploadTime() {
+        return mLastUploadTime;
     }
 
     private String hashScanResult(ScanResult ap) {

@@ -73,8 +73,7 @@ public final class MainActivity extends Activity {
                 Log.d(LOGTAG, "Received a reporter intent...");
                 return;
             } else if (subject.equals("Scanner")) {
-                int fixes = intent.getIntExtra("fixes", 0);
-                mGpsFixes = fixes;
+                mGpsFixes = intent.getIntExtra("fixes", 0);
                 updateUI();
                 Log.d(LOGTAG, "Received a scanner intent...");
                 return;
@@ -178,23 +177,25 @@ public final class MainActivity extends Activity {
             scanningBtn.setText(R.string.start_scanning);
         }
 
+        int locationsScanned = 0;
         int APs = 0;
+        long lastUploadTime = 0;
         try {
+            locationsScanned = mConnectionRemote.getLocationCount();
             APs = mConnectionRemote.getAPCount();
+            lastUploadTime = mConnectionRemote.getLastUploadTime();
         } catch (RemoteException e) {
             Log.e(LOGTAG, "", e);
         }
 
-        TextView reportedTextView = (TextView) findViewById(R.id.reportedTextView);
-        String reportedString = getResources().getString(R.string.wifi_access_points);
-        reportedString = String.format(reportedString, APs);
-        reportedTextView.setText(reportedString);
+        String lastUploadTimeString = (lastUploadTime > 0)
+                                      ? DateTimeUtils.formatTimeForLocale(lastUploadTime)
+                                      : "-";
 
-        String fixesString = getResources().getString(R.string.gps_fixes);
-        fixesString = String.format(fixesString, mGpsFixes);
-
-        TextView fixesTextView = (TextView) findViewById(R.id.gps_fixes);
-        fixesTextView.setText(fixesString);
+        formatTextView(R.id.gps_satellites, R.string.gps_satellites, mGpsFixes);
+        formatTextView(R.id.wifi_access_points, R.string.wifi_access_points, APs);
+        formatTextView(R.id.locations_scanned, R.string.locations_scanned, locationsScanned);
+        formatTextView(R.id.last_upload_time, R.string.last_upload_time, lastUploadTimeString);
     }
 
     public void onClick_ToggleScanning(View v) throws RemoteException {
@@ -240,5 +241,12 @@ public final class MainActivity extends Activity {
         StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
                                                       .detectAll()
                                                       .penaltyLog().build());
+    }
+
+    private void formatTextView(int textViewId, int stringId, Object... args) {
+        TextView textView = (TextView) findViewById(textViewId);
+        String str = getResources().getString(stringId);
+        str = String.format(str, args);
+        textView.setText(str);
     }
 }

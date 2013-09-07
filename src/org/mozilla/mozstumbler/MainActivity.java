@@ -221,6 +221,17 @@ public final class MainActivity extends Activity {
         startActivity(openLeaderboard);
     }
 
+    public void onClick_ViewMap(View v) throws RemoteException {
+        boolean scanning = mConnectionRemote.isScanning();
+        if (!scanning) {
+            mConnectionRemote.startWifiScanningOnly();
+        }
+
+        Log.d(LOGTAG, "onClick_ViewMap");
+        Intent intent = new Intent(this, MapActivity.class);
+        startActivity(intent);
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         return false;

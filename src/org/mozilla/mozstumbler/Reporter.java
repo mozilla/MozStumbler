@@ -2,12 +2,10 @@ package org.mozilla.mozstumbler;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
-import android.location.Location;
-import android.net.wifi.ScanResult;
-import android.telephony.TelephonyManager;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -22,29 +20,33 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import android.content.BroadcastReceiver;
 
-class Reporter {
+
+class Reporter extends BroadcastReceiver {
     private static final String LOGTAG          = Reporter.class.getName();
     private static final String LOCATION_URL    = "https://location.services.mozilla.com/v1/submit";
     private static final String NICKNAME_HEADER = "X-Nickname";
     private static final String USER_AGENT_HEADER = "User-Agent";
     private static final int RECORD_BATCH_SIZE  = 100;
+    private static final int REPORTER_WINDOW  = 3000; //ms
 
     private static String       MOZSTUMBLER_USER_AGENT_STRING;
 
     private final Context       mContext;
     private final Prefs         mPrefs;
-    private final MessageDigest mSHA1;
-    private final Set<String>   mAPs = new HashSet<String>();
-    private int mLocationCount;
+
+    private int   mAPCount;
+    private int   mLocationCount;
     private JSONArray mReports;
     private volatile long mLastUploadTime;
 
+    private long mDataTime;
+    private String mWifiData;
+    private String mCellData;
+    private String mRadioType;
+    private String mGPSData;
+        
     Reporter(Context context, Prefs prefs) {
         mContext = context;
         mPrefs = prefs;
@@ -58,18 +60,63 @@ class Reporter {
             mReports = new JSONArray();
         }
 
-        try {
-            mSHA1 = MessageDigest.getInstance("SHA-1");
-        } catch (NoSuchAlgorithmException e) {
-            throw new IllegalStateException(e);
-        }
+        resetData();
+        mContext.registerReceiver(this, new IntentFilter(ScannerService.MESSAGE_TOPIC));
+    }
+
+    void resetData() {
+        mWifiData = "";
+        mCellData = "";
+        mRadioType = "";
+        mGPSData = "";
+        mDataTime = 0;
     }
 
     void shutdown() {
         Log.d(LOGTAG, "shutdown");
 
+        resetData();
         // Attempt to write out mReports
         mPrefs.setReports(mReports.toString());
+        mContext.unregisterReceiver(this);
+    }
+
+    @Override
+    public void onReceive(Context context, Intent intent) {
+        String action = intent.getAction();
+        
+        if (!action.equals(ScannerService.MESSAGE_TOPIC)) {
+            Log.e(LOGTAG, "Received an unknown intent");
+            return;
+        }
+
+        long time = intent.getLongExtra("time", 0);
+
+        // If the time between cell, wifi, and location is more than the REPORTER_WINDOW, ignore 
+        if (time - mDataTime > REPORTER_WINDOW || mDataTime == 0) {
+          resetData();
+          mDataTime = time;
+        }
+       
+        String subject = intent.getStringExtra(Intent.EXTRA_SUBJECT);
+        String data = intent.getStringExtra("data");
+        Log.d(LOGTAG, "" + subject + " : " + data);
+
+        if (subject.equals("WifiScanner")) {
+            mWifiData = data;
+        } else if (subject.equals("CellScanner")) {
+            mCellData = data;
+            mRadioType = intent.getStringExtra("radioType");
+        } else if (subject.equals("GPSScanner")) {
+            mGPSData = data;
+        }
+
+        if (mWifiData.length() > 0 &&
+            mCellData.length() > 0 &&
+            mGPSData.length() > 0 ) {
+          reportLocation(mGPSData, mWifiData, mRadioType, mCellData);
+          resetData();
+        }
     }
 
     void sendReports(boolean force) {
@@ -117,6 +164,16 @@ class Reporter {
                         out.write(bytes);
                         out.flush();
 
+                        Log.d(LOGTAG, "uploaded data: " + data + " to " + LOCATION_URL);
+
+                        int code = urlConnection.getResponseCode();
+                        Log.e(LOGTAG, "urlConnection returned " + code);
+                        if (code != 200) {
+                          // do something else.
+                          urlConnection.disconnect();
+                          return;
+                        }
+
                         InputStream in = new BufferedInputStream(urlConnection.getInputStream());
                         BufferedReader r = new BufferedReader(new InputStreamReader(in));
                         StringBuilder total = new StringBuilder(in.available());
@@ -130,7 +187,6 @@ class Reporter {
                         sendUpdateIntent();
 
                         Log.d(LOGTAG, "response was: \n" + total + "\n");
-                        Log.d(LOGTAG, "uploaded data: " + data + " to " + LOCATION_URL);
                     } catch (JSONException jsonex) {
                         Log.e(LOGTAG, "error wrapping data as a batch", jsonex);
                     } catch (Exception ex) {
@@ -145,42 +201,18 @@ class Reporter {
         }).start();
     }
 
-    void reportLocation(Location location, Collection<ScanResult> scanResults, int radioType, JSONArray cellInfo) {
+    void reportLocation(String location, String wifiInfo, String radioType, String cellInfo) {
         Log.d(LOGTAG, "reportLocation called");
-        JSONObject locInfo = new JSONObject();
+        JSONObject locInfo = null;
         try {
-            locInfo.put("time", DateTimeUtils.formatTime(location.getTime()));
-            locInfo.put("lon", location.getLongitude());
-            locInfo.put("lat", location.getLatitude());
-            locInfo.put("accuracy", (int) location.getAccuracy());
-            locInfo.put("altitude", (int) location.getAltitude());
-            locInfo.put("cell", cellInfo);
+            locInfo = new JSONObject( location );
+            locInfo.put("cell", new JSONArray(cellInfo));
+            locInfo.put("radio", radioType);
 
-            String radioTypeName = getRadioTypeName(radioType);
-            if (radioTypeName != null) {
-                locInfo.put("radio", radioTypeName);
-            }
+            JSONArray w = new JSONArray(wifiInfo);
+            mAPCount += w.length();
+            locInfo.put("wifi", w);
 
-            JSONArray wifiInfo = new JSONArray();
-            if (scanResults != null) {
-                for (ScanResult ap : scanResults) {
-                    if (!shouldLog(ap)) {
-                        continue;
-                    }
-
-                    JSONObject obj = new JSONObject();
-                    obj.put("key", hashScanResult(ap));
-                    obj.put("frequency", ap.frequency);
-                    obj.put("signal", ap.level);
-                    wifiInfo.put(obj);
-
-                    // Since mAPs will grow without bound, strip BSSID colons to reduce memory usage.
-                    mAPs.add(ap.BSSID.replace(":", ""));
-
-                    Log.v(LOGTAG, "Reporting: BSSID=" + ap.BSSID + ", SSID=\"" + ap.SSID + "\", Signal=" + ap.level);
-                }
-            }
-            locInfo.put("wifi", wifiInfo);
         } catch (JSONException jsonex) {
             Log.w(LOGTAG, "json exception", jsonex);
             return;
@@ -188,21 +220,7 @@ class Reporter {
 
         mReports.put(locInfo);
         sendReports(false);
-
         mLocationCount++;
-        sendUpdateIntent();
-    }
-
-    private static boolean shouldLog(ScanResult scanResult) {
-        if (BSSIDBlockList.contains(scanResult)) {
-            Log.w(LOGTAG, "Blocked BSSID: " + scanResult);
-            return false;
-        }
-        if (SSIDBlockList.contains(scanResult)) {
-            Log.w(LOGTAG, "Blocked SSID: " + scanResult);
-            return false;
-        }
-        return true;
     }
 
     public int getLocationCount() {
@@ -210,39 +228,11 @@ class Reporter {
     }
 
     public int getAPCount() {
-        return mAPs.size();
+        return mAPCount;
     }
 
     public long getLastUploadTime() {
-        return mLastUploadTime;
-    }
-
-    private String hashScanResult(ScanResult ap) {
-        StringBuilder sb = new StringBuilder();
-        byte[] result = mSHA1.digest((ap.BSSID + ap.SSID).getBytes());
-        for (byte b : result) {
-            sb.append(String.format("%02X", b));
-        }
-        return sb.toString();
-    }
-
-    private static String getRadioTypeName(int phoneType) {
-        switch (phoneType) {
-            case TelephonyManager.PHONE_TYPE_CDMA:
-                return "cdma";
-
-            case TelephonyManager.PHONE_TYPE_GSM:
-                return "gsm";
-
-            case TelephonyManager.PHONE_TYPE_NONE:
-            case TelephonyManager.PHONE_TYPE_SIP:
-                // These devices have no radio.
-                return null;
-
-            default:
-                Log.e(LOGTAG, "", new IllegalArgumentException("Unexpected PHONE_TYPE: " + phoneType));
-                return null;
-        }
+      return mLastUploadTime;
     }
 
     private String getUserAgentString() {

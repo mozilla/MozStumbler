@@ -2,19 +2,27 @@ package org.mozilla.mozstumbler;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager.NameNotFoundException;
+import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.StrictMode;
 import android.util.Log;
 import android.view.Menu;
 
-import android.os.AsyncTask;
-import java.lang.Void;
-
-import android.content.Context;
-import android.content.BroadcastReceiver;
-import android.content.Intent;
-import android.content.IntentFilter;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.model.CircleOptions;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -22,25 +30,13 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.lang.Void;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-import org.json.JSONException;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
-
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.PackageManager.NameNotFoundException;
-
-import android.graphics.Color;
-import com.google.android.gms.maps.model.CircleOptions;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
 
 public final class MapActivity extends Activity {
     private static final String LOGTAG = MapActivity.class.getName();
@@ -61,24 +57,28 @@ public final class MapActivity extends Activity {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-          if (mDone == true) {
+          if (mDone) {
             return;
           }
 
           String action = intent.getAction();
-        
+
           if (!action.equals(ScannerService.MESSAGE_TOPIC)) {
-            Log.e(LOGTAG, "Received an unknown intent");
+            Log.e(LOGTAG, "Received an unknown intent: " + action);
             return;
           }
 
           String subject = intent.getStringExtra(Intent.EXTRA_SUBJECT);
-          
+
           if (subject.equals("WifiScanner")) {
             mWifiData = intent.getStringExtra("data");
             new GetLocationAndMapItTask().execute("");
             mDone = true;
-          } 
+          }
+          else {
+            // might be another scanner
+            return;
+          }
         }
     }
 
@@ -86,7 +86,6 @@ public final class MapActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        enableStrictMode();
         setContentView(R.layout.activity_map);
 
 
@@ -173,11 +172,6 @@ public final class MapActivity extends Activity {
                 int code = urlConnection.getResponseCode();
                 Log.d(LOGTAG, "uploaded data: " + data + " to " + LOCATION_URL);
                 Log.e(LOGTAG, "urlConnection returned " + code);
-                if (code != 200) {
-                    // do something else.
-                    urlConnection.disconnect();
-                    return "";
-                }
 
                 InputStream in = new BufferedInputStream(urlConnection.getInputStream());
                 BufferedReader r = new BufferedReader(new InputStreamReader(in));
@@ -199,13 +193,13 @@ public final class MapActivity extends Activity {
                 Log.e(LOGTAG, "Location lon: " + mLon);
                 Log.e(LOGTAG, "Location accuracy: " + mAccuracy);
 
-                urlConnection.disconnect();
-
             } catch (JSONException jsonex) {
                 Log.e(LOGTAG, "json parse error", jsonex);
             } catch (Exception ex) {
                 Log.e(LOGTAG, "error submitting data", ex);
             }
+
+            urlConnection.disconnect();
             return mStatus;
         }
 
@@ -222,7 +216,7 @@ public final class MapActivity extends Activity {
         @Override
         protected void onPreExecute() {
         }
-        
+
         @Override
         protected void onProgressUpdate(Void... values) {
         }
@@ -242,22 +236,5 @@ public final class MapActivity extends Activity {
 
         // "MozStumbler/X.Y.Z"
         return appName + '/' + versionName;
-    }
-
-    @TargetApi(9)
-    private void enableStrictMode() {
-        if (Build.VERSION.SDK_INT < 9) {
-            return;
-        }
-
-        StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
-                                                             .detectAll()
-                                                             .permitDiskReads()
-                                                             .permitDiskWrites()
-                                                             .penaltyLog().build());
-
-        StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
-                                                     .detectAll()
-                                                     .penaltyLog().build());
     }
 }

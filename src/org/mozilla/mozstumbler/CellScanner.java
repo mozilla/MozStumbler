@@ -13,6 +13,8 @@ import android.telephony.TelephonyManager;
 import android.telephony.gsm.GsmCellLocation;
 import android.util.Log;
 
+import android.os.Build.VERSION; 
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -32,7 +34,7 @@ public class CellScanner extends PhoneStateListener {
 
     CellScanner(Context context) {
         mContext = context;
-        
+
         TelephonyManager tm = getTelephonyManager();
         mRadioType = (tm != null) ? tm.getPhoneType() : TelephonyManager.PHONE_TYPE_NONE;
 
@@ -52,16 +54,19 @@ public class CellScanner extends PhoneStateListener {
     }
 
     public void stop() {
+      if (mCellScanTimer != null) {
         mCellScanTimer.cancel();
         mCellScanTimer = null;
+      }
     }
 
+    @Override
     public void onSignalStrengthsChanged(SignalStrength ss) {
         if (ss.isGsm()) {
             mSignalStrength = ss.getGsmSignalStrength();
         }
     }
-    
+
     private void getCellInfo() {
         JSONArray cellInfo = new JSONArray();
 
@@ -82,7 +87,8 @@ public class CellScanner extends PhoneStateListener {
             try {
                 obj.put("lac", gcl.getLac());
                 obj.put("cid", gcl.getCid());
-                obj.put("psc", gcl.getPsc());
+                int psc = (VERSION.SDK_INT >= 9) ? gcl.getPsc() : -1;
+                obj.put("psc", psc); 
                 switch (tm.getNetworkType()) {
                     case TelephonyManager.NETWORK_TYPE_GPRS:
                     case TelephonyManager.NETWORK_TYPE_EDGE:
@@ -113,7 +119,7 @@ public class CellScanner extends PhoneStateListener {
                 Log.e(LOGTAG, "", jsonex);
             }
         }
-        
+
         if (cells != null) {
             for (NeighboringCellInfo nci : cells) {
                 try {
@@ -180,5 +186,4 @@ public class CellScanner extends PhoneStateListener {
     private TelephonyManager getTelephonyManager() {
         return (TelephonyManager) mContext.getSystemService(Context.TELEPHONY_SERVICE);
     }
-
 }

@@ -23,7 +23,7 @@ public class GPSScanner implements LocationListener {
     private static final long     GEO_MIN_UPDATE_TIME     = 1000;
     private static final float    GEO_MIN_UPDATE_DISTANCE = 10;
 
-    private final Context             mContext;
+    private final Context         mContext;
     private GpsStatus.Listener    mGPSListener;
 
     GPSScanner(Context context) {
@@ -71,8 +71,10 @@ public class GPSScanner implements LocationListener {
         LocationManager lm = getLocationManager();
         lm.removeUpdates(this);
 
-        lm.removeGpsStatusListener(mGPSListener);
-        mGPSListener = null;
+        if (mGPSListener != null) {
+          lm.removeGpsStatusListener(mGPSListener);
+          mGPSListener = null;
+        }
     }
 
     @Override

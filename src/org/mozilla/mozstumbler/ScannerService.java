@@ -73,6 +73,23 @@ public final class ScannerService extends Service {
         }
 
         @Override
+        public void startWifiScanningOnly() throws RemoteException {
+            if (mScanner.isScanning()) {
+                return;
+            }
+
+            mLooper.post(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Log.d(LOGTAG, "Running looper...");
+                        mScanner.startWifiOnly();
+                    } catch (Exception e) {}
+                }
+            });
+        }
+
+        @Override
         public void stopScanning() throws RemoteException {
             if (!mScanner.isScanning()) {
                 return;
@@ -154,7 +171,7 @@ public final class ScannerService extends Service {
 
         Prefs prefs = new Prefs(this);
         mReporter = new Reporter(this, prefs);
-        mScanner = new Scanner(this, mReporter);
+        mScanner = new Scanner(this);
         mLooper = new LooperThread();
         mLooper.start();
     }

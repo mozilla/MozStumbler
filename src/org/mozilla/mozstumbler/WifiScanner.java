@@ -42,7 +42,7 @@ public class WifiScanner extends BroadcastReceiver {
   }
 
   public void start() {
-    if (mStarted == true) {
+    if (mStarted) {
         return;
     }
     mStarted = true;
@@ -71,21 +71,22 @@ public class WifiScanner extends BroadcastReceiver {
   }
 
   public void stop() {
-    mWifiLock.release();
-    mWifiLock = null;
+    if (mWifiLock != null) {
+      mWifiLock.release();
+      mWifiLock = null;
+    }
 
-    mWifiScanTimer.cancel();
-    mWifiScanTimer = null;
-    
+    if (mWifiScanTimer != null) {
+      mWifiScanTimer.cancel();
+      mWifiScanTimer = null;
+    }
+
     mContext.unregisterReceiver(this);
     mStarted = false;
   }
 
   public void onReceive(Context c, Intent intent) {
     Collection<ScanResult> scanResults = getWifiManager().getScanResults();
-    if (scanResults == null) {
-      return;
-    }
 
     JSONArray wifiInfo = new JSONArray();
     for (ScanResult scanResult : scanResults) {
@@ -108,9 +109,6 @@ public class WifiScanner extends BroadcastReceiver {
       } catch (JSONException jsonex) {
         Log.e(LOGTAG, "", jsonex);
       }
-      // TODO: this is for the total stats we have seen
-      // Since mAPs will grow without bound, strip BSSID colons to reduce memory usage.
-      //        mAPs.add(scanResult.BSSID.replace(":", ""));
       Log.v(LOGTAG, "BSSID=" + scanResult.BSSID + ", SSID=\"" + scanResult.SSID + "\", Signal=" + scanResult.level);
     }
 

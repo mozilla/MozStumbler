@@ -100,8 +100,8 @@ public final class MapActivity extends Activity {
         Log.d(LOGTAG, "onCreate");
     }
 
-    private void setPositionAndMarker(String lat, String lon, String accuracy) {
-        LatLng poi = new LatLng(Float.parseFloat(lat), Float.parseFloat(lon));
+    private void setPositionAndMarker(float lat, float lon, float accuracy) {
+        LatLng poi = new LatLng(lat, lon);
         Marker hamburg = mMap.addMarker(new MarkerOptions().position(poi).title("You're Here"));
 
         // Move the camera instantly to poi with a zoom of 15.
@@ -112,7 +112,7 @@ public final class MapActivity extends Activity {
 
         mMap.addCircle(new CircleOptions()
                                      .center(poi)
-                                     .radius(Float.parseFloat(accuracy))
+                                     .radius(accuracy)
                                      .strokeColor(Color.RED)
                                      .fillColor(Color.argb(30, 0, 153, 255))
                                      .strokeWidth(2));
@@ -138,16 +138,17 @@ public final class MapActivity extends Activity {
 
     private class GetLocationAndMapItTask extends AsyncTask<String, Void, String> {
         private String mStatus;
-        private String mLat;
-        private String mLon;
-        private String mAccuracy;
+        private float mLat;
+        private float mLon;
+        private float mAccuracy;
 
         @Override
         public String doInBackground(String... params) {
             Log.d(LOGTAG, "requesting location...");
+            HttpURLConnection urlConnection = null;
             try {
                 URL url = new URL(LOCATION_URL);
-                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+                urlConnection = (HttpURLConnection) url.openConnection();
 
                 urlConnection.setDoOutput(true);
                 urlConnection.setRequestProperty(USER_AGENT_HEADER, MOZSTUMBLER_USER_AGENT_STRING);
@@ -184,9 +185,9 @@ public final class MapActivity extends Activity {
 
                 JSONObject result = new JSONObject(total.toString());
                 mStatus = result.getString("status");
-                mLat = result.getString("lat");
-                mLon = result.getString("lon");
-                mAccuracy = result.getString("accuracy");
+                mLat = Float.parseFloat(result.getString("lat"));
+                mLon = Float.parseFloat(result.getString("lon"));
+                mAccuracy = Float.parseFloat(result.getString("accuracy"));
 
                 Log.e(LOGTAG, "Location status: " + mStatus);
                 Log.e(LOGTAG, "Location lat: " + mLat);
@@ -198,18 +199,22 @@ public final class MapActivity extends Activity {
             } catch (Exception ex) {
                 Log.e(LOGTAG, "error submitting data", ex);
             }
+            finally {
+              urlConnection.disconnect();
+            }
 
-            urlConnection.disconnect();
             return mStatus;
         }
 
         @Override
         protected void onPostExecute(String result) {
             if (mStatus.equals("ok")) {
-                setPositionAndMarker(mLat, mLon, mAccuracy);
+              setPositionAndMarker(mLat,
+                                   mLon,
+                                   mAccuracy);
             }
             else {
-                setPositionAndMarker("0", "0", "32000");
+                setPositionAndMarker(0, 0, 32000);
             }
         }
 

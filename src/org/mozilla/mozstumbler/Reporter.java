@@ -41,11 +41,16 @@ class Reporter extends BroadcastReceiver {
     private JSONArray mReports;
     private volatile long mLastUploadTime;
 
-    private long mDataTime;
     private String mWifiData;
+    private long mWifiDataTime;
+
     private String mCellData;
-    private String mRadioType;
+    private long mCellDataTime;
+
+    private long mGPSDataTime;
     private String mGPSData;
+
+    private String mRadioType;
         
     Reporter(Context context, Prefs prefs) {
         mContext = context;
@@ -64,12 +69,14 @@ class Reporter extends BroadcastReceiver {
         mContext.registerReceiver(this, new IntentFilter(ScannerService.MESSAGE_TOPIC));
     }
 
-    void resetData() {
+    private void resetData() {
         mWifiData = "";
         mCellData = "";
         mRadioType = "";
         mGPSData = "";
-        mDataTime = 0;
+        mWifiDataTime = 0;
+        mCellDataTime = 0;
+        mGPSDataTime = 0;
     }
 
     void shutdown() {
@@ -91,29 +98,42 @@ class Reporter extends BroadcastReceiver {
         }
 
         long time = intent.getLongExtra("time", 0);
-
-        // If the time between cell, wifi, and location is more than the REPORTER_WINDOW, ignore 
-        if (time - mDataTime > REPORTER_WINDOW || mDataTime == 0) {
-          resetData();
-          mDataTime = time;
-        }
-       
         String subject = intent.getStringExtra(Intent.EXTRA_SUBJECT);
         String data = intent.getStringExtra("data");
         Log.d(LOGTAG, "" + subject + " : " + data);
 
         if (subject.equals("WifiScanner")) {
             mWifiData = data;
+            mWifiDataTime = time;
         } else if (subject.equals("CellScanner")) {
             mCellData = data;
             mRadioType = intent.getStringExtra("radioType");
+            mCellDataTime = time;
         } else if (subject.equals("GPSScanner")) {
             mGPSData = data;
+            mGPSDataTime = time;
+        }
+        else {
+          Log.e(LOGTAG, "Unexpected subject: " + subject);
         }
 
-        if (mWifiData.length() > 0 &&
-            mCellData.length() > 0 &&
-            mGPSData.length() > 0 ) {
+        if (mWifiDataTime - time > REPORTER_WINDOW) {
+          mWifiData = "";
+          mWifiDataTime = 0;
+        }
+
+        if (mCellDataTime - time > REPORTER_WINDOW) {
+          mCellData = "";
+          mCellDataTime = 0;
+        }
+
+        if (mGPSDataTime - time > REPORTER_WINDOW) {
+          mGPSData = "";
+          mGPSDataTime = 0;
+        }
+
+        // Record recent Wi-Fi and/or cell scan results for the current GPS position.
+        if (mGPSData.length() > 0 && (mWifiData.length() > 0 || mCellData.length() > 0)) {
           reportLocation(mGPSData, mWifiData, mRadioType, mCellData);
           resetData();
         }
@@ -157,22 +177,17 @@ class Reporter extends BroadcastReceiver {
 
                         JSONObject wrapper = new JSONObject();
                         wrapper.put("items", reports);
-                        String data = wrapper.toString();
-                        byte[] bytes = data.getBytes();
+                        String wrapperData = wrapper.toString();
+                        byte[] bytes = wrapperData.getBytes();
                         urlConnection.setFixedLengthStreamingMode(bytes.length);
                         OutputStream out = new BufferedOutputStream(urlConnection.getOutputStream());
                         out.write(bytes);
                         out.flush();
 
-                        Log.d(LOGTAG, "uploaded data: " + data + " to " + LOCATION_URL);
+                        Log.d(LOGTAG, "uploaded wrapperData: " + wrapperData + " to " + LOCATION_URL);
 
                         int code = urlConnection.getResponseCode();
                         Log.e(LOGTAG, "urlConnection returned " + code);
-                        if (code != 200) {
-                          // do something else.
-                          urlConnection.disconnect();
-                          return;
-                        }
 
                         InputStream in = new BufferedInputStream(urlConnection.getInputStream());
                         BufferedReader r = new BufferedReader(new InputStreamReader(in));

@@ -29,14 +29,14 @@ public class CellScanner extends PhoneStateListener {
 
     private final Context mContext;
     private Timer mCellScanTimer;
-    private final int mRadioType;
+    private String mRadioType;
     private int mSignalStrength;
 
     CellScanner(Context context) {
         mContext = context;
 
         TelephonyManager tm = getTelephonyManager();
-        mRadioType = (tm != null) ? tm.getPhoneType() : TelephonyManager.PHONE_TYPE_NONE;
+        mRadioType = getRadioTypeName((tm != null) ? tm.getPhoneType() : TelephonyManager.PHONE_TYPE_NONE);
 
         tm.listen(this, PhoneStateListener.LISTEN_SIGNAL_STRENGTHS);
     }
@@ -160,7 +160,7 @@ public class CellScanner extends PhoneStateListener {
         i.putExtra(Intent.EXTRA_SUBJECT, "CellScanner");
         i.putExtra("data", cellInfo.toString());
         i.putExtra("time", System.currentTimeMillis());
-        i.putExtra("radioType", getRadioTypeName(mRadioType));
+        i.putExtra("radioType", mRadioType);
         mContext.sendBroadcast(i);
     }
 

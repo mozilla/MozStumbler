@@ -102,21 +102,6 @@ class Reporter extends BroadcastReceiver {
         String data = intent.getStringExtra("data");
         Log.d(LOGTAG, "" + subject + " : " + data);
 
-        if (subject.equals("WifiScanner")) {
-            mWifiData = data;
-            mWifiDataTime = time;
-        } else if (subject.equals("CellScanner")) {
-            mCellData = data;
-            mRadioType = intent.getStringExtra("radioType");
-            mCellDataTime = time;
-        } else if (subject.equals("GPSScanner")) {
-            mGPSData = data;
-            mGPSDataTime = time;
-        }
-        else {
-          Log.e(LOGTAG, "Unexpected subject: " + subject);
-        }
-
         if (mWifiDataTime - time > REPORTER_WINDOW) {
           mWifiData = "";
           mWifiDataTime = 0;
@@ -130,6 +115,21 @@ class Reporter extends BroadcastReceiver {
         if (mGPSDataTime - time > REPORTER_WINDOW) {
           mGPSData = "";
           mGPSDataTime = 0;
+        }
+
+        if (subject.equals("WifiScanner")) {
+            mWifiData = data;
+            mWifiDataTime = time;
+        } else if (subject.equals("CellScanner")) {
+            mCellData = data;
+            mRadioType = intent.getStringExtra("radioType");
+            mCellDataTime = time;
+        } else if (subject.equals("GPSScanner")) {
+            mGPSData = data;
+            mGPSDataTime = time;
+        }
+        else {
+          Log.e(LOGTAG, "Unexpected subject: " + subject);
         }
 
         // Record recent Wi-Fi and/or cell scan results for the current GPS position.

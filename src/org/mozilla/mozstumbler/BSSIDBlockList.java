@@ -7,9 +7,9 @@ import java.util.regex.Pattern;
 
 final class BSSIDBlockList {
 
-    private static final String  NULL_BSSID        = "00:00:00:00:00:00";
-    private static final String  WILDCARD_BSSID    = "ff:ff:ff:ff:ff:ff";
-    private static final Pattern BSSID_PATTERN     = Pattern.compile("([0-9a-f]{2}:){5}[0-9a-f]{2}");
+    private static final String  NULL_BSSID        = "000000000000";
+    private static final String  WILDCARD_BSSID    = "ffffffffffff";
+    private static final Pattern BSSID_PATTERN     = Pattern.compile("([0-9a-f]{12})");
     private static final String  AD_HOC_HEX_VALUES = "26aeAE";
 
     private BSSIDBlockList() {
@@ -22,13 +22,20 @@ final class BSSIDBlockList {
     }
 
     static String canonicalizeBSSID(String BSSID) {
-        if (BSSID == null || isCanonicalBSSID(BSSID)) {
+        if (BSSID == null) {
+            return "";
+        }
+
+        if (isCanonicalBSSID(BSSID)) {
             return BSSID;
         }
 
         // Some devices may return BSSIDs with '-' or '.' delimiters.
-        BSSID = BSSID.toLowerCase(Locale.US).replace('-', ':').replace('.', ':');
-        return isCanonicalBSSID(BSSID) ? BSSID : null;
+        BSSID = BSSID.toLowerCase(Locale.US).replace(":", "")
+                                            .replace("-", "")
+                                            .replace(".", "");
+
+        return isCanonicalBSSID(BSSID) ? BSSID : "";
     }
 
     private static boolean isCanonicalBSSID(String BSSID) {

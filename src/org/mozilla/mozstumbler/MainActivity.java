@@ -27,7 +27,7 @@ import android.widget.Toast;
 
 public final class MainActivity extends Activity {
     private static final String LOGTAG = MainActivity.class.getName();
-    private static final String LEADERBOARD_URL = "https://location.services.mozilla.com/stats";
+    private static final String LEADERBOARD_URL = "https://location.services.mozilla.com/leaders";
 
     private ScannerServiceInterface  mConnectionRemote;
     private ServiceConnection        mConnection;

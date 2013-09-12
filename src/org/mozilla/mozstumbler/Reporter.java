@@ -22,8 +22,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -39,7 +37,6 @@ class Reporter {
 
     private final Context       mContext;
     private final Prefs         mPrefs;
-    private final MessageDigest mSHA1;
     private final Set<String>   mAPs = new HashSet<String>();
     private int mLocationCount;
     private JSONArray mReports;
@@ -56,12 +53,6 @@ class Reporter {
             mReports = new JSONArray(storedReports);
         } catch (Exception e) {
             mReports = new JSONArray();
-        }
-
-        try {
-            mSHA1 = MessageDigest.getInstance("SHA-1");
-        } catch (NoSuchAlgorithmException e) {
-            throw new IllegalStateException(e);
         }
     }
 
@@ -169,13 +160,12 @@ class Reporter {
                     }
 
                     JSONObject obj = new JSONObject();
-                    obj.put("key", hashScanResult(ap));
+                    obj.put("key", ap.BSSID);
                     obj.put("frequency", ap.frequency);
                     obj.put("signal", ap.level);
                     wifiInfo.put(obj);
 
-                    // Since mAPs will grow without bound, strip BSSID colons to reduce memory usage.
-                    mAPs.add(ap.BSSID.replace(":", ""));
+                    mAPs.add(ap.BSSID);
 
                     Log.v(LOGTAG, "Reporting: BSSID=" + ap.BSSID + ", SSID=\"" + ap.SSID + "\", Signal=" + ap.level);
                 }
@@ -215,15 +205,6 @@ class Reporter {
 
     public long getLastUploadTime() {
         return mLastUploadTime;
-    }
-
-    private String hashScanResult(ScanResult ap) {
-        StringBuilder sb = new StringBuilder();
-        byte[] result = mSHA1.digest((ap.BSSID + ap.SSID).getBytes());
-        for (byte b : result) {
-            sb.append(String.format("%02X", b));
-        }
-        return sb.toString();
     }
 
     private static String getRadioTypeName(int phoneType) {

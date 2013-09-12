@@ -69,17 +69,9 @@ class Scanner implements LocationListener {
 
         Log.d(LOGTAG, "WifiReceiver new data at " + mWifiScanResultsTime);
 
-        // TODO does this even work?  Aren't we just setting
-        // a copy (scanResult) to store the correct BSSID?
-
         for (ScanResult scanResult : mWifiScanResults) {
-          Log.d(LOGTAG, "   scanResult = " + scanResult.BSSID);
-
-          String BSSID = BSSIDBlockList.canonicalizeBSSID(scanResult.BSSID);
-          if (BSSID == null) {
-            Log.e(LOGTAG, "", new IllegalArgumentException("Unexpected BSSID: " + scanResult.BSSID));
-          }
-          scanResult.BSSID = BSSID;
+          scanResult.BSSID = BSSIDBlockList.canonicalizeBSSID(scanResult.BSSID);
+          Log.d(LOGTAG, "   scanResult.BSSID = \"" + scanResult.BSSID + "\"");
         }
       }
     }

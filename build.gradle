@@ -2,13 +2,16 @@ buildscript {
     repositories {
         mavenCentral()
     }
-
     dependencies {
         classpath 'com.android.tools.build:gradle:0.5.6'
     }
 }
 
 apply plugin: 'android'
+
+dependencies {
+  compile 'com.google.android.gms:play-services:3.2.25'
+}
 
 android {
     compileSdkVersion 18
@@ -42,11 +45,6 @@ android {
             signingConfig signingConfigs.release
         }
     }
-
-}
-
-dependencies {
-    compile fileTree(dir: 'libs', include: '*.jar')
 }
 
 tasks.withType(JavaCompile) {
@@ -60,4 +58,12 @@ if (hasProperty('StoreFile')) {
     android.signingConfigs.release.keyPassword = KeyPassword
 } else {
     android.buildTypes.release.signingConfig = null
+}
+
+if (hasProperty('APIKey')) {
+    File manifest = file("./AndroidManifest.xml.in")
+    String content = manifest.getText('UTF-8')
+    content = content.replaceAll(/MY_GOOGLE_API_KEY/, APIKey)
+    manifest = file("./AndroidManifest.xml")
+    manifest.write(content, 'UTF-8')
 }

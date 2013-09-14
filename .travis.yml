@@ -17,7 +17,7 @@ before_install:
     - export PATH=${PATH}:${ANDROID_HOME}/tools:${ANDROID_HOME}/platform-tools
 
     # Install Android SDK components
-    - echo yes | android update sdk --filter platform-tools,android-$ANDROID_API_LEVEL,extra-android-support --no-ui --force > /dev/null
+    - echo yes | android update sdk --no-ui --force > /dev/null
 
     # Install Android build tools
     - wget https://dl-ssl.google.com/android/repository/build-tools_r$ANDROID_BUILD_TOOLS_VERSION-linux.zip

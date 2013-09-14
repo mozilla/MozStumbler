@@ -4,22 +4,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.location.GpsSatellite;
-import android.location.GpsStatus;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
-import android.net.wifi.ScanResult;
-import android.net.wifi.WifiManager;
-import android.net.wifi.WifiManager.WifiLock;
+
 import android.os.Bundle;
-import android.os.Build.VERSION;
-import android.telephony.CellLocation;
-import android.telephony.NeighboringCellInfo;
-import android.telephony.PhoneStateListener;
-import android.telephony.SignalStrength;
-import android.telephony.TelephonyManager;
-import android.telephony.gsm.GsmCellLocation;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -27,341 +13,76 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Collection;
-import java.util.Timer;
-import java.util.TimerTask;
 
-class Scanner implements LocationListener {
-    private static final String LOGTAG              = Scanner.class.getName();
-    private static final long   GEO_MIN_UPDATE_TIME     = 1000;                   // milliseconds
-    private static final float  GEO_MIN_UPDATE_DISTANCE = 10;                     // meters
-    private static final long   WIFI_MIN_UPDATE_TIME    = 1000;                   // milliseconds
+class Scanner {
+  private static final String LOGTAG = Scanner.class.getName();
 
-    private static final boolean DISABLE_GPS_AIDING = true;
+  private final Context  mContext;
+  private boolean        mIsScanning;
 
-    private final Context       mContext;
-    private int                 mSignalStrength;
-    private PhoneStateListener  mPhoneStateListener;
-    private final Reporter      mReporter;
-    private boolean             mIsScanning;
-    private WifiLock            mWifiLock;
-    private WifiReceiver        mWifiReceiver;
+  private GPSScanner     mGPSScanner;
+  private WifiScanner    mWifiScanner;
+  private CellScanner    mCellScanner;
 
-    private Timer                  mWifiScanTimer;
-    private long                   mWifiScanResultsTime;
-    private Collection<ScanResult> mWifiScanResults;
+  Scanner(Context context) {
+    mContext = context;
+    mGPSScanner  = new GPSScanner(context);
+    mWifiScanner = new WifiScanner(context);
+    mCellScanner = new CellScanner(context);
+  }
 
-    private GpsStatus.Listener  mGPSListener;
-    private final int           mRadioType;
+  void startScanning() {
+    if (mIsScanning) {
+      return;
+    }
+    Log.d(LOGTAG, "Scanning started...");
 
-    Scanner(Context context, Reporter reporter) {
-        mContext = context;
-        mReporter = reporter;
+    mGPSScanner.start();
+    mWifiScanner.start();
+    mCellScanner.start();
 
-        TelephonyManager tm = getTelephonyManager();
-        mRadioType = (tm != null) ? tm.getPhoneType() : TelephonyManager.PHONE_TYPE_NONE;
+    mIsScanning = true;
+
+    // FIXME convey "start" event here?
+    // for now all we want is to update the UI anyway
+    Intent startIntent = new Intent(ScannerService.MESSAGE_TOPIC);
+    startIntent.putExtra(Intent.EXTRA_SUBJECT, "Scanner");
+    mContext.sendBroadcast(startIntent);
+  }
+
+  void startWifiOnly() {
+    mWifiScanner.start();
+  }
+
+  void stopScanning() {
+    if (!mIsScanning) {
+      return;
     }
 
-    private class WifiReceiver extends BroadcastReceiver {
-      public void onReceive(Context c, Intent intent) {
+    Log.d(LOGTAG, "Scanning stopped");
 
-        mWifiScanResults = getWifiManager().getScanResults();
-        mWifiScanResultsTime = System.currentTimeMillis();
+    mGPSScanner.stop();
+    mWifiScanner.stop();
+    mCellScanner.stop();
 
-        Log.d(LOGTAG, "WifiReceiver new data at " + mWifiScanResultsTime);
+    mIsScanning = false;
 
-        for (ScanResult scanResult : mWifiScanResults) {
-          scanResult.BSSID = BSSIDBlockList.canonicalizeBSSID(scanResult.BSSID);
-          Log.d(LOGTAG, "   scanResult.BSSID = \"" + scanResult.BSSID + "\"");
-        }
-      }
-    }
+    // FIXME convey "stop" event here?
+    // for now all we want is to update the UI anyway
+    Intent stopIntent = new Intent(ScannerService.MESSAGE_TOPIC);
+    stopIntent.putExtra(Intent.EXTRA_SUBJECT, "Scanner");
+    mContext.sendBroadcast(stopIntent);
+  }
 
-    void startScanning() {
-        if (mIsScanning) {
-            return;
-        }
-        Log.d(LOGTAG, "Scanning started...");
+  boolean isScanning() {
+    return mIsScanning;
+  }
 
-        if (DISABLE_GPS_AIDING) {
-          deleteAidingData();
-        }
+  int getAPCount() {
+     return mWifiScanner.getAPCount();
+  }
 
-        LocationManager lm = getLocationManager();
-        lm.requestLocationUpdates(LocationManager.GPS_PROVIDER,
-                                  GEO_MIN_UPDATE_TIME,
-                                  GEO_MIN_UPDATE_DISTANCE,
-                                  getLocationListener());
-
-        mGPSListener = new GpsStatus.Listener() {
-            public void onGpsStatusChanged(int event) {
-              if (event == GpsStatus.GPS_EVENT_SATELLITE_STATUS) {
-
-                GpsStatus status = getLocationManager().getGpsStatus(null);
-                Iterable<GpsSatellite> sats = status.getSatellites();
-
-                int satellites = 0;
-                int fixes = 0;
-
-                for (GpsSatellite sat : sats) {
-                  satellites++;
-                  if(sat.usedInFix()) {
-                    fixes++;
-                  }
-                }
-
-                Intent i = new Intent(ScannerService.MESSAGE_TOPIC);
-                i.putExtra(Intent.EXTRA_SUBJECT, "Scanner");
-                i.putExtra("fixes", fixes);
-                mContext.sendBroadcast(i);
-
-                Log.d(LOGTAG, "onGpsStatusChange - satellites: " + satellites + " fixes: " + fixes);
-              }
-            }
-          };
-
-        lm.addGpsStatusListener(mGPSListener);
-
-        WifiManager wm = getWifiManager();
-        mWifiLock = wm.createWifiLock(WifiManager.WIFI_MODE_SCAN_ONLY,
-                                      "MozStumbler");
-        mWifiLock.acquire();
-
-        if (!wm.isWifiEnabled()) {
-            wm.setWifiEnabled(true);
-        }
-
-        mWifiReceiver = new WifiReceiver();
-        IntentFilter i = new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
-        mContext.registerReceiver(mWifiReceiver, i);
-
-        // Ensure that we are constantly scanning for new access points.
-        mWifiScanTimer = new Timer();
-        mWifiScanTimer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-              Log.d(LOGTAG, "WiFi Scanning Timer fired");
-              getWifiManager().startScan();
-            }
-          }, 0, WIFI_MIN_UPDATE_TIME);
-
-        // start some kind of timer repeating..
-        mIsScanning = true;
-
-        // FIXME convey "start" event here?
-        // for now all we want is to update the UI anyway
-        Intent startIntent = new Intent(ScannerService.MESSAGE_TOPIC);
-        startIntent.putExtra(Intent.EXTRA_SUBJECT, "Scanner");
-        mContext.sendBroadcast(startIntent);
-    }
-
-    void stopScanning() {
-        if (!mIsScanning) {
-            return;
-        }
-
-        Log.d(LOGTAG, "Scanning stopped");
-        LocationManager lm = getLocationManager();
-        lm.removeUpdates(getLocationListener());
-
-        lm.removeGpsStatusListener(mGPSListener);
-        mGPSListener = null;
-
-        if (mPhoneStateListener != null) {
-            TelephonyManager tm = getTelephonyManager();
-            tm.listen(mPhoneStateListener, PhoneStateListener.LISTEN_NONE);
-            mPhoneStateListener = null;
-        }
-
-        mWifiLock.release();
-        mWifiLock = null;
-
-        mWifiScanTimer.cancel();
-        mWifiScanTimer = null;
-
-        mContext.unregisterReceiver(mWifiReceiver);
-        mWifiReceiver = null;
-
-        mIsScanning = false;
-
-        // FIXME convey "stop" event here?
-        // for now all we want is to update the UI anyway
-        Intent stopIntent = new Intent(ScannerService.MESSAGE_TOPIC);
-        stopIntent.putExtra(Intent.EXTRA_SUBJECT, "Scanner");
-        mContext.sendBroadcast(stopIntent);
-    }
-
-    boolean isScanning() {
-        return mIsScanning;
-    }
-
-    private LocationListener getLocationListener() {
-        if (mPhoneStateListener == null) {
-            mPhoneStateListener = new PhoneStateListener() {
-                public void onSignalStrengthsChanged(SignalStrength ss) {
-                    if (ss.isGsm()) {
-                        mSignalStrength = ss.getGsmSignalStrength();
-                    }
-                }
-            };
-            TelephonyManager tm = getTelephonyManager();
-            tm.listen(mPhoneStateListener, PhoneStateListener.LISTEN_SIGNAL_STRENGTHS);
-        }
-        return this;
-    }
-
-    @Override
-    public void onLocationChanged(Location location) {
-        if (LocationBlockList.contains(location)) {
-            Log.w(LOGTAG, "Blocked location: " + location);
-        } else {
-            Log.d(LOGTAG, "New location: " + location);
-
-            Collection<ScanResult> scanResults = getWifiInfo();
-            JSONArray cellInfo = getCellInfo();
-
-            if ((scanResults == null || scanResults.size() == 0) && cellInfo == null) {
-                return;
-            }
-
-            mReporter.reportLocation(location, scanResults, mRadioType, cellInfo);
-        }
-    }
-
-    private Collection<ScanResult> getWifiInfo() {
-        Log.d(LOGTAG, "getWifiInfo() called at " + System.currentTimeMillis());
-        if (System.currentTimeMillis() - mWifiScanResultsTime < 5000 && mWifiScanResults != null) {
-          return mWifiScanResults;
-        }
-        Log.d(LOGTAG, "getWifiInfo() called and there is no (or only old) scan results");
-        return null;
-    }
-
-    private JSONArray getCellInfo() {
-        JSONArray cellInfo = new JSONArray();
-
-        TelephonyManager tm = getTelephonyManager();
-        if (tm == null)
-            return null;
-        Collection<NeighboringCellInfo> cells = tm.getNeighboringCellInfo();
-        CellLocation cl = tm.getCellLocation();
-        if (cl == null)
-            return null;
-
-        String mcc = "", mnc = "";
-        if (cl instanceof GsmCellLocation) {
-            JSONObject obj = new JSONObject();
-            GsmCellLocation gcl = (GsmCellLocation) cl;
-            try {
-                obj.put("lac", gcl.getLac());
-                obj.put("cid", gcl.getCid());
-
-                int psc = (VERSION.SDK_INT >= 9) ? gcl.getPsc() : -1;
-                obj.put("psc", psc);
-
-                switch (tm.getNetworkType()) {
-                    case TelephonyManager.NETWORK_TYPE_GPRS:
-                    case TelephonyManager.NETWORK_TYPE_EDGE:
-                        obj.put("radio", "gsm");
-                        break;
-                    case TelephonyManager.NETWORK_TYPE_UMTS:
-                    case TelephonyManager.NETWORK_TYPE_HSDPA:
-                    case TelephonyManager.NETWORK_TYPE_HSUPA:
-                    case TelephonyManager.NETWORK_TYPE_HSPA:
-                    case TelephonyManager.NETWORK_TYPE_HSPAP:
-                        obj.put("radio", "umts");
-                        break;
-                    default:
-                        Log.w(LOGTAG, "", new IllegalStateException("Unexpected NetworkType: " + tm.getNetworkType()));
-                        break;
-                }
-                String mcc_mnc = tm.getNetworkOperator();
-                if (mcc_mnc.length() > 3) {
-                    mcc = mcc_mnc.substring(0, 3);
-                    mnc = mcc_mnc.substring(3);
-                    obj.put("mcc", mcc);
-                    obj.put("mnc", mnc);
-                }
-                obj.put("asu", mSignalStrength);
-                cellInfo.put(obj);
-            } catch (JSONException jsonex) {
-                Log.e(LOGTAG, "", jsonex);
-            }
-        }
-        if (cells != null) {
-            for (NeighboringCellInfo nci : cells) {
-                try {
-                    JSONObject obj = new JSONObject();
-                    obj.put("lac", nci.getLac());
-                    obj.put("cid", nci.getCid());
-                    obj.put("psc", nci.getPsc());
-                    obj.put("mcc", mcc);
-                    obj.put("mnc", mnc);
-
-                    switch (nci.getNetworkType()) {
-                        case TelephonyManager.NETWORK_TYPE_GPRS:
-                        case TelephonyManager.NETWORK_TYPE_EDGE:
-                            obj.put("radio", "gsm");
-                            break;
-                        case TelephonyManager.NETWORK_TYPE_UMTS:
-                        case TelephonyManager.NETWORK_TYPE_HSDPA:
-                        case TelephonyManager.NETWORK_TYPE_HSUPA:
-                        case TelephonyManager.NETWORK_TYPE_HSPA:
-                        case TelephonyManager.NETWORK_TYPE_HSPAP:
-                            obj.put("radio", "umts");
-                            break;
-                        default:
-                            Log.w(LOGTAG, "",
-                                    new IllegalStateException("Unexpected NetworkType: " + tm.getNetworkType()));
-                            break;
-                    }
-
-                    obj.put("asu", nci.getRssi());
-                    cellInfo.put(obj);
-                } catch (JSONException jsonex) {
-                    Log.e(LOGTAG, "", jsonex);
-                }
-            }
-        }
-        return cellInfo;
-    }
-
-    @Override
-    public void onProviderDisabled(String provider) {
-        // TODO Auto-generated method stub
-    }
-
-    @Override
-    public void onProviderEnabled(String provider) {
-        // TODO Auto-generated method stub
-    }
-
-    @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {
-        // TODO Auto-generated method stub
-    }
-
-    private void deleteAidingData() {
-        LocationManager lm = getLocationManager();
-
-        // http://stackoverflow.com/questions/6126257/assistance-data-injection-into-gps
-
-        // Delete cached A-GPS aiding data to force GPS cold start.
-        lm.sendExtraCommand(LocationManager.GPS_PROVIDER, "delete_aiding_data", null);
-        lm.sendExtraCommand(LocationManager.GPS_PROVIDER, "force_xtra_injection", null);
-
-        // Force NTP resync.
-        lm.sendExtraCommand(LocationManager.GPS_PROVIDER, "force_time_injection", null);
-    }
-
-    private LocationManager getLocationManager() {
-        return (LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
-    }
-
-    private TelephonyManager getTelephonyManager() {
-        return (TelephonyManager) mContext.getSystemService(Context.TELEPHONY_SERVICE);
-    }
-
-    private WifiManager getWifiManager() {
-        return (WifiManager) mContext.getSystemService(Context.WIFI_SERVICE);
-    }
+  int getLocationCount() {
+     return mGPSScanner.getLocationCount();
+  }
 }

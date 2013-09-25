@@ -111,6 +111,11 @@ public class WifiScanner extends BroadcastReceiver {
       Log.v(LOGTAG, "BSSID=" + scanResult.BSSID + ", SSID=\"" + scanResult.SSID + "\", Signal=" + scanResult.level);
     }
 
+    // No scan results to report.
+    if (wifiInfo.length() == 0) {
+      return;
+    }
+
     Intent i = new Intent(ScannerService.MESSAGE_TOPIC);
     i.putExtra(Intent.EXTRA_SUBJECT, "WifiScanner");
     i.putExtra("data", wifiInfo.toString());

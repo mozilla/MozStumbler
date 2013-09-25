@@ -86,15 +86,10 @@ public class WifiScanner extends BroadcastReceiver {
 
     JSONArray wifiInfo = new JSONArray();
     for (ScanResult scanResult : scanResults) {
+      scanResult.BSSID = BSSIDBlockList.canonicalizeBSSID(scanResult.BSSID);
       if (!shouldLog(scanResult)) {
         continue;
       }
-
-      String BSSID = BSSIDBlockList.canonicalizeBSSID(scanResult.BSSID);
-      if (BSSID == null) {
-        Log.e(LOGTAG, "", new IllegalArgumentException("Unexpected BSSID: " + scanResult.BSSID));
-      }
-      scanResult.BSSID = BSSID;
 
       try {
         JSONObject obj = new JSONObject();

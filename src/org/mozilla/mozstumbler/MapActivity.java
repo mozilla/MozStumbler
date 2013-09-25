@@ -208,7 +208,7 @@ public final class MapActivity extends Activity {
 
         @Override
         protected void onPostExecute(String result) {
-            if (mStatus.equals("ok")) {
+            if (mStatus != null && "ok".equals(mStatus)) {
               setPositionAndMarker(mLat,
                                    mLon,
                                    mAccuracy);

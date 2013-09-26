@@ -26,7 +26,7 @@ before_install:
     - mv $ANDROID_HOME/android-$ANDROID_OS_VERSION $ANDROID_HOME/build-tools/$ANDROID_BUILD_TOOLS_VERSION
 
     # Install Gradle
-    - wget http://services.gradle.org/distributions/gradle-$GRADLE_VERSION-bin.zip
+    - wget http://downloads.gradle.org/distributions/gradle-$GRADLE_VERSION-bin.zip
     - unzip gradle-$GRADLE_VERSION-bin.zip
     - export GRADLE_HOME=$PWD/gradle-$GRADLE_VERSION
     - export PATH=$GRADLE_HOME/bin:$PATH

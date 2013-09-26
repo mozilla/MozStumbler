@@ -17,7 +17,7 @@ before_install:
     - export PATH=${PATH}:${ANDROID_HOME}/tools:${ANDROID_HOME}/platform-tools
 
     # Install Android SDK components
-    - echo yes | android update sdk --filter platform-tools,android-$ANDROID_API_LEVEL,extra-android-support --no-ui --force > /dev/null
+    - echo y | android update sdk --filter tools,platform-tools,build-tools-$ANDROID_BUILD_TOOLS_VERSION,android-$ANDROID_API_LEVEL,extra-android-m2repository,extra-google-google_play_services,extra-google-m2repository --no-ui --force > /dev/null
 
     # Install Android build tools
     - wget https://dl-ssl.google.com/android/repository/build-tools_r$ANDROID_BUILD_TOOLS_VERSION-linux.zip
@@ -26,7 +26,7 @@ before_install:
     - mv $ANDROID_HOME/android-$ANDROID_OS_VERSION $ANDROID_HOME/build-tools/$ANDROID_BUILD_TOOLS_VERSION
 
     # Install Gradle
-    - wget http://services.gradle.org/distributions/gradle-$GRADLE_VERSION-bin.zip
+    - wget http://downloads.gradle.org/distributions/gradle-$GRADLE_VERSION-bin.zip
     - unzip gradle-$GRADLE_VERSION-bin.zip
     - export GRADLE_HOME=$PWD/gradle-$GRADLE_VERSION
     - export PATH=$GRADLE_HOME/bin:$PATH

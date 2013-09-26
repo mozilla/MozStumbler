@@ -64,13 +64,22 @@
            android:text="@string/view_leaderboard" />
 
        <Button
+           android:id="@+id/view_map"
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:layout_alignParentLeft="true"
+           android:layout_below="@+id/view_leaderboard"
+           android:onClick="onClick_ViewMap"
+           android:text="@string/view_map" />
+
+       <Button
            android:id="@+id/toggle_scanning"
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"
            android:layout_alignParentBottom="true"
            android:layout_alignParentLeft="true"
            android:layout_alignParentRight="true"
-           android:layout_below="@+id/view_leaderboard"
+           android:layout_below="@+id/view_map"
            android:onClick="onClick_ToggleScanning"
            android:text="@string/start_scanning"
            android:textAppearance="?android:attr/textAppearanceLarge" />

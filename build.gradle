@@ -60,10 +60,10 @@ if (hasProperty('StoreFile')) {
     android.buildTypes.release.signingConfig = null
 }
 
-if (hasProperty('APIKey')) {
-    File manifest = file("./AndroidManifest.xml.in")
-    String content = manifest.getText('UTF-8')
-    content = content.replaceAll(/MY_GOOGLE_API_KEY/, APIKey)
-    manifest = file("./AndroidManifest.xml")
-    manifest.write(content, 'UTF-8')
-}
+// Generate AndroidManifest.xml
+String myAPIKey = hasProperty('APIKey') ? APIKey : "FAKE_GOOGLE_API_KEY";
+File manifest = file("./AndroidManifest.xml.in")
+String content = manifest.getText('UTF-8')
+content = content.replaceAll(/MY_GOOGLE_API_KEY/, myAPIKey)
+manifest = file("./AndroidManifest.xml")
+manifest.write(content, 'UTF-8')

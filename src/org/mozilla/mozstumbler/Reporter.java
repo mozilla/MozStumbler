@@ -3,9 +3,6 @@ package org.mozilla.mozstumbler;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.PackageManager.NameNotFoundException;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -52,7 +49,7 @@ class Reporter extends BroadcastReceiver {
         mContext = context;
         mPrefs = prefs;
 
-        MOZSTUMBLER_USER_AGENT_STRING = getUserAgentString();
+        MOZSTUMBLER_USER_AGENT_STRING = NetworkUtils.getUserAgentString(mContext);
 
         String storedReports = mPrefs.getReports();
         try {
@@ -234,21 +231,6 @@ class Reporter extends BroadcastReceiver {
 
     public long getLastUploadTime() {
         return mLastUploadTime;
-    }
-
-    private String getUserAgentString() {
-        String appName = mContext.getString(R.string.app_name);
-
-        String versionName;
-        try {
-            PackageManager pm = mContext.getPackageManager();
-            versionName = pm.getPackageInfo("org.mozilla.mozstumbler", 0).versionName;
-        } catch (NameNotFoundException e) {
-            throw new IllegalArgumentException(e);
-        }
-
-        // "MozStumbler/X.Y.Z"
-        return appName + '/' + versionName;
     }
 
     private void sendUpdateIntent() {

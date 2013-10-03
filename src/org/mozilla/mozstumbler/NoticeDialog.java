@@ -16,9 +16,6 @@ public class NoticeDialog
     }
 
     public void show() {
-        if (mPrefs.getHasSeenNotice()) {
-            return;
-        }
 
         AlertDialog.Builder builder = new AlertDialog.Builder(mActivity)
             .setTitle(mActivity.getString(R.string.app_name))

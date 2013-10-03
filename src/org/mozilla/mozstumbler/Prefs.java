@@ -64,7 +64,7 @@ final class Prefs {
         return getStringPref(REPORTS_PREF);
     }
 
-    boolean getHasSeenNotice() {
+    boolean hasSeenNotice() {
         int lastSeenVersion = getPrefs().getInt(NOTICE_PREF, 0);
         return lastSeenVersion == mCurrentVersion;
     }

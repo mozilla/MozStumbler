@@ -145,6 +145,11 @@ class Reporter extends BroadcastReceiver {
             return;
         }
 
+        if (!NetworkUtils.isNetworkAvailable(mContext)) {
+            Log.d(LOGTAG, "Can't send reports without network connection");
+            return;
+        }
+
         JSONArray reports = mReports;
         mReports = new JSONArray();
 

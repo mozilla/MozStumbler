@@ -6,9 +6,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager.NameNotFoundException;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -82,18 +79,16 @@ public final class MapActivity extends Activity {
         }
     }
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
 
-
         mWifiData = "";
         mReceiver = new ReporterBroadcastReceiver();
         registerReceiver(mReceiver, new IntentFilter(ScannerService.MESSAGE_TOPIC));
 
-        MOZSTUMBLER_USER_AGENT_STRING = getUserAgentString();
+        MOZSTUMBLER_USER_AGENT_STRING = NetworkUtils.getUserAgentString(this);
 
         mMap = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
 
@@ -226,20 +221,5 @@ public final class MapActivity extends Activity {
         protected void onProgressUpdate(Void... values) {
         }
 
-    }
-
-    private String getUserAgentString() {
-        String appName = getString(R.string.app_name);
-
-        String versionName;
-        try {
-            PackageManager pm = getPackageManager();
-            versionName = pm.getPackageInfo("org.mozilla.mozstumbler", 0).versionName;
-        } catch (NameNotFoundException e) {
-            throw new IllegalArgumentException(e);
-        }
-
-        // "MozStumbler/X.Y.Z"
-        return appName + '/' + versionName;
     }
 }

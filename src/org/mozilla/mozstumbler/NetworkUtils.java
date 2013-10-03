@@ -40,11 +40,6 @@ final class NetworkUtils {
             return false;
         }
 
-        if (network.isRoaming()) {
-            Log.w(LOGTAG, "Active network is roaming!");
-            return false;
-        }
-
         return true; // Network is OK!
     }
 

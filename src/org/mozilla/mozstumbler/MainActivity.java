@@ -227,9 +227,8 @@ public final class MainActivity extends Activity {
     public void onClick_ViewMap(View v) throws RemoteException {
         // We are starting Wi-Fi scanning because we want the the APs for our
         // geolocation request whose results we want to display on the map.
-        boolean scanning = mConnectionRemote.isScanning();
-        if (!scanning) {
-            mConnectionRemote.startWifiScanningOnly();
+        if (mConnectionRemote != null) {
+            mConnectionRemote.startScanning();
         }
 
         Log.d(LOGTAG, "onClick_ViewMap");

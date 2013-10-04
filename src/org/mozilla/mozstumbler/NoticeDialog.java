@@ -5,8 +5,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 
-public class NoticeDialog
-{
+final class NoticeDialog {
     private Activity mActivity;
     private Prefs mPrefs;
 
@@ -16,9 +15,12 @@ public class NoticeDialog
     }
 
     public void show() {
-        if (mPrefs.getHasSeenNotice()) {
-            return;
-        }
+        final Dialog.OnCancelListener onCancel = new Dialog.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface di) {
+                mActivity.finish();
+            }
+        };
 
         AlertDialog.Builder builder = new AlertDialog.Builder(mActivity)
             .setTitle(mActivity.getString(R.string.app_name))
@@ -35,9 +37,10 @@ public class NoticeDialog
                                new Dialog.OnClickListener() {
                                  @Override
                                  public void onClick(DialogInterface di, int which) {
-                                     mActivity.finish();
+                                     onCancel.onCancel(di);
                                  }
-                             });
+                             })
+            .setOnCancelListener(onCancel);
         builder.create().show();
     }
 }

@@ -88,12 +88,13 @@ public final class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
 
         mPrefs = new Prefs(this);
-
-        new NoticeDialog(this, mPrefs).show();
+        if (!mPrefs.hasSeenNotice()) {
+            new NoticeDialog(this, mPrefs).show();
+        }
 
         EditText nicknameEditor = (EditText) findViewById(R.id.edit_nickname);
 
-        String nickname = mPrefs.getNickname(); // FIXME: StrictMode violation?
+        String nickname = mPrefs.getNickname();
         if (nickname != null) {
             nicknameEditor.setText(nickname);
         }

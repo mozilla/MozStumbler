@@ -90,6 +90,8 @@ public final class MainActivity extends Activity {
         mPrefs = new Prefs(this);
         if (!mPrefs.hasSeenNotice()) {
             new NoticeDialog(this, mPrefs).show();
+        } else {
+            Updater.checkForUpdates(this);
         }
 
         EditText nicknameEditor = (EditText) findViewById(R.id.edit_nickname);

@@ -31,6 +31,7 @@ final class NoticeDialog {
                                    public void onClick(DialogInterface di, int which) {
                                        mPrefs.setHasSeenNotice();
                                        di.dismiss();
+                                       Updater.checkForUpdates(mActivity);
                                    }
                                })
             .setNegativeButton(android.R.string.cancel,

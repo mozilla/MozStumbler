@@ -219,25 +219,29 @@ class Reporter extends BroadcastReceiver {
     void reportLocation(String location, String wifiInfo, String radioType, String cellInfo) {
         Log.d(LOGTAG, "reportLocation called");
         JSONObject locInfo = null;
-        JSONArray cellJSON,wifiJSON;
+        JSONArray cellJSON = null
+                ,wifiJSON = null;
 
         try {
             locInfo = new JSONObject( location );
 
-            if (cellInfo.length()==0) {
-                cellJSON=new JSONArray();
-            } else {
+            if (cellInfo.length()>0) {
                 cellJSON=new JSONArray(cellInfo);
-                locInfo.put("cell", new JSONArray(cellInfo));
+                locInfo.put("cell", cellJSON);
                 locInfo.put("radio", radioType);
             }
 
-            if (wifiInfo.length()==0) {
-                wifiJSON=new JSONArray();
-            } else {
+            if (wifiInfo.length()>0) {
                 wifiJSON=new JSONArray(wifiInfo);
+                locInfo.put("wifi", wifiJSON);
             }
-            locInfo.put("wifi", wifiJSON);
+
+            // At least one cell or wifi entry is required
+            // as per: https://mozilla-ichnaea.readthedocs.org/en/latest/api/submit.html
+            if (cellJSON==null && wifiJSON==null) {
+                Log.w(LOGTAG, "Invalid report: at least one cell/wifi entry is required");
+                return;
+            }
 
         } catch (JSONException jsonex) {
             Log.w(LOGTAG, "JSON exception", jsonex);

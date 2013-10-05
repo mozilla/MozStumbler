@@ -93,7 +93,7 @@ class Reporter extends BroadcastReceiver {
         long time = intent.getLongExtra("time", 0);
         String subject = intent.getStringExtra(Intent.EXTRA_SUBJECT);
         String data = intent.getStringExtra("data");
-        Log.d(LOGTAG, "" + subject + " : " + data);
+        if (data!=null) Log.d(LOGTAG, "" + subject + " : " + data);
 
         if (mWifiDataTime - time > REPORTER_WINDOW) {
           mWifiData = "";
@@ -122,10 +122,12 @@ class Reporter extends BroadcastReceiver {
             mGPSDataTime = time;
         }
         else {
-          Log.e(LOGTAG, "Unexpected subject: " + subject);
+            Log.d(LOGTAG, "Intent ignored with Subject: " + subject);
+            return; // Intent not aimed at the Reporter (it is possibly for UI instead)
         }
 
         // Record recent Wi-Fi and/or cell scan results for the current GPS position.
+        Log.d(LOGTAG, "Reporter data: GPS: "+mGPSData.length()+", WiFi: "+mWifiData.length()+", Cell: "+mCellData.length()+" ("+mRadioType+")");
         if (mGPSData.length() > 0 && (mWifiData.length() > 0 || mCellData.length() > 0)) {
           reportLocation(mGPSData, mWifiData, mRadioType, mCellData);
           resetData();
@@ -217,16 +219,28 @@ class Reporter extends BroadcastReceiver {
     void reportLocation(String location, String wifiInfo, String radioType, String cellInfo) {
         Log.d(LOGTAG, "reportLocation called");
         JSONObject locInfo = null;
+        JSONArray cellJSON,wifiJSON;
+
         try {
             locInfo = new JSONObject( location );
-            locInfo.put("cell", new JSONArray(cellInfo));
-            locInfo.put("radio", radioType);
 
-            JSONArray w = new JSONArray(wifiInfo);
-            locInfo.put("wifi", w);
+            if (cellInfo.length()==0) {
+                cellJSON=new JSONArray();
+            } else {
+                cellJSON=new JSONArray(cellInfo);
+                locInfo.put("cell", new JSONArray(cellInfo));
+                locInfo.put("radio", radioType);
+            }
+
+            if (wifiInfo.length()==0) {
+                wifiJSON=new JSONArray();
+            } else {
+                wifiJSON=new JSONArray(wifiInfo);
+            }
+            locInfo.put("wifi", wifiJSON);
 
         } catch (JSONException jsonex) {
-            Log.w(LOGTAG, "json exception", jsonex);
+            Log.w(LOGTAG, "JSON exception", jsonex);
             return;
         }
 

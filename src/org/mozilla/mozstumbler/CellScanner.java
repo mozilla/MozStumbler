@@ -101,6 +101,10 @@ public class CellScanner extends PhoneStateListener {
                     case TelephonyManager.NETWORK_TYPE_HSPAP:
                         obj.put("radio", "umts");
                         break;
+                    case TelephonyManager.NETWORK_TYPE_LTE:
+                        obj.put("radio", "lte");
+                        Log.d(LOGTAG, "LTE network detected - NetworkType: " + tm.getNetworkType());
+                        break;
                     default:
                         Log.w(LOGTAG, "", new IllegalStateException("Unexpected NetworkType: " + tm.getNetworkType()));
                         break;
@@ -141,6 +145,10 @@ public class CellScanner extends PhoneStateListener {
                         case TelephonyManager.NETWORK_TYPE_HSPA:
                         case TelephonyManager.NETWORK_TYPE_HSPAP:
                             obj.put("radio", "umts");
+                            break;
+                        case TelephonyManager.NETWORK_TYPE_LTE:
+                            obj.put("radio", "lte");
+                            Log.d(LOGTAG, "LTE network in NeighboringCell - NetworkType: " + tm.getNetworkType());
                             break;
                         default:
                             Log.w(LOGTAG, "",

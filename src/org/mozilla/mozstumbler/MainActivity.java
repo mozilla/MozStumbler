@@ -17,6 +17,7 @@ import android.os.StrictMode;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnFocusChangeListener;
 import android.view.inputmethod.EditorInfo;
@@ -28,6 +29,7 @@ import android.widget.Toast;
 public final class MainActivity extends Activity {
     private static final String LOGTAG = MainActivity.class.getName();
     private static final String LEADERBOARD_URL = "https://location.services.mozilla.com/leaders";
+    private static final String ABOUT_PRIVACY_URL = "https://wiki.mozilla.org/Services/Location/About";
 
     private ScannerServiceInterface  mConnectionRemote;
     private ServiceConnection        mConnection;
@@ -238,7 +240,20 @@ public final class MainActivity extends Activity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        return false;
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_about_privacy) {
+            Intent openAboutPrivacy = new Intent(Intent.ACTION_VIEW, Uri.parse(ABOUT_PRIVACY_URL));
+            startActivity(openAboutPrivacy);
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     @TargetApi(9)

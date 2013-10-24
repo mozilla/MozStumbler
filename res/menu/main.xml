@@ -1,5 +1,5 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
     <item
-        android:id="@+id/action_about_privacy"
-        android:title="@string/action_about_privacy"/>
+        android:id="@+id/action_about"
+        android:title="@string/action_about"/>
 </menu>

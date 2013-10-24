@@ -113,15 +113,11 @@ public final class MainActivity extends Activity {
         enableStrictMode();
         setContentView(R.layout.activity_main);
 
-        mPrefs = new Prefs(this);
-        if (!mPrefs.hasSeenNotice()) {
-            new NoticeDialog(this, mPrefs).show();
-        } else {
-            Updater.checkForUpdates(this);
-        }
+        Updater.checkForUpdates(this);
 
         EditText nicknameEditor = (EditText) findViewById(R.id.edit_nickname);
 
+        mPrefs = new Prefs(this);
         String nickname = mPrefs.getNickname();
         if (nickname != null) {
             nicknameEditor.setText(nickname);

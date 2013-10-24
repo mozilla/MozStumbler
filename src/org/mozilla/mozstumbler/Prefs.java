@@ -15,7 +15,6 @@ final class Prefs {
     private static final String     PREFS_FILE    = Prefs.class.getName();
     private static final String     NICKNAME_PREF = "nickname";
     private static final String     REPORTS_PREF  = "reports";
-    private static final String     NOTICE_PREF   = "notice";
 
     private int mCurrentVersion;
     private Context mContext;
@@ -62,17 +61,6 @@ final class Prefs {
 
     String getReports() {
         return getStringPref(REPORTS_PREF);
-    }
-
-    boolean hasSeenNotice() {
-        int lastSeenVersion = getPrefs().getInt(NOTICE_PREF, 0);
-        return lastSeenVersion == mCurrentVersion;
-    }
-
-    void setHasSeenNotice() {
-        SharedPreferences.Editor editor = getPrefs().edit();
-        editor.putInt(NOTICE_PREF, mCurrentVersion);
-        apply(editor);
     }
 
     private String getStringPref(String key) {

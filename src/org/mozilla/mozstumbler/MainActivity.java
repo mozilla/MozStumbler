@@ -14,6 +14,8 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.os.StrictMode;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -83,6 +85,28 @@ public final class MainActivity extends Activity {
         }
     }
 
+    private class NicknameWatcher implements TextWatcher {
+        private String mPlaceholderText;
+
+        public NicknameWatcher() {
+            mPlaceholderText = getResources().getString(R.string.enter_nickname);
+        }
+
+        @Override
+        public void afterTextChanged(Editable editableNickname) {
+            String newNickname = editableNickname.toString().trim();
+            if (!newNickname.equals(mPlaceholderText)) {
+                mPrefs.setNickname(newNickname);
+            }
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -103,19 +127,7 @@ public final class MainActivity extends Activity {
             nicknameEditor.setText(nickname);
         }
 
-        nicknameEditor.setOnEditorActionListener(new EditText.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    String newNickname = v.getText().toString().trim();
-                    String placeholderText = getResources().getString(R.string.enter_nickname);
-                    if (!newNickname.equals(placeholderText)) {
-                        mPrefs.setNickname(newNickname);
-                    }
-                }
-                return false;
-            }
-        });
+        nicknameEditor.addTextChangedListener(new NicknameWatcher());
 
         Log.d(LOGTAG, "onCreate");
     }

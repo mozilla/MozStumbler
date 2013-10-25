@@ -69,6 +69,7 @@ public final class MapActivity extends Activity {
 
           if (subject.equals("WifiScanner")) {
             mWifiData = intent.getStringExtra("data");
+            zeroPositionAndMarker();
             new GetLocationAndMapItTask().execute("");
             mDone = true;
           }
@@ -85,32 +86,48 @@ public final class MapActivity extends Activity {
         setContentView(R.layout.activity_map);
 
         mWifiData = "";
-        mReceiver = new ReporterBroadcastReceiver();
-        registerReceiver(mReceiver, new IntentFilter(ScannerService.MESSAGE_TOPIC));
-
         MOZSTUMBLER_USER_AGENT_STRING = NetworkUtils.getUserAgentString(this);
 
         mMap = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
+        if (mMap != null) {
+            mReceiver = new ReporterBroadcastReceiver();
+            registerReceiver(mReceiver, new IntentFilter(ScannerService.MESSAGE_TOPIC));
+        } else {
+            Log.e(LOGTAG, "", new IllegalStateException("mMap must be non-null"));
+            finish();
+        }
 
         Log.d(LOGTAG, "onCreate");
     }
 
-    private void setPositionAndMarker(float lat, float lon, float accuracy) {
+    private void moveToPositionAndMarker(float lat, float lon, float accuracy) {
         LatLng poi = new LatLng(lat, lon);
-        Marker hamburg = mMap.addMarker(new MarkerOptions().position(poi).title("You're Here"));
+        mMap.addMarker(new MarkerOptions().position(poi));
 
-        // Move the camera instantly to poi with a zoom of 15.
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(poi, 15));
-
-        // Zoom in, animating the camera.
-        //        mMap.animateCamera(CameraUpdateFactory.zoomTo(20), 2000, null);
+        float zoom = zoomFromAccuracy(accuracy);
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(poi, zoom));
 
         mMap.addCircle(new CircleOptions()
                                      .center(poi)
                                      .radius(accuracy)
-                                     .strokeColor(Color.RED)
-                                     .fillColor(Color.argb(30, 0, 153, 255))
-                                     .strokeWidth(2));
+                                     .fillColor(Color.argb(50, 0, 153, 255))
+                                     .strokeWidth(0));
+    }
+
+    private void zeroPositionAndMarker() {
+        // A high altitude view of Google Maps' "North Atlantic Ocean" text is a pretty
+        // clear indication of "we don't know where you are".
+        LatLng northAtlanticOcean = new LatLng(35, -41);
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(northAtlanticOcean, 2));
+    }
+
+    private static float zoomFromAccuracy(float accuracy) {
+        if (accuracy <= 0) {
+            Log.w(LOGTAG, "", new IllegalArgumentException("accuracy=" + accuracy));
+            return 2;
+        }
+        // Valid zoom range is [2.0f, 21.0f].
+        return 21f - (float) Math.log(accuracy);
     }
 
     @Override
@@ -123,7 +140,10 @@ public final class MapActivity extends Activity {
     protected void onStop() {
         super.onStop();
         Log.d(LOGTAG, "onStop");
-        unregisterReceiver(mReceiver);
+        if (mReceiver != null) {
+            unregisterReceiver(mReceiver);
+            mReceiver = null;
+        }
     }
 
     @Override
@@ -131,11 +151,16 @@ public final class MapActivity extends Activity {
         return false;
     }
 
-    private class GetLocationAndMapItTask extends AsyncTask<String, Void, String> {
+    private final class GetLocationAndMapItTask extends AsyncTask<String, Void, String> {
         private String mStatus;
         private float mLat;
         private float mLon;
         private float mAccuracy;
+
+        @Override
+        protected void onPreExecute() {
+            zeroPositionAndMarker();
+        }
 
         @Override
         public String doInBackground(String... params) {
@@ -204,22 +229,10 @@ public final class MapActivity extends Activity {
         @Override
         protected void onPostExecute(String result) {
             if (mStatus != null && "ok".equals(mStatus)) {
-              setPositionAndMarker(mLat,
-                                   mLon,
-                                   mAccuracy);
-            }
-            else {
-                setPositionAndMarker(0, 0, 32000);
+                moveToPositionAndMarker(mLat, mLon, mAccuracy);
+            } else {
+                Log.e(LOGTAG, "", new IllegalStateException("mStatus=" + mStatus));
             }
         }
-
-        @Override
-        protected void onPreExecute() {
-        }
-
-        @Override
-        protected void onProgressUpdate(Void... values) {
-        }
-
     }
 }

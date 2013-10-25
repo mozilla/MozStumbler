@@ -12,6 +12,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -83,7 +84,15 @@ public final class MapActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_map);
+
+        try {
+            setContentView(R.layout.activity_map);
+        } catch (RuntimeException ex) {
+            Toast.makeText(getApplicationContext(), R.string.map_unavailable, Toast.LENGTH_SHORT).show();
+            Log.e(LOGTAG, "", new IllegalStateException("Failed to setContentView for map"));
+            finish();
+            return;
+        }
 
         mWifiData = "";
         mReceiver = new ReporterBroadcastReceiver();

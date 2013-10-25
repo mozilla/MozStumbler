@@ -9,6 +9,7 @@
     <string name="stop_scanning_upload">Stop Scanning &amp; Upload</string>
     <string name="view_leaderboard">View Leaderboard</string>
     <string name="view_map">Locate Me</string>
+    <string name="map_unavailable">Map unavailable, can\'t display your location</string>
     <string name="service_name">Mozilla Stumbler</string>
     <string name="wifi_access_points">Wi-Fi Access Points Scanned: %1$d</string>
     <string name="gps_satellites">GPS Satellites Visible: %1$d</string>

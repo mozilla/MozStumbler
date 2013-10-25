@@ -86,12 +86,16 @@ public final class MapActivity extends Activity {
         setContentView(R.layout.activity_map);
 
         mWifiData = "";
-        mReceiver = new ReporterBroadcastReceiver();
-        registerReceiver(mReceiver, new IntentFilter(ScannerService.MESSAGE_TOPIC));
-
         MOZSTUMBLER_USER_AGENT_STRING = NetworkUtils.getUserAgentString(this);
 
         mMap = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
+        if (mMap != null) {
+            mReceiver = new ReporterBroadcastReceiver();
+            registerReceiver(mReceiver, new IntentFilter(ScannerService.MESSAGE_TOPIC));
+        } else {
+            Log.e(LOGTAG, "", new IllegalStateException("mMap must be non-null"));
+            finish();
+        }
 
         Log.d(LOGTAG, "onCreate");
     }

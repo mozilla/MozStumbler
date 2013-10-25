@@ -136,7 +136,10 @@ public final class MapActivity extends Activity {
     protected void onStop() {
         super.onStop();
         Log.d(LOGTAG, "onStop");
-        unregisterReceiver(mReceiver);
+        if (mReceiver != null) {
+            unregisterReceiver(mReceiver);
+            mReceiver = null;
+        }
     }
 
     @Override

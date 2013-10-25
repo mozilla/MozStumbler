@@ -31,7 +31,7 @@ import android.widget.Toast;
 public final class MainActivity extends Activity {
     private static final String LOGTAG = MainActivity.class.getName();
     private static final String LEADERBOARD_URL = "https://location.services.mozilla.com/leaders";
-    private static final String ABOUT_PRIVACY_URL = "https://wiki.mozilla.org/Services/Location/About";
+    private static final String ABOUT_PAGE_URL = "https://wiki.mozilla.org/Services/Location/About";
 
     private ScannerServiceInterface  mConnectionRemote;
     private ServiceConnection        mConnection;
@@ -113,15 +113,11 @@ public final class MainActivity extends Activity {
         enableStrictMode();
         setContentView(R.layout.activity_main);
 
-        mPrefs = new Prefs(this);
-        if (!mPrefs.hasSeenNotice()) {
-            new NoticeDialog(this, mPrefs).show();
-        } else {
-            Updater.checkForUpdates(this);
-        }
+        Updater.checkForUpdates(this);
 
         EditText nicknameEditor = (EditText) findViewById(R.id.edit_nickname);
 
+        mPrefs = new Prefs(this);
         String nickname = mPrefs.getNickname();
         if (nickname != null) {
             nicknameEditor.setText(nickname);
@@ -259,9 +255,9 @@ public final class MainActivity extends Activity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.action_about_privacy) {
-            Intent openAboutPrivacy = new Intent(Intent.ACTION_VIEW, Uri.parse(ABOUT_PRIVACY_URL));
-            startActivity(openAboutPrivacy);
+        if (item.getItemId() == R.id.action_about) {
+            Intent openAboutPage = new Intent(Intent.ACTION_VIEW, Uri.parse(ABOUT_PAGE_URL));
+            startActivity(openAboutPage);
             return true;
         }
 

@@ -1,5 +1,7 @@
 package org.mozilla.mozstumbler;
 
+import org.mozilla.mozstumbler.preferences.PreferencesScreen;
+
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -15,7 +17,6 @@ import android.os.IBinder;
 import android.os.RemoteException;
 import android.os.StrictMode;
 import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -36,7 +37,6 @@ public final class MainActivity extends Activity {
     private ScannerServiceInterface  mConnectionRemote;
     private ServiceConnection        mConnection;
     private ServiceBroadcastReceiver mReceiver;
-    private Prefs                    mPrefs;
     private int                      mGpsFixes;
 
     private class ServiceBroadcastReceiver extends BroadcastReceiver {
@@ -85,28 +85,6 @@ public final class MainActivity extends Activity {
         }
     }
 
-    private class NicknameWatcher implements TextWatcher {
-        private String mPlaceholderText;
-
-        public NicknameWatcher() {
-            mPlaceholderText = getResources().getString(R.string.enter_nickname);
-        }
-
-        @Override
-        public void afterTextChanged(Editable editableNickname) {
-            String newNickname = editableNickname.toString().trim();
-            if (!newNickname.equals(mPlaceholderText)) {
-                mPrefs.setNickname(newNickname);
-            }
-        }
-
-        @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count) {}
-
-        @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -114,16 +92,6 @@ public final class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
 
         Updater.checkForUpdates(this);
-
-        EditText nicknameEditor = (EditText) findViewById(R.id.edit_nickname);
-
-        mPrefs = new Prefs(this);
-        String nickname = mPrefs.getNickname();
-        if (nickname != null) {
-            nicknameEditor.setText(nickname);
-        }
-
-        nicknameEditor.addTextChangedListener(new NicknameWatcher());
 
         // Temporarily disable map button on Gingerbread and older Honeycomb devices.
         if (VERSION.SDK_INT < 12) {
@@ -267,6 +235,11 @@ public final class MainActivity extends Activity {
         if (item.getItemId() == R.id.action_about) {
             Intent openAboutPage = new Intent(Intent.ACTION_VIEW, Uri.parse(ABOUT_PAGE_URL));
             startActivity(openAboutPage);
+            return true;
+        } else if (item.getItemId() == R.id.action_preferences) {
+            Intent open= new Intent();
+            open.setClass(getApplication(), PreferencesScreen.class);
+            startActivity(open);
             return true;
         }
 

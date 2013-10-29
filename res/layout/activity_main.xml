@@ -53,21 +53,12 @@
            android:text="@string/reports_sent"
            android:textAppearance="?android:attr/textAppearanceMedium" />
 
-       <EditText
-           android:id="@+id/edit_nickname"
-           android:layout_width="match_parent"
-           android:layout_height="wrap_content"
-           android:layout_below="@+id/reports_sent"
-           android:inputType="textPersonName"
-           android:selectAllOnFocus="true"
-           android:text="@string/enter_nickname" />
-
        <Button
            android:id="@+id/view_leaderboard"
            android:layout_width="match_parent"
            android:layout_height="wrap_content"
            android:layout_alignParentLeft="true"
-           android:layout_below="@+id/edit_nickname"
+           android:layout_below="@+id/reports_sent"
            android:onClick="onClick_ViewLeaderboard"
            android:text="@string/view_leaderboard" />
 

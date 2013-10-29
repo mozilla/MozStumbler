@@ -3,6 +3,7 @@
 
     <string name="app_name">MozStumbler</string>
     <string name="action_about">About MozStumbler</string>
+    <string name="action_preferences">Settings</string>
     <string name="mozilla_title">Mozilla</string>
     <string name="start_scanning">Start Scanning</string>
     <string name="stop_scanning">Stop Scanning</string>
@@ -16,6 +17,7 @@
     <string name="reports_sent">Reports Sent: %1$d</string>
     <string name="service_scanning">Scanning for Wi-Fi and Cellular networks</string>
     <string name="enter_nickname">Enter Nickname (optional)</string>
+    <string name="enter_nickname_longtext">Your nickname will appear on the leaderboard</string>
     <string name="battery_low_warning">Battery low, MozStumbler will stop scanning</string>
 
     <string name="update_title">Download MozStumbler Update?</string>

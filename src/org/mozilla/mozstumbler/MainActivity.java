@@ -9,7 +9,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.net.Uri;
-import android.os.Build;
+import android.os.Build.VERSION;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
@@ -124,6 +124,12 @@ public final class MainActivity extends Activity {
         }
 
         nicknameEditor.addTextChangedListener(new NicknameWatcher());
+
+        // Temporarily disable map button on Gingerbread and older Honeycomb devices.
+        if (VERSION.SDK_INT < 12) {
+            Button mapButton = (Button) findViewById(R.id.view_map);
+            mapButton.setEnabled(false);
+        }
 
         Log.d(LOGTAG, "onCreate");
     }
@@ -266,7 +272,7 @@ public final class MainActivity extends Activity {
 
     @TargetApi(9)
     private void enableStrictMode() {
-        if (Build.VERSION.SDK_INT < 9) {
+        if (VERSION.SDK_INT < 9) {
             return;
         }
 

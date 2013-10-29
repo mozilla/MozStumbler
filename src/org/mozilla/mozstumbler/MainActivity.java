@@ -191,7 +191,7 @@ public final class MainActivity extends Activity {
 
         Button scanningBtn = (Button) findViewById(R.id.toggle_scanning);
         if (scanning) {
-            scanningBtn.setText(R.string.stop_scanning_upload);
+            scanningBtn.setText(R.string.stop_scanning);
         } else {
             scanningBtn.setText(R.string.start_scanning);
         }
@@ -231,7 +231,7 @@ public final class MainActivity extends Activity {
             b.setText(R.string.start_scanning);
         } else {
             mConnectionRemote.startScanning();
-            b.setText(R.string.stop_scanning_upload);
+            b.setText(R.string.stop_scanning);
         }
     }
 

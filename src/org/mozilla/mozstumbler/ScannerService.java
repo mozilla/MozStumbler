@@ -125,6 +125,11 @@ public final class ScannerService extends Service {
         public long getLastUploadTime() throws RemoteException {
             return mReporter.getLastUploadTime();
         }
+
+        @Override
+        public long getReportsSent () throws RemoteException {
+            return mReporter.getReportsSent();
+        }
     };
 
     private final class LooperThread extends Thread {

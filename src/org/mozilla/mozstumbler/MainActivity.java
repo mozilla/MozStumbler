@@ -199,10 +199,12 @@ public final class MainActivity extends Activity {
         int locationsScanned = 0;
         int APs = 0;
         long lastUploadTime = 0;
+        long reportsSent = 0;
         try {
             locationsScanned = mConnectionRemote.getLocationCount();
             APs = mConnectionRemote.getAPCount();
             lastUploadTime = mConnectionRemote.getLastUploadTime();
+            reportsSent = mConnectionRemote.getReportsSent();
         } catch (RemoteException e) {
             Log.e(LOGTAG, "", e);
         }
@@ -215,6 +217,7 @@ public final class MainActivity extends Activity {
         formatTextView(R.id.wifi_access_points, R.string.wifi_access_points, APs);
         formatTextView(R.id.locations_scanned, R.string.locations_scanned, locationsScanned);
         formatTextView(R.id.last_upload_time, R.string.last_upload_time, lastUploadTimeString);
+        formatTextView(R.id.reports_sent, R.string.reports_sent, reportsSent);
     }
 
     public void onClick_ToggleScanning(View v) throws RemoteException {

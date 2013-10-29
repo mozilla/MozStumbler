@@ -135,14 +135,15 @@ class Reporter extends BroadcastReceiver {
     }
 
     void sendReports(boolean force) {
-        Log.d(LOGTAG, "sendReports: " + force);
+        Log.d(LOGTAG, "sendReports: force=" + force);
+
         int count = mReports.length();
         if (count == 0) {
             Log.d(LOGTAG, "no reports to send");
             return;
         }
 
-        if (count < RECORD_BATCH_SIZE && !force) {
+        if (count < RECORD_BATCH_SIZE && !force && mLastUploadTime > 0) {
             Log.d(LOGTAG, "batch count not reached, and !force");
             return;
         }

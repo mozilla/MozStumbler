@@ -24,7 +24,7 @@ class Reporter extends BroadcastReceiver {
     private static final String LOCATION_URL    = "https://location.services.mozilla.com/v1/submit";
     private static final String NICKNAME_HEADER = "X-Nickname";
     private static final String USER_AGENT_HEADER = "User-Agent";
-    private static final int RECORD_BATCH_SIZE  = 100;
+    private static final int RECORD_BATCH_SIZE  = 20;
     private static final int REPORTER_WINDOW  = 3000; //ms
 
     private static String       MOZSTUMBLER_USER_AGENT_STRING;
@@ -135,14 +135,15 @@ class Reporter extends BroadcastReceiver {
     }
 
     void sendReports(boolean force) {
-        Log.d(LOGTAG, "sendReports: " + force);
+        Log.d(LOGTAG, "sendReports: force=" + force);
+
         int count = mReports.length();
         if (count == 0) {
             Log.d(LOGTAG, "no reports to send");
             return;
         }
 
-        if (count < RECORD_BATCH_SIZE && !force) {
+        if (count < RECORD_BATCH_SIZE && !force && mLastUploadTime > 0) {
             Log.d(LOGTAG, "batch count not reached, and !force");
             return;
         }

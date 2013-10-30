@@ -8,4 +8,5 @@ interface ScannerServiceInterface {
     int getLocationCount();
     int getAPCount();
     long getLastUploadTime();
+    long getReportsSent();
 }

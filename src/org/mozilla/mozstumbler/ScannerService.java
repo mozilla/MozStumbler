@@ -23,7 +23,7 @@ public final class ScannerService extends Service {
     public static final String  MESSAGE_TOPIC   = "org.mozilla.mozstumbler.serviceMessage";
 
     private static final String LOGTAG          = ScannerService.class.getName();
-    private static final int    NOTIFICATION_ID = 0;
+    private static final int    NOTIFICATION_ID = 1;
     private static final int    WAKE_TIMEOUT    = 5 * 1000;
 
     private Scanner             mScanner;
@@ -103,6 +103,7 @@ public final class ScannerService extends Service {
 
                     NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
                     nm.cancel(NOTIFICATION_ID);
+                    stopForeground(true);
 
                     mScanner.stopScanning();
 
@@ -214,7 +215,7 @@ public final class ScannerService extends Service {
 
                 int icon = R.drawable.ic_status_scanning;
                 Notification n = buildNotification(ctx, icon, title, text, contentIntent, flags);
-                nm.notify(NOTIFICATION_ID, n);
+                startForeground(NOTIFICATION_ID, n);
             }
         });
     }

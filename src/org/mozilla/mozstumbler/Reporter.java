@@ -44,7 +44,7 @@ class Reporter extends BroadcastReceiver {
     private String mGPSData;
 
     private String mRadioType;
-	private long mReportsSent;
+    private long mReportsSent;
         
     Reporter(Context context, Prefs prefs) {
         mContext = context;
@@ -189,8 +189,8 @@ class Reporter extends BroadcastReceiver {
                         Log.d(LOGTAG, "uploaded wrapperData: " + wrapperData + " to " + LOCATION_URL);
 
                         int code = urlConnection.getResponseCode();
-                        if(code>=200 && code <= 299) {
-                        	mReportsSent = reports.length();
+                        if (code>=200 && code <= 299) {
+                            mReportsSent = reports.length();
                         }
                         Log.e(LOGTAG, "urlConnection returned " + code);
 

@@ -190,7 +190,7 @@ class Reporter extends BroadcastReceiver {
 
                         int code = urlConnection.getResponseCode();
                         if (code>=200 && code <= 299) {
-                            mReportsSent = reports.length();
+                            mReportsSent = mReportsSent + reports.length();
                         }
                         Log.e(LOGTAG, "urlConnection returned " + code);
 

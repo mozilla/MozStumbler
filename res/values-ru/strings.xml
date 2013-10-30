@@ -15,7 +15,7 @@
     <string name="last_upload_time">Отчет отправлен: %1$s</string>
     <string name="reports_sent">Отправлено отчетов: %1$d</string>
     <string name="service_scanning">Сканирование Wi-Fi точек доступа и базовых станций сотовых операторов</string>
-    <string name="enter_nickname">Укажите свой псевдоним</string>
+    <string name="enter_nickname">Укажите свой псевдоним (не обязательно)</string>
     <string name="battery_low_warning">MozStumbler остановит сканирование в связи с разрядом батареи</string>
 
     <string name="update_title">Загрузить обновление MozStumbler?</string>

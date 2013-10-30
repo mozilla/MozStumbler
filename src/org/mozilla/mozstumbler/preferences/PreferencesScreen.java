@@ -53,7 +53,7 @@ public class PreferencesScreen extends PreferenceActivity {
 
         public void setNicknamePreferenceTitle(String nickname) {
             if (nickname != null && nickname.length()>0) {
-                mNicknamePreference.setTitle("Nickname: " + nickname);
+                mNicknamePreference.setTitle(getString(R.string.enter_nickname_title) + " " + nickname);
             } else {
                 mNicknamePreference.setTitle(getString(R.string.enter_nickname));
             }

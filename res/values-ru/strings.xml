@@ -22,5 +22,6 @@
     <string name="update_message">Установленная версия: %1$s\nПоследняя версия: %2$s</string>
     <string name="update_now">Обновить сейчас</string>
     <string name="update_later">Обновить позже</string>
+    <string name="map_location_not_found">Местоположение не найдено!</string>
 
 </resources>

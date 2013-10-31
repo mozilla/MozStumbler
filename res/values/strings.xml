@@ -22,5 +22,6 @@
     <string name="update_message">Installed version: %1$s\nLatest version: %2$s</string>
     <string name="update_now">Update Now</string>
     <string name="update_later">Update Later</string>
+    <string name="map_location_not_found">Location not found!</string>
 
 </resources>

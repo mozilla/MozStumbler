@@ -1,4 +1,4 @@
-package org.mozilla.mozstumbler;
+package org.mozilla.mozstumbler.preferences;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -10,7 +10,7 @@ import android.util.Log;
 
 import java.util.UUID;
 
-final class Prefs {
+public final class Prefs {
     private static final String     LOGTAG        = Prefs.class.getName();
     private static final String     PREFS_FILE    = Prefs.class.getName();
     private static final String     NICKNAME_PREF = "nickname";
@@ -19,7 +19,7 @@ final class Prefs {
     private int mCurrentVersion;
     private Context mContext;
 
-    Prefs(Context context) {
+    public Prefs(Context context) {
         try {
             PackageInfo pi = context.getPackageManager().getPackageInfo(context.getPackageName(),
                                                                         PackageManager.GET_ACTIVITIES);
@@ -31,7 +31,7 @@ final class Prefs {
         mContext = context;
     }
 
-    String getNickname() {
+    public String getNickname() {
         String nickname = getStringPref(NICKNAME_PREF);
 
         // Remove old empty nickname prefs.
@@ -55,11 +55,11 @@ final class Prefs {
         deleteStringPref(NICKNAME_PREF);
     }
 
-    void setReports(String json) {
+    public void setReports(String json) {
         setStringPref(REPORTS_PREF, json);
     }
 
-    String getReports() {
+    public String getReports() {
         return getStringPref(REPORTS_PREF);
     }
 

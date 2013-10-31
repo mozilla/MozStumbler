@@ -2,6 +2,8 @@ package org.mozilla.mozstumbler;
 
 import java.util.Calendar;
 
+import org.mozilla.mozstumbler.preferences.Prefs;
+
 import android.annotation.TargetApi;
 import android.app.AlarmManager;
 import android.app.Notification;

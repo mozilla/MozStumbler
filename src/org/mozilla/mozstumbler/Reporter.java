@@ -19,6 +19,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import android.content.BroadcastReceiver;
 
+import org.mozilla.mozstumbler.preferences.Prefs;
+
 class Reporter extends BroadcastReceiver {
     private static final String LOGTAG          = Reporter.class.getName();
     private static final String LOCATION_URL    = "https://location.services.mozilla.com/v1/submit";

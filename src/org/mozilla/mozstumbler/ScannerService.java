@@ -207,7 +207,6 @@ public final class ScannerService extends Service {
         mLooper.post(new Runnable() {
             @Override
             public void run() {
-                NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
                 Context ctx = getApplicationContext();
                 Intent notificationIntent = new Intent(ctx, MainActivity.class);
                 notificationIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_FROM_BACKGROUND);

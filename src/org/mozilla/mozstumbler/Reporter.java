@@ -53,7 +53,7 @@ class Reporter extends BroadcastReceiver {
 
     private String mRadioType;
     private long mReportsSent;
-        
+
     Reporter(Context context, Prefs prefs) {
         mContext = context;
         mPrefs = prefs;
@@ -110,7 +110,7 @@ class Reporter extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         String action = intent.getAction();
-        
+
         if (!action.equals(ScannerService.MESSAGE_TOPIC)) {
             Log.e(LOGTAG, "Received an unknown intent");
             return;
@@ -213,7 +213,7 @@ class Reporter extends BroadcastReceiver {
                         Log.d(LOGTAG, "uploaded wrapperData: " + wrapperData + " to " + mURL.toString());
 
                         int code = urlConnection.getResponseCode();
-                        if (code>=200 && code <= 299) {
+                        if (code >= 200 && code <= 299) {
                             mReportsSent = mReportsSent + reports.length();
                         }
                         Log.e(LOGTAG, "urlConnection returned " + code);
@@ -267,7 +267,7 @@ class Reporter extends BroadcastReceiver {
 
             // At least one cell or wifi entry is required
             // as per: https://mozilla-ichnaea.readthedocs.org/en/latest/api/submit.html
-            if (cellJSON==null && wifiJSON==null) {
+            if (cellJSON == null && wifiJSON == null) {
                 Log.w(LOGTAG, "Invalid report: at least one cell/wifi entry is required");
                 return;
             }

@@ -233,7 +233,7 @@ public final class MapActivity extends Activity {
                 moveToPositionAndMarker(mLat, mLon, mAccuracy);
             } else if (mStatus != null && "not_found".equals(mStatus)) {
             	Toast.makeText(getApplicationContext(),
-            		getResources().getString(R.string.map_location_not_found),
+            		getResources().getString(R.string.location_not_found),
             		Toast.LENGTH_LONG).show();
             } else {
                 Log.e(LOGTAG, "", new IllegalStateException("mStatus=" + mStatus));

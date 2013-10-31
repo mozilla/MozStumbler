@@ -4,9 +4,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -23,6 +20,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 
 class Reporter extends BroadcastReceiver {
@@ -67,21 +65,11 @@ class Reporter extends BroadcastReceiver {
             mReports = new JSONArray();
         }
 
+        String apiKey = PackageUtils.getMetaDataString(context, "org.mozilla.mozstumbler.API_KEY");
         try {
-            ApplicationInfo appi = context.getPackageManager().getApplicationInfo(context.getPackageName(),
-                                                                                  PackageManager.GET_META_DATA);
-            String apiKey = (String) appi.metaData.get("org.mozilla.mozstumbler.API_KEY");
-            mURL = new URL(LOCATION_URL + "?key=" +  apiKey);
-        } catch (Exception e) {
-            Log.w(LOGTAG, "Not reporting with a valid API key.");
-        }
-
-        try {
-            if (mURL == null) {
-                mURL = new URL(LOCATION_URL);
-            }
-        } catch (Exception f) {
-            Log.e(LOGTAG, "Bad URL: " + LOCATION_URL);
+            mURL = new URL(LOCATION_URL + "?key=" + apiKey);
+        } catch (MalformedURLException e) {
+            throw new IllegalArgumentException(e);
         }
 
         resetData();

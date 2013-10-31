@@ -13,7 +13,6 @@ public class PreferencesScreen extends PreferenceActivity {
     private EditTextPreference mNicknamePreference;
     private Prefs mPrefs;
 
-    @SuppressWarnings("deprecation")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

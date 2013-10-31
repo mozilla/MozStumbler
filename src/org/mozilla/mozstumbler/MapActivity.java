@@ -12,6 +12,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -80,7 +81,7 @@ public final class MapActivity extends Activity {
         }
     }
 
-    @Override
+    @TargetApi(11) @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
@@ -192,7 +193,7 @@ public final class MapActivity extends Activity {
 
                 int code = urlConnection.getResponseCode();
                 Log.d(LOGTAG, "uploaded data: " + data + " to " + LOCATION_URL);
-                Log.e(LOGTAG, "urlConnection returned " + code);
+                Log.d(LOGTAG, "urlConnection returned " + code);
 
                 InputStream in = new BufferedInputStream(urlConnection.getInputStream());
                 BufferedReader r = new BufferedReader(new InputStreamReader(in));
@@ -205,15 +206,15 @@ public final class MapActivity extends Activity {
 
                 JSONObject result = new JSONObject(total.toString());
                 mStatus = result.getString("status");
-                mLat = Float.parseFloat(result.getString("lat"));
-                mLon = Float.parseFloat(result.getString("lon"));
-                mAccuracy = Float.parseFloat(result.getString("accuracy"));
-
-                Log.e(LOGTAG, "Location status: " + mStatus);
-                Log.e(LOGTAG, "Location lat: " + mLat);
-                Log.e(LOGTAG, "Location lon: " + mLon);
-                Log.e(LOGTAG, "Location accuracy: " + mAccuracy);
-
+                Log.d(LOGTAG, "Location status: " + mStatus);
+                if ("ok".equals(mStatus)) {
+                    mLat = Float.parseFloat(result.getString("lat"));
+                    mLon = Float.parseFloat(result.getString("lon"));
+                    mAccuracy = Float.parseFloat(result.getString("accuracy"));
+                    Log.d(LOGTAG, "Location lat: " + mLat);
+                    Log.d(LOGTAG, "Location lon: " + mLon);
+                    Log.d(LOGTAG, "Location accuracy: " + mAccuracy);
+                }
             } catch (JSONException jsonex) {
                 Log.e(LOGTAG, "json parse error", jsonex);
             } catch (Exception ex) {
@@ -230,6 +231,10 @@ public final class MapActivity extends Activity {
         protected void onPostExecute(String result) {
             if (mStatus != null && "ok".equals(mStatus)) {
                 moveToPositionAndMarker(mLat, mLon, mAccuracy);
+            } else if (mStatus != null && "not_found".equals(mStatus)) {
+            	Toast.makeText(getApplicationContext(),
+            		getResources().getString(R.string.map_location_not_found),
+            		Toast.LENGTH_LONG).show();
             } else {
                 Log.e(LOGTAG, "", new IllegalStateException("mStatus=" + mStatus));
             }

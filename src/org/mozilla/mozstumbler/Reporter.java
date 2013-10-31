@@ -3,6 +3,10 @@ package org.mozilla.mozstumbler;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.os.Bundle;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -28,11 +32,13 @@ class Reporter extends BroadcastReceiver {
     private static final int REPORTER_WINDOW  = 3000; //ms
 
     private static String       MOZSTUMBLER_USER_AGENT_STRING;
+    private static String       MOZSTUMBLER_API_KEY_STRING;
 
     private final Context       mContext;
     private final Prefs         mPrefs;
     private JSONArray           mReports;
-    private volatile long       mLastUploadTime;  //TODO why volatile
+    private long                mLastUploadTime;
+    private URL                 mURL;
 
     private String mWifiData;
     private long   mWifiDataTime;
@@ -57,6 +63,23 @@ class Reporter extends BroadcastReceiver {
             mReports = new JSONArray(storedReports);
         } catch (Exception e) {
             mReports = new JSONArray();
+        }
+
+        try {
+            ApplicationInfo appi = context.getPackageManager().getApplicationInfo(context.getPackageName(),
+                                                                                  PackageManager.GET_META_DATA);
+            String apiKey = (String) appi.metaData.get("org.mozilla.mozstumbler.API_KEY");
+            mURL = new URL(LOCATION_URL + "?key=" +  apiKey);
+        } catch (Exception e) {
+            Log.w(LOGTAG, "Not reporting with a valid API key.");
+        }
+
+        try {
+            if (mURL == null) {
+                mURL = new URL(LOCATION_URL);
+            }
+        } catch (Exception f) {
+            Log.e(LOGTAG, "Bad URL: " + LOCATION_URL);
         }
 
         resetData();
@@ -167,8 +190,7 @@ class Reporter extends BroadcastReceiver {
                 try {
                     Log.d(LOGTAG, "sending results...");
 
-                    URL url = new URL(LOCATION_URL);
-                    HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+                    HttpURLConnection urlConnection = (HttpURLConnection) mURL.openConnection();
                     try {
                         urlConnection.setDoOutput(true);
                         urlConnection.setRequestProperty(USER_AGENT_HEADER, MOZSTUMBLER_USER_AGENT_STRING);
@@ -186,7 +208,7 @@ class Reporter extends BroadcastReceiver {
                         out.write(bytes);
                         out.flush();
 
-                        Log.d(LOGTAG, "uploaded wrapperData: " + wrapperData + " to " + LOCATION_URL);
+                        Log.d(LOGTAG, "uploaded wrapperData: " + wrapperData + " to " + mURL.toString());
 
                         int code = urlConnection.getResponseCode();
                         if (code>=200 && code <= 299) {

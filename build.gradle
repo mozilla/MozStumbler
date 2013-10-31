@@ -63,9 +63,14 @@ if (hasProperty('StoreFile')) {
 }
 
 // Generate AndroidManifest.xml
-String myAPIKey = hasProperty('APIKey') ? APIKey : "FAKE_GOOGLE_API_KEY";
+String googleAPIKey = hasProperty('APIKey') ? APIKey : "FAKE_GOOGLE_API_KEY";
+String mozillaAPIKey = hasProperty('MozAPIKey') ? MozAPIKey : "FAKE_MOZILLA_API_KEY";
+
 File manifest = file("./AndroidManifest.xml.in")
 String content = manifest.getText('UTF-8')
-content = content.replaceAll(/MY_GOOGLE_API_KEY/, myAPIKey)
+content = content.replaceAll(/MY_GOOGLE_API_KEY/, googleAPIKey)
+content = content.replaceAll(/MY_MOZILLA_API_KEY/, mozillaAPIKey)
+
 manifest = file("./AndroidManifest.xml")
 manifest.write(content, 'UTF-8')
+

@@ -1,5 +1,6 @@
 package org.mozilla.mozstumbler;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -8,6 +9,8 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
+
+import org.mozilla.mozstumbler.preferences.Prefs;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -21,9 +24,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import android.content.BroadcastReceiver;
-
-import org.mozilla.mozstumbler.preferences.Prefs;
 
 class Reporter extends BroadcastReceiver {
     private static final String LOGTAG          = Reporter.class.getName();

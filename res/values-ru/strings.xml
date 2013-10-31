@@ -3,6 +3,7 @@
 
     <string name="app_name">MozStumbler</string>
     <string name="action_about">О MozStumbler</string>
+    <string name="action_preferences">Настройки</string>
     <string name="mozilla_title">Mozilla</string>
     <string name="start_scanning">Начать сканирование</string>
     <string name="stop_scanning">Остановить сканирование</string>
@@ -15,7 +16,11 @@
     <string name="last_upload_time">Отчет отправлен: %1$s</string>
     <string name="reports_sent">Отправлено отчетов: %1$d</string>
     <string name="service_scanning">Сканирование Wi-Fi точек доступа и базовых станций сотовых операторов</string>
+
     <string name="enter_nickname">Укажите свой псевдоним (не обязательно)</string>
+    <string name="enter_nickname_title">Псевдоним: </string>
+    <string name="enter_nickname_longtext">Ваш псевдоним появится в таблице лидеров</string>
+
     <string name="battery_low_warning">MozStumbler остановит сканирование в связи с разрядом батареи</string>
 
     <string name="update_title">Загрузить обновление MozStumbler?</string>

@@ -4,3 +4,4 @@ build
 .DS_Store
 gradle.properties
 AndroidManifest.xml
+*.keystore

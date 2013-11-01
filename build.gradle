@@ -54,7 +54,7 @@ task wrapper(type: Wrapper) {
 }
 
 tasks.withType(JavaCompile) {
-    options.compilerArgs = ['-Xlint:all', '-Werror']
+    options.compilerArgs = ['-Xlint:all', '-Werror', '-Xlint:-deprecation']
 }
 
 if (hasProperty('StoreFile')) {

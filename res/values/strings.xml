@@ -28,4 +28,6 @@
     <string name="update_now">Update Now</string>
     <string name="update_later">Update Later</string>
 
+    <string name="location_not_found">Location not found</string>
+
 </resources>

@@ -98,7 +98,7 @@ public final class MainActivity extends Activity {
         Updater.checkForUpdates(this);
 
         // Temporarily disable map button on Gingerbread and older Honeycomb devices.
-        if (VERSION.SDK_INT < 12) {
+        if (VERSION.SDK_INT < 12 || !isGoogleApiKeyValid()) {
             Button mapButton = (Button) findViewById(R.id.view_map);
             mapButton.setEnabled(false);
         }
@@ -128,6 +128,15 @@ public final class MainActivity extends Activity {
                 })
                 .show();
         }
+    }
+
+    private boolean isGoogleApiKeyValid() {
+        String apiKey = PackageUtils.getMetaDataString(this, "com.google.android.maps.v2.API_KEY");
+        if ("FAKE_GOOGLE_API_KEY".equals(apiKey)) {
+            Log.w(LOGTAG, "Fake Google API Key found.");
+            return false;
+        }
+        return true;
     }
 
     @Override

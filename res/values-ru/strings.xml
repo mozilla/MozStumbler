@@ -30,4 +30,8 @@
 
 	<string name="location_not_found">Местоположение не найдено</string>
 
+    <string name="gps_alert_msg">GPS отключен. Вы хотите перейти к настройкам и включить его?</string>
+    <string name="yes">Да</string>
+    <string name="no">Нет</string>
+
 </resources>

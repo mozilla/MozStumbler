@@ -4,18 +4,22 @@ import org.mozilla.mozstumbler.preferences.PreferencesScreen;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Build.VERSION;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.os.StrictMode;
+import android.provider.Settings;
 import android.text.Editable;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -94,7 +98,7 @@ public final class MainActivity extends Activity {
         Updater.checkForUpdates(this);
 
         // Temporarily disable map button on Gingerbread and older Honeycomb devices.
-        if (VERSION.SDK_INT < 12) {
+        if (VERSION.SDK_INT < 12 || !isGoogleApiKeyValid()) {
             Button mapButton = (Button) findViewById(R.id.view_map);
             mapButton.setEnabled(false);
         }
@@ -102,9 +106,44 @@ public final class MainActivity extends Activity {
         Log.d(LOGTAG, "onCreate");
     }
 
+    private void checkGps() {
+        LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
+        if (!lm.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            new AlertDialog.Builder(this, AlertDialog.THEME_DEVICE_DEFAULT_DARK)
+                .setCancelable(false)
+                .setTitle(R.string.app_name)
+                .setMessage(R.string.gps_alert_msg)
+                .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                    }
+                })
+                .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        finish();
+                    }
+                })
+                .show();
+        }
+    }
+
+    private boolean isGoogleApiKeyValid() {
+        String apiKey = PackageUtils.getMetaDataString(this, "com.google.android.maps.v2.API_KEY");
+        if ("FAKE_GOOGLE_API_KEY".equals(apiKey)) {
+            Log.w(LOGTAG, "Fake Google API Key found.");
+            return false;
+        }
+        return true;
+    }
+
     @Override
     protected void onStart() {
         super.onStart();
+
+        checkGps();
 
         mReceiver = new ServiceBroadcastReceiver();
         mReceiver.register();

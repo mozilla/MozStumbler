@@ -49,8 +49,12 @@ android {
     }
 }
 
+task wrapper(type: Wrapper) {
+    gradleVersion = '1.8'
+}
+
 tasks.withType(JavaCompile) {
-    options.compilerArgs = ['-Xlint:all', '-Werror']
+    options.compilerArgs = ['-Xlint:all', '-Werror', '-Xlint:-deprecation']
 }
 
 if (hasProperty('StoreFile')) {
@@ -63,7 +67,7 @@ if (hasProperty('StoreFile')) {
 }
 
 // Generate AndroidManifest.xml
-String googleAPIKey = hasProperty('APIKey') ? APIKey : "FAKE_GOOGLE_API_KEY";
+String googleAPIKey = hasProperty('GoogleAPIKey') ? GoogleAPIKey : (hasProperty('APIKey') ? APIKey : "FAKE_GOOGLE_API_KEY");
 String mozillaAPIKey = hasProperty('MozAPIKey') ? MozAPIKey : "FAKE_MOZILLA_API_KEY";
 
 File manifest = file("./AndroidManifest.xml.in")

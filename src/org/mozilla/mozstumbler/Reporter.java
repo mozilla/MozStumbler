@@ -1,13 +1,13 @@
 package org.mozilla.mozstumbler;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
+
+import org.mozilla.mozstumbler.preferences.Prefs;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -20,10 +20,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
-import android.content.BroadcastReceiver;
-
-import org.mozilla.mozstumbler.preferences.Prefs;
 
 class Reporter extends BroadcastReceiver {
     private static final String LOGTAG          = Reporter.class.getName();
@@ -53,7 +51,7 @@ class Reporter extends BroadcastReceiver {
 
     private String mRadioType;
     private long mReportsSent;
-        
+
     Reporter(Context context, Prefs prefs) {
         mContext = context;
         mPrefs = prefs;
@@ -67,21 +65,11 @@ class Reporter extends BroadcastReceiver {
             mReports = new JSONArray();
         }
 
+        String apiKey = PackageUtils.getMetaDataString(context, "org.mozilla.mozstumbler.API_KEY");
         try {
-            ApplicationInfo appi = context.getPackageManager().getApplicationInfo(context.getPackageName(),
-                                                                                  PackageManager.GET_META_DATA);
-            String apiKey = (String) appi.metaData.get("org.mozilla.mozstumbler.API_KEY");
-            mURL = new URL(LOCATION_URL + "?key=" +  apiKey);
-        } catch (Exception e) {
-            Log.w(LOGTAG, "Not reporting with a valid API key.");
-        }
-
-        try {
-            if (mURL == null) {
-                mURL = new URL(LOCATION_URL);
-            }
-        } catch (Exception f) {
-            Log.e(LOGTAG, "Bad URL: " + LOCATION_URL);
+            mURL = new URL(LOCATION_URL + "?key=" + apiKey);
+        } catch (MalformedURLException e) {
+            throw new IllegalArgumentException(e);
         }
 
         resetData();
@@ -110,7 +98,7 @@ class Reporter extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         String action = intent.getAction();
-        
+
         if (!action.equals(ScannerService.MESSAGE_TOPIC)) {
             Log.e(LOGTAG, "Received an unknown intent");
             return;
@@ -213,7 +201,7 @@ class Reporter extends BroadcastReceiver {
                         Log.d(LOGTAG, "uploaded wrapperData: " + wrapperData + " to " + mURL.toString());
 
                         int code = urlConnection.getResponseCode();
-                        if (code>=200 && code <= 299) {
+                        if (code >= 200 && code <= 299) {
                             mReportsSent = mReportsSent + reports.length();
                         }
                         Log.e(LOGTAG, "urlConnection returned " + code);
@@ -267,7 +255,7 @@ class Reporter extends BroadcastReceiver {
 
             // At least one cell or wifi entry is required
             // as per: https://mozilla-ichnaea.readthedocs.org/en/latest/api/submit.html
-            if (cellJSON==null && wifiJSON==null) {
+            if (cellJSON == null && wifiJSON == null) {
                 Log.w(LOGTAG, "Invalid report: at least one cell/wifi entry is required");
                 return;
             }

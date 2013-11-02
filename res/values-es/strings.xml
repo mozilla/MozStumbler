@@ -28,6 +28,10 @@
     <string name="update_now">Actualizar ahora</string>
     <string name="update_later">Actualizar más tarde</string>
 
-    <string name="location_not_found">Ubicación no Encontrada</string>
+    <string name="location_not_found">Ubicación no encontrada</string>
+
+    <string name="gps_alert_msg">El GPS está apagado. ¿Quieres ir a las configuraciones y encenderlo?</string>
+    <string name="yes">Si</string>
+    <string name="no">No</string>
 
 </resources>

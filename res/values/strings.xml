@@ -30,4 +30,8 @@
 
     <string name="location_not_found">Location not found</string>
 
+    <string name="gps_alert_msg">GPS is turned off. Do you wan\'t to go to settings and turn it on?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+
 </resources>

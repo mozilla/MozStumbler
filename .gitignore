@@ -1,7 +1,10 @@
-bin
-.gradle
-build
 .DS_Store
+.gradle
+.settings
+assets
+bin
+gen
+build
 gradle.properties
 AndroidManifest.xml
 *.keystore

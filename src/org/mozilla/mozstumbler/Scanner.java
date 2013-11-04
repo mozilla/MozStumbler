@@ -1,17 +1,10 @@
 package org.mozilla.mozstumbler;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.os.Bundle;
 import android.util.Log;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.Collection;
+import org.mozilla.mozstumbler.cellscanner.CellScanner;
 
 class Scanner {
   private static final String LOGTAG = Scanner.class.getName();

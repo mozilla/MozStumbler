@@ -10,6 +10,7 @@ import android.telephony.NeighboringCellInfo;
 import android.telephony.PhoneStateListener;
 import android.telephony.SignalStrength;
 import android.telephony.TelephonyManager;
+import android.telephony.cdma.CdmaCellLocation;
 import android.telephony.gsm.GsmCellLocation;
 import android.util.Log;
 
@@ -64,6 +65,8 @@ public class CellScanner extends PhoneStateListener {
     public void onSignalStrengthsChanged(SignalStrength ss) {
         if (ss.isGsm()) {
             mSignalStrength = ss.getGsmSignalStrength();
+        } else {
+            mSignalStrength = ss.getCdmaDbm();
         }
     }
 
@@ -118,6 +121,25 @@ public class CellScanner extends PhoneStateListener {
                     obj.put("mnc", mnc);
                 }
                 obj.put("asu", mSignalStrength);
+                cellInfo.put(obj);
+            } catch (JSONException jsonex) {
+                Log.e(LOGTAG, "", jsonex);
+            }
+        } else if (cl instanceof CdmaCellLocation) {
+            JSONObject obj = new JSONObject();
+            CdmaCellLocation ccl = (CdmaCellLocation) cl;
+            try {
+                obj.put("radio", "cdma");
+                obj.put("cid", ccl.getBaseStationId());
+                obj.put("lac", ccl.getNetworkId());
+                obj.put("mnc", ccl.getSystemId());
+                String mcc_mnc = tm.getNetworkOperator();
+                if (mcc_mnc.length() > 3) {
+                    mcc = mcc_mnc.substring(0, 3);
+                    mnc = mcc_mnc.substring(3);
+                    obj.put("mcc", mcc);
+                } // Could guess MCC from SID; see http://www.ifast.org/files/NationalSID.htm
+                obj.put("signal", mSignalStrength);
                 cellInfo.put(obj);
             } catch (JSONException jsonex) {
                 Log.e(LOGTAG, "", jsonex);

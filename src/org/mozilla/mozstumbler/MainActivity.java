@@ -105,7 +105,6 @@ public final class MainActivity extends Activity {
         Log.d(LOGTAG, "onCreate");
     }
 
-    @TargetApi(11)
     private void checkGps() {
         LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 

@@ -34,4 +34,7 @@
     <string name="yes">Да</string>
     <string name="no">Нет</string>
 
+    <string name="about_version">Версия %1$s</string>
+    <string name="about_more">Подробнее...</string>
+
 </resources>

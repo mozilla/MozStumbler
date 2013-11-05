@@ -34,4 +34,7 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
 
+    <string name="about_version">Version %1$s</string>
+    <string name="about_more">More...</string>
+
 </resources>

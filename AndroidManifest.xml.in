@@ -55,6 +55,11 @@
             android:label="@string/app_name" >
         </activity>
 
+        <activity
+            android:label="@string/app_name"
+            android:name="AboutActivity" >
+        </activity>
+
         <service
             android:name=".ScannerService"
             android:process=":.ScannerService"

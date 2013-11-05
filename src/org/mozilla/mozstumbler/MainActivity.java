@@ -142,8 +142,6 @@ public final class MainActivity extends Activity {
     protected void onStart() {
         super.onStart();
 
-        checkGps();
-
         mReceiver = new ServiceBroadcastReceiver();
         mReceiver.register();
 
@@ -232,6 +230,7 @@ public final class MainActivity extends Activity {
         }
 
         boolean scanning = mConnectionRemote.isScanning();
+        LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         Log.d(LOGTAG, "Connection remote return: isScanning() = " + scanning);
 
         Button b = (Button) v;
@@ -239,8 +238,12 @@ public final class MainActivity extends Activity {
             mConnectionRemote.stopScanning();
             b.setText(R.string.start_scanning);
         } else {
-            mConnectionRemote.startScanning();
-            b.setText(R.string.stop_scanning);
+            checkGps();
+            if (lm.isProviderEnabled(LocationManager.GPS_PROVIDER))
+            {
+                mConnectionRemote.startScanning();
+                b.setText(R.string.stop_scanning);
+            }
         }
     }
 

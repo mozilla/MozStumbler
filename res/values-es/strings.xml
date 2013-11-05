@@ -13,7 +13,7 @@
     <string name="wifi_access_points">Puntos de Acceso Wi-Fi escaneados: %1$d</string>
     <string name="gps_satellites">Satélites GPS visibles: %1$d</string>
     <string name="locations_scanned">Ubicaciones escaneadas: %1$d</string>
-    <string name="last_upload_time">Ultimo envío de Datos: %1$s</string>
+    <string name="last_upload_time">Último envío de datos: %1$s</string>
     <string name="reports_sent">Reportes enviados: %1$d</string>
     <string name="service_scanning">Escaneando redes Wi-Fi y Móviles</string>
 
@@ -33,5 +33,8 @@
     <string name="gps_alert_msg">El GPS está apagado. ¿Quieres ir a las configuraciones y encenderlo?</string>
     <string name="yes">Si</string>
     <string name="no">No</string>
+
+    <string name="about_version">Versión %1$s</string>
+    <string name="about_more">Más...</string>
 
 </resources>

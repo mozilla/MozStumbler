@@ -109,7 +109,7 @@ public final class MainActivity extends Activity {
         LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
         if (!lm.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-            new AlertDialog.Builder(this, AlertDialog.THEME_DEVICE_DEFAULT_DARK)
+            new AlertDialog.Builder(this)
                 .setCancelable(false)
                 .setTitle(R.string.app_name)
                 .setMessage(R.string.gps_alert_msg)

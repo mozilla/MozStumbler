@@ -96,12 +96,6 @@ public final class MainActivity extends Activity {
 
         Updater.checkForUpdates(this);
 
-        // Temporarily disable map button on Gingerbread and older Honeycomb devices.
-        if (VERSION.SDK_INT < 12 || !isGoogleApiKeyValid()) {
-            Button mapButton = (Button) findViewById(R.id.view_map);
-            mapButton.setEnabled(false);
-        }
-
         Log.d(LOGTAG, "onCreate");
     }
 

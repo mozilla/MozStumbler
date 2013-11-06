@@ -2,6 +2,7 @@ package org.mozilla.mozstumbler;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.support.v4.app.FragmentActivity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -16,7 +17,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -36,7 +37,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public final class MapActivity extends Activity {
+public final class MapActivity extends FragmentActivity {
     private static final String LOGTAG = MapActivity.class.getName();
 
     // TODO factor this out into something that can be shared with Reporter.java
@@ -89,7 +90,7 @@ public final class MapActivity extends Activity {
         mWifiData = "";
         MOZSTUMBLER_USER_AGENT_STRING = NetworkUtils.getUserAgentString(this);
 
-        mMap = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
+        mMap = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map)).getMap();
         if (mMap != null) {
             mReceiver = new ReporterBroadcastReceiver();
             registerReceiver(mReceiver, new IntentFilter(ScannerService.MESSAGE_TOPIC));

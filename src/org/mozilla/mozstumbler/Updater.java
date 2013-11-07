@@ -257,5 +257,9 @@ final class Updater {
         intent.setDataAndType(apkURI, "application/vnd.android.package-archive");
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(intent);
+        Intent service = new Intent();
+        service.setClass(context, ScannerService.class);
+        context.stopService(service);
+        android.os.Process.killProcess(android.os.Process.myPid());
     }
 }

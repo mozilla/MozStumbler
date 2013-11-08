@@ -30,4 +30,11 @@
 
     <string name="location_not_found">Nie znaleziono lokalizacji</string>
 
+    <string name="gps_alert_msg">GPS jest wyłączony. Chcesz przejść do ustawień aby go włączyć??</string>
+    <string name="yes">Tak</string>
+    <string name="no">Nie</string>
+
+    <string name="about_version">Wersja %1$s</string>
+    <string name="about_more">Więcej...</string>
+
 </resources>

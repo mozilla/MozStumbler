@@ -153,9 +153,9 @@ final class Updater {
     }
 
     private static void downloadAndInstallUpdate(final Context context, final String version) {
-        new AsyncTask<Void, Void, Void>() {
+        new AsyncTask<Void, Void, File>() {
             @Override
-            public Void doInBackground(Void... params) {
+            public File doInBackground(Void... params) {
                 URL apkURL = getUpdateURL(version);
                 File apk = downloadFile(context, apkURL);
                 if (apk == null || !apk.exists()) {
@@ -163,8 +163,12 @@ final class Updater {
                     return null;
                 }
 
-                installPackage(context, apk);
-                return null;
+                return apk;
+            }
+
+            @Override
+            public void onPostExecute(File result){
+                installPackage(context, result);
             }
         }.execute();
     }
@@ -253,9 +257,17 @@ final class Updater {
         Uri apkURI = Uri.fromFile(apkFile);
         Log.d(LOGTAG, "Installing: " + apkURI);
 
+        //First stop the service so it is not running more
+        Intent service = new Intent();
+        service.setClass(context, ScannerService.class);
+        context.stopService(service);
+
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setDataAndType(apkURI, "application/vnd.android.package-archive");
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(intent);
+
+        //And then kill the app to avoid any error
+        android.os.Process.killProcess(android.os.Process.myPid());
     }
 }

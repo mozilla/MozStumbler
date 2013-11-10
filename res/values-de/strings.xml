@@ -8,7 +8,7 @@
     <string name="start_scanning">Starte Scan-Vorgang</string>
     <string name="stop_scanning">Stoppe Scan-Vorgang</string>
     <string name="view_leaderboard">Öffne Bestenliste</string>
-    <string name="view_map">Test Mozilla Location Service</string>
+    <string name="view_map">Teste Localisierungsdienst</string>
     <string name="service_name">Mozilla Stumbler</string>
     <string name="wifi_access_points">WLAN Access Points erfasst: %1$d</string>
     <string name="gps_satellites">GPS-Satelliten sichtbar: %1$d</string>
@@ -23,7 +23,7 @@
 
     <string name="battery_low_warning">Akkustand niedrig, MozStumbler stoppt Erfassung</string>
 
-    <string name="update_title">MozStumbler Update herunteladen?</string>
+    <string name="update_title">Neue MozStumbler Version herunterladen?</string>
     <string name="update_message">Installierte Version: %1$s\nNeueste Version: %2$s</string>
     <string name="update_now">Update herunterladen</string>
     <string name="update_later">Später herunterladen</string>

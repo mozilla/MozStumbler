@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">MozStumbler</string>
+    <string name="action_about">À propos de MozStumbler</string>
+    <string name="action_preferences">Paramètres</string>
+    <string name="mozilla_title">Mozilla</string>
+    <string name="start_scanning">Démarrer la numérisation</string>
+    <string name="stop_scanning">Arrêter la numérisation</string>
+    <string name="view_leaderboard">Voir le classement</string>
+    <string name="view_map">Tester le service de géolocalisation de Mozilla</string>
+    <string name="service_name">Mozilla Stumbler</string>
+    <string name="wifi_access_points">Points d\'accès Wi-Fi numérisés : %1$d</string>
+    <string name="gps_satellites">Satellites GPS Visibles : %1$d</string>
+    <string name="locations_scanned">Emplacements numérisés : %1$d</string>
+    <string name="last_upload_time">Date du dernier envoi : %1$s</string>
+    <string name="reports_sent">Rapports Envoyés : %1$d</string>
+    <string name="service_scanning">Numérisation des réseaux Wi-Fi et cellulaires</string>
+
+    <string name="enter_nickname">Saisir un pseudo (optionnel)</string>
+    <string name="enter_nickname_title">Pseudo : </string>
+    <string name="enter_nickname_longtext">Votre pseudo apparaîtra dans le classement</string>
+
+    <string name="battery_low_warning">Batterie faible, MozStumbler va arrêter la numérisation</string>
+
+    <string name="update_title">Télécharger la mise à jour de MozStumbler ?</string>
+    <string name="update_message">Version installée : %1$s\nDernière version : %2$s</string>
+    <string name="update_now">Mettre à jour maintenant</string>
+    <string name="update_later">Mettre à jour ultérieurement</string>
+
+    <string name="location_not_found">Emplacement non trouvé</string>
+
+    <string name="gps_alert_msg">Le GPS n\'est pas activé. Voulez-vous aller dans les paramètres afin de l\'activer ? </string>
+    <string name="yes">Oui</string>
+    <string name="no">Non</string>
+
+    <string name="about_version">Version %1$s</string>
+    <string name="about_more">Plus...</string>
+
+</resources>

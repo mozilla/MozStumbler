@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">MozStumbler</string>
+    <string name="action_about">Über MozStumbler</string>
+    <string name="action_preferences">Einstellungen</string>
+    <string name="mozilla_title">Mozilla</string>
+    <string name="start_scanning">Scanvorgang starten</string>
+    <string name="stop_scanning">Scanvorgang stoppen</string>
+    <string name="view_leaderboard">Zeige Rangliste</string>
+    <string name="view_map">Teste Mozillas Ortungsdienst</string>
+    <string name="service_name">Mozilla Stumbler</string>
+    <string name="wifi_access_points">Wi-Fi Zugangspunkte gescannt: %1$d</string>
+    <string name="gps_satellites">GPS Satelliten sichtbar: %1$d</string>
+    <string name="locations_scanned">Standorte gescannt: %1$d</string>
+    <string name="last_upload_time">Datum der letzten Datenübermittlung: %1$s</string>
+    <string name="reports_sent">Berichte gesendet: %1$d</string>
+    <string name="service_scanning">Scanne Wi-Fi und Mobilfunknetze</string>
+
+    <string name="enter_nickname">Setze Nickname (optional)</string>
+    <string name="enter_nickname_title">Nickname: </string>
+    <string name="enter_nickname_longtext">Dein Nickname wird in der Rangliste erscheinen</string>
+
+    <string name="battery_low_warning">Batteriestand niedrig, MozStumbler wird den laufenden Scanvorgang stoppen.</string>
+
+    <string name="update_title">MozStumbler Aktualisierung herunterladen?</string>
+    <string name="update_message">Installierte Version: %1$s\nLAktuellste Version: %2$s</string>
+    <string name="update_now">Aktualisiere jetzt</string>
+    <string name="update_later">Aktualisiere später</string>
+
+    <string name="location_not_found">Standort nicht gefunden</string>
+
+    <string name="gps_alert_msg">GPS ist ausgeschaltet. Willst du in die Einstellungen gehen, und es einschalten?</string>
+    <string name="yes">Ja</string>
+    <string name="no">Nein</string>
+
+    <string name="about_version">Version %1$s</string>
+    <string name="about_more">Mehr...</string>
+
+</resources>

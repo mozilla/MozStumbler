@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">MozStumbler</string>
+    <string name="action_about">Über MozStumbler</string>
+    <string name="action_preferences">Einstellungen</string>
+    <string name="mozilla_title">Mozilla</string>
+    <string name="start_scanning">Starte Scan-Vorgang</string>
+    <string name="stop_scanning">Stoppe Scan-Vorgang</string>
+    <string name="view_leaderboard">Öffne Bestenliste</string>
+    <string name="view_map">Teste Localisierungsdienst</string>
+    <string name="service_name">Mozilla Stumbler</string>
+    <string name="wifi_access_points">WLAN Access Points erfasst: %1$d</string>
+    <string name="gps_satellites">GPS-Satelliten sichtbar: %1$d</string>
+    <string name="locations_scanned">Standorte erfasst: %1$d</string>
+    <string name="last_upload_time">Letzer Upload: %1$s</string>
+    <string name="reports_sent">Gesendete Berichte: %1$d</string>
+    <string name="service_scanning">Erfassen von WLAN und Funkzellen</string>
+
+    <string name="enter_nickname">Gebe Spitznamen ein (optional)</string>
+    <string name="enter_nickname_title">Spitzname: </string>
+    <string name="enter_nickname_longtext">Dein Spitzname taucht in der Bestenliste auf</string>
+
+    <string name="battery_low_warning">Akkustand niedrig, MozStumbler stoppt Erfassung</string>
+
+    <string name="update_title">Neue MozStumbler Version herunterladen?</string>
+    <string name="update_message">Installierte Version: %1$s\nNeueste Version: %2$s</string>
+    <string name="update_now">Update herunterladen</string>
+    <string name="update_later">Später herunterladen</string>
+
+    <string name="location_not_found">Standort nicht gefunden</string>
+
+    <string name="gps_alert_msg">GPS ist ausgeschaltet. Möchtest du in die Einstellungen gehen und es anschalten?</string>
+    <string name="yes">Einstellungen öffnen</string>
+    <string name="no">Abbrechen</string>
+
+    <string name="about_version">Version %1$s</string>
+    <string name="about_more">Mehr...</string>
+
+</resources>

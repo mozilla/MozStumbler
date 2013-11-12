@@ -28,6 +28,7 @@ final class SSIDBlockList {
         "Verizon ",
         "Verizon-",
         "VirginMobile MiFi",
+        "FirefoxHotspot",
 
         // Transportation Wi-Fi
         "ac_transit_wifi_bus",

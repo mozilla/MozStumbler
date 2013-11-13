@@ -43,7 +43,6 @@ final class SSIDBlockList {
         "egged.co.il", // Egged transportation services (Israel)
         "gb-tours.com", // GB Tours transportation services (Israel)
         "ISRAEL-RAILWAYS",
-        //"S-ISRAEL-RAILWAYS",  // Israel Railways stations
         "Omni-WiFi", // Omnibus transportation services (Israel)
     };
 

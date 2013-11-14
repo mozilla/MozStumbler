@@ -41,6 +41,10 @@ final class SSIDBlockList {
         "ShuttleWiFi",
         "SST-PR-1", // Sears Home Service van hotspot?!
         "wifi_rail", // BART
+        "egged.co.il", // Egged transportation services (Israel)
+        "gb-tours.com", // GB Tours transportation services (Israel)
+        "ISRAEL-RAILWAYS",
+        "Omni-WiFi", // Omnibus transportation services (Israel)
     };
 
     private static final String[] SUFFIX_LIST = {

@@ -5,23 +5,23 @@
     <string name="action_about">À propos de MozStumbler</string>
     <string name="action_preferences">Paramètres</string>
     <string name="mozilla_title">Mozilla</string>
-    <string name="start_scanning">Démarrer la numérisation</string>
-    <string name="stop_scanning">Arrêter la numérisation</string>
+    <string name="start_scanning">Démarrer l\'analyse</string>
+    <string name="stop_scanning">Arrêter l\'analyse</string>
     <string name="view_leaderboard">Voir le classement</string>
     <string name="view_map">Tester le service de géolocalisation de Mozilla</string>
     <string name="service_name">Mozilla Stumbler</string>
-    <string name="wifi_access_points">Points d\'accès Wi-Fi numérisés : %1$d</string>
-    <string name="gps_satellites">Satellites GPS Visibles : %1$d</string>
-    <string name="locations_scanned">Emplacements numérisés : %1$d</string>
+    <string name="wifi_access_points">Points d\'accès Wi-Fi détectés : %1$d</string>
+    <string name="gps_satellites">Satellites GPS visibles : %1$d</string>
+    <string name="locations_scanned">Emplacements enregistrés : %1$d</string>
     <string name="last_upload_time">Date du dernier envoi : %1$s</string>
-    <string name="reports_sent">Rapports Envoyés : %1$d</string>
-    <string name="service_scanning">Numérisation des réseaux Wi-Fi et cellulaires</string>
+    <string name="reports_sent">Rapports envoyés : %1$d</string>
+    <string name="service_scanning">Détection des réseaux Wi-Fi et cellulaires</string>
 
     <string name="enter_nickname">Saisir un pseudo (optionnel)</string>
     <string name="enter_nickname_title">Pseudo : </string>
     <string name="enter_nickname_longtext">Votre pseudo apparaîtra dans le classement</string>
 
-    <string name="battery_low_warning">Batterie faible, MozStumbler va arrêter la numérisation</string>
+    <string name="battery_low_warning">Batterie faible, MozStumbler va arrêter l\'analyse</string>
 
     <string name="update_title">Télécharger la mise à jour de MozStumbler ?</string>
     <string name="update_message">Version installée : %1$s\nDernière version : %2$s</string>

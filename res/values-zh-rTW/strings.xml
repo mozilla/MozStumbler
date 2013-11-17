@@ -7,34 +7,34 @@
     <string name="mozilla_title">Mozilla</string>
     <string name="start_scanning">開始掃描</string>
     <string name="stop_scanning">停止掃描</string>
-    <string name="view_leaderboard">觀看 Leaderboard</string>
+    <string name="view_leaderboard">觀看排行榜</string>
     <string name="view_map">測試 Mozilla Location Service</string>
     <string name="service_name">Mozilla Stumbler</string>
-    <string name="wifi_access_points">已掃描 Wi-Fi Access Points: %1$d</string>
-    <string name="gps_satellites">可視 GPS 衛星: %1$d</string>
-    <string name="locations_scanned">已掃描 Locations: %1$d</string>
-    <string name="last_upload_time">最後一次資料上傳時間: %1$s</string>
-    <string name="reports_sent">已傳送報告: %1$d</string>
-    <string name="service_scanning">正在掃描 Wi-Fi 與手機網路</string>
+    <string name="wifi_access_points">已掃描 Wi-Fi 基地台數量: %1$d</string>
+    <string name="gps_satellites">可視 GPS 衛星數量: %1$d</string>
+    <string name="locations_scanned">已掃描位置數量: %1$d</string>
+    <string name="last_upload_time">上次資料上傳時間: %1$s</string>
+    <string name="reports_sent">已傳送報告數量: %1$d</string>
+    <string name="service_scanning">正在掃描 Wi-Fi 與行動網路</string>
 
     <string name="enter_nickname">輸入暱稱 (非必填)</string>
     <string name="enter_nickname_title">暱稱: </string>
-    <string name="enter_nickname_longtext">您的暱稱將顯示在 leaderboard 中</string>
+    <string name="enter_nickname_longtext">您的暱稱將顯示在排行榜中</string>
 
-    <string name="battery_low_warning">電量太低，MozStumbler 將停止掃描</string>
+    <string name="battery_low_warning">剩餘電量太低，MozStumbler 已停止掃描</string>
 
     <string name="update_title">下載 MozStumbler 更新？</string>
     <string name="update_message">已安裝版本: %1$s\n最新版本號: %2$s</string>
     <string name="update_now">現在更新</string>
-    <string name="update_later">稍候再更新</string>
+    <string name="update_later">以後再更新</string>
 
-    <string name="location_not_found">找不到 Location</string>
+    <string name="location_not_found">找不到位置</string>
 
-    <string name="gps_alert_msg">GPS 處理關閉狀態。您是否想要開啟「設定」並且將之開啟？</string>
+    <string name="gps_alert_msg">GPS 已關閉。您是否想要到「設定」並且開啟 GPS？</string>
     <string name="yes">是</string>
     <string name="no">不要</string>
 
     <string name="about_version">版本 %1$s</string>
-    <string name="about_more">更多...</string>
+    <string name="about_more">更多…</string>
 
 </resources>

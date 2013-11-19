@@ -5,11 +5,16 @@ import android.annotation.SuppressLint;
 import java.util.Date;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.TimeZone;
 
 final class DateTimeUtils {
     private static final DateFormat mISO8601Format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
 
     static final long MILLISECONDS_PER_DAY = 86400000;  // milliseconds/day
+
+    static {
+        mISO8601Format.setTimeZone(TimeZone.getTimeZone("UTC"));
+    }
 
     private DateTimeUtils() {
     }

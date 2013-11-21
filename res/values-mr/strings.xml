@@ -8,9 +8,9 @@
     <string name="start_scanning">सर्वेक्षण सुरु करा</string>
     <string name="stop_scanning">सर्वेक्षण बंद करा</string>
     <string name="view_leaderboard">अग्रेसर फलक बघा</string>
-    <string name="view_map">मोझिला स्थळ सेवा तपासा</string>
+    <string name="view_map">मोझिला स्थळसेवा तपासा</string>
     <string name="service_name">मोझिला स्टंबलर</string>
-    <string name="wifi_access_points">Wi-Fi प्रवेश बिंदू शोधले: %1$d</string>
+    <string name="wifi_access_points">शोधलेले Wi-Fi प्रवेश बिंदू: %1$d</string>
     <string name="gps_satellites">दिसणारे GPS उपग्रह: %1$d</string>
     <string name="locations_scanned">शोधलेल्या जागा: %1$d</string>
     <string name="last_upload_time">शेवटची जागा पाठवण्याची वेळ: %1$s</string>

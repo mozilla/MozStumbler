@@ -22,12 +22,14 @@ final class SSIDBlockList {
         "MiFi",
         "myLGNet",
         "myTouch 4G Hotspot",
+        "NOKIA Lumia",
         "PhoneAP",
         "SCH-I",
         "Sprint MiFi",
         "Verizon ",
         "Verizon-",
         "VirginMobile MiFi",
+        "VodafoneMobileWiFi-",
         "FirefoxHotspot",
 
         // Transportation Wi-Fi
@@ -37,8 +39,10 @@ final class SSIDBlockList {
         "amtrak_",
         "GBUS",
         "GBusWifi",
+        "gogoinflight", // Gogo in-flight WiFi
         "SF Shuttle Wireless",
         "ShuttleWiFi",
+        "Southwest WiFi", // Southwest Airlines in-flight WiFi
         "SST-PR-1", // Sears Home Service van hotspot?!
         "wifi_rail", // BART
         "egged.co.il", // Egged transportation services (Israel)

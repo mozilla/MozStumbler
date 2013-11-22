@@ -22,12 +22,14 @@ final class SSIDBlockList {
         "MiFi",
         "myLGNet",
         "myTouch 4G Hotspot",
+        "NOKIA Lumia",
         "PhoneAP",
         "SCH-I",
         "Sprint MiFi",
         "Verizon ",
         "Verizon-",
         "VirginMobile MiFi",
+        "VodafoneMobileWiFi-",
         "FirefoxHotspot",
 
         // Transportation Wi-Fi

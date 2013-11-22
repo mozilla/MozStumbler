@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">मोज़स्टम्बलर</string>
+    <string name="action_about">मोज़स्टम्बलर के बारे में</string>
+    <string name="action_preferences">व्यवस्था पर्याय</string>
+    <string name="mozilla_title">मोज़िला</string>
+    <string name="start_scanning">क्रमवीक्षण शुरू करें</string>
+    <string name="stop_scanning">क्रमवीक्षण बंद करें</string>
+    <string name="view_leaderboard">अग्रणी उपयोगकर्ता फलक देखें</string>
+    <string name="view_map">मोज़िला स्थानसेवा जांचे</string>
+    <string name="service_name">मोज़िला स्टम्बलर</string>
+    <string name="wifi_access_points">खोजे गए Wi-Fi प्रवेश बिंदु: %1$d</string>
+    <string name="gps_satellites">दिखाई दे रहे GPS उपग्रह: %1$d</string>
+    <string name="locations_scanned">जांचे गए स्थान: %1$d</string>
+    <string name="last_upload_time">अंतिम विवरण भेजने का समय: %1$s</string>
+    <string name="reports_sent">भेजे गए विवरण: %1$d</string>
+    <string name="service_scanning">Wi -Fi एवं Cellular जाल खोज रहा है</string>
+
+    <string name="enter_nickname">उपनाम डालें (वैकल्पिक)</string>
+    <string name="enter_nickname_title">उपनाम: </string>
+    <string name="enter_nickname_longtext">आपका उपनाम अग्रणी उपयोगकर्ता फलक पर दिखाया जायेगा</string>
+
+    <string name="battery_low_warning">बैटरी कम होनेकी वजहसे मोज़स्टम्बलर रोक दिया जायेगा</string>
+
+    <string name="update_title">मोज़स्टम्बलर संस्करण अद्यतन करें?</string>
+    <string name="update_message">स्थापित संस्करण: %1$s\nनवीनतम संस्करण: %2$s</string>
+    <string name="update_now">अभी अद्यतन करें</string>
+    <string name="update_later">बादमें अद्यतन करें</string>
+
+    <string name="location_not_found">स्थान नहीं मिला</string>
+
+    <string name="gps_alert_msg">GPS बंद है। सेटिंग में जाकर शुरू करें?</string>
+    <string name="yes">हाँ</string>
+    <string name="no">नहीं</string>
+
+    <string name="about_version">संस्करण %1$s</string>
+    <string name="about_more">अधिक...</string>
+
+</resources>

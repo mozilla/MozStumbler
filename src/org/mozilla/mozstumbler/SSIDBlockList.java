@@ -39,8 +39,10 @@ final class SSIDBlockList {
         "amtrak_",
         "GBUS",
         "GBusWifi",
+        "gogoinflight", // Gogo in-flight WiFi
         "SF Shuttle Wireless",
         "ShuttleWiFi",
+        "Southwest WiFi", // Southwest Airlines in-flight WiFi
         "SST-PR-1", // Sears Home Service van hotspot?!
         "wifi_rail", // BART
         "egged.co.il", // Egged transportation services (Israel)

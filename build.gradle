@@ -11,13 +11,13 @@ buildscript {
 apply plugin: 'android'
 apply plugin: 'eclipse'
 
-dependencies {
-  compile 'com.google.android.gms:play-services:3.2.25'
-}
-
 android {
     compileSdkVersion 19
     buildToolsVersion '19'
+
+    dependencies {
+        compile fileTree(dir: 'libs', include: '*.jar')
+    }
 
     sourceSets {
         main {
@@ -67,13 +67,13 @@ if (hasProperty('StoreFile')) {
 }
 
 // Generate AndroidManifest.xml
-String googleAPIKey = hasProperty('GoogleAPIKey') ? GoogleAPIKey : (hasProperty('APIKey') ? APIKey : "FAKE_GOOGLE_API_KEY");
 String mozillaAPIKey = hasProperty('MozAPIKey') ? MozAPIKey : "FAKE_MOZILLA_API_KEY";
+String mapAPIKey     = hasProperty('MapAPIKey') ? MapAPIKey : "FAKE_MAP_API_KEY";
 
 File manifest = file("./AndroidManifest.xml.in")
 String content = manifest.getText('UTF-8')
-content = content.replaceAll(/MY_GOOGLE_API_KEY/, googleAPIKey)
 content = content.replaceAll(/MY_MOZILLA_API_KEY/, mozillaAPIKey)
+content = content.replaceAll(/MY_MAP_API_KEY/, mapAPIKey)
 
 manifest = file("./AndroidManifest.xml")
 manifest.write(content, 'UTF-8')

@@ -1,6 +1,7 @@
 package org.mozilla.mozstumbler.preferences;
 
 import org.mozilla.mozstumbler.R;
+import org.mozilla.mozstumbler.preferences.Prefs;
 
 import android.os.Bundle;
 import android.preference.EditTextPreference;
@@ -16,6 +17,7 @@ public class PreferencesScreen extends PreferenceActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getPreferenceManager().setSharedPreferencesName(Prefs.PREFS_FILE);
         addPreferencesFromResource(R.xml.preferences);
         mNicknamePreference = (EditTextPreference) getPreferenceManager().findPreference("nickname");
         mPrefs = new Prefs(this);

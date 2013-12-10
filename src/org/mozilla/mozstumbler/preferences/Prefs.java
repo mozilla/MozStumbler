@@ -12,7 +12,7 @@ import java.util.UUID;
 
 public final class Prefs {
     private static final String     LOGTAG        = Prefs.class.getName();
-    private static final String     PREFS_FILE    = Prefs.class.getName();
+            static final String     PREFS_FILE    = Prefs.class.getName();
     private static final String     NICKNAME_PREF = "nickname";
     private static final String     REPORTS_PREF  = "reports";
 

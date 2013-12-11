@@ -67,4 +67,4 @@ This release process ought to be automated.
 13. Merge the new version pull request. **NB:** *There is a race condition between steps 13 and 14!* It is mostly harmless, but be quick about it.
 14. *Now* go back to the draft release and **Publish release**.
 15. Email a release announcment to the dev-geolocation mailing list with release notes giving @credit to contributors and a link to the release's page https://github.com/dougt/MozStumbler/releases/tag/v$MOZSTUMBLER_VERSION.
-16. Good work!
+16. Good work!  Pat yourself on your back.

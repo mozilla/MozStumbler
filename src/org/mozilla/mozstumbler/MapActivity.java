@@ -172,7 +172,7 @@ public final class MapActivity extends Activity {
     private void positionMapAt(float lat, float lon, float accuracy) {
         GeoPoint point = new GeoPoint(lat, lon);
         mMap.getController().setCenter(point);
-        mMap.getController().setZoom(10);
+        mMap.getController().setZoom(17);
         mMap.getController().animateTo(point);
         mMap.getOverlays().add(new AccuracyCircleOverlay(point, accuracy));
         mMap.invalidate();

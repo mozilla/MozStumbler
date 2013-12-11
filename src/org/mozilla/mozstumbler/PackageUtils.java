@@ -30,6 +30,6 @@ final class PackageUtils {
             throw new IllegalArgumentException(e);
         }
 
-        return (String) ai.metaData.get(name);
+        return ai.metaData.getString(name);
     }
 }

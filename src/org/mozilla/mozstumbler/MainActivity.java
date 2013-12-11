@@ -123,15 +123,6 @@ public final class MainActivity extends Activity {
         }
     }
 
-    private boolean isGoogleApiKeyValid() {
-        String apiKey = PackageUtils.getMetaDataString(this, "com.google.android.maps.v2.API_KEY");
-        if ("FAKE_GOOGLE_API_KEY".equals(apiKey)) {
-            Log.w(LOGTAG, "Fake Google API Key found.");
-            return false;
-        }
-        return true;
-    }
-
     @Override
     protected void onStart() {
         super.onStart();

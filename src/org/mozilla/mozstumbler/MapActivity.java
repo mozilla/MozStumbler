@@ -101,13 +101,11 @@ public final class MapActivity extends Activity {
         mWifiData = "";
         MOZSTUMBLER_USER_AGENT_STRING = NetworkUtils.getUserAgentString(this);
 
-        String apiKey = PackageUtils.getMetaDataString(context, "org.mozilla.mozstumbler.MAP_API_KEY");
-
         OnlineTileSourceBase tileSource = new XYTileSource("MozStumbler Tile Store",
                                                            null,
                                                            0, 21, 128,
                                                            ".png",
-                                                           "https://a.tiles.mapbox.com/v3/" + apiKey + "/");
+                                                           getMapBoxURL(context));
 
         mMap = (MapView) this.findViewById(R.id.map);
 
@@ -131,6 +129,15 @@ public final class MapActivity extends Activity {
         }
 
         Log.d(LOGTAG, "onCreate");
+    }
+
+    private static String getMapBoxURL(Context context) {
+        String apiKey = PackageUtils.getMetaDataString(context, "org.mozilla.mozstumbler.MAP_API_KEY");
+        if (apiKey == null || "FAKE_MAP_API_KEY".equals(apiKey)) {
+            Log.e(LOGTAG, "", new IllegalArgumentException("Need to specify MapAPIKey property in gradle.properties to use MapBox tiles"));
+        }
+
+        return "https://a.tiles.mapbox.com/v3/" + apiKey + "/";
     }
 
     private class AccuracyCircleOverlay extends SafeDrawOverlay {
@@ -165,7 +172,7 @@ public final class MapActivity extends Activity {
     private void positionMapAt(float lat, float lon, float accuracy) {
         GeoPoint point = new GeoPoint(lat, lon);
         mMap.getController().setCenter(point);
-        mMap.getController().setZoom(10);
+        mMap.getController().setZoom(17);
         mMap.getController().animateTo(point);
         mMap.getOverlays().add(new AccuracyCircleOverlay(point, accuracy));
         mMap.invalidate();

@@ -18,17 +18,9 @@ StoreFile=<path to file>
 StorePassword=<password>
 KeyAlias=<key alias>
 KeyPassword=<password>
-GoogleAPIKey=<optional: your Google Maps API key>
 MozAPIKey=test
-MapAPIKey=<your MapBox api key>
+MapAPIKey=<your MapBox API key>
 ```
-
-To obtain a Google API key:
-
-1. Create an account on https://cloud.google.com/console.
-2. Browse to the APIs & auth > APIs menu.
-3. Enable the API name "Google Maps Android API v2". You do **not** need any of the other Google Maps API keys.
-4. *TODO: add instructions for registering your app certificate with Google's API console.**
 
 To obtain a MapBox API Key:
 

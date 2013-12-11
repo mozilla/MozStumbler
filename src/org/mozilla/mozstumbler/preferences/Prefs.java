@@ -6,13 +6,14 @@ import android.os.Build.VERSION;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.text.TextUtils;
 import android.util.Log;
 
 import java.util.UUID;
 
 public final class Prefs {
     private static final String     LOGTAG        = Prefs.class.getName();
-    private static final String     PREFS_FILE    = Prefs.class.getName();
+            static final String     PREFS_FILE    = Prefs.class.getName();
     private static final String     NICKNAME_PREF = "nickname";
     private static final String     REPORTS_PREF  = "reports";
 
@@ -33,26 +34,11 @@ public final class Prefs {
 
     public String getNickname() {
         String nickname = getStringPref(NICKNAME_PREF);
-
-        // Remove old empty nickname prefs.
-        if (nickname != null && nickname.length() == 0) {
-            deleteNickname();
-            nickname = null;
+        if (nickname != null) {
+            nickname = nickname.trim();
         }
 
-        return nickname;
-    }
-
-    void setNickname(String nickname) {
-        if (nickname != null && nickname.length() > 0) {
-            setStringPref(NICKNAME_PREF, nickname);
-        } else {
-            deleteNickname();
-        }
-    }
-
-    void deleteNickname() {
-        deleteStringPref(NICKNAME_PREF);
+        return TextUtils.isEmpty(nickname) ? null : nickname;
     }
 
     public void setReports(String json) {
@@ -70,12 +56,6 @@ public final class Prefs {
     private void setStringPref(String key, String value) {
         SharedPreferences.Editor editor = getPrefs().edit();
         editor.putString(key, value);
-        apply(editor);
-    }
-
-    private void deleteStringPref(String key) {
-        SharedPreferences.Editor editor = getPrefs().edit();
-        editor.remove(key);
         apply(editor);
     }
 

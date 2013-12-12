@@ -5,22 +5,25 @@ import android.content.Intent;
 import android.util.Log;
 
 import org.mozilla.mozstumbler.cellscanner.CellScanner;
+import org.mozilla.mozstumbler.preferences.Prefs;
 
 class Scanner {
   private static final String LOGTAG = Scanner.class.getName();
 
   private final Context  mContext;
   private boolean        mIsScanning;
+  private final Prefs    mPrefs;
 
   private GPSScanner     mGPSScanner;
   private WifiScanner    mWifiScanner;
   private CellScanner    mCellScanner;
 
-  Scanner(Context context) {
+  Scanner(Context context, Prefs prefs) {
     mContext = context;
     mGPSScanner  = new GPSScanner(context);
     mWifiScanner = new WifiScanner(context);
     mCellScanner = new CellScanner(context);
+    mPrefs = prefs;
   }
 
   void startScanning() {
@@ -30,7 +33,9 @@ class Scanner {
     Log.d(LOGTAG, "Scanning started...");
 
     mGPSScanner.start();
-    mWifiScanner.start();
+    if(mPrefs.getIsWifiScanningEnabled()) {
+    	mWifiScanner.start();
+    }
     mCellScanner.start();
 
     mIsScanning = true;
@@ -43,7 +48,9 @@ class Scanner {
   }
 
   void startWifiOnly() {
-    mWifiScanner.start();
+	  if(mPrefs.getIsWifiScanningEnabled()) {
+		  mWifiScanner.start();
+	  }
   }
 
   void stopScanning() {

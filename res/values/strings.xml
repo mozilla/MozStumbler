@@ -36,5 +36,8 @@
 
     <string name="about_version">Version %1$s</string>
     <string name="about_more">More...</string>
+    
+    <string name="enable_wifi_scanning">Wi-Fi Access Points Scanning</string>
+    <string name="enable_wifi_scanning_longtext">This will take effect on the next start</string>
 
 </resources>

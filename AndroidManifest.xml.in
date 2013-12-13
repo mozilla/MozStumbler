@@ -66,6 +66,10 @@
             android:value="MY_MAP_API_KEY"/>
 
         <meta-data
+            android:name="org.mozilla.mozstumbler.TILE_SERVER_URL"
+            android:value="TILE_SERVER_URL"/>
+
+        <meta-data
             android:name="org.mozilla.mozstumbler.API_KEY"
             android:value="MY_MOZILLA_API_KEY"/>
 

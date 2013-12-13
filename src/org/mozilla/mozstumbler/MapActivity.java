@@ -105,7 +105,8 @@ public final class MapActivity extends Activity {
                                                            null,
                                                            0, 21, 128,
                                                            ".png",
-                                                           getMapBoxURL(context));
+                                                           getMapURL(context));
+
 
         mMap = (MapView) this.findViewById(R.id.map);
 
@@ -131,13 +132,18 @@ public final class MapActivity extends Activity {
         Log.d(LOGTAG, "onCreate");
     }
 
-    private static String getMapBoxURL(Context context) {
-        String apiKey = PackageUtils.getMetaDataString(context, "org.mozilla.mozstumbler.MAP_API_KEY");
-        if (apiKey == null || "FAKE_MAP_API_KEY".equals(apiKey)) {
-            Log.e(LOGTAG, "", new IllegalArgumentException("Need to specify MapAPIKey property in gradle.properties to use MapBox tiles"));
-        }
+    private static String getMapURL(Context context) {
+        String tileServerURL = PackageUtils.getMetaDataString(context, "org.mozilla.mozstumbler.TILE_SERVER_URL");
 
-        return "https://a.tiles.mapbox.com/v3/" + apiKey + "/";
+        if (tileServerURL == null || tileServerURL.equals("http://tile.openstreetmap.org/")) {
+            String apiKey = PackageUtils.getMetaDataString(context, "org.mozilla.mozstumbler.MAP_API_KEY");
+            if (apiKey == null || "FAKE_MAP_API_KEY".equals(apiKey)) {
+                tileServerURL = "http://tile.openstreetmap.org/";
+            } else {
+                tileServerURL = "https://a.tiles.mapbox.com/v3/" + apiKey + "/";
+            }
+        }
+        return tileServerURL;
     }
 
     private class AccuracyCircleOverlay extends SafeDrawOverlay {
@@ -274,9 +280,9 @@ public final class MapActivity extends Activity {
             if (mStatus != null && "ok".equals(mStatus)) {
                 positionMapAt(mLat, mLon, mAccuracy);
             } else if (mStatus != null && "not_found".equals(mStatus)) {
-            	Toast.makeText(getApplicationContext(),
-            		getResources().getString(R.string.location_not_found),
-            		Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(),
+                            getResources().getString(R.string.location_not_found),
+                            Toast.LENGTH_LONG).show();
             } else {
                 Log.e(LOGTAG, "", new IllegalStateException("mStatus=" + mStatus));
             }

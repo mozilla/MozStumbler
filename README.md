@@ -19,12 +19,24 @@ StorePassword=<password>
 KeyAlias=<key alias>
 KeyPassword=<password>
 MozAPIKey=test
-MapAPIKey=<your MapBox API key>
+TileServerURL=<OSM Tile Server>
 ```
+For the OSM (Open Street Maps) Tile Server, you have several options:
 
-To obtain a MapBox API Key:
+* *[MapBox](https://www.mapbox.com/)* (easy, secure) is a hosted OSM solution, allowing users to easily create beautiful maps and featuring full SSL. To use MapBox:
 
-1. ?
+  1. Visit [mapbox.com](https://www.mapbox.com/) and sign up
+  2. From the [MapBox Dashboad](https://www.mapbox.com/dashboard/) click the big blue "New Project" button
+  3. Customize your map as you please. The only requirement is that you allow public API access. To do this click on the gear in the white box at the top, select the "Advanced" option at the bottom, and uncheck the "Hide project from public API" box. Be sure to hit the save button after doing this.
+  4. Obtain the API key for your map (visible from the dashboard under Projects and Data, or in the URL of the editor)
+  5. Set `TileServerURL` in the `gradle.propeties` file to `https://a.tiles.mapbox.com/v3/<API key>/`. Do not miss the tailing slash, it will break things if you do.i
+
+  *Note that, for historical reasons, you can simply specify the API key in the `gradle.properties` file and not the full URL, using the `MapAPIKey` key*
+
+* *Another hosted solution* (difficulty varies, as does security). There are many OSM tile servers available. [This is a nice list of some](http://switch2osm.org/providers/).
+
+* Run your own Tile Server (advanced, as secure as you want)
+  You can, of course, run your own tileserver. [Switch2OSM](http://switch2osm.org/serving-tiles/) has several excellent guides on the subject and is a good place to get started
 
 To generate a signing key, search the internet for details.  This command is probably what you want:
 

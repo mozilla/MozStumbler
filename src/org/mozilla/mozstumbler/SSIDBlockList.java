@@ -49,6 +49,7 @@ final class SSIDBlockList {
         "gb-tours.com", // GB Tours transportation services (Israel)
         "ISRAEL-RAILWAYS",
         "Omni-WiFi", // Omnibus transportation services (Israel)
+        "Telekom_ICE", // Deutsche Bahn on-train WiFi
     };
 
     private static final String[] SUFFIX_LIST = {

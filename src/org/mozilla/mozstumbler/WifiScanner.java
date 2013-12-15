@@ -66,21 +66,18 @@ public class WifiScanner extends BroadcastReceiver {
   }
 
   public void stop() {
-	  if(mStarted) {
+    if (mWifiLock != null) {
+      mWifiLock.release();
+      mWifiLock = null;
+    }
 
-		  if (mWifiLock != null) {
-			  mWifiLock.release();
-			  mWifiLock = null;
-		  }
+    if (mWifiScanTimer != null) {
+      mWifiScanTimer.cancel();
+      mWifiScanTimer = null;
+    }
 
-		  if (mWifiScanTimer != null) {
-			  mWifiScanTimer.cancel();
-			  mWifiScanTimer = null;
-		  }
-
-		  mContext.unregisterReceiver(this);
-		  mStarted = false;
-	  }
+    mContext.unregisterReceiver(this);
+    mStarted = false;
   }
 
   public void onReceive(Context c, Intent intent) {

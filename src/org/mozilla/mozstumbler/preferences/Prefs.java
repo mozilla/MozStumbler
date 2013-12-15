@@ -16,7 +16,6 @@ public final class Prefs {
             static final String     PREFS_FILE    = Prefs.class.getName();
     private static final String     NICKNAME_PREF = "nickname";
     private static final String     REPORTS_PREF  = "reports";
-    private static final String     WIFI_SCANNING_PREF  = "wifi_scanning";
 
     private int mCurrentVersion;
     private Context mContext;
@@ -48,10 +47,6 @@ public final class Prefs {
 
     public String getReports() {
         return getStringPref(REPORTS_PREF);
-    }
-    
-    public boolean getIsWifiScanningEnabled() {
-        return getPrefs().getBoolean(WIFI_SCANNING_PREF, true);
     }
 
     private String getStringPref(String key) {

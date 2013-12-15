@@ -179,7 +179,7 @@ public final class ScannerService extends Service {
 
         Prefs prefs = new Prefs(this);
         mReporter = new Reporter(this, prefs);
-        mScanner = new Scanner(this, prefs);
+        mScanner = new Scanner(this);
         mLooper = new LooperThread();
         mLooper.start();
     }

@@ -8,10 +8,5 @@
         android:title="@string/enter_nickname"
         android:summary="@string/enter_nickname_longtext"
     />  
-    <CheckBoxPreference
-        android:key="wifi_scanning"
-        android:title="@string/enable_wifi_scanning"
-        android:summary="@string/enable_wifi_scanning_longtext"
-        android:defaultValue="true" />  
 
 </PreferenceScreen>

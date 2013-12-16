@@ -37,19 +37,17 @@ public class WifiScanner extends BroadcastReceiver {
   }
 
   public void start() {
-    if (mStarted) {
+	WifiManager wm = getWifiManager();
+	  
+    if (mStarted || !wm.isWifiEnabled()) {
         return;
     }
     mStarted = true;
 
-    WifiManager wm = getWifiManager();
+    
     mWifiLock = wm.createWifiLock(WifiManager.WIFI_MODE_SCAN_ONLY,
                                   "MozStumbler");
     mWifiLock.acquire();
-    
-    if (!wm.isWifiEnabled()) {
-      wm.setWifiEnabled(true);
-    }
 
     IntentFilter i = new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
     mContext.registerReceiver(this, i);
@@ -75,8 +73,10 @@ public class WifiScanner extends BroadcastReceiver {
       mWifiScanTimer.cancel();
       mWifiScanTimer = null;
     }
-
-    mContext.unregisterReceiver(this);
+    
+    if (mStarted) {
+      mContext.unregisterReceiver(this);
+    }
     mStarted = false;
   }
 

@@ -57,8 +57,6 @@ public final class MapActivity extends Activity {
     private static String MOZSTUMBLER_USER_AGENT_STRING;
 
     private MapView mMap;
-    private TilesOverlay mTilesOverlay;
-    private MapTileProviderBasic mProvider;
 
     private ReporterBroadcastReceiver mReceiver;
 
@@ -113,12 +111,6 @@ public final class MapActivity extends Activity {
         mMap.setTileSource(tileSource);
         mMap.setBuiltInZoomControls(true);
         mMap.setMultiTouchControls(true);
-
-        mProvider = new MapTileProviderBasic(context);
-        mProvider.setTileSource(TileSourceFactory.FIETS_OVERLAY_NL);
-        mTilesOverlay = new TilesOverlay(mProvider, this.getBaseContext());
-        mMap.getOverlays().add(this.mTilesOverlay);
-
         mMap.getTileProvider().clearTileCache();
 
         if (mMap != null) {

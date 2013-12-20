@@ -67,7 +67,7 @@
 
         <meta-data
             android:name="org.mozilla.mozstumbler.TILE_SERVER_URL"
-            android:value="TILE_SERVER_URL"/>
+            android:value="MY_TILE_SERVER"/>
 
         <meta-data
             android:name="org.mozilla.mozstumbler.API_KEY"

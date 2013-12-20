@@ -45,6 +45,7 @@ public final class MapActivity extends Activity {
     private static String MOZSTUMBLER_USER_AGENT_STRING;
 
     private MapView mMap;
+    private AccuracyCircleOverlay mAccuracyCircleOverlay;
 
     private ReporterBroadcastReceiver mReceiver;
 
@@ -99,6 +100,9 @@ public final class MapActivity extends Activity {
         mMap.setBuiltInZoomControls(true);
         mMap.setMultiTouchControls(true);
 
+        mAccuracyCircleOverlay = new AccuracyCircleOverlay(this);
+        mMap.getOverlays().add(mAccuracyCircleOverlay);
+
         mReceiver = new ReporterBroadcastReceiver();
         registerReceiver(mReceiver, new IntentFilter(ScannerService.MESSAGE_TOPIC));
 
@@ -119,17 +123,23 @@ public final class MapActivity extends Activity {
         return tileServerURL;
     }
 
-    private class AccuracyCircleOverlay extends SafeDrawOverlay {
+    private static class AccuracyCircleOverlay extends SafeDrawOverlay {
         private GeoPoint mPoint;
         private float mAccuracy;
 
-        public AccuracyCircleOverlay(GeoPoint point, float accuracy) {
-            super(getApplicationContext());
-            mPoint = point;
+        public AccuracyCircleOverlay(Context ctx) {
+            super(ctx);
+        }
+
+        public void set(GeoPoint point, float accuracy) {
+            mPoint = (GeoPoint) point.clone();
             mAccuracy = accuracy;
         }
 
         protected void drawSafe(ISafeCanvas c, MapView osmv, boolean shadow) {
+            if (shadow || mPoint == null) {
+                return;
+            }
             Projection pj = osmv.getProjection();
             Point center = pj.toPixels(mPoint, null);
             float radius = pj.metersToEquatorPixels(mAccuracy);
@@ -153,7 +163,7 @@ public final class MapActivity extends Activity {
         mMap.getController().setCenter(point);
         mMap.getController().setZoom(17);
         mMap.getController().animateTo(point);
-        mMap.getOverlays().add(new AccuracyCircleOverlay(point, accuracy));
+        mAccuracyCircleOverlay.set(point, accuracy);
         mMap.invalidate();
     }
 

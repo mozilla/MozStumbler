@@ -111,7 +111,6 @@ public final class MapActivity extends Activity {
         mMap.setTileSource(tileSource);
         mMap.setBuiltInZoomControls(true);
         mMap.setMultiTouchControls(true);
-        mMap.getTileProvider().clearTileCache();
 
         if (mMap != null) {
             mReceiver = new ReporterBroadcastReceiver();
@@ -186,6 +185,7 @@ public final class MapActivity extends Activity {
     protected void onStop() {
         super.onStop();
         Log.d(LOGTAG, "onStop");
+        mMap.getTileProvider().clearTileCache();
         if (mReceiver != null) {
             unregisterReceiver(mReceiver);
             mReceiver = null;

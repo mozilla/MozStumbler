@@ -132,7 +132,7 @@ public final class MapActivity extends Activity {
             if (apiKey == null || "FAKE_MAP_API_KEY".equals(apiKey)) {
                 tileServerURL = "http://tile.openstreetmap.org/";
             } else {
-                tileServerURL = "https://a.tiles.mapbox.com/v3/" + apiKey + "/";
+                tileServerURL = "http://api.tiles.mapbox.com/v3/" + apiKey + "/";
             }
         }
         return tileServerURL;

@@ -29,7 +29,7 @@ For the OSM (Open Street Maps) Tile Server, you have several options:
   2. From the [MapBox Dashboad](https://www.mapbox.com/dashboard/) click the big blue "New Project" button
   3. Customize your map as you please. The only requirement is that you allow public API access. To do this click on the gear in the white box at the top, select the "Advanced" option at the bottom, and uncheck the "Hide project from public API" box. Be sure to hit the save button after doing this.
   4. Obtain the API key for your map (visible from the dashboard under Projects and Data, or in the URL of the editor)
-  5. Set `TileServerURL` in the `gradle.propeties` file to `https://a.tiles.mapbox.com/v3/<API key>/`. Do not miss the tailing slash, it will break things if you do.i
+  5. Set `TileServerURL` in the `gradle.propeties` file to `http://api.tiles.mapbox.com/v3/<API key>/`. Do not miss the tailing slash, it will break things if you do.i
 
   *Note that, for historical reasons, you can simply specify the API key in the `gradle.properties` file and not the full URL, using the `MapAPIKey` key*
 

@@ -101,7 +101,7 @@ public final class MapActivity extends Activity {
 
         OnlineTileSourceBase tileSource = new XYTileSource("MozStumbler Tile Store",
                                                            null,
-                                                           0, 21, 256,
+                                                           1, 20, 256,
                                                            ".png",
                                                            getMapURL(context));
 

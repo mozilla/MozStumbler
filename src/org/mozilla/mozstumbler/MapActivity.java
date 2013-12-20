@@ -1,20 +1,16 @@
 package org.mozilla.mozstumbler;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Color;
 import android.graphics.Paint.Style;
 import android.graphics.Point;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
-import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import java.io.BufferedInputStream;
@@ -26,25 +22,17 @@ import java.io.OutputStream;
 import java.lang.Void;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import org.osmdroid.ResourceProxy;
-import org.osmdroid.tileprovider.MapTileProviderBasic;
-import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
-import org.osmdroid.views.MapController;
 import org.osmdroid.views.MapView.Projection;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.SafeDrawOverlay;
-import org.osmdroid.views.overlay.TilesOverlay;
 import org.osmdroid.views.safecanvas.ISafeCanvas;
 import org.osmdroid.views.safecanvas.SafePaint;
-import org.osmdroid.views.safecanvas.SafeTranslatedCanvas;
-import org.osmdroid.views.util.constants.MapViewConstants;
 import org.osmdroid.tileprovider.tilesource.OnlineTileSourceBase;
 import org.osmdroid.tileprovider.tilesource.XYTileSource;
 
@@ -90,7 +78,7 @@ public final class MapActivity extends Activity {
         }
     }
 
-    @TargetApi(11) @Override
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
@@ -105,20 +93,14 @@ public final class MapActivity extends Activity {
                                                            ".png",
                                                            getMapURL(context));
 
-
         mMap = (MapView) this.findViewById(R.id.map);
 
         mMap.setTileSource(tileSource);
         mMap.setBuiltInZoomControls(true);
         mMap.setMultiTouchControls(true);
 
-        if (mMap != null) {
-            mReceiver = new ReporterBroadcastReceiver();
-            registerReceiver(mReceiver, new IntentFilter(ScannerService.MESSAGE_TOPIC));
-        } else {
-            Log.e(LOGTAG, "", new IllegalStateException("mMap must be non-null"));
-            finish();
-        }
+        mReceiver = new ReporterBroadcastReceiver();
+        registerReceiver(mReceiver, new IntentFilter(ScannerService.MESSAGE_TOPIC));
 
         Log.d(LOGTAG, "onCreate");
     }

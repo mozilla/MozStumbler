@@ -1,20 +1,16 @@
 package org.mozilla.mozstumbler;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Color;
 import android.graphics.Paint.Style;
 import android.graphics.Point;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
-import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import java.io.BufferedInputStream;
@@ -26,25 +22,17 @@ import java.io.OutputStream;
 import java.lang.Void;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import org.osmdroid.ResourceProxy;
-import org.osmdroid.tileprovider.MapTileProviderBasic;
-import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
-import org.osmdroid.views.MapController;
 import org.osmdroid.views.MapView.Projection;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.SafeDrawOverlay;
-import org.osmdroid.views.overlay.TilesOverlay;
 import org.osmdroid.views.safecanvas.ISafeCanvas;
 import org.osmdroid.views.safecanvas.SafePaint;
-import org.osmdroid.views.safecanvas.SafeTranslatedCanvas;
-import org.osmdroid.views.util.constants.MapViewConstants;
 import org.osmdroid.tileprovider.tilesource.OnlineTileSourceBase;
 import org.osmdroid.tileprovider.tilesource.XYTileSource;
 
@@ -57,8 +45,7 @@ public final class MapActivity extends Activity {
     private static String MOZSTUMBLER_USER_AGENT_STRING;
 
     private MapView mMap;
-    private TilesOverlay mTilesOverlay;
-    private MapTileProviderBasic mProvider;
+    private AccuracyCircleOverlay mAccuracyCircleOverlay;
 
     private ReporterBroadcastReceiver mReceiver;
 
@@ -92,7 +79,7 @@ public final class MapActivity extends Activity {
         }
     }
 
-    @TargetApi(11) @Override
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
@@ -103,10 +90,9 @@ public final class MapActivity extends Activity {
 
         OnlineTileSourceBase tileSource = new XYTileSource("MozStumbler Tile Store",
                                                            null,
-                                                           0, 21, 128,
+                                                           1, 20, 256,
                                                            ".png",
                                                            getMapURL(context));
-
 
         mMap = (MapView) this.findViewById(R.id.map);
 
@@ -114,20 +100,11 @@ public final class MapActivity extends Activity {
         mMap.setBuiltInZoomControls(true);
         mMap.setMultiTouchControls(true);
 
-        mProvider = new MapTileProviderBasic(context);
-        mProvider.setTileSource(TileSourceFactory.FIETS_OVERLAY_NL);
-        mTilesOverlay = new TilesOverlay(mProvider, this.getBaseContext());
-        mMap.getOverlays().add(this.mTilesOverlay);
+        mAccuracyCircleOverlay = new AccuracyCircleOverlay(this);
+        mMap.getOverlays().add(mAccuracyCircleOverlay);
 
-        mMap.getTileProvider().clearTileCache();
-
-        if (mMap != null) {
-            mReceiver = new ReporterBroadcastReceiver();
-            registerReceiver(mReceiver, new IntentFilter(ScannerService.MESSAGE_TOPIC));
-        } else {
-            Log.e(LOGTAG, "", new IllegalStateException("mMap must be non-null"));
-            finish();
-        }
+        mReceiver = new ReporterBroadcastReceiver();
+        registerReceiver(mReceiver, new IntentFilter(ScannerService.MESSAGE_TOPIC));
 
         Log.d(LOGTAG, "onCreate");
     }
@@ -140,23 +117,29 @@ public final class MapActivity extends Activity {
             if (apiKey == null || "FAKE_MAP_API_KEY".equals(apiKey)) {
                 tileServerURL = "http://tile.openstreetmap.org/";
             } else {
-                tileServerURL = "https://a.tiles.mapbox.com/v3/" + apiKey + "/";
+                tileServerURL = "http://api.tiles.mapbox.com/v3/" + apiKey + "/";
             }
         }
         return tileServerURL;
     }
 
-    private class AccuracyCircleOverlay extends SafeDrawOverlay {
+    private static class AccuracyCircleOverlay extends SafeDrawOverlay {
         private GeoPoint mPoint;
         private float mAccuracy;
 
-        public AccuracyCircleOverlay(GeoPoint point, float accuracy) {
-            super(getApplicationContext());
-            mPoint = point;
+        public AccuracyCircleOverlay(Context ctx) {
+            super(ctx);
+        }
+
+        public void set(GeoPoint point, float accuracy) {
+            mPoint = (GeoPoint) point.clone();
             mAccuracy = accuracy;
         }
 
         protected void drawSafe(ISafeCanvas c, MapView osmv, boolean shadow) {
+            if (shadow || mPoint == null) {
+                return;
+            }
             Projection pj = osmv.getProjection();
             Point center = pj.toPixels(mPoint, null);
             float radius = pj.metersToEquatorPixels(mAccuracy);
@@ -180,7 +163,7 @@ public final class MapActivity extends Activity {
         mMap.getController().setCenter(point);
         mMap.getController().setZoom(17);
         mMap.getController().animateTo(point);
-        mMap.getOverlays().add(new AccuracyCircleOverlay(point, accuracy));
+        mAccuracyCircleOverlay.set(point, accuracy);
         mMap.invalidate();
     }
 
@@ -194,6 +177,7 @@ public final class MapActivity extends Activity {
     protected void onStop() {
         super.onStop();
         Log.d(LOGTAG, "onStop");
+        mMap.getTileProvider().clearTileCache();
         if (mReceiver != null) {
             unregisterReceiver(mReceiver);
             mReceiver = null;

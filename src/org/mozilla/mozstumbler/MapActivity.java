@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.lang.Void;
+import java.net.MalformedURLException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
@@ -200,7 +201,14 @@ public final class MapActivity extends Activity {
             Log.d(LOGTAG, "requesting location...");
             HttpURLConnection urlConnection = null;
             try {
-                URL url = new URL(LOCATION_URL);
+                URL url;
+                Context context = getApplicationContext();
+                String apiKey = PackageUtils.getMetaDataString(context, "org.mozilla.mozstumbler.API_KEY");
+                try {
+                    url = new URL(LOCATION_URL + "?key=" + apiKey);
+                } catch (MalformedURLException e) {
+                    throw new IllegalArgumentException(e);
+                }
                 urlConnection = (HttpURLConnection) url.openConnection();
 
                 urlConnection.setDoOutput(true);

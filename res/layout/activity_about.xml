@@ -30,6 +30,17 @@
         android:gravity="center"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:paddingTop="32dp"
+        android:onClick="onClick_ViewMapboxAttribution"
+        android:clickable="true"
+        android:textColor="#00e"
+        android:text="@string/about_mapbox" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:paddingTop="32dp"
         android:onClick="onClick_ViewMore"
         android:clickable="true"
         android:textColor="#00e"

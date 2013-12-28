@@ -180,12 +180,14 @@ public final class MainActivity extends Activity {
             Log.e(LOGTAG, "", e);
         }
 
-        Button scanningBtn = (Button) findViewById(R.id.toggle_scanning);
-        if (scanning) {
-            scanningBtn.setText(R.string.stop_scanning);
-        } else {
-            scanningBtn.setText(R.string.start_scanning);
-        }
+        Log.d(LOGTAG, "!!!!! we are scanning?? = " + scanning);
+
+        //        Button scanningBtn = (Button) findViewById(R.id.toggle_scanning);
+        //        if (scanning) {
+        //            scanningBtn.setText(R.string.stop_scanning);
+        //        } else {
+        //            scanningBtn.setText(R.string.start_scanning);
+        //        }
 
         int locationsScanned = 0;
         double latitude = 0;
@@ -241,23 +243,6 @@ public final class MainActivity extends Activity {
         }
     }
 
-    public void onClick_ViewLeaderboard(View v) {
-        Intent openLeaderboard = new Intent(Intent.ACTION_VIEW, Uri.parse(LEADERBOARD_URL));
-        startActivity(openLeaderboard);
-    }
-
-    public void onClick_ViewMap(View v) throws RemoteException {
-        // We are starting Wi-Fi scanning because we want the the APs for our
-        // geolocation request whose results we want to display on the map.
-        if (mConnectionRemote != null) {
-            mConnectionRemote.startScanning();
-        }
-
-        Log.d(LOGTAG, "onClick_ViewMap");
-        Intent intent = new Intent(this, MapActivity.class);
-        startActivity(intent);
-    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -268,10 +253,40 @@ public final class MainActivity extends Activity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_about) {
-        	startActivity(new Intent(getApplication(), AboutActivity.class));
+            startActivity(new Intent(getApplication(), AboutActivity.class));
             return true;
-        } else if (item.getItemId() == R.id.action_preferences) {
-        	startActivity(new Intent(getApplication(), PreferencesScreen.class));
+        }
+        
+        if (item.getItemId() == R.id.action_preferences) {
+            startActivity(new Intent(getApplication(), PreferencesScreen.class));
+            return true;
+        }
+
+        if (item.getItemId() == R.id.action_view_leaderboard) {
+            Intent openLeaderboard = new Intent(Intent.ACTION_VIEW, Uri.parse(LEADERBOARD_URL));
+            startActivity(openLeaderboard);
+            return true;
+        }
+
+        if (item.getItemId() == R.id.action_test_mls) {
+            // We are starting Wi-Fi scanning because we want the the APs for our
+            // geolocation request whose results we want to display on the map.
+            if (mConnectionRemote != null) {
+                try {
+                    mConnectionRemote.startScanning();
+                } catch (RemoteException e) {
+                    Log.e(LOGTAG, "", e);
+                }
+            }
+
+
+            Intent intent = new Intent(this, MapActivity.class);
+            startActivity(intent);
+            return true;
+        }
+
+        if (item.getItemId() == R.id.action_exit) {
+            finish();
             return true;
         }
 

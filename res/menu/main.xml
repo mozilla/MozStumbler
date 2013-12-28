@@ -1,8 +1,17 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
     <item
+        android:id="@+id/action_view_leaderboard"
+        android:title="@string/view_leaderboard"/>
+    <item
+        android:id="@+id/action_test_mls"
+        android:title="@string/view_map"/>
+    <item
         android:id="@+id/action_preferences"
         android:title="@string/action_preferences"/>
     <item
         android:id="@+id/action_about"
         android:title="@string/action_about"/>
+    <item
+        android:id="@+id/action_exit"
+        android:title="@string/action_exit"/>
 </menu>

@@ -7,8 +7,6 @@ import org.mozilla.mozstumbler.ActivityRecognitionIntentService;
 
 import android.annotation.TargetApi;
 import android.app.AlarmManager;
-import android.app.Notification;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
@@ -36,7 +34,6 @@ public final class ScannerService extends Service {
     public static final String  MESSAGE_TOPIC   = "org.mozilla.mozstumbler.serviceMessage";
 
     private static final String LOGTAG          = ScannerService.class.getName();
-    private static final int    NOTIFICATION_ID = 1;
     private static final int    WAKE_TIMEOUT    = 5 * 1000;
     private static final int    ACTIVITY_DETECTION_INTERVAL = 30 * 1000;
     private Scanner             mScanner;
@@ -64,11 +61,6 @@ public final class ScannerService extends Service {
                 @Override
                 public void run() {
                     try {
-                        Log.d(LOGTAG, "Running looper...");
-
-                        String title = getResources().getString(R.string.service_name);
-                        String text = getResources().getString(R.string.service_scanning);
-                        postNotification(title, text, Notification.FLAG_NO_CLEAR | Notification.FLAG_ONGOING_EVENT);
 
                         mScanner.startScanning();
 
@@ -99,11 +91,6 @@ public final class ScannerService extends Service {
                 public void run() {
                     AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
                     alarm.cancel(mWakeIntent);
-
-                    NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-                    nm.cancel(NOTIFICATION_ID);
-                    stopForeground(true);
-
                     mScanner.stopScanning();
 
                     mReporter.sendReports(true);
@@ -217,10 +204,6 @@ public final class ScannerService extends Service {
                 try {
                     if (mBinder.isScanning()) {
                         mBinder.stopScanning();
-
-                        String title = getResources().getString(R.string.service_name);
-                        String batteryLowWarning = getResources().getString(R.string.battery_low_warning);
-                        postNotification(title, batteryLowWarning, Notification.FLAG_AUTO_CANCEL);
                     }
                 } catch (RemoteException e) {
                     Log.e(LOGTAG, "", e);
@@ -287,27 +270,6 @@ public final class ScannerService extends Service {
         mReporter = null; 
 
         stopActivityTracking();
-
-        NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        nm.cancel(NOTIFICATION_ID);
-    }
-
-    private void postNotification(final String title, final String text, final int flags) {
-        mLooper.post(new Runnable() {
-            @Override
-            public void run() {
-                Context ctx = getApplicationContext();
-                Intent notificationIntent = new Intent(ctx, MainActivity.class);
-                notificationIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_FROM_BACKGROUND);
-
-                PendingIntent contentIntent = PendingIntent.getActivity(ctx, NOTIFICATION_ID, notificationIntent,
-                        PendingIntent.FLAG_CANCEL_CURRENT);
-
-                int icon = R.drawable.ic_status_scanning;
-                Notification n = buildNotification(ctx, icon, title, text, contentIntent, flags);
-                startForeground(NOTIFICATION_ID, n);
-            }
-        });
     }
 
     @Override
@@ -320,17 +282,5 @@ public final class ScannerService extends Service {
     public IBinder onBind(Intent intent) {
         Log.d(LOGTAG, "onBind");
         return mBinder;
-    }
-
-    @SuppressWarnings("deprecation")
-    private static Notification buildNotification(Context context, int icon,
-                                                  String contentTitle,
-                                                  String contentText,
-                                                  PendingIntent contentIntent,
-                                                  int flags) {
-        Notification n = new Notification(icon, contentTitle, 0);
-        n.setLatestEventInfo(context, contentTitle, contentText, contentIntent);
-        n.flags |= flags;
-        return n;
     }
 }

@@ -71,16 +71,12 @@ public final class MainActivity extends Activity {
 
             String subject = intent.getStringExtra(Intent.EXTRA_SUBJECT);
 
-            if (subject.equals("Notification")) {
-                String text = intent.getStringExtra(Intent.EXTRA_TEXT);
-                Toast.makeText(getApplicationContext(), (CharSequence) text, Toast.LENGTH_SHORT).show();
-                Log.d(LOGTAG, "Received a notification intent and showing: " + text);
-                return;
-            } else if (subject.equals("Reporter")) {
+            if (subject.equals("Reporter")) {
                 updateUI();
                 Log.d(LOGTAG, "Received a reporter intent...");
                 return;
-            } else if (subject.equals("Scanner")) {
+            } 
+            if (subject.equals("Scanner")) {
                 mGpsFixes = intent.getIntExtra("fixes", 0);
                 updateUI();
                 Log.d(LOGTAG, "Received a scanner intent...");

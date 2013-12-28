@@ -59,6 +59,7 @@ class Scanner {
     // for now all we want is to update the UI anyway
     Intent stopIntent = new Intent(ScannerService.MESSAGE_TOPIC);
     stopIntent.putExtra(Intent.EXTRA_SUBJECT, "Scanner");
+    stopIntent.putExtra("fixes", 0);
     mContext.sendBroadcast(stopIntent);
   }
 

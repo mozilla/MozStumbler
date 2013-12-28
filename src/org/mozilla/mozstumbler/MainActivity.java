@@ -30,6 +30,7 @@ import android.view.View.OnFocusChangeListener;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -180,15 +181,6 @@ public final class MainActivity extends Activity {
             Log.e(LOGTAG, "", e);
         }
 
-        Log.d(LOGTAG, "!!!!! we are scanning?? = " + scanning);
-
-        //        Button scanningBtn = (Button) findViewById(R.id.toggle_scanning);
-        //        if (scanning) {
-        //            scanningBtn.setText(R.string.stop_scanning);
-        //        } else {
-        //            scanningBtn.setText(R.string.start_scanning);
-        //        }
-
         int locationsScanned = 0;
         double latitude = 0;
         double longitude = 0;
@@ -208,6 +200,15 @@ public final class MainActivity extends Activity {
             Log.e(LOGTAG, "", e);
         }
 
+        Log.d(LOGTAG, "!!!!! we are scanning?? = " + scanning);
+        ProgressBar progress = (ProgressBar) findViewById(R.id.progressBar);
+        if (scanning) {
+            progress.setVisibility(View.VISIBLE);
+        } else {
+            progress.setVisibility(View.GONE);
+        }
+
+
         String lastUploadTimeString = (lastUploadTime > 0)
                                       ? DateTimeUtils.formatTimeForLocale(lastUploadTime)
                                       : "-";
@@ -223,24 +224,6 @@ public final class MainActivity extends Activity {
         formatTextView(R.id.locations_scanned, R.string.locations_scanned, locationsScanned);
         formatTextView(R.id.last_upload_time, R.string.last_upload_time, lastUploadTimeString);
         formatTextView(R.id.reports_sent, R.string.reports_sent, reportsSent);
-    }
-
-    public void onClick_ToggleScanning(View v) throws RemoteException {
-        if (mConnectionRemote == null) {
-            return;
-        }
-
-        boolean scanning = mConnectionRemote.isScanning();
-        Log.d(LOGTAG, "Connection remote return: isScanning() = " + scanning);
-
-        Button b = (Button) v;
-        if (scanning) {
-            mConnectionRemote.stopScanning();
-            b.setText(R.string.start_scanning);
-        } else {
-            mConnectionRemote.startScanning();
-            b.setText(R.string.stop_scanning);
-        }
     }
 
     @Override

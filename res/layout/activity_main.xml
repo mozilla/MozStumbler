@@ -99,6 +99,7 @@
            android:layout_below="@+id/view_map"
            android:onClick="onClick_ToggleScanning"
            android:text="@string/start_scanning"
+           android:visibility="gone"
            android:textAppearance="?android:attr/textAppearanceLarge" />
 
 </RelativeLayout>

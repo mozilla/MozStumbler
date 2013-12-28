@@ -1,5 +1,5 @@
 MozStumbler
-[![Build Status](https://travis-ci.org/dougt/MozStumbler.png)](https://travis-ci.org/dougt/MozStumbler.png)
+[![Build Status](https://travis-ci.org/mozilla/MozStumbler.png)](https://travis-ci.org/mozilla/MozStumbler.png)
 
 # Building #
 

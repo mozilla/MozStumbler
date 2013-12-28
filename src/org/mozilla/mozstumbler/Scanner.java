@@ -42,10 +42,6 @@ class Scanner {
     mContext.sendBroadcast(startIntent);
   }
 
-  void startWifiOnly() {
-    mWifiScanner.start();
-  }
-
   void stopScanning() {
     if (!mIsScanning) {
       return;

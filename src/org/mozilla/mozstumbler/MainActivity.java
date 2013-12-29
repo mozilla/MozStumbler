@@ -258,7 +258,6 @@ public final class MainActivity extends Activity {
                 }
             }
 
-
             Intent intent = new Intent(this, MapActivity.class);
             startActivity(intent);
             return true;

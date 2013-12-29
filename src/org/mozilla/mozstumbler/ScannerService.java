@@ -26,6 +26,7 @@ import android.util.Log;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient.ConnectionCallbacks;
 import com.google.android.gms.common.GooglePlayServicesClient.OnConnectionFailedListener;
+import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.location.ActivityRecognitionClient;
 import com.google.android.gms.location.ActivityRecognitionResult;
 import com.google.android.gms.location.DetectedActivity;
@@ -153,6 +154,13 @@ public final class ScannerService extends Service {
 
     private void startActivityTracking() {
 
+        int status = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
+        if (status != ConnectionResult.SUCCESS) {
+            // TODO: What should we do here?
+            Log.d(LOGTAG, "No google play services!");
+            return;
+        }
+  
         mActivityRecognitionClient = new ActivityRecognitionClient(this, new ConnectionCallbacks() {
 
             @Override
@@ -215,18 +223,18 @@ public final class ScannerService extends Service {
         mActivityRecognitionReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-              int activityType = intent.getIntExtra("activity_type", 0);
-              int confidence = intent.getIntExtra("confidence", -1);
-              long time = intent.getLongExtra("time", 0);
+                int activityType = intent.getIntExtra("activity_type", 0);
+                int confidence = intent.getIntExtra("confidence", -1);
+                long time = intent.getLongExtra("time", 0);
 
-              if (confidence < 50) {
-                return;
-              }
+                if (confidence < 50) {
+                    return;
+                }
 
-              boolean active =
-                activityType == DetectedActivity.IN_VEHICLE ||
-                activityType == DetectedActivity.ON_BICYCLE ||
-                activityType == DetectedActivity.ON_FOOT;
+                boolean active =
+                  activityType == DetectedActivity.IN_VEHICLE ||
+                  activityType == DetectedActivity.ON_BICYCLE ||
+                  activityType == DetectedActivity.ON_FOOT;
 
                 try {
                     if (active) {
@@ -234,8 +242,8 @@ public final class ScannerService extends Service {
                     } else {
                         mBinder.stopScanning();
                     }
-                  } catch (RemoteException e) {
-                      Log.e(LOGTAG, "", e);
+                } catch (RemoteException e) {
+                    Log.e(LOGTAG, "", e);
                 }
             }
         };

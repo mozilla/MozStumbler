@@ -64,22 +64,43 @@ public final class MainActivity extends Activity {
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
 
-            if (!action.equals(ScannerService.MESSAGE_TOPIC)) {
-                Log.e(LOGTAG, "Received an unknown intent");
-                return;
-            }
+            if (action.equals(ScannerService.MESSAGE_TOPIC)) {
 
-            String subject = intent.getStringExtra(Intent.EXTRA_SUBJECT);
+                String subject = intent.getStringExtra(Intent.EXTRA_SUBJECT);
 
-            if (subject.equals("Reporter")) {
-                updateUI();
-                Log.d(LOGTAG, "Received a reporter intent...");
-                return;
-            } 
-            if (subject.equals("Scanner")) {
-                mGpsFixes = intent.getIntExtra("fixes", 0);
-                updateUI();
-                Log.d(LOGTAG, "Received a scanner intent...");
+                if (subject.equals("Reporter")) {
+                    updateUI();
+                    Log.d(LOGTAG, "Received a reporter intent...");
+                    return;
+                } 
+
+                if (subject.equals("Scanner")) {
+                    if (intent.hasExtra("fixes")) {
+                        mGpsFixes = intent.getIntExtra("fixes", 0);
+                    }
+
+                    if (intent.hasExtra("enable")) {
+                        int enable = intent.getIntExtra("enable", -1);
+
+                        if (mConnectionRemote != null) {
+                            try {
+                                if (enable == 1) {
+                                    mConnectionRemote.startScanning();
+                                } else if (enable == 0) {
+                                    mConnectionRemote.stopScanning();
+                                }
+                            } catch (RemoteException e) {
+                              Log.e(LOGTAG, "", e);
+                            }
+                        }
+                    }
+
+                    updateUI();
+                    Log.d(LOGTAG, "Received a scanner intent...");
+                    return;
+                }
+
+                Log.e(LOGTAG, "Unknown scanner message!");
                 return;
             }
         }
@@ -248,16 +269,6 @@ public final class MainActivity extends Activity {
         }
 
         if (item.getItemId() == R.id.action_test_mls) {
-            // We are starting Wi-Fi scanning because we want the the APs for our
-            // geolocation request whose results we want to display on the map.
-            if (mConnectionRemote != null) {
-                try {
-                    mConnectionRemote.startScanning();
-                } catch (RemoteException e) {
-                    Log.e(LOGTAG, "", e);
-                }
-            }
-
             Intent intent = new Intent(this, MapActivity.class);
             startActivity(intent);
             return true;

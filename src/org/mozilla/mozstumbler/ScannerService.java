@@ -22,7 +22,6 @@ import android.os.RemoteException;
 import android.text.format.DateFormat;
 import android.util.Log;
 
-
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient.ConnectionCallbacks;
 import com.google.android.gms.common.GooglePlayServicesClient.OnConnectionFailedListener;

@@ -27,11 +27,20 @@
            android:textAppearance="?android:attr/textAppearanceMedium" />
 
        <TextView
-           android:id="@+id/wifi_access_points"
+           android:id="@+id/visible_wifi_access_points"
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"
            android:layout_alignParentLeft="true"
            android:layout_below="@+id/locations_scanned"
+           android:text="@string/visible_wifi_access_points"
+           android:textAppearance="?android:attr/textAppearanceMedium" />
+
+       <TextView
+           android:id="@+id/wifi_access_points"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:layout_alignParentLeft="true"
+           android:layout_below="@+id/visible_wifi_access_points"
            android:text="@string/wifi_access_points"
            android:textAppearance="?android:attr/textAppearanceMedium" />
 

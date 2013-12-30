@@ -189,11 +189,13 @@ public final class MainActivity extends Activity {
 
         int locationsScanned = 0;
         int APs = 0;
+        int visibleAPs = 0;
         long lastUploadTime = 0;
         long reportsSent = 0;
         try {
             locationsScanned = mConnectionRemote.getLocationCount();
             APs = mConnectionRemote.getAPCount();
+            visibleAPs = mConnectionRemote.getVisibleAPCount();
             lastUploadTime = mConnectionRemote.getLastUploadTime();
             reportsSent = mConnectionRemote.getReportsSent();
         } catch (RemoteException e) {
@@ -205,6 +207,7 @@ public final class MainActivity extends Activity {
                                       : "-";
 
         formatTextView(R.id.gps_satellites, R.string.gps_satellites, mGpsFixes);
+        formatTextView(R.id.visible_wifi_access_points, R.string.visible_wifi_access_points, visibleAPs);
         formatTextView(R.id.wifi_access_points, R.string.wifi_access_points, APs);
         formatTextView(R.id.locations_scanned, R.string.locations_scanned, locationsScanned);
         formatTextView(R.id.last_upload_time, R.string.last_upload_time, lastUploadTimeString);

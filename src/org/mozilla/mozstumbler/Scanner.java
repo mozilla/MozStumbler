@@ -74,6 +74,10 @@ class Scanner {
      return mWifiScanner.getAPCount();
   }
 
+  int getVisibleAPCount() {
+     return mWifiScanner.getVisibleAPCount();
+  }
+
   int getLocationCount() {
      return mGPSScanner.getLocationCount();
   }

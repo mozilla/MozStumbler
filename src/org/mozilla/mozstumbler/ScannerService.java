@@ -125,6 +125,11 @@ public final class ScannerService extends Service {
         }
 
         @Override
+        public int getVisibleAPCount() throws RemoteException {
+            return mScanner.getVisibleAPCount();
+        }
+
+        @Override
         public long getLastUploadTime() throws RemoteException {
             return mReporter.getLastUploadTime();
         }

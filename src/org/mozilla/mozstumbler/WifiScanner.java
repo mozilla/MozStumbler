@@ -78,6 +78,7 @@ public class WifiScanner extends BroadcastReceiver {
       mContext.unregisterReceiver(this);
     }
     mStarted = false;
+    mVisibleAPs = 0;
   }
 
   public void onReceive(Context c, Intent intent) {

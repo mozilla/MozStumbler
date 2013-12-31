@@ -34,8 +34,6 @@ public class WifiScanner extends BroadcastReceiver {
 
   WifiScanner(Context c) {
     mContext = c;
-    mStarted = false;
-    mVisibleAPs = 0;
   }
 
   public void start() {

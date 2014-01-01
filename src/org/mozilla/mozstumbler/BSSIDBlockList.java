@@ -12,21 +12,39 @@ final class BSSIDBlockList {
     private static final String  WILDCARD_BSSID    = "ffffffffffff";
     private static final Pattern BSSID_PATTERN     = Pattern.compile("([0-9a-f]{12})");
 
+    private static final String[] OUI_LIST = {
+        // Some iPad and iPhone OUIs:
+        "001b63",
+        "0021e9",
+        "74e2f5",
+        "78d6f0",
+        "7c6d62",
+        "7cc537",
+        "88c663",
+        "8c7712",
+    };
+
     private BSSIDBlockList() {
     }
 
     static boolean contains(ScanResult scanResult) {
         String BSSID = scanResult.BSSID;
         if (BSSID == null || NULL_BSSID.equals(BSSID) || WILDCARD_BSSID.equals(BSSID)) {
-            return true;
+            return true; // blocked!
         }
 
-        if (isCanonicalBSSID(BSSID)) {
-            return false;
+        if (!isCanonicalBSSID(BSSID)) {
+            Log.w(LOGTAG, "", new IllegalArgumentException("Unexpected BSSID format: " + BSSID));
+            return true; // blocked!
         }
 
-        Log.w(LOGTAG, "", new IllegalArgumentException("Unexpected BSSID format: " + BSSID));
-        return true;
+        for (String oui : OUI_LIST) {
+            if (BSSID.startsWith(oui)) {
+                return true; // blocked!
+            }
+        }
+
+        return false; // OK
     }
 
     static String canonicalizeBSSID(String BSSID) {

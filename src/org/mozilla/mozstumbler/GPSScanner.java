@@ -27,6 +27,8 @@ public class GPSScanner implements LocationListener {
     private GpsStatus.Listener    mGPSListener;
 
     private int mLocationCount;
+    private double mLatitude;
+    private double mLongitude;
 
     GPSScanner(Context context) {
         mContext = context;
@@ -82,6 +84,15 @@ public class GPSScanner implements LocationListener {
     public int getLocationCount() {
         return mLocationCount;
     }
+
+    public double getLatitude() {
+        return mLatitude;
+    }
+
+    public double getLongitude() {
+        return mLongitude;
+    }
+
     @Override
     public void onLocationChanged(Location location) {
         if (location == null) {
@@ -95,11 +106,14 @@ public class GPSScanner implements LocationListener {
 
         Log.d(LOGTAG, "New location: " + location);
 
+        mLongitude = location.getLongitude();
+        mLatitude = location.getLatitude();
+
         JSONObject locInfo = new JSONObject();
         try {
             locInfo.put("time", DateTimeUtils.formatTime(location.getTime()));
-            locInfo.put("lon", location.getLongitude());
-            locInfo.put("lat", location.getLatitude());
+            locInfo.put("lon", mLongitude);
+            locInfo.put("lat", mLatitude);
             locInfo.put("accuracy", (int) location.getAccuracy());
             locInfo.put("altitude", (int) location.getAltitude());
         } catch (JSONException jsonex) {

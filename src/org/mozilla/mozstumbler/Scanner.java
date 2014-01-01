@@ -81,4 +81,12 @@ class Scanner {
   int getLocationCount() {
      return mGPSScanner.getLocationCount();
   }
+
+  double getLatitude() {
+     return mGPSScanner.getLatitude();
+  }
+
+  double getLongitude() {
+     return mGPSScanner.getLongitude();
+  }
 }

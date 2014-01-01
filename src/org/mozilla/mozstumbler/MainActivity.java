@@ -188,12 +188,16 @@ public final class MainActivity extends Activity {
         }
 
         int locationsScanned = 0;
+        double latitude = 0;
+        double longitude = 0;
         int APs = 0;
         int visibleAPs = 0;
         long lastUploadTime = 0;
         long reportsSent = 0;
         try {
             locationsScanned = mConnectionRemote.getLocationCount();
+            latitude = mConnectionRemote.getLatitude();
+            longitude = mConnectionRemote.getLongitude();
             APs = mConnectionRemote.getAPCount();
             visibleAPs = mConnectionRemote.getVisibleAPCount();
             lastUploadTime = mConnectionRemote.getLastUploadTime();
@@ -206,7 +210,12 @@ public final class MainActivity extends Activity {
                                       ? DateTimeUtils.formatTimeForLocale(lastUploadTime)
                                       : "-";
 
+        String lastLocationString = (mGpsFixes > 0 && locationsScanned > 0)
+                                    ? formatLocation(latitude, longitude)
+                                    : "-";
+
         formatTextView(R.id.gps_satellites, R.string.gps_satellites, mGpsFixes);
+        formatTextView(R.id.last_location, R.string.last_location, lastLocationString);
         formatTextView(R.id.visible_wifi_access_points, R.string.visible_wifi_access_points, visibleAPs);
         formatTextView(R.id.wifi_access_points, R.string.wifi_access_points, APs);
         formatTextView(R.id.locations_scanned, R.string.locations_scanned, locationsScanned);
@@ -291,5 +300,10 @@ public final class MainActivity extends Activity {
         String str = getResources().getString(stringId);
         str = String.format(str, args);
         textView.setText(str);
+    }
+
+    private String formatLocation(double latitude, double longitude) {
+        final String coordinateFormatString = getResources().getString(R.string.coordinate);
+        return String.format(coordinateFormatString, latitude, longitude);
     }
 }

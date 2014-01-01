@@ -18,11 +18,20 @@
            android:textAppearance="?android:attr/textAppearanceMedium" />
 
        <TextView
-           android:id="@+id/locations_scanned"
+           android:id="@+id/last_location"
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"
            android:layout_alignParentLeft="true"
            android:layout_below="@+id/gps_satellites"
+           android:text="@string/last_location"
+           android:textAppearance="?android:attr/textAppearanceMedium" />
+
+       <TextView
+           android:id="@+id/locations_scanned"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:layout_alignParentLeft="true"
+           android:layout_below="@+id/last_location"
            android:text="@string/locations_scanned"
            android:textAppearance="?android:attr/textAppearanceMedium" />
 

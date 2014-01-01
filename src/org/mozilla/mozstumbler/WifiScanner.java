@@ -30,10 +30,10 @@ public class WifiScanner extends BroadcastReceiver {
   private WifiLock               mWifiLock;
   private Timer                  mWifiScanTimer;
   private final Set<String>      mAPs = new HashSet<String>();
+  private int                    mVisibleAPs;
 
   WifiScanner(Context c) {
     mContext = c;
-    mStarted = false;
   }
 
   public void start() {
@@ -78,12 +78,14 @@ public class WifiScanner extends BroadcastReceiver {
       mContext.unregisterReceiver(this);
     }
     mStarted = false;
+    mVisibleAPs = 0;
   }
 
   public void onReceive(Context c, Intent intent) {
     Collection<ScanResult> scanResults = getWifiManager().getScanResults();
 
     JSONArray wifiInfo = new JSONArray();
+    mVisibleAPs = 0;
     for (ScanResult scanResult : scanResults) {
       scanResult.BSSID = BSSIDBlockList.canonicalizeBSSID(scanResult.BSSID);
       if (!shouldLog(scanResult)) {
@@ -100,6 +102,7 @@ public class WifiScanner extends BroadcastReceiver {
         Log.e(LOGTAG, "", jsonex);
       }
 
+      mVisibleAPs += 1;
       mAPs.add(scanResult.BSSID);
 
       Log.v(LOGTAG, "BSSID=" + scanResult.BSSID + ", SSID=\"" + scanResult.SSID + "\", Signal=" + scanResult.level);
@@ -119,6 +122,10 @@ public class WifiScanner extends BroadcastReceiver {
 
   public int getAPCount() {
     return mAPs.size();
+  }
+
+  public int getVisibleAPCount() {
+    return mVisibleAPs;
   }
 
   private static boolean shouldLog(ScanResult scanResult) {

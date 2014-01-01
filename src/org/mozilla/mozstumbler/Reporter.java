@@ -26,12 +26,12 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import android.content.BroadcastReceiver;
 
-class Reporter extends BroadcastReceiver {
+final class Reporter extends BroadcastReceiver {
     private static final String LOGTAG          = Reporter.class.getName();
     private static final String LOCATION_URL    = "https://location.services.mozilla.com/v1/submit";
     private static final String NICKNAME_HEADER = "X-Nickname";
     private static final String USER_AGENT_HEADER = "User-Agent";
-    private static final int RECORD_BATCH_SIZE  = 20;
+    private static final int RECORD_BATCH_SIZE  = 100;
     private static final int REPORTER_WINDOW  = 3000; //ms
 
     private static String       MOZSTUMBLER_USER_AGENT_STRING;

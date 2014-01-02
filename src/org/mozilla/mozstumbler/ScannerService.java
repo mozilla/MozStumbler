@@ -120,6 +120,16 @@ public final class ScannerService extends Service {
         }
 
         @Override
+        public double getLatitude() throws RemoteException {
+            return mScanner.getLatitude();
+        }
+
+        @Override
+        public double getLongitude() throws RemoteException {
+            return mScanner.getLongitude();
+        }
+
+        @Override
         public int getAPCount() throws RemoteException {
             return mScanner.getAPCount();
         }

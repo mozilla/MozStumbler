@@ -6,6 +6,8 @@ interface ScannerServiceInterface {
     void startWifiScanningOnly();
     void stopScanning();
     int getLocationCount();
+    double getLatitude();
+    double getLongitude();
     int getAPCount();
     int getVisibleAPCount();
     long getLastUploadTime();

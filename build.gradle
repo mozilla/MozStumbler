@@ -13,7 +13,7 @@ apply plugin: 'eclipse'
 
 android {
     compileSdkVersion 19
-    buildToolsVersion '19'
+    buildToolsVersion '19.0.1'
 
     dependencies {
         compile fileTree(dir: 'libs', include: '*.jar')

@@ -1,6 +1,8 @@
 package org.mozilla.mozstumbler.cellscanner;
 
 import android.os.Build;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.telephony.CellLocation;
 import android.telephony.NeighboringCellInfo;
 import android.telephony.TelephonyManager;
@@ -10,7 +12,7 @@ import android.telephony.gsm.GsmCellLocation;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class CellInfo {
+public class CellInfo implements Parcelable {
     public static final String RADIO_GSM = "gsm";
     public static final String RADIO_CDMA = "cdma";
     public static final String RADIO_WCDMA = "wcdma";
@@ -23,7 +25,18 @@ public class CellInfo {
     static final int UNKNOWN_CID = -1;
     static final int UNKNOWN_SIGNAL = -1000;
 
-    private String mRadio = RADIO_GSM;
+    public static final Parcelable.Creator<CellInfo> CREATOR
+            = new Parcelable.Creator<CellInfo>() {
+        public CellInfo createFromParcel(Parcel in) {
+            return new CellInfo(in);
+        }
+
+        public CellInfo[] newArray(int size) {
+            return new CellInfo[size];
+        }
+    };
+
+    private String mRadio;
     private String mCellRadio;
 
     private int mMcc;
@@ -40,10 +53,41 @@ public class CellInfo {
         setRadio(phoneType);
     }
 
-    public String getRadio() { return mRadio; }
+    private CellInfo(Parcel in) {
+        mRadio = in.readString();
+        mCellRadio = in.readString();
+        mMcc = in.readInt();
+        mMnc = in.readInt();
+        mCid = in.readInt();
+        mLac = in.readInt();
+        mSignal = in.readInt();
+        mAsu = in.readInt();
+        mTa = in.readInt();
+        mPsc = in.readInt();
+    }
+
+    public String getRadio() {
+        return mRadio;
+    }
 
     public String getCellRadio() {
         return mCellRadio;
+    }
+
+    public int getMcc() {
+        return mMcc;
+    }
+
+    public int getMnc() {
+        return mMnc;
+    }
+
+    public int getCid() {
+        return mCid;
+    }
+
+    public int getLac() {
+        return mLac;
     }
 
     public JSONObject toJSONObject() {
@@ -64,6 +108,25 @@ public class CellInfo {
         }
 
         return obj;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(mRadio);
+        dest.writeString(mCellRadio);
+        dest.writeInt(mMcc);
+        dest.writeInt(mMnc);
+        dest.writeInt(mCid);
+        dest.writeInt(mLac);
+        dest.writeInt(mSignal);
+        dest.writeInt(mAsu);
+        dest.writeInt(mTa);
+        dest.writeInt(mPsc);
     }
 
     void reset() {

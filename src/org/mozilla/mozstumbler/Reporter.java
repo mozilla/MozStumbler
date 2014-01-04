@@ -139,7 +139,7 @@ final class Reporter extends BroadcastReceiver {
             mCellData = data;
             mRadioType = intent.getStringExtra("radioType");
             mCellDataTime = time;
-        } else if (subject.equals("GPSScanner")) {
+        } else if (GPSScanner.GPS_SCANNER_EXTRA_SUBJECT.equals(subject)) {
             mGPSData = data;
             mGPSDataTime = time;
         }

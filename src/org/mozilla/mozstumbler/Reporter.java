@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.location.Location;
+import android.net.wifi.ScanResult;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -23,6 +24,8 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
 
 final class Reporter extends BroadcastReceiver {
@@ -44,7 +47,7 @@ final class Reporter extends BroadcastReceiver {
     private URL                 mURL;
     private ReentrantLock       mReportsLock;
 
-    private String mWifiData;
+    private List<ScanResult> mWifiData;
     private long   mWifiDataTime;
 
     private String mCellData;
@@ -82,7 +85,7 @@ final class Reporter extends BroadcastReceiver {
     }
 
     private void resetData() {
-        mWifiData = "";
+        mWifiData = Collections.emptyList();
         mCellData = "";
         mRadioType = "";
         mWifiDataTime = 0;
@@ -119,7 +122,7 @@ final class Reporter extends BroadcastReceiver {
         }
 
         if (mWifiDataTime - time > REPORTER_WINDOW) {
-            mWifiData = "";
+            mWifiData = Collections.emptyList();;
             mWifiDataTime = 0;
         }
 
@@ -129,7 +132,7 @@ final class Reporter extends BroadcastReceiver {
         }
 
         if (WifiScanner.WIFI_SCANNER_EXTRA_SUBJECT.equals(subject)) {
-            mWifiData = data;
+            mWifiData = intent.getParcelableArrayListExtra(WifiScanner.WIFI_SCANNER_ARG_SCAN_RESULTS);
             mWifiDataTime = time;
         } else if (subject.equals("CellScanner")) {
             mCellData = data;
@@ -149,7 +152,7 @@ final class Reporter extends BroadcastReceiver {
             return; // Intent not aimed at the Reporter (it is possibly for UI instead)
         }
 
-        if (mIsGpsPositionKnown && (mWifiData.length() > 0 || mCellData.length() > 0)) {
+        if (mIsGpsPositionKnown && (!mWifiData.isEmpty() || mCellData.length() > 0)) {
           reportLocation(mGpsPosition, mWifiData, mRadioType, mCellData);
           resetData();
         }
@@ -258,7 +261,7 @@ final class Reporter extends BroadcastReceiver {
         }).start();
     }
 
-    void reportLocation(Location gpsPosition, String wifiInfo, String radioType, String cellInfo) {
+    void reportLocation(Location gpsPosition, List<ScanResult> wifiInfo, String radioType, String cellInfo) {
         Log.d(LOGTAG, "reportLocation called");
         JSONObject locInfo = null;
         JSONArray cellJSON = null;
@@ -278,8 +281,15 @@ final class Reporter extends BroadcastReceiver {
                 locInfo.put("radio", radioType);
             }
 
-            if (wifiInfo.length()>0) {
-                wifiJSON=new JSONArray(wifiInfo);
+            if (!wifiInfo.isEmpty()) {
+                wifiJSON = new JSONArray();
+                for (ScanResult wifi : wifiInfo) {
+                    JSONObject jsonItem = new JSONObject();
+                    jsonItem.put("key", wifi.BSSID);
+                    jsonItem.put("frequency", wifi.frequency);
+                    jsonItem.put("signal", wifi.level);
+                    wifiJSON.put(jsonItem);
+                }
                 locInfo.put("wifi", wifiJSON);
             }
 

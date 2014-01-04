@@ -13,6 +13,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -21,6 +22,7 @@ import java.util.TimerTask;
 
 public class WifiScanner extends BroadcastReceiver {
   public static final String WIFI_SCANNER_EXTRA_SUBJECT = "WifiScanner";
+  public static final String WIFI_SCANNER_ARG_SCAN_RESULTS = "org.mozilla.mozstumbler.WifiScanner.scan_results";
 
   private static final String LOGTAG              = Scanner.class.getName();
   private static final long WIFI_MIN_UPDATE_TIME  = 1000; // milliseconds
@@ -82,7 +84,7 @@ public class WifiScanner extends BroadcastReceiver {
   }
 
     public void onReceive(Context c, Intent intent) {
-        Collection<ScanResult> scanResults = getWifiManager().getScanResults();
+        ArrayList<ScanResult> scanResults = new ArrayList<ScanResult>();
         for (ScanResult scanResult : getWifiManager().getScanResults()) {
             scanResult.BSSID = BSSIDBlockList.canonicalizeBSSID(scanResult.BSSID);
             if (shouldLog(scanResult)) {
@@ -119,25 +121,11 @@ public class WifiScanner extends BroadcastReceiver {
     return (WifiManager) mContext.getSystemService(Context.WIFI_SERVICE);
   }
 
-    private void reportScanResults(Collection<ScanResult> scanResults) {
+    private void reportScanResults(ArrayList<ScanResult> scanResults) {
         if (scanResults.isEmpty()) return;
-
-        final JSONArray wifiInfo = new JSONArray();
-        for (ScanResult scanResult : scanResults) {
-            try {
-                JSONObject obj = new JSONObject();
-                obj.put("key", scanResult.BSSID);
-                obj.put("frequency", scanResult.frequency);
-                obj.put("signal", scanResult.level);
-                wifiInfo.put(obj);
-            } catch (JSONException jsonex) {
-                Log.e(LOGTAG, "", jsonex);
-            }
-        }
-
         Intent i = new Intent(ScannerService.MESSAGE_TOPIC);
         i.putExtra(Intent.EXTRA_SUBJECT, WIFI_SCANNER_EXTRA_SUBJECT);
-        i.putExtra("data", wifiInfo.toString());
+        i.putParcelableArrayListExtra(WIFI_SCANNER_ARG_SCAN_RESULTS, scanResults);
         i.putExtra("time", System.currentTimeMillis());
         mContext.sendBroadcast(i);
     }

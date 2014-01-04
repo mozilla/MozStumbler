@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Paint.Style;
 import android.graphics.Point;
+import android.net.wifi.ScanResult;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -23,6 +24,8 @@ import java.lang.Void;
 import java.net.MalformedURLException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Collections;
+import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -51,7 +54,7 @@ public final class MapActivity extends Activity {
     private ReporterBroadcastReceiver mReceiver;
 
     // TODO add cell data
-    private String mWifiData;
+    private List<ScanResult> mWifiData;
 
     private class ReporterBroadcastReceiver extends BroadcastReceiver {
         private boolean mDone;
@@ -74,7 +77,7 @@ public final class MapActivity extends Activity {
                 return;
             }
 
-            mWifiData = intent.getStringExtra("data");
+            mWifiData = intent.getParcelableArrayListExtra(WifiScanner.WIFI_SCANNER_ARG_SCAN_RESULTS);
             new GetLocationAndMapItTask().execute("");
             mDone = true;
         }
@@ -86,7 +89,7 @@ public final class MapActivity extends Activity {
         setContentView(R.layout.activity_map);
 
         Context context = getApplicationContext();
-        mWifiData = "";
+        mWifiData = Collections.emptyList();
         MOZSTUMBLER_USER_AGENT_STRING = NetworkUtils.getUserAgentString(this);
 
         OnlineTileSourceBase tileSource = new XYTileSource("MozStumbler Tile Store",
@@ -218,7 +221,15 @@ public final class MapActivity extends Activity {
 
                 JSONObject wrapper = new JSONObject("{}");
                 try {
-                  wrapper.put("wifi", new JSONArray(mWifiData));
+                    JSONArray wifiData = new JSONArray();
+                    for (ScanResult result : mWifiData) {
+                        JSONObject item = new JSONObject();
+                        item.put("key", BSSIDBlockList.canonicalizeBSSID(result.BSSID));
+                        item.put("frequency", result.frequency);
+                        item.put("signal", result.level);
+                        wifiData.put(item);
+                    }
+                    wrapper.put("wifi", wifiData);
                 } catch (JSONException jsonex) {
                   Log.w(LOGTAG, "json exception", jsonex);
                   return "";

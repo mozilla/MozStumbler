@@ -18,10 +18,10 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 
 public class WifiScanner extends BroadcastReceiver {
+  public static final String WIFI_SCANNER_EXTRA_SUBJECT = "WifiScanner";
+
   private static final String LOGTAG              = Scanner.class.getName();
   private static final long WIFI_MIN_UPDATE_TIME  = 1000; // milliseconds
 
@@ -81,44 +81,19 @@ public class WifiScanner extends BroadcastReceiver {
     mVisibleAPs = 0;
   }
 
-  public void onReceive(Context c, Intent intent) {
-    Collection<ScanResult> scanResults = getWifiManager().getScanResults();
-
-    JSONArray wifiInfo = new JSONArray();
-    mVisibleAPs = 0;
-    for (ScanResult scanResult : scanResults) {
-      scanResult.BSSID = BSSIDBlockList.canonicalizeBSSID(scanResult.BSSID);
-      if (!shouldLog(scanResult)) {
-        continue;
-      }
-
-      try {
-        JSONObject obj = new JSONObject();
-        obj.put("key", scanResult.BSSID);
-        obj.put("frequency", scanResult.frequency);
-        obj.put("signal", scanResult.level);
-        wifiInfo.put(obj);
-      } catch (JSONException jsonex) {
-        Log.e(LOGTAG, "", jsonex);
-      }
-
-      mVisibleAPs += 1;
-      mAPs.add(scanResult.BSSID);
-
-      Log.v(LOGTAG, "BSSID=" + scanResult.BSSID + ", SSID=\"" + scanResult.SSID + "\", Signal=" + scanResult.level);
+    public void onReceive(Context c, Intent intent) {
+        Collection<ScanResult> scanResults = getWifiManager().getScanResults();
+        for (ScanResult scanResult : getWifiManager().getScanResults()) {
+            scanResult.BSSID = BSSIDBlockList.canonicalizeBSSID(scanResult.BSSID);
+            if (shouldLog(scanResult)) {
+                scanResults.add(scanResult);
+                mAPs.add(scanResult.BSSID);
+                //Log.v(LOGTAG, "BSSID=" + scanResult.BSSID + ", SSID=\"" + scanResult.SSID + "\", Signal=" + scanResult.level);
+            }
+        }
+        mVisibleAPs = scanResults.size();
+        reportScanResults(scanResults);
     }
-
-    // No scan results to report.
-    if (wifiInfo.length() == 0) {
-      return;
-    }
-
-    Intent i = new Intent(ScannerService.MESSAGE_TOPIC);
-    i.putExtra(Intent.EXTRA_SUBJECT, "WifiScanner");
-    i.putExtra("data", wifiInfo.toString());
-    i.putExtra("time", System.currentTimeMillis());
-    mContext.sendBroadcast(i);
-  }
 
   public int getAPCount() {
     return mAPs.size();
@@ -143,4 +118,27 @@ public class WifiScanner extends BroadcastReceiver {
   private WifiManager getWifiManager() {
     return (WifiManager) mContext.getSystemService(Context.WIFI_SERVICE);
   }
+
+    private void reportScanResults(Collection<ScanResult> scanResults) {
+        if (scanResults.isEmpty()) return;
+
+        final JSONArray wifiInfo = new JSONArray();
+        for (ScanResult scanResult : scanResults) {
+            try {
+                JSONObject obj = new JSONObject();
+                obj.put("key", scanResult.BSSID);
+                obj.put("frequency", scanResult.frequency);
+                obj.put("signal", scanResult.level);
+                wifiInfo.put(obj);
+            } catch (JSONException jsonex) {
+                Log.e(LOGTAG, "", jsonex);
+            }
+        }
+
+        Intent i = new Intent(ScannerService.MESSAGE_TOPIC);
+        i.putExtra(Intent.EXTRA_SUBJECT, WIFI_SCANNER_EXTRA_SUBJECT);
+        i.putExtra("data", wifiInfo.toString());
+        i.putExtra("time", System.currentTimeMillis());
+        mContext.sendBroadcast(i);
+    }
 }

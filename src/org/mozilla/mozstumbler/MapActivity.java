@@ -69,7 +69,7 @@ public final class MapActivity extends Activity {
             }
 
             String subject = intent.getStringExtra(Intent.EXTRA_SUBJECT);
-            if (!subject.equals("WifiScanner")) {
+            if (!WifiScanner.WIFI_SCANNER_EXTRA_SUBJECT.equals(subject)) {
                 // might be another scanner
                 return;
             }

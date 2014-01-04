@@ -24,8 +24,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.concurrent.locks.ReentrantLock;
 
-import android.content.BroadcastReceiver;
-
 final class Reporter extends BroadcastReceiver {
     private static final String LOGTAG          = Reporter.class.getName();
     private static final String LOCATION_URL    = "https://location.services.mozilla.com/v1/submit";
@@ -134,7 +132,7 @@ final class Reporter extends BroadcastReceiver {
             mGPSDataTime = 0;
         }
 
-        if (subject.equals("WifiScanner")) {
+        if (WifiScanner.WIFI_SCANNER_EXTRA_SUBJECT.equals(subject)) {
             mWifiData = data;
             mWifiDataTime = time;
         } else if (subject.equals("CellScanner")) {

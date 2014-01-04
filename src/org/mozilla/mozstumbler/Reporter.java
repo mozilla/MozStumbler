@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -49,8 +50,8 @@ final class Reporter extends BroadcastReceiver {
     private String mCellData;
     private long   mCellDataTime;
 
-    private long   mGPSDataTime;
-    private String mGPSData;
+    private boolean mIsGpsPositionKnown = false;
+    private final   Location mGpsPosition = new Location("");
 
     private String mRadioType;
     private long mReportsSent;
@@ -84,10 +85,10 @@ final class Reporter extends BroadcastReceiver {
         mWifiData = "";
         mCellData = "";
         mRadioType = "";
-        mGPSData = "";
         mWifiDataTime = 0;
         mCellDataTime = 0;
-        mGPSDataTime = 0;
+        mGpsPosition.reset();
+        mIsGpsPositionKnown = false;
     }
 
     void shutdown() {
@@ -127,11 +128,6 @@ final class Reporter extends BroadcastReceiver {
             mCellDataTime = 0;
         }
 
-        if (mGPSDataTime - time > REPORTER_WINDOW) {
-            mGPSData = "";
-            mGPSDataTime = 0;
-        }
-
         if (WifiScanner.WIFI_SCANNER_EXTRA_SUBJECT.equals(subject)) {
             mWifiData = data;
             mWifiDataTime = time;
@@ -140,21 +136,21 @@ final class Reporter extends BroadcastReceiver {
             mRadioType = intent.getStringExtra("radioType");
             mCellDataTime = time;
         } else if (GPSScanner.GPS_SCANNER_EXTRA_SUBJECT.equals(subject)) {
-            mGPSData = data;
-            mGPSDataTime = time;
+            Location l = intent.getParcelableExtra(GPSScanner.GPS_SCANNER_ARG_LOCATION);
+            if (l == null) {
+                mIsGpsPositionKnown = false;
+            } else {
+                mGpsPosition.set(l);
+                mIsGpsPositionKnown = true;
+            }
         }
         else {
             Log.d(LOGTAG, "Intent ignored with Subject: " + subject);
             return; // Intent not aimed at the Reporter (it is possibly for UI instead)
         }
 
-        // Record recent Wi-Fi and/or cell scan results for the current GPS position.
-        Log.d(LOGTAG, "Reporter data: GPS: "+mGPSData.length() + 
-              ", WiFi: "+mWifiData.length()+", Cell: " + 
-              mCellData.length()+" ("+mRadioType+")");
-
-        if (mGPSData.length() > 0 && (mWifiData.length() > 0 || mCellData.length() > 0)) {
-          reportLocation(mGPSData, mWifiData, mRadioType, mCellData);
+        if (mIsGpsPositionKnown && (mWifiData.length() > 0 || mCellData.length() > 0)) {
+          reportLocation(mGpsPosition, mWifiData, mRadioType, mCellData);
           resetData();
         }
     }
@@ -262,14 +258,19 @@ final class Reporter extends BroadcastReceiver {
         }).start();
     }
 
-    void reportLocation(String location, String wifiInfo, String radioType, String cellInfo) {
+    void reportLocation(Location gpsPosition, String wifiInfo, String radioType, String cellInfo) {
         Log.d(LOGTAG, "reportLocation called");
         JSONObject locInfo = null;
         JSONArray cellJSON = null;
         JSONArray wifiJSON = null;
 
         try {
-            locInfo = new JSONObject( location );
+            locInfo = new JSONObject();
+            locInfo.put("lat", gpsPosition.getLatitude());
+            locInfo.put("lon", gpsPosition.getLongitude());
+            locInfo.put("time", DateTimeUtils.formatTime(gpsPosition.getTime()));
+            if (gpsPosition.hasAccuracy()) locInfo.put("accuracy", (int)gpsPosition.getAccuracy());
+            if (gpsPosition.hasAltitude()) locInfo.put("altitude", (int)gpsPosition.getAltitude());
 
             if (cellInfo.length()>0) {
                 cellJSON=new JSONArray(cellInfo);

@@ -17,6 +17,7 @@ import android.util.Log;
 
 public class GPSScanner implements LocationListener {
     public static final String GPS_SCANNER_EXTRA_SUBJECT = "GPSScanner";
+    public static final String GPS_SCANNER_ARG_LOCATION = "org.mozilla.mozstumbler.GPSScanner.location";
 
     private static final String   LOGTAG                  = Scanner.class.getName();
     private static final long     GEO_MIN_UPDATE_TIME     = 1000;
@@ -140,20 +141,9 @@ public class GPSScanner implements LocationListener {
     }
 
     private void reportNewLocationReceived(Location location) {
-        JSONObject locInfo = new JSONObject();
-        try {
-            locInfo.put("time", DateTimeUtils.formatTime(location.getTime()));
-            locInfo.put("lon", location.getLongitude());
-            locInfo.put("lat", location.getLatitude());
-            locInfo.put("accuracy", (int) location.getAccuracy());
-            locInfo.put("altitude", (int) location.getAltitude());
-        } catch (JSONException jsonex) {
-            Log.e(LOGTAG, "", jsonex);
-        }
-
         Intent i = new Intent(ScannerService.MESSAGE_TOPIC);
         i.putExtra(Intent.EXTRA_SUBJECT, GPS_SCANNER_EXTRA_SUBJECT);
-        i.putExtra("data", locInfo.toString());
+        i.putExtra(GPS_SCANNER_ARG_LOCATION, location);
         i.putExtra("time", System.currentTimeMillis());
         mContext.sendBroadcast(i);
     }
@@ -161,7 +151,6 @@ public class GPSScanner implements LocationListener {
     private void reportLocationLost() {
         Intent i = new Intent(ScannerService.MESSAGE_TOPIC);
         i.putExtra(Intent.EXTRA_SUBJECT, GPS_SCANNER_EXTRA_SUBJECT);
-        i.putExtra("data", "");
         i.putExtra("time", System.currentTimeMillis());
         mContext.sendBroadcast(i);
     }

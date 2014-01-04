@@ -25,7 +25,7 @@ public class CellScanner {
 
         public void stop();
 
-        public List<CellsRecord.CellInfo> getCellInfo();
+        public List<CellInfo> getCellInfo();
     }
 
     public CellScanner(Context context) {
@@ -53,13 +53,13 @@ public class CellScanner {
             public void run() {
                 Log.d(LOGTAG, "Cell Scanning Timer fired");
                 final long curTime = System.currentTimeMillis();
-                List<CellsRecord.CellInfo> cells = mImpl.getCellInfo();
+                List<CellInfo> cells = mImpl.getCellInfo();
                 if (cells.isEmpty()) {
                     return;
                 }
 
                 JSONArray cellsJson = new JSONArray();
-                for (CellsRecord.CellInfo cell : cells) cellsJson.put(cell.toJSONObject());
+                for (CellInfo cell : cells) cellsJson.put(cell.toJSONObject());
 
                 Intent intent = new Intent(ScannerService.MESSAGE_TOPIC);
                 intent.putExtra(Intent.EXTRA_SUBJECT, "CellScanner");

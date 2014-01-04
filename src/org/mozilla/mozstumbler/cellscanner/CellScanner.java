@@ -5,6 +5,7 @@ import android.content.Intent;
 
 import android.util.Log;
 
+import org.json.JSONArray;
 import org.mozilla.mozstumbler.ScannerService;
 
 import java.util.List;
@@ -24,7 +25,7 @@ public class CellScanner {
 
         public void stop();
 
-        public List<CellsRecord> getCellInfo();
+        public List<CellsRecord.CellInfo> getCellInfo();
     }
 
     public CellScanner(Context context) {
@@ -52,16 +53,20 @@ public class CellScanner {
             public void run() {
                 Log.d(LOGTAG, "Cell Scanning Timer fired");
                 final long curTime = System.currentTimeMillis();
-                for (CellsRecord record : mImpl.getCellInfo()) {
-                    if (record.hasCells()) {
-                        Intent intent = new Intent(ScannerService.MESSAGE_TOPIC);
-                        intent.putExtra(Intent.EXTRA_SUBJECT, "CellScanner");
-                        intent.putExtra("time", curTime);
-                        intent.putExtra("data", record.getCellsAsJson().toString());
-                        intent.putExtra("radioType", record.getRadio());
-                        mContext.sendBroadcast(intent);
-                    }
+                List<CellsRecord.CellInfo> cells = mImpl.getCellInfo();
+                if (cells.isEmpty()) {
+                    return;
                 }
+
+                JSONArray cellsJson = new JSONArray();
+                for (CellsRecord.CellInfo cell : cells) cellsJson.put(cell.toJSONObject());
+
+                Intent intent = new Intent(ScannerService.MESSAGE_TOPIC);
+                intent.putExtra(Intent.EXTRA_SUBJECT, "CellScanner");
+                intent.putExtra("time", curTime);
+                intent.putExtra("data", cellsJson.toString());
+                intent.putExtra("radioType", cells.get(0).getRadio());
+                mContext.sendBroadcast(intent);
             }
         }, 0, CELL_MIN_UPDATE_TIME);
     }

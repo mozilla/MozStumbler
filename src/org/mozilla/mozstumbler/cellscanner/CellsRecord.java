@@ -15,23 +15,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 class CellsRecord {
-    public static final String RADIO_GSM = "gsm";
-    public static final String RADIO_CDMA = "cdma";
-    public static final String RADIO_WCDMA = "wcdma";
-
-    public static final String CELL_RADIO_GSM = "gsm";
-    public static final String CELL_RADIO_UMTS = "umts";
-    public static final String CELL_RADIO_CDMA = "cdma";
-    public static final String CELL_RADIO_LTE = "lte";
-
-    private String mRadio = RADIO_GSM;
-    private final List<CellInfo> mCells = new ArrayList<CellInfo>();
 
     public static class CellInfo {
+        public static final String RADIO_GSM = "gsm";
+        public static final String RADIO_CDMA = "cdma";
+        public static final String RADIO_WCDMA = "wcdma";
+
+        public static final String CELL_RADIO_GSM = "gsm";
+        public static final String CELL_RADIO_UMTS = "umts";
+        public static final String CELL_RADIO_CDMA = "cdma";
+        public static final String CELL_RADIO_LTE = "lte";
+
         static final int UNKNOWN_CID = -1;
         static final int UNKNOWN_SIGNAL = -1000;
 
-        private String mRadio;
+        private String mRadio = RADIO_GSM;
+        private String mCellRadio;
 
         private int mMcc;
         private int mMnc;
@@ -42,19 +41,22 @@ class CellsRecord {
         private int mTa;
         private int mPsc;
 
-        CellInfo() {
+        CellInfo(int phoneType) {
             reset();
+            setRadio(phoneType);
         }
 
-        public String getRadio() {
-            return mRadio;
+        public String getRadio() { return mRadio; }
+
+        public String getCellRadio() {
+            return mCellRadio;
         }
 
         public JSONObject toJSONObject() {
             final JSONObject obj = new JSONObject();
 
             try {
-                obj.put("radio", getRadio());
+                obj.put("radio", getCellRadio());
                 obj.put("mcc", mMcc);
                 obj.put("mnc", mMnc);
                 if (mLac != UNKNOWN_CID) obj.put("lac", mLac);
@@ -71,7 +73,8 @@ class CellsRecord {
         }
 
         void reset() {
-            mRadio = CELL_RADIO_GSM;
+            mRadio = RADIO_GSM;
+            mCellRadio = CELL_RADIO_GSM;
             mMcc = UNKNOWN_CID;
             mMnc = UNKNOWN_CID;
             mLac = UNKNOWN_CID;
@@ -80,6 +83,14 @@ class CellsRecord {
             mAsu = UNKNOWN_SIGNAL;
             mTa = UNKNOWN_CID;
             mPsc = UNKNOWN_CID;
+        }
+
+        void setRadio(int phoneType) {
+            String radio = getRadioTypeName(phoneType);
+            if (radio == null) {
+                throw new IllegalArgumentException("Unexpected Phone Type: " + phoneType);
+            }
+            mRadio = radio;
         }
 
         void setCellLocation(CellLocation cl,
@@ -92,7 +103,7 @@ class CellsRecord {
                 final GsmCellLocation gcl = (GsmCellLocation) cl;
 
                 reset();
-                mRadio = getCellRadioTypeName(networkType);
+                mCellRadio = getCellRadioTypeName(networkType);
                 setNetworkOperator(networkOperator);
 
                 lac = gcl.getLac();
@@ -112,7 +123,7 @@ class CellsRecord {
                 final CdmaCellLocation cdl = (CdmaCellLocation) cl;
 
                 reset();
-                mRadio = getCellRadioTypeName(networkType);
+                mCellRadio = getCellRadioTypeName(networkType);
 
                 setNetworkOperator(networkOperator);
 
@@ -133,7 +144,7 @@ class CellsRecord {
             final int lac, cid, psc, rssi;
 
             reset();
-            mRadio = getCellRadioTypeName(nci.getNetworkType());
+            mCellRadio = getCellRadioTypeName(nci.getNetworkType());
             setNetworkOperator(networkOperator);
 
             lac = nci.getLac();
@@ -193,65 +204,21 @@ class CellsRecord {
             }
             throw new IllegalArgumentException("Unexpected Network Type: " + name);
         }
-    }
 
-    public CellsRecord(int phoneType) {
-        setRadio(phoneType);
-    }
+        private static String getRadioTypeName(int phoneType) {
+            switch (phoneType) {
+                case TelephonyManager.PHONE_TYPE_CDMA:
+                    return RADIO_CDMA;
 
-    /**
-     * @return {@link #RADIO_GSM}, {@link #RADIO_CDMA}, or {@link #RADIO_WCDMA}
-     */
-    public String getRadio() {
-        return mRadio;
-    }
+                case TelephonyManager.PHONE_TYPE_GSM:
+                    return RADIO_GSM;
 
-    public boolean hasCells() {
-        return !mCells.isEmpty();
-    }
-
-    public JSONArray getCellsAsJson() {
-        JSONArray arr = new JSONArray();
-        for (CellInfo cell : mCells) arr.put(cell.toJSONObject());
-        return arr;
-    }
-
-    public void putCellLocation(CellLocation cl, int networkType,
-                                String networkOperator, Integer gsmSignalStrength,
-                                Integer cdmaRssi) {
-        CellInfo ci = new CellInfo();
-        ci.setCellLocation(cl, networkType, networkOperator, gsmSignalStrength, cdmaRssi);
-        mCells.add(ci);
-    }
-
-    public void putNeighboringCell(NeighboringCellInfo neighbour,
-                                   String networkOperator) {
-        CellInfo ci = new CellInfo();
-        ci.setNeighboringCellInfo(neighbour, networkOperator);
-        mCells.add(ci);
-    }
-
-    void setRadio(int phoneType) {
-        String radio = getRadioTypeName(phoneType);
-        if (radio == null) {
-            throw new IllegalArgumentException("Unexpected Phone Type: " + phoneType);
-        }
-        mRadio = radio;
-    }
-
-    private static String getRadioTypeName(int phoneType) {
-        switch (phoneType) {
-            case TelephonyManager.PHONE_TYPE_CDMA:
-                return RADIO_CDMA;
-
-            case TelephonyManager.PHONE_TYPE_GSM:
-                return RADIO_GSM;
-
-            case TelephonyManager.PHONE_TYPE_NONE:
-            case TelephonyManager.PHONE_TYPE_SIP:
-                // These devices have no radio.
-            default:
-                return null;
+                case TelephonyManager.PHONE_TYPE_NONE:
+                case TelephonyManager.PHONE_TYPE_SIP:
+                    // These devices have no radio.
+                default:
+                    return null;
+            }
         }
     }
 }

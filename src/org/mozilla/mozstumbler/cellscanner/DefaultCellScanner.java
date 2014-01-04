@@ -8,6 +8,7 @@ import android.telephony.SignalStrength;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -54,7 +55,7 @@ public class DefaultCellScanner implements CellScanner.CellScannerImpl {
     }
 
     @Override
-    public List<CellsRecord> getCellInfo() {
+    public List<CellsRecord.CellInfo> getCellInfo() {
         String networkOperator;
         final CellLocation cl = mTelephonyManager.getCellLocation();
         if (cl == null) {
@@ -67,15 +68,17 @@ public class DefaultCellScanner implements CellScanner.CellScannerImpl {
         if (networkOperator == null || networkOperator.length() <= 3) {
             networkOperator = mTelephonyManager.getSimOperator();
         }
-        final CellsRecord info = new CellsRecord(mPhoneType);
+        final List<CellsRecord.CellInfo> records = new ArrayList<CellsRecord.CellInfo>(1 + (cells == null ? 0 : cells.size()));
+        final CellsRecord.CellInfo info = new CellsRecord.CellInfo(mPhoneType);
         try {
             final int signalStrength = mSignalStrength;
             final int cdmaDbm = mCdmaDbm;
-            info.putCellLocation(cl,
+            info.setCellLocation(cl,
                     mTelephonyManager.getNetworkType(),
                     networkOperator,
                     signalStrength == CellsRecord.CellInfo.UNKNOWN_SIGNAL ? null : signalStrength,
                     cdmaDbm == CellsRecord.CellInfo.UNKNOWN_SIGNAL ? null : cdmaDbm);
+            records.add(info);
         } catch (IllegalArgumentException iae) {
             Log.e(LOGTAG, "Skip invalid or incomplete CellLocation: " + cl, iae);
         }
@@ -83,13 +86,15 @@ public class DefaultCellScanner implements CellScanner.CellScannerImpl {
         if (cells != null) {
             for (NeighboringCellInfo nci : cells) {
                 try {
-                    info.putNeighboringCell(nci, networkOperator);
+                    final CellsRecord.CellInfo record = new CellsRecord.CellInfo(mPhoneType);
+                    record.setNeighboringCellInfo(nci, networkOperator);
+                    records.add(record);
                 } catch (IllegalArgumentException iae) {
                     Log.e(LOGTAG, "Skip invalid or incomplete NeighboringCellInfo: " + nci, iae);
                 }
             }
         }
-        return Collections.singletonList(info);
+        return records;
     }
 
     private final PhoneStateListener mPhoneStateListener = new PhoneStateListener() {

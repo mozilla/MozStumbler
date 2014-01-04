@@ -10,6 +10,8 @@ import android.location.LocationManager;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import android.location.LocationProvider;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -19,6 +21,7 @@ public class GPSScanner implements LocationListener {
     private static final String   LOGTAG                  = Scanner.class.getName();
     private static final long     GEO_MIN_UPDATE_TIME     = 1000;
     private static final float    GEO_MIN_UPDATE_DISTANCE = 10;
+    private static final int      MIN_SAT_USED_IN_FIX     = 3;
 
     private final Context         mContext;
     private GpsStatus.Listener    mGPSListener;
@@ -38,6 +41,7 @@ public class GPSScanner implements LocationListener {
                                                             GEO_MIN_UPDATE_DISTANCE,
                                                             this);
 
+        reportLocationLost();
         mGPSListener = new GpsStatus.Listener() {
                 public void onGpsStatusChanged(int event) {
                     if (event == GpsStatus.GPS_EVENT_SATELLITE_STATUS) {
@@ -54,7 +58,12 @@ public class GPSScanner implements LocationListener {
                             }
                         }
                         reportNewGpsStatus(fixes);
+                        if (fixes < MIN_SAT_USED_IN_FIX) {
+                            reportLocationLost();
+                        }
                         Log.d(LOGTAG, "onGpsStatusChange - satellites: " + satellites + " fixes: " + fixes);
+                    } else if (event == GpsStatus.GPS_EVENT_STOPPED) {
+                        reportLocationLost();
                     }
                 }
             };
@@ -65,6 +74,7 @@ public class GPSScanner implements LocationListener {
     public void stop() {
         LocationManager lm = getLocationManager();
         lm.removeUpdates(this);
+        reportLocationLost();
 
         if (mGPSListener != null) {
           lm.removeGpsStatusListener(mGPSListener);
@@ -87,11 +97,13 @@ public class GPSScanner implements LocationListener {
     @Override
     public void onLocationChanged(Location location) {
         if (location == null) {
+            reportLocationLost();
             return;
         }
 
         if (LocationBlockList.contains(location)) {
             Log.w(LOGTAG, "Blocked location: " + location);
+            reportLocationLost();
             return;
         }
 
@@ -106,6 +118,9 @@ public class GPSScanner implements LocationListener {
 
     @Override
     public void onProviderDisabled(String provider) {
+        if (LocationManager.GPS_PROVIDER.equals(provider)) {
+            reportLocationLost();
+        }
     }
 
     @Override
@@ -114,6 +129,10 @@ public class GPSScanner implements LocationListener {
 
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {
+        if ((status != LocationProvider.AVAILABLE)
+                && (LocationManager.GPS_PROVIDER.equals(provider))) {
+            reportLocationLost();
+        }
     }
 
     private LocationManager getLocationManager() {
@@ -135,6 +154,14 @@ public class GPSScanner implements LocationListener {
         Intent i = new Intent(ScannerService.MESSAGE_TOPIC);
         i.putExtra(Intent.EXTRA_SUBJECT, GPS_SCANNER_EXTRA_SUBJECT);
         i.putExtra("data", locInfo.toString());
+        i.putExtra("time", System.currentTimeMillis());
+        mContext.sendBroadcast(i);
+    }
+
+    private void reportLocationLost() {
+        Intent i = new Intent(ScannerService.MESSAGE_TOPIC);
+        i.putExtra(Intent.EXTRA_SUBJECT, GPS_SCANNER_EXTRA_SUBJECT);
+        i.putExtra("data", "");
         i.putExtra("time", System.currentTimeMillis());
         mContext.sendBroadcast(i);
     }

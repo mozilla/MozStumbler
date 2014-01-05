@@ -6,9 +6,10 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.location.Location;
 import android.net.wifi.ScanResult;
-import android.os.Bundle;
 import android.util.Log;
 
+import org.mozilla.mozstumbler.cellscanner.CellInfo;
+import org.mozilla.mozstumbler.cellscanner.CellScanner;
 import org.mozilla.mozstumbler.preferences.Prefs;
 
 import org.json.JSONArray;
@@ -50,13 +51,12 @@ final class Reporter extends BroadcastReceiver {
     private List<ScanResult> mWifiData;
     private long   mWifiDataTime;
 
-    private String mCellData;
+    private List<CellInfo> mCellData;
     private long   mCellDataTime;
 
     private boolean mIsGpsPositionKnown = false;
     private final   Location mGpsPosition = new Location("");
 
-    private String mRadioType;
     private long mReportsSent;
 
     Reporter(Context context, Prefs prefs) {
@@ -86,8 +86,7 @@ final class Reporter extends BroadcastReceiver {
 
     private void resetData() {
         mWifiData = Collections.emptyList();
-        mCellData = "";
-        mRadioType = "";
+        mCellData = Collections.emptyList();
         mWifiDataTime = 0;
         mCellDataTime = 0;
         mGpsPosition.reset();
@@ -122,21 +121,20 @@ final class Reporter extends BroadcastReceiver {
         }
 
         if (mWifiDataTime - time > REPORTER_WINDOW) {
-            mWifiData = Collections.emptyList();;
+            mWifiData = Collections.emptyList();
             mWifiDataTime = 0;
         }
 
         if (mCellDataTime - time > REPORTER_WINDOW) {
-            mCellData = "";
+            mCellData = Collections.emptyList();
             mCellDataTime = 0;
         }
 
         if (WifiScanner.WIFI_SCANNER_EXTRA_SUBJECT.equals(subject)) {
             mWifiData = intent.getParcelableArrayListExtra(WifiScanner.WIFI_SCANNER_ARG_SCAN_RESULTS);
             mWifiDataTime = time;
-        } else if (subject.equals("CellScanner")) {
-            mCellData = data;
-            mRadioType = intent.getStringExtra("radioType");
+        } else if (CellScanner.CELL_SCANNER_EXTRA_SUBJECT.equals(subject)) {
+            mCellData = intent.getParcelableArrayListExtra(CellScanner.CELL_SCANNER_ARG_CELLS);
             mCellDataTime = time;
         } else if (GPSScanner.GPS_SCANNER_EXTRA_SUBJECT.equals(subject)) {
             Location l = intent.getParcelableExtra(GPSScanner.GPS_SCANNER_ARG_LOCATION);
@@ -152,8 +150,9 @@ final class Reporter extends BroadcastReceiver {
             return; // Intent not aimed at the Reporter (it is possibly for UI instead)
         }
 
-        if (mIsGpsPositionKnown && (!mWifiData.isEmpty() || mCellData.length() > 0)) {
-          reportLocation(mGpsPosition, mWifiData, mRadioType, mCellData);
+        if (mIsGpsPositionKnown && (!mWifiData.isEmpty() || !mCellData.isEmpty())) {
+          String radioType = mCellData.isEmpty() ? null : mCellData.get(0).getRadio();
+          reportLocation(mGpsPosition, mWifiData, radioType, mCellData);
           resetData();
         }
     }
@@ -261,7 +260,7 @@ final class Reporter extends BroadcastReceiver {
         }).start();
     }
 
-    void reportLocation(Location gpsPosition, List<ScanResult> wifiInfo, String radioType, String cellInfo) {
+    void reportLocation(Location gpsPosition, List<ScanResult> wifiInfo, String radioType, List<CellInfo> cellInfo) {
         Log.d(LOGTAG, "reportLocation called");
         JSONObject locInfo = null;
         JSONArray cellJSON = null;
@@ -275,8 +274,9 @@ final class Reporter extends BroadcastReceiver {
             if (gpsPosition.hasAccuracy()) locInfo.put("accuracy", (int)gpsPosition.getAccuracy());
             if (gpsPosition.hasAltitude()) locInfo.put("altitude", (int)gpsPosition.getAltitude());
 
-            if (cellInfo.length()>0) {
-                cellJSON=new JSONArray(cellInfo);
+            if (!cellInfo.isEmpty()) {
+                cellJSON=new JSONArray();
+                for (CellInfo cell: cellInfo) cellJSON.put(cell.toJSONObject());
                 locInfo.put("cell", cellJSON);
                 locInfo.put("radio", radioType);
             }

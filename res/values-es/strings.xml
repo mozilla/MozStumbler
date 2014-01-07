@@ -11,7 +11,9 @@
     <string name="view_map">Probar servicio de ubicación de Mozilla</string>
     <string name="service_name">Mozilla Stumbler</string>
     <string name="wifi_access_points">Puntos de Acceso Wi-Fi escaneados: %1$d</string>
+    <string name="visible_wifi_access_points">Puntos de Acceso Wi-Fi visibles: %1$d</string>
     <string name="gps_satellites">Satélites GPS visibles: %1$d</string>
+    <string name="last_location">Última ubicación: %1$s</string>
     <string name="locations_scanned">Ubicaciones escaneadas: %1$d</string>
     <string name="last_upload_time">Último envío de datos: %1$s</string>
     <string name="reports_sent">Reportes enviados: %1$d</string>
@@ -35,6 +37,7 @@
     <string name="no">No</string>
 
     <string name="about_version">Versión %1$s</string>
+    <string name="about_mapbox">Aprenda más acerca de nuestro proveedor de de cartografía...</string>
     <string name="about_more">Más...</string>
 
 </resources>

@@ -28,8 +28,8 @@ import java.util.List;
 
 final class Updater {
     private static final String LOGTAG = Updater.class.getName();
-    private static final String VERSION_URL = "https://raw.github.com/dougt/MozStumbler/master/VERSION";
-    private static final String APK_URL_FORMAT = "https://github.com/dougt/MozStumbler/releases/download/v%s/MozStumbler-v%s.apk";
+    private static final String VERSION_URL = "https://raw.github.com/mozilla/MozStumbler/master/VERSION";
+    private static final String APK_URL_FORMAT = "https://github.com/mozilla/MozStumbler/releases/download/v%s/MozStumbler-v%s.apk";
 
     private Updater() {
     }

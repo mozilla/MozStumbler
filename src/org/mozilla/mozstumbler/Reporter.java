@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.location.Location;
 import android.net.wifi.ScanResult;
+import android.os.Build;
 import android.util.Log;
 
 import org.mozilla.mozstumbler.cellscanner.CellInfo;
@@ -192,6 +193,12 @@ final class Reporter extends BroadcastReceiver {
                     try {
                         urlConnection.setDoOutput(true);
                         urlConnection.setRequestProperty(USER_AGENT_HEADER, MOZSTUMBLER_USER_AGENT_STRING);
+
+                        // Workaround for a bug in Android HttpURLConnection. When the library
+                        // reuses a stale connection, the connection may fail with an EOFException
+                        if (Build.VERSION.SDK_INT > 13 && Build.VERSION.SDK_INT < 19) {
+                            urlConnection.setRequestProperty("Connection", "Close");
+                        }
 
                         if (nickname != null) {
                             urlConnection.setRequestProperty(NICKNAME_HEADER, nickname);

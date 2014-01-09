@@ -26,6 +26,9 @@
     <string name="enter_nickname_title">Nickname: </string>
     <string name="enter_nickname_longtext">Your nickname will appear on the leaderboard</string>
 
+    <string name="power_saving_mode">Power saving mode</string>
+    <string name="power_saving_mode_longtext">When enabled, stumbling will only occur when you are moving</string>
+
     <string name="update_title">Download MozStumbler Update?</string>
     <string name="update_message">Installed version: %1$s\nLatest version: %2$s</string>
     <string name="update_now">Update Now</string>

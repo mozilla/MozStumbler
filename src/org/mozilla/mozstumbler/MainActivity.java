@@ -1,6 +1,7 @@
 package org.mozilla.mozstumbler;
 
 import org.mozilla.mozstumbler.preferences.PreferencesScreen;
+import org.mozilla.mozstumbler.preferences.Prefs;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -38,6 +39,7 @@ public final class MainActivity extends Activity {
     private static final String LOGTAG = MainActivity.class.getName();
     private static final String LEADERBOARD_URL = "https://location.services.mozilla.com/leaders";
 
+    private Prefs                    mPrefs;
     private ScannerServiceInterface  mConnectionRemote;
     private ServiceConnection        mConnection;
     private ServiceBroadcastReceiver mReceiver;
@@ -78,15 +80,16 @@ public final class MainActivity extends Activity {
                     if (intent.hasExtra("fixes")) {
                         mGpsFixes = intent.getIntExtra("fixes", 0);
                     }
-
-                    if (intent.hasExtra("enable")) {
+                    else if (intent.hasExtra("enable")) {
                         int enable = intent.getIntExtra("enable", -1);
 
                         if (mConnectionRemote != null) {
                             try {
                                 if (enable == 1) {
+                                  Log.d(LOGTAG, "Enabling scanning");
                                     mConnectionRemote.startScanning();
                                 } else if (enable == 0) {
+                                  Log.d(LOGTAG, "Disabling scanning");
                                     mConnectionRemote.stopScanning();
                                 }
                             } catch (RemoteException e) {
@@ -149,11 +152,29 @@ public final class MainActivity extends Activity {
 
         mReceiver = new ServiceBroadcastReceiver();
         mReceiver.register();
+        mPrefs = new Prefs(this);
 
         mConnection = new ServiceConnection() {
             public void onServiceConnected(ComponentName className, IBinder binder) {
                 mConnectionRemote = ScannerServiceInterface.Stub.asInterface(binder);
                 Log.d(LOGTAG, "Service connected");
+
+                // each time we reconnect, check to see if we're suppose to be
+                // in power saving mode.  if not, start the scanning. TODO: we
+                // shouldn't just stopScanning if we find that we are in PSM.
+                // Instead, we should see if we were scanning do to an activity
+                // recognition.  If we were, don't stop.
+                if (mConnectionRemote != null) {
+                    try {
+                        if (mPrefs.getPowerSavingMode()) {
+                            mConnectionRemote.stopScanning();
+                        } else {
+                            mConnectionRemote.startScanning();
+                        }
+                    } catch (RemoteException e) {
+                        Log.e(LOGTAG, "", e);
+                    }
+                }
                 updateUI();
             }
 

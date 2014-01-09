@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" 
-    android:key="preferences"
-    >
+    android:key="preferences">
     
     <EditTextPreference 
         android:key="nickname"
         android:title="@string/enter_nickname"
-        android:summary="@string/enter_nickname_longtext"
-    />  
+        android:summary="@string/enter_nickname_longtext" />
+
+    <SwitchPreference
+        android:key="power_saving_mode"
+        android:title="@string/power_saving_mode"
+        android:summary="@string/power_saving_mode_longtext" />
 
 </PreferenceScreen>

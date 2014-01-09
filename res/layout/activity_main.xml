@@ -32,7 +32,7 @@
            android:layout_alignParentLeft="true"
            android:layout_below="@+id/gps_satellites"
            android:text="@string/last_location"
-           android:textAppearance="?android:attr/textAppearanceMedium" />
+           android:textAppearance="?android:attr/textAppearanceSmall" />
 
        <TextView
            android:id="@+id/locations_scanned"
@@ -50,7 +50,7 @@
            android:layout_alignParentLeft="true"
            android:layout_below="@+id/locations_scanned"
            android:text="@string/visible_wifi_access_points"
-           android:textAppearance="?android:attr/textAppearanceMedium" />
+           android:textAppearance="?android:attr/textAppearanceSmall" />
 
        <TextView
            android:id="@+id/wifi_access_points"

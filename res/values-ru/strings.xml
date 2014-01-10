@@ -11,10 +11,13 @@
     <string name="view_map">Открыть карту</string>
     <string name="service_name">Mozilla Stumbler</string>
     <string name="wifi_access_points">Отсканировано Wi-Fi точек: %1$d</string>
+    <string name="visible_wifi_access_points">Видно Wi-Fi точек: %1$d</string>
     <string name="gps_satellites">Доступно GPS спутников: %1$d</string>
-    <string name="locations_scanned">Отсканировано местоположений: %1$d</string>
-    <string name="last_upload_time">Отчет отправлен: %1$s</string>
-    <string name="reports_sent">Отправлено отчетов: %1$d</string>
+    <string name="last_location">Координаты: %1$s</string>
+    <string name="coordinate">%1$.4f, %2$.4f</string>
+    <string name="locations_scanned">Отсканировано координат: %1$d</string>
+    <string name="last_upload_time">Время последней отправки отчёта: %1$s</string>
+    <string name="reports_sent">Отправлено отчётов: %1$d</string>
     <string name="service_scanning">Сканирование Wi-Fi точек и базовых станций сотовых операторов</string>
 
     <string name="enter_nickname">Укажите свой псевдоним (не обязательно)</string>
@@ -35,6 +38,7 @@
     <string name="no">Нет</string>
 
     <string name="about_version">Версия %1$s</string>
-    <string name="about_more">Подробнее...</string>
+    <string name="about_mapbox">Информация о картографическом провайдере...</string>
+    <string name="about_more">О проекте...</string>
 
 </resources>

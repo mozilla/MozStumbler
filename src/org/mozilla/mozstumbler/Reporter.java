@@ -345,11 +345,15 @@ final class Reporter extends BroadcastReceiver {
 
         try {
             locInfo = new JSONObject();
-            locInfo.put("lat", gpsPosition.getLatitude());
-            locInfo.put("lon", gpsPosition.getLongitude());
+            locInfo.put("lat", Math.floor(gpsPosition.getLatitude() * 1.0E6) / 1.0E6);
+            locInfo.put("lon", Math.floor(gpsPosition.getLongitude() * 1.0E6) / 1.0E6);
             locInfo.put("time", DateTimeUtils.formatTime(time));
-            locInfo.put("accuracy", (int)gpsPosition.getAccuracy());
-            locInfo.put("altitude", (int)gpsPosition.getAltitude());
+            if (gpsPosition.hasAccuracy()) {
+                locInfo.put("accuracy", (int) Math.ceil(gpsPosition.getAccuracy()));
+            }
+            if (gpsPosition.hasAltitude()) {
+                locInfo.put("altitude", Math.round(gpsPosition.getAltitude()));
+            }
 
             if (!cellInfo.isEmpty()) {
                 JSONArray cellJSON=new JSONArray();

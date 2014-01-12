@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.location.Location;
 import android.net.wifi.ScanResult;
+import android.os.Build;
 import android.util.Log;
 
 import org.mozilla.mozstumbler.cellscanner.CellInfo;
@@ -31,6 +32,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.ReentrantLock;
 
 final class Reporter extends BroadcastReceiver {
@@ -49,7 +51,7 @@ final class Reporter extends BroadcastReceiver {
     private final Prefs         mPrefs;
     private JSONArray           mReports;
 
-    private long                mLastUploadTime;
+    private final AtomicLong    mLastUploadTime = new AtomicLong();
     private URL                 mURL;
     private ReentrantLock       mReportsLock;
 
@@ -60,7 +62,7 @@ final class Reporter extends BroadcastReceiver {
     private final Map<String, ScanResult> mWifiData = new HashMap<String, ScanResult>();
     private final Map<String, CellInfo> mCellData = new HashMap<String, CellInfo>();
 
-    private long mReportsSent;
+    private final AtomicLong mReportsSent = new AtomicLong();
 
     Reporter(Context context, Prefs prefs) {
         mContext = context;
@@ -160,7 +162,7 @@ final class Reporter extends BroadcastReceiver {
             return;
         }
 
-        if (count < RECORD_BATCH_SIZE && !force && mLastUploadTime > 0) {
+        if (count < RECORD_BATCH_SIZE && !force && mLastUploadTime.get() > 0) {
             Log.d(LOGTAG, "batch count not reached, and !force");
             mReportsLock.unlock();
             return;
@@ -192,6 +194,12 @@ final class Reporter extends BroadcastReceiver {
                         urlConnection.setDoOutput(true);
                         urlConnection.setRequestProperty(USER_AGENT_HEADER, MOZSTUMBLER_USER_AGENT_STRING);
 
+                        // Workaround for a bug in Android HttpURLConnection. When the library
+                        // reuses a stale connection, the connection may fail with an EOFException
+                        if (Build.VERSION.SDK_INT > 13 && Build.VERSION.SDK_INT < 19) {
+                            urlConnection.setRequestProperty("Connection", "Close");
+                        }
+
                         if (nickname != null) {
                             urlConnection.setRequestProperty(NICKNAME_HEADER, nickname);
                         }
@@ -209,7 +217,7 @@ final class Reporter extends BroadcastReceiver {
 
                         int code = urlConnection.getResponseCode();
                         if (code >= 200 && code <= 299) {
-                            mReportsSent = mReportsSent + reports.length();
+                            mReportsSent.addAndGet(reports.length());
                         }
                         Log.e(LOGTAG, "urlConnection returned " + code);
 
@@ -222,7 +230,7 @@ final class Reporter extends BroadcastReceiver {
                         }
                         r.close();
 
-                        mLastUploadTime = System.currentTimeMillis();
+                        mLastUploadTime.set(System.currentTimeMillis());
                         sendUpdateIntent();
                         successfulUpload = true;
                         Log.d(LOGTAG, "response was: \n" + total + "\n");
@@ -368,11 +376,11 @@ final class Reporter extends BroadcastReceiver {
     }
 
     public long getLastUploadTime() {
-        return mLastUploadTime;
+        return mLastUploadTime.get();
     }
 
     public long getReportsSent() {
-        return mReportsSent;
+        return mReportsSent.get();
     }
 
     private void sendUpdateIntent() {

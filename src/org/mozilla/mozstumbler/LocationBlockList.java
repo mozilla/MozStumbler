@@ -41,22 +41,22 @@ final class LocationBlockList {
             }
         }
 
-        if (inaccuracy < 0 || inaccuracy > MIN_ACCURACY) {
+        if (location.hasAccuracy() && (inaccuracy < 0 || inaccuracy > MIN_ACCURACY)) {
             block = true;
             Log.w(LOGTAG, "Insufficient accuracy: " + inaccuracy + " meters");
         }
 
-        if (altitude < MIN_ALTITUDE || altitude > MAX_ALTITUDE) {
+        if (location.hasAltitude() && (altitude < MIN_ALTITUDE || altitude > MAX_ALTITUDE)) {
             block = true;
             Log.w(LOGTAG, "Bogus altitude: " + altitude + " meters");
         }
 
-        if (bearing < 0 || bearing > 360) {
+        if (location.hasBearing() && (bearing < 0 || bearing > 360)) {
             block = true;
             Log.w(LOGTAG, "Bogus bearing: " + bearing + " degrees");
         }
 
-        if (speed < 0 || speed > MAX_SPEED) {
+        if (location.hasSpeed() && (speed < 0 || speed > MAX_SPEED)) {
             block = true;
             Log.w(LOGTAG, "Bogus speed: " + speed + " meters/second");
         }

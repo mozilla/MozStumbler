@@ -90,6 +90,10 @@ public class CellInfo implements Parcelable {
         return mLac;
     }
 
+    public int getPsc() {
+        return mPsc;
+    }
+
     public JSONObject toJSONObject() {
         final JSONObject obj = new JSONObject();
 

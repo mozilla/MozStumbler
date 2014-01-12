@@ -43,7 +43,7 @@ final class Reporter extends BroadcastReceiver {
     private static final int RECORD_BATCH_SIZE  = 100;
     private static final int REPORTER_WINDOW  = 60000; //ms
     private static final int WIFI_COUNT_WATERMARK = 500;
-    private static final int CELLS_COUNT_WATERMARK = 500;
+    private static final int CELLS_COUNT_WATERMARK = 50;
 
     private static String       MOZSTUMBLER_USER_AGENT_STRING;
 
@@ -55,7 +55,6 @@ final class Reporter extends BroadcastReceiver {
     private URL                 mURL;
     private ReentrantLock       mReportsLock;
 
-    private boolean             mIsGpsPositionKnown = false;
     private final Location      mGpsPosition = new Location("");
     private long                mGpsPositionTime;
 
@@ -89,11 +88,15 @@ final class Reporter extends BroadcastReceiver {
         mContext.registerReceiver(this, new IntentFilter(ScannerService.MESSAGE_TOPIC));
     }
 
+    private boolean isGpsPositionKnown() {
+        return (mGpsPositionTime > 0);
+    }
+
     private void resetData() {
         mWifiData.clear();
         mCellData.clear();
         mGpsPosition.reset();
-        mIsGpsPositionKnown = false;
+        mGpsPositionTime = 0;
     }
 
     void shutdown() {
@@ -117,10 +120,10 @@ final class Reporter extends BroadcastReceiver {
             return;
         }
 
-        long time = intent.getLongExtra("time", 0);
+        long time = intent.getLongExtra("time", System.currentTimeMillis());
         String subject = intent.getStringExtra(Intent.EXTRA_SUBJECT);
 
-        if (mIsGpsPositionKnown && Math.abs(time - mGpsPositionTime) > REPORTER_WINDOW) {
+        if (isGpsPositionKnown() && Math.abs(time - mGpsPositionTime) > REPORTER_WINDOW) {
             reportCollectedLocation();
         }
 
@@ -134,10 +137,9 @@ final class Reporter extends BroadcastReceiver {
             reportCollectedLocation();
             Location l = intent.getParcelableExtra(GPSScanner.GPS_SCANNER_ARG_LOCATION);
             if (l == null) {
-                mIsGpsPositionKnown = false;
+                mGpsPositionTime = 0;
             } else {
                 mGpsPosition.set(l);
-                mIsGpsPositionKnown = true;
                 mGpsPositionTime = time;
             }
         } else {
@@ -145,8 +147,8 @@ final class Reporter extends BroadcastReceiver {
             return; // Intent not aimed at the Reporter (it is possibly for UI instead)
         }
 
-        if (mIsGpsPositionKnown && ((mWifiData.keySet().size() > WIFI_COUNT_WATERMARK)
-                || (mCellData.keySet().size() > CELLS_COUNT_WATERMARK))) {
+        if (isGpsPositionKnown() && ((mWifiData.size() > WIFI_COUNT_WATERMARK)
+                || (mCellData.size() > CELLS_COUNT_WATERMARK))) {
             reportCollectedLocation();
         }
     }
@@ -261,7 +263,7 @@ final class Reporter extends BroadcastReceiver {
     }
 
     private void putWifiResults(List<ScanResult> results) {
-        if (!mIsGpsPositionKnown) {
+        if (!isGpsPositionKnown()) {
             return;
         }
         for (ScanResult result : results) {
@@ -273,7 +275,7 @@ final class Reporter extends BroadcastReceiver {
     }
 
     private void putCellResults(List<CellInfo> cells) {
-        if (!mIsGpsPositionKnown) {
+        if (!isGpsPositionKnown()) {
             return;
         }
         for (CellInfo result : cells) {
@@ -282,7 +284,8 @@ final class Reporter extends BroadcastReceiver {
                     + " " + result.getMcc()
                     + " " + result.getMnc()
                     + " " + result.getLac()
-                    + " " + result.getCid();
+                    + " " + result.getCid()
+                    + " " + result.getPsc();
 
             if (!mCellData.containsKey(key)) {
                 mCellData.put(key, result);
@@ -291,7 +294,7 @@ final class Reporter extends BroadcastReceiver {
     }
 
     private void reportCollectedLocation() {
-        if (!mIsGpsPositionKnown) {
+        if (!isGpsPositionKnown()) {
             return;
         }
 
@@ -345,8 +348,8 @@ final class Reporter extends BroadcastReceiver {
             locInfo.put("lat", gpsPosition.getLatitude());
             locInfo.put("lon", gpsPosition.getLongitude());
             locInfo.put("time", DateTimeUtils.formatTime(time));
-            if (gpsPosition.hasAccuracy()) locInfo.put("accuracy", (int)gpsPosition.getAccuracy());
-            if (gpsPosition.hasAltitude()) locInfo.put("altitude", (int)gpsPosition.getAltitude());
+            locInfo.put("accuracy", (int)gpsPosition.getAccuracy());
+            locInfo.put("altitude", (int)gpsPosition.getAltitude());
 
             if (!cellInfo.isEmpty()) {
                 JSONArray cellJSON=new JSONArray();

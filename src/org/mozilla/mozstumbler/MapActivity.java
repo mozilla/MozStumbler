@@ -174,12 +174,25 @@ public final class MapActivity extends Activity {
     @Override
     protected void onStart() {
         super.onStart();
+
+        Context context = getApplicationContext();
+        Intent i = new Intent(ScannerService.MESSAGE_TOPIC);
+        i.putExtra(Intent.EXTRA_SUBJECT, "Scanner");
+        i.putExtra("enable", 1);
+        context.sendBroadcast(i);
         Log.d(LOGTAG, "onStart");
     }
 
     @Override
     protected void onStop() {
         super.onStop();
+
+        Context context = getApplicationContext();
+        Intent i = new Intent(ScannerService.MESSAGE_TOPIC);
+        i.putExtra(Intent.EXTRA_SUBJECT, "Scanner");
+        i.putExtra("enable", 0);
+        context.sendBroadcast(i);
+
         Log.d(LOGTAG, "onStop");
         mMap.getTileProvider().clearTileCache();
         if (mReceiver != null) {

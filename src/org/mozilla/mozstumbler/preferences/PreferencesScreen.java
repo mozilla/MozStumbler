@@ -2,18 +2,24 @@ package org.mozilla.mozstumbler.preferences;
 
 import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.preferences.Prefs;
+import org.mozilla.mozstumbler.ScannerService;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.EditTextPreference;
-import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
+import android.preference.Preference;
 import android.preference.PreferenceActivity;
+import android.preference.SwitchPreference;
 import android.text.TextUtils;
+import android.util.Log;
 
 public class PreferencesScreen extends PreferenceActivity {
 
     private EditTextPreference mNicknamePreference;
+    private SwitchPreference mPowerSavingPreference;
     private Prefs mPrefs;
 
     @Override
@@ -25,14 +31,16 @@ public class PreferencesScreen extends PreferenceActivity {
         }
         addPreferencesFromResource(R.xml.preferences);
         mNicknamePreference = (EditTextPreference) getPreferenceManager().findPreference("nickname");
+        mPowerSavingPreference = (SwitchPreference) getPreferenceManager().findPreference("power_saving_mode");
         mPrefs = new Prefs(this);
 
-        String nickname = mPrefs.getNickname();
-        setNicknamePreferenceTitle(nickname);
-        setNicknameListener();
+        setNicknamePreferenceTitle(mPrefs.getNickname());
+        setPowerSavingModeState(mPrefs.getPowerSavingMode());
+
+        setPreferenceListener();
     }
 
-    public void setNicknameListener() {
+    private void setPreferenceListener() {
         mNicknamePreference.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
@@ -40,14 +48,26 @@ public class PreferencesScreen extends PreferenceActivity {
                 return true;
             }
         });
+
+        mPowerSavingPreference.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                setPowerSavingModeState((Boolean)newValue);
+                return true;
+            }
+        });
+
     }
 
-    public void setNicknamePreferenceTitle(String nickname) {
+    private void setNicknamePreferenceTitle(String nickname) {
         if (!TextUtils.isEmpty(nickname)) {
             mNicknamePreference.setTitle(getString(R.string.enter_nickname_title) + " " + nickname);
         } else {
             mNicknamePreference.setTitle(R.string.enter_nickname);
         }
     }
-    
+
+    private void setPowerSavingModeState(Boolean state) {
+      Log.d("PreferencesScreen", "setPowerSavingModeState : " + state);
+    }
 }

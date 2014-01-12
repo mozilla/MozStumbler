@@ -9,13 +9,21 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".MainActivity" >
 
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true">
+        </ProgressBar>
+
        <TextView
            android:id="@+id/gps_satellites"
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"
            android:layout_alignParentLeft="true"
            android:text="@string/gps_satellites"
-           android:textAppearance="?android:attr/textAppearanceMedium" />
+           android:textAppearance="?android:attr/textAppearanceSmall" />
 
        <TextView
            android:id="@+id/last_location"
@@ -24,7 +32,7 @@
            android:layout_alignParentLeft="true"
            android:layout_below="@+id/gps_satellites"
            android:text="@string/last_location"
-           android:textAppearance="?android:attr/textAppearanceMedium" />
+           android:textAppearance="?android:attr/textAppearanceSmall" />
 
        <TextView
            android:id="@+id/locations_scanned"
@@ -33,7 +41,7 @@
            android:layout_alignParentLeft="true"
            android:layout_below="@+id/last_location"
            android:text="@string/locations_scanned"
-           android:textAppearance="?android:attr/textAppearanceMedium" />
+           android:textAppearance="?android:attr/textAppearanceSmall" />
 
        <TextView
            android:id="@+id/visible_wifi_access_points"
@@ -42,7 +50,7 @@
            android:layout_alignParentLeft="true"
            android:layout_below="@+id/locations_scanned"
            android:text="@string/visible_wifi_access_points"
-           android:textAppearance="?android:attr/textAppearanceMedium" />
+           android:textAppearance="?android:attr/textAppearanceSmall" />
 
        <TextView
            android:id="@+id/wifi_access_points"
@@ -51,7 +59,7 @@
            android:layout_alignParentLeft="true"
            android:layout_below="@+id/visible_wifi_access_points"
            android:text="@string/wifi_access_points"
-           android:textAppearance="?android:attr/textAppearanceMedium" />
+           android:textAppearance="?android:attr/textAppearanceSmall" />
 
        <TextView
            android:id="@+id/last_upload_time"
@@ -60,7 +68,7 @@
            android:layout_alignParentLeft="true"
            android:layout_below="@+id/wifi_access_points"
            android:text="@string/last_upload_time"
-           android:textAppearance="?android:attr/textAppearanceMedium" />
+           android:textAppearance="?android:attr/textAppearanceSmall" />
 
        <TextView
            android:id="@+id/reports_sent"
@@ -69,36 +77,6 @@
            android:layout_alignParentLeft="true"
            android:layout_below="@+id/last_upload_time"
            android:text="@string/reports_sent"
-           android:textAppearance="?android:attr/textAppearanceMedium" />
-
-       <Button
-           android:id="@+id/view_leaderboard"
-           android:layout_width="match_parent"
-           android:layout_height="wrap_content"
-           android:layout_alignParentLeft="true"
-           android:layout_below="@+id/reports_sent"
-           android:onClick="onClick_ViewLeaderboard"
-           android:text="@string/view_leaderboard" />
-
-       <Button
-           android:id="@+id/view_map"
-           android:layout_width="match_parent"
-           android:layout_height="wrap_content"
-           android:layout_alignParentLeft="true"
-           android:layout_below="@+id/view_leaderboard"
-           android:onClick="onClick_ViewMap"
-           android:text="@string/view_map" />
-
-       <Button
-           android:id="@+id/toggle_scanning"
-           android:layout_width="wrap_content"
-           android:layout_height="wrap_content"
-           android:layout_alignParentBottom="true"
-           android:layout_alignParentLeft="true"
-           android:layout_alignParentRight="true"
-           android:layout_below="@+id/view_map"
-           android:onClick="onClick_ToggleScanning"
-           android:text="@string/start_scanning"
-           android:textAppearance="?android:attr/textAppearanceLarge" />
+           android:textAppearance="?android:attr/textAppearanceSmall" />
 
 </RelativeLayout>

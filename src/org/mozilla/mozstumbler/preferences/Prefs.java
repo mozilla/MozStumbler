@@ -15,6 +15,7 @@ public final class Prefs {
     private static final String     LOGTAG        = Prefs.class.getName();
             static final String     PREFS_FILE    = Prefs.class.getName();
     private static final String     NICKNAME_PREF = "nickname";
+    private static final String     POWER_SAVING_MODE_PREF = "power_saving_mode";
     private static final String     REPORTS_PREF  = "reports";
 
     private int mCurrentVersion;
@@ -39,6 +40,10 @@ public final class Prefs {
         }
 
         return TextUtils.isEmpty(nickname) ? null : nickname;
+    }
+
+    public boolean getPowerSavingMode() {
+        return getPrefs().getBoolean(POWER_SAVING_MODE_PREF, true);
     }
 
     public void setReports(String json) {

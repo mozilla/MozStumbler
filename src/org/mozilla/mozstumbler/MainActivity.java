@@ -1,6 +1,7 @@
 package org.mozilla.mozstumbler;
 
 import org.mozilla.mozstumbler.preferences.PreferencesScreen;
+import org.mozilla.mozstumbler.preferences.Prefs;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -30,6 +31,7 @@ import android.view.View.OnFocusChangeListener;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,6 +39,7 @@ public final class MainActivity extends Activity {
     private static final String LOGTAG = MainActivity.class.getName();
     private static final String LEADERBOARD_URL = "https://location.services.mozilla.com/leaders";
 
+    private Prefs                    mPrefs;
     private ScannerServiceInterface  mConnectionRemote;
     private ServiceConnection        mConnection;
     private ServiceBroadcastReceiver mReceiver;
@@ -63,26 +66,44 @@ public final class MainActivity extends Activity {
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
 
-            if (!action.equals(ScannerService.MESSAGE_TOPIC)) {
-                Log.e(LOGTAG, "Received an unknown intent");
-                return;
-            }
+            if (action.equals(ScannerService.MESSAGE_TOPIC)) {
 
-            String subject = intent.getStringExtra(Intent.EXTRA_SUBJECT);
+                String subject = intent.getStringExtra(Intent.EXTRA_SUBJECT);
 
-            if (subject.equals("Notification")) {
-                String text = intent.getStringExtra(Intent.EXTRA_TEXT);
-                Toast.makeText(getApplicationContext(), (CharSequence) text, Toast.LENGTH_SHORT).show();
-                Log.d(LOGTAG, "Received a notification intent and showing: " + text);
-                return;
-            } else if (subject.equals("Reporter")) {
-                updateUI();
-                Log.d(LOGTAG, "Received a reporter intent...");
-                return;
-            } else if (subject.equals("Scanner")) {
-                mGpsFixes = intent.getIntExtra("fixes", 0);
-                updateUI();
-                Log.d(LOGTAG, "Received a scanner intent...");
+                if (subject.equals("Reporter")) {
+                    updateUI();
+                    Log.d(LOGTAG, "Received a reporter intent...");
+                    return;
+                } 
+
+                if (subject.equals("Scanner")) {
+                    if (intent.hasExtra("fixes")) {
+                        mGpsFixes = intent.getIntExtra("fixes", 0);
+                    }
+                    else if (intent.hasExtra("enable")) {
+                        int enable = intent.getIntExtra("enable", -1);
+
+                        if (mConnectionRemote != null) {
+                            try {
+                                if (enable == 1) {
+                                  Log.d(LOGTAG, "Enabling scanning");
+                                    mConnectionRemote.startScanning();
+                                } else if (enable == 0) {
+                                  Log.d(LOGTAG, "Disabling scanning");
+                                    mConnectionRemote.stopScanning();
+                                }
+                            } catch (RemoteException e) {
+                              Log.e(LOGTAG, "", e);
+                            }
+                        }
+                    }
+
+                    updateUI();
+                    Log.d(LOGTAG, "Received a scanner intent...");
+                    return;
+                }
+
+                Log.e(LOGTAG, "Unknown scanner message!");
                 return;
             }
         }
@@ -131,11 +152,29 @@ public final class MainActivity extends Activity {
 
         mReceiver = new ServiceBroadcastReceiver();
         mReceiver.register();
+        mPrefs = new Prefs(this);
 
         mConnection = new ServiceConnection() {
             public void onServiceConnected(ComponentName className, IBinder binder) {
                 mConnectionRemote = ScannerServiceInterface.Stub.asInterface(binder);
                 Log.d(LOGTAG, "Service connected");
+
+                // each time we reconnect, check to see if we're suppose to be
+                // in power saving mode.  if not, start the scanning. TODO: we
+                // shouldn't just stopScanning if we find that we are in PSM.
+                // Instead, we should see if we were scanning do to an activity
+                // recognition.  If we were, don't stop.
+                if (mConnectionRemote != null) {
+                    try {
+                        if (mPrefs.getPowerSavingMode()) {
+                            mConnectionRemote.stopScanning();
+                        } else {
+                            mConnectionRemote.startScanning();
+                        }
+                    } catch (RemoteException e) {
+                        Log.e(LOGTAG, "", e);
+                    }
+                }
                 updateUI();
             }
 
@@ -180,13 +219,6 @@ public final class MainActivity extends Activity {
             Log.e(LOGTAG, "", e);
         }
 
-        Button scanningBtn = (Button) findViewById(R.id.toggle_scanning);
-        if (scanning) {
-            scanningBtn.setText(R.string.stop_scanning);
-        } else {
-            scanningBtn.setText(R.string.start_scanning);
-        }
-
         int locationsScanned = 0;
         double latitude = 0;
         double longitude = 0;
@@ -206,6 +238,15 @@ public final class MainActivity extends Activity {
             Log.e(LOGTAG, "", e);
         }
 
+        Log.d(LOGTAG, "!!!!! we are scanning?? = " + scanning);
+        ProgressBar progress = (ProgressBar) findViewById(R.id.progressBar);
+        if (scanning) {
+            progress.setVisibility(View.VISIBLE);
+        } else {
+            progress.setVisibility(View.GONE);
+        }
+
+
         String lastUploadTimeString = (lastUploadTime > 0)
                                       ? DateTimeUtils.formatTimeForLocale(lastUploadTime)
                                       : "-";
@@ -223,41 +264,6 @@ public final class MainActivity extends Activity {
         formatTextView(R.id.reports_sent, R.string.reports_sent, reportsSent);
     }
 
-    public void onClick_ToggleScanning(View v) throws RemoteException {
-        if (mConnectionRemote == null) {
-            return;
-        }
-
-        boolean scanning = mConnectionRemote.isScanning();
-        Log.d(LOGTAG, "Connection remote return: isScanning() = " + scanning);
-
-        Button b = (Button) v;
-        if (scanning) {
-            mConnectionRemote.stopScanning();
-            b.setText(R.string.start_scanning);
-        } else {
-            mConnectionRemote.startScanning();
-            b.setText(R.string.stop_scanning);
-        }
-    }
-
-    public void onClick_ViewLeaderboard(View v) {
-        Intent openLeaderboard = new Intent(Intent.ACTION_VIEW, Uri.parse(LEADERBOARD_URL));
-        startActivity(openLeaderboard);
-    }
-
-    public void onClick_ViewMap(View v) throws RemoteException {
-        // We are starting Wi-Fi scanning because we want the the APs for our
-        // geolocation request whose results we want to display on the map.
-        if (mConnectionRemote != null) {
-            mConnectionRemote.startScanning();
-        }
-
-        Log.d(LOGTAG, "onClick_ViewMap");
-        Intent intent = new Intent(this, MapActivity.class);
-        startActivity(intent);
-    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -268,10 +274,36 @@ public final class MainActivity extends Activity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_about) {
-        	startActivity(new Intent(getApplication(), AboutActivity.class));
+            startActivity(new Intent(getApplication(), AboutActivity.class));
             return true;
-        } else if (item.getItemId() == R.id.action_preferences) {
-        	startActivity(new Intent(getApplication(), PreferencesScreen.class));
+        }
+        
+        if (item.getItemId() == R.id.action_preferences) {
+            startActivity(new Intent(getApplication(), PreferencesScreen.class));
+            return true;
+        }
+
+        if (item.getItemId() == R.id.action_view_leaderboard) {
+            Intent openLeaderboard = new Intent(Intent.ACTION_VIEW, Uri.parse(LEADERBOARD_URL));
+            startActivity(openLeaderboard);
+            return true;
+        }
+
+        if (item.getItemId() == R.id.action_test_mls) {
+            Intent intent = new Intent(this, MapActivity.class);
+            startActivity(intent);
+            return true;
+        }
+
+        if (item.getItemId() == R.id.action_exit) {
+            if (mConnectionRemote != null) {
+                try {
+                    mConnectionRemote.stopScanning();
+                } catch (RemoteException e) {
+                    Log.e(LOGTAG, "", e);
+                }
+            }
+            finish();
             return true;
         }
 

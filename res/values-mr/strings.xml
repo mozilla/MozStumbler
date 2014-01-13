@@ -26,7 +26,7 @@
     <string name="enter_nickname_title">टोपणनाव: </string>
     <string name="enter_nickname_longtext">तुमचे टोपणनाव अग्रेसर वापरकर्ता फलकावर दिसेल</string>
     
-    <string name="power_saving_mode">वीज बचत पद्धत</string>
+    <string name="power_saving_mode">उर्जा बचत पद्धत</string>
     <string name="power_saving_mode_longtext">सक्षम केलेले असल्यास हालचाल झाल्यानंतरच फक्त स्टंबलींग चालू राहील</string>
 
     <string name="update_title">मोझस्टंबलर आवृत्ती अद्ययावत करायची का?</string>

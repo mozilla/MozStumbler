@@ -115,6 +115,7 @@ public final class MainActivity extends Activity {
         enableStrictMode();
         setContentView(R.layout.activity_main);
 
+        new Prefs(this).setDefaultValues();
         Updater.checkForUpdates(this);
 
         Log.d(LOGTAG, "onCreate");

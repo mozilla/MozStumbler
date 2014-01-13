@@ -5,11 +5,11 @@ import android.content.SharedPreferences;
 import android.os.Build.VERSION;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.os.Build;
+import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.Log;
 
-import java.util.UUID;
+import org.mozilla.mozstumbler.R;
 
 public final class Prefs {
     private static final String     LOGTAG        = Prefs.class.getName();
@@ -17,6 +17,7 @@ public final class Prefs {
     private static final String     NICKNAME_PREF = "nickname";
     private static final String     POWER_SAVING_MODE_PREF = "power_saving_mode";
     private static final String     REPORTS_PREF  = "reports";
+    private static final String     VALUES_VERSION_PREF = "values_version";
 
     private int mCurrentVersion;
     private Context mContext;
@@ -31,6 +32,16 @@ public final class Prefs {
             mCurrentVersion = 0;
         }
         mContext = context;
+    }
+
+    public void setDefaultValues() {
+        final SharedPreferences prefs = getPrefs();
+        if (prefs.getInt(VALUES_VERSION_PREF, -1) != mCurrentVersion) {
+            Log.i(LOGTAG, "Version of the application has changed. Updating default values.");
+            PreferenceManager.setDefaultValues(mContext, PREFS_FILE,
+                    Context.MODE_MULTI_PROCESS, R.xml.preferences, true);
+            prefs.edit().putInt(VALUES_VERSION_PREF, mCurrentVersion).commit();
+        }
     }
 
     public String getNickname() {

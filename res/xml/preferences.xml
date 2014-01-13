@@ -10,6 +10,7 @@
     <SwitchPreference
         android:key="power_saving_mode"
         android:title="@string/power_saving_mode"
-        android:summary="@string/power_saving_mode_longtext" />
+        android:summary="@string/power_saving_mode_longtext"
+        android:defaultValue="true" />
 
 </PreferenceScreen>

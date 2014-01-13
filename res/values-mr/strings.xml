@@ -4,24 +4,30 @@
     <string name="app_name">मोझस्टंबलर</string>
     <string name="action_about">मोझस्टंबलर बद्दल</string>
     <string name="action_preferences">मांडणी पर्याय</string>
+    <string name="action_exit">बाहेर पडा</string>
+    
     <string name="mozilla_title">मोझिला</string>
     <string name="start_scanning">सर्वेक्षण सुरु करा</string>
     <string name="stop_scanning">सर्वेक्षण बंद करा</string>
     <string name="view_leaderboard">अग्रेसर वापरकर्ता फलक बघा</string>
     <string name="view_map">मोझिला स्थळसेवा तपासा</string>
     <string name="service_name">मोझिला स्टंबलर</string>
-    <string name="wifi_access_points">शोधलेले Wi-Fi प्रवेश बिंदू: %1$d</string>
+    <string name="activity_recognition_service">मोझिला स्टंबलर क्रियाशीलता ओळख हेतू सेवा</string>
+    <string name="wifi_access_points">तपासलेले Wi-Fi प्रवेश बिंदू: %1$d</string>
+    <string name="visible_wifi_access_points">दिसणारे Wi-Fi प्रवेश बिंदू:: %1$d</string>
     <string name="gps_satellites">दिसणारे GPS उपग्रह: %1$d</string>
+    <string name="last_location">शेवटची जागा: %1$s</string>
+    <string name="coordinate">(%1$.4f, %2$.4f)</string>
     <string name="locations_scanned">शोधलेल्या जागा: %1$d</string>
     <string name="last_upload_time">शेवटचा अहवाल पाठवण्याची वेळ: %1$s</string>
     <string name="reports_sent">पाठवलेले अहवाल: %1$d</string>
-    <string name="service_scanning">Wi-Fi आणि भ्रमणध्वनी जाळे शोधत आहे</string>
 
     <string name="enter_nickname">टोपणनाव टाका (ऐच्छिक)</string>
     <string name="enter_nickname_title">टोपणनाव: </string>
     <string name="enter_nickname_longtext">तुमचे टोपणनाव अग्रेसर वापरकर्ता फलकावर दिसेल</string>
-
-    <string name="battery_low_warning">बॅटरी कमी असल्यामुळे मोझस्टंबलर काम करणे थांबवत आहे.</string>
+    
+    <string name="power_saving_mode">उर्जा बचत पद्धत</string>
+    <string name="power_saving_mode_longtext">सक्षम केलेले असल्यास फक्त हालचाल झाल्यानंतरच स्टंबलींग चालू राहील</string>
 
     <string name="update_title">मोझस्टंबलर आवृत्ती अद्ययावत करायची का?</string>
     <string name="update_message">प्रतिष्ठापित आवृत्ती: %1$s\nनवीनतम आवृत्ती: %2$s</string>
@@ -35,6 +41,7 @@
     <string name="no">नाही</string>
 
     <string name="about_version">आवृत्ती %1$s</string>
+    <string name="about_mapbox">आमच्या नकाशा पुरवठादाराविषयी अधिक जाणून घ्या...</string>
     <string name="about_more">आणखी...</string>
 
 </resources>

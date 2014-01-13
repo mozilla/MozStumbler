@@ -220,6 +220,9 @@ final class Reporter extends BroadcastReceiver {
                         int code = urlConnection.getResponseCode();
                         if (code >= 200 && code <= 299) {
                             mReportsSent.addAndGet(reports.length());
+                            mLastUploadTime.set(System.currentTimeMillis());
+                            sendUpdateIntent();
+                            successfulUpload = true;
                         }
                         Log.e(LOGTAG, "urlConnection returned " + code);
 
@@ -232,9 +235,6 @@ final class Reporter extends BroadcastReceiver {
                         }
                         r.close();
 
-                        mLastUploadTime.set(System.currentTimeMillis());
-                        sendUpdateIntent();
-                        successfulUpload = true;
                         Log.d(LOGTAG, "response was: \n" + total + "\n");
                     } catch (JSONException jsonex) {
                         Log.e(LOGTAG, "error wrapping data as a batch", jsonex);

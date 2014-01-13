@@ -222,24 +222,35 @@ public final class ScannerService extends Service {
         mActivityRecognitionReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                int activityType = intent.getIntExtra("activity_type", 0);
+                int activityType = intent.getIntExtra("activity_type", DetectedActivity.UNKNOWN);
                 int confidence = intent.getIntExtra("confidence", -1);
-                long time = intent.getLongExtra("time", 0);
 
                 if (confidence < 50) {
                     return;
                 }
 
-                boolean active =
-                  activityType == DetectedActivity.IN_VEHICLE ||
-                  activityType == DetectedActivity.ON_BICYCLE ||
-                  activityType == DetectedActivity.ON_FOOT;
-
                 try {
-                    if (active) {
-                        mBinder.startScanning();
-                    } else {
-                        mBinder.stopScanning();
+                    switch (activityType) {
+                        case DetectedActivity.IN_VEHICLE:
+                        case DetectedActivity.ON_BICYCLE:
+                        case DetectedActivity.ON_FOOT:
+                            mBinder.startScanning();
+                            break;
+
+                        case DetectedActivity.TILTING:
+                            // Tilting is a hint that the user is changing activity.
+                            break;
+
+                        case DetectedActivity.STILL:
+                            mBinder.stopScanning();
+                            break;
+
+                        case DetectedActivity.UNKNOWN:
+                            break;
+
+                        default:
+                            Log.e(LOGTAG, "", new IllegalArgumentException("Unknown activity type: " + activityType));
+                            break;
                     }
                 } catch (RemoteException e) {
                     Log.e(LOGTAG, "", e);

@@ -7,7 +7,7 @@
         android:title="@string/enter_nickname"
         android:summary="@string/enter_nickname_longtext" />
 
-    <SwitchPreference
+    <CheckBoxPreference
         android:key="power_saving_mode"
         android:title="@string/power_saving_mode"
         android:summary="@string/power_saving_mode_longtext"

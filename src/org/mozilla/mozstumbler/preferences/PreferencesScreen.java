@@ -19,9 +19,10 @@ import android.util.Log;
 public class PreferencesScreen extends PreferenceActivity {
 
     private EditTextPreference mNicknamePreference;
-    private SwitchPreference mPowerSavingPreference;
+    private Preference mPowerSavingPreference;
     private Prefs mPrefs;
 
+    @SuppressWarnings("deprecation")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,7 +32,7 @@ public class PreferencesScreen extends PreferenceActivity {
         }
         addPreferencesFromResource(R.xml.preferences);
         mNicknamePreference = (EditTextPreference) getPreferenceManager().findPreference("nickname");
-        mPowerSavingPreference = (SwitchPreference) getPreferenceManager().findPreference("power_saving_mode");
+        mPowerSavingPreference = getPreferenceManager().findPreference("power_saving_mode");
         mPrefs = new Prefs(this);
 
         setNicknamePreferenceTitle(mPrefs.getNickname());

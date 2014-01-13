@@ -6,9 +6,6 @@
     <string name="action_preferences">व्यवस्था पर्याय</string>
     <string name="action_exit">बंद करे</string>
     
-    <string name="mozilla_title">मोज़िला</string>
-    <string name="start_scanning">क्रमवीक्षण शुरू करें</string>
-    <string name="stop_scanning">क्रमवीक्षण बंद करें</string>
     <string name="view_leaderboard">अग्रणी उपयोगकर्ता फलक देखें</string>
     <string name="view_map">मोज़िला स्थानसेवा जांचे</string>
     <string name="service_name">मोज़िला स्टम्बलर</string>
@@ -41,7 +38,7 @@
     <string name="no">नहीं</string>
 
     <string name="about_version">संस्करण %1$s</string>
-    <string name="about_mapbox">हमारे नक्शा प्रदाता के बारेमे अधिक जानें...</string>
-    <string name="about_more">अधिक...</string>
+    <string name="about_mapbox">हमारे नक्शा प्रदाता के बारेमे अधिक जानें…</string>
+    <string name="about_more">अधिक…</string>
 
 </resources>

@@ -5,10 +5,11 @@ import android.annotation.SuppressLint;
 import java.util.Date;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Locale;
 import java.util.TimeZone;
 
 final class DateTimeUtils {
-    private static final DateFormat mISO8601Format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
+    private static final DateFormat mISO8601Format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'", Locale.US);
 
     static final long MILLISECONDS_PER_DAY = 86400000;  // milliseconds/day
 

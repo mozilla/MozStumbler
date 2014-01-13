@@ -4,9 +4,6 @@
     <string name="app_name">MozStumbler</string>
     <string name="action_about">O MozStumbler</string>
     <string name="action_preferences">Ustawienia</string>
-    <string name="mozilla_title">Mozilla</string>
-    <string name="start_scanning">Rozpocznij skanowanie</string>
-    <string name="stop_scanning">Zatrzymaj skanowanie</string>
     <string name="view_leaderboard">Zobacz ranking</string>
     <string name="view_map">Przetestuj serwis lokalizacji Mozilli</string>
     <string name="service_name">Mozilla Stumbler</string>
@@ -15,13 +12,10 @@
     <string name="locations_scanned">Przeskanowane lokacje: %1$d</string>
     <string name="last_upload_time">Ostatnio wysłano o: %1$s</string>
     <string name="reports_sent">Wysłane raporty: %1$d</string>
-    <string name="service_scanning">Skanowanie w poszukiwaniu Wi-Fi i sieci komórkowych</string>
 
     <string name="enter_nickname">Wpisz Nickanme (opcjonalnie)</string>
     <string name="enter_nickname_title">Nickname: </string>
     <string name="enter_nickname_longtext">Twój nickname wyświetli się w rankingu</string>
-
-    <string name="battery_low_warning">Słaba bateria, MozStumbler zatrzyma skanowanie</string>
 
     <string name="update_title">Pobrać aktualizację MozStumbler?</string>
     <string name="update_message">Zainstalowana wersja: %1$s\nNajnowsza wersja: %2$s</string>
@@ -35,6 +29,6 @@
     <string name="no">Nie</string>
 
     <string name="about_version">Wersja %1$s</string>
-    <string name="about_more">Więcej...</string>
+    <string name="about_more">Więcej…</string>
 
 </resources>

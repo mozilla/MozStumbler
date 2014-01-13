@@ -11,4 +11,5 @@ interface ScannerServiceInterface {
     int getVisibleAPCount();
     long getLastUploadTime();
     long getReportsSent();
+    String getDetectedActivity();
 }

@@ -44,6 +44,7 @@ public final class ScannerService extends Service {
     private BroadcastReceiver   mBatteryLowReceiver;
     private BroadcastReceiver   mActivityRecognitionReceiver;
     private ActivityRecognitionClient mActivityRecognitionClient;
+    private int                 mDetectedActivity = DetectedActivity.UNKNOWN;
 
     private final ScannerServiceInterface.Stub mBinder = new ScannerServiceInterface.Stub() {
         @Override
@@ -131,6 +132,29 @@ public final class ScannerService extends Service {
         @Override
         public long getReportsSent () throws RemoteException {
             return mReporter.getReportsSent();
+        }
+
+        @Override
+        public String getDetectedActivity() throws RemoteException {
+            return getResources().getString(getStringIdForDetectedActivity());
+        }
+
+        private int getStringIdForDetectedActivity() {
+            switch (mDetectedActivity) {
+                case DetectedActivity.IN_VEHICLE:
+                    return R.string.detected_activity_in_vehicle;
+                case DetectedActivity.ON_BICYCLE:
+                    return R.string.detected_activity_on_bicycle;
+                case DetectedActivity.ON_FOOT:
+                    return R.string.detected_activity_on_foot;
+                case DetectedActivity.TILTING:
+                    return R.string.detected_activity_tilting;
+                case DetectedActivity.STILL:
+                    return R.string.detected_activity_still;
+                default:
+                case DetectedActivity.UNKNOWN:
+                    return R.string.detected_activity_unknown;
+            }
         }
     };
 
@@ -254,6 +278,15 @@ public final class ScannerService extends Service {
                     }
                 } catch (RemoteException e) {
                     Log.e(LOGTAG, "", e);
+                }
+
+                if (mDetectedActivity != activityType) {
+                    mDetectedActivity = activityType;
+
+                    // Update UI
+                    Intent i = new Intent(ScannerService.MESSAGE_TOPIC);
+                    i.putExtra(Intent.EXTRA_SUBJECT, "Scanner");
+                    sendBroadcast(i);
                 }
             }
         };

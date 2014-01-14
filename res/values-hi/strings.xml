@@ -12,7 +12,7 @@
     <string name="view_leaderboard">अग्रणी उपयोगकर्ता फलक देखें</string>
     <string name="view_map">मोज़िला स्थानसेवा जांचे</string>
     <string name="service_name">मोज़िला स्टम्बलर</string>
-    <string name="activity_recognition_service">मोज़िल स्टम्बलर गतिविधि मान्यता आशय सेवा</string>
+    <string name="activity_recognition_service">मोज़िला स्टम्बलर गतिविधि मान्यता आशय सेवा</string>
     <string name="wifi_access_points">जांचे गए Wi-Fi प्रवेश बिंदु: %1$d</string>
     <string name="visible_wifi_access_points">दिखाई दे रहे Wi-Fi प्रवेश बिंदु: %1$d</string>
     <string name="gps_satellites">दिखाई दे रहे GPS उपग्रह: %1$d</string>

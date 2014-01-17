@@ -4,7 +4,7 @@
     <string name="app_name">MozStumbler</string>
     <string name="action_about">關於 MozStumbler</string>
     <string name="action_preferences">設定</string>
-    <string name="action_exit">離開</string>
+    <string name="action_exit">結束</string>
 
     <string name="mozilla_title">Mozilla</string>
     <string name="start_scanning">開始掃描</string>
@@ -27,10 +27,10 @@
     <string name="enter_nickname_longtext">您的暱稱將顯示在排行榜中</string>
 
     <string name="power_saving_mode">省電模式</string>
-    <string name="power_saving_mode_longtext">一旦啟動，MozStumbler 只會在你移動時收集資料</string>
+    <string name="power_saving_mode_longtext">啟動後，MozStumbler 只會在您移動時收集資料</string>
 
     <string name="update_title">下載 MozStumbler 更新？</string>
-    <string name="update_message">已安裝版本: %1$s\n最新版本號: %2$s</string>
+    <string name="update_message">已安裝版本: %1$s\n最新版本: %2$s</string>
     <string name="update_now">現在更新</string>
     <string name="update_later">以後再更新</string>
 
@@ -40,7 +40,7 @@
     <string name="yes">是</string>
     <string name="no">不要</string>
 
-    <string name="about_version">版本 %1$s</string>
+    <string name="about_version">%1$s 版</string>
     <string name="about_mapbox">了解我們的地圖資料提供者資訊…</string>
     <string name="about_more">更多…</string>
 

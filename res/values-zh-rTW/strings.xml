@@ -4,24 +4,30 @@
     <string name="app_name">MozStumbler</string>
     <string name="action_about">關於 MozStumbler</string>
     <string name="action_preferences">設定</string>
+    <string name="action_exit">離開</string>
+
     <string name="mozilla_title">Mozilla</string>
     <string name="start_scanning">開始掃描</string>
     <string name="stop_scanning">停止掃描</string>
     <string name="view_leaderboard">觀看排行榜</string>
     <string name="view_map">測試 Mozilla Location Service</string>
     <string name="service_name">Mozilla Stumbler</string>
+    <string name="activity_recognition_service">Mozilla Stumbler Activity Recognition Intent Service</string>
     <string name="wifi_access_points">已掃描 Wi-Fi 基地台數量: %1$d</string>
+    <string name="visible_wifi_access_points">可視 Wi-Fi 基地台數量: %1$d</string>
     <string name="gps_satellites">可視 GPS 衛星數量: %1$d</string>
+    <string name="last_location">最後定位位置: %1$s</string>
+    <string name="coordinate">(%1$.4f, %2$.4f)</string>
     <string name="locations_scanned">已掃描位置數量: %1$d</string>
-    <string name="last_upload_time">上次資料上傳時間: %1$s</string>
+    <string name="last_upload_time">前次資料上傳時間: %1$s</string>
     <string name="reports_sent">已傳送報告數量: %1$d</string>
-    <string name="service_scanning">正在掃描 Wi-Fi 與行動網路</string>
 
     <string name="enter_nickname">輸入暱稱 (非必填)</string>
     <string name="enter_nickname_title">暱稱: </string>
     <string name="enter_nickname_longtext">您的暱稱將顯示在排行榜中</string>
 
-    <string name="battery_low_warning">剩餘電量太低，MozStumbler 已停止掃描</string>
+    <string name="power_saving_mode">省電模式</string>
+    <string name="power_saving_mode_longtext">一旦啟動，MozStumbler 只會在你移動時收集資料</string>
 
     <string name="update_title">下載 MozStumbler 更新？</string>
     <string name="update_message">已安裝版本: %1$s\n最新版本號: %2$s</string>
@@ -30,11 +36,12 @@
 
     <string name="location_not_found">找不到位置</string>
 
-    <string name="gps_alert_msg">GPS 已關閉。您是否想要到「設定」並且開啟 GPS？</string>
+    <string name="gps_alert_msg">GPS 已關閉。您是否想要前往「設定」開啟 GPS？</string>
     <string name="yes">是</string>
     <string name="no">不要</string>
 
     <string name="about_version">版本 %1$s</string>
+    <string name="about_mapbox">了解我們的地圖資料提供者資訊…</string>
     <string name="about_more">更多…</string>
 
 </resources>

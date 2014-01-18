@@ -18,6 +18,7 @@
     <string name="coordinate">(%1$.4f, %2$.4f)</string>
     <string name="last_upload_time">अंतिम विवरण भेजने का समय: %1$s</string>
     <string name="reports_sent">भेजे गए विवरण: %1$d</string>
+    <string name="service_scanning">Wi -Fi एवं Cellular जाल खोज रहा है</string>
 
     <string name="enter_nickname">उपनाम डालें (वैकल्पिक)</string>
     <string name="enter_nickname_title">उपनाम: </string>

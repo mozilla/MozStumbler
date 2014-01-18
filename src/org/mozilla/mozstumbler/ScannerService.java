@@ -7,6 +7,8 @@ import org.mozilla.mozstumbler.ActivityRecognitionIntentService;
 
 import android.annotation.TargetApi;
 import android.app.AlarmManager;
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
@@ -19,6 +21,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.RemoteException;
+import android.support.v4.app.NotificationCompat;
 import android.text.format.DateFormat;
 import android.util.Log;
 
@@ -34,6 +37,7 @@ public final class ScannerService extends Service {
     public static final String  MESSAGE_TOPIC   = "org.mozilla.mozstumbler.serviceMessage";
 
     private static final String LOGTAG          = ScannerService.class.getName();
+    private static final int    NOTIFICATION_ID = 1;
     private static final int    WAKE_TIMEOUT    = 5 * 1000;
     private static final int    ACTIVITY_DETECTION_INTERVAL = 30 * 1000;
     private Scanner             mScanner;
@@ -61,6 +65,9 @@ public final class ScannerService extends Service {
                 @Override
                 public void run() {
                     try {
+                        CharSequence title = getResources().getText(R.string.service_name);
+                        CharSequence text = getResources().getText(R.string.service_scanning);
+                        postNotification(title, text);
 
                         mScanner.startScanning();
 
@@ -91,6 +98,11 @@ public final class ScannerService extends Service {
                 public void run() {
                     AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
                     alarm.cancel(mWakeIntent);
+
+                    NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+                    nm.cancel(NOTIFICATION_ID);
+                    stopForeground(true);
+
                     mScanner.stopScanning();
 
                     mReporter.sendReports(true);
@@ -277,6 +289,25 @@ public final class ScannerService extends Service {
         mReporter = null; 
 
         stopActivityTracking();
+
+        NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        nm.cancel(NOTIFICATION_ID);
+    }
+
+    private void postNotification(final CharSequence title, final CharSequence text) {
+        mLooper.post(new Runnable() {
+            @Override
+            public void run() {
+                Context ctx = getApplicationContext();
+                Intent notificationIntent = new Intent(ctx, MainActivity.class);
+                notificationIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_FROM_BACKGROUND);
+                PendingIntent contentIntent = PendingIntent.getActivity(ctx, NOTIFICATION_ID, notificationIntent,
+                        PendingIntent.FLAG_CANCEL_CURRENT);
+                int icon = R.drawable.ic_status_scanning;
+                Notification n = buildNotification(ctx, icon, title, text, contentIntent);
+                startForeground(NOTIFICATION_ID, n);
+            }
+        });
     }
 
     @Override
@@ -289,5 +320,19 @@ public final class ScannerService extends Service {
     public IBinder onBind(Intent intent) {
         Log.d(LOGTAG, "onBind");
         return mBinder;
+    }
+
+    private static Notification buildNotification(Context context, int icon,
+                                                  CharSequence contentTitle,
+                                                  CharSequence contentText,
+                                                  PendingIntent contentIntent) {
+        return new NotificationCompat.Builder(context)
+                .setSmallIcon(icon)
+                .setContentTitle(contentTitle)
+                .setContentText(contentText)
+                .setContentIntent(contentIntent)
+                .setOngoing(true)
+                .setPriority(NotificationCompat.PRIORITY_MIN)
+                .build();
     }
 }

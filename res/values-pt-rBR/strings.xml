@@ -15,6 +15,7 @@
     <string name="locations_scanned">Localizações escaneadas: %1$d</string>
     <string name="last_upload_time">Horário do último upload: %1$s</string>
     <string name="reports_sent">Relatórios enviados: %1$d</string>
+    <string name="service_scanning">Escanear para redes Wi-Fi e Cellular</string>
 
     <string name="enter_nickname">Entre com seu nickname (opcional)</string>
     <string name="enter_nickname_title">Nickname: </string>

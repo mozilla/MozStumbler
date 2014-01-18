@@ -18,6 +18,7 @@
     <string name="locations_scanned">शोधलेल्या जागा: %1$d</string>
     <string name="last_upload_time">शेवटचा अहवाल पाठवण्याची वेळ: %1$s</string>
     <string name="reports_sent">पाठवलेले अहवाल: %1$d</string>
+    <string name="service_scanning">Wi-Fi आणि भ्रमणध्वनी जाळे शोधत आहे</string>
 
     <string name="enter_nickname">टोपणनाव टाका (ऐच्छिक)</string>
     <string name="enter_nickname_title">टोपणनाव: </string>

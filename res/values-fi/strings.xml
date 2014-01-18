@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">MozStumbler</string>
+    <string name="action_about">Tietoja</string>
+    <string name="action_preferences">Asetukset</string>
+    <string name="action_exit">Lopeta</string>
+
+    <string name="view_leaderboard">Näytä pistetilasto</string>
+    <string name="view_map">Kokeile Mozilla Location Serviceä</string>
+    <string name="service_name">Mozilla Stumbler</string>
+    <string name="activity_recognition_service">Mozilla Stumbler aktiivisuudentunnistuspalvelu</string>
+    <string name="wifi_access_points">Wi-Fi-tukiasemia skannattu: %1$d</string>
+    <string name="visible_wifi_access_points">Wi-Fi-tukiasemia näkyvillä: %1$d</string>
+    <string name="gps_satellites">GPS-satelliitteja näkyvillä: %1$d</string>
+    <string name="last_location">Viimeisin sijainti: %1$s</string>
+    <string name="coordinate">(%1$.4f, %2$.4f)</string>
+    <string name="locations_scanned">Sijainteja skannattu: %1$d</string>
+    <string name="last_upload_time">Viimeisin lähetysaika: %1$s</string>
+    <string name="reports_sent">Raportteja lähetetty: %1$d</string>
+
+    <string name="enter_nickname">Valitse nimimerkki (ei pakollinen)</string>
+    <string name="enter_nickname_title">Nimimerkki: </string>
+    <string name="enter_nickname_longtext">Nimimerkkisi näytetään pistetilastossa</string>
+
+    <string name="power_saving_mode">Virransäästötila</string>
+    <string name="power_saving_mode_longtext">Tässä tilassa tiedonkeruuta suoritetaan vain ollessasi liikkellä</string>
+
+    <string name="update_title">Lataa MozStumbler päivitys?</string>
+    <string name="update_message">Asennettu versio: %1$s\nUusin versio: %2$s</string>
+    <string name="update_now">Päivitä nyt</string>
+    <string name="update_later">Päivitä myöhemmin</string>
+
+    <string name="location_not_found">Sijaintia ei löytynyt</string>
+
+    <string name="gps_alert_msg">GPS on pois päältä. Haluatko mennä asetuksiin laittamaan sen päälle?</string>
+    <string name="yes">Kyllä</string>
+    <string name="no">Ei</string>
+
+    <string name="about_version">Versio %1$s</string>
+    <string name="about_mapbox">Lisätietoja käyttämästämme karttapalvelusta…</string>
+    <string name="about_more">Lisätietoja…</string>
+
+</resources>

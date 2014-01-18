@@ -4,9 +4,6 @@
     <string name="app_name">MozStumbler</string>
     <string name="action_about">关于 MozStumbler</string>
     <string name="action_preferences">设置</string>
-    <string name="mozilla_title">Mozilla</string>
-    <string name="start_scanning">开始扫描</string>
-    <string name="stop_scanning">停止扫描</string>
     <string name="view_leaderboard">查看积分榜</string>
     <string name="view_map">测试 Mozilla 位置服务</string>
     <string name="service_name">Mozilla Stumbler</string>
@@ -15,13 +12,10 @@
     <string name="locations_scanned">累计锁定位置: %1$d</string>
     <string name="last_upload_time">最近一次上传时间: %1$s</string>
     <string name="reports_sent">累计上传报告: %1$d</string>
-    <string name="service_scanning">扫描 Wi-Fi 和手机网络</string>
 
     <string name="enter_nickname">输入昵称 (可选)</string>
     <string name="enter_nickname_title">昵称: </string>
     <string name="enter_nickname_longtext">你的昵称将被显示在积分榜中</string>
-
-    <string name="battery_low_warning">电量过低，MozStumbler 将停止扫描</string>
 
     <string name="update_title">下载 MozStumbler 更新？</string>
     <string name="update_message">当前版本: %1$s\n最新版本: %2$s</string>

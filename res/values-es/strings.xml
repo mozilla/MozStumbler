@@ -4,9 +4,6 @@
     <string name="app_name">MozStumbler</string>
     <string name="action_about">Acerca de MozStumbler</string>
     <string name="action_preferences">Configuración</string>
-    <string name="mozilla_title">Mozilla</string>
-    <string name="start_scanning">Comenzar escaneo</string>
-    <string name="stop_scanning">Detener escaneo</string>
     <string name="view_leaderboard">Ver tabla de posiciones</string>
     <string name="view_map">Probar servicio de ubicación de Mozilla</string>
     <string name="service_name">Mozilla Stumbler</string>
@@ -17,13 +14,10 @@
     <string name="locations_scanned">Ubicaciones escaneadas: %1$d</string>
     <string name="last_upload_time">Último envío de datos: %1$s</string>
     <string name="reports_sent">Reportes enviados: %1$d</string>
-    <string name="service_scanning">Escaneando redes Wi-Fi y Móviles</string>
 
     <string name="enter_nickname">Ingresa tu apodo (opcional)</string>
     <string name="enter_nickname_title">Apodo: </string>
     <string name="enter_nickname_longtext">Tu apodo aparecerá en la tabla de posiciones</string>
-
-    <string name="battery_low_warning">Batería baja, MozStumbler detendrá el escaneo</string>
 
     <string name="update_title">¿Descargar la actualización de MozStumbler?</string>
     <string name="update_message">Versión instalada: %1$s\nÚltima versión: %2$s</string>
@@ -37,7 +31,7 @@
     <string name="no">No</string>
 
     <string name="about_version">Versión %1$s</string>
-    <string name="about_mapbox">Aprenda más acerca de nuestro proveedor de de cartografía...</string>
-    <string name="about_more">Más...</string>
+    <string name="about_mapbox">Aprenda más acerca de nuestro proveedor de de cartografía…</string>
+    <string name="about_more">Más…</string>
 
 </resources>

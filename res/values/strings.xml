@@ -6,9 +6,6 @@
     <string name="action_preferences">Settings</string>
     <string name="action_exit">Quit</string>
 
-    <string name="mozilla_title">Mozilla</string>
-    <string name="start_scanning">Start Scanning</string>
-    <string name="stop_scanning">Stop Scanning</string>
     <string name="view_leaderboard">View Leaderboard</string>
     <string name="view_map">Test Mozilla Location Service</string>
     <string name="service_name">Mozilla Stumbler</string>
@@ -41,7 +38,7 @@
     <string name="no">No</string>
 
     <string name="about_version">Version %1$s</string>
-    <string name="about_mapbox">Learn more about our mapping provider...</string>
-    <string name="about_more">More...</string>
+    <string name="about_mapbox">Learn more about our mapping provider…</string>
+    <string name="about_more">More…</string>
 
 </resources>

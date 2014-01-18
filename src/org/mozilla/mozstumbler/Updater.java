@@ -231,7 +231,9 @@ final class Updater {
             try {
                 uri = url.toURI();
             } catch (URISyntaxException e) {
-                throw new IOException(url.toString(), e);
+                IOException ioe = new IOException(url.toString());
+                ioe.initCause(e);
+                throw ioe;
             }
 
             List<Proxy> proxies = proxySelector.select(uri);

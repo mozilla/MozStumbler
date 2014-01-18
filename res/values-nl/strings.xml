@@ -4,9 +4,6 @@
     <string name="app_name">MozStumbler</string>
     <string name="action_about">Over MozStumbler</string>
     <string name="action_preferences">Instellingen</string>
-    <string name="mozilla_title">Mozilla</string>
-    <string name="start_scanning">Begin met scannen</string>
-    <string name="stop_scanning">Stop met scannen</string>
     <string name="view_leaderboard">Bekijk Leaderboard</string>
     <string name="view_map">Test Mozilla locatiedienst</string>
     <string name="service_name">Mozilla Stumbler</string>
@@ -15,13 +12,10 @@
     <string name="locations_scanned">Gevonden lokaties: %1$d</string>
     <string name="last_upload_time">Laatste upload om: %1$s</string>
     <string name="reports_sent">Verzonden rapportages: %1$d</string>
-    <string name="service_scanning">Bezig met scannen van Wi-Fi en mobiele netwerken</string>
 
     <string name="enter_nickname">Alias (niet verplicht)</string>
     <string name="enter_nickname_title">Alias: </string>
     <string name="enter_nickname_longtext">Alias wordt gepubliceerd op het leaderboard</string>
-
-    <string name="battery_low_warning">Accu bijna leeg, MozStumbler stopt met scannen</string>
 
     <string name="update_title">Download MozStumbler update?</string>
     <string name="update_message">Geinstalleerde versie: %1$s\nMeeste recente versie: %2$s</string>
@@ -35,6 +29,6 @@
     <string name="no">Nee</string>
 
     <string name="about_version">Versie %1$s</string>
-    <string name="about_more">Meer...</string>
+    <string name="about_more">Meer…</string>
 
 </resources>

@@ -1,5 +1,7 @@
 package org.mozilla.mozstumbler.preferences;
 
+import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Build.VERSION;
@@ -34,6 +36,7 @@ public final class Prefs {
         mContext = context;
     }
 
+    @SuppressLint("InlinedApi")
     public void setDefaultValues() {
         final SharedPreferences prefs = getPrefs();
         if (prefs.getInt(VALUES_VERSION_PREF, -1) != mCurrentVersion) {
@@ -75,6 +78,7 @@ public final class Prefs {
         apply(editor);
     }
 
+    @TargetApi(9)
     private static void apply(SharedPreferences.Editor editor) {
         if (VERSION.SDK_INT >= 9) {
             editor.apply();
@@ -83,6 +87,7 @@ public final class Prefs {
         }
     }
 
+    @SuppressLint("InlinedApi")
     private SharedPreferences getPrefs() {
         return mContext.getSharedPreferences(PREFS_FILE, Context.MODE_MULTI_PROCESS | Context.MODE_PRIVATE);
     }

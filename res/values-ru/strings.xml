@@ -4,9 +4,6 @@
     <string name="app_name">MozStumbler</string>
     <string name="action_about">О MozStumbler</string>
     <string name="action_preferences">Настройки</string>
-    <string name="mozilla_title">Mozilla</string>
-    <string name="start_scanning">Начать сканирование</string>
-    <string name="stop_scanning">Остановить сканирование</string>
     <string name="view_leaderboard">Открыть таблицу лидеров</string>
     <string name="view_map">Открыть карту</string>
     <string name="service_name">Mozilla Stumbler</string>
@@ -18,13 +15,10 @@
     <string name="locations_scanned">Отсканировано координат: %1$d</string>
     <string name="last_upload_time">Время последней отправки отчёта: %1$s</string>
     <string name="reports_sent">Отправлено отчётов: %1$d</string>
-    <string name="service_scanning">Сканирование Wi-Fi точек и базовых станций сотовых операторов</string>
 
     <string name="enter_nickname">Укажите свой псевдоним (не обязательно)</string>
     <string name="enter_nickname_title">Псевдоним: </string>
     <string name="enter_nickname_longtext">Ваш псевдоним появится в таблице лидеров</string>
-
-    <string name="battery_low_warning">Батарея разряжена, MozStumbler остановит сканирование</string>
 
     <string name="update_title">Загрузить обновление MozStumbler?</string>
     <string name="update_message">Установленная версия: %1$s\nПоследняя версия: %2$s</string>
@@ -38,7 +32,7 @@
     <string name="no">Нет</string>
 
     <string name="about_version">Версия %1$s</string>
-    <string name="about_mapbox">Информация о картографическом провайдере...</string>
-    <string name="about_more">О проекте...</string>
+    <string name="about_mapbox">Информация о картографическом провайдере…</string>
+    <string name="about_more">О проекте…</string>
 
 </resources>

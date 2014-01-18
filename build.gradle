@@ -4,7 +4,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:0.6.+'
+        classpath 'com.android.tools.build:gradle:0.7.+'
     }
 }
 
@@ -48,10 +48,11 @@ android {
             signingConfig signingConfigs.release
         }
     }
-}
 
-task wrapper(type: Wrapper) {
-    gradleVersion = '1.8'
+    lintOptions {
+        abortOnError true
+        disable 'MissingTranslation'
+    }
 }
 
 tasks.withType(JavaCompile) {

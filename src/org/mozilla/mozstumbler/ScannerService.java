@@ -3,9 +3,7 @@ package org.mozilla.mozstumbler;
 import java.util.Calendar;
 
 import org.mozilla.mozstumbler.preferences.Prefs;
-import org.mozilla.mozstumbler.ActivityRecognitionIntentService;
 
-import android.annotation.TargetApi;
 import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -15,14 +13,12 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.RemoteException;
 import android.support.v4.app.NotificationCompat;
-import android.text.format.DateFormat;
 import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -30,7 +26,6 @@ import com.google.android.gms.common.GooglePlayServicesClient.ConnectionCallback
 import com.google.android.gms.common.GooglePlayServicesClient.OnConnectionFailedListener;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.location.ActivityRecognitionClient;
-import com.google.android.gms.location.ActivityRecognitionResult;
 import com.google.android.gms.location.DetectedActivity;
 
 public final class ScannerService extends Service {
@@ -39,15 +34,12 @@ public final class ScannerService extends Service {
     private static final String LOGTAG          = ScannerService.class.getName();
     private static final int    NOTIFICATION_ID = 1;
     private static final int    WAKE_TIMEOUT    = 5 * 1000;
-    private static final int    ACTIVITY_DETECTION_INTERVAL = 30 * 1000;
     private Scanner             mScanner;
     private Reporter            mReporter;
     private LooperThread        mLooper;
     private PendingIntent       mWakeIntent;
-    private PendingIntent       mActivityRecognitionPendingIntent;
     private BroadcastReceiver   mBatteryLowReceiver;
     private BroadcastReceiver   mActivityRecognitionReceiver;
-    private ActivityRecognitionClient mActivityRecognitionClient;
 
     private final ScannerServiceInterface.Stub mBinder = new ScannerServiceInterface.Stub() {
         @Override
@@ -163,54 +155,6 @@ public final class ScannerService extends Service {
         }
     }
 
-    private void startActivityTracking() {
-
-        int status = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
-        if (status != ConnectionResult.SUCCESS) {
-            // TODO: What should we do here?
-            Log.d(LOGTAG, "No google play services!");
-            return;
-        }
-  
-        mActivityRecognitionClient = new ActivityRecognitionClient(this, new ConnectionCallbacks() {
-
-            @Override
-            public void onConnected(Bundle bundle) {
-                Intent intent = new Intent(ScannerService.this, ActivityRecognitionIntentService.class);
-                mActivityRecognitionPendingIntent = PendingIntent.getService(ScannerService.this,
-                                                                             0,
-                                                                             intent,
-                                                                             PendingIntent.FLAG_UPDATE_CURRENT);
-
-                mActivityRecognitionClient.requestActivityUpdates(ACTIVITY_DETECTION_INTERVAL,
-                                                                  mActivityRecognitionPendingIntent);
-            }
-
-            @Override
-            public void onDisconnected() {
-                mActivityRecognitionPendingIntent = null;
-
-            }
-
-        }, new OnConnectionFailedListener() {
-                @Override
-                public void onConnectionFailed(ConnectionResult result) {
-
-                }
-        });
-
-        mActivityRecognitionClient.connect();
-    }
-
-    private void stopActivityTracking() {
-        if (mActivityRecognitionClient == null || !mActivityRecognitionClient.isConnected()) {
-            return;
-        }
-
-        mActivityRecognitionClient.removeActivityUpdates(mActivityRecognitionPendingIntent);
-        mActivityRecognitionClient.disconnect();
-    }
-
     @Override
     public void onCreate() {
         super.onCreate();
@@ -266,8 +210,6 @@ public final class ScannerService extends Service {
         mScanner = new Scanner(this);
         mLooper = new LooperThread();
         mLooper.start();
-
-        startActivityTracking();
     }
 
     @Override
@@ -286,9 +228,7 @@ public final class ScannerService extends Service {
         mScanner = null;
 
         mReporter.shutdown();
-        mReporter = null; 
-
-        stopActivityTracking();
+        mReporter = null;
 
         NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         nm.cancel(NOTIFICATION_ID);

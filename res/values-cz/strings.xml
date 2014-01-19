@@ -15,6 +15,7 @@
     <string name="locations_scanned">Prohledáno míst: %1$d</string>
     <string name="last_upload_time">Čas posledniho reportu: %1$s</string>
     <string name="reports_sent">Odesláno reportů: %1$d</string>
+    <string name="service_scanning">Vyhledávám Wi-Fi a mobilní sítě</string>
 
     <string name="enter_nickname">Vložte jméno (nepovinné)</string>
     <string name="enter_nickname_title">Jméno: </string>

@@ -15,6 +15,7 @@
     <string name="locations_scanned">Отсканировано координат: %1$d</string>
     <string name="last_upload_time">Время последней отправки отчёта: %1$s</string>
     <string name="reports_sent">Отправлено отчётов: %1$d</string>
+    <string name="service_scanning">Сканирование Wi-Fi точек и базовых станций сотовых операторов</string>
 
     <string name="enter_nickname">Укажите свой псевдоним (не обязательно)</string>
     <string name="enter_nickname_title">Псевдоним: </string>

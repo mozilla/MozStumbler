@@ -12,6 +12,7 @@
     <string name="locations_scanned">Gevonden lokaties: %1$d</string>
     <string name="last_upload_time">Laatste upload om: %1$s</string>
     <string name="reports_sent">Verzonden rapportages: %1$d</string>
+    <string name="service_scanning">Bezig met scannen van Wi-Fi en mobiele netwerken</string>
 
     <string name="enter_nickname">Alias (niet verplicht)</string>
     <string name="enter_nickname_title">Alias: </string>

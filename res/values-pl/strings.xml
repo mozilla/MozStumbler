@@ -12,6 +12,7 @@
     <string name="locations_scanned">Przeskanowane lokacje: %1$d</string>
     <string name="last_upload_time">Ostatnio wysłano o: %1$s</string>
     <string name="reports_sent">Wysłane raporty: %1$d</string>
+    <string name="service_scanning">Skanowanie w poszukiwaniu Wi-Fi i sieci komórkowych</string>
 
     <string name="enter_nickname">Wpisz Nickanme (opcjonalnie)</string>
     <string name="enter_nickname_title">Nickname: </string>

@@ -14,6 +14,7 @@
     <string name="locations_scanned">Emplacements enregistrés : %1$d</string>
     <string name="last_upload_time">Date du dernier envoi : %1$s</string>
     <string name="reports_sent">Rapports envoyés : %1$d</string>
+    <string name="service_scanning">Détection des réseaux Wi-Fi et cellulaires</string>
 
     <string name="enter_nickname">Saisir un pseudo (optionnel)</string>
     <string name="enter_nickname_title">Pseudo : </string>

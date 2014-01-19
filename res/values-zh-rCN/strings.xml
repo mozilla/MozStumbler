@@ -12,6 +12,7 @@
     <string name="locations_scanned">累计锁定位置: %1$d</string>
     <string name="last_upload_time">最近一次上传时间: %1$s</string>
     <string name="reports_sent">累计上传报告: %1$d</string>
+    <string name="service_scanning">扫描 Wi-Fi 和手机网络</string>
 
     <string name="enter_nickname">输入昵称 (可选)</string>
     <string name="enter_nickname_title">昵称: </string>

@@ -32,7 +32,7 @@
     <string name="no">No</string>
 
     <string name="about_version">Versión %1$s</string>
-    <string name="about_mapbox">Aprenda más acerca de nuestro proveedor de de cartografía…</string>
+    <string name="about_mapbox">Aprenda más acerca de nuestro proveedor de cartografía…</string>
     <string name="about_more">Más…</string>
 
 </resources>

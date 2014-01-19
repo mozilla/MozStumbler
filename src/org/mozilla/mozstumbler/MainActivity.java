@@ -6,6 +6,7 @@ import org.mozilla.mozstumbler.preferences.Prefs;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -21,19 +22,17 @@ import android.os.IBinder;
 import android.os.RemoteException;
 import android.os.StrictMode;
 import android.provider.Settings;
-import android.text.Editable;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnFocusChangeListener;
-import android.view.inputmethod.EditorInfo;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesClient;
+import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.location.ActivityRecognitionClient;
 
 public final class MainActivity extends Activity {
     private static final String LOGTAG = MainActivity.class.getName();
@@ -158,7 +157,18 @@ public final class MainActivity extends Activity {
         mConnection = new ServiceConnection() {
             public void onServiceConnected(ComponentName className, IBinder binder) {
                 mConnectionRemote = ScannerServiceInterface.Stub.asInterface(binder);
+                boolean activityRecognitionActive = mPrefs.getPowerSavingMode();
                 Log.d(LOGTAG, "Service connected");
+
+                if (GooglePlayServicesUtil.isGooglePlayServicesAvailable(MainActivity.this) == ConnectionResult.SUCCESS) {
+                    if (activityRecognitionActive) {
+                        ActivityRecognitionRequest.requestActivityUpdates(MainActivity.this);
+                    } else {
+                        ActivityRecognitionRequest.removeActivityUpdates(MainActivity.this);
+                    }
+                } else {
+                    activityRecognitionActive = false;
+                }
 
                 // each time we reconnect, check to see if we're suppose to be
                 // in power saving mode.  if not, start the scanning. TODO: we
@@ -167,7 +177,7 @@ public final class MainActivity extends Activity {
                 // recognition.  If we were, don't stop.
                 if (mConnectionRemote != null) {
                     try {
-                        if (mPrefs.getPowerSavingMode()) {
+                        if (activityRecognitionActive) {
                             mConnectionRemote.stopScanning();
                         } else {
                             mConnectionRemote.startScanning();
@@ -304,6 +314,9 @@ public final class MainActivity extends Activity {
                     Log.e(LOGTAG, "", e);
                 }
             }
+            if (GooglePlayServicesUtil.isGooglePlayServicesAvailable(MainActivity.this) == ConnectionResult.SUCCESS) {
+                ActivityRecognitionRequest.removeActivityUpdates(this);
+            }
             finish();
             return true;
         }
@@ -338,5 +351,57 @@ public final class MainActivity extends Activity {
     private String formatLocation(double latitude, double longitude) {
         final String coordinateFormatString = getResources().getString(R.string.coordinate);
         return String.format(coordinateFormatString, latitude, longitude);
+    }
+
+    static class ActivityRecognitionRequest implements
+            GooglePlayServicesClient.ConnectionCallbacks,
+            GooglePlayServicesClient.OnConnectionFailedListener {
+        private static final int ACTIVITY_DETECTION_INTERVAL = 30 * 1000;
+
+        private final boolean mSubscribeToUpdates;
+        private final ActivityRecognitionClient mClient;
+        private final PendingIntent mActivityRecognitionIntent;
+
+        private ActivityRecognitionRequest(Context context, boolean subscribeToUpdates) {
+            mSubscribeToUpdates = subscribeToUpdates;
+            mClient = new ActivityRecognitionClient(context, this, this);
+            Context appContext = context.getApplicationContext();
+            Intent intent = new Intent(appContext, ActivityRecognitionIntentService.class);
+            mActivityRecognitionIntent = PendingIntent.getService(appContext,
+                    0,
+                    intent,
+                    PendingIntent.FLAG_UPDATE_CURRENT);
+        }
+
+        public static void requestActivityUpdates(Context context) {
+            ActivityRecognitionRequest req = new ActivityRecognitionRequest(context, true);
+            req.mClient.connect();
+        }
+
+        public static void removeActivityUpdates(Context context) {
+            ActivityRecognitionRequest req = new ActivityRecognitionRequest(context, false);
+            req.mClient.connect();
+        }
+
+        @Override
+        public void onConnected(Bundle bundle) {
+            Log.d(LOGTAG, "ActivityRecognitionRequest.onConnected. Subscribe to updates: " + mSubscribeToUpdates);
+            if (mSubscribeToUpdates) {
+                mClient.requestActivityUpdates(ACTIVITY_DETECTION_INTERVAL, mActivityRecognitionIntent);
+            } else {
+                mClient.removeActivityUpdates(mActivityRecognitionIntent);
+            }
+            mClient.disconnect();
+        }
+
+        @Override
+        public void onDisconnected() {
+            Log.d(LOGTAG, "ActivityRecognitionRequest.onDisconnected");
+        }
+
+        @Override
+        public void onConnectionFailed(ConnectionResult connectionResult) {
+            Log.d(LOGTAG, "ActivityRecognitionRequest.onConnectionFailed");
+        }
     }
 }

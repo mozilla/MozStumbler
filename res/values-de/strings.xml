@@ -4,9 +4,12 @@
     <string name="app_name">MozStumbler</string>
     <string name="action_about">Über MozStumbler</string>
     <string name="action_preferences">Einstellungen</string>
+    <string name="action_exit">Schliessen</string>
+    
     <string name="view_leaderboard">Zeige Rangliste</string>
     <string name="view_map">Teste Mozillas Ortungsdienst</string>
     <string name="service_name">Mozilla Stumbler</string>
+    <string name="activity_recognition_service">Mozilla Stumbler Aktivitätenerkennung Intent Service</string>
     <string name="wifi_access_points">Wi-Fi Zugangspunkte gescannt: %1$d</string>
     <string name="visible_wifi_access_points">Wi-Fi Zugangspunkte sichtbar: %1$d</string>
     <string name="gps_satellites">GPS Satelliten sichtbar: %1$d</string>
@@ -19,6 +22,9 @@
     <string name="enter_nickname">Setze Nickname (optional)</string>
     <string name="enter_nickname_title">Nickname: </string>
     <string name="enter_nickname_longtext">Dein Nickname wird in der Rangliste erscheinen</string>
+
+    <string name="power_saving_mode">Energiesparmodus</string>
+    <string name="power_saving_mode_longtext">Scannt nur wenn Bewegungen erkannt werden</string>
 
     <string name="update_title">MozStumbler Aktualisierung herunterladen?</string>
     <string name="update_message">Installierte Version: %1$s\nLAktuellste Version: %2$s</string>
@@ -35,4 +41,11 @@
     <string name="about_mapbox">Mehr über unseren Kartenanbieter…</string>
     <string name="about_more">Mehr…</string>
 
+    <string name="detected_activity">Erkannte Aktivität: %1$s</string>
+    <string name="detected_activity_in_vehicle">In Bewegung (Fahrzeug)</string>
+    <string name="detected_activity_on_bicycle">In Bewegung (Fahrrad)</string>
+    <string name="detected_activity_on_foot">In Bewegung (zu Fuss)</string>
+    <string name="detected_activity_still">Stillstehend</string>
+    <string name="detected_activity_tilting">Gekippt</string>
+    <string name="detected_activity_unknown">Unbekannt</string>
 </resources>

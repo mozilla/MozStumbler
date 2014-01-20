@@ -18,10 +18,19 @@
         </ProgressBar>
 
        <TextView
+           android:id="@+id/detected_activity"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:layout_alignParentLeft="true"
+           android:text="@string/detected_activity"
+           android:textAppearance="?android:attr/textAppearanceSmall" />
+
+       <TextView
            android:id="@+id/gps_satellites"
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"
            android:layout_alignParentLeft="true"
+           android:layout_below="@+id/detected_activity"
            android:text="@string/gps_satellites"
            android:textAppearance="?android:attr/textAppearanceSmall" />
 

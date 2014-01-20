@@ -48,6 +48,7 @@ public final class ScannerService extends Service {
     private BroadcastReceiver   mBatteryLowReceiver;
     private BroadcastReceiver   mActivityRecognitionReceiver;
     private ActivityRecognitionClient mActivityRecognitionClient;
+    private int                 mDetectedActivity = DetectedActivity.UNKNOWN;
 
     private final ScannerServiceInterface.Stub mBinder = new ScannerServiceInterface.Stub() {
         @Override
@@ -144,6 +145,29 @@ public final class ScannerService extends Service {
         public long getReportsSent () throws RemoteException {
             return mReporter.getReportsSent();
         }
+
+        @Override
+        public String getDetectedActivity() throws RemoteException {
+            return getResources().getString(getStringIdForDetectedActivity());
+        }
+
+        private int getStringIdForDetectedActivity() {
+            switch (mDetectedActivity) {
+                case DetectedActivity.IN_VEHICLE:
+                    return R.string.detected_activity_in_vehicle;
+                case DetectedActivity.ON_BICYCLE:
+                    return R.string.detected_activity_on_bicycle;
+                case DetectedActivity.ON_FOOT:
+                    return R.string.detected_activity_on_foot;
+                case DetectedActivity.TILTING:
+                    return R.string.detected_activity_tilting;
+                case DetectedActivity.STILL:
+                    return R.string.detected_activity_still;
+                default:
+                case DetectedActivity.UNKNOWN:
+                    return R.string.detected_activity_unknown;
+            }
+        }
     };
 
     private final class LooperThread extends Thread {
@@ -234,27 +258,47 @@ public final class ScannerService extends Service {
         mActivityRecognitionReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                int activityType = intent.getIntExtra("activity_type", 0);
+                int activityType = intent.getIntExtra("activity_type", DetectedActivity.UNKNOWN);
                 int confidence = intent.getIntExtra("confidence", -1);
-                long time = intent.getLongExtra("time", 0);
 
                 if (confidence < 50) {
                     return;
                 }
 
-                boolean active =
-                  activityType == DetectedActivity.IN_VEHICLE ||
-                  activityType == DetectedActivity.ON_BICYCLE ||
-                  activityType == DetectedActivity.ON_FOOT;
-
                 try {
-                    if (active) {
-                        mBinder.startScanning();
-                    } else {
-                        mBinder.stopScanning();
+                    switch (activityType) {
+                        case DetectedActivity.IN_VEHICLE:
+                        case DetectedActivity.ON_BICYCLE:
+                        case DetectedActivity.ON_FOOT:
+                            mBinder.startScanning();
+                            break;
+
+                        case DetectedActivity.TILTING:
+                            // Tilting is a hint that the user is changing activity.
+                            break;
+
+                        case DetectedActivity.STILL:
+                            mBinder.stopScanning();
+                            break;
+
+                        case DetectedActivity.UNKNOWN:
+                            break;
+
+                        default:
+                            Log.e(LOGTAG, "", new IllegalArgumentException("Unknown activity type: " + activityType));
+                            break;
                     }
                 } catch (RemoteException e) {
                     Log.e(LOGTAG, "", e);
+                }
+
+                if (mDetectedActivity != activityType) {
+                    mDetectedActivity = activityType;
+
+                    // Update UI
+                    Intent i = new Intent(ScannerService.MESSAGE_TOPIC);
+                    i.putExtra(Intent.EXTRA_SUBJECT, "Scanner");
+                    sendBroadcast(i);
                 }
             }
         };

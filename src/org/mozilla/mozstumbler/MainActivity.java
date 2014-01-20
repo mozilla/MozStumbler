@@ -213,13 +213,8 @@ public final class MainActivity extends Activity {
         }
 
         Log.d(LOGTAG, "Updating UI");
-        boolean scanning = false;
-        try {
-            scanning = mConnectionRemote.isScanning();
-        } catch (RemoteException e) {
-            Log.e(LOGTAG, "", e);
-        }
 
+        boolean scanning = false;
         int locationsScanned = 0;
         double latitude = 0;
         double longitude = 0;
@@ -227,7 +222,10 @@ public final class MainActivity extends Activity {
         int visibleAPs = 0;
         long lastUploadTime = 0;
         long reportsSent = 0;
+        String detectedActivity = null;
+
         try {
+            scanning = mConnectionRemote.isScanning();
             locationsScanned = mConnectionRemote.getLocationCount();
             latitude = mConnectionRemote.getLatitude();
             longitude = mConnectionRemote.getLongitude();
@@ -235,6 +233,7 @@ public final class MainActivity extends Activity {
             visibleAPs = mConnectionRemote.getVisibleAPCount();
             lastUploadTime = mConnectionRemote.getLastUploadTime();
             reportsSent = mConnectionRemote.getReportsSent();
+            detectedActivity = mConnectionRemote.getDetectedActivity();
         } catch (RemoteException e) {
             Log.e(LOGTAG, "", e);
         }
@@ -256,6 +255,7 @@ public final class MainActivity extends Activity {
                                     ? formatLocation(latitude, longitude)
                                     : "-";
 
+        formatTextView(R.id.detected_activity, R.string.detected_activity, detectedActivity);
         formatTextView(R.id.gps_satellites, R.string.gps_satellites, mGpsFixes);
         formatTextView(R.id.last_location, R.string.last_location, lastLocationString);
         formatTextView(R.id.visible_wifi_access_points, R.string.visible_wifi_access_points, visibleAPs);

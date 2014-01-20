@@ -42,4 +42,12 @@
     <string name="about_mapbox">Learn more about our mapping provider…</string>
     <string name="about_more">More…</string>
 
+    <string name="detected_activity">Detected Activity: %1$s</string>
+    <string name="detected_activity_in_vehicle">Moving (in vehicle)</string>
+    <string name="detected_activity_on_bicycle">Moving (on bicycle)</string>
+    <string name="detected_activity_on_foot">Moving (on foot)</string>
+    <string name="detected_activity_still">Still</string>
+    <string name="detected_activity_tilting">Tilting</string>
+    <string name="detected_activity_unknown">Unknown</string>
+
 </resources>

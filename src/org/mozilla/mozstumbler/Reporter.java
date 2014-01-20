@@ -220,22 +220,30 @@ final class Reporter extends BroadcastReceiver {
                         int code = urlConnection.getResponseCode();
                         if (code >= 200 && code <= 299) {
                             mReportsSent.addAndGet(reports.length());
+                            mLastUploadTime.set(System.currentTimeMillis());
+                            sendUpdateIntent();
+                            successfulUpload = true;
                         }
                         Log.e(LOGTAG, "urlConnection returned " + code);
 
-                        InputStream in = new BufferedInputStream(urlConnection.getInputStream());
-                        BufferedReader r = new BufferedReader(new InputStreamReader(in));
-                        StringBuilder total = new StringBuilder(in.available());
-                        String line;
-                        while ((line = r.readLine()) != null) {
-                            total.append(line);
+                        BufferedReader r = null;
+                        try {
+                            InputStream in = new BufferedInputStream(urlConnection.getInputStream());
+                            r = new BufferedReader(new InputStreamReader(in));
+                            StringBuilder total = new StringBuilder(in.available());
+                            String line;
+                            while ((line = r.readLine()) != null) {
+                                total.append(line);
+                            }
+                            Log.d(LOGTAG, "response was: \n" + total + "\n");
+                        } catch (Exception e) {
+                            Log.e(LOGTAG, "", e);
+                        } finally {
+                            if (r != null) {
+                                r.close();
+                                r = null;
+                            }
                         }
-                        r.close();
-
-                        mLastUploadTime.set(System.currentTimeMillis());
-                        sendUpdateIntent();
-                        successfulUpload = true;
-                        Log.d(LOGTAG, "response was: \n" + total + "\n");
                     } catch (JSONException jsonex) {
                         Log.e(LOGTAG, "error wrapping data as a batch", jsonex);
                     } catch (Exception ex) {

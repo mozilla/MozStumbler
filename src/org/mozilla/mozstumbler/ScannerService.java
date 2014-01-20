@@ -100,8 +100,7 @@ public final class ScannerService extends Service {
                     AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
                     alarm.cancel(mWakeIntent);
 
-                    NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-                    nm.cancel(NOTIFICATION_ID);
+                    cancelNotification();
                     stopForeground(true);
 
                     mScanner.stopScanning();
@@ -333,9 +332,7 @@ public final class ScannerService extends Service {
         mReporter = null; 
 
         stopActivityTracking();
-
-        NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        nm.cancel(NOTIFICATION_ID);
+        cancelNotification();
     }
 
     private void postNotification(final CharSequence title, final CharSequence text) {
@@ -352,6 +349,11 @@ public final class ScannerService extends Service {
                 startForeground(NOTIFICATION_ID, n);
             }
         });
+    }
+
+    private void cancelNotification() {
+        NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        nm.cancel(NOTIFICATION_ID);
     }
 
     @Override

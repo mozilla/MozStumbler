@@ -4,9 +4,12 @@
     <string name="app_name">MozStumbler</string>
     <string name="action_about">Acerca de MozStumbler</string>
     <string name="action_preferences">Configuración</string>
+    <string name="action_exit">Salir</string>
+
     <string name="view_leaderboard">Ver tabla de posiciones</string>
     <string name="view_map">Probar servicio de ubicación de Mozilla</string>
     <string name="service_name">Mozilla Stumbler</string>
+    <string name="activity_recognition_service">Servicio de reconocimiento de actividad de Mozilla Stumbler</string>
     <string name="wifi_access_points">Puntos de Acceso Wi-Fi escaneados: %1$d</string>
     <string name="visible_wifi_access_points">Puntos de Acceso Wi-Fi visibles: %1$d</string>
     <string name="gps_satellites">Satélites GPS visibles: %1$d</string>
@@ -19,6 +22,9 @@
     <string name="enter_nickname">Ingresa tu apodo (opcional)</string>
     <string name="enter_nickname_title">Apodo: </string>
     <string name="enter_nickname_longtext">Tu apodo aparecerá en la tabla de posiciones</string>
+
+    <string name="power_saving_mode">Modo ahorro de bateria</string>
+    <string name="power_saving_mode_longtext">Cuando está activado, el escaneo solo ocurrirá cuando estés en movimiento.</string>
 
     <string name="update_title">¿Descargar la actualización de MozStumbler?</string>
     <string name="update_message">Versión instalada: %1$s\nÚltima versión: %2$s</string>
@@ -34,5 +40,13 @@
     <string name="about_version">Versión %1$s</string>
     <string name="about_mapbox">Aprenda más acerca de nuestro proveedor de cartografía…</string>
     <string name="about_more">Más…</string>
+
+    <string name="detected_activity">Actividad detectada: %1$s</string>
+    <string name="detected_activity_in_vehicle">Moviéndose (en vehículo)</string>
+    <string name="detected_activity_on_bicycle">Moviéndose (en bicicleta)</string>
+    <string name="detected_activity_on_foot">Moviéndose (a pie)</string>
+    <string name="detected_activity_still">Quieto</string>
+    <string name="detected_activity_tilting">Inclinado</string>
+    <string name="detected_activity_unknown">Desconocido</string>
 
 </resources>

@@ -220,6 +220,8 @@ public final class MainActivity extends Activity {
         double longitude = 0;
         int APs = 0;
         int visibleAPs = 0;
+        int cellInfoScanned = 0;
+        int currentCellInfo = 0;
         long lastUploadTime = 0;
         long reportsSent = 0;
         String detectedActivity = null;
@@ -231,6 +233,8 @@ public final class MainActivity extends Activity {
             longitude = mConnectionRemote.getLongitude();
             APs = mConnectionRemote.getAPCount();
             visibleAPs = mConnectionRemote.getVisibleAPCount();
+            cellInfoScanned = mConnectionRemote.getCellInfoCount();
+            currentCellInfo = mConnectionRemote.getCurrentCellInfoCount();
             lastUploadTime = mConnectionRemote.getLastUploadTime();
             reportsSent = mConnectionRemote.getReportsSent();
             detectedActivity = mConnectionRemote.getDetectedActivity();
@@ -260,6 +264,8 @@ public final class MainActivity extends Activity {
         formatTextView(R.id.last_location, R.string.last_location, lastLocationString);
         formatTextView(R.id.visible_wifi_access_points, R.string.visible_wifi_access_points, visibleAPs);
         formatTextView(R.id.wifi_access_points, R.string.wifi_access_points, APs);
+        formatTextView(R.id.current_cell_info, R.string.current_cell_info, currentCellInfo);
+        formatTextView(R.id.cell_info_scanned, R.string.cell_info_scanned, cellInfoScanned);
         formatTextView(R.id.locations_scanned, R.string.locations_scanned, locationsScanned);
         formatTextView(R.id.last_upload_time, R.string.last_upload_time, lastUploadTimeString);
         formatTextView(R.id.reports_sent, R.string.reports_sent, reportsSent);

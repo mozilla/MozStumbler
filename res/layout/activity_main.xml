@@ -53,11 +53,29 @@
            android:textAppearance="?android:attr/textAppearanceSmall" />
 
        <TextView
-           android:id="@+id/visible_wifi_access_points"
+           android:id="@+id/current_cell_info"
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"
            android:layout_alignParentLeft="true"
            android:layout_below="@+id/locations_scanned"
+           android:text="@string/current_cell_info"
+           android:textAppearance="?android:attr/textAppearanceSmall" />
+
+       <TextView
+           android:id="@+id/cell_info_scanned"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:layout_alignParentLeft="true"
+           android:layout_below="@+id/current_cell_info"
+           android:text="@string/cell_info_scanned"
+           android:textAppearance="?android:attr/textAppearanceSmall" />
+
+       <TextView
+           android:id="@+id/visible_wifi_access_points"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:layout_alignParentLeft="true"
+           android:layout_below="@+id/cell_info_scanned"
            android:text="@string/visible_wifi_access_points"
            android:textAppearance="?android:attr/textAppearanceSmall" />
 

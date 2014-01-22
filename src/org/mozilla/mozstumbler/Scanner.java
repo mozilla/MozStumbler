@@ -75,6 +75,14 @@ class Scanner {
      return mWifiScanner.getVisibleAPCount();
   }
 
+  int getCellInfoCount() {
+     return mCellScanner.getCellInfoCount();
+  }
+
+  int getCurrentCellInfoCount() {
+     return mCellScanner.getCurrentCellInfoCount();
+  }
+
   int getLocationCount() {
      return mGPSScanner.getLocationCount();
   }

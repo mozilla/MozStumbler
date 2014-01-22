@@ -135,6 +135,16 @@ public final class ScannerService extends Service {
         }
 
         @Override
+        public int getCellInfoCount() throws RemoteException {
+            return mScanner.getCellInfoCount();
+        }
+
+        @Override
+        public int getCurrentCellInfoCount() throws RemoteException {
+            return mScanner.getCurrentCellInfoCount();
+        }
+
+        @Override
         public long getLastUploadTime() throws RemoteException {
             return mReporter.getLastUploadTime();
         }

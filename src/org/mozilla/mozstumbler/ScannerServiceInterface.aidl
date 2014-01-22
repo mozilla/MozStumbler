@@ -9,6 +9,8 @@ interface ScannerServiceInterface {
     double getLongitude();
     int getAPCount();
     int getVisibleAPCount();
+    int getCellInfoCount();
+    int getCurrentCellInfoCount();
     long getLastUploadTime();
     long getReportsSent();
     String getDetectedActivity();

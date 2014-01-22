@@ -281,4 +281,39 @@ public class CellInfo implements Parcelable {
                 return null;
         }
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == this)
+            return true;
+        if (!(o instanceof CellInfo))
+            return false;
+        CellInfo ci = (CellInfo) o;
+        return mRadio.equals(ci.mRadio)
+               && mCellRadio.equals(ci.mCellRadio)
+               && mMcc == ci.mMcc
+               && mMnc == ci.mMnc
+               && mCid == ci.mCid
+               && mLac == ci.mLac
+               && mSignal == ci.mSignal
+               && mAsu == ci.mAsu
+               && mTa == ci.mTa
+               && mPsc == ci.mPsc;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = 17;
+        result = 31 * result + mRadio.hashCode();
+        result = 31 * result + mCellRadio.hashCode();
+        result = 31 * result + mMcc;
+        result = 31 * result + mMnc;
+        result = 31 * result + mCid;
+        result = 31 * result + mLac;
+        result = 31 * result + mSignal;
+        result = 31 * result + mAsu;
+        result = 31 * result + mTa;
+        result = 31 * result + mPsc;
+        return result;
+    }
 }

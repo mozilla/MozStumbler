@@ -4,13 +4,17 @@
     <string name="app_name">MozStumbler</string>
     <string name="action_about">À propos de MozStumbler</string>
     <string name="action_preferences">Paramètres</string>
+    <string name="action_exit">Quitter</string>
+    
     <string name="view_leaderboard">Voir le classement</string>
     <string name="view_map">Tester le service de géolocalisation de Mozilla</string>
     <string name="service_name">Mozilla Stumbler</string>
+    <string name="activity_recognition_service">Service de reconnaissance d'activité de Mozilla Stumbler</string>
     <string name="wifi_access_points">Points d\'accès Wi-Fi détectés : %1$d</string>
     <string name="visible_wifi_access_points">Points d\'accès Wi-Fi visibles : %1$d</string>
     <string name="gps_satellites">Satellites GPS visibles : %1$d</string>
     <string name="last_location">Dernier emplacement : %1$s</string>
+    <string name="coordinate">(%1$.4f, %2$.4f)</string>
     <string name="locations_scanned">Emplacements enregistrés : %1$d</string>
     <string name="last_upload_time">Date du dernier envoi : %1$s</string>
     <string name="reports_sent">Rapports envoyés : %1$d</string>
@@ -19,6 +23,9 @@
     <string name="enter_nickname">Saisir un pseudo (optionnel)</string>
     <string name="enter_nickname_title">Pseudo : </string>
     <string name="enter_nickname_longtext">Votre pseudo apparaîtra dans le classement</string>
+
+    <string name="power_saving_mode">Mode économie d\'énergie</string>
+    <string name="power_saving_mode_longtext">Si activé, l'analyse ne sera effectée que lors de déplacements</string>
 
     <string name="update_title">Télécharger la mise à jour de MozStumbler ?</string>
     <string name="update_message">Version installée : %1$s\nDernière version : %2$s</string>
@@ -34,5 +41,13 @@
     <string name="about_version">Version %1$s</string>
     <string name="about_mapbox">En savoir plus sur notre fournisseur cartographique…</string>
     <string name="about_more">Plus…</string>
+
+    <string name="detected_activity">Activité détectée : %1$s</string>
+    <string name="detected_activity_in_vehicle">Déplacement (en véhicle)</string>
+    <string name="detected_activity_on_bicycle">Déplacement (à vélo)</string>
+    <string name="detected_activity_on_foot">Déplacement (à pied)</string>
+    <string name="detected_activity_still">Immobile</string>
+    <string name="detected_activity_tilting">Changeante</string>
+    <string name="detected_activity_unknown">Inconnue</string>
 
 </resources>

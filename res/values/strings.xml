@@ -12,8 +12,8 @@
     <string name="activity_recognition_service">Mozilla Stumbler Activity Recognition Intent Service</string>
     <string name="wifi_access_points">Wi-Fi Access Points Scanned: %1$d</string>
     <string name="visible_wifi_access_points">Wi-Fi Access Points Visible: %1$d</string>
-    <string name="cell_info_scanned">Cell Info Scanned: %1$d</string>
-    <string name="current_cell_info">Current Cell Info: %1$d</string>
+    <string name="cell_info_scanned">Cells Scanned: %1$d</string>
+    <string name="current_cell_info">Cells: %1$d</string>
     <string name="gps_satellites">GPS Satellites Visible: %1$d</string>
     <string name="last_location">Last Location: %1$s</string>
     <string name="coordinate">(%1$.4f, %2$.4f)</string>

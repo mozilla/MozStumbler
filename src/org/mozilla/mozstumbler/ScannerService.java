@@ -21,6 +21,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.RemoteException;
+import android.support.v4.app.NotificationCompat;
 import android.text.format.DateFormat;
 import android.util.Log;
 
@@ -67,7 +68,7 @@ public final class ScannerService extends Service {
                     try {
                         CharSequence title = getResources().getText(R.string.service_name);
                         CharSequence text = getResources().getText(R.string.service_scanning);
-                        postNotification(title, text, Notification.FLAG_NO_CLEAR | Notification.FLAG_ONGOING_EVENT);
+                        postNotification(title, text);
 
                         mScanner.startScanning();
 
@@ -344,7 +345,7 @@ public final class ScannerService extends Service {
         cancelNotification();
     }
 
-    private void postNotification(final CharSequence title, final CharSequence text, final int flags) {
+    private void postNotification(final CharSequence title, final CharSequence text) {
         mLooper.post(new Runnable() {
             @Override
             public void run() {
@@ -354,7 +355,7 @@ public final class ScannerService extends Service {
                 PendingIntent contentIntent = PendingIntent.getActivity(ctx, NOTIFICATION_ID, notificationIntent,
                         PendingIntent.FLAG_CANCEL_CURRENT);
                 int icon = R.drawable.ic_status_scanning;
-                Notification n = buildNotification(ctx, icon, title, text, contentIntent, flags);
+                Notification n = buildNotification(ctx, icon, title, text, contentIntent);
                 startForeground(NOTIFICATION_ID, n);
             }
         });
@@ -380,10 +381,14 @@ public final class ScannerService extends Service {
     private static Notification buildNotification(Context context, int icon,
                                                   CharSequence contentTitle,
                                                   CharSequence contentText,
-                                                  PendingIntent contentIntent, int flags) {
-        Notification n = new Notification(icon, contentTitle, 0);
-        n.setLatestEventInfo(context, contentTitle, contentText, contentIntent);
-        n.flags |= flags;
-        return n;
+                                                  PendingIntent contentIntent) {
+        return new NotificationCompat.Builder(context)
+                                     .setSmallIcon(icon)
+                                     .setContentTitle(contentTitle)
+                                     .setContentText(contentText)
+                                     .setContentIntent(contentIntent)
+                                     .setOngoing(true)
+                                     .setPriority(NotificationCompat.PRIORITY_LOW)
+                                     .build();
     }
 }

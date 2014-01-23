@@ -5,7 +5,8 @@
     <string name="action_about">About MozStumbler</string>
     <string name="action_preferences">Settings</string>
     <string name="action_exit">Quit</string>
-
+    <string name="start_scanning">Start Scanning</string>
+    <string name="stop_scanning">Stop Scanning</string>
     <string name="view_leaderboard">View Leaderboard</string>
     <string name="view_map">Test Mozilla Location Service</string>
     <string name="service_name">Mozilla Stumbler</string>

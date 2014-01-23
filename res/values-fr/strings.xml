@@ -5,7 +5,8 @@
     <string name="action_about">À propos de MozStumbler</string>
     <string name="action_preferences">Paramètres</string>
     <string name="action_exit">Quitter</string>
-    
+    <string name="start_scanning">Démarrer l\'analyse</string>
+    <string name="stop_scanning">Arrêter l\'analyse</string>
     <string name="view_leaderboard">Voir le classement</string>
     <string name="view_map">Tester le service de géolocalisation de Mozilla</string>
     <string name="service_name">Mozilla Stumbler</string>

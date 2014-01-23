@@ -215,8 +215,20 @@ public final class MainActivity extends Activity {
         }
 
         Log.d(LOGTAG, "Updating UI");
-
         boolean scanning = false;
+        try {
+            scanning = mConnectionRemote.isScanning();
+        } catch (RemoteException e) {
+            Log.e(LOGTAG, "", e);
+        }
+
+        Button scanningBtn = (Button) findViewById(R.id.toggle_scanning);
+        if (scanning) {
+            scanningBtn.setText(R.string.stop_scanning);
+        } else {
+            scanningBtn.setText(R.string.start_scanning);
+        }
+
         int locationsScanned = 0;
         double latitude = 0;
         double longitude = 0;
@@ -269,10 +281,13 @@ public final class MainActivity extends Activity {
         boolean scanning = mConnectionRemote.isScanning();
         Log.d(LOGTAG, "Connection remote return: isScanning() = " + scanning);
 
+        Button b = (Button) v;
         if (scanning) {
             mConnectionRemote.stopScanning();
+            b.setText(R.string.start_scanning);
         } else {
             mConnectionRemote.startScanning();
+            b.setText(R.string.stop_scanning);
         }
     }
 

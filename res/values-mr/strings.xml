@@ -5,7 +5,8 @@
     <string name="action_about">मोझस्टंबलर बद्दल</string>
     <string name="action_preferences">मांडणी पर्याय</string>
     <string name="action_exit">बाहेर पडा</string>
-
+    <string name="start_scanning">सर्वेक्षण सुरु करा</string>
+    <string name="stop_scanning">सर्वेक्षण बंद करा</string>
     <string name="view_leaderboard">अग्रेसर वापरकर्ता फलक बघा</string>
     <string name="view_map">मोझिला स्थळसेवा तपासा</string>
     <string name="service_name">मोझिला स्टंबलर</string>
@@ -23,7 +24,7 @@
     <string name="enter_nickname">टोपणनाव टाका (ऐच्छिक)</string>
     <string name="enter_nickname_title">टोपणनाव: </string>
     <string name="enter_nickname_longtext">तुमचे टोपणनाव अग्रेसर वापरकर्ता फलकावर दिसेल</string>
-    
+
     <string name="power_saving_mode">उर्जा बचत पद्धत</string>
     <string name="power_saving_mode_longtext">सक्षम केलेले असल्यास फक्त हालचाल झाल्यानंतरच स्टंबलींग चालू राहील</string>
 

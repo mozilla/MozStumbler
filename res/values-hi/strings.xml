@@ -5,7 +5,8 @@
     <string name="action_about">मोज़स्टम्बलर के बारे में</string>
     <string name="action_preferences">व्यवस्था पर्याय</string>
     <string name="action_exit">बंद करे</string>
-    
+    <string name="start_scanning">क्रमवीक्षण शुरू करें</string>
+    <string name="stop_scanning">क्रमवीक्षण बंद करें</string>
     <string name="view_leaderboard">अग्रणी उपयोगकर्ता फलक देखें</string>
     <string name="view_map">मोज़िला स्थानसेवा जांचे</string>
     <string name="service_name">मोज़िला स्टम्बलर</string>
@@ -23,7 +24,7 @@
     <string name="enter_nickname">उपनाम डालें (वैकल्पिक)</string>
     <string name="enter_nickname_title">उपनाम: </string>
     <string name="enter_nickname_longtext">आपका उपनाम अग्रणी उपयोगकर्ता फलक पर दिखाया जायेगा</string>
-    
+
     <string name="power_saving_mode">ऊर्जा बचत रीति</string>
     <string name="power_saving_mode_longtext">सक्षम होनेपर सिर्फ गतिमान होनेपर स्टम्बलिंग चालू रहेगा</string>
 

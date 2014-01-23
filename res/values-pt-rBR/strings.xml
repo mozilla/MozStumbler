@@ -4,6 +4,8 @@
     <string name="app_name">MozStumbler</string>
     <string name="action_about">Sobre o MozStumbler</string>
     <string name="action_preferences">Configurações</string>
+    <string name="start_scanning">Começar a escanear</string>
+    <string name="stop_scanning">Parar de escanear</string>
     <string name="view_leaderboard">Ver ranking</string>
     <string name="view_map">Testar serviço de localização do Mozilla</string>
     <string name="service_name">Mozilla Stumbler</string>

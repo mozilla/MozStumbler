@@ -4,6 +4,8 @@
     <string name="app_name">MozStumbler</string>
     <string name="action_about">О MozStumbler</string>
     <string name="action_preferences">Настройки</string>
+    <string name="start_scanning">Начать сканирование</string>
+    <string name="stop_scanning">Остановить сканирование</string>
     <string name="view_leaderboard">Открыть таблицу лидеров</string>
     <string name="view_map">Открыть карту</string>
     <string name="service_name">Mozilla Stumbler</string>

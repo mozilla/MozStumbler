@@ -19,7 +19,6 @@ import android.util.Log;
 public class PreferencesScreen extends PreferenceActivity {
 
     private EditTextPreference mNicknamePreference;
-    private Preference mPowerSavingPreference;
     private Prefs mPrefs;
 
     @SuppressWarnings("deprecation")
@@ -32,11 +31,9 @@ public class PreferencesScreen extends PreferenceActivity {
         }
         addPreferencesFromResource(R.xml.preferences);
         mNicknamePreference = (EditTextPreference) getPreferenceManager().findPreference("nickname");
-        mPowerSavingPreference = getPreferenceManager().findPreference("power_saving_mode");
         mPrefs = new Prefs(this);
 
         setNicknamePreferenceTitle(mPrefs.getNickname());
-        setPowerSavingModeState(mPrefs.getPowerSavingMode());
 
         setPreferenceListener();
     }
@@ -49,15 +46,6 @@ public class PreferencesScreen extends PreferenceActivity {
                 return true;
             }
         });
-
-        mPowerSavingPreference.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
-            @Override
-            public boolean onPreferenceChange(Preference preference, Object newValue) {
-                setPowerSavingModeState((Boolean)newValue);
-                return true;
-            }
-        });
-
     }
 
     private void setNicknamePreferenceTitle(String nickname) {
@@ -66,9 +54,5 @@ public class PreferencesScreen extends PreferenceActivity {
         } else {
             mNicknamePreference.setTitle(R.string.enter_nickname);
         }
-    }
-
-    private void setPowerSavingModeState(Boolean state) {
-      Log.d("PreferencesScreen", "setPowerSavingModeState : " + state);
     }
 }

@@ -9,12 +9,13 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 final class DateTimeUtils {
-    private static final DateFormat mISO8601Format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'", Locale.US);
+    private static final DateFormat sLocaleFormat = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);
+    private static final DateFormat sISO8601Format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'", Locale.US);
 
     static final long MILLISECONDS_PER_DAY = 86400000;  // milliseconds/day
 
     static {
-        mISO8601Format.setTimeZone(TimeZone.getTimeZone("UTC"));
+        sISO8601Format.setTimeZone(TimeZone.getTimeZone("UTC"));
     }
 
     private DateTimeUtils() {
@@ -22,7 +23,7 @@ final class DateTimeUtils {
 
     @SuppressLint("SimpleDateFormat")
     static String formatDate(Date date) {
-        return mISO8601Format.format(date);
+        return sISO8601Format.format(date);
     }
 
     static String formatTime(long time) {
@@ -30,10 +31,10 @@ final class DateTimeUtils {
     }
 
     static String formatTimeForLocale(long time) {
-        return DateFormat.getDateTimeInstance().format(time);
+        return sLocaleFormat.format(time);
     }
 
     static String formatCurrentTime() {
-        return formatTime(System.currentTimeMillis());
+        return formatTimeForLocale(System.currentTimeMillis());
     }
 }

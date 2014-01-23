@@ -14,7 +14,7 @@
     <string name="visible_wifi_access_points">可視 Wi-Fi 基地台數量: %1$d</string>
     <string name="gps_satellites">可視 GPS 衛星數量: %1$d</string>
     <string name="last_location">最後定位位置: %1$s</string>
-    <string name="coordinate">(%1$.4f, %2$.4f)</string>
+    <string name="coordinate">%1$.4f, %2$.4f</string>
     <string name="locations_scanned">已掃描位置數量: %1$d</string>
     <string name="last_upload_time">前次資料上傳時間: %1$s</string>
     <string name="reports_sent">已傳送報告數量: %1$d</string>

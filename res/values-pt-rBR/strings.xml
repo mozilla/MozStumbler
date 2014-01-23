@@ -11,7 +11,7 @@
     <string name="visible_wifi_access_points">Pontos de acesso Wi-Fi visíveis: %1$d</string>
     <string name="gps_satellites">Satélites GPS visíveis: %1$d</string>
     <string name="last_location">Última localização: %1$s</string>
-    <string name="coordinate">(%1$.4f, %2$.4f)</string>
+    <string name="coordinate">%1$.4f, %2$.4f</string>
     <string name="locations_scanned">Localizações escaneadas: %1$d</string>
     <string name="last_upload_time">Horário do último upload: %1$s</string>
     <string name="reports_sent">Relatórios enviados: %1$d</string>

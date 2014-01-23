@@ -4,6 +4,8 @@
     <string name="app_name">MozStumbler</string>
     <string name="action_about">O Aplikaci</string>
     <string name="action_preferences">Nastavení</string>
+    <string name="start_scanning">Spusť vyhledávání</string>
+    <string name="stop_scanning">Zastav vyhledávání</string>
     <string name="view_leaderboard">Zobraz žebříček</string>
     <string name="view_map">Vyzkoušet zjišťování pozice</string>
     <string name="service_name">Mozilla Stumbler</string>

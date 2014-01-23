@@ -4,6 +4,8 @@
     <string name="app_name">MozStumbler</string>
     <string name="action_about">על אודות MozStumbler</string>
     <string name="action_preferences">הגדרות</string>
+    <string name="start_scanning">התחלת הסריקה</string>
+    <string name="stop_scanning">עצירת הסריקה</string>
     <string name="view_leaderboard">צפייה בלוח המובילים</string>
     <string name="view_map">בדיקת שירות האיכון של Mozilla</string>
     <string name="service_name">Mozilla Stumbler</string>

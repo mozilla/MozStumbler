@@ -98,6 +98,7 @@
            android:layout_alignParentRight="true"
            android:layout_below="@+id/reports_sent"
            android:onClick="onToggleScanningClicked"
+           android:text="@string/start_scanning"
            android:textAppearance="?android:attr/textAppearanceLarge" />
 
 </RelativeLayout>

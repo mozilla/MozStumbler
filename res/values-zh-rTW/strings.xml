@@ -5,7 +5,8 @@
     <string name="action_about">關於 MozStumbler</string>
     <string name="action_preferences">設定</string>
     <string name="action_exit">結束</string>
-
+    <string name="start_scanning">開始掃描</string>
+    <string name="stop_scanning">停止掃描</string>
     <string name="view_leaderboard">觀看排行榜</string>
     <string name="view_map">測試 Mozilla Location Service</string>
     <string name="service_name">Mozilla Stumbler</string>

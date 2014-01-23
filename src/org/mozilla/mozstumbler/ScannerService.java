@@ -3,7 +3,6 @@ package org.mozilla.mozstumbler;
 import java.util.Calendar;
 
 import org.mozilla.mozstumbler.preferences.Prefs;
-import org.mozilla.mozstumbler.ActivityRecognitionIntentService;
 
 import android.annotation.TargetApi;
 import android.app.AlarmManager;
@@ -25,30 +24,17 @@ import android.support.v4.app.NotificationCompat;
 import android.text.format.DateFormat;
 import android.util.Log;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesClient.ConnectionCallbacks;
-import com.google.android.gms.common.GooglePlayServicesClient.OnConnectionFailedListener;
-import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.google.android.gms.location.ActivityRecognitionClient;
-import com.google.android.gms.location.ActivityRecognitionResult;
-import com.google.android.gms.location.DetectedActivity;
-
 public final class ScannerService extends Service {
     public static final String  MESSAGE_TOPIC   = "org.mozilla.mozstumbler.serviceMessage";
 
     private static final String LOGTAG          = ScannerService.class.getName();
     private static final int    NOTIFICATION_ID = 1;
     private static final int    WAKE_TIMEOUT    = 5 * 1000;
-    private static final int    ACTIVITY_DETECTION_INTERVAL = 30 * 1000;
     private Scanner             mScanner;
     private Reporter            mReporter;
     private LooperThread        mLooper;
     private PendingIntent       mWakeIntent;
-    private PendingIntent       mActivityRecognitionPendingIntent;
     private BroadcastReceiver   mBatteryLowReceiver;
-    private BroadcastReceiver   mActivityRecognitionReceiver;
-    private ActivityRecognitionClient mActivityRecognitionClient;
-    private int                 mDetectedActivity = DetectedActivity.UNKNOWN;
 
     private final ScannerServiceInterface.Stub mBinder = new ScannerServiceInterface.Stub() {
         @Override
@@ -154,29 +140,6 @@ public final class ScannerService extends Service {
         public long getReportsSent () throws RemoteException {
             return mReporter.getReportsSent();
         }
-
-        @Override
-        public String getDetectedActivity() throws RemoteException {
-            return getResources().getString(getStringIdForDetectedActivity());
-        }
-
-        private int getStringIdForDetectedActivity() {
-            switch (mDetectedActivity) {
-                case DetectedActivity.IN_VEHICLE:
-                    return R.string.detected_activity_in_vehicle;
-                case DetectedActivity.ON_BICYCLE:
-                    return R.string.detected_activity_on_bicycle;
-                case DetectedActivity.ON_FOOT:
-                    return R.string.detected_activity_on_foot;
-                case DetectedActivity.TILTING:
-                    return R.string.detected_activity_tilting;
-                case DetectedActivity.STILL:
-                    return R.string.detected_activity_still;
-                default:
-                case DetectedActivity.UNKNOWN:
-                    return R.string.detected_activity_unknown;
-            }
-        }
     };
 
     private final class LooperThread extends Thread {
@@ -194,54 +157,6 @@ public final class ScannerService extends Service {
                 mHandler.post(runnable);
             }
         }
-    }
-
-    private void startActivityTracking() {
-
-        int status = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
-        if (status != ConnectionResult.SUCCESS) {
-            // TODO: What should we do here?
-            Log.d(LOGTAG, "No google play services!");
-            return;
-        }
-  
-        mActivityRecognitionClient = new ActivityRecognitionClient(this, new ConnectionCallbacks() {
-
-            @Override
-            public void onConnected(Bundle bundle) {
-                Intent intent = new Intent(ScannerService.this, ActivityRecognitionIntentService.class);
-                mActivityRecognitionPendingIntent = PendingIntent.getService(ScannerService.this,
-                                                                             0,
-                                                                             intent,
-                                                                             PendingIntent.FLAG_UPDATE_CURRENT);
-
-                mActivityRecognitionClient.requestActivityUpdates(ACTIVITY_DETECTION_INTERVAL,
-                                                                  mActivityRecognitionPendingIntent);
-            }
-
-            @Override
-            public void onDisconnected() {
-                mActivityRecognitionPendingIntent = null;
-
-            }
-
-        }, new OnConnectionFailedListener() {
-                @Override
-                public void onConnectionFailed(ConnectionResult result) {
-
-                }
-        });
-
-        mActivityRecognitionClient.connect();
-    }
-
-    private void stopActivityTracking() {
-        if (mActivityRecognitionClient == null || !mActivityRecognitionClient.isConnected()) {
-            return;
-        }
-
-        mActivityRecognitionClient.removeActivityUpdates(mActivityRecognitionPendingIntent);
-        mActivityRecognitionClient.disconnect();
     }
 
     @Override
@@ -264,63 +179,11 @@ public final class ScannerService extends Service {
         };
         registerReceiver(mBatteryLowReceiver, new IntentFilter(Intent.ACTION_BATTERY_LOW));
 
-        mActivityRecognitionReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                int activityType = intent.getIntExtra("activity_type", DetectedActivity.UNKNOWN);
-                int confidence = intent.getIntExtra("confidence", -1);
-
-                if (confidence < 50) {
-                    return;
-                }
-
-                try {
-                    switch (activityType) {
-                        case DetectedActivity.IN_VEHICLE:
-                        case DetectedActivity.ON_BICYCLE:
-                        case DetectedActivity.ON_FOOT:
-                            mBinder.startScanning();
-                            break;
-
-                        case DetectedActivity.TILTING:
-                            // Tilting is a hint that the user is changing activity.
-                            break;
-
-                        case DetectedActivity.STILL:
-                            mBinder.stopScanning();
-                            break;
-
-                        case DetectedActivity.UNKNOWN:
-                            break;
-
-                        default:
-                            Log.e(LOGTAG, "", new IllegalArgumentException("Unknown activity type: " + activityType));
-                            break;
-                    }
-                } catch (RemoteException e) {
-                    Log.e(LOGTAG, "", e);
-                }
-
-                if (mDetectedActivity != activityType) {
-                    mDetectedActivity = activityType;
-
-                    // Update UI
-                    Intent i = new Intent(ScannerService.MESSAGE_TOPIC);
-                    i.putExtra(Intent.EXTRA_SUBJECT, "Scanner");
-                    sendBroadcast(i);
-                }
-            }
-        };
-        registerReceiver(mActivityRecognitionReceiver,
-                         new IntentFilter("receive_recognition"));
-
         Prefs prefs = new Prefs(this);
         mReporter = new Reporter(this, prefs);
         mScanner = new Scanner(this);
         mLooper = new LooperThread();
         mLooper.start();
-
-        startActivityTracking();
     }
 
     @Override
@@ -331,17 +194,13 @@ public final class ScannerService extends Service {
         unregisterReceiver(mBatteryLowReceiver);
         mBatteryLowReceiver = null;
 
-        unregisterReceiver(mActivityRecognitionReceiver);
-        mActivityRecognitionReceiver = null;
-
         mLooper.interrupt();
         mLooper = null;
         mScanner = null;
 
         mReporter.shutdown();
-        mReporter = null; 
+        mReporter = null;
 
-        stopActivityTracking();
         cancelNotification();
     }
 

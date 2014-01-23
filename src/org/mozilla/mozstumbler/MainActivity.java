@@ -160,6 +160,7 @@ public final class MainActivity extends Activity {
                 mConnectionRemote = ScannerServiceInterface.Stub.asInterface(binder);
                 Log.d(LOGTAG, "Service connected");
 
+                /* FIXME
                 // each time we reconnect, check to see if we're suppose to be
                 // in power saving mode.  if not, start the scanning. TODO: we
                 // shouldn't just stopScanning if we find that we are in PSM.
@@ -176,6 +177,7 @@ public final class MainActivity extends Activity {
                         Log.e(LOGTAG, "", e);
                     }
                 }
+                */
                 updateUI();
             }
 
@@ -224,7 +226,6 @@ public final class MainActivity extends Activity {
         int currentCellInfo = 0;
         long lastUploadTime = 0;
         long reportsSent = 0;
-        String detectedActivity = null;
 
         try {
             scanning = mConnectionRemote.isScanning();
@@ -237,19 +238,9 @@ public final class MainActivity extends Activity {
             currentCellInfo = mConnectionRemote.getCurrentCellInfoCount();
             lastUploadTime = mConnectionRemote.getLastUploadTime();
             reportsSent = mConnectionRemote.getReportsSent();
-            detectedActivity = mConnectionRemote.getDetectedActivity();
         } catch (RemoteException e) {
             Log.e(LOGTAG, "", e);
         }
-
-        Log.d(LOGTAG, "!!!!! we are scanning?? = " + scanning);
-        ProgressBar progress = (ProgressBar) findViewById(R.id.progressBar);
-        if (scanning) {
-            progress.setVisibility(View.VISIBLE);
-        } else {
-            progress.setVisibility(View.GONE);
-        }
-
 
         String lastUploadTimeString = (lastUploadTime > 0)
                                       ? DateTimeUtils.formatTimeForLocale(lastUploadTime)
@@ -259,7 +250,6 @@ public final class MainActivity extends Activity {
                                     ? formatLocation(latitude, longitude)
                                     : "-";
 
-        formatTextView(R.id.detected_activity, R.string.detected_activity, detectedActivity);
         formatTextView(R.id.gps_satellites, R.string.gps_satellites, mGpsFixes);
         formatTextView(R.id.last_location, R.string.last_location, lastLocationString);
         formatTextView(R.id.visible_wifi_access_points, R.string.visible_wifi_access_points, visibleAPs);
@@ -270,6 +260,22 @@ public final class MainActivity extends Activity {
         formatTextView(R.id.last_upload_time, R.string.last_upload_time, lastUploadTimeString);
         formatTextView(R.id.reports_sent, R.string.reports_sent, reportsSent);
     }
+
+    public void onToggleScanningClicked(View v) throws RemoteException {
+        if (mConnectionRemote == null) {
+            return;
+        }
+
+        boolean scanning = mConnectionRemote.isScanning();
+        Log.d(LOGTAG, "Connection remote return: isScanning() = " + scanning);
+
+        if (scanning) {
+            mConnectionRemote.stopScanning();
+        } else {
+            mConnectionRemote.startScanning();
+        }
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

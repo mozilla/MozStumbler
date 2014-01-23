@@ -56,10 +56,6 @@ public final class Prefs {
         return TextUtils.isEmpty(nickname) ? null : nickname;
     }
 
-    public boolean getPowerSavingMode() {
-        return getPrefs().getBoolean(POWER_SAVING_MODE_PREF, true);
-    }
-
     public void setReports(String json) {
         setStringPref(REPORTS_PREF, json);
     }

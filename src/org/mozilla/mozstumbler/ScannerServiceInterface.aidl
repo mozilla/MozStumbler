@@ -13,5 +13,4 @@ interface ScannerServiceInterface {
     int getCurrentCellInfoCount();
     long getLastUploadTime();
     long getReportsSent();
-    String getDetectedActivity();
 }

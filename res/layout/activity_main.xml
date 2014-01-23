@@ -23,7 +23,7 @@
            android:layout_height="wrap_content"
            android:layout_alignParentLeft="true"
            android:text="@string/detected_activity"
-           android:textAppearance="?android:attr/textAppearanceSmall" />
+           android:textAppearance="?android:attr/textAppearanceMedium" />
 
        <TextView
            android:id="@+id/gps_satellites"
@@ -32,7 +32,7 @@
            android:layout_alignParentLeft="true"
            android:layout_below="@+id/detected_activity"
            android:text="@string/gps_satellites"
-           android:textAppearance="?android:attr/textAppearanceSmall" />
+           android:textAppearance="?android:attr/textAppearanceMedium" />
 
        <TextView
            android:id="@+id/last_location"
@@ -41,7 +41,7 @@
            android:layout_alignParentLeft="true"
            android:layout_below="@+id/gps_satellites"
            android:text="@string/last_location"
-           android:textAppearance="?android:attr/textAppearanceSmall" />
+           android:textAppearance="?android:attr/textAppearanceMedium" />
 
        <TextView
            android:id="@+id/locations_scanned"
@@ -50,7 +50,7 @@
            android:layout_alignParentLeft="true"
            android:layout_below="@+id/last_location"
            android:text="@string/locations_scanned"
-           android:textAppearance="?android:attr/textAppearanceSmall" />
+           android:textAppearance="?android:attr/textAppearanceMedium" />
 
        <TextView
            android:id="@+id/cells_visible"
@@ -59,7 +59,7 @@
            android:layout_alignParentLeft="true"
            android:layout_below="@+id/locations_scanned"
            android:text="@string/cells_visible"
-           android:textAppearance="?android:attr/textAppearanceSmall" />
+           android:textAppearance="?android:attr/textAppearanceMedium" />
 
        <TextView
            android:id="@+id/cells_scanned"
@@ -68,7 +68,7 @@
            android:layout_alignParentLeft="true"
            android:layout_below="@+id/cells_visible"
            android:text="@string/cells_scanned"
-           android:textAppearance="?android:attr/textAppearanceSmall" />
+           android:textAppearance="?android:attr/textAppearanceMedium" />
 
        <TextView
            android:id="@+id/visible_wifi_access_points"
@@ -77,7 +77,7 @@
            android:layout_alignParentLeft="true"
            android:layout_below="@+id/cells_scanned"
            android:text="@string/visible_wifi_access_points"
-           android:textAppearance="?android:attr/textAppearanceSmall" />
+           android:textAppearance="?android:attr/textAppearanceMedium" />
 
        <TextView
            android:id="@+id/wifi_access_points"
@@ -86,7 +86,7 @@
            android:layout_alignParentLeft="true"
            android:layout_below="@+id/visible_wifi_access_points"
            android:text="@string/wifi_access_points"
-           android:textAppearance="?android:attr/textAppearanceSmall" />
+           android:textAppearance="?android:attr/textAppearanceMedium" />
 
        <TextView
            android:id="@+id/last_upload_time"
@@ -95,7 +95,7 @@
            android:layout_alignParentLeft="true"
            android:layout_below="@+id/wifi_access_points"
            android:text="@string/last_upload_time"
-           android:textAppearance="?android:attr/textAppearanceSmall" />
+           android:textAppearance="?android:attr/textAppearanceMedium" />
 
        <TextView
            android:id="@+id/reports_sent"
@@ -104,6 +104,6 @@
            android:layout_alignParentLeft="true"
            android:layout_below="@+id/last_upload_time"
            android:text="@string/reports_sent"
-           android:textAppearance="?android:attr/textAppearanceSmall" />
+           android:textAppearance="?android:attr/textAppearanceMedium" />
 
 </RelativeLayout>

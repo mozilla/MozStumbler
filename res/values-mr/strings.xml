@@ -14,7 +14,7 @@
     <string name="visible_wifi_access_points">दिसणारे Wi-Fi प्रवेश बिंदू:: %1$d</string>
     <string name="gps_satellites">दिसणारे GPS उपग्रह: %1$d</string>
     <string name="last_location">शेवटची जागा: %1$s</string>
-    <string name="coordinate">(%1$.4f, %2$.4f)</string>
+    <string name="coordinate">%1$.4f, %2$.4f</string>
     <string name="locations_scanned">शोधलेल्या जागा: %1$d</string>
     <string name="last_upload_time">शेवटचा अहवाल पाठवण्याची वेळ: %1$s</string>
     <string name="reports_sent">पाठवलेले अहवाल: %1$d</string>

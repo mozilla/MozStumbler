@@ -4,21 +4,27 @@
     <string name="app_name">MozStumbler</string>
     <string name="action_about">O MozStumbler</string>
     <string name="action_preferences">Ustawienia</string>
+    <string name="action_exit">Wyjdź</string>
     <string name="start_scanning">Rozpocznij skanowanie</string>
     <string name="stop_scanning">Zatrzymaj skanowanie</string>
     <string name="view_leaderboard">Zobacz ranking</string>
     <string name="view_map">Przetestuj serwis lokalizacji Mozilli</string>
     <string name="service_name">Mozilla Stumbler</string>
+    <string name="activity_recognition_service">Mozilla Stumbler Serwis Rozpoznawania Ruchu</string>
     <string name="wifi_access_points">Przeskanowane punkty dostępu Wi-Fi: %1$d</string>
+    <string name="visible_wifi_access_points">Widoczne punkty dostępu Wi-Fi: %1$d</string>
+    <string name="cells_scanned">Przeskanowane stacje sieci komórkowej: %1$d</string>
+    <string name="cells_visible">Widoczne stacje sieci komórkowej: %1$d</string>
     <string name="gps_satellites">Namierzone satelity GPS: %1$d</string>
     <string name="locations_scanned">Przeskanowane lokacje: %1$d</string>
+    <string name="last_location">Ostatnia lokalizacja: %1$s</string>
     <string name="last_upload_time">Ostatnio wysłano o: %1$s</string>
     <string name="reports_sent">Wysłane raporty: %1$d</string>
     <string name="service_scanning">Skanowanie w poszukiwaniu Wi-Fi i sieci komórkowych</string>
 
-    <string name="enter_nickname">Wpisz Nickanme (opcjonalnie)</string>
-    <string name="enter_nickname_title">Nickname: </string>
-    <string name="enter_nickname_longtext">Twój nickname wyświetli się w rankingu</string>
+    <string name="enter_nickname">Wpisz Pseudonim (opcjonalnie)</string>
+    <string name="enter_nickname_title">Pseudonim: </string>
+    <string name="enter_nickname_longtext">Twój pseudonim wyświetli się w rankingu</string>
 
     <string name="update_title">Pobrać aktualizację MozStumbler?</string>
     <string name="update_message">Zainstalowana wersja: %1$s\nNajnowsza wersja: %2$s</string>
@@ -33,5 +39,13 @@
 
     <string name="about_version">Wersja %1$s</string>
     <string name="about_more">Więcej…</string>
+    
+    <string name="detected_activity">Wykryta aktywność: %1$s</string>
+    <string name="detected_activity_in_vehicle">Ruch (w pojeździe)</string>
+    <string name="detected_activity_on_bicycle">Ruch (na rowerze)</string>
+    <string name="detected_activity_on_foot">Ruch (pieszo)</string>
+    <string name="detected_activity_still">Spoczynek</string>
+    <string name="detected_activity_tilting">Przechylenie</string>
+    <string name="detected_activity_unknown">Nieznana</string>
 
 </resources>

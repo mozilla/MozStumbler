@@ -60,18 +60,6 @@
             android:label="@string/service_name">
         </service>
 
-        <meta-data
-            android:name="org.mozilla.mozstumbler.MAP_API_KEY"
-            android:value="MY_MAP_API_KEY"/>
-
-        <meta-data
-            android:name="org.mozilla.mozstumbler.TILE_SERVER_URL"
-            android:value="MY_TILE_SERVER"/>
-
-        <meta-data
-            android:name="org.mozilla.mozstumbler.API_KEY"
-            android:value="MY_MOZILLA_API_KEY"/>
-
     </application>
 
 </manifest>

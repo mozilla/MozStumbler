@@ -13,23 +13,9 @@ final class PackageUtils {
     static String getAppVersion(Context context) {
         PackageManager pm = context.getPackageManager();
         try {
-            return pm.getPackageInfo("org.mozilla.mozstumbler", 0).versionName;
+            return pm.getPackageInfo(BuildConfig.PACKAGE_NAME, 0).versionName;
         } catch (NameNotFoundException e) {
             throw new IllegalArgumentException(e);
         }
-    }
-
-    static String getMetaDataString(Context context, String name) {
-        PackageManager pm = context.getPackageManager();
-        String packageName = context.getPackageName();
-
-        ApplicationInfo ai;
-        try {
-            ai = pm.getApplicationInfo(packageName, PackageManager.GET_META_DATA);
-        } catch (NameNotFoundException e) {
-            throw new IllegalArgumentException(e);
-        }
-
-        return ai.metaData.getString(name);
     }
 }

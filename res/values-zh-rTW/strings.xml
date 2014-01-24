@@ -13,6 +13,8 @@
     <string name="activity_recognition_service">Mozilla Stumbler Activity Recognition Intent Service</string>
     <string name="wifi_access_points">已掃描 Wi-Fi 基地台數量: %1$d</string>
     <string name="visible_wifi_access_points">可視 Wi-Fi 基地台數量: %1$d</string>
+    <string name="cells_scanned">已掃描行動電話基地台數量: %1$d</string>
+    <string name="cells_visible">可視行動電話基地台數量: %1$d</string>
     <string name="gps_satellites">可視 GPS 衛星數量: %1$d</string>
     <string name="last_location">最後定位位置: %1$s</string>
     <string name="coordinate">%1$.4f, %2$.4f</string>
@@ -42,5 +44,13 @@
     <string name="about_version">%1$s 版</string>
     <string name="about_mapbox">了解我們的地圖資料提供者資訊…</string>
     <string name="about_more">更多…</string>
+
+    <string name="detected_activity">偵測移動狀態: %1$s</string>
+    <string name="detected_activity_in_vehicle">移動中 (乘車)</string>
+    <string name="detected_activity_on_bicycle">移動中 (腳踏車)</string>
+    <string name="detected_activity_on_foot">移動中 (步行)</string>
+    <string name="detected_activity_still">停止不動</string>
+    <string name="detected_activity_tilting">傾斜中</string>
+    <string name="detected_activity_unknown">未知</string>
 
 </resources>

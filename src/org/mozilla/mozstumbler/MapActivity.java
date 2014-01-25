@@ -85,7 +85,6 @@ public final class MapActivity extends Activity {
         }
     }
 
-    @SuppressWarnings("ConstantConditions")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -94,20 +93,8 @@ public final class MapActivity extends Activity {
         mWifiData = Collections.emptyList();
         MOZSTUMBLER_USER_AGENT_STRING = NetworkUtils.getUserAgentString(this);
 
-        OnlineTileSourceBase tileSource;
-        if (BuildConfig.TILE_SERVER_URL == null) {
-            tileSource = TileSourceFactory.DEFAULT_TILE_SOURCE;
-        } else {
-            tileSource = new XYTileSource("MozStumbler Tile Store",
-                                          null,
-                                          1, 20, 256,
-                                          ".png",
-                                          BuildConfig.TILE_SERVER_URL);
-        }
-
         mMap = (MapView) this.findViewById(R.id.map);
-
-        mMap.setTileSource(tileSource);
+        mMap.setTileSource(getTileSource());
         mMap.setBuiltInZoomControls(true);
         mMap.setMultiTouchControls(true);
 
@@ -118,6 +105,18 @@ public final class MapActivity extends Activity {
         registerReceiver(mReceiver, new IntentFilter(ScannerService.MESSAGE_TOPIC));
 
         Log.d(LOGTAG, "onCreate");
+    }
+
+    @SuppressWarnings("ConstantConditions")
+    private static OnlineTileSourceBase getTileSource() {
+        if (BuildConfig.TILE_SERVER_URL == null) {
+            return TileSourceFactory.DEFAULT_TILE_SOURCE;
+        }
+        return new XYTileSource("MozStumbler Tile Store",
+                                null,
+                                1, 20, 256,
+                                ".png",
+                                BuildConfig.TILE_SERVER_URL);
     }
 
     private static class AccuracyCircleOverlay extends SafeDrawOverlay {

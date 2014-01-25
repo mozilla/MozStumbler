@@ -31,7 +31,7 @@
     <string name="power_saving_mode_longtext">Scannt nur, wenn Bewegungen erkannt werden</string>
 
     <string name="update_title">MozStumbler Aktualisierung herunterladen?</string>
-    <string name="update_message">Installierte Version: %1$s\nLAktuellste Version: %2$s</string>
+    <string name="update_message">Installierte Version: %1$s\nAktuellste Version: %2$s</string>
     <string name="update_now">Aktualisiere jetzt</string>
     <string name="update_later">Aktualisiere später</string>
 

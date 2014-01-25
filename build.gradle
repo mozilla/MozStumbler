@@ -38,7 +38,7 @@ android {
     }
 
     signingConfigs {
-      release
+        release
     }
 
     buildTypes {
@@ -47,7 +47,6 @@ android {
         }
 
         release {
-            debuggable true
             runProguard true
             proguardFile 'proguard.cfg'
             signingConfig signingConfigs.release
@@ -74,7 +73,7 @@ if (hasProperty('StoreFile')) {
 }
 
 String getMozillaApiKey() {
-    return project.hasProperty('MozAPIKey') ? '"' +  project['MozAPIKey'] + '"' : "\"test\"";
+    return project.hasProperty('MozAPIKey') ? '"' +  project['MozAPIKey'] + '"' : "null";
 }
 
 String getTileServerUrl() {
@@ -82,7 +81,6 @@ String getTileServerUrl() {
         return '"' + project['TileServerURL'] + '"';
     } else if (project.hasProperty('MapAPIKey')) {
         return "\"http://api.tiles.mapbox.com/v3/${project['MapAPIKey']}/\"";
-    } else {
-        return "null";
     }
+    return "null";
 }

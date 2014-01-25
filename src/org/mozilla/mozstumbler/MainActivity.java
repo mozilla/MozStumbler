@@ -116,7 +116,10 @@ public final class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
 
         new Prefs(this).setDefaultValues();
-        Updater.checkForUpdates(this);
+
+        if (BuildConfig.MOZILLA_API_KEY != null) {
+            Updater.checkForUpdates(this);
+        }
 
         Log.d(LOGTAG, "onCreate");
     }

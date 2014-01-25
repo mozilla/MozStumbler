@@ -10,6 +10,7 @@ import android.graphics.Point;
 import android.net.wifi.ScanResult;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.widget.Toast;
@@ -31,6 +32,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView.Projection;
 import org.osmdroid.views.MapView;
@@ -83,20 +85,25 @@ public final class MapActivity extends Activity {
         }
     }
 
+    @SuppressWarnings("ConstantConditions")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
 
-        Context context = getApplicationContext();
         mWifiData = Collections.emptyList();
         MOZSTUMBLER_USER_AGENT_STRING = NetworkUtils.getUserAgentString(this);
 
-        OnlineTileSourceBase tileSource = new XYTileSource("MozStumbler Tile Store",
-                                                           null,
-                                                           1, 20, 256,
-                                                           ".png",
-                                                           getMapURL(context));
+        OnlineTileSourceBase tileSource;
+        if (BuildConfig.TILE_SERVER_URL == null) {
+            tileSource = TileSourceFactory.DEFAULT_TILE_SOURCE;
+        } else {
+            tileSource = new XYTileSource("MozStumbler Tile Store",
+                                          null,
+                                          1, 20, 256,
+                                          ".png",
+                                          BuildConfig.TILE_SERVER_URL);
+        }
 
         mMap = (MapView) this.findViewById(R.id.map);
 
@@ -111,20 +118,6 @@ public final class MapActivity extends Activity {
         registerReceiver(mReceiver, new IntentFilter(ScannerService.MESSAGE_TOPIC));
 
         Log.d(LOGTAG, "onCreate");
-    }
-
-    private static String getMapURL(Context context) {
-        String tileServerURL = PackageUtils.getMetaDataString(context, "org.mozilla.mozstumbler.TILE_SERVER_URL");
-
-        if (tileServerURL == null || tileServerURL.equals("http://tile.openstreetmap.org/")) {
-            String apiKey = PackageUtils.getMetaDataString(context, "org.mozilla.mozstumbler.MAP_API_KEY");
-            if (apiKey == null || "FAKE_MAP_API_KEY".equals(apiKey)) {
-                tileServerURL = "http://tile.openstreetmap.org/";
-            } else {
-                tileServerURL = "http://api.tiles.mapbox.com/v3/" + apiKey + "/";
-            }
-        }
-        return tileServerURL;
     }
 
     private static class AccuracyCircleOverlay extends SafeDrawOverlay {
@@ -218,10 +211,8 @@ public final class MapActivity extends Activity {
             HttpURLConnection urlConnection = null;
             try {
                 URL url;
-                Context context = getApplicationContext();
-                String apiKey = PackageUtils.getMetaDataString(context, "org.mozilla.mozstumbler.API_KEY");
                 try {
-                    url = new URL(LOCATION_URL + "?key=" + apiKey);
+                    url = new URL(LOCATION_URL + "?key=" + BuildConfig.MOZILLA_API_KEY);
                 } catch (MalformedURLException e) {
                     throw new IllegalArgumentException(e);
                 }

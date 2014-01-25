@@ -4,7 +4,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:0.7.+'
+        classpath 'com.android.tools.build:gradle:0.8.+'
     }
 }
 
@@ -30,6 +30,11 @@ android {
             res.srcDirs = ['res']
             assets.srcDirs = ['assets']
         }
+    }
+
+    defaultConfig {
+        buildConfigField "String", "MOZILLA_API_KEY", getMozillaApiKey()
+        buildConfigField "String", "TILE_SERVER_URL", getTileServerUrl()
     }
 
     signingConfigs {
@@ -68,18 +73,16 @@ if (hasProperty('StoreFile')) {
     android.buildTypes.release.signingConfig = null
 }
 
-// Generate AndroidManifest.xml
-String mozillaAPIKey = hasProperty('MozAPIKey') ? MozAPIKey : "FAKE_MOZILLA_API_KEY";
-String mapAPIKey     = hasProperty('MapAPIKey') ? MapAPIKey : "FAKE_MAP_API_KEY";
-String tileServerURL = hasProperty('TileServerURL') ? TileServerURL : "http://tile.openstreetmap.org/";
+String getMozillaApiKey() {
+    return project.hasProperty('MozAPIKey') ? '"' +  project['MozAPIKey'] + '"' : "\"test\"";
+}
 
-File manifest = file("./AndroidManifest.xml.in")
-String content = manifest.getText('UTF-8')
-content = content.replaceAll(/MY_MOZILLA_API_KEY/, mozillaAPIKey)
-
-content = content.replaceAll(/MY_MAP_API_KEY/, mapAPIKey)
-content = content.replaceAll(/MY_TILE_SERVER/, tileServerURL)
-
-manifest = file("./AndroidManifest.xml")
-manifest.write(content, 'UTF-8')
-
+String getTileServerUrl() {
+    if (project.hasProperty('TileServerURL')) {
+        return '"' + project['TileServerURL'] + '"';
+    } else if (project.hasProperty('MapAPIKey')) {
+        return "\"http://api.tiles.mapbox.com/v3/${project['MapAPIKey']}/\"";
+    } else {
+        return "null";
+    }
+}

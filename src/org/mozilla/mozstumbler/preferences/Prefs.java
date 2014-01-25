@@ -11,6 +11,7 @@ import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.Log;
 
+import org.mozilla.mozstumbler.BuildConfig;
 import org.mozilla.mozstumbler.R;
 
 public final class Prefs {
@@ -21,29 +22,20 @@ public final class Prefs {
     private static final String     REPORTS_PREF  = "reports";
     private static final String     VALUES_VERSION_PREF = "values_version";
 
-    private int mCurrentVersion;
-    private Context mContext;
+    private final Context mContext;
 
     public Prefs(Context context) {
-        try {
-            PackageInfo pi = context.getPackageManager().getPackageInfo(context.getPackageName(),
-                                                                        PackageManager.GET_ACTIVITIES);
-            mCurrentVersion = pi.versionCode;
-        } catch (PackageManager.NameNotFoundException exception) {
-            Log.e(LOGTAG, "getPackageInfo failed", exception);
-            mCurrentVersion = 0;
-        }
         mContext = context;
     }
 
     @SuppressLint("InlinedApi")
     public void setDefaultValues() {
         final SharedPreferences prefs = getPrefs();
-        if (prefs.getInt(VALUES_VERSION_PREF, -1) != mCurrentVersion) {
+        if (prefs.getInt(VALUES_VERSION_PREF, -1) != BuildConfig.VERSION_CODE) {
             Log.i(LOGTAG, "Version of the application has changed. Updating default values.");
             PreferenceManager.setDefaultValues(mContext, PREFS_FILE,
                     Context.MODE_MULTI_PROCESS, R.xml.preferences, true);
-            prefs.edit().putInt(VALUES_VERSION_PREF, mCurrentVersion).commit();
+            prefs.edit().putInt(VALUES_VERSION_PREF, BuildConfig.VERSION_CODE).commit();
         }
     }
 

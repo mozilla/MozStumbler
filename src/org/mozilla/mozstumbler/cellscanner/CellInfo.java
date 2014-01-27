@@ -219,6 +219,54 @@ public class CellInfo implements Parcelable {
         if (rssi != NeighboringCellInfo.UNKNOWN_RSSI) mAsu = rssi;
     }
 
+    void setGsmCellInfo(int mcc, int mnc, int lac, int cid, int asu) {
+        mCellRadio = CELL_RADIO_GSM;
+        mMcc = mcc != Integer.MAX_VALUE ? mcc : UNKNOWN_CID;
+        mMnc = mnc != Integer.MAX_VALUE ? mnc : UNKNOWN_CID;
+        mLac = lac != Integer.MAX_VALUE ? lac : UNKNOWN_CID;
+        mCid = cid != Integer.MAX_VALUE ? cid : UNKNOWN_CID;
+        mAsu = asu;
+    }
+
+    void setWcmdaCellInfo(int mcc, int mnc, int lac, int cid, int psc, int asu) {
+        mCellRadio = CELL_RADIO_UMTS;
+        mMcc = mcc != Integer.MAX_VALUE ? mcc : UNKNOWN_CID;
+        mMnc = mnc != Integer.MAX_VALUE ? mnc : UNKNOWN_CID;
+        mLac = lac != Integer.MAX_VALUE ? lac : UNKNOWN_CID;
+        mCid = cid != Integer.MAX_VALUE ? cid : UNKNOWN_CID;
+        mPsc = psc != Integer.MAX_VALUE ? psc : UNKNOWN_CID;
+        mAsu = asu;
+    }
+
+    /**
+     *
+     * @param mcc Mobile Country Code, Integer.MAX_VALUE if unknown
+     * @param mnc Mobile Network Code, Integer.MAX_VALUE if unknown
+     * @param ci  Cell Identity, Integer.MAX_VALUE if unknown
+     * @param pci Physical Cell Id, Integer.MAX_VALUE if unknown
+     * @param tac Tracking Area Code, Integer.MAX_VALUE if unknown
+     * @param asu Arbitrary strength unit
+     * @param ta  Timing advance
+     */
+    void setLteCellInfo(int mcc, int mnc, int ci, int pci, int tac, int asu, int ta) {
+        mCellRadio = CELL_RADIO_LTE;
+        mMcc = mcc != Integer.MAX_VALUE ? mcc : UNKNOWN_CID;
+        mMnc = mnc != Integer.MAX_VALUE ? mnc : UNKNOWN_CID;
+        mLac = tac != Integer.MAX_VALUE ? tac : UNKNOWN_CID;
+        mCid = ci != Integer.MAX_VALUE ? ci : UNKNOWN_CID;
+        mPsc = pci != Integer.MAX_VALUE ? pci : UNKNOWN_CID;
+        mAsu = asu;
+        mTa = ta;
+    }
+
+    void setCdmaCellInfo(int baseStationId, int networkId, int systemId, int dbm) {
+        mCellRadio = CELL_RADIO_CDMA;
+        mMnc = systemId != Integer.MAX_VALUE ? systemId : UNKNOWN_CID;
+        mLac = networkId != Integer.MAX_VALUE ? networkId : UNKNOWN_CID;
+        mCid = baseStationId != Integer.MAX_VALUE ? baseStationId : UNKNOWN_CID;
+        mSignal = dbm;
+    }
+
     void setNetworkOperator(String mccMnc) {
         if (mccMnc == null || mccMnc.length() < 5 || mccMnc.length() > 8) {
             throw new IllegalArgumentException("Bad mccMnc: " + mccMnc);

@@ -52,7 +52,7 @@ final class Reporter extends BroadcastReceiver {
     private JSONArray           mReports;
 
     private final AtomicLong    mLastUploadTime = new AtomicLong();
-    private URL                 mURL;
+    private final URL           mURL;
     private ReentrantLock       mReportsLock;
 
     private final Location      mGpsPosition = new Location("");
@@ -76,9 +76,8 @@ final class Reporter extends BroadcastReceiver {
             mReports = new JSONArray();
         }
 
-        String apiKey = PackageUtils.getMetaDataString(context, "org.mozilla.mozstumbler.API_KEY");
         try {
-            mURL = new URL(LOCATION_URL + "?key=" + apiKey);
+            mURL = new URL(LOCATION_URL + "?key=" + BuildConfig.MOZILLA_API_KEY);
         } catch (MalformedURLException e) {
             throw new IllegalArgumentException(e);
         }

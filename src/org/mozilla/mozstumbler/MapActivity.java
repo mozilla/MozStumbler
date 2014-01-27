@@ -10,6 +10,7 @@ import android.graphics.Point;
 import android.net.wifi.ScanResult;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.widget.Toast;
@@ -31,6 +32,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView.Projection;
 import org.osmdroid.views.MapView;
@@ -88,19 +90,11 @@ public final class MapActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
 
-        Context context = getApplicationContext();
         mWifiData = Collections.emptyList();
         MOZSTUMBLER_USER_AGENT_STRING = NetworkUtils.getUserAgentString(this);
 
-        OnlineTileSourceBase tileSource = new XYTileSource("MozStumbler Tile Store",
-                                                           null,
-                                                           1, 20, 256,
-                                                           ".png",
-                                                           getMapURL(context));
-
         mMap = (MapView) this.findViewById(R.id.map);
-
-        mMap.setTileSource(tileSource);
+        mMap.setTileSource(getTileSource());
         mMap.setBuiltInZoomControls(true);
         mMap.setMultiTouchControls(true);
 
@@ -113,18 +107,16 @@ public final class MapActivity extends Activity {
         Log.d(LOGTAG, "onCreate");
     }
 
-    private static String getMapURL(Context context) {
-        String tileServerURL = PackageUtils.getMetaDataString(context, "org.mozilla.mozstumbler.TILE_SERVER_URL");
-
-        if (tileServerURL == null || tileServerURL.equals("http://tile.openstreetmap.org/")) {
-            String apiKey = PackageUtils.getMetaDataString(context, "org.mozilla.mozstumbler.MAP_API_KEY");
-            if (apiKey == null || "FAKE_MAP_API_KEY".equals(apiKey)) {
-                tileServerURL = "http://tile.openstreetmap.org/";
-            } else {
-                tileServerURL = "http://api.tiles.mapbox.com/v3/" + apiKey + "/";
-            }
+    @SuppressWarnings("ConstantConditions")
+    private static OnlineTileSourceBase getTileSource() {
+        if (BuildConfig.TILE_SERVER_URL == null) {
+            return TileSourceFactory.DEFAULT_TILE_SOURCE;
         }
-        return tileServerURL;
+        return new XYTileSource("MozStumbler Tile Store",
+                                null,
+                                1, 20, 256,
+                                ".png",
+                                BuildConfig.TILE_SERVER_URL);
     }
 
     private static class AccuracyCircleOverlay extends SafeDrawOverlay {
@@ -187,12 +179,6 @@ public final class MapActivity extends Activity {
     protected void onStop() {
         super.onStop();
 
-        Context context = getApplicationContext();
-        Intent i = new Intent(ScannerService.MESSAGE_TOPIC);
-        i.putExtra(Intent.EXTRA_SUBJECT, "Scanner");
-        i.putExtra("enable", 0);
-        context.sendBroadcast(i);
-
         Log.d(LOGTAG, "onStop");
         mMap.getTileProvider().clearTileCache();
         if (mReceiver != null) {
@@ -218,10 +204,8 @@ public final class MapActivity extends Activity {
             HttpURLConnection urlConnection = null;
             try {
                 URL url;
-                Context context = getApplicationContext();
-                String apiKey = PackageUtils.getMetaDataString(context, "org.mozilla.mozstumbler.API_KEY");
                 try {
-                    url = new URL(LOCATION_URL + "?key=" + apiKey);
+                    url = new URL(LOCATION_URL + "?key=" + BuildConfig.MOZILLA_API_KEY);
                 } catch (MalformedURLException e) {
                     throw new IllegalArgumentException(e);
                 }

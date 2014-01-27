@@ -6,5 +6,4 @@ bin
 gen
 build
 gradle.properties
-AndroidManifest.xml
 *.keystore

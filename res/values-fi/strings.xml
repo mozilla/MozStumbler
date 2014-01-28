@@ -7,9 +7,9 @@
     <string name="action_exit">Lopeta</string>
 
     <string name="view_leaderboard">Näytä pistetilasto</string>
-    <string name="view_map">Kokeile Mozilla Location Serviceä</string>
+    <string name="view_map">Kokeile Mozillan paikannuspalvelua</string>
     <string name="service_name">Mozilla Stumbler</string>
-    <string name="activity_recognition_service">Mozilla Stumbler aktiivisuudentunnistuspalvelu</string>
+    <string name="activity_recognition_service">Aktiivisuuden tunnistuspalvelu</string>
     <string name="wifi_access_points">Wi-Fi-tukiasemia skannattu: %1$d</string>
     <string name="visible_wifi_access_points">Wi-Fi-tukiasemia näkyvillä: %1$d</string>
     <string name="gps_satellites">GPS-satelliitteja näkyvillä: %1$d</string>
@@ -24,9 +24,9 @@
     <string name="enter_nickname_longtext">Nimimerkkisi näytetään pistetilastossa</string>
 
     <string name="power_saving_mode">Virransäästötila</string>
-    <string name="power_saving_mode_longtext">Tässä tilassa tiedonkeruuta suoritetaan vain ollessasi liikkellä</string>
+    <string name="power_saving_mode_longtext">Tässä tilassa tietoja kerätään vain kun liikut</string>
 
-    <string name="update_title">Lataa MozStumbler päivitys?</string>
+    <string name="update_title">Lataa MozStumblerin päivitys?</string>
     <string name="update_message">Asennettu versio: %1$s\nUusin versio: %2$s</string>
     <string name="update_now">Päivitä nyt</string>
     <string name="update_later">Päivitä myöhemmin</string>
@@ -38,7 +38,7 @@
     <string name="no">Ei</string>
 
     <string name="about_version">Versio %1$s</string>
-    <string name="about_mapbox">Lisätietoja käyttämästämme karttapalvelusta…</string>
+    <string name="about_mapbox">Lisätietoja karttapalvelusta…</string>
     <string name="about_more">Lisätietoja…</string>
 
 </resources>

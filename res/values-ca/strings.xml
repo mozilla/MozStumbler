@@ -10,15 +10,15 @@
     <string name="view_leaderboard">Vore Classificació</string>
     <string name="view_map">Provar el Servei de Posició de Mozilla</string>
     <string name="service_name">Mozilla Stumbler</string>
-    <string name="activity_recognition_service">Servei de reconeiximent d'activitat de Mozilla Stumbler</string>
-    <string name="wifi_access_points">Punts d'accés WiFi escanejats: %1$d</string>
-    <string name="visible_wifi_access_points">Punts d'accés WiFi visibles: %1$d</string>
+    <string name="activity_recognition_service">Servei de reconeiximent d\'activitat de Mozilla Stumbler</string>
+    <string name="wifi_access_points">Punts d\'accés WiFi escanejats: %1$d</string>
+    <string name="visible_wifi_access_points">Punts d\'accés WiFi visibles: %1$d</string>
     <string name="cells_scanned">Cel·les escanejades: %1$d</string>
     <string name="cells_visible">Cel·les visibles: %1$d</string>
     <string name="gps_satellites">Satèl·lits GPS: %1$d</string>
     <string name="last_location">Última posició: %1$s</string>
     <string name="locations_scanned">Posicions escanejades: %1$d</string>
-    <string name="last_upload_time">Temps de l'ùltima càrrega: %1$s</string>
+    <string name="last_upload_time">Temps de l\'ùltima càrrega: %1$s</string>
     <string name="reports_sent">Informes enviats: %1$d</string>
     <string name="service_scanning">Escaneat en cerca de xarxes WiFi i cel·lulars</string>
 
@@ -26,8 +26,8 @@
     <string name="enter_nickname_title">Sobrenom: </string>
     <string name="enter_nickname_longtext">El vostre sobrenom apareixerà en la taula de classificacions</string>
 
-    <string name="power_saving_mode">Mode d'estalvi d'energia</string>
-    <string name="power_saving_mode_longtext">Quan activat, només s'escanejarà quan es mou</string>
+    <string name="power_saving_mode">Mode d\'estalvi d\'energia</string>
+    <string name="power_saving_mode_longtext">Quan activat, només s\'escanejarà quan es mou</string>
 
     <string name="update_title">Descarregar actual·lització del MozStumbler?</string>
     <string name="update_message">Versió instal·lada: %1$s\nÚltima versió: %2$s</string>

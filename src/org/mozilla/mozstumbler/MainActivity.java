@@ -30,6 +30,7 @@ import android.view.View;
 import android.view.View.OnFocusChangeListener;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -225,11 +226,13 @@ public final class MainActivity extends Activity {
             Log.e(LOGTAG, "", e);
         }
 
-        Button scanningBtn = (Button) findViewById(R.id.toggle_scanning);
+        CompoundButton scanningBtn = (CompoundButton) findViewById(R.id.toggle_scanning);
         if (scanning) {
             scanningBtn.setText(R.string.stop_scanning);
+            scanningBtn.setChecked(true);
         } else {
             scanningBtn.setText(R.string.start_scanning);
+            scanningBtn.setChecked(false);
         }
 
         int locationsScanned = 0;

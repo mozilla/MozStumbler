@@ -18,7 +18,6 @@ StoreFile=<path to file>
 StorePassword=<password>
 KeyAlias=<key alias>
 KeyPassword=<password>
-MozAPIKey=test
 TileServerURL=<OSM Tile Server>
 ```
 For the OSM (Open Street Maps) Tile Server, you have several options:

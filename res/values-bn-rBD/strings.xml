@@ -11,23 +11,23 @@
     <string name="view_map">মোজিলা লোকেশন সার্ভিস পরীক্ষা করুন</string>
     <string name="service_name">Mozilla Stumbler</string>
     <string name="activity_recognition_service">Mozilla Stumbler Activity Recognition Intent Service</string>
-    <string name="wifi_access_points">ওয়াই-ফাই এক্সেস পয়েন্ট স্ক্যান হয়েছে: %1$d</string>
-    <string name="visible_wifi_access_points">ওয়াই-ফাই এক্সেস পয়েন্ট বিদ্যমান আছে: %1$d</string>
-    <string name="cells_scanned">Cells স্ক্যান হয়েছে: %1$d</string>
+    <string name="wifi_access_points">ওয়াই-ফাই এক্সেস পয়েন্ট স্ক্যান হয়েছে: %1$d</string>
+    <string name="visible_wifi_access_points">ওয়াই-ফাই এক্সেস পয়েন্ট বিদ্যমান আছে: %1$d</string>
+    <string name="cells_scanned">Cells স্ক্যান হয়েছে: %1$d</string>
     <string name="cells_visible">Cells বিদ্যমান আছে: %1$d</string>
-    <string name="gps_satellites">জিপিএস স্যাটেলাইট বিদ্যমান রয়েছে: %1$d</string>
+    <string name="gps_satellites">জিপিএস স্যাটেলাইট বিদ্যমান রয়েছে: %1$d</string>
     <string name="last_location">সর্বশেষ অবস্থান: %1$s</string>
     <string name="coordinate">%1$.4f, %2$.4f</string>
-    <string name="locations_scanned">অবস্থান স্ক্যান হয়েছে: %1$d</string>
-    <string name="last_upload_time">সর্বশেষ আপলোড এর সময়: %1$s</string>
-    <string name="reports_sent">রিপোর্ট পাঠানো হয়েছে: %1$d</string>
-    <string name="service_scanning">অয়াই-ফাই এবং মোবাইল নেটওয়ার্ক এর জন্য স্ক্যান করা হচ্ছে</string>
+    <string name="locations_scanned">অবস্থান স্ক্যান হয়েছে: %1$d</string>
+    <string name="last_upload_time">সর্বশেষ আপলোড এর সময়: %1$s</string>
+    <string name="reports_sent">রিপোর্ট পাঠানো হয়েছে: %1$d</string>
+    <string name="service_scanning">অয়াই-ফাই এবং মোবাইল নেটওয়ার্ক এর জন্য স্ক্যান করা হচ্ছে</string>
 
     <string name="enter_nickname">নাম প্রবেশ করুন (ঐচ্ছিক)</string>
     <string name="enter_nickname_title">নাম: </string>
     <string name="enter_nickname_longtext">আপনার নাম লীডারবোর্ডে দেখানো হবে</string>
 
-    <string name="power_saving_mode">পাওয়ার সেবিং মোড</string>
+    <string name="power_saving_mode">পাওয়ার সেবিং মোড</string>
     <string name="power_saving_mode_longtext">যখন চালু করা হবে, তখন শুধু আপনি অবস্থান পরিবর্তন করলেই stumbling করা হবে।</string>
 
     <string name="update_title">MozStumbler আপডেট ডাউনলোড করবেন?</string>
@@ -35,15 +35,15 @@
     <string name="update_now">এক্ষুনি আপডেট করুন</string>
     <string name="update_later">পরে আপডেট করুন</string>
 
-    <string name="location_not_found">অবস্থান নির্নয় করা হয়নি</string>
+    <string name="location_not_found">অবস্থান নির্নয় করা হয়নি</string>
 
     <string name="gps_alert_msg">জিপিএস বন্ধ আছে। আপনি কি সেটিংস থেকে তা চালু করতে চান?</string>
     <string name="yes">হ্যা</string>
     <string name="no">না</string>
 
     <string name="about_version">সংস্করন %1$s</string>
-    <string name="about_mapbox">ম্যাপিং প্রোভাইডার সম্পর্কে আরও জানুনż/string>
-    <string name="about_more">আরওż/string>
+    <string name="about_mapbox">ম্যাপিং প্রোভাইডার সম্পর্কে আরও জানুন</string>
+    <string name="about_more">আরও</string>
 
     <string name="detected_activity">Detected Activity: %1$s</string>
     <string name="detected_activity_in_vehicle">Moving (in vehicle)</string>

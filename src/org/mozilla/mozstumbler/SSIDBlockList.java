@@ -50,6 +50,9 @@ final class SSIDBlockList {
         "ISRAEL-RAILWAYS",
         "Omni-WiFi", // Omnibus transportation services (Israel)
         "Telekom_ICE", // Deutsche Bahn on-train WiFi
+        "TPE-Free Bus", // Taipei City on-bus WiFi (Taiwan)
+        "THSR-VeeTIME", // Taiwan High Speed Rail on-train WiFi
+        "CapitalBus", // Capital Bus on-bus WiFi (Taiwan)
     };
 
     private static final String[] SUFFIX_LIST = {

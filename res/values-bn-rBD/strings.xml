@@ -27,7 +27,7 @@
     <string name="enter_nickname_title">নাম: </string>
     <string name="enter_nickname_longtext">আপনার নাম লীডারবোর্ডে দেখানো হবে</string>
 
-    <string name="power_saving_mode">পাওয়ার সেবিং মোড</string>
+    <string name="power_saving_mode">পাওয়ার সেভিং মোড</string>
     <string name="power_saving_mode_longtext">যখন চালু করা হবে, তখন শুধু আপনি অবস্থান পরিবর্তন করলেই stumbling করা হবে।</string>
 
     <string name="update_title">MozStumbler আপডেট ডাউনলোড করবেন?</string>
@@ -45,12 +45,12 @@
     <string name="about_mapbox">ম্যাপিং প্রোভাইডার সম্পর্কে আরও জানুন</string>
     <string name="about_more">আরও</string>
 
-    <string name="detected_activity">Detected Activity: %1$s</string>
-    <string name="detected_activity_in_vehicle">Moving (in vehicle)</string>
-    <string name="detected_activity_on_bicycle">Moving (on bicycle)</string>
-    <string name="detected_activity_on_foot">Moving (on foot)</string>
-    <string name="detected_activity_still">Still</string>
+    <string name="detected_activity">কার্যকলাপ সনাক্ত হয়েছে: %1$s</string>
+    <string name="detected_activity_in_vehicle">চলমান (গাড়ীতে)</string>
+    <string name="detected_activity_on_bicycle">চলমান (বাই-সাইকেলে)</string>
+    <string name="detected_activity_on_foot">চলমান (পায়ে হেটে)</string>
+    <string name="detected_activity_still">থেমে আছেন</string>
     <string name="detected_activity_tilting">Tilting</string>
-    <string name="detected_activity_unknown">Unknown</string>
+    <string name="detected_activity_unknown">অজানা</string>
 
 </resources>

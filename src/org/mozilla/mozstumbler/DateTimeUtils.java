@@ -10,7 +10,7 @@ import java.util.TimeZone;
 
 final class DateTimeUtils {
     private static final DateFormat sLocaleFormat = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);
-    private static final DateFormat sISO8601Format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'", Locale.US);
+    private static final DateFormat sISO8601Format = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
 
     static final long MILLISECONDS_PER_DAY = 86400000;  // milliseconds/day
 

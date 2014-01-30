@@ -227,13 +227,10 @@ public final class MainActivity extends Activity {
         }
 
         CompoundButton scanningBtn = (CompoundButton) findViewById(R.id.toggle_scanning);
-        if (scanning) {
-            scanningBtn.setText(R.string.stop_scanning);
-            scanningBtn.setChecked(true);
-        } else {
-            scanningBtn.setText(R.string.start_scanning);
-            scanningBtn.setChecked(false);
-        }
+        scanningBtn.setChecked(scanning);
+
+        int buttonTextID = scanning ? R.string.stop_scanning : R.string.start_scanning;
+        scanningBtn.setText(buttonTextID); // override button's default ON/OFF text
 
         int locationsScanned = 0;
         double latitude = 0;

@@ -4,21 +4,31 @@
     <string name="app_name">MozStumbler</string>
     <string name="action_about">关于 MozStumbler</string>
     <string name="action_preferences">设置</string>
+    <string name="action_exit">退出</string>
     <string name="start_scanning">开始扫描</string>
     <string name="stop_scanning">停止扫描</string>
     <string name="view_leaderboard">查看积分榜</string>
     <string name="view_map">测试 Mozilla 位置服务</string>
     <string name="service_name">Mozilla Stumbler</string>
+    <string name="activity_recognition_service">Mozilla Stumbler Activity Recognition Intent Service</string>
     <string name="wifi_access_points">累计扫描到 Wi-Fi 接入点: %1$d</string>
+    <string name="visible_wifi_access_points">当前可见的 Wi-Fi 接入点: %1$d</string>
+    <string name="cells_scanned">累计扫描到移动基站: %1$d</string>
+    <string name="cells_visible">当前可见的移动基站: %1$d</string>
     <string name="gps_satellites">当前可见的 GPS 卫星: %1$d</string>
+    <string name="last_location">最近一次锁定的位置: %1$s</string>
+    <string name="coordinate">%1$.4f, %2$.4f</string>
     <string name="locations_scanned">累计锁定位置: %1$d</string>
     <string name="last_upload_time">最近一次上传时间: %1$s</string>
     <string name="reports_sent">累计上传报告: %1$d</string>
-    <string name="service_scanning">扫描 Wi-Fi 和手机网络</string>
+    <string name="service_scanning">扫描 Wi-Fi 和移动基站</string>
 
     <string name="enter_nickname">输入昵称 (可选)</string>
     <string name="enter_nickname_title">昵称: </string>
     <string name="enter_nickname_longtext">你的昵称将被显示在积分榜中</string>
+
+    <string name="power_saving_mode">省电模式</string>
+    <string name="power_saving_mode_longtext">启用省电模式后，仅在检测到您的移动时才会进行扫描</string>
 
     <string name="update_title">下载 MozStumbler 更新？</string>
     <string name="update_message">当前版本: %1$s\n最新版本: %2$s</string>
@@ -32,6 +42,15 @@
     <string name="no">否</string>
 
     <string name="about_version">版本 %1$s</string>
+    <string name="about_mapbox">了解我们的地图提供商…</string>
     <string name="about_more">更多…</string>
+
+    <string name="detected_activity">检测到的移动: %1$s</string>
+    <string name="detected_activity_in_vehicle">移动中 (机动车)</string>
+    <string name="detected_activity_on_bicycle">移动中 (自行车)</string>
+    <string name="detected_activity_on_foot">移动中 (步行)</string>
+    <string name="detected_activity_still">静止</string>
+    <string name="detected_activity_tilting">倾斜</string>
+    <string name="detected_activity_unknown">未知</string>
 
 </resources>

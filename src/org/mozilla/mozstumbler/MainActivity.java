@@ -229,9 +229,6 @@ public final class MainActivity extends Activity {
         CompoundButton scanningBtn = (CompoundButton) findViewById(R.id.toggle_scanning);
         scanningBtn.setChecked(scanning);
 
-        int buttonTextID = scanning ? R.string.stop_scanning : R.string.start_scanning;
-        scanningBtn.setText(buttonTextID); // override button's default ON/OFF text
-
         int locationsScanned = 0;
         double latitude = 0;
         double longitude = 0;
@@ -284,13 +281,10 @@ public final class MainActivity extends Activity {
         boolean scanning = mConnectionRemote.isScanning();
         Log.d(LOGTAG, "Connection remote return: isScanning() = " + scanning);
 
-        Button b = (Button) v;
         if (scanning) {
             mConnectionRemote.stopScanning();
-            b.setText(R.string.start_scanning);
         } else {
             mConnectionRemote.startScanning();
-            b.setText(R.string.stop_scanning);
         }
     }
 

@@ -1,10 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" 
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     android:key="preferences">
 
     <EditTextPreference
         android:key="nickname"
         android:title="@string/enter_nickname"
         android:summary="@string/enter_nickname_longtext" />
+
+    <CheckBoxPreference
+        android:key="wifi_only"
+        android:title="@string/upload_wifi_only_title"
+        android:summary="@string/upload_wifi_only_summary"
+        android:defaultValue="false"/>
 
 </PreferenceScreen>

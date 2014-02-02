@@ -21,6 +21,7 @@ public final class Prefs {
     private static final String     POWER_SAVING_MODE_PREF = "power_saving_mode";
     private static final String     REPORTS_PREF  = "reports";
     private static final String     VALUES_VERSION_PREF = "values_version";
+    private static final String     WIFI_ONLY = "wifi_only";
 
     private final Context mContext;
 
@@ -48,6 +49,11 @@ public final class Prefs {
         return TextUtils.isEmpty(nickname) ? null : nickname;
     }
 
+    public boolean getWifi() {
+
+        return getBoolPref(WIFI_ONLY);
+    }
+
     public void setReports(String json) {
         setStringPref(REPORTS_PREF, json);
     }
@@ -58,6 +64,10 @@ public final class Prefs {
 
     private String getStringPref(String key) {
         return getPrefs().getString(key, null);
+    }
+
+    private boolean getBoolPref(String key) {
+        return getPrefs().getBoolean(key, false);
     }
 
     private void setStringPref(String key, String value) {

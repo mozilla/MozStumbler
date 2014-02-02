@@ -5,10 +5,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.location.Location;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.wifi.ScanResult;
 import android.os.Build;
 import android.util.Log;
 
+import org.mozilla.mozstumbler.NetworkUtils;
 import org.mozilla.mozstumbler.cellscanner.CellInfo;
 import org.mozilla.mozstumbler.cellscanner.CellScanner;
 import org.mozilla.mozstumbler.preferences.Prefs;
@@ -171,6 +174,12 @@ final class Reporter extends BroadcastReceiver {
 
         if (!NetworkUtils.isNetworkAvailable(mContext)) {
             Log.d(LOGTAG, "Can't send reports without network connection");
+            mReportsLock.unlock();
+            return;
+        }
+
+        if (mPrefs.getWifi() && !NetworkUtils.isWifiAvailable(mContext)) {
+            Log.d(LOGTAG,"not on WiFi, not sending");
             mReportsLock.unlock();
             return;
         }
@@ -401,5 +410,18 @@ final class Reporter extends BroadcastReceiver {
         Intent i = new Intent(ScannerService.MESSAGE_TOPIC);
         i.putExtra(Intent.EXTRA_SUBJECT, "Reporter");
         mContext.sendBroadcast(i);
+    }
+    private boolean isNetworkWifi() {
+        boolean isWiFi;
+        ConnectivityManager cMgr = (ConnectivityManager)mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo aNet = cMgr.getActiveNetworkInfo();
+        try {
+            isWiFi = aNet.getType() == ConnectivityManager.TYPE_WIFI;
+        }
+        catch (NullPointerException nullex) {
+            Log.w(LOGTAG,"NetworkInfo exception",nullex);
+            isWiFi = false;
+        }
+        return isWiFi;
     }
 }

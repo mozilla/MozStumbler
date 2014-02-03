@@ -43,7 +43,6 @@ final class NetworkUtils {
         return true; // Network is OK!
     }
     static boolean isWifiAvailable(Context context) {
-        boolean isWiFi;
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         if (cm == null) {
             Log.e(LOGTAG, "ConnectivityManager is null!");

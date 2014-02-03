@@ -411,17 +411,4 @@ final class Reporter extends BroadcastReceiver {
         i.putExtra(Intent.EXTRA_SUBJECT, "Reporter");
         mContext.sendBroadcast(i);
     }
-    private boolean isNetworkWifi() {
-        boolean isWiFi;
-        ConnectivityManager cMgr = (ConnectivityManager)mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo aNet = cMgr.getActiveNetworkInfo();
-        try {
-            isWiFi = aNet.getType() == ConnectivityManager.TYPE_WIFI;
-        }
-        catch (NullPointerException nullex) {
-            Log.w(LOGTAG,"NetworkInfo exception",nullex);
-            isWiFi = false;
-        }
-        return isWiFi;
-    }
 }

@@ -22,6 +22,10 @@ public final class Prefs {
     private static final String     REPORTS_PREF  = "reports";
     private static final String     VALUES_VERSION_PREF = "values_version";
     private static final String     WIFI_ONLY = "wifi_only";
+    private static final String     LAT_PREF = "lat_pref";
+    private static final String     LON_PREF = "lon_pref";
+    private static final String     GEOFENCE_HERE = "geofence_here";
+    private static final String     GEOFENCE_SWITCH = "geofence_switch";
 
     private final Context mContext;
 
@@ -40,26 +44,70 @@ public final class Prefs {
         }
     }
 
-    public String getNickname() {
-        String nickname = getStringPref(NICKNAME_PREF);
-        if (nickname != null) {
-            nickname = nickname.trim();
-        }
+    ///
+    /// Setters
+    ///
 
-        return TextUtils.isEmpty(nickname) ? null : nickname;
+    public void setGeofenceState(boolean state) {
+        setBoolPref(GEOFENCE_SWITCH,state);
     }
 
-    public boolean getWifi() {
-        return getBoolPref(WIFI_ONLY);
+    public void setGeofenceHere(boolean flag) {
+        setBoolPref(GEOFENCE_HERE,flag);
+    }
+
+    public void setLatLonPref(float la, float lo) {
+        SharedPreferences.Editor editor = getPrefs().edit();
+        editor.putFloat(LAT_PREF,la);
+        editor.putFloat(LON_PREF,lo);
+        apply(editor);
+        Log.d(LOGTAG, "Geofence set: " + la + "," + lo);
     }
 
     public void setReports(String json) {
         setStringPref(REPORTS_PREF, json);
     }
 
+    ///
+    /// Getters
+    ///
+
+    public boolean getGeofenceState() {
+        return getBoolPref(GEOFENCE_SWITCH);
+    }
+
+    public boolean getGeofenceHere() {
+        return getBoolPref(GEOFENCE_HERE,false);
+    }
+
+    public float getLat() {
+        return getPrefs().getFloat(LAT_PREF, 0);
+    }
+
+    public float getLon() {
+        return getPrefs().getFloat(LON_PREF,0);
+    }
+
+    public String getNickname() {
+        String nickname = getStringPref(NICKNAME_PREF);
+        if (nickname != null) {
+            nickname = nickname.trim();
+        }
+        return TextUtils.isEmpty(nickname) ? null : nickname;
+    }
+
     public String getReports() {
         return getStringPref(REPORTS_PREF);
     }
+
+    public boolean getWifi() {
+        return getBoolPref(WIFI_ONLY);
+    }
+
+    ///
+    /// Privates
+    ///
+
 
     private String getStringPref(String key) {
         return getPrefs().getString(key, null);
@@ -67,6 +115,16 @@ public final class Prefs {
 
     private boolean getBoolPref(String key) {
         return getPrefs().getBoolean(key, false);
+    }
+
+    private boolean getBoolPref(String key, boolean def) {
+        return getPrefs().getBoolean(key, def);
+    }
+
+    private void setBoolPref(String key, Boolean state) {
+        SharedPreferences.Editor editor = getPrefs().edit();
+        editor.putBoolean(key,state);
+        apply(editor);
     }
 
     private void setStringPref(String key, String value) {

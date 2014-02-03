@@ -13,17 +13,22 @@ import android.preference.EditTextPreference;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
-import android.text.TextUtils;
 import android.util.Log;
+import android.text.TextUtils;
+import android.widget.EditText;
 
 public class PreferencesScreen extends PreferenceActivity {
 
     private EditTextPreference mNicknamePreference;
+    private CheckBoxPreference mGeofenceSwitch;
+    private Preference mGeofenceHere;
+    private Prefs mPrefs;
 
     @SuppressWarnings("deprecation")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         getPreferenceManager().setSharedPreferencesName(Prefs.PREFS_FILE);
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.GINGERBREAD) {
             getPreferenceManager().setSharedPreferencesMode(MODE_MULTI_PROCESS);
@@ -32,10 +37,18 @@ public class PreferencesScreen extends PreferenceActivity {
         CheckBoxPreference mWifiPreference;
         mNicknamePreference = (EditTextPreference) getPreferenceManager().findPreference("nickname");
         mWifiPreference = (CheckBoxPreference) getPreferenceManager().findPreference("wifi_only");
-        Prefs prefs = new Prefs(this);
+        mGeofenceSwitch = (CheckBoxPreference) getPreferenceManager().findPreference("geofence_switch");
+        mGeofenceHere = getPreferenceManager().findPreference("geofence_here");
 
-        setNicknamePreferenceTitle(prefs.getNickname());
-        mWifiPreference.setChecked(prefs.getWifi());
+        mPrefs = new Prefs(this);
+
+        setNicknamePreferenceTitle(mPrefs.getNickname());
+        mWifiPreference.setChecked(mPrefs.getWifi());
+        setGeofenceSwitchTitle();
+        mGeofenceSwitch.setChecked(mPrefs.getGeofenceState());
+        boolean geofence_here = mPrefs.getGeofenceHere();
+        mGeofenceSwitch.setEnabled(!geofence_here);
+        setGeofenceHereDesc(geofence_here);
 
         setPreferenceListener();
     }
@@ -48,6 +61,30 @@ public class PreferencesScreen extends PreferenceActivity {
                 return true;
             }
         });
+
+        mGeofenceHere.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                mPrefs.setGeofenceHere(true);
+                setGeofenceHereDesc(true);
+                mGeofenceSwitch.setChecked(false);
+                mGeofenceSwitch.setEnabled(false);
+                mPrefs.setGeofenceState(false);
+                return true;
+            }
+        });
+    }
+    private void setGeofenceHereDesc(boolean state) {
+        if (state) {
+            mGeofenceHere.setSummary(R.string.geofencing_explain);
+        } else {
+            mGeofenceHere.setSummary(R.string.geofencing_desc);
+        }
+    }
+
+    private void setGeofenceSwitchTitle() {
+        String geo_on = getResources().getString(R.string.geofencing_on);
+        mGeofenceSwitch.setTitle(String.format(geo_on,mPrefs.getLat(),mPrefs.getLon()));
     }
 
     private void setNicknamePreferenceTitle(String nickname) {

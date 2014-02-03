@@ -94,4 +94,12 @@ class Scanner {
   double getLongitude() {
      return mGPSScanner.getLongitude();
   }
+
+  void checkPrefs() {
+      mGPSScanner.checkPrefs();
+  }
+
+  boolean isGeofenced() {
+      return mGPSScanner.isGeofenced();
+  }
 }

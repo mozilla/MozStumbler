@@ -8,8 +8,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import org.mozilla.mozstumbler.preferences.Prefs;
 
 import android.location.LocationProvider;
 import android.os.Bundle;
@@ -30,6 +29,7 @@ public class GPSScanner implements LocationListener {
     private int mLocationCount;
     private double mLatitude;
     private double mLongitude;
+    private LocationBlockList mBlockList;
 
     GPSScanner(Context context) {
         mContext = context;
@@ -70,6 +70,7 @@ public class GPSScanner implements LocationListener {
             };
 
         lm.addGpsStatusListener(mGPSListener);
+        mBlockList = new LocationBlockList(mContext);
     }
 
     public void stop() {
@@ -94,6 +95,12 @@ public class GPSScanner implements LocationListener {
     public double getLongitude() {
         return mLongitude;
     }
+    public void checkPrefs() {
+        Log.d(LOGTAG,"Updating blocking data.");
+        if (mBlockList!=null) mBlockList.update_blocks();
+    }
+
+    public boolean isGeofenced() { return (mBlockList!=null) ? mBlockList.isGeofenced() : false ; }
 
     @Override
     public void onLocationChanged(Location location) {
@@ -102,7 +109,7 @@ public class GPSScanner implements LocationListener {
             return;
         }
 
-        if (LocationBlockList.contains(location)) {
+        if (mBlockList.contains(location)) {
             Log.w(LOGTAG, "Blocked location: " + location);
             reportLocationLost();
             return;

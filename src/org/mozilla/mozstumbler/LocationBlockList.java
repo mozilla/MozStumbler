@@ -3,6 +3,8 @@ package org.mozilla.mozstumbler;
 import android.location.Location;
 import android.util.Log;
 
+import org.mozilla.mozstumbler.preferences.Prefs;
+
 final class LocationBlockList {
     private static final String LOGTAG          = LocationBlockList.class.getName();
     private static final double MAX_ALTITUDE    = 8848;      // Mount Everest's altitude in meters
@@ -10,11 +12,12 @@ final class LocationBlockList {
     private static final float  MAX_SPEED       = 340.29f;   // Mach 1 in meters/second
     private static final float  MIN_ACCURACY    = 500;       // meter radius
     private static final long   MIN_TIMESTAMP   = 946684801; // 2000-01-01 00:00:01
+    private static final double  MIN_DIFF       = 0.01;      // arbitrary value giving enough privacy
 
     private LocationBlockList() {
     }
 
-    static boolean contains(Location location) {
+    static boolean contains(Location location,float bLat, float bLon) {
         final float inaccuracy = location.getAccuracy();
         final double altitude = location.getAltitude();
         final float bearing = location.getBearing();
@@ -64,6 +67,11 @@ final class LocationBlockList {
         if (timestamp < MIN_TIMESTAMP || timestamp > tomorrow) {
             block = true;
             Log.w(LOGTAG, "Bogus timestamp: " + timestamp + " (" + DateTimeUtils.formatTime(timestamp) + ")");
+        }
+
+        if ( Math.abs(location.getLatitude()-(double)bLat)<MIN_DIFF && Math.abs(location.getLongitude()-(double)bLon)<MIN_DIFF) {
+            block = true;
+            Log.w(LOGTAG, "Hit the geofence: " + bLat +" / " + bLon);
         }
 
         return block;

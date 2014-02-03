@@ -13,4 +13,11 @@
         android:summary="@string/upload_wifi_only_summary"
         android:defaultValue="false"/>
 
+
+    <EditTextPreference
+        android:key="geofence"
+        android:title="@string/geofencing_title"
+        android:summary="@string/geofencing_desc"
+        android:defaultValue="0,0"/>
+
 </PreferenceScreen>

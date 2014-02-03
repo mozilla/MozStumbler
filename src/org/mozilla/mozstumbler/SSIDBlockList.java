@@ -31,6 +31,7 @@ final class SSIDBlockList {
         "VirginMobile MiFi",
         "VodafoneMobileWiFi-",
         "FirefoxHotspot",
+        "Mobile Hotspot", // BlackBerry OS 10
 
         // Transportation Wi-Fi
         "ac_transit_wifi_bus",

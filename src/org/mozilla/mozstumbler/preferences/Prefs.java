@@ -50,8 +50,7 @@ public final class Prefs {
     }
 
     public boolean getWifi() {
-        boolean wifi_only = getBoolPref(WIFI_ONLY);
-        return wifi_only;
+        return getBoolPref(WIFI_ONLY);
     }
 
     public void setReports(String json) {

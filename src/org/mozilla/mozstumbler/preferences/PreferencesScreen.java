@@ -8,11 +8,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
-import android.preference.CheckBoxPreference;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -24,7 +24,6 @@ public class PreferencesScreen extends PreferenceActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Prefs mPrefs;
         getPreferenceManager().setSharedPreferencesName(Prefs.PREFS_FILE);
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.GINGERBREAD) {
             getPreferenceManager().setSharedPreferencesMode(MODE_MULTI_PROCESS);
@@ -33,10 +32,10 @@ public class PreferencesScreen extends PreferenceActivity {
         CheckBoxPreference mWifiPreference;
         mNicknamePreference = (EditTextPreference) getPreferenceManager().findPreference("nickname");
         mWifiPreference = (CheckBoxPreference) getPreferenceManager().findPreference("wifi_only");
-        mPrefs = new Prefs(this);
+        Prefs prefs = new Prefs(this);
 
-        setNicknamePreferenceTitle(mPrefs.getNickname());
-        mWifiPreference.setChecked(mPrefs.getWifi());
+        setNicknamePreferenceTitle(prefs.getNickname());
+        mWifiPreference.setChecked(prefs.getWifi());
 
         setPreferenceListener();
     }

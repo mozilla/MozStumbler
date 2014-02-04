@@ -54,5 +54,5 @@
     <string name="detected_activity_unknown">Unknown</string>
 
     <string name="upload_wifi_only_title">Upload only on WiFi</string>
-    <string name="upload_wifi_only_summary">This option will reduce your data usage over the cellular network</string>
+    <string name="upload_wifi_only_summary">This option will reduce your data usage over the cellular network.</string>
 </resources>

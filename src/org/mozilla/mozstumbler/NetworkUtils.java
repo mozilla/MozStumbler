@@ -42,7 +42,16 @@ final class NetworkUtils {
 
         return true; // Network is OK!
     }
-
+    static boolean isWifiAvailable(Context context) {
+        boolean isWiFi;
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (cm == null) {
+            Log.e(LOGTAG, "ConnectivityManager is null!");
+            return false;
+        }
+        NetworkInfo aNet = cm.getActiveNetworkInfo();
+        return (aNet != null && aNet.getType() == ConnectivityManager.TYPE_WIFI);
+    }
     static String getUserAgentString(Context context) {
         String appName = context.getString(R.string.app_name);
         String appVersion = PackageUtils.getAppVersion(context);

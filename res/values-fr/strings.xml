@@ -52,5 +52,7 @@
     <string name="detected_activity_still">Immobile</string>
     <string name="detected_activity_tilting">Changeante</string>
     <string name="detected_activity_unknown">Inconnue</string>
-
+ 
+    <string name="upload_wifi_only_title">Envoi des rapports par le WiFi uniquement</string>
+    <string name="upload_wifi_only_summary">Cette option réduira votre consommation de données de votre forfait.</string>
 </resources>

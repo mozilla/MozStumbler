@@ -53,4 +53,12 @@
     <string name="detected_activity_tilting">Tilting</string>
     <string name="detected_activity_unknown">Unknown</string>
 
+    <string name="upload_wifi_only_title">Upload only on WiFi</string>
+    <string name="upload_wifi_only_summary">This option will reduce your data usage over the cellular network.</string>
+
+    <string name="geofencing_off">Geofencing off (0,0)</string>
+    <string name="geofencing_title">Geofencing options</string>
+    <string name="geofencing_desc">By entering coordinates here, you instruct MozStumbler to ignore locations around certain point.</string>
+    <string name="geofencing_on">Geofencing active</string>
+
 </resources>

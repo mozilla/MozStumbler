@@ -53,4 +53,6 @@
     <string name="detected_activity_tilting">Inclinado</string>
     <string name="detected_activity_unknown">Desconocido</string>
 
+    <string name="upload_wifi_only_title">Subir sólo por Wifi</string>
+    <string name="upload_wifi_only_summary">Está opción reducirá tu consumo de datos de tu operador móvil.</string>
 </resources>

@@ -13,8 +13,8 @@
     <string name="activity_recognition_service">Servicio de reconocimiento de actividad de Mozilla Stumbler</string>
     <string name="wifi_access_points">Puntos de Acceso Wi-Fi escaneados: %1$d</string>
     <string name="visible_wifi_access_points">Puntos de Acceso Wi-Fi visibles: %1$d</string>
-    <string name="cells_scanned">Celdas escaneadas: %1$d</string>
-    <string name="cells_visible">Celdas visibles: %1$d</string>
+    <string name="cells_scanned">Antenas moviles escaneadas: %1$d</string>
+    <string name="cells_visible">Antenas moviles visibles: %1$d</string>
     <string name="gps_satellites">Satélites GPS visibles: %1$d</string>
     <string name="last_location">Última ubicación: %1$s</string>
     <string name="coordinate">%1$.4f, %2$.4f</string>

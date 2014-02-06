@@ -46,7 +46,6 @@ public final class MainActivity extends Activity {
     private ServiceConnection        mConnection;
     private ServiceBroadcastReceiver mReceiver;
     private int                      mGpsFixes;
-    private String                   mGeofence;
     private MenuItem                 mMenuGeofence;
 
     private class ServiceBroadcastReceiver extends BroadcastReceiver {
@@ -161,8 +160,6 @@ public final class MainActivity extends Activity {
         mReceiver = new ServiceBroadcastReceiver();
         mReceiver.register();
         mPrefs = new Prefs(this);
-        mGeofence = mPrefs.getLatLon();
-
         mConnection = new ServiceConnection() {
             public void onServiceConnected(ComponentName className, IBinder binder) {
                 mConnectionRemote = ScannerServiceInterface.Stub.asInterface(binder);
@@ -275,10 +272,10 @@ public final class MainActivity extends Activity {
         formatTextView(R.id.locations_scanned, R.string.locations_scanned, locationsScanned);
         formatTextView(R.id.last_upload_time, R.string.last_upload_time, lastUploadTimeString);
         formatTextView(R.id.reports_sent, R.string.reports_sent, reportsSent);
-        if (TextUtils.equals(mGeofence,"0,0")|| TextUtils.equals(mGeofence, "0.0,0.0")) {
+        if (!mPrefs.getGeofenceState()) {
             formatTextView(R.id.geofence_status, R.string.geofencing_off);
         } else {
-            formatTextView(R.id.geofence_status, R.string.geofencing_on, mGeofence);
+            formatTextView(R.id.geofence_status, R.string.geofencing_on, mPrefs.getLatLon());
         }
         if (mMenuGeofence!=null) mMenuGeofence.setEnabled(scanning && mGpsFixes > 0 && locationsScanned > 0);
     }
@@ -362,7 +359,6 @@ public final class MainActivity extends Activity {
                     ? formatLocation(latitude, longitude)
                     : "0,0";
             mPrefs.setLatLon(geofence);
-            mGeofence=mPrefs.getLatLon();
             return true;
         }
 

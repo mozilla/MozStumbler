@@ -21,6 +21,7 @@ public class PreferencesScreen extends PreferenceActivity {
 
     private EditTextPreference mNicknamePreference;
     private EditTextPreference mLatLonPreference;
+    private CheckBoxPreference mGeofenceSwitch;
     private Prefs mPrefs;
 
     @SuppressWarnings("deprecation")
@@ -37,12 +38,13 @@ public class PreferencesScreen extends PreferenceActivity {
         mNicknamePreference = (EditTextPreference) getPreferenceManager().findPreference("nickname");
         mWifiPreference = (CheckBoxPreference) getPreferenceManager().findPreference("wifi_only");
         mLatLonPreference = (EditTextPreference) getPreferenceManager().findPreference("geofence");
+        mGeofenceSwitch = (CheckBoxPreference) getPreferenceManager().findPreference("geofence_switch");
 
         mPrefs = new Prefs(this);
 
         setNicknamePreferenceTitle(mPrefs.getNickname());
         mWifiPreference.setChecked(mPrefs.getWifi());
-        setGeoFencePreferenceTitle(mPrefs.getLatLon());
+        setGeofencePreferenceTitle(mPrefs.getLatLon());
 
         setPreferenceListener();
     }
@@ -60,20 +62,33 @@ public class PreferencesScreen extends PreferenceActivity {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
                 mPrefs.setLatLon(newValue.toString());
-                String nLatLon = mPrefs.getLatLon();
-                setGeoFencePreferenceTitle(nLatLon);
+                setGeofencePreferenceTitle(mPrefs.getLatLon());
                 return true;
+            }
+        });
+
+        mGeofenceSwitch.setOnPreferenceChangeListener( new OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object o) {
+                if (o.equals(Boolean.TRUE)) {
+                    return(mPrefs.getLat()!=0&&mPrefs.getLon()!=0);
+                }
+                    else {
+                return true;
+                }
             }
         });
     }
 
-    private void setGeoFencePreferenceTitle(String LatLon) {
+    private void setGeofencePreferenceTitle(String LatLon) {
 
         if (TextUtils.equals(LatLon,"0,0")||TextUtils.equals(LatLon,"0.0,0.0")) {
-            mLatLonPreference.setTitle(R.string.geofencing_off);
+            mGeofenceSwitch.setTitle(R.string.geofencing_off);
+            mGeofenceSwitch.setChecked(false);
         } else {
             String geo_on = getResources().getString(R.string.geofencing_on);
-            mLatLonPreference.setTitle(String.format(geo_on,mPrefs.getLatLon()));
+            mGeofenceSwitch.setTitle(String.format(geo_on,mPrefs.getLatLon()));
+            mGeofenceSwitch.setChecked(true);
         }
     }
 

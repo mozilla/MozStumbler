@@ -13,4 +13,16 @@
         android:summary="@string/upload_wifi_only_summary"
         android:defaultValue="false"/>
 
+
+    <EditTextPreference
+        android:key="geofence"
+        android:title="@string/geofencing_title"
+        android:summary="@string/geofencing_desc"
+        android:defaultValue="0,0"/>
+
+    <CheckBoxPreference
+        android:key="geofence_switch"
+        android:title="@string/geofencing_off"
+        android:defaultValue="false" />
+
 </PreferenceScreen>

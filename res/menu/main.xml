@@ -9,6 +9,10 @@
         android:id="@+id/action_preferences"
         android:title="@string/action_preferences"/>
     <item
+        android:id="@+id/action_set_geofence"
+        android:title="@string/geofencing_enable"
+        android:enabled="false"/>
+    <item
         android:id="@+id/action_about"
         android:title="@string/action_about"/>
     <item

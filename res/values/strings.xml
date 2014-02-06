@@ -55,4 +55,11 @@
 
     <string name="upload_wifi_only_title">Upload only on WiFi</string>
     <string name="upload_wifi_only_summary">This option will reduce your data usage over the cellular network.</string>
+
+    <string name="geofencing_off">Geofencing: off</string>
+    <string name="geofencing_title">Geofencing options</string>
+    <string name="geofencing_desc">By entering coordinates here, you instruct MozStumbler to ignore locations around certain point.</string>
+    <string name="geofencing_on">Geofencing: on (%1$s)</string>
+    <string name="geofencing_enable">Geofence this location</string>
+
 </resources>

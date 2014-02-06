@@ -89,6 +89,15 @@
            android:text="@string/reports_sent"
            android:textAppearance="?android:attr/textAppearanceMedium" />
 
+        <TextView
+            android:id="@+id/geofence_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/reports_sent"
+            android:text="@string/geofencing_off"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
        <ToggleButton
            android:id="@+id/toggle_scanning"
            android:layout_width="wrap_content"
@@ -96,7 +105,7 @@
            android:layout_alignParentBottom="true"
            android:layout_alignParentLeft="true"
            android:layout_alignParentRight="true"
-           android:layout_below="@+id/reports_sent"
+           android:layout_below="@+id/geofence_status"
            android:onClick="onToggleScanningClicked"
            android:textOff="@string/start_scanning"
            android:textOn="@string/stop_scanning" 

@@ -22,6 +22,10 @@ public final class Prefs {
     private static final String     REPORTS_PREF  = "reports";
     private static final String     VALUES_VERSION_PREF = "values_version";
     private static final String     WIFI_ONLY = "wifi_only";
+    private static final String     LAT_PREF = "lat_pref";
+    private static final String     LON_PREF = "lon_pref";
+    private static final String     GEOFENCE = "geofence";
+    private static final String     GEOFENCE_SWITCH = "geofence_switch";
 
     private final Context mContext;
 
@@ -53,6 +57,52 @@ public final class Prefs {
         return getBoolPref(WIFI_ONLY);
     }
 
+    public boolean getGeofenceState() {
+        return getBoolPref(GEOFENCE_SWITCH);
+    }
+
+    public void setGeofenceState(boolean state) {
+       setBoolPref(GEOFENCE_SWITCH,state);
+    }
+    public String getLatLon() {
+        float la=getPrefs().getFloat(LAT_PREF,0);
+        float lo=getPrefs().getFloat(LON_PREF,0);
+        String LatLon = Float.toString(la).concat(",").concat(Float.toString(lo));
+        return LatLon;
+    }
+    public float getLat() {
+        float Lat = getPrefs().getFloat(LAT_PREF,0);
+        return Lat;
+    }
+
+    public float getLon() {
+        float Lon = getPrefs().getFloat(LON_PREF,0);
+        return Lon;
+    }
+    public void setLatLon(String LatLon) {
+        float la = 0;
+        float lo = 0;
+        try {
+            la = Float.parseFloat(LatLon.substring(0,LatLon.indexOf(",")));
+            lo = Float.parseFloat(LatLon.substring(LatLon.lastIndexOf(",")+1));
+        } catch (Exception err) {
+            Log.w(LOGTAG,"Messed up again: ".concat(err.toString()));
+            la = 0;
+            lo = 0;
+        }
+        setLatLonPref(la,lo);
+        setStringPref(GEOFENCE,getLatLon());
+    }
+
+    private void setLatLonPref(float la, float lo) {
+        SharedPreferences.Editor editor = getPrefs().edit();
+        editor.putFloat(LAT_PREF,la);
+        editor.putFloat(LON_PREF,lo);
+        apply(editor);
+        Log.d(LOGTAG,Float.toString(la).concat(",").concat(Float.toString(lo)));
+        setGeofenceState(la==0&&lo==0);
+    }
+
     public void setReports(String json) {
         setStringPref(REPORTS_PREF, json);
     }
@@ -67,6 +117,12 @@ public final class Prefs {
 
     private boolean getBoolPref(String key) {
         return getPrefs().getBoolean(key, false);
+    }
+
+    private void setBoolPref(String key, Boolean state) {
+        SharedPreferences.Editor editor = getPrefs().edit();
+        editor.putBoolean(key,state);
+        apply(editor);
     }
 
     private void setStringPref(String key, String value) {

@@ -72,7 +72,8 @@ public class PreferencesScreen extends PreferenceActivity {
         if (TextUtils.equals(LatLon,"0,0")||TextUtils.equals(LatLon,"0.0,0.0")) {
             mLatLonPreference.setTitle(R.string.geofencing_off);
         } else {
-            mLatLonPreference.setTitle(R.string.geofencing_on);
+            String geo_on = getResources().getString(R.string.geofencing_on);
+            mLatLonPreference.setTitle(String.format(geo_on,mPrefs.getLatLon()));
         }
     }
 

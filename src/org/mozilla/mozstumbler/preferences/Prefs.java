@@ -24,6 +24,7 @@ public final class Prefs {
     private static final String     WIFI_ONLY = "wifi_only";
     private static final String     LAT_PREF = "lat_pref";
     private static final String     LON_PREF = "lon_pref";
+    private static final String     GEOFENCE = "geofence";
 
     private final Context mContext;
 
@@ -82,6 +83,7 @@ public final class Prefs {
             lo = 0;
         }
         setLatLonPref(la,lo);
+        setStringPref(GEOFENCE,getLatLon());
     }
 
     private void setLatLonPref(float la, float lo) {

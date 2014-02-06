@@ -22,6 +22,7 @@ import android.os.RemoteException;
 import android.os.StrictMode;
 import android.provider.Settings;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -45,6 +46,8 @@ public final class MainActivity extends Activity {
     private ServiceConnection        mConnection;
     private ServiceBroadcastReceiver mReceiver;
     private int                      mGpsFixes;
+    private String                   mGeofence;
+    private MenuItem                 mMenuGeofence;
 
     private class ServiceBroadcastReceiver extends BroadcastReceiver {
         private boolean mReceiverIsRegistered;
@@ -158,6 +161,7 @@ public final class MainActivity extends Activity {
         mReceiver = new ServiceBroadcastReceiver();
         mReceiver.register();
         mPrefs = new Prefs(this);
+        mGeofence = mPrefs.getLatLon();
 
         mConnection = new ServiceConnection() {
             public void onServiceConnected(ComponentName className, IBinder binder) {
@@ -271,6 +275,12 @@ public final class MainActivity extends Activity {
         formatTextView(R.id.locations_scanned, R.string.locations_scanned, locationsScanned);
         formatTextView(R.id.last_upload_time, R.string.last_upload_time, lastUploadTimeString);
         formatTextView(R.id.reports_sent, R.string.reports_sent, reportsSent);
+        if (TextUtils.equals(mGeofence,"0,0")|| TextUtils.equals(mGeofence, "0.0,0.0")) {
+            formatTextView(R.id.geofence_status, R.string.geofencing_off);
+        } else {
+            formatTextView(R.id.geofence_status, R.string.geofencing_on, mGeofence);
+        }
+        if (mMenuGeofence!=null) mMenuGeofence.setEnabled(scanning && mGpsFixes > 0 && locationsScanned > 0);
     }
 
     public void onToggleScanningClicked(View v) throws RemoteException {
@@ -293,6 +303,7 @@ public final class MainActivity extends Activity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
+        mMenuGeofence = menu.findItem(R.id.action_set_geofence);
         return true;
     }
 
@@ -329,6 +340,29 @@ public final class MainActivity extends Activity {
                 }
             }
             finish();
+            return true;
+        }
+
+        if (item.getItemId() == R.id.action_set_geofence) {
+            if (mConnectionRemote == null) {
+                return true;
+            }
+            int locationsScanned = 0;
+            double latitude = 0;
+            double longitude = 0;
+            try {
+                latitude = mConnectionRemote.getLatitude();
+                longitude = mConnectionRemote.getLongitude();
+                locationsScanned = mConnectionRemote.getLocationCount();
+
+            } catch (RemoteException e) {
+                Log.e(LOGTAG, "", e);
+            }
+            String geofence = (mGpsFixes > 0 && locationsScanned > 0)
+                    ? formatLocation(latitude, longitude)
+                    : "0,0";
+            mPrefs.setLatLon(geofence);
+            mGeofence=mPrefs.getLatLon();
             return true;
         }
 

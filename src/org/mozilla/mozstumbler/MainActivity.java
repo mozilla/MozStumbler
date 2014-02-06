@@ -272,7 +272,7 @@ public final class MainActivity extends Activity {
         formatTextView(R.id.locations_scanned, R.string.locations_scanned, locationsScanned);
         formatTextView(R.id.last_upload_time, R.string.last_upload_time, lastUploadTimeString);
         formatTextView(R.id.reports_sent, R.string.reports_sent, reportsSent);
-        if (!mPrefs.getGeofenceState()) {
+        if (!mPrefs.getGeofenceState()) { // FIXME: BUG
             formatTextView(R.id.geofence_status, R.string.geofencing_off);
         } else {
             formatTextView(R.id.geofence_status, R.string.geofencing_on, mPrefs.getLatLon());

@@ -53,4 +53,6 @@
     <string name="detected_activity_tilting">Отклонение</string>
     <string name="detected_activity_unknown">Неопределено</string>
 
+    <string name="upload_wifi_only_title">Передача данных только через WiFi</string>
+    <string name="upload_wifi_only_summary">Эта опция позволяет экономить GPRS траффик.</string>
 </resources>

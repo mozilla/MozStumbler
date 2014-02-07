@@ -29,8 +29,7 @@ public class GPSScanner implements LocationListener {
     private int mLocationCount;
     private double mLatitude;
     private double mLongitude;
-    private float mBlockedLat;
-    private float mBlockedLon;
+    private LocationBlockList mBlockList;
 
 
     GPSScanner(Context context) {
@@ -73,9 +72,7 @@ public class GPSScanner implements LocationListener {
             };
 
         lm.addGpsStatusListener(mGPSListener);
-        Prefs prefs = new Prefs(mContext);
-        mBlockedLat = prefs.getLat();
-        mBlockedLon = prefs.getLon();
+        mBlockList = new LocationBlockList(mContext);
     }
 
     public void stop() {
@@ -108,7 +105,7 @@ public class GPSScanner implements LocationListener {
             return;
         }
 
-        if (LocationBlockList.contains(location,mBlockedLat,mBlockedLon)) {
+        if (mBlockList.contains(location)) {
             Log.w(LOGTAG, "Blocked location: " + location);
             reportLocationLost();
             return;

@@ -56,32 +56,34 @@ public final class Prefs {
     }
 
     public String getLatLon() {
-        float la=getPrefs().getFloat(LAT_PREF,0);
-        float lo=getPrefs().getFloat(LON_PREF,0);
-        String LatLon = Float.toString(la).concat(",").concat(Float.toString(lo));
-        return LatLon;
+        float la = getPrefs().getFloat(LAT_PREF,0);
+        float lo = getPrefs().getFloat(LON_PREF,0);
+        return Float.toString(la).concat(",").concat(Float.toString(lo));
     }
+
     public float getLat() {
-        float Lat = getPrefs().getFloat(LAT_PREF,0);
-        return Lat;
+        return getPrefs().getFloat(LAT_PREF,0);
     }
 
     public float getLon() {
-        float Lon = getPrefs().getFloat(LON_PREF,0);
-        return Lon;
+        return getPrefs().getFloat(LON_PREF,0);
     }
+
     public void setLatLon(String LatLon) {
-        float la = 0;
-        float lo = 0;
+        float la;
+        float lo;
         try {
             la = Float.parseFloat(LatLon.substring(0,LatLon.indexOf(",")));
             lo = Float.parseFloat(LatLon.substring(LatLon.lastIndexOf(",")+1));
-        } catch (Exception err) {
-            Log.w(LOGTAG,"Messed up again: ".concat(err.toString()));
-            la = 0;
-            lo = 0;
+        } catch (NumberFormatException e) {
+            Log.w(LOGTAG,"",e);
+            return;
+        } catch (IndexOutOfBoundsException e) {
+            Log.w(LOGTAG,"",e);
+            return;
         }
-        setLatLonPref(la,lo);
+
+        setLatLonPref(la, lo);
     }
 
     private void setLatLonPref(float la, float lo) {
@@ -89,7 +91,7 @@ public final class Prefs {
         editor.putFloat(LAT_PREF,la);
         editor.putFloat(LON_PREF,lo);
         apply(editor);
-        Log.d(LOGTAG,Float.toString(la).concat(",").concat(Float.toString(lo)));
+        Log.d(LOGTAG, la + "," + lo);
     }
 
     public void setReports(String json) {

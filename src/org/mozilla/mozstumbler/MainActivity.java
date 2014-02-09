@@ -103,8 +103,21 @@ public final class MainActivity extends Activity {
                     Log.d(LOGTAG, "Received a scanner intent...");
                     return;
                 }
+                if (subject.equals("WifiScanner")) {
+                    Log.d(LOGTAG, "Received a WiFiScanner intent, ignoring...");
+                    return;
+                }
 
-                Log.e(LOGTAG, "Unknown scanner message!");
+                if (subject.equals("GPSScanner")) {
+                    Log.d(LOGTAG, "Received a GPSScanner intent, ignoring...");
+                    return;
+                }
+
+                if (subject.equals("CellScanner")) {
+                    Log.d(LOGTAG, "Received a CellScanner intent, ignoring...");
+                    return;
+                }
+                Log.e(LOGTAG, String.format("Unknown scanner message: %1$s",subject));
                 return;
             }
         }

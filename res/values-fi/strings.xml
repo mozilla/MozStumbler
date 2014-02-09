@@ -21,10 +21,10 @@
 
     <string name="enter_nickname">Valitse nimimerkki (ei pakollinen)</string>
     <string name="enter_nickname_title">Nimimerkki: </string>
-    <string name="enter_nickname_longtext">Nimimerkkisi näytetään pistetilastossa</string>
+    <string name="enter_nickname_longtext">Nimimerkkisi näytetään pistetilastossa.</string>
 
     <string name="power_saving_mode">Virransäästötila</string>
-    <string name="power_saving_mode_longtext">Tässä tilassa tietoja kerätään vain kun liikut</string>
+    <string name="power_saving_mode_longtext">Tässä tilassa tietoja kerätään vain kun liikut.</string>
 
     <string name="update_title">Lataa MozStumblerin päivitys?</string>
     <string name="update_message">Asennettu versio: %1$s\nUusin versio: %2$s</string>

@@ -24,7 +24,7 @@
 
     <string name="enter_nickname">Wpisz Pseudonim (opcjonalnie)</string>
     <string name="enter_nickname_title">Pseudonim: </string>
-    <string name="enter_nickname_longtext">Twój pseudonim wyświetli się w rankingu</string>
+    <string name="enter_nickname_longtext">Twój pseudonim wyświetli się w rankingu.</string>
 
     <string name="update_title">Pobrać aktualizację MozStumbler?</string>
     <string name="update_message">Zainstalowana wersja: %1$s\nNajnowsza wersja: %2$s</string>
@@ -48,4 +48,6 @@
     <string name="detected_activity_tilting">Przechylenie</string>
     <string name="detected_activity_unknown">Nieznana</string>
 
+    <string name="upload_wifi_only_title">Wysyłaj tylko prez WiFi</string>
+    <string name="upload_wifi_only_summary">Ta opcja zmniejszy zużycie danych Twojego telefonu.</string>
 </resources>

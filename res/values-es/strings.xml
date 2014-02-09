@@ -25,7 +25,7 @@
 
     <string name="enter_nickname">Ingresa tu apodo (opcional)</string>
     <string name="enter_nickname_title">Apodo: </string>
-    <string name="enter_nickname_longtext">Tu apodo aparecerá en la tabla de posiciones</string>
+    <string name="enter_nickname_longtext">Tu apodo aparecerá en la tabla de posiciones.</string>
 
     <string name="power_saving_mode">Modo ahorro de bateria</string>
     <string name="power_saving_mode_longtext">Cuando está activado, el escaneo solo ocurrirá cuando estés en movimiento.</string>

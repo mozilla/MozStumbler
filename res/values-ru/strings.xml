@@ -25,10 +25,10 @@
 
     <string name="enter_nickname">Укажите свой псевдоним (не обязательно)</string>
     <string name="enter_nickname_title">Псевдоним: </string>
-    <string name="enter_nickname_longtext">Ваш псевдоним появится в таблице лидеров</string>
+    <string name="enter_nickname_longtext">Ваш псевдоним появится в таблице лидеров.</string>
 
     <string name="power_saving_mode">Режим экономии энергии</string>
-    <string name="power_saving_mode_longtext">Когда включён, точки сохраняются только во время движения</string>
+    <string name="power_saving_mode_longtext">Когда включён, точки сохраняются только во время движения.</string>
 
     <string name="update_title">Загрузить обновление MozStumbler?</string>
     <string name="update_message">Установленная версия: %1$s\nПоследняя версия: %2$s</string>

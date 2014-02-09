@@ -23,9 +23,9 @@
   <string name="service_scanning">Analisi delle reti Wi-Fi e cellulari in corso</string>
   <string name="enter_nickname">Inserisci il soprannome (opzionale)</string>
   <string name="enter_nickname_title">Soprannome:</string>
-  <string name="enter_nickname_longtext">Il tuo soprannome comparirà sulla classifica</string>
+  <string name="enter_nickname_longtext">Il tuo soprannome comparirà sulla classifica.</string>
   <string name="power_saving_mode">Modalità risparmio energetico</string>
-  <string name="power_saving_mode_longtext">Se abilitata, l\'analisi verrà effettuata solo durante gli spostamenti</string>
+  <string name="power_saving_mode_longtext">Se abilitata, l\'analisi verrà effettuata solo durante gli spostamenti.</string>
   <string name="update_title">Scaricare l\'aggiornamento di MozStumbler?</string>
   <string name="update_message">Versione installata: %1$s\nVersione più recente: %2$s</string>
   <string name="update_now">Aggiorna ora</string>

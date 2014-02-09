@@ -18,7 +18,7 @@
 
     <string name="enter_nickname">Alias (niet verplicht)</string>
     <string name="enter_nickname_title">Alias: </string>
-    <string name="enter_nickname_longtext">Alias wordt gepubliceerd op het leaderboard</string>
+    <string name="enter_nickname_longtext">Alias wordt gepubliceerd op het leaderboard.</string>
 
     <string name="update_title">Download MozStumbler update?</string>
     <string name="update_message">Geinstalleerde versie: %1$s\nMeeste recente versie: %2$s</string>

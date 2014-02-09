@@ -21,7 +21,7 @@
 
     <string name="enter_nickname">Vložte jméno (nepovinné)</string>
     <string name="enter_nickname_title">Jméno: </string>
-    <string name="enter_nickname_longtext">Vaše jméno se zobrazí v žebříčku</string>
+    <string name="enter_nickname_longtext">Vaše jméno se zobrazí v žebříčku.</string>
 
     <string name="update_title">Stáhnout novou verzi MozStumbleru?</string>
     <string name="update_message">Nainstalovana verze: %1$s\nPoslední verze: %2$s</string>

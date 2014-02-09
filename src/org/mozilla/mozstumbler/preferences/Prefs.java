@@ -22,6 +22,8 @@ public final class Prefs {
     private static final String     REPORTS_PREF  = "reports";
     private static final String     VALUES_VERSION_PREF = "values_version";
     private static final String     WIFI_ONLY = "wifi_only";
+    private static final String     LAT_PREF = "lat_pref";
+    private static final String     LON_PREF = "lon_pref";
 
     private final Context mContext;
 
@@ -51,6 +53,45 @@ public final class Prefs {
 
     public boolean getWifi() {
         return getBoolPref(WIFI_ONLY);
+    }
+
+    public String getLatLon() {
+        float la = getPrefs().getFloat(LAT_PREF,0);
+        float lo = getPrefs().getFloat(LON_PREF,0);
+        return Float.toString(la).concat(",").concat(Float.toString(lo));
+    }
+
+    public float getLat() {
+        return getPrefs().getFloat(LAT_PREF,0);
+    }
+
+    public float getLon() {
+        return getPrefs().getFloat(LON_PREF,0);
+    }
+
+    public void setLatLon(String LatLon) {
+        float la;
+        float lo;
+        try {
+            la = Float.parseFloat(LatLon.substring(0,LatLon.indexOf(",")));
+            lo = Float.parseFloat(LatLon.substring(LatLon.lastIndexOf(",")+1));
+        } catch (NumberFormatException e) {
+            Log.w(LOGTAG,"",e);
+            return;
+        } catch (IndexOutOfBoundsException e) {
+            Log.w(LOGTAG,"",e);
+            return;
+        }
+
+        setLatLonPref(la, lo);
+    }
+
+    private void setLatLonPref(float la, float lo) {
+        SharedPreferences.Editor editor = getPrefs().edit();
+        editor.putFloat(LAT_PREF,la);
+        editor.putFloat(LON_PREF,lo);
+        apply(editor);
+        Log.d(LOGTAG, la + "," + lo);
     }
 
     public void setReports(String json) {

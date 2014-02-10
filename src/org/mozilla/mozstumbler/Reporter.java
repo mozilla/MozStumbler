@@ -43,8 +43,8 @@ final class Reporter extends BroadcastReceiver {
     private static final String USER_AGENT_HEADER = "User-Agent";
     private static final int RECORD_BATCH_SIZE  = 100;
     private static final int REPORTER_WINDOW  = 60000; //ms
-    private static final int WIFI_COUNT_WATERMARK = 500;
-    private static final int CELLS_COUNT_WATERMARK = 50;
+    private static final int WIFI_COUNT_WATERMARK = 100;
+    private static final int CELLS_COUNT_WATERMARK = 10;
 
     private static String       MOZSTUMBLER_USER_AGENT_STRING;
 

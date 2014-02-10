@@ -232,22 +232,24 @@ final class Reporter extends BroadcastReceiver {
                         }
                         Log.e(LOGTAG, "urlConnection returned " + code);
 
-                        BufferedReader r = null;
-                        try {
-                            InputStream in = new BufferedInputStream(urlConnection.getInputStream());
-                            r = new BufferedReader(new InputStreamReader(in));
-                            StringBuilder total = new StringBuilder(in.available());
-                            String line;
-                            while ((line = r.readLine()) != null) {
-                                total.append(line);
-                            }
-                            Log.d(LOGTAG, "response was: \n" + total + "\n");
-                        } catch (Exception e) {
-                            Log.e(LOGTAG, "", e);
-                        } finally {
-                            if (r != null) {
-                                r.close();
-                                r = null;
+                        if (code != 204) {
+                            BufferedReader r = null;
+                            try {
+                                InputStream in = new BufferedInputStream(urlConnection.getInputStream());
+                                r = new BufferedReader(new InputStreamReader(in));
+                                StringBuilder total = new StringBuilder(in.available());
+                                String line;
+                                while ((line = r.readLine()) != null) {
+                                    total.append(line);
+                                }
+                                Log.d(LOGTAG, "response was: \n" + total + "\n");
+                            } catch (Exception e) {
+                                Log.e(LOGTAG, "", e);
+                            } finally {
+                                if (r != null) {
+                                    r.close();
+                                    r = null;
+                                }
                             }
                         }
                     } catch (JSONException jsonex) {

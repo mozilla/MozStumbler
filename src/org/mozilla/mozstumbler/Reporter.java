@@ -315,67 +315,81 @@ final class Reporter extends BroadcastReceiver {
                 list.add(cell);
             }
             for (String radio : groupByRadio.keySet()) {
-                reportLocation(mGpsPosition, wifis, radio, groupByRadio.get(radio), mGpsPositionTime);
-                mWifiData.clear();
+                Collection<CellInfo> cellInfo = groupByRadio.get(radio);
+                saveCellReport(radio, cellInfo);
             }
             mCellData.clear();
         }
 
         Collection<ScanResult> wifis = mWifiData.values();
         if (!wifis.isEmpty()) {
-            Collection<CellInfo> emptyList = Collections.emptyList();
-            reportLocation(mGpsPosition, wifis, "", emptyList, mGpsPositionTime);
+            saveWifiReport(wifis);
             mWifiData.clear();
         }
     }
 
-    void reportLocation(Location gpsPosition, Collection<ScanResult> wifiInfo, String radioType,
-                        Collection<CellInfo> cellInfo, long time) {
-        Log.d(LOGTAG, "reportLocation called");
-        JSONObject locInfo;
+    private JSONObject createGpsReport() throws JSONException {
+        JSONObject locInfo = new JSONObject();
 
-        // At least one cell or wifi entry is required
-        // as per: https://mozilla-ichnaea.readthedocs.org/en/latest/api/submit.html
-        if (cellInfo.isEmpty() && wifiInfo.isEmpty()) {
-            Log.w(LOGTAG, "Invalid report: at least one cell/wifi entry is required");
-            return;
+        locInfo.put("lat", Math.floor(mGpsPosition.getLatitude() * 1.0E6) / 1.0E6);
+        locInfo.put("lon", Math.floor(mGpsPosition.getLongitude() * 1.0E6) / 1.0E6);
+        locInfo.put("time", DateTimeUtils.formatTime(mGpsPosition.getTime()));
+
+        if (mGpsPosition.hasAccuracy()) {
+            locInfo.put("accuracy", (int) Math.ceil(mGpsPosition.getAccuracy()));
+        }
+
+        if (mGpsPosition.hasAltitude()) {
+            locInfo.put("altitude", Math.round(mGpsPosition.getAltitude()));
+        }
+
+        return locInfo;
+    }
+
+    private void saveCellReport(String radioType, Collection<CellInfo> cellInfo) {
+        if (cellInfo.isEmpty()) {
+            throw new IllegalArgumentException("cellInfo must not be empty");
         }
 
         try {
-            locInfo = new JSONObject();
-            locInfo.put("lat", Math.floor(gpsPosition.getLatitude() * 1.0E6) / 1.0E6);
-            locInfo.put("lon", Math.floor(gpsPosition.getLongitude() * 1.0E6) / 1.0E6);
-            locInfo.put("time", DateTimeUtils.formatTime(time));
-            if (gpsPosition.hasAccuracy()) {
-                locInfo.put("accuracy", (int) Math.ceil(gpsPosition.getAccuracy()));
-            }
-            if (gpsPosition.hasAltitude()) {
-                locInfo.put("altitude", Math.round(gpsPosition.getAltitude()));
+            JSONArray cellJSON = new JSONArray();
+            for (CellInfo cell : cellInfo) {
+                cellJSON.put(cell.toJSONObject());
             }
 
-            if (!cellInfo.isEmpty()) {
-                JSONArray cellJSON=new JSONArray();
-                for (CellInfo cell: cellInfo) cellJSON.put(cell.toJSONObject());
-                locInfo.put("cell", cellJSON);
-                locInfo.put("radio", radioType);
-            }
-
-            if (!wifiInfo.isEmpty()) {
-                JSONArray wifiJSON = new JSONArray();
-                for (ScanResult wifi : wifiInfo) {
-                    JSONObject jsonItem = new JSONObject();
-                    jsonItem.put("key", wifi.BSSID);
-                    jsonItem.put("frequency", wifi.frequency);
-                    jsonItem.put("signal", wifi.level);
-                    wifiJSON.put(jsonItem);
-                }
-                locInfo.put("wifi", wifiJSON);
-            }
+            JSONObject locInfo = createGpsReport();
+            locInfo.put("cell", cellJSON);
+            locInfo.put("radio", radioType);
+            saveReport(locInfo);
         } catch (JSONException jsonex) {
             Log.w(LOGTAG, "JSON exception", jsonex);
-            return;
+        }
+    }
+
+    private void saveWifiReport(Collection<ScanResult> wifiInfo) {
+        if (wifiInfo.isEmpty()) {
+            throw new IllegalArgumentException("wifiInfo must not be empty");
         }
 
+        try {
+            JSONArray wifiJSON = new JSONArray();
+            for (ScanResult wifi : wifiInfo) {
+                JSONObject jsonItem = new JSONObject();
+                jsonItem.put("key", wifi.BSSID);
+                jsonItem.put("frequency", wifi.frequency);
+                jsonItem.put("signal", wifi.level);
+                wifiJSON.put(jsonItem);
+            }
+
+            JSONObject locInfo = createGpsReport();
+            locInfo.put("wifi", wifiJSON);
+            saveReport(locInfo);
+        } catch (JSONException jsonex) {
+            Log.w(LOGTAG, "JSON exception", jsonex);
+        }
+    }
+
+    private void saveReport(JSONObject locInfo) {
         mReports.put(locInfo);
         sendReports(false);
     }

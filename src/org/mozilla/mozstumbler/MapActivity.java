@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Color;
 import android.graphics.Paint.Style;
 import android.graphics.Point;
 import android.net.wifi.ScanResult;
@@ -32,11 +33,14 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import org.osmdroid.tileprovider.MapTileProviderBasic;
+import org.osmdroid.tileprovider.tilesource.ITileSource;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView.Projection;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.SafeDrawOverlay;
+import org.osmdroid.views.overlay.TilesOverlay;
 import org.osmdroid.views.safecanvas.ISafeCanvas;
 import org.osmdroid.views.safecanvas.SafePaint;
 import org.osmdroid.tileprovider.tilesource.OnlineTileSourceBase;
@@ -49,6 +53,7 @@ public final class MapActivity extends Activity {
     private static final String LOCATION_URL        = "https://location.services.mozilla.com/v1/search";
     private static final String USER_AGENT_HEADER = "User-Agent";
     private static String MOZSTUMBLER_USER_AGENT_STRING;
+    private static final String COVERAGE_URL        = "https://location.services.mozilla.com/tiles/";
 
     private MapView mMap;
     private AccuracyCircleOverlay mAccuracyCircleOverlay;
@@ -98,7 +103,9 @@ public final class MapActivity extends Activity {
         mMap.setBuiltInZoomControls(true);
         mMap.setMultiTouchControls(true);
 
+        TilesOverlay coverageTilesOverlay = CoverageTilesOverlay(this);
         mAccuracyCircleOverlay = new AccuracyCircleOverlay(this);
+        mMap.getOverlays().add(coverageTilesOverlay);
         mMap.getOverlays().add(mAccuracyCircleOverlay);
 
         mReceiver = new ReporterBroadcastReceiver();
@@ -117,6 +124,19 @@ public final class MapActivity extends Activity {
                                 1, 20, 256,
                                 ".png",
                                 BuildConfig.TILE_SERVER_URL);
+    }
+
+    private static TilesOverlay CoverageTilesOverlay(Context context) {
+        final MapTileProviderBasic coverageTileProvider = new MapTileProviderBasic(context);
+        final ITileSource coverageTileSource = new XYTileSource("Mozilla Location Service Coverage Map",
+                null,
+                1, 13, 256,
+                ".png",
+                COVERAGE_URL);
+        coverageTileProvider.setTileSource(coverageTileSource);
+        final TilesOverlay coverageTileOverlay = new TilesOverlay(coverageTileProvider,context);
+        coverageTileOverlay.setLoadingBackgroundColor(Color.TRANSPARENT);
+        return coverageTileOverlay;
     }
 
     private static class AccuracyCircleOverlay extends SafeDrawOverlay {

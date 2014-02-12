@@ -150,11 +150,7 @@ public class CellInfo implements Parcelable {
     }
 
     void setRadio(int phoneType) {
-        String radio = getRadioTypeName(phoneType);
-        if (radio == null) {
-            throw new IllegalArgumentException("Unexpected Phone Type: " + phoneType);
-        }
-        mRadio = radio;
+        mRadio = getRadioTypeName(phoneType);
     }
 
     void setCellLocation(CellLocation cl,
@@ -316,6 +312,7 @@ public class CellInfo implements Parcelable {
         }
     }
 
+    @SuppressWarnings("fallthrough")
     private static String getRadioTypeName(int phoneType) {
         switch (phoneType) {
             case TelephonyManager.PHONE_TYPE_CDMA:
@@ -324,11 +321,14 @@ public class CellInfo implements Parcelable {
             case TelephonyManager.PHONE_TYPE_GSM:
                 return RADIO_GSM;
 
+            default:
+                Log.e(LOGTAG, "", new IllegalArgumentException("Unexpected phone type: " + phoneType));
+                // fallthrough
+
             case TelephonyManager.PHONE_TYPE_NONE:
             case TelephonyManager.PHONE_TYPE_SIP:
                 // These devices have no radio.
-            default:
-                return null;
+                return "";
         }
     }
 

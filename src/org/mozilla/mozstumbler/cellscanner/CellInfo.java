@@ -8,11 +8,14 @@ import android.telephony.NeighboringCellInfo;
 import android.telephony.TelephonyManager;
 import android.telephony.cdma.CdmaCellLocation;
 import android.telephony.gsm.GsmCellLocation;
+import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 public class CellInfo implements Parcelable {
+    private static final String LOGTAG = CellInfo.class.getName();
+
     public static final String RADIO_GSM = "gsm";
     public static final String RADIO_CDMA = "cdma";
     public static final String RADIO_WCDMA = "wcdma";
@@ -147,11 +150,7 @@ public class CellInfo implements Parcelable {
     }
 
     void setRadio(int phoneType) {
-        String radio = getRadioTypeName(phoneType);
-        if (radio == null) {
-            throw new IllegalArgumentException("Unexpected Phone Type: " + phoneType);
-        }
-        mRadio = radio;
+        mRadio = getRadioTypeName(phoneType);
     }
 
     void setCellLocation(CellLocation cl,
@@ -276,44 +275,44 @@ public class CellInfo implements Parcelable {
     }
 
     static String getCellRadioTypeName(int networkType) {
-        String name;
         switch (networkType) {
+            // If the network is either GSM or any high-data-rate variant of it, the radio
+            // field should be specified as `gsm`. This includes `GSM`, `EDGE` and `GPRS`.
             case TelephonyManager.NETWORK_TYPE_GPRS:
             case TelephonyManager.NETWORK_TYPE_EDGE:
                 return CELL_RADIO_GSM;
+
+            // If the network is either UMTS or any high-data-rate variant of it, the radio
+            // field should be specified as `umts`. This includes `UMTS`, `HSPA`, `HSDPA`,
+            // `HSPA+` and `HSUPA`.
             case TelephonyManager.NETWORK_TYPE_UMTS:
             case TelephonyManager.NETWORK_TYPE_HSDPA:
             case TelephonyManager.NETWORK_TYPE_HSUPA:
             case TelephonyManager.NETWORK_TYPE_HSPA:
             case TelephonyManager.NETWORK_TYPE_HSPAP:
                 return CELL_RADIO_UMTS;
+
             case TelephonyManager.NETWORK_TYPE_LTE:
                 return CELL_RADIO_LTE;
+
+            // If the network is either CDMA or one of the EVDO variants, the radio
+            // field should be specified as `cdma`. This includes `1xRTT`, `CDMA`, `eHRPD`,
+            // `EVDO_0`, `EVDO_A`, `EVDO_B`, `IS95A` and `IS95B`.
             case TelephonyManager.NETWORK_TYPE_EVDO_0:
-                name = "CDMA - EvDo rev. 0";
-                break;
             case TelephonyManager.NETWORK_TYPE_EVDO_A:
-                name = "CDMA - EvDo rev. A";
-                break;
             case TelephonyManager.NETWORK_TYPE_EVDO_B:
-                name = "CDMA - EvDo rev. B";
-                break;
             case TelephonyManager.NETWORK_TYPE_1xRTT:
-                name = "CDMA - 1xRTT";
-                break;
             case TelephonyManager.NETWORK_TYPE_EHRPD:
-                name = "CDMA - eHRPD";
-                break;
             case TelephonyManager.NETWORK_TYPE_IDEN:
-                name = "iDEN";
-                break;
+                return CELL_RADIO_CDMA;
+
             default:
-                name = "UNKNOWN (" + String.valueOf(networkType) + ")";
-                break;
+                Log.e(LOGTAG, "", new IllegalArgumentException("Unexpected network type: " + networkType));
+                return String.valueOf(networkType);
         }
-        throw new IllegalArgumentException("Unexpected Network Type: " + name);
     }
 
+    @SuppressWarnings("fallthrough")
     private static String getRadioTypeName(int phoneType) {
         switch (phoneType) {
             case TelephonyManager.PHONE_TYPE_CDMA:
@@ -322,11 +321,14 @@ public class CellInfo implements Parcelable {
             case TelephonyManager.PHONE_TYPE_GSM:
                 return RADIO_GSM;
 
+            default:
+                Log.e(LOGTAG, "", new IllegalArgumentException("Unexpected phone type: " + phoneType));
+                // fallthrough
+
             case TelephonyManager.PHONE_TYPE_NONE:
             case TelephonyManager.PHONE_TYPE_SIP:
                 // These devices have no radio.
-            default:
-                return null;
+                return "";
         }
     }
 

@@ -46,4 +46,12 @@
         android:textColor="#00e"
         android:text="@string/about_more" />
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:paddingTop="32dp"
+        android:text="@string/about_legal_aosp" />
+
 </LinearLayout>

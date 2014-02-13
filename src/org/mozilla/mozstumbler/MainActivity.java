@@ -323,18 +323,6 @@ public final class MainActivity extends Activity {
             return true;
         }
 
-        if (item.getItemId() == R.id.action_exit) {
-            if (mConnectionRemote != null) {
-                try {
-                    mConnectionRemote.stopScanning();
-                } catch (RemoteException e) {
-                    Log.e(LOGTAG, "", e);
-                }
-            }
-            finish();
-            return true;
-        }
-
         return super.onOptionsItemSelected(item);
     }
 

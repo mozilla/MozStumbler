@@ -13,4 +13,6 @@ interface ScannerServiceInterface {
     int getCurrentCellInfoCount();
     long getLastUploadTime();
     long getReportsSent();
+    boolean isGeofenced();
+    void checkPrefs();
 }

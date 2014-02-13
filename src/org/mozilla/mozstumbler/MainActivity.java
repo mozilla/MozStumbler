@@ -13,6 +13,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.graphics.Color;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Build.VERSION;
@@ -22,6 +23,7 @@ import android.os.RemoteException;
 import android.os.StrictMode;
 import android.provider.Settings;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -45,6 +47,8 @@ public final class MainActivity extends Activity {
     private ServiceConnection        mConnection;
     private ServiceBroadcastReceiver mReceiver;
     private int                      mGpsFixes;
+    private boolean                  mNeedsUpdate = false;
+    private boolean                  mGeofenceHere = false;
 
     private class ServiceBroadcastReceiver extends BroadcastReceiver {
         private boolean mReceiverIsRegistered;
@@ -114,6 +118,14 @@ public final class MainActivity extends Activity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        setGeofenceText();
+        mNeedsUpdate = true;
+        mGeofenceHere = mPrefs.getGeofenceHere();
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         enableStrictMode();
@@ -161,7 +173,6 @@ public final class MainActivity extends Activity {
         mReceiver = new ServiceBroadcastReceiver();
         mReceiver.register();
         mPrefs = new Prefs(this);
-
         mConnection = new ServiceConnection() {
             public void onServiceConnected(ComponentName className, IBinder binder) {
                 mConnectionRemote = ScannerServiceInterface.Stub.asInterface(binder);
@@ -241,6 +252,7 @@ public final class MainActivity extends Activity {
         int currentCellInfo = 0;
         long lastUploadTime = 0;
         long reportsSent = 0;
+        boolean isGeofenced = false;
 
         try {
             scanning = mConnectionRemote.isScanning();
@@ -253,6 +265,7 @@ public final class MainActivity extends Activity {
             currentCellInfo = mConnectionRemote.getCurrentCellInfoCount();
             lastUploadTime = mConnectionRemote.getLastUploadTime();
             reportsSent = mConnectionRemote.getReportsSent();
+            isGeofenced = mConnectionRemote.isGeofenced();
         } catch (RemoteException e) {
             Log.e(LOGTAG, "", e);
         }
@@ -274,6 +287,24 @@ public final class MainActivity extends Activity {
         formatTextView(R.id.locations_scanned, R.string.locations_scanned, locationsScanned);
         formatTextView(R.id.last_upload_time, R.string.last_upload_time, lastUploadTimeString);
         formatTextView(R.id.reports_sent, R.string.reports_sent, reportsSent);
+        if (mNeedsUpdate) try {
+            mConnectionRemote.checkPrefs();
+            mNeedsUpdate = false;
+        } catch (RemoteException e) {
+            Log.e(LOGTAG, "", e);
+        }
+        if (mGeofenceHere) {
+            if (mGpsFixes > 0 && locationsScanned > 0) {
+                mPrefs.setLatLonPref((float)latitude,(float)longitude);
+                mPrefs.setGeofenceState(true);
+                mGeofenceHere = false;
+                mPrefs.setGeofenceHere(false);
+                setGeofenceText();
+            }
+            mNeedsUpdate = true;
+        }
+        TextView geofence_tv = (TextView) findViewById(R.id.geofence_status);
+        geofence_tv.setTextColor(isGeofenced ? Color.RED : Color.BLACK);
     }
 
     public void onToggleScanningClicked(View v) throws RemoteException {
@@ -353,5 +384,13 @@ public final class MainActivity extends Activity {
     private String formatLocation(double latitude, double longitude) {
         final String coordinateFormatString = getResources().getString(R.string.coordinate);
         return String.format(coordinateFormatString, latitude, longitude);
+    }
+
+    private void setGeofenceText() {
+        if (mPrefs.getGeofenceState()) {
+            formatTextView(R.id.geofence_status, R.string.geofencing_on, mPrefs.getLat(),mPrefs.getLon());
+        } else {
+            formatTextView(R.id.geofence_status, R.string.geofencing_off);
+        }
     }
 }

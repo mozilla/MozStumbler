@@ -62,9 +62,12 @@ final class Reporter extends BroadcastReceiver {
 
     private final AtomicLong mReportsSent = new AtomicLong();
 
-    Reporter(Context context, Prefs prefs) {
+    private boolean             mWifiOnly;
+
+    Reporter(Context context) {
         mContext = context;
-        mPrefs = prefs;
+        mPrefs = new Prefs(mContext);
+        checkPrefs();
 
         MOZSTUMBLER_USER_AGENT_STRING = NetworkUtils.getUserAgentString(mContext);
 
@@ -84,6 +87,11 @@ final class Reporter extends BroadcastReceiver {
 
         resetData();
         mContext.registerReceiver(this, new IntentFilter(ScannerService.MESSAGE_TOPIC));
+    }
+
+    public void checkPrefs()
+    {
+        mWifiOnly = mPrefs.getWifi();
     }
 
     private void resetData() {
@@ -163,7 +171,7 @@ final class Reporter extends BroadcastReceiver {
             return;
         }
 
-        if (mPrefs.getWifi() && !NetworkUtils.isWifiAvailable(mContext)) {
+        if (mWifiOnly && !NetworkUtils.isWifiAvailable(mContext)) {
             Log.d(LOGTAG,"not on WiFi, not sending");
             mReportsLock.unlock();
             return;

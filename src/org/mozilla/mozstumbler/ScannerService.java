@@ -99,6 +99,12 @@ public final class ScannerService extends Service {
         }
 
         @Override
+        public void checkPrefs() {
+            mScanner.checkPrefs();
+            mReporter.checkPrefs();
+        }
+
+        @Override
         public int getLocationCount() throws RemoteException {
             return mScanner.getLocationCount();
         }
@@ -142,6 +148,11 @@ public final class ScannerService extends Service {
         public long getReportsSent () throws RemoteException {
             return mReporter.getReportsSent();
         }
+
+        @Override
+        public boolean isGeofenced () throws RemoteException {
+            return mScanner.isGeofenced();
+        }
     };
 
     private final class LooperThread extends Thread {
@@ -181,8 +192,7 @@ public final class ScannerService extends Service {
         };
         registerReceiver(mBatteryLowReceiver, new IntentFilter(Intent.ACTION_BATTERY_LOW));
 
-        Prefs prefs = new Prefs(this);
-        mReporter = new Reporter(this, prefs);
+        mReporter = new Reporter(this);
         mScanner = new Scanner(this);
         mLooper = new LooperThread();
         mLooper.start();

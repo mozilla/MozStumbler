@@ -1,7 +1,11 @@
 package org.mozilla.mozstumbler;
 
+import android.content.Context;
 import android.location.Location;
 import android.util.Log;
+
+import org.mozilla.mozstumbler.preferences.Prefs;
+
 
 final class LocationBlockList {
     private static final String LOGTAG          = LocationBlockList.class.getName();
@@ -10,11 +14,27 @@ final class LocationBlockList {
     private static final float  MAX_SPEED       = 340.29f;   // Mach 1 in meters/second
     private static final float  MIN_ACCURACY    = 500;       // meter radius
     private static final long   MIN_TIMESTAMP   = 946684801; // 2000-01-01 00:00:01
+    private static final double GEOFENCE_RADIUS = 0.01;      // .01 degrees is approximately 1km
 
-    private LocationBlockList() {
+    private Context mContext;
+    private double mBlockedLat;
+    private double mBlockedLon;
+    private boolean mGeofencingState;
+    private boolean mIsGeofenced = false;
+
+    LocationBlockList(Context context) {
+        mContext = context;
+        update_blocks();
     }
 
-    static boolean contains(Location location) {
+    public void update_blocks()    {
+        Prefs prefs = new Prefs(mContext);
+        mBlockedLat = prefs.getLat();
+        mBlockedLon = prefs.getLon();
+        mGeofencingState = prefs.getGeofenceState();
+    }
+
+    public boolean contains(Location location) {
         final float inaccuracy = location.getAccuracy();
         final double altitude = location.getAltitude();
         final float bearing = location.getBearing();
@@ -25,6 +45,7 @@ final class LocationBlockList {
         final long tomorrow = System.currentTimeMillis() + DateTimeUtils.MILLISECONDS_PER_DAY;
 
         boolean block = false;
+        mIsGeofenced = false;
 
         if (latitude == 0 && longitude == 0) {
             block = true;
@@ -66,6 +87,14 @@ final class LocationBlockList {
             Log.w(LOGTAG, "Bogus timestamp: " + timestamp + " (" + DateTimeUtils.formatTime(timestamp) + ")");
         }
 
+        if (mGeofencingState && Math.abs(location.getLatitude()-mBlockedLat) < GEOFENCE_RADIUS && Math.abs(location.getLongitude()-mBlockedLon) < GEOFENCE_RADIUS) {
+            block = true;
+            mIsGeofenced = true;
+            Log.i(LOGTAG, "Hit the geofence: " + mBlockedLat +" / " + mBlockedLon);
+        }
+
         return block;
     }
+
+    public boolean isGeofenced() { return mIsGeofenced; }
 }

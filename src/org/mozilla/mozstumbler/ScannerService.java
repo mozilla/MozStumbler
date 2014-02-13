@@ -35,7 +35,7 @@ public final class ScannerService extends Service {
     private LooperThread        mLooper;
     private PendingIntent       mWakeIntent;
     private BroadcastReceiver   mBatteryLowReceiver;
-    private boolean             mIsBound = false;
+    private boolean             mIsBound;
 
     private final ScannerServiceInterface.Stub mBinder = new ScannerServiceInterface.Stub() {
         @Override
@@ -259,9 +259,8 @@ public final class ScannerService extends Service {
         Log.d(LOGTAG, "onUnbind");
         if (!mScanner.isScanning()) {
             stopSelf();
-        } else {
-            mIsBound = false;
         }
+        mIsBound = false;
         return true;
     }
 

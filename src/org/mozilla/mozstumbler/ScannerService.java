@@ -35,6 +35,7 @@ public final class ScannerService extends Service {
     private LooperThread        mLooper;
     private PendingIntent       mWakeIntent;
     private BroadcastReceiver   mBatteryLowReceiver;
+    private boolean             mIsBound;
 
     private final ScannerServiceInterface.Stub mBinder = new ScannerServiceInterface.Stub() {
         @Override
@@ -76,24 +77,25 @@ public final class ScannerService extends Service {
 
         @Override
         public void stopScanning() throws RemoteException {
-            if (!mScanner.isScanning()) {
-                return;
+            if (mScanner.isScanning()) {
+                mLooper.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+                        alarm.cancel(mWakeIntent);
+
+                        cancelNotification();
+                        stopForeground(true);
+
+                        mScanner.stopScanning();
+
+                        mReporter.sendReports(true);
+                    }
+                });
             }
-
-            mLooper.post(new Runnable() {
-                @Override
-                public void run() {
-                    AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-                    alarm.cancel(mWakeIntent);
-
-                    cancelNotification();
-                    stopForeground(true);
-
-                    mScanner.stopScanning();
-
-                    mReporter.sendReports(true);
-                }
-            });
+            if (!mIsBound) {
+                stopSelf();
+            }
         }
 
         @Override
@@ -233,6 +235,7 @@ public final class ScannerService extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
+        mIsBound = true;
         Log.d(LOGTAG, "onBind");
         return mBinder;
     }
@@ -249,5 +252,21 @@ public final class ScannerService extends Service {
                                      .setOngoing(true)
                                      .setPriority(NotificationCompat.PRIORITY_LOW)
                                      .build();
+    }
+
+    @Override
+    public boolean onUnbind(Intent intent) {
+        Log.d(LOGTAG, "onUnbind");
+        if (!mScanner.isScanning()) {
+            stopSelf();
+        }
+        mIsBound = false;
+        return true;
+    }
+
+    @Override
+    public void onRebind(Intent intent) {
+        mIsBound = true;
+        Log.d(LOGTAG,"onRebind");
     }
 }

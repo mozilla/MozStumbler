@@ -127,8 +127,8 @@ public final class MainActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        if (BuildConfig.DEBUG) enableStrictMode();
         super.onCreate(savedInstanceState);
-        enableStrictMode();
         setContentView(R.layout.activity_main);
 
         new Prefs(this).setDefaultValues();

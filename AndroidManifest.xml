@@ -18,6 +18,10 @@
     <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_SYNC_SETTINGS"/>
+    <uses-permission android:name="android.permission.READ_SYNC_STATS"/>
+    <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS"/>
+    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS"/>
 
     <uses-feature android:name="android.hardware.location"/>
     <uses-feature android:name="android.hardware.location.gps"/>
@@ -59,6 +63,35 @@
             android:icon="@drawable/ic_launcher"
             android:label="@string/service_name">
         </service>
+
+        <service
+            android:name=".sync.AuthenticatorService"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.accounts.AccountAuthenticator"/>
+            </intent-filter>
+            <meta-data
+                android:name="android.accounts.AccountAuthenticator"
+                android:resource="@xml/authenticator" />
+        </service>
+
+        <service
+            android:name=".sync.SyncService"
+            android:process=":.ScannerService"
+            android:exported="true" >
+            <intent-filter>
+                <action android:name="android.content.SyncAdapter"/>
+            </intent-filter>
+            <meta-data android:name="android.content.SyncAdapter"
+                android:resource="@xml/syncadapter" />
+        </service>
+
+        <provider
+            android:name="org.mozilla.mozstumbler.provider.Provider"
+            android:authorities="org.mozilla.mozstumbler.provider"
+            android:exported="false"
+            android:syncable="true"
+            android:process=":.ScannerService" />
 
     </application>
 

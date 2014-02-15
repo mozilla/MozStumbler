@@ -5,7 +5,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
 
-final class NetworkUtils {
+public final class NetworkUtils {
     private static final String LOGTAG = NetworkUtils.class.getName();
 
     private NetworkUtils() {
@@ -42,7 +42,7 @@ final class NetworkUtils {
 
         return true; // Network is OK!
     }
-    static boolean isWifiAvailable(Context context) {
+    public static boolean isWifiAvailable(Context context) {
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         if (cm == null) {
             Log.e(LOGTAG, "ConnectivityManager is null!");
@@ -51,7 +51,7 @@ final class NetworkUtils {
         NetworkInfo aNet = cm.getActiveNetworkInfo();
         return (aNet != null && aNet.getType() == ConnectivityManager.TYPE_WIFI);
     }
-    static String getUserAgentString(Context context) {
+    public static String getUserAgentString(Context context) {
         String appName = context.getString(R.string.app_name);
         String appVersion = PackageUtils.getAppVersion(context);
 

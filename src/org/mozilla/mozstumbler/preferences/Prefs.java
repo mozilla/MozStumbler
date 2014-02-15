@@ -19,7 +19,6 @@ public final class Prefs {
             static final String     PREFS_FILE    = Prefs.class.getName();
     private static final String     NICKNAME_PREF = "nickname";
     private static final String     POWER_SAVING_MODE_PREF = "power_saving_mode";
-    private static final String     REPORTS_PREF  = "reports";
     private static final String     VALUES_VERSION_PREF = "values_version";
     private static final String     WIFI_ONLY = "wifi_only";
     private static final String     LAT_PREF = "lat_pref";
@@ -64,10 +63,6 @@ public final class Prefs {
         Log.d(LOGTAG, "Geofence set: " + la + "," + lo);
     }
 
-    public void setReports(String json) {
-        setStringPref(REPORTS_PREF, json);
-    }
-
     ///
     /// Getters
     ///
@@ -94,10 +89,6 @@ public final class Prefs {
             nickname = nickname.trim();
         }
         return TextUtils.isEmpty(nickname) ? null : nickname;
-    }
-
-    public String getReports() {
-        return getStringPref(REPORTS_PREF);
     }
 
     public boolean getWifi() {

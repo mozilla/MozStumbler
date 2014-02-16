@@ -26,6 +26,7 @@ import java.lang.Void;
 import java.net.MalformedURLException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -42,6 +43,10 @@ import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView.Projection;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.SafeDrawOverlay;
+import org.osmdroid.views.overlay.ItemizedIconOverlay;
+import org.osmdroid.views.overlay.ItemizedOverlay;
+import org.osmdroid.views.overlay.ItemizedOverlayWithFocus;
+import org.osmdroid.views.overlay.OverlayItem;
 import org.osmdroid.views.overlay.TilesOverlay;
 import org.osmdroid.views.safecanvas.ISafeCanvas;
 import org.osmdroid.views.safecanvas.SafePaint;
@@ -180,8 +185,22 @@ public final class MapActivity extends Activity {
         GeoPoint point = new GeoPoint(lat, lon);
         mMap.getController().setZoom(16);
         mMap.getController().animateTo(point);
-        mAccuracyCircleOverlay.set(point, accuracy);
+        mMap.getOverlays().add(getMapMarker(point)); // You are here!
         mMap.invalidate();
+    }
+
+    private ItemizedOverlay<OverlayItem> getMapMarker(GeoPoint point) {
+        ArrayList<OverlayItem> items = new ArrayList<OverlayItem>();
+        items.add(new OverlayItem(null, null, point));
+        return new ItemizedOverlayWithFocus<OverlayItem>(
+            getApplicationContext(),
+            items,
+            new ItemizedIconOverlay.OnItemGestureListener<OverlayItem>() {
+                @Override
+                public boolean onItemSingleTapUp(int index, OverlayItem item) { return false; }
+                @Override
+                public boolean onItemLongPress(int index, OverlayItem item) { return false; }
+            });
     }
 
     @Override

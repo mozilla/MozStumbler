@@ -40,16 +40,12 @@ import org.osmdroid.tileprovider.tilesource.OnlineTileSourceBase;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.tileprovider.tilesource.XYTileSource;
 import org.osmdroid.util.GeoPoint;
-import org.osmdroid.views.MapView.Projection;
 import org.osmdroid.views.MapView;
-import org.osmdroid.views.overlay.SafeDrawOverlay;
 import org.osmdroid.views.overlay.ItemizedIconOverlay;
 import org.osmdroid.views.overlay.ItemizedOverlay;
 import org.osmdroid.views.overlay.ItemizedOverlayWithFocus;
 import org.osmdroid.views.overlay.OverlayItem;
 import org.osmdroid.views.overlay.TilesOverlay;
-import org.osmdroid.views.safecanvas.ISafeCanvas;
-import org.osmdroid.views.safecanvas.SafePaint;
 
 public final class MapActivity extends Activity {
     private static final String LOGTAG = MapActivity.class.getName();
@@ -61,7 +57,6 @@ public final class MapActivity extends Activity {
     private static final String COVERAGE_URL        = "https://location.services.mozilla.com/tiles/";
 
     private MapView mMap;
-    private AccuracyCircleOverlay mAccuracyCircleOverlay;
 
     private ReporterBroadcastReceiver mReceiver;
 
@@ -109,9 +104,7 @@ public final class MapActivity extends Activity {
         mMap.setMultiTouchControls(true);
 
         TilesOverlay coverageTilesOverlay = CoverageTilesOverlay(this);
-        mAccuracyCircleOverlay = new AccuracyCircleOverlay(this);
         mMap.getOverlays().add(coverageTilesOverlay);
-        mMap.getOverlays().add(mAccuracyCircleOverlay);
 
         mReceiver = new ReporterBroadcastReceiver();
         registerReceiver(mReceiver, new IntentFilter(ScannerService.MESSAGE_TOPIC));
@@ -146,42 +139,7 @@ public final class MapActivity extends Activity {
         return coverageTileOverlay;
     }
 
-    private static class AccuracyCircleOverlay extends SafeDrawOverlay {
-        private GeoPoint mPoint;
-        private float mAccuracy;
-
-        public AccuracyCircleOverlay(Context ctx) {
-            super(ctx);
-        }
-
-        public void set(GeoPoint point, float accuracy) {
-            mPoint = (GeoPoint) point.clone();
-            mAccuracy = accuracy;
-        }
-
-        protected void drawSafe(ISafeCanvas c, MapView osmv, boolean shadow) {
-            if (shadow || mPoint == null) {
-                return;
-            }
-            Projection pj = osmv.getProjection();
-            Point center = pj.toPixels(mPoint, null);
-            float radius = pj.metersToEquatorPixels(mAccuracy);
-            SafePaint circle = new SafePaint();
-            circle.setARGB(0, 100, 100, 255);
-
-            // Fill
-            circle.setAlpha(40);
-            circle.setStyle(Style.FILL);
-            c.drawCircle(center.x, center.y, radius, circle);
-
-            // Border
-            circle.setAlpha(165);
-            circle.setStyle(Style.STROKE);
-            c.drawCircle(center.x, center.y, radius, circle);
-        }
-    }
-
-    private void positionMapAt(float lat, float lon, float accuracy) {
+    private void positionMapAt(float lat, float lon) {
         GeoPoint point = new GeoPoint(lat, lon);
         mMap.getController().setZoom(16);
         mMap.getController().animateTo(point);
@@ -236,7 +194,6 @@ public final class MapActivity extends Activity {
         private String mStatus;
         private float mLat;
         private float mLon;
-        private float mAccuracy;
 
         @Override
         public String doInBackground(String... params) {
@@ -298,10 +255,10 @@ public final class MapActivity extends Activity {
                 if ("ok".equals(mStatus)) {
                     mLat = Float.parseFloat(result.getString("lat"));
                     mLon = Float.parseFloat(result.getString("lon"));
-                    mAccuracy = Float.parseFloat(result.getString("accuracy"));
+                    float accuracy = Float.parseFloat(result.getString("accuracy"));
                     Log.d(LOGTAG, "Location lat: " + mLat);
                     Log.d(LOGTAG, "Location lon: " + mLon);
-                    Log.d(LOGTAG, "Location accuracy: " + mAccuracy);
+                    Log.d(LOGTAG, "Location accuracy: " + accuracy);
                 }
             } catch (JSONException jsonex) {
                 Log.e(LOGTAG, "json parse error", jsonex);
@@ -318,7 +275,7 @@ public final class MapActivity extends Activity {
         @Override
         protected void onPostExecute(String result) {
             if (mStatus != null && "ok".equals(mStatus)) {
-                positionMapAt(mLat, mLon, mAccuracy);
+                positionMapAt(mLat, mLon);
             } else if (mStatus != null && "not_found".equals(mStatus)) {
                     Toast.makeText(getApplicationContext(),
                             getResources().getString(R.string.location_not_found),

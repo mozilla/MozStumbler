@@ -26,6 +26,7 @@ import java.lang.Void;
 import java.net.MalformedURLException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -35,16 +36,16 @@ import org.json.JSONObject;
 
 import org.osmdroid.tileprovider.MapTileProviderBasic;
 import org.osmdroid.tileprovider.tilesource.ITileSource;
-import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
-import org.osmdroid.util.GeoPoint;
-import org.osmdroid.views.MapView.Projection;
-import org.osmdroid.views.MapView;
-import org.osmdroid.views.overlay.SafeDrawOverlay;
-import org.osmdroid.views.overlay.TilesOverlay;
-import org.osmdroid.views.safecanvas.ISafeCanvas;
-import org.osmdroid.views.safecanvas.SafePaint;
 import org.osmdroid.tileprovider.tilesource.OnlineTileSourceBase;
+import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.tileprovider.tilesource.XYTileSource;
+import org.osmdroid.util.GeoPoint;
+import org.osmdroid.views.MapView;
+import org.osmdroid.views.overlay.ItemizedIconOverlay;
+import org.osmdroid.views.overlay.ItemizedOverlay;
+import org.osmdroid.views.overlay.ItemizedOverlayWithFocus;
+import org.osmdroid.views.overlay.OverlayItem;
+import org.osmdroid.views.overlay.TilesOverlay;
 
 public final class MapActivity extends Activity {
     private static final String LOGTAG = MapActivity.class.getName();
@@ -56,7 +57,6 @@ public final class MapActivity extends Activity {
     private static final String COVERAGE_URL        = "https://location.services.mozilla.com/tiles/";
 
     private MapView mMap;
-    private AccuracyCircleOverlay mAccuracyCircleOverlay;
 
     private ReporterBroadcastReceiver mReceiver;
 
@@ -104,12 +104,12 @@ public final class MapActivity extends Activity {
         mMap.setMultiTouchControls(true);
 
         TilesOverlay coverageTilesOverlay = CoverageTilesOverlay(this);
-        mAccuracyCircleOverlay = new AccuracyCircleOverlay(this);
         mMap.getOverlays().add(coverageTilesOverlay);
-        mMap.getOverlays().add(mAccuracyCircleOverlay);
 
         mReceiver = new ReporterBroadcastReceiver();
         registerReceiver(mReceiver, new IntentFilter(ScannerService.MESSAGE_TOPIC));
+
+        mMap.getController().setZoom(2);
 
         Log.d(LOGTAG, "onCreate");
     }
@@ -139,48 +139,26 @@ public final class MapActivity extends Activity {
         return coverageTileOverlay;
     }
 
-    private static class AccuracyCircleOverlay extends SafeDrawOverlay {
-        private GeoPoint mPoint;
-        private float mAccuracy;
-
-        public AccuracyCircleOverlay(Context ctx) {
-            super(ctx);
-        }
-
-        public void set(GeoPoint point, float accuracy) {
-            mPoint = (GeoPoint) point.clone();
-            mAccuracy = accuracy;
-        }
-
-        protected void drawSafe(ISafeCanvas c, MapView osmv, boolean shadow) {
-            if (shadow || mPoint == null) {
-                return;
-            }
-            Projection pj = osmv.getProjection();
-            Point center = pj.toPixels(mPoint, null);
-            float radius = pj.metersToEquatorPixels(mAccuracy);
-            SafePaint circle = new SafePaint();
-            circle.setARGB(0, 100, 100, 255);
-
-            // Fill
-            circle.setAlpha(40);
-            circle.setStyle(Style.FILL);
-            c.drawCircle(center.x, center.y, radius, circle);
-
-            // Border
-            circle.setAlpha(165);
-            circle.setStyle(Style.STROKE);
-            c.drawCircle(center.x, center.y, radius, circle);
-        }
+    private void positionMapAt(float lat, float lon) {
+        GeoPoint point = new GeoPoint(lat, lon);
+        mMap.getController().setZoom(16);
+        mMap.getController().animateTo(point);
+        mMap.getOverlays().add(getMapMarker(point)); // You are here!
+        mMap.invalidate();
     }
 
-    private void positionMapAt(float lat, float lon, float accuracy) {
-        GeoPoint point = new GeoPoint(lat, lon);
-        mMap.getController().setCenter(point);
-        mMap.getController().setZoom(17);
-        mMap.getController().animateTo(point);
-        mAccuracyCircleOverlay.set(point, accuracy);
-        mMap.invalidate();
+    private ItemizedOverlay<OverlayItem> getMapMarker(GeoPoint point) {
+        ArrayList<OverlayItem> items = new ArrayList<OverlayItem>();
+        items.add(new OverlayItem(null, null, point));
+        return new ItemizedOverlayWithFocus<OverlayItem>(
+            getApplicationContext(),
+            items,
+            new ItemizedIconOverlay.OnItemGestureListener<OverlayItem>() {
+                @Override
+                public boolean onItemSingleTapUp(int index, OverlayItem item) { return false; }
+                @Override
+                public boolean onItemLongPress(int index, OverlayItem item) { return false; }
+            });
     }
 
     @Override
@@ -216,7 +194,6 @@ public final class MapActivity extends Activity {
         private String mStatus;
         private float mLat;
         private float mLon;
-        private float mAccuracy;
 
         @Override
         public String doInBackground(String... params) {
@@ -278,10 +255,10 @@ public final class MapActivity extends Activity {
                 if ("ok".equals(mStatus)) {
                     mLat = Float.parseFloat(result.getString("lat"));
                     mLon = Float.parseFloat(result.getString("lon"));
-                    mAccuracy = Float.parseFloat(result.getString("accuracy"));
+                    float accuracy = Float.parseFloat(result.getString("accuracy"));
                     Log.d(LOGTAG, "Location lat: " + mLat);
                     Log.d(LOGTAG, "Location lon: " + mLon);
-                    Log.d(LOGTAG, "Location accuracy: " + mAccuracy);
+                    Log.d(LOGTAG, "Location accuracy: " + accuracy);
                 }
             } catch (JSONException jsonex) {
                 Log.e(LOGTAG, "json parse error", jsonex);
@@ -298,7 +275,7 @@ public final class MapActivity extends Activity {
         @Override
         protected void onPostExecute(String result) {
             if (mStatus != null && "ok".equals(mStatus)) {
-                positionMapAt(mLat, mLon, mAccuracy);
+                positionMapAt(mLat, mLon);
             } else if (mStatus != null && "not_found".equals(mStatus)) {
                     Toast.makeText(getApplicationContext(),
                             getResources().getString(R.string.location_not_found),

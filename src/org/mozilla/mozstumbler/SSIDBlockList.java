@@ -53,6 +53,7 @@ final class SSIDBlockList {
         "Telekom_ICE", // Deutsche Bahn on-train WiFi
         "TPE-Free Bus", // Taipei City on-bus WiFi (Taiwan)
         "THSR-VeeTIME", // Taiwan High Speed Rail on-train WiFi
+        "VR-junaverkko", // VR on-train WiFi (Finland)
         "CapitalBus", // Capital Bus on-bus WiFi (Taiwan)
         "Hot-Spot-KS", // Koleje Slaskie transportation services (Poland)
     };

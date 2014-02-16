@@ -111,6 +111,8 @@ public final class MapActivity extends Activity {
         mReceiver = new ReporterBroadcastReceiver();
         registerReceiver(mReceiver, new IntentFilter(ScannerService.MESSAGE_TOPIC));
 
+        mMap.getController().setZoom(2);
+
         Log.d(LOGTAG, "onCreate");
     }
 

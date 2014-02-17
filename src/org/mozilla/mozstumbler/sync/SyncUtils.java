@@ -8,9 +8,12 @@ import android.os.Bundle;
 
 import org.mozilla.mozstumbler.provider.DatabaseContract;
 
-public class SyncUtils {
+public final class SyncUtils {
     // private static final long SYNC_FREQUENCY = 3 * 60 * 60;  // 3 hours (in seconds)
     private static final String CONTENT_AUTHORITY = DatabaseContract.CONTENT_AUTHORITY;
+
+    private SyncUtils() {
+    }
 
     public static void CreateSyncAccount(Context context) {
         // Create account, if it's missing. (Either first run, or user has deleted account.)

@@ -5,19 +5,23 @@
     <string name="action_about">Tietoja</string>
     <string name="action_preferences">Asetukset</string>
     <string name="action_exit">Lopeta</string>
-
+    <string name="start_scanning">Aloita skannaus</string>
+    <string name="stop_scanning">Lopeta skannaus</string>
     <string name="view_leaderboard">Näytä pistetilasto</string>
     <string name="view_map">Kokeile Mozillan paikannuspalvelua</string>
     <string name="service_name">Mozilla Stumbler</string>
     <string name="activity_recognition_service">Aktiivisuuden tunnistuspalvelu</string>
     <string name="wifi_access_points">Wi-Fi-tukiasemia skannattu: %1$d</string>
     <string name="visible_wifi_access_points">Wi-Fi-tukiasemia näkyvillä: %1$d</string>
+    <string name="cells_scanned">Mastoja skannattu: %1$d</string>
+    <string name="cells_visible">Mastoja näkyvillä: %1$d</string>
     <string name="gps_satellites">GPS-satelliitteja näkyvillä: %1$d</string>
     <string name="last_location">Viimeisin sijainti: %1$s</string>
     <string name="coordinate">%1$.4f, %2$.4f</string>
     <string name="locations_scanned">Sijainteja skannattu: %1$d</string>
     <string name="last_upload_time">Viimeisin lähetysaika: %1$s</string>
     <string name="reports_sent">Raportteja lähetetty: %1$d</string>
+    <string name="service_scanning">Skannataan Wi-Fi-tukiasemia ja verkkomastoja</string>
 
     <string name="enter_nickname">Valitse nimimerkki (ei pakollinen)</string>
     <string name="enter_nickname_title">Nimimerkki: </string>
@@ -40,5 +44,23 @@
     <string name="about_version">Versio %1$s</string>
     <string name="about_mapbox">Lisätietoja karttapalvelusta…</string>
     <string name="about_more">Lisätietoja…</string>
+    <string name="about_legal_aosp">Tämä sovellus sisältää ikoneita Android Open Source -projektista. Käytössä olevat ikonit on lisensoitu Creative Commons 2.5 Attribution -lisenssillä.</string>
+
+    <string name="detected_activity">Tunnistettiin toiminto: %1$s</string>
+    <string name="detected_activity_in_vehicle">Liikkeellä (autossa)</string>
+    <string name="detected_activity_on_bicycle">Liikkeellä (pyörällä)</string>
+    <string name="detected_activity_on_foot">Liikkeellä (kävellen)</string>
+    <string name="detected_activity_still">Paikallaan</string>
+    <string name="detected_activity_tilting">Kädessä</string>
+    <string name="detected_activity_unknown">Tuntematon</string>
+
+    <string name="upload_wifi_only_title">Lähetä vain Wi-Fi:n yli</string>
+    <string name="upload_wifi_only_summary">Tämä asetus vähentää datan käyttöä matkapuhelinverkon yli</string>
+
+    <string name="geofencing_off">Sijainnin mukaan rajaus: pois</string>
+    <string name="geofencing_explain">Sijainti otetaan seuraavasta skannauksessa saadusta GPS-paikasta.</string>
+    <string name="geofencing_desc">MozStumbler ei skannaa yhden kilometrin säteellä tästä sijainnista.</string>
+    <string name="geofencing_on">Rajattu pois @ %1$.3f, %2$.3f</string>
+    <string name="geofencing_enable">Rajaa pois tämä sijainti</string>
 
 </resources>

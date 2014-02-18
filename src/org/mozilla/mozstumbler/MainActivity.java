@@ -2,9 +2,10 @@ package org.mozilla.mozstumbler;
 
 import org.mozilla.mozstumbler.preferences.PreferencesScreen;
 import org.mozilla.mozstumbler.preferences.Prefs;
+import org.mozilla.mozstumbler.provider.DatabaseContract;
+import org.mozilla.mozstumbler.sync.SyncUtils;
 
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -13,6 +14,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.location.LocationManager;
 import android.net.Uri;
@@ -22,23 +24,18 @@ import android.os.IBinder;
 import android.os.RemoteException;
 import android.os.StrictMode;
 import android.provider.Settings;
-import android.text.Editable;
-import android.text.TextUtils;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnFocusChangeListener;
-import android.view.inputmethod.EditorInfo;
-import android.widget.Button;
 import android.widget.CompoundButton;
-import android.widget.EditText;
-import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
-public final class MainActivity extends Activity {
+public final class MainActivity extends FragmentActivity {
     private static final String LOGTAG = MainActivity.class.getName();
     private static final String LEADERBOARD_URL = "https://location.services.mozilla.com/leaders";
 
@@ -74,12 +71,6 @@ public final class MainActivity extends Activity {
             if (action.equals(ScannerService.MESSAGE_TOPIC)) {
 
                 String subject = intent.getStringExtra(Intent.EXTRA_SUBJECT);
-
-                if (subject.equals("Reporter")) {
-                    updateUI();
-                    Log.d(LOGTAG, "Received a reporter intent...");
-                    return;
-                } 
 
                 if (subject.equals("Scanner")) {
                     if (intent.hasExtra("fixes")) {
@@ -133,9 +124,13 @@ public final class MainActivity extends Activity {
 
         new Prefs(this).setDefaultValues();
 
+        SyncUtils.CreateSyncAccount(this);
+
         if (BuildConfig.MOZILLA_API_KEY != null) {
             Updater.checkForUpdates(this);
         }
+
+        getSupportLoaderManager().initLoader(0, null, mSyncStatsLoaderCallbacks);
 
         Log.d(LOGTAG, "onCreate");
     }
@@ -250,8 +245,6 @@ public final class MainActivity extends Activity {
         int visibleAPs = 0;
         int cellInfoScanned = 0;
         int currentCellInfo = 0;
-        long lastUploadTime = 0;
-        long reportsSent = 0;
         boolean isGeofenced = false;
 
         try {
@@ -263,16 +256,10 @@ public final class MainActivity extends Activity {
             visibleAPs = mConnectionRemote.getVisibleAPCount();
             cellInfoScanned = mConnectionRemote.getCellInfoCount();
             currentCellInfo = mConnectionRemote.getCurrentCellInfoCount();
-            lastUploadTime = mConnectionRemote.getLastUploadTime();
-            reportsSent = mConnectionRemote.getReportsSent();
             isGeofenced = mConnectionRemote.isGeofenced();
         } catch (RemoteException e) {
             Log.e(LOGTAG, "", e);
         }
-
-        String lastUploadTimeString = (lastUploadTime > 0)
-                                      ? DateTimeUtils.formatTimeForLocale(lastUploadTime)
-                                      : "-";
 
         String lastLocationString = (mGpsFixes > 0 && locationsScanned > 0)
                                     ? formatLocation(latitude, longitude)
@@ -285,8 +272,6 @@ public final class MainActivity extends Activity {
         formatTextView(R.id.cells_visible, R.string.cells_visible, currentCellInfo);
         formatTextView(R.id.cells_scanned, R.string.cells_scanned, cellInfoScanned);
         formatTextView(R.id.locations_scanned, R.string.locations_scanned, locationsScanned);
-        formatTextView(R.id.last_upload_time, R.string.last_upload_time, lastUploadTimeString);
-        formatTextView(R.id.reports_sent, R.string.reports_sent, reportsSent);
         if (mNeedsUpdate) try {
             mConnectionRemote.checkPrefs();
             mNeedsUpdate = false;
@@ -332,29 +317,34 @@ public final class MainActivity extends Activity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.action_about) {
-            startActivity(new Intent(getApplication(), AboutActivity.class));
-            return true;
-        }
-        
-        if (item.getItemId() == R.id.action_preferences) {
-            startActivity(new Intent(getApplication(), PreferencesScreen.class));
-            return true;
-        }
+        switch (item.getItemId()) {
+            case R.id.action_about:
+                startActivity(new Intent(getApplication(), AboutActivity.class));
+                return true;
+            case R.id.action_preferences:
+                startActivity(new Intent(getApplication(), PreferencesScreen.class));
+                return true;
+            case R.id.action_view_leaderboard:
+                Intent openLeaderboard = new Intent(Intent.ACTION_VIEW, Uri.parse(LEADERBOARD_URL));
+                startActivity(openLeaderboard);
+                return true;
+            case R.id.action_test_mls:
+                Intent intent = new Intent(this, MapActivity.class);
+                startActivity(intent);
+                return true;
+            case R.id.action_upload_observations:
+                try {
+                    mConnectionRemote.flushReporterBuffer();
+                } catch (RemoteException re) {
+                    Log.i(LOGTAG, "remote exception ", re);
+                }
+                UploadReportsDialog newFragment = new UploadReportsDialog();
+                newFragment.show(getSupportFragmentManager(), "UploadReportsDialog");
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
 
-        if (item.getItemId() == R.id.action_view_leaderboard) {
-            Intent openLeaderboard = new Intent(Intent.ACTION_VIEW, Uri.parse(LEADERBOARD_URL));
-            startActivity(openLeaderboard);
-            return true;
         }
-
-        if (item.getItemId() == R.id.action_test_mls) {
-            Intent intent = new Intent(this, MapActivity.class);
-            startActivity(intent);
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 
     @TargetApi(9)
@@ -393,4 +383,44 @@ public final class MainActivity extends Activity {
             formatTextView(R.id.geofence_status, R.string.geofencing_off);
         }
     }
+
+    private final LoaderManager.LoaderCallbacks<Cursor> mSyncStatsLoaderCallbacks =
+            new LoaderManager.LoaderCallbacks<Cursor>() {
+
+        @Override
+        public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+            return new CursorLoader(MainActivity.this, DatabaseContract.Stats.CONTENT_URI,
+                    null, null, null, null);
+        }
+
+        @Override
+        public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
+            long lastUploadTime = 0;
+            long observationsSent = 0;
+            if (BuildConfig.DEBUG) Log.v(LOGTAG, "mSyncStatsLoaderCallbacks.onLoadFinished()");
+
+            if (cursor != null) {
+                cursor.moveToPosition(-1);
+                while (cursor.moveToNext()) {
+                    String key = cursor.getString(cursor.getColumnIndex(DatabaseContract.Stats.KEY));
+                    String value = cursor.getString(cursor.getColumnIndex(DatabaseContract.Stats.VALUE));
+                    if (DatabaseContract.Stats.KEY_LAST_UPLOAD_TIME.equals(key)) {
+                        lastUploadTime = Long.valueOf(value);
+                    }else if (DatabaseContract.Stats.KEY_OBSERVATIONS_SENT.equals(key)) {
+                        observationsSent = Long.valueOf(value);
+                    }
+                }
+            }
+            String lastUploadTimeString = (lastUploadTime > 0)
+                    ? DateTimeUtils.formatTimeForLocale(lastUploadTime)
+                    : "-";
+            formatTextView(R.id.last_upload_time, R.string.last_upload_time, lastUploadTimeString);
+            formatTextView(R.id.reports_sent, R.string.reports_sent, observationsSent);
+        }
+
+        @Override
+        public void onLoaderReset(Loader<Cursor> cursorLoader) {
+
+        }
+    };
 }

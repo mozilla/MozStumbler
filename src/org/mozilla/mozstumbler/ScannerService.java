@@ -3,6 +3,7 @@ package org.mozilla.mozstumbler;
 import java.util.Calendar;
 
 import org.mozilla.mozstumbler.preferences.Prefs;
+import org.mozilla.mozstumbler.sync.SyncUtils;
 
 import android.annotation.TargetApi;
 import android.app.AlarmManager;
@@ -56,7 +57,6 @@ public final class ScannerService extends Service {
                         CharSequence title = getResources().getText(R.string.service_name);
                         CharSequence text = getResources().getText(R.string.service_scanning);
                         postNotification(title, text);
-
                         mScanner.startScanning();
 
                         // keep us awake.
@@ -67,7 +67,6 @@ public final class ScannerService extends Service {
                         AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
                         alarm.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), WAKE_TIMEOUT, mWakeIntent);
 
-                        mReporter.sendReports(false);
                     } catch (Exception e) {
                         Log.d(LOGTAG, "looper shat itself : " + e);
                     }
@@ -88,8 +87,8 @@ public final class ScannerService extends Service {
                         stopForeground(true);
 
                         mScanner.stopScanning();
-
-                        mReporter.sendReports(true);
+                        mReporter.flush();
+                        SyncUtils.TriggerRefresh(false);
                     }
                 });
             }
@@ -101,7 +100,6 @@ public final class ScannerService extends Service {
         @Override
         public void checkPrefs() {
             mScanner.checkPrefs();
-            mReporter.checkPrefs();
         }
 
         @Override
@@ -140,19 +138,15 @@ public final class ScannerService extends Service {
         }
 
         @Override
-        public long getLastUploadTime() throws RemoteException {
-            return mReporter.getLastUploadTime();
-        }
-
-        @Override
-        public long getReportsSent () throws RemoteException {
-            return mReporter.getReportsSent();
-        }
-
-        @Override
         public boolean isGeofenced () throws RemoteException {
             return mScanner.isGeofenced();
         }
+
+        @Override
+        public void flushReporterBuffer() throws RemoteException {
+            mReporter.queueReport(true);
+        }
+
     };
 
     private final class LooperThread extends Thread {

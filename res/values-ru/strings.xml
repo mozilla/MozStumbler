@@ -8,7 +8,7 @@
     <string name="start_scanning">Начать сканирование</string>
     <string name="stop_scanning">Остановить сканирование</string>
     <string name="view_leaderboard">Открыть таблицу лидеров</string>
-    <string name="view_map">Открыть карту</string>
+    <string name="view_map">Показать карту</string>
     <string name="service_name">Mozilla Stumbler</string>
     <string name="activity_recognition_service">Mozilla Stumbler Activity Recognition Intent Service</string>
     <string name="wifi_access_points">Отсканировано Wi-Fi точек: %1$d</string>
@@ -21,7 +21,7 @@
     <string name="locations_scanned">Отсканировано координат: %1$d</string>
     <string name="last_upload_time">Время последней отправки отчёта: %1$s</string>
     <string name="reports_sent">Отправлено отчётов: %1$d</string>
-    <string name="service_scanning">Сканирование Wi-Fi точек и базовых станций сотовых операторов</string>
+    <string name="service_scanning">Сканирование Wi-Fi и сотовых сетей</string>
 
     <string name="enter_nickname">Укажите свой псевдоним (не обязательно)</string>
     <string name="enter_nickname_title">Псевдоним: </string>
@@ -51,8 +51,15 @@
     <string name="detected_activity_on_foot">Движение (ходьба)</string>
     <string name="detected_activity_still">Остановка</string>
     <string name="detected_activity_tilting">Отклонение</string>
-    <string name="detected_activity_unknown">Неопределено</string>
+    <string name="detected_activity_unknown">Не определено</string>
 
-    <string name="upload_wifi_only_title">Передача данных только через WiFi</string>
-    <string name="upload_wifi_only_summary">Эта опция позволяет экономить GPRS траффик.</string>
+    <string name="upload_wifi_only_title">Передача данных только через Wi-Fi</string>
+    <string name="upload_wifi_only_summary">Эта опция позволяет экономить мобильный трафик.</string>
+
+    <string name="geofencing_off">Геозона: выключена</string>
+    <string name="geofencing_explain">Установка геозоны произойдет при ближайшем допустимом местоположении в процессе сканирования.</string>
+    <string name="geofencing_desc">MozStumbler приостановит сканирование в радиусе 1 км от текущего местоположения.</string>
+    <string name="geofencing_on">Геозона @ %1$.3f, %2$.3f</string>
+    <string name="geofencing_enable">Установить геозону в текущем местоположении</string>
+
 </resources>

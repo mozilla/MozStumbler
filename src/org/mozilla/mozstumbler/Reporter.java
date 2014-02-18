@@ -1,6 +1,7 @@
 package org.mozilla.mozstumbler;
 
 import android.content.BroadcastReceiver;
+import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -11,27 +12,22 @@ import android.util.Log;
 
 import org.mozilla.mozstumbler.cellscanner.CellInfo;
 import org.mozilla.mozstumbler.cellscanner.CellScanner;
-import org.mozilla.mozstumbler.preferences.Prefs;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.mozilla.mozstumbler.provider.DatabaseContract;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicLong;
+
+import static org.mozilla.mozstumbler.provider.DatabaseContract.*;
 
 final class Reporter extends BroadcastReceiver {
     private static final String LOGTAG          = Reporter.class.getName();
-
-    /**
-     *  Maximum number of observations in a single report
-     */
-    private static final int RECORD_BATCH_SIZE  = 40;
 
     /**
      * The maximum time of observation
@@ -49,8 +45,7 @@ final class Reporter extends BroadcastReceiver {
     private static final int CELLS_COUNT_WATERMARK = 50;
 
     private final Context       mContext;
-    private final AtomicLong    mLastUploadTime = new AtomicLong();
-    private final Report mReport = new Report();
+    private final ContentResolver mContentResolver;
 
     private Location            mGpsPosition;
     private final Map<String, ScanResult> mWifiData = new HashMap<String, ScanResult>();
@@ -58,6 +53,7 @@ final class Reporter extends BroadcastReceiver {
 
     Reporter(Context context) {
         mContext = context;
+        mContentResolver = context.getContentResolver();
         resetData();
         mContext.registerReceiver(this, new IntentFilter(ScannerService.MESSAGE_TOPIC));
     }
@@ -70,7 +66,6 @@ final class Reporter extends BroadcastReceiver {
 
     void flush() {
         reportCollectedLocation();
-        queueReport(true);
     }
 
     void shutdown() {
@@ -152,6 +147,8 @@ final class Reporter extends BroadcastReceiver {
         }
 
         Collection<CellInfo> cells = mCellData.values();
+        Collection<ScanResult> wifis = mWifiData.values();
+
         if (!cells.isEmpty()) {
             Map<String, List<CellInfo>> groupByRadio = new HashMap<String, List<CellInfo>>();
             for (CellInfo cell : cells) {
@@ -165,151 +162,60 @@ final class Reporter extends BroadcastReceiver {
                 list.add(cell);
             }
             for (String radio : groupByRadio.keySet()) {
-                Collection<CellInfo> cellInfo = groupByRadio.get(radio);
-                saveCellObservation(radio, cellInfo);
+                reportCollectedLocation(mGpsPosition, wifis, radio, groupByRadio.get(radio));
+                mWifiData.clear();
             }
             mCellData.clear();
         }
 
-        Collection<ScanResult> wifis = mWifiData.values();
         if (!wifis.isEmpty()) {
-            saveWifiObservation(wifis);
+            Collection<CellInfo> emptyList = Collections.emptyList();
+            reportCollectedLocation(mGpsPosition, wifis, "", emptyList);
             mWifiData.clear();
         }
+
+        mGpsPosition.setTime(System.currentTimeMillis());
     }
 
-    private JSONObject createObservation() throws JSONException {
-        JSONObject locInfo = new JSONObject();
-
-        locInfo.put("lat", Math.floor(mGpsPosition.getLatitude() * 1.0E6) / 1.0E6);
-        locInfo.put("lon", Math.floor(mGpsPosition.getLongitude() * 1.0E6) / 1.0E6);
-        locInfo.put("time", DateTimeUtils.formatTime(mGpsPosition.getTime()));
-
-        if (mGpsPosition.hasAccuracy()) {
-            locInfo.put("accuracy", (int) Math.ceil(mGpsPosition.getAccuracy()));
-        }
-
-        if (mGpsPosition.hasAltitude()) {
-            locInfo.put("altitude", Math.round(mGpsPosition.getAltitude()));
-        }
-
-        return locInfo;
-    }
-
-    private void saveCellObservation(String radioType, Collection<CellInfo> cellInfo) {
-        if (cellInfo.isEmpty()) {
-            throw new IllegalArgumentException("cellInfo must not be empty");
-        }
-
-        try {
-            JSONArray cellJSON = new JSONArray();
-            for (CellInfo cell : cellInfo) {
-                cellJSON.put(cell.toJSONObject());
-            }
-
-            JSONObject locInfo = createObservation();
-            locInfo.put("cell", cellJSON);
-            locInfo.put("radio", radioType);
-            saveObservation(locInfo, 0, cellInfo.size());
-        } catch (JSONException jsonex) {
-            Log.w(LOGTAG, "JSON exception", jsonex);
-        }
-    }
-
-    private void saveWifiObservation(Collection<ScanResult> wifiInfo) {
-        if (wifiInfo.isEmpty()) {
-            throw new IllegalArgumentException("wifiInfo must not be empty");
-        }
-
-        try {
-            JSONArray wifiJSON = new JSONArray();
-            for (ScanResult wifi : wifiInfo) {
-                JSONObject jsonItem = new JSONObject();
-                jsonItem.put("key", wifi.BSSID);
-                jsonItem.put("frequency", wifi.frequency);
-                jsonItem.put("signal", wifi.level);
-                wifiJSON.put(jsonItem);
-            }
-
-            JSONObject locInfo = createObservation();
-            locInfo.put("wifi", wifiJSON);
-            saveObservation(locInfo, wifiInfo.size(), 0);
-        } catch (JSONException jsonex) {
-            Log.w(LOGTAG, "JSON exception", jsonex);
-        }
-    }
-
-    private void saveObservation(JSONObject locInfo, int wifiCount, int cellCount) {
-        mReport.putObservation(locInfo, wifiCount, cellCount);
-        queueReport(false);
-    }
-
-    public void queueReport(boolean force) {
-        Log.d(LOGTAG, "queueReport: force=" + force);
-        int count = mReport.length();
-        if (count == 0) {
-            Log.d(LOGTAG, "no observations to send");
+    void reportCollectedLocation(Location gpsPosition, Collection<ScanResult> wifiInfo, String radioType,
+                                 Collection<CellInfo> cellInfo) {
+        if (gpsPosition == null) {
             return;
         }
-        if (count < RECORD_BATCH_SIZE && !force && mLastUploadTime.get() > 0) {
-            Log.d(LOGTAG, "batch count not reached, and !force");
-            return;
+        ContentValues values = new ContentValues(10);
+        values.put(Reports.TIME, gpsPosition.getTime());
+        values.put(Reports.LAT, Math.floor(gpsPosition.getLatitude() * 1.0E6) / 1.0E6);
+        values.put(Reports.LON, Math.floor(gpsPosition.getLongitude() * 1.0E6) / 1.0E6);
+        if (gpsPosition.hasAltitude()) {
+            values.put(Reports.ALTITUDE, Math.round(gpsPosition.getAltitude()));
+        }
+        if (gpsPosition.hasAccuracy()) {
+            values.put(Reports.ACCURACY, (int) Math.ceil(gpsPosition.getAccuracy()));
         }
 
+        values.put(Reports.RADIO, radioType);
+        JSONArray cellJSON = new JSONArray();
+        for (CellInfo cell : cellInfo) {
+            cellJSON.put(cell.toJSONObject());
+        }
+        values.put(Reports.CELL, cellJSON.toString());
+        values.put(Reports.CELL_COUNT, cellJSON.length());
+
+        JSONArray wifiJSON = new JSONArray();
         try {
-            ContentValues values = mReport.asInsertContentValues();
-            mContext.getContentResolver().insert(DatabaseContract.Reports.CONTENT_URI, values);
-            mLastUploadTime.set(System.currentTimeMillis());
-            mReport.reset();
-        } catch (JSONException jsonex) {
-            Log.e(LOGTAG, "error wrapping data as a batch", jsonex);
-            mReport.reset();
+        for (ScanResult wifi : wifiInfo) {
+            JSONObject jsonItem = new JSONObject();
+            jsonItem.put("key", wifi.BSSID);
+            jsonItem.put("frequency", wifi.frequency);
+            jsonItem.put("signal", wifi.level);
+            wifiJSON.put(jsonItem);
         }
-    }
-
-    /**
-     * The report is a collection of observations
-     */
-    private static class Report {
-        private JSONArray mObservations;
-        private int mWifiCount;
-        private int mCellCount;
-
-        public Report() {
-            reset();
+        }catch (JSONException jsonex) {
+            Log.w(LOGTAG, "JSON exception", jsonex);
         }
+        values.put(Reports.WIFI, wifiJSON.toString());
+        values.put(Reports.WIFI_COUNT, wifiJSON.length());
 
-        public void reset() {
-            mObservations = new JSONArray();
-            mCellCount = 0;
-            mWifiCount = 0;
-        }
-
-        public void putObservation(JSONObject observation, int cellCount, int wifiCount) {
-            mObservations.put(observation);
-            mWifiCount += wifiCount;
-            mCellCount += cellCount;
-        }
-
-        public JSONObject asJsonObject() throws JSONException {
-            JSONObject wrapper = new JSONObject();
-            wrapper.put("items", mObservations);
-            return wrapper;
-        }
-
-        public ContentValues asInsertContentValues() throws JSONException {
-            byte[] bytes = asJsonObject().toString().getBytes();
-
-            ContentValues values = new ContentValues();
-            values.put(DatabaseContract.Reports.REPORT, bytes);
-            values.put(DatabaseContract.Reports.OBSERVATION_COUNT, mObservations.length());
-            values.put(DatabaseContract.Reports.WIFI_COUNT, mCellCount);
-            values.put(DatabaseContract.Reports.CELL_COUNT, mWifiCount);
-            return values;
-        }
-
-        public int length() {
-            return mObservations.length();
-        }
+        mContentResolver.insert(Reports.CONTENT_URI, values);
     }
 }

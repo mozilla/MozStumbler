@@ -142,11 +142,6 @@ public final class ScannerService extends Service {
             return mScanner.isGeofenced();
         }
 
-        @Override
-        public void flushReporterBuffer() throws RemoteException {
-            mReporter.queueReport(true);
-        }
-
     };
 
     private final class LooperThread extends Thread {

@@ -8,7 +8,7 @@ import java.text.SimpleDateFormat;
 import java.util.Locale;
 import java.util.TimeZone;
 
-final class DateTimeUtils {
+public final class DateTimeUtils {
     private static final DateFormat sLocaleFormat = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);
     private static final DateFormat sISO8601Format = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
 
@@ -26,7 +26,7 @@ final class DateTimeUtils {
         return sISO8601Format.format(date);
     }
 
-    static String formatTime(long time) {
+    public static String formatTime(long time) {
         return formatDate(new Date(time));
     }
 

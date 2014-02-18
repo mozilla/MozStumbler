@@ -16,8 +16,14 @@ public final class DatabaseContract {
     private static final String PATH_SYNC_STATS = "sync_stats";
 
     interface ReportsColumns {
-        String REPORT = "report";
-        String OBSERVATION_COUNT = "observation_count";
+        String LAT = "lat";
+        String LON = "lon";
+        String TIME = "time";
+        String ACCURACY = "accuracy";
+        String ALTITUDE = "altitude";
+        String RADIO = "radio";
+        String CELL = "cell";
+        String WIFI = "wifi";
         String CELL_COUNT = "cell_count";
         String WIFI_COUNT = "wifi_count";
         String RETRY_NUMBER = "retry";
@@ -41,10 +47,10 @@ public final class DatabaseContract {
                 + "vnd.mozstumbler.reports_summary";
         public static final String DEFAULT_SORT = _ID;
 
-        public static final String TOTAL_REPORT_COUNT = "total_report_count";
         public static final String TOTAL_OBSERVATION_COUNT = "total_observation_count";
         public static final String TOTAL_CELL_COUNT = "total_cell_count";
         public static final String TOTAL_WIFI_COUNT = "total_wifi_count";
+        public static final String MAX_ID = "max_id";
 
         public static Uri buildReportUri(long reportId) {
             return ContentUris.withAppendedId(CONTENT_URI, reportId);

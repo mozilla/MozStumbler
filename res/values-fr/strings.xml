@@ -72,7 +72,7 @@
 
     <string name="geofencing_off">Gardiennage virtuel : Arrêté</string>
     <string name="geofencing_explain">Le gardiennage virtuel sera défini au prochain emplacement analysé.</string>
-    <string name="geofencing_desc">MozStumbler suspendra l\'analyse à 1 km de cet emplacement (lat\/long).</string>
+    <string name="geofencing_desc">MozStumbler suspendra l\'analyse à 1 km de cet emplacement (lat,long).</string>
     <string name="geofencing_on">Gardiennage virtuel @ %1$.3f, %2$.3f</string>
     <string name="geofencing_enable">Gardienner cet emplacement</string>
 

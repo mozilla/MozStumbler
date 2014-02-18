@@ -5,6 +5,7 @@
     <string name="action_about">À propos de MozStumbler</string>
     <string name="action_preferences">Paramètres</string>
     <string name="action_exit">Quitter</string>
+    <string name="action_upload_observations">Envoyer les rapports</string>
     <string name="start_scanning">Démarrer l\'analyse</string>
     <string name="stop_scanning">Arrêter l\'analyse</string>
     <string name="view_leaderboard">Voir le classement</string>
@@ -44,6 +45,19 @@
     <string name="about_version">Version %1$s</string>
     <string name="about_mapbox">En savoir plus sur notre fournisseur cartographique…</string>
     <string name="about_more">Plus…</string>
+    <string name="about_legal_aosp">Certaines icônes de cette application sont une reproduction du travail créé et partagé par le projet Open Source Android et sont utilisées selon les termes décrits dans la licence Creative Commons - Attribution 2.5.</string>
+
+    <string name="upload_observations_sent_title">Envoyés</string>
+    <string name="upload_observations_last_upload_time_title">Date du dernier envoi :</string>
+    <string name="upload_observations_observations_sent_title">Rapports :</string>
+    <string name="upload_observations_wifis_sent_title">Points d\'accès Wi-Fi :</string>
+    <string name="upload_observations_cells_sent_title">Antennes cellulaires :</string>
+    <string name="upload_observations_in_queue_title">En attente</string>
+    <string name="upload_observations_observations_queued_title">Rapports :</string>
+    <string name="upload_observations_wifis_queued_title">Points d\'accès Wi-Fi :</string>
+    <string name="upload_observations_cells_queued_title">Antennes cellulaires :</string>
+    <string name="upload_observations_button">Envoyer</string>
+    <string name="upload_observations_dialog_title">Envoi des rapports</string>
 
     <string name="detected_activity">Activité détectée : %1$s</string>
     <string name="detected_activity_in_vehicle">Déplacement (en véhicle)</string>
@@ -55,4 +69,11 @@
  
     <string name="upload_wifi_only_title">Envoi des rapports par le WiFi uniquement</string>
     <string name="upload_wifi_only_summary">Cette option réduira votre consommation de données de votre forfait.</string>
+
+    <string name="geofencing_off">Gardiennage virtuel : Arrêté</string>
+    <string name="geofencing_explain">Le gardiennage virtuel sera défini au prochain emplacement analysé.</string>
+    <string name="geofencing_desc">MozStumbler suspendra l\'analyse à 1 km de cet emplacement (lat/long).</string>
+    <string name="geofencing_on">Gardiennage virtuel @ %1$.3f, %2$.3f</string>
+    <string name="geofencing_enable">Gardienner cet emplacement</string>
+
 </resources>

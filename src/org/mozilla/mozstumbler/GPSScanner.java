@@ -123,7 +123,7 @@ public class GPSScanner implements LocationListener {
         mLongitude = location.getLongitude();
         mLatitude = location.getLatitude();
 
-        reportNewLocationReceived(location);
+        if (!mAutoGeofencing) { reportNewLocationReceived(location); }
         mLocationCount++;
     }
 
@@ -151,7 +151,6 @@ public class GPSScanner implements LocationListener {
     }
 
     private void reportNewLocationReceived(Location location) {
-        if (mAutoGeofencing) { return; }
         Intent i = new Intent(ScannerService.MESSAGE_TOPIC);
         i.putExtra(Intent.EXTRA_SUBJECT, GPS_SCANNER_EXTRA_SUBJECT);
         i.putExtra(GPS_SCANNER_ARG_LOCATION, location);

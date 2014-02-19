@@ -38,24 +38,27 @@ final class SSIDBlockList {
         "AmtrakConnect",
         "Amtrak_",
         "amtrak_",
+        "arriva", //Arriva Nederland on-train Wifi (Netherlands)
+        "CapitalBus", // Capital Bus on-bus WiFi (Taiwan)
         "GBUS",
         "GBusWifi",
         "gogoinflight", // Gogo in-flight WiFi
-        "SF Shuttle Wireless",
-        "ShuttleWiFi",
-        "Southwest WiFi", // Southwest Airlines in-flight WiFi
-        "SST-PR-1", // Sears Home Service van hotspot?!
+        "Hot-Spot-KS", // Koleje Slaskie transportation services (Poland)
         "wifi_rail", // BART
         "egged.co.il", // Egged transportation services (Israel)
         "gb-tours.com", // GB Tours transportation services (Israel)
         "ISRAEL-RAILWAYS",
         "Omni-WiFi", // Omnibus transportation services (Israel)
+        "QbuzzWIFI", //Qbuzz on-bus WiFi (Netherlands)
+        "SF Shuttle Wireless",
+        "ShuttleWiFi",
+        "Southwest WiFi", // Southwest Airlines in-flight WiFi
+        "SST-PR-1", // Sears Home Service van hotspot?!
         "Telekom_ICE", // Deutsche Bahn on-train WiFi
         "TPE-Free Bus", // Taipei City on-bus WiFi (Taiwan)
         "THSR-VeeTIME", // Taiwan High Speed Rail on-train WiFi
+        "tmobile", //Nederlandse Spoorwegen on-train WiFi by T-Mobile (Netherlands)
         "VR-junaverkko", // VR on-train WiFi (Finland)
-        "CapitalBus", // Capital Bus on-bus WiFi (Taiwan)
-        "Hot-Spot-KS", // Koleje Slaskie transportation services (Poland)
     };
 
     private static final String[] SUFFIX_LIST = {

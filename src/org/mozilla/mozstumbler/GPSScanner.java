@@ -30,6 +30,7 @@ public class GPSScanner implements LocationListener {
     private double mLatitude;
     private double mLongitude;
     private LocationBlockList mBlockList;
+    private boolean mAutoGeofencing;
 
     GPSScanner(Context context) {
         mContext = context;
@@ -98,6 +99,8 @@ public class GPSScanner implements LocationListener {
     public void checkPrefs() {
         Log.d(LOGTAG,"Updating blocking data.");
         if (mBlockList!=null) mBlockList.update_blocks();
+        Prefs prefs = new Prefs(mContext);
+        mAutoGeofencing = prefs.getGeofenceHere();
     }
 
     public boolean isGeofenced() { return (mBlockList!=null) ? mBlockList.isGeofenced() : false ; }
@@ -148,6 +151,7 @@ public class GPSScanner implements LocationListener {
     }
 
     private void reportNewLocationReceived(Location location) {
+        if (mAutoGeofencing) { return; }
         Intent i = new Intent(ScannerService.MESSAGE_TOPIC);
         i.putExtra(Intent.EXTRA_SUBJECT, GPS_SCANNER_EXTRA_SUBJECT);
         i.putExtra(GPS_SCANNER_ARG_LOCATION, location);

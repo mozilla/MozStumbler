@@ -111,9 +111,10 @@ public final class MainActivity extends FragmentActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        mGeofenceHere = mPrefs.getGeofenceHere();
+        if (mGeofenceHere) mPrefs.setGeofenceState(false);
         setGeofenceText();
         mNeedsUpdate = true;
-        mGeofenceHere = mPrefs.getGeofenceHere();
     }
 
     @Override

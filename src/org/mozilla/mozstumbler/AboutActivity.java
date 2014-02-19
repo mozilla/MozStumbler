@@ -9,7 +9,7 @@ import android.view.View;
 import android.widget.TextView;
 
 public class AboutActivity extends Activity {
-    private static final String ABOUT_PAGE_URL = "https://wiki.mozilla.org/Services/Location/About";
+    private static final String ABOUT_PAGE_URL = "https://location.services.mozilla.com/";
     private static final String ABOUT_MAPBOX_URL = "https://www.mapbox.com/about/maps/";
 
     @Override

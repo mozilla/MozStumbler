@@ -44,6 +44,7 @@
     <string name="about_version">Version %1$s</string>
     <string name="about_mapbox">Mehr über unseren Kartenanbieter…</string>
     <string name="about_more">Mehr…</string>
+    <string name="about_legal_aosp">Einige Symbole in dieser Anwendung wurden Werken entnommen, welche vom Android Open Source Project erstellt und verteilt werden. Sie werden in Übereinstimmung mit der Creative Commons - Attribution 2.5 Lizenz verwendet..</string>
     
     <string name="upload_observations_sent_title">Daten hochladen</string>
     <string name="upload_observations_last_upload_time_title">Zeit des letzten Hochladens:</string>
@@ -67,5 +68,11 @@
     
     <string name="upload_wifi_only_title">Nur über Wi-Fi hochladen</string>
     <string name="upload_wifi_only_summary">Diese Option reduziert den Mobilfunk-Datenverbrauch.</string>
+    
+    <string name="geofencing_off">Geofencing: Ausgeschaltet</string>
+    <string name="geofencing_explain">Geofencing wird bei der nächsten gültigen Position aktiviert werden.</string>
+    <string name="geofencing_desc">MozStumbler wird den Scanvorgang in Umkreis von 1 km um diese Koordinaten (Breite/Länge) unterbrechen.</string>
+    <string name="geofencing_on">Geofencing @ %1$.3f, %2$.3f</string>
+    <string name="geofencing_enable">Geofencing ist eingeschaltet.</string>
 
 </resources>

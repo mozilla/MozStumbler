@@ -44,7 +44,19 @@
     <string name="about_version">Version %1$s</string>
     <string name="about_mapbox">Mehr über unseren Kartenanbieter…</string>
     <string name="about_more">Mehr…</string>
-
+    
+    <string name="upload_observations_sent_title">Daten hochladen</string>
+    <string name="upload_observations_last_upload_time_title">Zeit des letzten Hochladens:</string>
+    <!-- <string name="upload_observations_observations_sent_title">Berichte:</string> -->
+    <string name="upload_observations_wifis_sent_title">Wi-Fi Zugriffspunkte:</string>
+    <string name="upload_observations_cells_sent_title">Funkzellen:</string>
+    <string name="upload_observations_in_queue_title">In Warteschlange</string>
+    <!-- <string name="upload_observations_observations_queued_title">Berichte:</string> -->
+    <string name="upload_observations_wifis_queued_title">Wi-Fi Zugriffspunkte:</string>
+    <string name="upload_observations_cells_queued_title">Funkzellen:</string>
+    <string name="upload_observations_button">Hochladen</string>
+    <string name="upload_observations_dialog_title">Daten hochladen</string>
+    
     <string name="detected_activity">Erkannte Aktivität: %1$s</string>
     <string name="detected_activity_in_vehicle">In Bewegung (Fahrzeug)</string>
     <string name="detected_activity_on_bicycle">In Bewegung (Fahrrad)</string>
@@ -52,5 +64,8 @@
     <string name="detected_activity_still">Stillstehend</string>
     <string name="detected_activity_tilting">Gekippt</string>
     <string name="detected_activity_unknown">Unbekannt</string>
+    
+    <string name="upload_wifi_only_title">Nur über Wi-Fi hochladen</string>
+    <string name="upload_wifi_only_summary">Diese Option reduziert den Mobilfunk-Datenverbrauch.</string>
 
 </resources>

@@ -45,9 +45,9 @@ public class PreferencesScreen extends PreferenceActivity {
         setNicknamePreferenceTitle(mPrefs.getNickname());
         mWifiPreference.setChecked(mPrefs.getWifi());
         setGeofenceSwitchTitle();
-        mGeofenceSwitch.setChecked(mPrefs.getGeofenceState());
         boolean geofence_here = mPrefs.getGeofenceHere();
-        mGeofenceSwitch.setEnabled(!geofence_here);
+        if(geofence_here) { mPrefs.setGeofenceState(true); }
+        mGeofenceSwitch.setChecked(mPrefs.getGeofenceState());
         setGeofenceHereDesc(geofence_here);
 
         setPreferenceListener();
@@ -67,9 +67,20 @@ public class PreferencesScreen extends PreferenceActivity {
             public boolean onPreferenceClick(Preference preference) {
                 mPrefs.setGeofenceHere(true);
                 setGeofenceHereDesc(true);
-                mGeofenceSwitch.setChecked(false);
-                mGeofenceSwitch.setEnabled(false);
+                mGeofenceSwitch.setChecked(true);
                 mPrefs.setGeofenceState(false);
+                return true;
+            }
+        });
+
+        mGeofenceSwitch.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                if (mPrefs.getGeofenceHere() && newValue.equals(false))
+                {
+                    mPrefs.setGeofenceHere(false);
+                    setGeofenceHereDesc(false);
+                }
                 return true;
             }
         });

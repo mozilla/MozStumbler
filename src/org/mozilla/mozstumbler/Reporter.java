@@ -174,7 +174,9 @@ final class Reporter extends BroadcastReceiver {
             mWifiData.clear();
         }
 
-        mGpsPosition.setTime(System.currentTimeMillis());
+        if (mGpsPosition != null) {
+            mGpsPosition.setTime(System.currentTimeMillis());
+        }
     }
 
     void reportCollectedLocation(Location gpsPosition, Collection<ScanResult> wifiInfo, String radioType,

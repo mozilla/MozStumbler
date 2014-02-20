@@ -30,6 +30,7 @@ import org.mozilla.mozstumbler.provider.Provider;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -39,7 +40,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
+import java.util.zip.CRC32;
+import java.util.zip.GZIPOutputStream;
 
 import static org.mozilla.mozstumbler.provider.DatabaseContract.*;
 
@@ -150,7 +152,13 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
                 if (batch == null) {
                     break;
                 }
-                uploadReport(batch.body);
+                try {
+                    uploadReport(batch.body,true);
+                } catch (HttpErrorException e) {
+                    if (e.responseCode==400)
+                        uploadReport(batch.body,false);
+                    else throw e;
+                }
                 deleteObservations(batch.minId, batch.maxId);
                 uploadedObservations += batch.observations;
                 uploadedWifis += batch.wifis;
@@ -341,7 +349,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         mContentResolver.applyBatch(DatabaseContract.CONTENT_AUTHORITY, updateBatch);
     }
 
-    private int uploadReport(byte body[]) throws IOException {
+    private int uploadReport(byte body[], boolean gzip) throws IOException {
         HttpURLConnection urlConnection = (HttpURLConnection) sURL.openConnection();
         try {
             urlConnection.setDoOutput(true);
@@ -358,18 +366,36 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
                 urlConnection.setRequestProperty(NICKNAME_HEADER, mNickname);
             }
 
+            if (gzip) {
+                ByteArrayOutputStream os = new ByteArrayOutputStream();
+                GZIPOutputStream gstream = new GZIPOutputStream(os);
+                try {
+                    gstream.write(body);
+                    gstream.finish();
+                    body = os.toByteArray();
+                    urlConnection.setRequestProperty("Content-Encoding","gzip");
+                } finally {
+                    os.close();
+                    gstream.close();
+                }
+            }
             urlConnection.setFixedLengthStreamingMode(body.length);
             OutputStream out = new BufferedOutputStream(urlConnection.getOutputStream());
             out.write(body);
             out.flush();
 
             if (DBG) {
-                Log.d(LOGTAG, "uploaded wrapperData: " + new String(body, "UTF-8") + " to " + sURL.toString());
+                if (gzip) {
+                    CRC32 checksum = new CRC32();
+                    checksum.update(body);
+                    Log.d(LOGTAG, "uploaded compressed data, crc32: " +  checksum.getValue() + " to " + sURL.toString());
+                } else {
+                    Log.d(LOGTAG, "uploaded wrapperData: " + new String(body, "UTF-8") + " to " + sURL.toString());
+                }
             }
-
             int code = urlConnection.getResponseCode();
 
-            if (DBG) Log.e(LOGTAG, "urlConnection returned " + code);
+            if (DBG) Log.d(LOGTAG, "urlConnection returned " + code);
 
             if (code != 204) {
                 BufferedReader r = null;

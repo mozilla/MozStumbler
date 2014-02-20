@@ -334,11 +334,6 @@ public final class MainActivity extends FragmentActivity {
                 startActivity(intent);
                 return true;
             case R.id.action_upload_observations:
-                try {
-                    mConnectionRemote.flushReporterBuffer();
-                } catch (RemoteException re) {
-                    Log.i(LOGTAG, "remote exception ", re);
-                }
                 UploadReportsDialog newFragment = new UploadReportsDialog();
                 newFragment.show(getSupportFragmentManager(), "UploadReportsDialog");
                 return true;

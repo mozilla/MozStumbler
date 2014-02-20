@@ -13,5 +13,4 @@ interface ScannerServiceInterface {
     int getCurrentCellInfoCount();
     boolean isGeofenced();
     void checkPrefs();
-    void flushReporterBuffer();
 }

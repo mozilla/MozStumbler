@@ -23,7 +23,7 @@ import static org.mozilla.mozstumbler.provider.DatabaseContract.*;
 
 public class Provider extends ContentProvider {
     private static final String LOGTAG = Provider.class.getName();
-    private static final int SYNC_REPORTS_PERIOD = 10;
+    private static final int SYNC_OBSERVATIONS_PERIOD = 200;
     private static final int REPORTS = 1;
     private static final int REPORTS_ID = 2;
     private static final int REPORTS_SUMMARY = 3;
@@ -33,7 +33,7 @@ public class Provider extends ContentProvider {
     private static HashMap<String, String> sReportSummaryProjectionMap = buildReportSummaryProjectionMap();
 
     private Database mDbHelper;
-    private int mInsertedReports;
+    private int mInsertedObservations;
 
     private static UriMatcher buildUriMatcher() {
         final UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
@@ -51,8 +51,8 @@ public class Provider extends ContentProvider {
         final HashMap<String, String> map = new HashMap<String, String>();
         map.put(Reports.TOTAL_CELL_COUNT, "SUM(" + Reports.CELL_COUNT + ") AS " + Reports.TOTAL_CELL_COUNT);
         map.put(Reports.TOTAL_WIFI_COUNT, "SUM(" + Reports.WIFI_COUNT + ") AS " + Reports.TOTAL_WIFI_COUNT);
-        map.put(Reports.TOTAL_OBSERVATION_COUNT, "SUM(" + Reports.OBSERVATION_COUNT + ") AS " + Reports.TOTAL_OBSERVATION_COUNT);
-        map.put(Reports.TOTAL_REPORT_COUNT, "COUNT(" + Reports._ID + ") AS " + Reports.TOTAL_REPORT_COUNT);
+        map.put(Reports.TOTAL_OBSERVATION_COUNT, "COUNT(" + Reports._ID + ") AS " + Reports.TOTAL_OBSERVATION_COUNT);
+        map.put(Reports.MAX_ID, "MAX(" + Reports._ID + ") AS " + Reports.MAX_ID);
         return map;
     }
 
@@ -92,7 +92,7 @@ public class Provider extends ContentProvider {
                 cursor.setNotificationUri(getContext().getContentResolver(), Reports.CONTENT_URI_SUMMARY);
                 break;
             case SYNC_STATS:
-                cursor = getSyncStats();
+                cursor = getSyncStats(projection);
                 cursor.setNotificationUri(getContext().getContentResolver(), Stats.CONTENT_URI);
                 break;
             default:
@@ -129,8 +129,8 @@ public class Provider extends ContentProvider {
                 rowId = db.insertOrThrow(Database.TABLE_REPORTS, null, values);
                 if (rowId >= 0) {
                     final ContentResolver resolver = getContext().getContentResolver();
-                    mInsertedReports = (mInsertedReports + 1) % SYNC_REPORTS_PERIOD;
-                    if (mInsertedReports == 0) {
+                    mInsertedObservations = (mInsertedObservations + 1) % SYNC_OBSERVATIONS_PERIOD;
+                    if (mInsertedObservations == 0) {
                         resolver.notifyChange(uri, null, true);
                     }
                     resolver.notifyChange(Reports.CONTENT_URI_SUMMARY, null, false);
@@ -233,9 +233,9 @@ public class Provider extends ContentProvider {
         return builder.query(mDbHelper.getReadableDatabase(), null, null, null, null, null, null);
     }
 
-    private Cursor getSyncStats() {
+    private Cursor getSyncStats(String[] projection) {
         final SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
         builder.setTables(Database.TABLE_STATS);
-        return builder.query(mDbHelper.getReadableDatabase(), null, null, null, null, null, null);
+        return builder.query(mDbHelper.getReadableDatabase(), projection, null, null, null, null, null);
     }
 }

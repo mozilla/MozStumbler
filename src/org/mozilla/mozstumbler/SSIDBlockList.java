@@ -40,6 +40,8 @@ final class SSIDBlockList {
         "amtrak_",
         "arriva", //Arriva Nederland on-train Wifi (Netherlands)
         "CapitalBus", // Capital Bus on-bus WiFi (Taiwan)
+        "CDWiFi",           // Ceske drahy (Czech railways): http://www.cd.cz/cd-online/-15765/
+        "csadplzen_bus",    // CSAD Plzen bus hotspots: http://www.csadplzen.cz/?ob=aktuality#wifi7
         "GBUS",
         "GBusWifi",
         "gogoinflight", // Gogo in-flight WiFi

@@ -11,7 +11,7 @@
         android:key="wifi_only"
         android:title="@string/upload_wifi_only_title"
         android:summary="@string/upload_wifi_only_summary"
-        android:defaultValue="false"/>
+        android:defaultValue="true" />
 
     <CheckBoxPreference
         android:key="geofence_switch"

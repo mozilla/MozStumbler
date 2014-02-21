@@ -49,11 +49,11 @@
 
     <string name="upload_observations_sent_title">Envoyés</string>
     <string name="upload_observations_last_upload_time_title">Date du dernier envoi :</string>
-    <string name="upload_observations_observations_sent_title">Rapports :</string>
+    <string name="upload_observations_observations_sent_title">Emplacements :</string>
     <string name="upload_observations_wifis_sent_title">Points d\'accès Wi-Fi :</string>
     <string name="upload_observations_cells_sent_title">Antennes cellulaires :</string>
     <string name="upload_observations_in_queue_title">En attente</string>
-    <string name="upload_observations_observations_queued_title">Rapports :</string>
+    <string name="upload_observations_observations_queued_title">Emplacements :</string>
     <string name="upload_observations_wifis_queued_title">Points d\'accès Wi-Fi :</string>
     <string name="upload_observations_cells_queued_title">Antennes cellulaires :</string>
     <string name="upload_observations_button">Envoyer</string>

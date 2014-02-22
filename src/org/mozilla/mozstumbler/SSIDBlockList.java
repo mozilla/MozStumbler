@@ -50,6 +50,7 @@ final class SSIDBlockList {
         "egged.co.il", // Egged transportation services (Israel)
         "gb-tours.com", // GB Tours transportation services (Israel)
         "ISRAEL-RAILWAYS",
+        "MAVSTART-WiFi", // Hungarian State Railways onboard hotspot on InterCity trains (Hungary)
         "Omni-WiFi", // Omnibus transportation services (Israel)
         "QbuzzWIFI", //Qbuzz on-bus WiFi (Netherlands)
         "SF Shuttle Wireless",

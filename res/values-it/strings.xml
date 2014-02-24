@@ -4,6 +4,7 @@
   <string name="action_about">Informazioni su MozStumbler</string>
   <string name="action_preferences">Impostazioni</string>
   <string name="action_exit">Esci</string>
+  <string name="action_upload_observations">Invia osservazioni</string>
   <string name="start_scanning">Inizia l\'analisi</string>
   <string name="stop_scanning">Interrompi l\'analisi</string>
   <string name="view_leaderboard">Guarda la classifica</string>
@@ -18,7 +19,7 @@
   <string name="last_location">Ultima posizione: %1$s</string>
   <string name="coordinate">%1$.4f, %2$.4f</string>
   <string name="locations_scanned">Posizioni analizzate: %1$d</string>
-  <string name="last_upload_time">Ultimo caricamento dati: %1$s</string>
+  <string name="last_upload_time">Ultimo invio dati: %1$s</string>
   <string name="reports_sent">Rapporti inviati: %1$d</string>
   <string name="service_scanning">Analisi delle reti Wi-Fi e cellulari in corso</string>
   <string name="enter_nickname">Inserisci il soprannome (opzionale)</string>
@@ -35,8 +36,20 @@
   <string name="yes">Sì</string>
   <string name="no">No</string>
   <string name="about_version">Versione %1$s</string>
-  <string name="about_mapbox">Per saperne di più sul nostro fornitore di mappe...</string>
-  <string name="about_more">Altro…</string>
+  <string name="about_mapbox">Per maggiori informazioni sul nostro fornitore di mappe...</string>
+  <string name="about_more">Ancora…</string>
+  <string name="about_legal_aosp">Alcune icone in questa applicazione sono riprodotte da opere create e condivise dall\'Android Open Source Project e sono usate secondo i termini descritti dalla licenza Creative Commons 2.5 Attribution.</string>
+  <string name="upload_observations_sent_title">Inviati</string>
+  <string name="upload_observations_last_upload_time_title">Ultimo invio dati:</string>
+  <string name="upload_observations_observations_sent_title">Osservazioni:</string>
+  <string name="upload_observations_wifis_sent_title">Access point Wi-Fi:</string>
+  <string name="upload_observations_cells_sent_title">Celle:</string>
+  <string name="upload_observations_in_queue_title">In coda</string>
+  <string name="upload_observations_observations_queued_title">Osservazioni:</string>
+  <string name="upload_observations_wifis_queued_title">Access point Wi-Fi:</string>
+  <string name="upload_observations_cells_queued_title">Celle:</string>
+  <string name="upload_observations_button">Invia</string>
+  <string name="upload_observations_dialog_title">Invia osservazioni</string>
   <string name="detected_activity">Attività rilevata: %1$s</string>
   <string name="detected_activity_in_vehicle">Spostamento (in veicolo)</string>
   <string name="detected_activity_on_bicycle">Spostamento (in bicicletta)</string>
@@ -44,4 +57,11 @@
   <string name="detected_activity_still">Fermo</string>
   <string name="detected_activity_tilting">Inclinamento</string>
   <string name="detected_activity_unknown">Sconosciuta</string>
+  <string name="upload_wifi_only_title">Invia solo in WiFi</string>
+  <string name="upload_wifi_only_summary">Questa opzione ridurrà il traffico dati sulla rete cellulare.</string>
+  <string name="geofencing_off">Recinzione geografica: spenta</string>
+  <string name="geofencing_explain">La recinzione geografica sarà impostata alla prossima posizione valida ottenuta durante l\'analisi.</string>
+  <string name="geofencing_desc">MozStumbler metterà in pausa l\'analisi fino a 1 km di distanza da questa posizione.</string>
+  <string name="geofencing_on">Recinzione geografica \@ %1$.3f, %2$.3f</string>
+  <string name="geofencing_enable">Recinzione geografica in questa posizione</string>
 </resources>

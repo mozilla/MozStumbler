@@ -44,6 +44,7 @@ public final class MainActivity extends FragmentActivity {
     private ServiceConnection        mConnection;
     private ServiceBroadcastReceiver mReceiver;
     private int                      mGpsFixes;
+    private int                      mGpsSats;
     private boolean                  mNeedsUpdate = false;
     private boolean                  mGeofenceHere = false;
 
@@ -75,6 +76,7 @@ public final class MainActivity extends FragmentActivity {
                 if (subject.equals("Scanner")) {
                     if (intent.hasExtra("fixes")) {
                         mGpsFixes = intent.getIntExtra("fixes", 0);
+                        mGpsSats = intent.getIntExtra("sats",0);
                     }
                     else if (intent.hasExtra("enable")) {
                         int enable = intent.getIntExtra("enable", -1);
@@ -266,7 +268,7 @@ public final class MainActivity extends FragmentActivity {
                                     ? formatLocation(latitude, longitude)
                                     : "-";
 
-        formatTextView(R.id.gps_satellites, R.string.gps_satellites, mGpsFixes);
+        formatTextView(R.id.gps_satellites, R.string.gps_satellites, mGpsFixes,mGpsSats);
         formatTextView(R.id.last_location, R.string.last_location, lastLocationString);
         formatTextView(R.id.visible_wifi_access_points, R.string.visible_wifi_access_points, visibleAPs);
         formatTextView(R.id.wifi_access_points, R.string.wifi_access_points, APs);

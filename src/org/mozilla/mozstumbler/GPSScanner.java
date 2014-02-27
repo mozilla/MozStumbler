@@ -59,7 +59,7 @@ public class GPSScanner implements LocationListener {
                                 fixes++;
                             }
                         }
-                        reportNewGpsStatus(fixes);
+                        reportNewGpsStatus(fixes,satellites);
                         if (fixes < MIN_SAT_USED_IN_FIX) {
                             reportLocationLost();
                         }
@@ -165,10 +165,11 @@ public class GPSScanner implements LocationListener {
         mContext.sendBroadcast(i);
     }
 
-    private void reportNewGpsStatus(int fixes) {
+    private void reportNewGpsStatus(int fixes, int sats) {
         Intent i = new Intent(ScannerService.MESSAGE_TOPIC);
         i.putExtra(Intent.EXTRA_SUBJECT, "Scanner");
         i.putExtra("fixes", fixes);
+        i.putExtra("sats", sats);
         mContext.sendBroadcast(i);
     }
 }

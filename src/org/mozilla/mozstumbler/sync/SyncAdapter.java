@@ -25,7 +25,6 @@ import org.mozilla.mozstumbler.DateTimeUtils;
 import org.mozilla.mozstumbler.NetworkUtils;
 import org.mozilla.mozstumbler.preferences.Prefs;
 import org.mozilla.mozstumbler.provider.DatabaseContract;
-import org.mozilla.mozstumbler.provider.Provider;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -154,7 +153,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
                 }
                 try {
                     uploadReport(batch.body,true);
-                } catch (HttpErrorException e) {
+                } catch (NetworkUtils.HttpErrorException e) {
                     if (e.responseCode==400)
                         uploadReport(batch.body,false);
                     else throw e;
@@ -167,7 +166,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
                 boolean isTemporary;
                 Log.e(LOGTAG, "IO exception ", e);
                 syncResult.stats.numIoExceptions += 1;
-                isTemporary = !(e instanceof HttpErrorException) || ((HttpErrorException) e).isTemporary();
+                isTemporary = !(e instanceof NetworkUtils.HttpErrorException) || ((NetworkUtils.HttpErrorException) e).isTemporary();
                 if (isTemporary) {
                     increaseRetryCounter(cursor, syncResult);
                 } else {
@@ -417,27 +416,12 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
                 }
             }
             if (!(code >= 200 && code <= 299)) {
-                throw new HttpErrorException(code);
+                throw new NetworkUtils.HttpErrorException(code);
             }
 
             return code;
         } finally {
             urlConnection.disconnect();
         }
-    }
-
-    private static class HttpErrorException extends IOException {
-        private static final long serialVersionUID = -5404095858043243126L;
-        public final int responseCode;
-
-        public HttpErrorException(int responseCode) {
-            super();
-            this.responseCode = responseCode;
-        }
-
-        public boolean isTemporary() {
-            return responseCode >= 500 && responseCode <= 599;
-        }
-
     }
 }

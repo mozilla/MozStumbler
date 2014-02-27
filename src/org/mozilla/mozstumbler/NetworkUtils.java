@@ -5,6 +5,8 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
 
+import java.io.IOException;
+
 public final class NetworkUtils {
     private static final String LOGTAG = NetworkUtils.class.getName();
 
@@ -57,5 +59,20 @@ public final class NetworkUtils {
 
         // "MozStumbler/X.Y.Z"
         return appName + '/' + appVersion;
+    }
+
+    public static class HttpErrorException extends IOException {
+        private static final long serialVersionUID = -5404095858043243126L;
+        public final int responseCode;
+
+        public HttpErrorException(int responseCode) {
+            super();
+            this.responseCode = responseCode;
+        }
+
+        public boolean isTemporary() {
+            return responseCode >= 500 && responseCode <= 599;
+        }
+
     }
 }

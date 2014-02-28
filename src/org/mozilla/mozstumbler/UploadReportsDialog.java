@@ -50,6 +50,9 @@ public class UploadReportsDialog extends DialogFragment {
         LayoutInflater inflater = getActivity().getLayoutInflater();
 
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.dialog_upload_observations, null);
+//      if (Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH) { // API14+ doesn't need it
+        rootView.setBackgroundResource(android.R.color.background_light);
+//      }
         mLastUpdateTimeView = (TextView) rootView.findViewById(R.id.last_upload_time_value);
         mObservationsSentView = (TextView) rootView.findViewById(R.id.observations_sent_value);
         mCellsSentView = (TextView) rootView.findViewById(R.id.cells_sent_value);

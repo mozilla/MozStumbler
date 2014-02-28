@@ -22,6 +22,9 @@ final class BSSIDBlockList {
         "7cc537",
         "88c663",
         "8c7712",
+
+         // Adelaide Metro WiFi Network OUIs:
+        "a854b2",
     };
 
     private BSSIDBlockList() {

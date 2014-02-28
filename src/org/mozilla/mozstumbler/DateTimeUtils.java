@@ -24,11 +24,14 @@ public final class DateTimeUtils {
 
     @SuppressLint("SimpleDateFormat")
     static String formatDate(Date date) {
-        Calendar c = Calendar.getInstance();
-        c.setTime(date);
-        c.set(Calendar.DAY_OF_MONTH,1);
-        date = c.getTime();
         return sISO8601Format.format(date);
+    }
+
+    public static long removeDay(long time) {
+        Calendar c = Calendar.getInstance();
+        c.setTimeInMillis(time);
+        c.set(Calendar.DAY_OF_MONTH,1);
+        return c.getTimeInMillis();
     }
 
     public static String formatTime(long time) {

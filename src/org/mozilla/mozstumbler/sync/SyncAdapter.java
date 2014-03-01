@@ -230,7 +230,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         try {
             while (cursor.moveToNext()) {
                 JSONObject item = new JSONObject();
-                item.put("time", DateTimeUtils.formatTime(cursor.getLong(columnTime)));
+                item.put("time", DateTimeUtils.formatTime(DateTimeUtils.removeDay(cursor.getLong(columnTime))));
                 item.put("lat", cursor.getDouble(columnLat));
                 item.put("lon", cursor.getDouble(columnLon));
                 if (!cursor.isNull(columnAltitude)) {

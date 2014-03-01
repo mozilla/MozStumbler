@@ -2,6 +2,7 @@ package org.mozilla.mozstumbler;
 
 import android.annotation.SuppressLint;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -24,6 +25,13 @@ public final class DateTimeUtils {
     @SuppressLint("SimpleDateFormat")
     static String formatDate(Date date) {
         return sISO8601Format.format(date);
+    }
+
+    public static long removeDay(long time) {
+        Calendar c = Calendar.getInstance();
+        c.setTimeInMillis(time);
+        c.set(Calendar.DAY_OF_MONTH,1);
+        return c.getTimeInMillis();
     }
 
     public static String formatTime(long time) {

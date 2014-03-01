@@ -61,6 +61,7 @@ final class SSIDBlockList {
         "TPE-Free Bus", // Taipei City on-bus WiFi (Taiwan)
         "THSR-VeeTIME", // Taiwan High Speed Rail on-train WiFi
         "tmobile", //Nederlandse Spoorwegen on-train WiFi by T-Mobile (Netherlands)
+        "TriangleTransitWiFi_", // Triangle Transit on-bus WiFi
         "VR-junaverkko", // VR on-train WiFi (Finland)
     };
 

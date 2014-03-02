@@ -31,11 +31,12 @@ public final class ScannerService extends Service {
     private static final String LOGTAG          = ScannerService.class.getName();
     private static final int    NOTIFICATION_ID = 1;
     private static final int    WAKE_TIMEOUT    = 5 * 1000;
+    private static final String INTENT_TURN_OFF = MESSAGE_TOPIC + ".turnMeOff";
     private Scanner             mScanner;
     private Reporter            mReporter;
     private LooperThread        mLooper;
     private PendingIntent       mWakeIntent;
-    private BroadcastReceiver   mBatteryLowReceiver;
+    private BroadcastReceiver   mTurnOffReceiver;
     private boolean             mIsBound;
 
     private final ScannerServiceInterface.Stub mBinder = new ScannerServiceInterface.Stub() {
@@ -89,11 +90,11 @@ public final class ScannerService extends Service {
                         mScanner.stopScanning();
                         mReporter.flush();
                         SyncUtils.TriggerRefresh(false);
+                        if (!mIsBound) {
+                            stopSelf();
+                        }
                     }
                 });
-            }
-            if (!mIsBound) {
-                stopSelf();
             }
         }
 
@@ -166,10 +167,10 @@ public final class ScannerService extends Service {
         super.onCreate();
         Log.d(LOGTAG, "onCreate");
 
-        mBatteryLowReceiver = new BroadcastReceiver() {
+        mTurnOffReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                Log.d(LOGTAG, "Got battery low broadcast!");
+                Log.d(LOGTAG,"Got a request to turn off!");
                 try {
                     if (mBinder.isScanning()) {
                         mBinder.stopScanning();
@@ -179,7 +180,10 @@ public final class ScannerService extends Service {
                 }
             }
         };
-        registerReceiver(mBatteryLowReceiver, new IntentFilter(Intent.ACTION_BATTERY_LOW));
+
+        IntentFilter intentFilter = new IntentFilter(Intent.ACTION_BATTERY_LOW);
+        intentFilter.addAction(INTENT_TURN_OFF);
+        registerReceiver(mTurnOffReceiver, intentFilter);
 
         mReporter = new Reporter(this);
         mScanner = new Scanner(this);
@@ -192,8 +196,8 @@ public final class ScannerService extends Service {
         super.onDestroy();
         Log.d(LOGTAG, "onDestroy");
 
-        unregisterReceiver(mBatteryLowReceiver);
-        mBatteryLowReceiver = null;
+        unregisterReceiver(mTurnOffReceiver);
+        mTurnOffReceiver = null;
 
         mLooper.interrupt();
         mLooper = null;
@@ -243,6 +247,7 @@ public final class ScannerService extends Service {
                                                   CharSequence contentTitle,
                                                   CharSequence contentText,
                                                   PendingIntent contentIntent) {
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context,0,new Intent(INTENT_TURN_OFF),0);
         return new NotificationCompat.Builder(context)
                                      .setSmallIcon(icon)
                                      .setContentTitle(contentTitle)
@@ -250,6 +255,7 @@ public final class ScannerService extends Service {
                                      .setContentIntent(contentIntent)
                                      .setOngoing(true)
                                      .setPriority(NotificationCompat.PRIORITY_LOW)
+                                     .addAction(R.drawable.ic_action_cancel, context.getResources().getString(R.string.stop_scanning), pendingIntent)
                                      .build();
     }
 

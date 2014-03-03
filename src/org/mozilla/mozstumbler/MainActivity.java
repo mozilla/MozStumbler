@@ -47,6 +47,7 @@ public final class MainActivity extends FragmentActivity {
     private int                      mGpsSats;
     private boolean                  mNeedsUpdate = false;
     private boolean                  mGeofenceHere = false;
+    private boolean                  mHaveShownEnableGpsDialog = false;
 
     private class ServiceBroadcastReceiver extends BroadcastReceiver {
         private boolean mReceiverIsRegistered;
@@ -141,7 +142,8 @@ public final class MainActivity extends FragmentActivity {
     private void checkGps() {
         LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
-        if (!lm.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+        if (!lm.isProviderEnabled(LocationManager.GPS_PROVIDER) && !mHaveShownEnableGpsDialog) {
+            mHaveShownEnableGpsDialog = true;
             new AlertDialog.Builder(this)
                 .setCancelable(false)
                 .setTitle(R.string.app_name)

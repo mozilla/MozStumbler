@@ -6,37 +6,23 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
-import android.graphics.Paint.Style;
-import android.graphics.Point;
 import android.net.wifi.ScanResult;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.widget.Toast;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.lang.Void;
-import java.net.MalformedURLException;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.zip.GZIPOutputStream;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import org.mozilla.mozstumbler.communicator.Searcher;
 import org.osmdroid.tileprovider.MapTileProviderBasic;
 import org.osmdroid.tileprovider.tilesource.ITileSource;
 import org.osmdroid.tileprovider.tilesource.OnlineTileSourceBase;
@@ -53,13 +39,13 @@ import org.osmdroid.views.overlay.TilesOverlay;
 public final class MapActivity extends Activity {
     private static final String LOGTAG = MapActivity.class.getName();
 
-    // TODO factor this out into something that can be shared with Reporter.java
-    private static final String LOCATION_URL        = "https://location.services.mozilla.com/v1/search";
-    private static final String USER_AGENT_HEADER = "User-Agent";
-    private static String MOZSTUMBLER_USER_AGENT_STRING;
+    private static final String STATUS_OK           = "ok";
+    private static final String STATUS_NOT_FOUND    = "not_found";
+    private static final String STATUS_FAILED       = "failed";
     private static final String COVERAGE_URL        = "https://location.services.mozilla.com/tiles/";
 
     private MapView mMap;
+    private Context mContext;
 
     private ReporterBroadcastReceiver mReceiver;
 
@@ -99,7 +85,6 @@ public final class MapActivity extends Activity {
         setContentView(R.layout.activity_map);
 
         mWifiData = Collections.emptyList();
-        MOZSTUMBLER_USER_AGENT_STRING = NetworkUtils.getUserAgentString(this);
 
         mMap = (MapView) this.findViewById(R.id.map);
         mMap.setTileSource(getTileSource());
@@ -169,6 +154,7 @@ public final class MapActivity extends Activity {
         super.onStart();
 
         Context context = getApplicationContext();
+        mContext = context;
         Intent i = new Intent(ScannerService.MESSAGE_TOPIC);
         i.putExtra(Intent.EXTRA_SUBJECT, "Scanner");
         i.putExtra("enable", 1);
@@ -194,7 +180,7 @@ public final class MapActivity extends Activity {
     }
 
     private final class GetLocationAndMapItTask extends AsyncTask<String, Void, String> {
-        private String mStatus;
+        private String mStatus="";
         private float mLat=0;
         private float mLon=0;
 
@@ -220,110 +206,33 @@ public final class MapActivity extends Activity {
             }
             String data = wrapper.toString();
             byte[] bytes = data.getBytes();
-            Log.d(LOGTAG, "Uploading data: " + data + " to " + LOCATION_URL);
-            try {
-                try {
-                    sendData(bytes,true);
-                } catch (NetworkUtils.HttpErrorException e) {
-                    if (e.responseCode == 400) {
-                        sendData(bytes,false);
-                    } else {
-                        Log.e(LOGTAG,"",e);
-                    }
-                }
-            } catch (IOException e) {
-                Log.e(LOGTAG,"",e);
+            Searcher searcher = new Searcher(mContext);
+            if (searcher.cleanSend(bytes)) {
+                mStatus = searcher.getStatus();
+                mLat = searcher.getLat();
+                mLon = searcher.getLon();
+            } else {
+                mStatus = STATUS_FAILED;
             }
-
+            searcher.close();
             Log.d(LOGTAG, "Upload status: " + mStatus);
             return mStatus;
         }
 
         @Override
         protected void onPostExecute(String result) {
-            if (mStatus != null && "ok".equals(mStatus)) {
+            if (mStatus.equals(STATUS_OK)) {
                 positionMapAt(mLat, mLon);
-            } else if (mStatus != null && "not_found".equals(mStatus)) {
-                    Toast.makeText(getApplicationContext(),
-                            getResources().getString(R.string.location_not_found),
-                            Toast.LENGTH_LONG).show();
+            } else if (mStatus == STATUS_NOT_FOUND) {
+                Toast.makeText(mContext,
+                        getResources().getString(R.string.location_not_found),
+                        Toast.LENGTH_LONG).show();
             } else {
+                Toast.makeText(mContext,
+                        getResources().getString(R.string.location_lookup_error),
+                        Toast.LENGTH_LONG).show();
                 Log.e(LOGTAG, "", new IllegalStateException("mStatus=" + mStatus));
             }
-        }
-
-        private void sendData(byte[] bytes, boolean gzip) throws IOException {
-            HttpURLConnection urlConnection = null;
-
-            URL url;
-            try {
-                url = new URL(LOCATION_URL + "?key=" + BuildConfig.MOZILLA_API_KEY);
-            } catch (MalformedURLException e) {
-                throw new IllegalArgumentException(e);
-            }
-            try {
-                urlConnection = (HttpURLConnection) url.openConnection();
-
-                if (gzip) {
-                    ByteArrayOutputStream os = new ByteArrayOutputStream();
-                    GZIPOutputStream gstream = new GZIPOutputStream(os);
-                    try {
-                        gstream.write(bytes);
-                        gstream.finish();
-                        bytes = os.toByteArray();
-                        urlConnection.setRequestProperty("Content-Encoding","gzip");
-                        Log.d(LOGTAG, "Compressing data...");
-                    } finally {
-                        os.close();
-                        gstream.close();
-                    }
-                }
-
-                urlConnection.setDoOutput(true);
-                urlConnection.setRequestProperty(USER_AGENT_HEADER, MOZSTUMBLER_USER_AGENT_STRING);
-
-                Log.d(LOGTAG, "mWifiData: " + mWifiData);
-
-                urlConnection.setFixedLengthStreamingMode(bytes.length);
-                OutputStream out = new BufferedOutputStream(urlConnection.getOutputStream());
-                out.write(bytes);
-                out.flush();
-
-                int code = urlConnection.getResponseCode();
-
-                Log.d(LOGTAG, "urlConnection returned " + code);
-                if (code != 200) {
-                    throw new NetworkUtils.HttpErrorException(code);
-                }
-                InputStream in = new BufferedInputStream(urlConnection.getInputStream());
-                BufferedReader r = new BufferedReader(new InputStreamReader(in));
-                StringBuilder total = new StringBuilder(in.available());
-                String line;
-                while ((line = r.readLine()) != null) {
-                    total.append(line);
-                }
-                r.close();
-
-                try {
-                    JSONObject result = new JSONObject(total.toString());
-                    mStatus = result.getString("status");
-                    Log.d(LOGTAG, "Location status: " + mStatus);
-                    if ("ok".equals(mStatus)) {
-                        mLat = Float.parseFloat(result.getString("lat"));
-                        mLon = Float.parseFloat(result.getString("lon"));
-                        float accuracy = Float.parseFloat(result.getString("accuracy"));
-                        Log.d(LOGTAG, "Location lat: " + mLat);
-                        Log.d(LOGTAG, "Location lon: " + mLon);
-                        Log.d(LOGTAG, "Location accuracy: " + accuracy);
-                    }
-                } catch (JSONException e) {
-                    Log.e(LOGTAG,"",e);
-                }
-
-            } finally {
-                urlConnection.disconnect();
-            }
-
         }
     }
 }

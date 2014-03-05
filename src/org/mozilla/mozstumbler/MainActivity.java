@@ -135,6 +135,8 @@ public final class MainActivity extends FragmentActivity {
 
         getSupportLoaderManager().initLoader(0, null, mSyncStatsLoaderCallbacks);
 
+        checkGps();
+
         Log.d(LOGTAG, "onCreate");
     }
 
@@ -165,8 +167,6 @@ public final class MainActivity extends FragmentActivity {
     @Override
     protected void onStart() {
         super.onStart();
-
-        checkGps();
 
         mReceiver = new ServiceBroadcastReceiver();
         mReceiver.register();

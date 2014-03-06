@@ -82,7 +82,7 @@ public class Searcher extends AbstractCommunicator {
                 Log.e(LOGTAG, "Latitude JSON response problem: ", e);
             }
         }
-        return 0;
+        return 0f;
     }
 
     public float getLon() {
@@ -97,7 +97,7 @@ public class Searcher extends AbstractCommunicator {
     }
 
     public float getAccuracy() {
-        if (getStatus()==RESPONSE_OK_TEXT) {
+        if (getStatus().equals(RESPONSE_OK_TEXT)) {
             try {
                 return Float.parseFloat(mResponse.getString(JSON_ACCURACY));
             } catch (JSONException e) {

@@ -6,11 +6,11 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 
-final class PackageUtils {
+final public class PackageUtils {
     private PackageUtils() {
     }
 
-    static String getAppVersion(Context context) {
+    public static String getAppVersion(Context context) {
         PackageManager pm = context.getPackageManager();
         try {
             return pm.getPackageInfo(BuildConfig.PACKAGE_NAME, 0).versionName;

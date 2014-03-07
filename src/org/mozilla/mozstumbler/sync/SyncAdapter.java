@@ -6,7 +6,6 @@ import android.content.AbstractThreadedSyncAdapter;
 import android.content.ContentProviderClient;
 import android.content.ContentProviderOperation;
 import android.content.ContentResolver;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.OperationApplicationException;
 import android.content.SyncResult;
@@ -17,57 +16,35 @@ import android.os.Bundle;
 import android.os.RemoteException;
 import android.util.Log;
 
+import org.apache.http.conn.ConnectTimeoutException;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.mozilla.mozstumbler.BuildConfig;
 import org.mozilla.mozstumbler.DateTimeUtils;
 import org.mozilla.mozstumbler.NetworkUtils;
+import org.mozilla.mozstumbler.communicator.Submitter;
 import org.mozilla.mozstumbler.preferences.Prefs;
 import org.mozilla.mozstumbler.provider.DatabaseContract;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.zip.CRC32;
-import java.util.zip.GZIPOutputStream;
 
 import static org.mozilla.mozstumbler.provider.DatabaseContract.*;
 
 public class SyncAdapter extends AbstractThreadedSyncAdapter {
-    private static final String NICKNAME_HEADER = "X-Nickname";
-    private static final String USER_AGENT_HEADER = "User-Agent";
     static final String SYNC_EXTRAS_IGNORE_WIFI_STATUS = "org.mozilla.mozstumbler.sync.ignore_wifi_status";
 
     private static final String LOGTAG = SyncAdapter.class.getName();
     private static final boolean DBG = BuildConfig.DEBUG;
-    private static final String LOCATION_URL = "https://location.services.mozilla.com/v1/submit";
+    private final Context mContext;
     private static final int REQUEST_BATCH_SIZE = 50;
     private static final int MAX_RETRY_COUNT = 3;
-    private static final URL sURL;
 
     private final ContentResolver mContentResolver;
     private final Prefs mPrefs;
-    private final String mUserAgentString;
-    private String mNickname;
 
-    static {
-        try {
-            sURL = new URL(LOCATION_URL + "?key=" + BuildConfig.MOZILLA_API_KEY);
-        } catch (MalformedURLException e) {
-            throw new IllegalArgumentException(e);
-        }
-    }
 
     private static class BatchRequestStats {
         final byte[] body;
@@ -89,9 +66,9 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
     public SyncAdapter(Context context, boolean autoInitialize) {
         super(context, autoInitialize);
+        mContext = context;
         mPrefs = new Prefs(context);
         mContentResolver = context.getContentResolver();
-        mUserAgentString = NetworkUtils.getUserAgentString(context);
     }
 
     /**
@@ -105,9 +82,9 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
             boolean autoInitialize,
             boolean allowParallelSyncs) {
         super(context, autoInitialize, allowParallelSyncs);
+        mContext = context;
         mPrefs = new Prefs(context);
         mContentResolver = context.getContentResolver();
-        mUserAgentString = NetworkUtils.getUserAgentString(context);
     }
 
     @Override
@@ -130,12 +107,12 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
             return;
         }
 
-        mNickname = mPrefs.getNickname();
         Uri uri = Reports.CONTENT_URI.buildUpon()
                 .appendQueryParameter("limit", String.valueOf(REQUEST_BATCH_SIZE))
                 .build();
         queueMinId = 0;
         queueMaxId = getMaxId();
+        Submitter submitter = new Submitter(mContext);
         for (; queueMinId < queueMaxId; ) {
             BatchRequestStats batch = null;
             Cursor cursor = mContentResolver.query(uri, null,
@@ -145,40 +122,31 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
             if (cursor == null) {
                 break;
             }
+            batch = getRequestBody(cursor);
+            if (batch == null) {
+                break;
+            }
 
-            try {
-                batch = getRequestBody(cursor);
-                if (batch == null) {
-                    break;
-                }
-                try {
-                    uploadReport(batch.body,true);
-                } catch (NetworkUtils.HttpErrorException e) {
-                    if (e.responseCode==400)
-                        uploadReport(batch.body,false);
-                    else throw e;
-                }
+            if (submitter.cleanSend(batch.body)) {
                 deleteObservations(batch.minId, batch.maxId);
                 uploadedObservations += batch.observations;
                 uploadedWifis += batch.wifis;
                 uploadedCells += batch.cells;
-            } catch (IOException e) {
-                boolean isTemporary;
-                Log.e(LOGTAG, "IO exception ", e);
+            } else {
                 syncResult.stats.numIoExceptions += 1;
-                isTemporary = !(e instanceof NetworkUtils.HttpErrorException) || ((NetworkUtils.HttpErrorException) e).isTemporary();
-                if (isTemporary) {
-                    increaseRetryCounter(cursor, syncResult);
+                if (submitter.isErrorTemporary()) {
+                   increaseRetryCounter(cursor, syncResult);
                 } else {
                     deleteObservations(batch.minId, batch.maxId);
                 }
-            } finally {
-                cursor.close();
-                if (batch != null) {
-                    queueMinId = batch.maxId;
-                }else {
-                    queueMinId += REQUEST_BATCH_SIZE;
-                }
+            }
+            submitter.close();
+
+            cursor.close();
+            if (batch != null) {
+                queueMinId = batch.maxId;
+            } else {
+                queueMinId += REQUEST_BATCH_SIZE;
             }
         }
 
@@ -346,82 +314,5 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         updateBatch.add(Stats.updateOperation(Stats.KEY_CELLS_SENT, totalCells));
         updateBatch.add(Stats.updateOperation(Stats.KEY_WIFIS_SENT, totalWifis));
         mContentResolver.applyBatch(DatabaseContract.CONTENT_AUTHORITY, updateBatch);
-    }
-
-    private int uploadReport(byte body[], boolean gzip) throws IOException {
-        HttpURLConnection urlConnection = (HttpURLConnection) sURL.openConnection();
-        try {
-            urlConnection.setDoOutput(true);
-            urlConnection.setRequestProperty(USER_AGENT_HEADER, mUserAgentString);
-            urlConnection.setRequestProperty("Content-Type", "application/json");
-
-            // Workaround for a bug in Android HttpURLConnection. When the library
-            // reuses a stale connection, the connection may fail with an EOFException
-            if (Build.VERSION.SDK_INT > 13 && Build.VERSION.SDK_INT < 19) {
-                urlConnection.setRequestProperty("Connection", "Close");
-            }
-
-            if (mNickname != null) {
-                urlConnection.setRequestProperty(NICKNAME_HEADER, mNickname);
-            }
-
-            if (gzip) {
-                ByteArrayOutputStream os = new ByteArrayOutputStream();
-                GZIPOutputStream gstream = new GZIPOutputStream(os);
-                try {
-                    gstream.write(body);
-                    gstream.finish();
-                    body = os.toByteArray();
-                    urlConnection.setRequestProperty("Content-Encoding","gzip");
-                } finally {
-                    os.close();
-                    gstream.close();
-                }
-            }
-            urlConnection.setFixedLengthStreamingMode(body.length);
-            OutputStream out = new BufferedOutputStream(urlConnection.getOutputStream());
-            out.write(body);
-            out.flush();
-
-            if (DBG) {
-                if (gzip) {
-                    CRC32 checksum = new CRC32();
-                    checksum.update(body);
-                    Log.d(LOGTAG, "uploaded compressed data, crc32: " +  checksum.getValue() + " to " + sURL.toString());
-                } else {
-                    Log.d(LOGTAG, "uploaded wrapperData: " + new String(body, "UTF-8") + " to " + sURL.toString());
-                }
-            }
-            int code = urlConnection.getResponseCode();
-
-            if (DBG) Log.d(LOGTAG, "urlConnection returned " + code);
-
-            if (code != 204) {
-                BufferedReader r = null;
-                try {
-                    InputStream in = new BufferedInputStream(urlConnection.getInputStream());
-                    r = new BufferedReader(new InputStreamReader(in));
-                    StringBuilder total = new StringBuilder(in.available());
-                    String line;
-                    while ((line = r.readLine()) != null) {
-                        total.append(line);
-                    }
-                    Log.d(LOGTAG, "response was: \n" + total + "\n");
-                } catch (Exception e) {
-                    Log.e(LOGTAG, "", e);
-                } finally {
-                    if (r != null) {
-                        r.close();
-                    }
-                }
-            }
-            if (!(code >= 200 && code <= 299)) {
-                throw new NetworkUtils.HttpErrorException(code);
-            }
-
-            return code;
-        } finally {
-            urlConnection.disconnect();
-        }
     }
 }

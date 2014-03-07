@@ -13,37 +13,6 @@ public final class NetworkUtils {
     private NetworkUtils() {
     }
 
-    @SuppressWarnings("deprecation")
-    static boolean isNetworkAvailable(Context context) {
-        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        if (cm == null) {
-            Log.e(LOGTAG, "ConnectivityManager is null!");
-            return false;
-        }
-
-        if (!cm.getBackgroundDataSetting()) {
-            Log.w(LOGTAG, "Background data is restricted!");
-            return false;
-        }
-
-        NetworkInfo network = cm.getActiveNetworkInfo();
-        if (network == null) {
-            Log.w(LOGTAG, "No active network!");
-            return false;
-        }
-
-        if (!network.isAvailable()) {
-            Log.w(LOGTAG, "Active network is not available!");
-            return false;
-        }
-
-        if (!network.isConnected()) {
-            Log.w(LOGTAG, "Active network is not connected!");
-            return false;
-        }
-
-        return true; // Network is OK!
-    }
     public static boolean isWifiAvailable(Context context) {
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         if (cm == null) {
@@ -53,26 +22,5 @@ public final class NetworkUtils {
         NetworkInfo aNet = cm.getActiveNetworkInfo();
         return (aNet != null && aNet.getType() == ConnectivityManager.TYPE_WIFI);
     }
-    public static String getUserAgentString(Context context) {
-        String appName = context.getString(R.string.app_name);
-        String appVersion = PackageUtils.getAppVersion(context);
 
-        // "MozStumbler/X.Y.Z"
-        return appName + '/' + appVersion;
-    }
-
-    public static class HttpErrorException extends IOException {
-        private static final long serialVersionUID = -5404095858043243126L;
-        public final int responseCode;
-
-        public HttpErrorException(int responseCode) {
-            super();
-            this.responseCode = responseCode;
-        }
-
-        public boolean isTemporary() {
-            return responseCode >= 500 && responseCode <= 599;
-        }
-
-    }
 }

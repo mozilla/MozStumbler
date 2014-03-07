@@ -38,15 +38,8 @@ public class Submitter extends AbstractCommunicator {
         try {
             this.send(data);
             result = true;
-        } catch (HttpErrorException ex) {
-            if (ex.isTemporary())
-            {
-                isTemp = true;
-            }
-        } catch (ConnectTimeoutException ex) {
-            isTemp = true;
         } catch (IOException ex) {
-            isTemp = false;
+            isTemp = true;
         }
         return result;
     }

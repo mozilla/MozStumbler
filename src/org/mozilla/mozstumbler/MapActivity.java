@@ -221,9 +221,9 @@ public final class MapActivity extends Activity {
 
         @Override
         protected void onPostExecute(String result) {
-            if (mStatus.equals(STATUS_OK)) {
+            if (STATUS_OK.equals(mStatus)) {
                 positionMapAt(mLat, mLon);
-            } else if (mStatus == STATUS_NOT_FOUND) {
+            } else if (STATUS_NOT_FOUND.equals(mStatus)) {
                 Toast.makeText(mContext,
                         getResources().getString(R.string.location_not_found),
                         Toast.LENGTH_LONG).show();

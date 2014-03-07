@@ -37,7 +37,7 @@
     <string name="update_later">Update Later</string>
 
     <string name="location_not_found">Location not found</string>
-    <string name="location_lookup_error">"Location lookup error"</string>
+    <string name="location_lookup_error">Location lookup error</string>
 
     <string name="gps_alert_msg">GPS is turned off. Do you want to go to settings and turn it on?</string>
     <string name="yes">Yes</string>

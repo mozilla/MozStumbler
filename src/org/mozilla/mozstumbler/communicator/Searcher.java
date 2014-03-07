@@ -75,7 +75,7 @@ public class Searcher extends AbstractCommunicator {
     }
 
     public float getLat() {
-        if (getStatus().equals(RESPONSE_OK_TEXT)) {
+        if (RESPONSE_OK_TEXT.equals(getStatus())) {
             try {
                 return Float.parseFloat(mResponse.getString(JSON_LATITUDE));
             } catch (JSONException e) {
@@ -86,7 +86,7 @@ public class Searcher extends AbstractCommunicator {
     }
 
     public float getLon() {
-        if (getStatus().equals(RESPONSE_OK_TEXT)) {
+        if (RESPONSE_OK_TEXT.equals(getStatus())) {
             try {
                 return Float.parseFloat(mResponse.getString(JSON_LONGITUDE));
             } catch (JSONException e) {
@@ -97,7 +97,7 @@ public class Searcher extends AbstractCommunicator {
     }
 
     public float getAccuracy() {
-        if (getStatus().equals(RESPONSE_OK_TEXT)) {
+        if (RESPONSE_OK_TEXT.equals(getStatus())) {
             try {
                 return Float.parseFloat(mResponse.getString(JSON_ACCURACY));
             } catch (JSONException e) {
@@ -105,6 +105,12 @@ public class Searcher extends AbstractCommunicator {
             }
         }
         return 0f;
+    }
+
+    @Override
+    public void close() {
+        super.close();
+        mResponse = null;
     }
 
 }

@@ -45,7 +45,6 @@ public final class MapActivity extends Activity {
     private static final String COVERAGE_URL        = "https://location.services.mozilla.com/tiles/";
 
     private MapView mMap;
-    private Context mContext;
 
     private ReporterBroadcastReceiver mReceiver;
 
@@ -154,7 +153,6 @@ public final class MapActivity extends Activity {
         super.onStart();
 
         Context context = getApplicationContext();
-        mContext = context;
         Intent i = new Intent(ScannerService.MESSAGE_TOPIC);
         i.putExtra(Intent.EXTRA_SUBJECT, "Scanner");
         i.putExtra("enable", 1);
@@ -206,7 +204,7 @@ public final class MapActivity extends Activity {
             }
             String data = wrapper.toString();
             byte[] bytes = data.getBytes();
-            Searcher searcher = new Searcher(mContext);
+            Searcher searcher = new Searcher(MapActivity.this);
             if (searcher.cleanSend(bytes)) {
                 mStatus = searcher.getStatus();
                 mLat = searcher.getLat();
@@ -224,11 +222,11 @@ public final class MapActivity extends Activity {
             if (STATUS_OK.equals(mStatus)) {
                 positionMapAt(mLat, mLon);
             } else if (STATUS_NOT_FOUND.equals(mStatus)) {
-                Toast.makeText(mContext,
+                Toast.makeText(MapActivity.this,
                         getResources().getString(R.string.location_not_found),
                         Toast.LENGTH_LONG).show();
             } else {
-                Toast.makeText(mContext,
+                Toast.makeText(MapActivity.this,
                         getResources().getString(R.string.location_lookup_error),
                         Toast.LENGTH_LONG).show();
                 Log.e(LOGTAG, "", new IllegalStateException("mStatus=" + mStatus));

@@ -38,7 +38,6 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
     private static final String LOGTAG = SyncAdapter.class.getName();
     private static final boolean DBG = BuildConfig.DEBUG;
-    private final Context mContext;
     private static final int REQUEST_BATCH_SIZE = 50;
     private static final int MAX_RETRY_COUNT = 3;
 
@@ -66,7 +65,6 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
     public SyncAdapter(Context context, boolean autoInitialize) {
         super(context, autoInitialize);
-        mContext = context;
         mPrefs = new Prefs(context);
         mContentResolver = context.getContentResolver();
     }
@@ -82,7 +80,6 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
             boolean autoInitialize,
             boolean allowParallelSyncs) {
         super(context, autoInitialize, allowParallelSyncs);
-        mContext = context;
         mPrefs = new Prefs(context);
         mContentResolver = context.getContentResolver();
     }
@@ -112,7 +109,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
                 .build();
         queueMinId = 0;
         queueMaxId = getMaxId();
-        Submitter submitter = new Submitter(mContext);
+        Submitter submitter = new Submitter(getContext());
         for (; queueMinId < queueMaxId; ) {
             BatchRequestStats batch = null;
             Cursor cursor = mContentResolver.query(uri, null,
@@ -122,27 +119,28 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
             if (cursor == null) {
                 break;
             }
-            batch = getRequestBody(cursor);
-            if (batch == null) {
-                break;
-            }
 
-            if (submitter.cleanSend(batch.body)) {
-                deleteObservations(batch.minId, batch.maxId);
-                uploadedObservations += batch.observations;
-                uploadedWifis += batch.wifis;
-                uploadedCells += batch.cells;
-            } else {
-                syncResult.stats.numIoExceptions += 1;
-                if (submitter.isErrorTemporary()) {
-                   increaseRetryCounter(cursor, syncResult);
-                } else {
-                    deleteObservations(batch.minId, batch.maxId);
+            try {
+                batch = getRequestBody(cursor);
+                if (batch == null) {
+                    break;
                 }
-            }
-            submitter.close();
 
-            cursor.close();
+
+                if (submitter.cleanSend(batch.body)) {
+                    deleteObservations(batch.minId, batch.maxId);
+                    uploadedObservations += batch.observations;
+                    uploadedWifis += batch.wifis;
+                    uploadedCells += batch.cells;
+                } else {
+                    syncResult.stats.numIoExceptions += 1;
+                    increaseRetryCounter(cursor, syncResult);
+                }
+            } finally {
+                cursor.close();
+                submitter.close();
+            }
+
             if (batch != null) {
                 queueMinId = batch.maxId;
             } else {

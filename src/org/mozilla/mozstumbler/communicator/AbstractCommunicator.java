@@ -104,6 +104,8 @@ abstract class AbstractCommunicator {
             sendData(zipData(data));
         } catch (IOException e) {
             Log.e(LOGTAG, "Couldn't compress and send data, falling back to plain-text: ", e);
+            close();
+            setHeaders();
             sendData(data);
         }
     }

@@ -117,6 +117,16 @@ public class CellInfo implements Parcelable {
         return obj;
     }
 
+    public String getCellIdentity() {
+        return getRadio()
+                + " " + getCellRadio()
+                + " " + getMcc()
+                + " " + getMnc()
+                + " " + getLac()
+                + " " + getCid()
+                + " " + getPsc();
+    }
+
     @Override
     public int describeContents() {
         return 0;

@@ -127,14 +127,7 @@ final class Reporter extends BroadcastReceiver {
             return;
         }
         for (CellInfo result : cells) {
-            String key = result.getRadio()
-                    + " " + result.getCellRadio()
-                    + " " + result.getMcc()
-                    + " " + result.getMnc()
-                    + " " + result.getLac()
-                    + " " + result.getCid()
-                    + " " + result.getPsc();
-
+            String key = result.getCellIdentity();
             if (!mCellData.containsKey(key)) {
                 mCellData.put(key, result);
             }

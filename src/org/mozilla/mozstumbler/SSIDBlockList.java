@@ -42,6 +42,7 @@ final class SSIDBlockList {
         "CapitalBus", // Capital Bus on-bus WiFi (Taiwan)
         "CDWiFi",           // Ceske drahy (Czech railways): http://www.cd.cz/cd-online/-15765/
         "csadplzen_bus",    // CSAD Plzen bus hotspots: http://www.csadplzen.cz/?ob=aktuality#wifi7
+        "EMT-Madrid",  // Empresa municipal de transportes de Madrid http://buswifi.com/
         "GBUS",
         "GBusWifi",
         "gogoinflight", // Gogo in-flight WiFi

@@ -1,6 +1,7 @@
 package org.mozilla.mozstumbler.communicator;
 
 import android.content.Context;
+import android.util.Log;
 
 import org.apache.http.conn.ConnectTimeoutException;
 import org.mozilla.mozstumbler.preferences.Prefs;
@@ -10,9 +11,9 @@ import java.net.HttpURLConnection;
 
 public class Submitter extends AbstractCommunicator {
     private static final String SUBMIT_URL = "https://location.services.mozilla.com/v1/submit";
+    private static final String LOGTAG = Submitter.class.getName();
     private static final int CORRECT_RESPONSE = HttpURLConnection.HTTP_NO_CONTENT;
     private final String mNickname;
-    private boolean isTemp = false;
 
     public Submitter(Context ctx) {
         super(ctx);
@@ -39,12 +40,9 @@ public class Submitter extends AbstractCommunicator {
             this.send(data);
             result = true;
         } catch (IOException ex) {
-            isTemp = true;
+            Log.e(LOGTAG,"Error submitting: ", ex);
         }
         return result;
     }
 
-    public boolean isErrorTemporary() {
-        return isTemp;
-    }
 }

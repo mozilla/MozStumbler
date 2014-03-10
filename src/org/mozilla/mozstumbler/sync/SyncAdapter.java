@@ -134,11 +134,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
                     uploadedCells += batch.cells;
                 } else {
                     syncResult.stats.numIoExceptions += 1;
-                    if (submitter.isErrorTemporary()) {
-                        increaseRetryCounter(cursor, syncResult);
-                    } else {
-                        deleteObservations(batch.minId, batch.maxId);
-                    }
+                    increaseRetryCounter(cursor, syncResult);
                 }
             } finally {
                 cursor.close();

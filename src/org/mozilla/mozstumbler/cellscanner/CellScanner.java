@@ -25,7 +25,7 @@ public class CellScanner {
     private final Context mContext;
     private CellScannerImpl mImpl;
     private Timer mCellScanTimer;
-    private final Set<CellInfo> mCells = new HashSet<CellInfo>();
+    private final Set<String> mCells = new HashSet<String>();
     private int mCurrentCellInfoCount;
 
     interface CellScannerImpl {
@@ -66,7 +66,7 @@ public class CellScanner {
                 if (cells.isEmpty()) {
                     return;
                 }
-                mCells.addAll(cells);
+                for (CellInfo cell: cells) mCells.add(cell.getCellIdentity());
 
                 Intent intent = new Intent(ScannerService.MESSAGE_TOPIC);
                 intent.putExtra(Intent.EXTRA_SUBJECT, CELL_SCANNER_EXTRA_SUBJECT);

@@ -10,10 +10,12 @@ import android.content.Intent;
 import android.content.IntentFilter;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class WifiScanner extends BroadcastReceiver {
     public static final String WIFI_SCANNER_EXTRA_SUBJECT = "WifiScanner";
@@ -26,14 +28,14 @@ public class WifiScanner extends BroadcastReceiver {
     private final Context mContext;
     private WifiLock mWifiLock;
     private Timer mWifiScanTimer;
-    private final Set<String> mAPs = new HashSet<String>();
-    private int mVisibleAPs;
+    private final Set<String> mAPs = Collections.synchronizedSet(new HashSet<String>());
+    private AtomicInteger mVisibleAPs = new AtomicInteger();
 
     WifiScanner(Context c) {
         mContext = c;
     }
 
-    public void start() {
+    public synchronized void start() {
         WifiManager wm = getWifiManager();
 
         if (mStarted) {
@@ -41,21 +43,20 @@ public class WifiScanner extends BroadcastReceiver {
         }
         mStarted = true;
 
-        IntentFilter i = new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
-        i.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION);
-        mContext.registerReceiver(this, i);
-
         if (getWifiManager().isWifiEnabled()) {
             activatePeriodicScan();
         }
+
+        IntentFilter i = new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
+        i.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION);
+        mContext.registerReceiver(this, i);
     }
 
-    public void stop() {
-        deactivatePeriodicScan();
-
+    public synchronized void stop() {
         if (mStarted) {
             mContext.unregisterReceiver(this);
         }
+        deactivatePeriodicScan();
         mStarted = false;
     }
 
@@ -63,6 +64,7 @@ public class WifiScanner extends BroadcastReceiver {
         String action = intent.getAction();
 
         if (WifiManager.WIFI_STATE_CHANGED_ACTION.equals(action)) {
+            Log.v(LOGTAG, "WIFI_STATE_CHANGED_ACTION new state: " + intent.getIntExtra(WifiManager.EXTRA_WIFI_STATE, -1));
             if (getWifiManager().isWifiEnabled()) {
                 activatePeriodicScan();
             } else {
@@ -78,7 +80,7 @@ public class WifiScanner extends BroadcastReceiver {
                     //Log.v(LOGTAG, "BSSID=" + scanResult.BSSID + ", SSID=\"" + scanResult.SSID + "\", Signal=" + scanResult.level);
                 }
             }
-            mVisibleAPs = scanResults.size();
+            mVisibleAPs.set(scanResults.size());
             reportScanResults(scanResults);
         }
     }
@@ -88,13 +90,15 @@ public class WifiScanner extends BroadcastReceiver {
     }
 
     public int getVisibleAPCount() {
-        return mVisibleAPs;
+        return mVisibleAPs.get();
     }
 
-    private void activatePeriodicScan() {
+    private synchronized void activatePeriodicScan() {
         if (mWifiScanTimer != null) {
             return;
         }
+
+        Log.v(LOGTAG, "Activate Periodic Scan");
 
         mWifiLock = getWifiManager().createWifiLock(WifiManager.WIFI_MODE_SCAN_ONLY,
                 "MozStumbler");
@@ -111,10 +115,12 @@ public class WifiScanner extends BroadcastReceiver {
         }, 0, WIFI_MIN_UPDATE_TIME);
     }
 
-    private void deactivatePeriodicScan() {
+    private synchronized void deactivatePeriodicScan() {
         if (mWifiScanTimer == null) {
             return;
         }
+
+        Log.v(LOGTAG, "Deactivate periodic scan");
 
         mWifiLock.release();
         mWifiLock = null;
@@ -122,7 +128,7 @@ public class WifiScanner extends BroadcastReceiver {
         mWifiScanTimer.cancel();
         mWifiScanTimer = null;
 
-        mVisibleAPs = 0;
+        mVisibleAPs.set(0);
     }
 
     private static boolean shouldLog(ScanResult scanResult) {

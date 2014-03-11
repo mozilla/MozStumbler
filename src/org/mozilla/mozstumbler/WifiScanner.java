@@ -9,12 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Timer;
@@ -41,18 +36,69 @@ public class WifiScanner extends BroadcastReceiver {
     public void start() {
         WifiManager wm = getWifiManager();
 
-        if (mStarted || !wm.isWifiEnabled()) {
+        if (mStarted) {
             return;
         }
         mStarted = true;
 
+        IntentFilter i = new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
+        i.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION);
+        mContext.registerReceiver(this, i);
 
-        mWifiLock = wm.createWifiLock(WifiManager.WIFI_MODE_SCAN_ONLY,
+        if (getWifiManager().isWifiEnabled()) {
+            activatePeriodicScan();
+        }
+    }
+
+    public void stop() {
+        deactivatePeriodicScan();
+
+        if (mStarted) {
+            mContext.unregisterReceiver(this);
+        }
+        mStarted = false;
+    }
+
+    public void onReceive(Context c, Intent intent) {
+        String action = intent.getAction();
+
+        if (WifiManager.WIFI_STATE_CHANGED_ACTION.equals(action)) {
+            if (getWifiManager().isWifiEnabled()) {
+                activatePeriodicScan();
+            } else {
+                deactivatePeriodicScan();
+            }
+        } else if (WifiManager.SCAN_RESULTS_AVAILABLE_ACTION.equals(action)) {
+            ArrayList<ScanResult> scanResults = new ArrayList<ScanResult>();
+            for (ScanResult scanResult : getWifiManager().getScanResults()) {
+                scanResult.BSSID = BSSIDBlockList.canonicalizeBSSID(scanResult.BSSID);
+                if (shouldLog(scanResult)) {
+                    scanResults.add(scanResult);
+                    mAPs.add(scanResult.BSSID);
+                    //Log.v(LOGTAG, "BSSID=" + scanResult.BSSID + ", SSID=\"" + scanResult.SSID + "\", Signal=" + scanResult.level);
+                }
+            }
+            mVisibleAPs = scanResults.size();
+            reportScanResults(scanResults);
+        }
+    }
+
+    public int getAPCount() {
+        return mAPs.size();
+    }
+
+    public int getVisibleAPCount() {
+        return mVisibleAPs;
+    }
+
+    private void activatePeriodicScan() {
+        if (mWifiScanTimer != null) {
+            return;
+        }
+
+        mWifiLock = getWifiManager().createWifiLock(WifiManager.WIFI_MODE_SCAN_ONLY,
                 "MozStumbler");
         mWifiLock.acquire();
-
-        IntentFilter i = new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
-        mContext.registerReceiver(this, i);
 
         // Ensure that we are constantly scanning for new access points.
         mWifiScanTimer = new Timer();
@@ -65,44 +111,18 @@ public class WifiScanner extends BroadcastReceiver {
         }, 0, WIFI_MIN_UPDATE_TIME);
     }
 
-    public void stop() {
-        if (mWifiLock != null) {
-            mWifiLock.release();
-            mWifiLock = null;
+    private void deactivatePeriodicScan() {
+        if (mWifiScanTimer == null) {
+            return;
         }
 
-        if (mWifiScanTimer != null) {
-            mWifiScanTimer.cancel();
-            mWifiScanTimer = null;
-        }
+        mWifiLock.release();
+        mWifiLock = null;
 
-        if (mStarted) {
-            mContext.unregisterReceiver(this);
-        }
-        mStarted = false;
+        mWifiScanTimer.cancel();
+        mWifiScanTimer = null;
+
         mVisibleAPs = 0;
-    }
-
-    public void onReceive(Context c, Intent intent) {
-        ArrayList<ScanResult> scanResults = new ArrayList<ScanResult>();
-        for (ScanResult scanResult : getWifiManager().getScanResults()) {
-            scanResult.BSSID = BSSIDBlockList.canonicalizeBSSID(scanResult.BSSID);
-            if (shouldLog(scanResult)) {
-                scanResults.add(scanResult);
-                mAPs.add(scanResult.BSSID);
-                //Log.v(LOGTAG, "BSSID=" + scanResult.BSSID + ", SSID=\"" + scanResult.SSID + "\", Signal=" + scanResult.level);
-            }
-        }
-        mVisibleAPs = scanResults.size();
-        reportScanResults(scanResults);
-    }
-
-    public int getAPCount() {
-        return mAPs.size();
-    }
-
-    public int getVisibleAPCount() {
-        return mVisibleAPs;
     }
 
     private static boolean shouldLog(ScanResult scanResult) {

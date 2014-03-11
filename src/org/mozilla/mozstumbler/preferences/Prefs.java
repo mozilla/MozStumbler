@@ -25,6 +25,7 @@ public final class Prefs {
     private static final String     LON_PREF = "lon_pref";
     private static final String     GEOFENCE_HERE = "geofence_here";
     private static final String     GEOFENCE_SWITCH = "geofence_switch";
+            static final String     WIFI_SCAN_ALWAYS = "wifi_scan_always";
 
     private final Context mContext;
 
@@ -93,6 +94,10 @@ public final class Prefs {
 
     public boolean getWifi() {
         return getBoolPref(WIFI_ONLY);
+    }
+
+    public boolean getWifiScanAlways() {
+        return getBoolPref(WIFI_SCAN_ALWAYS);
     }
 
     ///

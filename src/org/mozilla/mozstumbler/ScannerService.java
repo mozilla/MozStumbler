@@ -115,6 +115,11 @@ public final class ScannerService extends Service {
         }
 
         @Override
+        public int getWifiStatus() throws RemoteException {
+            return mScanner.getWifiStatus();
+        }
+
+        @Override
         public int getAPCount() throws RemoteException {
             return mScanner.getAPCount();
         }

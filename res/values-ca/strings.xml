@@ -12,7 +12,7 @@
     <string name="service_name">Mozilla Stumbler</string>
     <string name="activity_recognition_service">Servei de reconeiximent d\'activitat de Mozilla Stumbler</string>
     <string name="wifi_access_points">Punts d\'accés WiFi escanejats: %1$d</string>
-    <string name="visible_wifi_access_points">Punts d\'accés WiFi visibles: %1$d</string>
+    <string name="visible_wifi_access_points">Punts d\'accés WiFi visibles: %1$s</string>
     <string name="cells_scanned">Cel·les escanejades: %1$d</string>
     <string name="cells_visible">Cel·les visibles: %1$d</string>
     <string name="gps_satellites">Satèl·lits GPS: %1$d</string>

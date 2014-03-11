@@ -13,7 +13,7 @@
     <string name="service_name">Mozilla Stumbler</string>
     <string name="activity_recognition_service">Servicio de reconocimiento de actividad de Mozilla Stumbler</string>
     <string name="wifi_access_points">Puntos de acceso wifi escaneados: %1$d</string>
-    <string name="visible_wifi_access_points">Puntos de acceso wifi visibles: %1$d</string>
+    <string name="visible_wifi_access_points">Puntos de acceso wifi visibles: %1$s</string>
     <string name="cells_scanned">Celdas móviles escaneadas: %1$d</string>
     <string name="cells_visible">Celdas móviles visibles: %1$d</string>
     <string name="gps_satellites">Satélites GPS visibles: %1$d</string>
@@ -76,8 +76,4 @@
     <string name="geofencing_desc">MozStumbler pausará el escaneo dentro de 1 km de está lat/long posición.</string>
     <string name="geofencing_on">Geo-valla @ %1$.3f, %2$.3f</string>
     <string name="geofencing_enable">Geo-valla está ubicación</string>
-
-    <string name="wifi_scan_always_title">Escanear wifis siempre</string>
-    <string name="wifi_scan_always_summary">Escanear APs incluso si el wifi está apagado</string>
-
 </resources>

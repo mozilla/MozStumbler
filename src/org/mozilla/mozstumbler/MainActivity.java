@@ -244,6 +244,7 @@ public final class MainActivity extends FragmentActivity {
         int locationsScanned = 0;
         double latitude = 0;
         double longitude = 0;
+        int wifiStatus = WifiScanner.STATUS_IDLE;
         int APs = 0;
         int visibleAPs = 0;
         int cellInfoScanned = 0;
@@ -255,6 +256,7 @@ public final class MainActivity extends FragmentActivity {
             locationsScanned = mConnectionRemote.getLocationCount();
             latitude = mConnectionRemote.getLatitude();
             longitude = mConnectionRemote.getLongitude();
+            wifiStatus = mConnectionRemote.getWifiStatus();
             APs = mConnectionRemote.getAPCount();
             visibleAPs = mConnectionRemote.getVisibleAPCount();
             cellInfoScanned = mConnectionRemote.getCellInfoCount();
@@ -270,8 +272,8 @@ public final class MainActivity extends FragmentActivity {
 
         formatTextView(R.id.gps_satellites, R.string.gps_satellites, mGpsFixes,mGpsSats);
         formatTextView(R.id.last_location, R.string.last_location, lastLocationString);
-        formatTextView(R.id.visible_wifi_access_points, R.string.visible_wifi_access_points, visibleAPs);
         formatTextView(R.id.wifi_access_points, R.string.wifi_access_points, APs);
+        setVisibleAccessPoints(scanning, wifiStatus, visibleAPs);
         formatTextView(R.id.cells_visible, R.string.cells_visible, currentCellInfo);
         formatTextView(R.id.cells_scanned, R.string.cells_scanned, cellInfoScanned);
         formatTextView(R.id.locations_scanned, R.string.locations_scanned, locationsScanned);
@@ -360,6 +362,29 @@ public final class MainActivity extends FragmentActivity {
         StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
                                                       .detectAll()
                                                       .penaltyLog().build());
+    }
+
+    private void setVisibleAccessPoints(boolean scanning, int wifiStatus, int apsCount) {
+        String status;
+        if (!scanning) {
+            status = "";
+        } else {
+            switch (wifiStatus) {
+                case WifiScanner.STATUS_IDLE:
+                    status = "";
+                    break;
+                case WifiScanner.STATUS_WIFI_DISABLED:
+                    status = getString(R.string.wifi_disabled);
+                    break;
+                case WifiScanner.STATUS_ACTIVE:
+                    status = String.valueOf(apsCount);
+                    break;
+                default:
+                    throw new IllegalArgumentException();
+            }
+        }
+
+        formatTextView(R.id.visible_wifi_access_points, R.string.visible_wifi_access_points, status);
     }
 
     private void formatTextView(int textViewId, int stringId, Object... args) {

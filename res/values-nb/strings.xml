@@ -13,7 +13,7 @@
     <string name="service_name">Mozilla Stumbler</string>
     <string name="activity_recognition_service">Mozilla Stumbler Activity Recognition Intent Service</string>
     <string name="wifi_access_points">Innsamlede trådløspunkt: %1$d</string>
-    <string name="visible_wifi_access_points">Synlige trådløspunkt: %1$d</string>
+    <string name="visible_wifi_access_points">Synlige trådløspunkt: %1$s</string>
     <string name="cells_scanned">Innsamlede mobilnettverk: %1$d</string>
     <string name="cells_visible">Synlige mobilnettverk: %1$d</string>
     <string name="gps_satellites">Synlige GPS-satellitter: %1$d</string>

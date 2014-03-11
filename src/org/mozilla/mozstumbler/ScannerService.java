@@ -1,11 +1,7 @@
 package org.mozilla.mozstumbler;
 
-import java.util.Calendar;
-
-import org.mozilla.mozstumbler.preferences.Prefs;
 import org.mozilla.mozstumbler.sync.SyncUtils;
 
-import android.annotation.TargetApi;
 import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -15,15 +11,15 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.res.Resources;
-import android.os.Bundle;
 import android.os.Handler;
+import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.RemoteException;
 import android.support.v4.app.NotificationCompat;
-import android.text.format.DateFormat;
 import android.util.Log;
+
+import java.util.Calendar;
 
 public final class ScannerService extends Service {
     public static final String  MESSAGE_TOPIC   = "org.mozilla.mozstumbler.serviceMessage";
@@ -145,20 +141,19 @@ public final class ScannerService extends Service {
 
     };
 
-    private final class LooperThread extends Thread {
+    private final class LooperThread extends HandlerThread {
         private Handler mHandler;
 
-        @Override
-        public void run() {
-            Looper.prepare();
-            mHandler = new Handler();
-            Looper.loop();
+        public LooperThread() {
+            super("ScannerService");
+        }
+
+        public synchronized void waitUntilReady() {
+            mHandler = new Handler(getLooper());
         }
 
         void post(Runnable runnable) {
-            if (mHandler != null) {
-                mHandler.post(runnable);
-            }
+            mHandler.post(runnable);
         }
     }
 
@@ -185,10 +180,11 @@ public final class ScannerService extends Service {
         intentFilter.addAction(INTENT_TURN_OFF);
         registerReceiver(mTurnOffReceiver, intentFilter);
 
-        mReporter = new Reporter(this);
         mScanner = new Scanner(this);
         mLooper = new LooperThread();
         mLooper.start();
+        mLooper.waitUntilReady();
+        mReporter = new Reporter(this, mLooper.getLooper());
     }
 
     @Override
@@ -199,14 +195,28 @@ public final class ScannerService extends Service {
         unregisterReceiver(mTurnOffReceiver);
         mTurnOffReceiver = null;
 
-        mLooper.interrupt();
+        cancelNotification();
+
+        // Quit the handler thread's looper safely.
+        try {
+            mLooper.post(new Runnable() {
+                @Override
+                public void run() {
+                    mReporter.shutdown();
+                    mLooper.quit();
+                }
+            });
+            Looper looper = mLooper.getLooper();
+            if (looper != null) {
+                looper.getThread().join(5000);
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        mReporter = null;
         mLooper = null;
         mScanner = null;
-
-        mReporter.shutdown();
-        mReporter = null;
-
-        cancelNotification();
     }
 
     private void postNotification(final CharSequence title, final CharSequence text) {

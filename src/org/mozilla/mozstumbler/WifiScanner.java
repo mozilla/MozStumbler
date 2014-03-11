@@ -21,67 +21,67 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class WifiScanner extends BroadcastReceiver {
-  public static final String WIFI_SCANNER_EXTRA_SUBJECT = "WifiScanner";
-  public static final String WIFI_SCANNER_ARG_SCAN_RESULTS = "org.mozilla.mozstumbler.WifiScanner.scan_results";
+    public static final String WIFI_SCANNER_EXTRA_SUBJECT = "WifiScanner";
+    public static final String WIFI_SCANNER_ARG_SCAN_RESULTS = "org.mozilla.mozstumbler.WifiScanner.scan_results";
 
-  private static final String LOGTAG              = Scanner.class.getName();
-  private static final long WIFI_MIN_UPDATE_TIME  = 1000; // milliseconds
+    private static final String LOGTAG = Scanner.class.getName();
+    private static final long WIFI_MIN_UPDATE_TIME = 1000; // milliseconds
 
-  private boolean                mStarted;
-  private final Context          mContext;
-  private WifiLock               mWifiLock;
-  private Timer                  mWifiScanTimer;
-  private final Set<String>      mAPs = new HashSet<String>();
-  private int                    mVisibleAPs;
+    private boolean mStarted;
+    private final Context mContext;
+    private WifiLock mWifiLock;
+    private Timer mWifiScanTimer;
+    private final Set<String> mAPs = new HashSet<String>();
+    private int mVisibleAPs;
 
-  WifiScanner(Context c) {
-    mContext = c;
-  }
-
-  public void start() {
-	WifiManager wm = getWifiManager();
-	  
-    if (mStarted || !wm.isWifiEnabled()) {
-        return;
+    WifiScanner(Context c) {
+        mContext = c;
     }
-    mStarted = true;
 
-    
-    mWifiLock = wm.createWifiLock(WifiManager.WIFI_MODE_SCAN_ONLY,
-                                  "MozStumbler");
-    mWifiLock.acquire();
+    public void start() {
+        WifiManager wm = getWifiManager();
 
-    IntentFilter i = new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
-    mContext.registerReceiver(this, i);
-
-    // Ensure that we are constantly scanning for new access points.
-    mWifiScanTimer = new Timer();
-    mWifiScanTimer.schedule(new TimerTask() {
-        @Override
-        public void run() {
-          Log.d(LOGTAG, "WiFi Scanning Timer fired");
-          getWifiManager().startScan();
+        if (mStarted || !wm.isWifiEnabled()) {
+            return;
         }
-      }, 0, WIFI_MIN_UPDATE_TIME);
-  }
+        mStarted = true;
 
-  public void stop() {
-    if (mWifiLock != null) {
-      mWifiLock.release();
-      mWifiLock = null;
+
+        mWifiLock = wm.createWifiLock(WifiManager.WIFI_MODE_SCAN_ONLY,
+                "MozStumbler");
+        mWifiLock.acquire();
+
+        IntentFilter i = new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
+        mContext.registerReceiver(this, i);
+
+        // Ensure that we are constantly scanning for new access points.
+        mWifiScanTimer = new Timer();
+        mWifiScanTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                Log.d(LOGTAG, "WiFi Scanning Timer fired");
+                getWifiManager().startScan();
+            }
+        }, 0, WIFI_MIN_UPDATE_TIME);
     }
 
-    if (mWifiScanTimer != null) {
-      mWifiScanTimer.cancel();
-      mWifiScanTimer = null;
+    public void stop() {
+        if (mWifiLock != null) {
+            mWifiLock.release();
+            mWifiLock = null;
+        }
+
+        if (mWifiScanTimer != null) {
+            mWifiScanTimer.cancel();
+            mWifiScanTimer = null;
+        }
+
+        if (mStarted) {
+            mContext.unregisterReceiver(this);
+        }
+        mStarted = false;
+        mVisibleAPs = 0;
     }
-    
-    if (mStarted) {
-      mContext.unregisterReceiver(this);
-    }
-    mStarted = false;
-    mVisibleAPs = 0;
-  }
 
     public void onReceive(Context c, Intent intent) {
         ArrayList<ScanResult> scanResults = new ArrayList<ScanResult>();
@@ -97,29 +97,29 @@ public class WifiScanner extends BroadcastReceiver {
         reportScanResults(scanResults);
     }
 
-  public int getAPCount() {
-    return mAPs.size();
-  }
-
-  public int getVisibleAPCount() {
-    return mVisibleAPs;
-  }
-
-  private static boolean shouldLog(ScanResult scanResult) {
-    if (BSSIDBlockList.contains(scanResult)) {
-      Log.w(LOGTAG, "Blocked BSSID: " + scanResult);
-      return false;
+    public int getAPCount() {
+        return mAPs.size();
     }
-    if (SSIDBlockList.contains(scanResult)) {
-      Log.w(LOGTAG, "Blocked SSID: " + scanResult);
-      return false;
-    }
-    return true;
-  }
 
-  private WifiManager getWifiManager() {
-    return (WifiManager) mContext.getSystemService(Context.WIFI_SERVICE);
-  }
+    public int getVisibleAPCount() {
+        return mVisibleAPs;
+    }
+
+    private static boolean shouldLog(ScanResult scanResult) {
+        if (BSSIDBlockList.contains(scanResult)) {
+            Log.w(LOGTAG, "Blocked BSSID: " + scanResult);
+            return false;
+        }
+        if (SSIDBlockList.contains(scanResult)) {
+            Log.w(LOGTAG, "Blocked SSID: " + scanResult);
+            return false;
+        }
+        return true;
+    }
+
+    private WifiManager getWifiManager() {
+        return (WifiManager) mContext.getSystemService(Context.WIFI_SERVICE);
+    }
 
     private void reportScanResults(ArrayList<ScanResult> scanResults) {
         if (scanResults.isEmpty()) return;

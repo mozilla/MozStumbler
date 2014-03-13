@@ -22,6 +22,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import org.mozilla.mozstumbler.cellscanner.CellInfo;
+import org.mozilla.mozstumbler.cellscanner.CellScanner;
 import org.mozilla.mozstumbler.communicator.Searcher;
 import org.osmdroid.tileprovider.MapTileProviderBasic;
 import org.osmdroid.tileprovider.tilesource.ITileSource;
@@ -48,8 +50,8 @@ public final class MapActivity extends Activity {
 
     private ReporterBroadcastReceiver mReceiver;
 
-    // TODO add cell data
     private List<ScanResult> mWifiData;
+    private List<CellInfo> mCellData;
 
     private class ReporterBroadcastReceiver extends BroadcastReceiver {
         private boolean mDone;
@@ -67,12 +69,14 @@ public final class MapActivity extends Activity {
             }
 
             String subject = intent.getStringExtra(Intent.EXTRA_SUBJECT);
-            if (!WifiScanner.WIFI_SCANNER_EXTRA_SUBJECT.equals(subject)) {
-                // might be another scanner
+            if (WifiScanner.WIFI_SCANNER_EXTRA_SUBJECT.equals(subject)) {
+                mWifiData = intent.getParcelableArrayListExtra(WifiScanner.WIFI_SCANNER_ARG_SCAN_RESULTS);
+            } else if (CellScanner.CELL_SCANNER_EXTRA_SUBJECT.equals(subject)) {
+                mCellData = intent.getParcelableArrayListExtra(CellScanner.CELL_SCANNER_ARG_CELLS);
+            } else {
                 return;
             }
 
-            mWifiData = intent.getParcelableArrayListExtra(WifiScanner.WIFI_SCANNER_ARG_SCAN_RESULTS);
             new GetLocationAndMapItTask().execute("");
             mDone = true;
         }
@@ -189,15 +193,26 @@ public final class MapActivity extends Activity {
             JSONObject wrapper;
             try {
                 wrapper = new JSONObject("{}");
-                JSONArray wifiData = new JSONArray();
-                for (ScanResult result : mWifiData) {
-                    JSONObject item = new JSONObject();
-                    item.put("key", BSSIDBlockList.canonicalizeBSSID(result.BSSID));
-                    item.put("frequency", result.frequency);
-                    item.put("signal", result.level);
-                    wifiData.put(item);
+                if (mCellData != null) {
+                    wrapper.put("radio", mCellData.get(0).getRadio());
+                    JSONArray cellData = new JSONArray();
+                    for (CellInfo info : mCellData) {
+                        JSONObject item = info.toJSONObject();
+                        cellData.put(item);
+                    }
+                    wrapper.put("cell", cellData);
                 }
-                wrapper.put("wifi", wifiData);
+                if (mWifiData != null) {
+                    JSONArray wifiData = new JSONArray();
+                    for (ScanResult result : mWifiData) {
+                        JSONObject item = new JSONObject();
+                        item.put("key", BSSIDBlockList.canonicalizeBSSID(result.BSSID));
+                        item.put("frequency", result.frequency);
+                        item.put("signal", result.level);
+                        wifiData.put(item);
+                    }
+                    wrapper.put("wifi", wifiData);
+                }
             } catch (JSONException jsonex) {
                 Log.w(LOGTAG, "json exception", jsonex);
                 return "";

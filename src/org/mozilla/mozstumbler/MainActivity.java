@@ -135,8 +135,6 @@ public final class MainActivity extends FragmentActivity {
 
         getSupportLoaderManager().initLoader(0, null, mSyncStatsLoaderCallbacks);
 
-        checkGps();
-
         Log.d(LOGTAG, "onCreate");
     }
 
@@ -309,6 +307,7 @@ public final class MainActivity extends FragmentActivity {
             mConnectionRemote.stopScanning();
         } else {
             mConnectionRemote.startScanning();
+            checkGps();
         }
     }
 

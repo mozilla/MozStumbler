@@ -12,7 +12,7 @@
     <string name="service_name">Mozilla Stumbler</string>
     <string name="activity_recognition_service">Mozilla Stumbler Activity Recognition Intent Service</string>
     <string name="wifi_access_points">ওয়াই-ফাই এক্সেস পয়েন্ট স্ক্যান হয়েছে: %1$d</string>
-    <string name="visible_wifi_access_points">ওয়াই-ফাই এক্সেস পয়েন্ট বিদ্যমান আছে: %1$d</string>
+    <string name="visible_wifi_access_points">ওয়াই-ফাই এক্সেস পয়েন্ট বিদ্যমান আছে: %1$s</string>
     <string name="cells_scanned">সেল স্ক্যান হয়েছে: %1$d</string>
     <string name="cells_visible">সেল বিদ্যমান আছে: %1$d</string>
     <string name="gps_satellites">জিপিএস স্যাটেলাইট বিদ্যমান রয়েছে: %1$d</string>

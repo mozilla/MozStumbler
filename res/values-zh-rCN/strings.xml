@@ -12,7 +12,7 @@
     <string name="service_name">Mozilla Stumbler</string>
     <string name="activity_recognition_service">Mozilla Stumbler Activity Recognition Intent Service</string>
     <string name="wifi_access_points">累计扫描到 Wi-Fi 接入点: %1$d</string>
-    <string name="visible_wifi_access_points">当前可见的 Wi-Fi 接入点: %1$d</string>
+    <string name="visible_wifi_access_points">当前可见的 Wi-Fi 接入点: %1$s</string>
     <string name="cells_scanned">累计扫描到移动基站: %1$d</string>
     <string name="cells_visible">当前可见的移动基站: %1$d</string>
     <string name="gps_satellites">当前可见的 GPS 卫星: %1$d</string>

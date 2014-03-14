@@ -9,6 +9,7 @@ interface ScannerServiceInterface {
     double getLongitude();
     int getAPCount();
     int getVisibleAPCount();
+    int getWifiStatus();
     int getCellInfoCount();
     int getCurrentCellInfoCount();
     boolean isGeofenced();

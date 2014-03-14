@@ -12,7 +12,7 @@
     <string name="service_name">Mozilla Stumbler</string>
     <string name="activity_recognition_service">Mozilla Stumbler Activiteitsherkenningsservice</string>
     <string name="wifi_access_points">Gevonden wifinetwerken: %1$d</string>
-    <string name="visible_wifi_access_points">Zichtbare wifinetwerken: %1$d</string>
+    <string name="visible_wifi_access_points">Zichtbare wifinetwerken: %1$s</string>
     <string name="cells_scanned">Gevonden telefoonnetwerken: %1$d</string>
     <string name="cells_visible">Zichtbare telefoonnetwerken: %1$d</string>
     <string name="gps_satellites">Zichtbare GPS-satellieten: %1$d</string>

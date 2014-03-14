@@ -12,7 +12,7 @@
     <string name="service_name">Mozilla Stumbler</string>
     <string name="activity_recognition_service">Mozilla Stumbler Aktivitätenerkennung Intent Service</string>
     <string name="wifi_access_points">Wi-Fi Zugangspunkte gescannt: %1$d</string>
-    <string name="visible_wifi_access_points">Wi-Fi Zugangspunkte sichtbar: %1$d</string>
+    <string name="visible_wifi_access_points">Wi-Fi Zugangspunkte sichtbar: %1$s</string>
     <string name="cells_scanned">Funkzellen gescannt: %1$d</string>
     <string name="cells_visible">Funkzellen sichtbar: %1$d</string>
     <string name="gps_satellites">GPS Satelliten sichtbar: %1$d</string>

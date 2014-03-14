@@ -13,7 +13,7 @@
     <string name="service_name">Mozilla Stumbler</string>
     <string name="activity_recognition_service">Mozilla Stumbler Activity Recognition Intent Service</string>
     <string name="wifi_access_points">Отсканировано Wi-Fi точек: %1$d</string>
-    <string name="visible_wifi_access_points">Доступно Wi-Fi точек: %1$d</string>
+    <string name="visible_wifi_access_points">Доступно Wi-Fi точек: %1$s</string>
     <string name="cells_scanned">Отсканировано GSM сот: %1$d</string>
     <string name="cells_visible">Доступно GSM сот: %1$d</string>
     <string name="gps_satellites">Доступно GPS спутников: %1$d</string>

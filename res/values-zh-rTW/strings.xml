@@ -12,7 +12,7 @@
     <string name="service_name">Mozilla Stumbler</string>
     <string name="activity_recognition_service">Mozilla Stumbler Activity Recognition Intent Service</string>
     <string name="wifi_access_points">已掃描 Wi-Fi 基地台數量: %1$d</string>
-    <string name="visible_wifi_access_points">可視 Wi-Fi 基地台數量: %1$d</string>
+    <string name="visible_wifi_access_points">可視 Wi-Fi 基地台數量: %1$s</string>
     <string name="cells_scanned">已掃描行動電話基地台數量: %1$d</string>
     <string name="cells_visible">可視行動電話基地台數量: %1$d</string>
     <string name="gps_satellites">可視 GPS 衛星數量: %1$d</string>

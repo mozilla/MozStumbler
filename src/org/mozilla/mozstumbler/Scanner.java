@@ -75,6 +75,10 @@ class Scanner {
      return mWifiScanner.getVisibleAPCount();
   }
 
+  int getWifiStatus() {
+      return mWifiScanner.getStatus();
+  }
+
   int getCellInfoCount() {
      return mCellScanner.getCellInfoCount();
   }

@@ -21,6 +21,10 @@ public class WifiScanner extends BroadcastReceiver {
     public static final String WIFI_SCANNER_EXTRA_SUBJECT = "WifiScanner";
     public static final String WIFI_SCANNER_ARG_SCAN_RESULTS = "org.mozilla.mozstumbler.WifiScanner.scan_results";
 
+    public static final int STATUS_IDLE = 0;
+    public static final int STATUS_ACTIVE = 1;
+    public static final int STATUS_WIFI_DISABLED = -1;
+
     private static final String LOGTAG = Scanner.class.getName();
     private static final long WIFI_MIN_UPDATE_TIME = 1000; // milliseconds
 
@@ -91,6 +95,16 @@ public class WifiScanner extends BroadcastReceiver {
 
     public int getVisibleAPCount() {
         return mVisibleAPs.get();
+    }
+
+    public synchronized int getStatus() {
+        if (!mStarted) {
+            return STATUS_IDLE;
+        }
+        if (mWifiScanTimer == null) {
+            return STATUS_WIFI_DISABLED;
+        }
+        return STATUS_ACTIVE;
     }
 
     private synchronized void activatePeriodicScan() {

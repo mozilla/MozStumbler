@@ -10,7 +10,7 @@
     <string name="view_map">Testar serviço de localização do Mozilla</string>
     <string name="service_name">Mozilla Stumbler</string>
     <string name="wifi_access_points">Pontos de acesso Wi-Fi escaneados: %1$d</string>
-    <string name="visible_wifi_access_points">Pontos de acesso Wi-Fi visíveis: %1$d</string>
+    <string name="visible_wifi_access_points">Pontos de acesso Wi-Fi visíveis: %1$s</string>
     <string name="gps_satellites">Satélites GPS visíveis: %1$d</string>
     <string name="last_location">Última localização: %1$s</string>
     <string name="coordinate">%1$.4f, %2$.4f</string>

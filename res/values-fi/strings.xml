@@ -12,7 +12,7 @@
     <string name="service_name">Mozilla Stumbler</string>
     <string name="activity_recognition_service">Aktiivisuuden tunnistuspalvelu</string>
     <string name="wifi_access_points">Wi-Fi-tukiasemia skannattu: %1$d</string>
-    <string name="visible_wifi_access_points">Wi-Fi-tukiasemia näkyvillä: %1$d</string>
+    <string name="visible_wifi_access_points">Wi-Fi-tukiasemia näkyvillä: %1$s</string>
     <string name="cells_scanned">Mastoja skannattu: %1$d</string>
     <string name="cells_visible">Mastoja näkyvillä: %1$d</string>
     <string name="gps_satellites">GPS-satelliitteja näkyvillä: %1$d</string>

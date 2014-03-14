@@ -12,7 +12,7 @@
   <string name="service_name">מאתר מוזילה</string>
   <string name="activity_recognition_service">פעילות מאתר מוזילה לרישום מיקום</string>
   <string name="wifi_access_points">נקודות גישה מסוג Wi-Fi שנסרקו: %1$d</string>
-  <string name="visible_wifi_access_points">נקודות Wi-Fi גלויות: %1$d</string>
+  <string name="visible_wifi_access_points">נקודות Wi-Fi גלויות: %1$s</string>
   <string name="cells_scanned">אנטנות שנסרקו: %1$d</string>
   <string name="cells_visible">אנטנות גלויות: %1$d</string>
   <string name="gps_satellites">לווייני GPS גלויים: %1$d</string>

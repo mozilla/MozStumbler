@@ -5,6 +5,7 @@
     <string name="action_about">Über MozStumbler</string>
     <string name="action_preferences">Einstellungen</string>
     <string name="action_exit">Schließen</string>
+    <string name="action_upload_observations">Beobachtungen hochladen</string>
     <string name="start_scanning">Scanvorgang starten</string>
     <string name="stop_scanning">Scanvorgang stoppen</string>
     <string name="view_leaderboard">Zeige Rangliste</string>
@@ -12,6 +13,7 @@
     <string name="service_name">Mozilla Stumbler</string>
     <string name="activity_recognition_service">Mozilla Stumbler Aktivitätenerkennung Intent Service</string>
     <string name="wifi_access_points">Wi-Fi Zugangspunkte gescannt: %1$d</string>
+    <string name="wifi_disabled">0 (Wi-Fi deaktiviert)</string>
     <string name="visible_wifi_access_points">Wi-Fi Zugangspunkte sichtbar: %1$s</string>
     <string name="cells_scanned">Funkzellen gescannt: %1$d</string>
     <string name="cells_visible">Funkzellen sichtbar: %1$d</string>
@@ -36,6 +38,7 @@
     <string name="update_later">Aktualisiere später</string>
 
     <string name="location_not_found">Standort nicht gefunden</string>
+    <string name="location_lookup_error">Standortsuche fehlgeschlagen</string>
 
     <string name="gps_alert_msg">GPS ist ausgeschaltet. Willst du in die Einstellungen gehen, und es einschalten?</string>
     <string name="yes">Ja</string>
@@ -45,19 +48,19 @@
     <string name="about_mapbox">Mehr über unseren Kartenanbieter…</string>
     <string name="about_more">Mehr…</string>
     <string name="about_legal_aosp">Einige Symbole in dieser Anwendung wurden Werken entnommen, welche vom Android Open Source Project erstellt und verteilt werden. Sie werden in Übereinstimmung mit der Creative Commons - Attribution 2.5 Lizenz verwendet..</string>
-    
+
     <string name="upload_observations_sent_title">Daten hochladen</string>
     <string name="upload_observations_last_upload_time_title">Zeit des letzten Hochladens:</string>
-    <!-- <string name="upload_observations_observations_sent_title">Berichte:</string> -->
+    <string name="upload_observations_observations_sent_title">Beobachtungen:</string>
     <string name="upload_observations_wifis_sent_title">Wi-Fi Zugriffspunkte:</string>
     <string name="upload_observations_cells_sent_title">Funkzellen:</string>
     <string name="upload_observations_in_queue_title">In Warteschlange</string>
-    <!-- <string name="upload_observations_observations_queued_title">Berichte:</string> -->
+    <string name="upload_observations_observations_queued_title">Beobachtungen:</string>
     <string name="upload_observations_wifis_queued_title">Wi-Fi Zugriffspunkte:</string>
     <string name="upload_observations_cells_queued_title">Funkzellen:</string>
     <string name="upload_observations_button">Hochladen</string>
     <string name="upload_observations_dialog_title">Daten hochladen</string>
-    
+
     <string name="detected_activity">Erkannte Aktivität: %1$s</string>
     <string name="detected_activity_in_vehicle">In Bewegung (Fahrzeug)</string>
     <string name="detected_activity_on_bicycle">In Bewegung (Fahrrad)</string>
@@ -65,10 +68,10 @@
     <string name="detected_activity_still">Stillstehend</string>
     <string name="detected_activity_tilting">Gekippt</string>
     <string name="detected_activity_unknown">Unbekannt</string>
-    
+
     <string name="upload_wifi_only_title">Nur über Wi-Fi hochladen</string>
     <string name="upload_wifi_only_summary">Diese Option reduziert den Mobilfunk-Datenverbrauch.</string>
-    
+
     <string name="geofencing_off">Geofencing: Ausgeschaltet</string>
     <string name="geofencing_explain">Geofencing wird bei der nächsten gültigen Position aktiviert werden.</string>
     <string name="geofencing_desc">MozStumbler wird den Scanvorgang in Umkreis von 1 km um diese Koordinaten (Breite/Länge) unterbrechen.</string>

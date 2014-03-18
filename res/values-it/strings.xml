@@ -3,7 +3,6 @@
   <string name="app_name">MozStumbler</string>
   <string name="action_about">Informazioni su MozStumbler</string>
   <string name="action_preferences">Impostazioni</string>
-  <string name="action_exit">Esci</string>
   <string name="action_upload_observations">Invia osservazioni</string>
   <string name="start_scanning">Inizia l\'analisi</string>
   <string name="stop_scanning">Interrompi l\'analisi</string>

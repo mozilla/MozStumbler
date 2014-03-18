@@ -12,10 +12,11 @@
     <string name="service_name">Mozilla Stumbler</string>
     <string name="activity_recognition_service">Service de reconnaissance d\'activité de Mozilla Stumbler</string>
     <string name="wifi_access_points">Points d\'accès Wi-Fi détectés : %1$d</string>
+    <!--<string name="wifi_disabled">0 (Wi-Fi disabled)</string> translation missing-->
     <string name="visible_wifi_access_points">Points d\'accès Wi-Fi visibles : %1$s</string>
     <string name="cells_scanned">Antennes cellulaires détectées : %1$d</string>
     <string name="cells_visible">Antennes cellulaires visibles : %1$d</string>
-    <string name="gps_satellites">Satellites GPS visibles : %1$d</string>
+    <string name="gps_satellites">Satellites GPS visibles : %1$d</string><!--needs to be updated to: <string name="gps_satellites">GPS Satellites Used / Visible: %1$d/%2$d</string>-->
     <string name="last_location">Dernier emplacement : %1$s</string>
     <string name="coordinate">%1$.4f, %2$.4f</string>
     <string name="locations_scanned">Emplacements enregistrés : %1$d</string>
@@ -36,6 +37,7 @@
     <string name="update_later">Mettre à jour ultérieurement</string>
 
     <string name="location_not_found">Emplacement non trouvé</string>
+    <!--<string name="location_lookup_error">Location lookup error</string> translation missing-->
 
     <string name="gps_alert_msg">Le GPS n\'est pas activé. Voulez-vous aller dans les paramètres afin de l\'activer ? </string>
     <string name="yes">Oui</string>

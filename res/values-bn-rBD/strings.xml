@@ -4,7 +4,6 @@
     <string name="app_name">MozStumbler</string>
     <string name="action_about">MozStumbler সম্পর্কে</string>
     <string name="action_preferences">সেটিংস</string>
-    <string name="action_exit">বন্ধ করুন</string>
     <string name="start_scanning">স্ক্যান চালু করুন</string>
     <string name="stop_scanning">স্ক্যান বন্ধ করুন</string>
     <string name="view_leaderboard">লীডারবোর্ড দেখুন</string>

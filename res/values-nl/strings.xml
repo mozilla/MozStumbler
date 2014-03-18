@@ -4,7 +4,7 @@
     <string name="app_name">MozStumbler</string>
     <string name="action_about">Over MozStumbler</string>
     <string name="action_preferences">Instellingen</string>
-    <string name="action_exit">Afsluiten</string>
+    <!--<string name="action_upload_observations">Upload observations</string> translation missing-->
     <string name="start_scanning">Begin met scannen</string>
     <string name="stop_scanning">Stop met scannen</string>
     <string name="view_leaderboard">Bekijk scorebord</string>
@@ -12,12 +12,13 @@
     <string name="service_name">Mozilla Stumbler</string>
     <string name="activity_recognition_service">Mozilla Stumbler Activiteitsherkenningsservice</string>
     <string name="wifi_access_points">Gevonden wifinetwerken: %1$d</string>
+    <!--<string name="wifi_disabled">0 (Wi-Fi disabled)</string> translation missing-->
     <string name="visible_wifi_access_points">Zichtbare wifinetwerken: %1$s</string>
     <string name="cells_scanned">Gevonden telefoonnetwerken: %1$d</string>
     <string name="cells_visible">Zichtbare telefoonnetwerken: %1$d</string>
-    <string name="gps_satellites">Zichtbare GPS-satellieten: %1$d</string>
+    <string name="gps_satellites">Zichtbare GPS-satellieten: %1$d</string><!--needs to be updated to: <string name="gps_satellites">GPS Satellites Used / Visible: %1$d/%2$d</string>-->
     <string name="last_location">Laatste locatie: %1$s</string>
-    
+    <!--<string name="coordinate">%1$.4f, %2$.4f</string> translation missing-->
     <string name="locations_scanned">Gevonden locaties: %1$d</string>
     <string name="last_upload_time">Laatste upload om: %1$s</string>
     <string name="reports_sent">Verzonden rapportages: %1$d</string>
@@ -36,6 +37,7 @@
     <string name="update_later">Later updaten</string>
 
     <string name="location_not_found">Locatie niet gevonden</string>
+    <!--<string name="location_lookup_error">Location lookup error</string> translation missing-->
 
     <string name="gps_alert_msg">GPS staat uit. Aanzetten in de instellingen?</string>
     <string name="yes">Ja</string>
@@ -45,6 +47,19 @@
     <string name="about_mapbox">Ontdek meer over mapbox…</string>
     <string name="about_more">Meer…</string>
     <string name="about_legal_aosp">Sommige iconografie in deze app is overgenomen uit het werk gemaakt en gedeeld door het Android Open Source Project en gebruikt volgens de voorwaarden zoals beschreven in de Creative Commons Attribution 2.5 License.</string>
+
+    <!-- translations missing
+    <string name="upload_observations_sent_title">Inviati</string>
+    <string name="upload_observations_last_upload_time_title">Ultimo invio dati:</string>
+    <string name="upload_observations_observations_sent_title">Osservazioni:</string>
+    <string name="upload_observations_wifis_sent_title">Access point Wi-Fi:</string>
+    <string name="upload_observations_cells_sent_title">Celle:</string>
+    <string name="upload_observations_in_queue_title">In coda</string>
+    <string name="upload_observations_observations_queued_title">Osservazioni:</string>
+    <string name="upload_observations_wifis_queued_title">Access point Wi-Fi:</string>
+    <string name="upload_observations_cells_queued_title">Celle:</string>
+    <string name="upload_observations_button">Invia</string>
+    <string name="upload_observations_dialog_title">Invia osservazioni</string>-->
 
     <string name="detected_activity">Gedetecteerde activiteit: %1$s</string>
     <string name="detected_activity_in_vehicle">In beweging (in een voertuig)</string>
@@ -62,4 +77,5 @@
     <string name="geofencing_desc">MozStumbler zal het scannen binnen 1 km rondom deze positie pauzeren.</string>
     <string name="geofencing_on">Geofencing @ %1$.3f, %2$.3f</string>
     <string name="geofencing_enable">Geofence deze lokatie</string>
+
 </resources>

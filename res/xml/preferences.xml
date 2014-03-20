@@ -23,4 +23,10 @@
         android:title="@string/geofencing_enable"
         android:summary="@string/geofencing_desc" />
 
+    <CheckBoxPreference
+        android:key="wifi_scan_always"
+        android:title="@string/wifi_scan_always_title"
+        android:summary="@string/wifi_scan_always_summary"
+        android:defaultValue="false" />
+
 </PreferenceScreen>

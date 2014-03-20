@@ -9,6 +9,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 
+import org.mozilla.mozstumbler.preferences.Prefs;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -40,19 +42,19 @@ public class WifiScanner extends BroadcastReceiver {
     }
 
     public synchronized void start() {
-        WifiManager wm = getWifiManager();
-
         if (mStarted) {
             return;
         }
         mStarted = true;
 
-        if (getWifiManager().isWifiEnabled()) {
+        boolean scanAlways = new Prefs(mContext).getWifiScanAlways();
+
+        if (scanAlways || getWifiManager().isWifiEnabled()) {
             activatePeriodicScan();
         }
 
         IntentFilter i = new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
-        i.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION);
+        if (!scanAlways) i.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION);
         mContext.registerReceiver(this, i);
     }
 

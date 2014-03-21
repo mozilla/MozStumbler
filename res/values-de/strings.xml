@@ -77,7 +77,7 @@
     <string name="geofencing_on">Geofencing @ %1$.3f/%2$.3f</string>
     <string name="geofencing_enable">Geofencing für diesen Standort.</string>
     
-    <string name="wifi_scan_always_title">Immer Wi-Fi scannen</string>
+    <string name="wifi_scan_always_title">Wi-Fi immer scannen</string>
     <string name="wifi_scan_always_summary">Zugangspunkte auch bei abgeschaltetem Wi-Fi scannen</string>
 
 </resources>

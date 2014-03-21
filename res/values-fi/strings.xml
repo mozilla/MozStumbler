@@ -4,7 +4,7 @@
     <string name="app_name">MozStumbler</string>
     <string name="action_about">Tietoja</string>
     <string name="action_preferences">Asetukset</string>
-    <string name="action_exit">Lopeta</string>
+    <!--<string name="action_upload_observations">Upload observations</string>translation missing-->
     <string name="start_scanning">Aloita skannaus</string>
     <string name="stop_scanning">Lopeta skannaus</string>
     <string name="view_leaderboard">Näytä pistetilasto</string>
@@ -12,10 +12,11 @@
     <string name="service_name">Mozilla Stumbler</string>
     <string name="activity_recognition_service">Aktiivisuuden tunnistuspalvelu</string>
     <string name="wifi_access_points">Wi-Fi-tukiasemia skannattu: %1$d</string>
+    <!--<string name="wifi_disabled">0 (Wi-Fi disabled)</string> translation missing-->
     <string name="visible_wifi_access_points">Wi-Fi-tukiasemia näkyvillä: %1$s</string>
     <string name="cells_scanned">Mastoja skannattu: %1$d</string>
     <string name="cells_visible">Mastoja näkyvillä: %1$d</string>
-    <string name="gps_satellites">GPS-satelliitteja näkyvillä: %1$d</string>
+    <string name="gps_satellites">GPS-satelliitteja näkyvillä: %1$d</string><!--needs to be updated to: <string name="gps_satellites">GPS Satellites Used / Visible: %1$d/%2$d</string>-->
     <string name="last_location">Viimeisin sijainti: %1$s</string>
     <string name="coordinate">%1$.4f, %2$.4f</string>
     <string name="locations_scanned">Sijainteja skannattu: %1$d</string>
@@ -36,6 +37,7 @@
     <string name="update_later">Päivitä myöhemmin</string>
 
     <string name="location_not_found">Sijaintia ei löytynyt</string>
+    <!--<string name="location_lookup_error">Location lookup error</string> translation missing-->
 
     <string name="gps_alert_msg">GPS on pois päältä. Haluatko mennä asetuksiin laittamaan sen päälle?</string>
     <string name="yes">Kyllä</string>
@@ -46,6 +48,19 @@
     <string name="about_more">Lisätietoja…</string>
     <string name="about_legal_aosp">Tämä sovellus sisältää ikoneita Android Open Source -projektista. Käytössä olevat ikonit on lisensoitu Creative Commons 2.5 Attribution -lisenssillä.</string>
 
+    <!--translations missing
+    <string name="upload_observations_sent_title">Sent</string>
+    <string name="upload_observations_last_upload_time_title">Last Upload Time:</string>
+    <string name="upload_observations_observations_sent_title">Observations:</string>
+    <string name="upload_observations_wifis_sent_title">Wi-Fi Access Points:</string>
+    <string name="upload_observations_cells_sent_title">Cells:</string>
+    <string name="upload_observations_in_queue_title">In queue</string>
+    <string name="upload_observations_observations_queued_title">Observations:</string>
+    <string name="upload_observations_wifis_queued_title">Wi-Fi Access Points:</string>
+    <string name="upload_observations_cells_queued_title">Cells:</string>
+    <string name="upload_observations_button">Upload</string>
+    <string name="upload_observations_dialog_title">Upload observations</string>-->
+    
     <string name="detected_activity">Tunnistettiin toiminto: %1$s</string>
     <string name="detected_activity_in_vehicle">Liikkeellä (autossa)</string>
     <string name="detected_activity_on_bicycle">Liikkeellä (pyörällä)</string>

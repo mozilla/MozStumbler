@@ -4,7 +4,6 @@
     <string name="app_name">MozStumbler</string>
     <string name="action_about">О программе</string>
     <string name="action_preferences">Настройки</string>
-    <string name="action_exit">Выход</string>
     <string name="action_upload_observations">Отправка измерений</string>
     <string name="start_scanning">Начать сканирование</string>
     <string name="stop_scanning">Остановить сканирование</string>
@@ -13,10 +12,11 @@
     <string name="service_name">Mozilla Stumbler</string>
     <string name="activity_recognition_service">Mozilla Stumbler Activity Recognition Intent Service</string>
     <string name="wifi_access_points">Отсканировано Wi-Fi точек: %1$d</string>
+    <!--<string name="wifi_disabled">0 (Wi-Fi disabled)</string> translation missing-->
     <string name="visible_wifi_access_points">Доступно Wi-Fi точек: %1$s</string>
     <string name="cells_scanned">Отсканировано GSM сот: %1$d</string>
     <string name="cells_visible">Доступно GSM сот: %1$d</string>
-    <string name="gps_satellites">Доступно GPS спутников: %1$d</string>
+    <string name="gps_satellites">Доступно GPS спутников: %1$d</string><!--needs to be updated to: <string name="gps_satellites">GPS Satellites Used / Visible: %1$d/%2$d</string>-->
     <string name="last_location">Координаты: %1$s</string>
     <string name="coordinate">%1$.4f, %2$.4f</string>
     <string name="locations_scanned">Отсканировано координат: %1$d</string>

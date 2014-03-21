@@ -4,7 +4,7 @@
     <string name="app_name">MozStumbler</string>
     <string name="action_about">关于 MozStumbler</string>
     <string name="action_preferences">设置</string>
-    <string name="action_exit">退出</string>
+    <!--<string name="action_upload_observations">Upload observations</string> translation missing-->
     <string name="start_scanning">开始扫描</string>
     <string name="stop_scanning">停止扫描</string>
     <string name="view_leaderboard">查看积分榜</string>
@@ -12,10 +12,11 @@
     <string name="service_name">Mozilla Stumbler</string>
     <string name="activity_recognition_service">Mozilla Stumbler Activity Recognition Intent Service</string>
     <string name="wifi_access_points">累计扫描到 Wi-Fi 接入点: %1$d</string>
+    <!--<string name="wifi_disabled">0 (Wi-Fi disabled)</string> translation missing-->
     <string name="visible_wifi_access_points">当前可见的 Wi-Fi 接入点: %1$s</string>
     <string name="cells_scanned">累计扫描到移动基站: %1$d</string>
     <string name="cells_visible">当前可见的移动基站: %1$d</string>
-    <string name="gps_satellites">当前可见的 GPS 卫星: %1$d</string>
+    <string name="gps_satellites">当前可见的 GPS 卫星: %1$d</string><!--needs to be updated to: <string name="gps_satellites">GPS Satellites Used / Visible: %1$d/%2$d</string>-->
     <string name="last_location">最近一次锁定的位置: %1$s</string>
     <string name="coordinate">%1$.4f, %2$.4f</string>
     <string name="locations_scanned">累计锁定位置: %1$d</string>
@@ -36,6 +37,7 @@
     <string name="update_later">稍后更新</string>
 
     <string name="location_not_found">没有找到位置</string>
+    <!--<string name="location_lookup_error">Location lookup error</string> translation missing-->
 
     <string name="gps_alert_msg">GPS 处于关闭状态。是否到设置中开启 GPS？</string>
     <string name="yes">是</string>
@@ -44,6 +46,20 @@
     <string name="about_version">版本 %1$s</string>
     <string name="about_mapbox">了解我们的地图提供商…</string>
     <string name="about_more">更多…</string>
+    <!--<string name="about_legal_aosp">Some iconography in this app is reproduced from work created and shared by the Android Open Source Project and used according to terms described in the Creative Commons 2.5 Attribution License.</string> translation missing-->
+
+    <!-- translations missing
+    <string name="upload_observations_sent_title">Sent</string>
+    <string name="upload_observations_last_upload_time_title">Last Upload Time:</string>
+    <string name="upload_observations_observations_sent_title">Observations:</string>
+    <string name="upload_observations_wifis_sent_title">Wi-Fi Access Points:</string>
+    <string name="upload_observations_cells_sent_title">Cells:</string>
+    <string name="upload_observations_in_queue_title">In queue</string>
+    <string name="upload_observations_observations_queued_title">Observations:</string>
+    <string name="upload_observations_wifis_queued_title">Wi-Fi Access Points:</string>
+    <string name="upload_observations_cells_queued_title">Cells:</string>
+    <string name="upload_observations_button">Upload</string>
+    <string name="upload_observations_dialog_title">Upload observations</string>-->
 
     <string name="detected_activity">检测到的移动: %1$s</string>
     <string name="detected_activity_in_vehicle">移动中 (机动车)</string>
@@ -52,5 +68,15 @@
     <string name="detected_activity_still">静止</string>
     <string name="detected_activity_tilting">倾斜</string>
     <string name="detected_activity_unknown">未知</string>
+    
+    <!--translations missing
+    <string name="upload_wifi_only_title">Upload only on WiFi</string>
+    <string name="upload_wifi_only_summary">This option will reduce your data usage over the cellular network.</string>
+
+    <string name="geofencing_off">Geofencing: off</string>
+    <string name="geofencing_explain">Geofencing will be set at the next valid location obtained during scanning.</string>
+    <string name="geofencing_desc">MozStumbler will pause scanning within 1 km of this lat/long position.</string>
+    <string name="geofencing_on">Geofencing @ %1$.3f, %2$.3f</string>
+    <string name="geofencing_enable">Geofence this location</string>-->
 
 </resources>

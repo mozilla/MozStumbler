@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 
 import org.apache.http.conn.ConnectTimeoutException;
+import org.mozilla.mozstumbler.BuildConfig;
 import org.mozilla.mozstumbler.preferences.Prefs;
 
 import java.io.IOException;
@@ -41,6 +42,10 @@ public class Submitter extends AbstractCommunicator {
             result = true;
         } catch (IOException ex) {
             Log.e(LOGTAG,"Error submitting: ", ex);
+            if ((BuildConfig.DEBUG) && (ex instanceof HttpErrorException)) {
+                Log.d(LOGTAG, "Got status: " + ((HttpErrorException)ex).responseCode);
+                Log.d(LOGTAG, "Tried sending: " + data);
+            }
         }
         return result;
     }

@@ -4,6 +4,7 @@
     <string name="app_name">MozStumbler</string>
     <string name="action_about">Über MozStumbler</string>
     <string name="action_preferences">Einstellungen</string>
+    <string name="action_upload_observations">Beobachtungen hochladen</string>
     <string name="start_scanning">Scanvorgang starten</string>
     <string name="stop_scanning">Scanvorgang stoppen</string>
     <string name="view_leaderboard">Bestenliste ansehen</string>
@@ -75,5 +76,8 @@
     <string name="geofencing_desc">MozStumbler wird den Scanvorgang in Umkreis von 1 km um diese Koordinaten (Breite/Länge) unterbrechen.</string>
     <string name="geofencing_on">Geofencing @ %1$.3f/%2$.3f</string>
     <string name="geofencing_enable">Geofencing für diesen Standort.</string>
+    
+    <string name="wifi_scan_always_title">Immer Wi-Fi scannen</string>
+    <string name="wifi_scan_always_summary">Zugangspunkte auch bei abgeschaltetem Wi-Fi scannen</string>
 
 </resources>

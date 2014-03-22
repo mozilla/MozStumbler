@@ -20,7 +20,7 @@ KeyAlias=<key alias>
 KeyPassword=<password>
 TileServerURL=<OSM Tile Server>
 ```
-For the OSM (Open Street Maps) Tile Server, you have several options:
+For the OSM (OpenStreetMap) Tile Server, you have several options:
 
 * *[MapBox](https://www.mapbox.com/)* (easy, secure) is a hosted OSM solution, allowing users to easily create beautiful maps and featuring full SSL. To use MapBox:
 

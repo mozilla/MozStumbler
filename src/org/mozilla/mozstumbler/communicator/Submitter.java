@@ -8,6 +8,7 @@ import org.mozilla.mozstumbler.BuildConfig;
 import org.mozilla.mozstumbler.preferences.Prefs;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.nio.charset.Charset;
 
@@ -45,7 +46,11 @@ public class Submitter extends AbstractCommunicator {
             Log.e(LOGTAG,"Error submitting: ", ex);
             if ((BuildConfig.DEBUG) && (ex instanceof HttpErrorException)) {
                 Log.d(LOGTAG, "Got status: " + ((HttpErrorException)ex).responseCode);
-                Log.d(LOGTAG, "Tried sending: " + new String(data, Charset.defaultCharset()));
+                try {
+                    Log.d(LOGTAG, "Tried sending: " + new String(data, "UTF-8"));
+                } catch (UnsupportedEncodingException uex) {
+                    Log.e(LOGTAG, "WTF: ", uex);
+                }
                 Log.d(LOGTAG, "Got error message: "+ ex.getMessage());
             }
         }

@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Point;
 import android.net.wifi.ScanResult;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -36,7 +38,10 @@ import org.osmdroid.views.overlay.ItemizedIconOverlay;
 import org.osmdroid.views.overlay.ItemizedOverlay;
 import org.osmdroid.views.overlay.ItemizedOverlayWithFocus;
 import org.osmdroid.views.overlay.OverlayItem;
+import org.osmdroid.views.overlay.SafeDrawOverlay;
 import org.osmdroid.views.overlay.TilesOverlay;
+import org.osmdroid.views.safecanvas.ISafeCanvas;
+import org.osmdroid.views.safecanvas.SafePaint;
 
 public final class MapActivity extends Activity {
     private static final String LOGTAG = MapActivity.class.getName();
@@ -130,19 +135,53 @@ public final class MapActivity extends Activity {
         return coverageTileOverlay;
     }
 
-    private void positionMapAt(float lat, float lon) {
+    private void positionMapAt(float lat, float lon, float accuracy) {
         GeoPoint point = new GeoPoint(lat, lon);
         mMap.getController().setZoom(16);
         mMap.getController().animateTo(point);
         mMap.getOverlays().add(getMapMarker(point)); // You are here!
+        mMap.getOverlays().add(new AccuracyCircleOverlay(this, point, accuracy));
         mMap.invalidate();
+    }
+
+    private static class AccuracyCircleOverlay extends SafeDrawOverlay {
+        private GeoPoint mPoint;
+        private float mAccuracy;
+
+        public AccuracyCircleOverlay(Context ctx, GeoPoint point, float accuracy) {
+            super(ctx);
+            //this.mPoint = (GeoPoint) point.clone();
+            this.mPoint = point;
+            this.mAccuracy = accuracy;
+        }
+
+        protected void drawSafe(ISafeCanvas c, MapView osmv, boolean shadow) {
+            if (shadow || mPoint == null) {
+                return;
+            }
+            MapView.Projection pj = osmv.getProjection();
+            Point center = pj.toPixels(mPoint, null);
+            float radius = pj.metersToEquatorPixels(mAccuracy);
+            SafePaint circle = new SafePaint();
+            circle.setARGB(0, 100, 100, 255);
+
+            // Fill
+            circle.setAlpha(40);
+            circle.setStyle(Paint.Style.FILL);
+            c.drawCircle(center.x, center.y, radius, circle);
+
+            // Border
+            circle.setAlpha(165);
+            circle.setStyle(Paint.Style.STROKE);
+            c.drawCircle(center.x, center.y, radius, circle);
+        }
     }
 
     private ItemizedOverlay<OverlayItem> getMapMarker(GeoPoint point) {
         ArrayList<OverlayItem> items = new ArrayList<OverlayItem>();
         items.add(new OverlayItem(null, null, point));
         return new ItemizedOverlayWithFocus<OverlayItem>(
-            getApplicationContext(),
+            this,
             items,
             new ItemizedIconOverlay.OnItemGestureListener<OverlayItem>() {
                 @Override
@@ -183,8 +222,9 @@ public final class MapActivity extends Activity {
 
     private final class GetLocationAndMapItTask extends AsyncTask<String, Void, String> {
         private String mStatus="";
-        private float mLat=0;
-        private float mLon=0;
+        private float mLat = 0;
+        private float mLon = 0;
+        private float mAccuracy = 0;
 
         @Override
         public String doInBackground(String... params) {
@@ -224,6 +264,7 @@ public final class MapActivity extends Activity {
                 mStatus = searcher.getStatus();
                 mLat = searcher.getLat();
                 mLon = searcher.getLon();
+                mAccuracy = searcher.getAccuracy();
             } else {
                 mStatus = STATUS_FAILED;
             }
@@ -235,7 +276,7 @@ public final class MapActivity extends Activity {
         @Override
         protected void onPostExecute(String result) {
             if (STATUS_OK.equals(mStatus)) {
-                positionMapAt(mLat, mLon);
+                positionMapAt(mLat, mLon, mAccuracy);
             } else if (STATUS_NOT_FOUND.equals(mStatus)) {
                 Toast.makeText(MapActivity.this,
                         getResources().getString(R.string.location_not_found),

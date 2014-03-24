@@ -5,14 +5,16 @@ import android.os.Build;
 import android.util.Log;
 
 import org.mozilla.mozstumbler.BuildConfig;
-import org.mozilla.mozstumbler.NetworkUtils;
 import org.mozilla.mozstumbler.PackageUtils;
 import org.mozilla.mozstumbler.R;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -93,6 +95,14 @@ abstract class AbstractCommunicator {
         out.flush();
         mCode = httpURLConnection.getResponseCode();
         if (mCode != getCorrectResponse()) {
+            HttpErrorException ex = new HttpErrorException(mCode);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(httpURLConnection.getInputStream()));
+            StringBuilder outstr = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                outstr.append(line);
+            }
+            ex.setMessage(outstr.toString());
             throw new HttpErrorException(mCode);
         }
     }
@@ -129,10 +139,20 @@ abstract class AbstractCommunicator {
     public static class HttpErrorException extends IOException {
         private static final long serialVersionUID = -5404095858043243126L;
         public final int responseCode;
+        private String message;
 
         public HttpErrorException(int responseCode) {
             super();
             this.responseCode = responseCode;
+            this.message = "";
+        }
+
+        public String getMessage() {
+            return this.message;
+        }
+
+        public void setMessage(String msg) {
+            this.message = msg;
         }
 
         public boolean isTemporary() {

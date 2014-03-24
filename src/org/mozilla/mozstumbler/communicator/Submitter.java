@@ -9,6 +9,7 @@ import org.mozilla.mozstumbler.preferences.Prefs;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
+import java.nio.charset.Charset;
 
 public class Submitter extends AbstractCommunicator {
     private static final String SUBMIT_URL = "https://location.services.mozilla.com/v1/submit";
@@ -44,7 +45,8 @@ public class Submitter extends AbstractCommunicator {
             Log.e(LOGTAG,"Error submitting: ", ex);
             if ((BuildConfig.DEBUG) && (ex instanceof HttpErrorException)) {
                 Log.d(LOGTAG, "Got status: " + ((HttpErrorException)ex).responseCode);
-                Log.d(LOGTAG, "Tried sending: " + data);
+                Log.d(LOGTAG, "Tried sending: " + new String(data, Charset.defaultCharset()));
+                Log.d(LOGTAG, "Got error message: "+ ex.getMessage());
             }
         }
         return result;

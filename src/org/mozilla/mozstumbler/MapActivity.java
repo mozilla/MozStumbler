@@ -140,7 +140,7 @@ public final class MapActivity extends Activity {
         mMap.getController().setZoom(16);
         mMap.getController().animateTo(point);
         mMap.getOverlays().add(getMapMarker(point)); // You are here!
-        mMap.getOverlays().add(new AccuracyCircleOverlay(this, point, accuracy));
+        mMap.getOverlays().add(new AccuracyCircleOverlay(MapActivity.this, point, accuracy));
         mMap.invalidate();
     }
 
@@ -181,7 +181,7 @@ public final class MapActivity extends Activity {
         ArrayList<OverlayItem> items = new ArrayList<OverlayItem>();
         items.add(new OverlayItem(null, null, point));
         return new ItemizedOverlayWithFocus<OverlayItem>(
-            this,
+            MapActivity.this,
             items,
             new ItemizedIconOverlay.OnItemGestureListener<OverlayItem>() {
                 @Override

@@ -13,6 +13,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 import java.lang.Void;
@@ -50,8 +51,11 @@ public final class MapActivity extends Activity {
     private static final String STATUS_NOT_FOUND    = "not_found";
     private static final String STATUS_FAILED       = "failed";
     private static final String COVERAGE_URL        = "https://location.services.mozilla.com/tiles/";
+    private static final int MENU_REFRESH           = 1;
 
     private MapView mMap;
+    private AccuracyCircleOverlay mAccuracyOverlay;
+    private ItemizedOverlay<OverlayItem> mPointOverlay;
 
     private ReporterBroadcastReceiver mReceiver;
 
@@ -60,6 +64,13 @@ public final class MapActivity extends Activity {
 
     private class ReporterBroadcastReceiver extends BroadcastReceiver {
         private boolean mDone;
+
+        public void reset()
+        {
+            mMap.getOverlays().remove(mAccuracyOverlay);
+            mMap.getOverlays().remove(mPointOverlay);
+            mDone = false;
+        }
 
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -110,6 +121,28 @@ public final class MapActivity extends Activity {
         Log.d(LOGTAG, "onCreate");
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        menu.add(Menu.NONE,MENU_REFRESH,Menu.NONE,R.string.refresh_map)
+                .setIcon(R.drawable.ic_action_refresh)
+                .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case MENU_REFRESH:
+                if (mReceiver != null) {
+                    mReceiver.reset();
+                    return true;
+                }
+                return false;
+            default:
+                return false;
+        }
+    }
+
     @SuppressWarnings("ConstantConditions")
     private static OnlineTileSourceBase getTileSource() {
         if (BuildConfig.TILE_SERVER_URL == null) {
@@ -139,8 +172,10 @@ public final class MapActivity extends Activity {
         GeoPoint point = new GeoPoint(lat, lon);
         mMap.getController().setZoom(16);
         mMap.getController().animateTo(point);
-        mMap.getOverlays().add(getMapMarker(point)); // You are here!
-        mMap.getOverlays().add(new AccuracyCircleOverlay(MapActivity.this, point, accuracy));
+        mPointOverlay = getMapMarker(point);
+        mAccuracyOverlay = new AccuracyCircleOverlay(MapActivity.this, point, accuracy);
+        mMap.getOverlays().add(mPointOverlay); // You are here!
+        mMap.getOverlays().add(mAccuracyOverlay);
         mMap.invalidate();
     }
 
@@ -213,11 +248,6 @@ public final class MapActivity extends Activity {
             unregisterReceiver(mReceiver);
             mReceiver = null;
         }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        return false;
     }
 
     private final class GetLocationAndMapItTask extends AsyncTask<String, Void, String> {

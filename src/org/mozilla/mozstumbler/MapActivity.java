@@ -6,11 +6,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Point;
 import android.net.wifi.ScanResult;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 import java.lang.Void;
@@ -36,7 +39,10 @@ import org.osmdroid.views.overlay.ItemizedIconOverlay;
 import org.osmdroid.views.overlay.ItemizedOverlay;
 import org.osmdroid.views.overlay.ItemizedOverlayWithFocus;
 import org.osmdroid.views.overlay.OverlayItem;
+import org.osmdroid.views.overlay.SafeDrawOverlay;
 import org.osmdroid.views.overlay.TilesOverlay;
+import org.osmdroid.views.safecanvas.ISafeCanvas;
+import org.osmdroid.views.safecanvas.SafePaint;
 
 public final class MapActivity extends Activity {
     private static final String LOGTAG = MapActivity.class.getName();
@@ -45,8 +51,11 @@ public final class MapActivity extends Activity {
     private static final String STATUS_NOT_FOUND    = "not_found";
     private static final String STATUS_FAILED       = "failed";
     private static final String COVERAGE_URL        = "https://location.services.mozilla.com/tiles/";
+    private static final int MENU_REFRESH           = 1;
 
     private MapView mMap;
+    private AccuracyCircleOverlay mAccuracyOverlay;
+    private ItemizedOverlay<OverlayItem> mPointOverlay;
 
     private ReporterBroadcastReceiver mReceiver;
 
@@ -55,6 +64,13 @@ public final class MapActivity extends Activity {
 
     private class ReporterBroadcastReceiver extends BroadcastReceiver {
         private boolean mDone;
+
+        public void reset()
+        {
+            mMap.getOverlays().remove(mAccuracyOverlay);
+            mMap.getOverlays().remove(mPointOverlay);
+            mDone = false;
+        }
 
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -105,6 +121,28 @@ public final class MapActivity extends Activity {
         Log.d(LOGTAG, "onCreate");
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        menu.add(Menu.NONE,MENU_REFRESH,Menu.NONE,R.string.refresh_map)
+                .setIcon(R.drawable.ic_action_refresh)
+                .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case MENU_REFRESH:
+                if (mReceiver != null) {
+                    mReceiver.reset();
+                    return true;
+                }
+                return false;
+            default:
+                return false;
+        }
+    }
+
     @SuppressWarnings("ConstantConditions")
     private static OnlineTileSourceBase getTileSource() {
         if (BuildConfig.TILE_SERVER_URL == null) {
@@ -130,19 +168,55 @@ public final class MapActivity extends Activity {
         return coverageTileOverlay;
     }
 
-    private void positionMapAt(float lat, float lon) {
+    private void positionMapAt(float lat, float lon, float accuracy) {
         GeoPoint point = new GeoPoint(lat, lon);
         mMap.getController().setZoom(16);
         mMap.getController().animateTo(point);
-        mMap.getOverlays().add(getMapMarker(point)); // You are here!
+        mPointOverlay = getMapMarker(point);
+        mAccuracyOverlay = new AccuracyCircleOverlay(MapActivity.this, point, accuracy);
+        mMap.getOverlays().add(mPointOverlay); // You are here!
+        mMap.getOverlays().add(mAccuracyOverlay);
         mMap.invalidate();
+    }
+
+    private static class AccuracyCircleOverlay extends SafeDrawOverlay {
+        private GeoPoint mPoint;
+        private float mAccuracy;
+
+        public AccuracyCircleOverlay(Context ctx, GeoPoint point, float accuracy) {
+            super(ctx);
+            //this.mPoint = (GeoPoint) point.clone();
+            this.mPoint = point;
+            this.mAccuracy = accuracy;
+        }
+
+        protected void drawSafe(ISafeCanvas c, MapView osmv, boolean shadow) {
+            if (shadow || mPoint == null) {
+                return;
+            }
+            MapView.Projection pj = osmv.getProjection();
+            Point center = pj.toPixels(mPoint, null);
+            float radius = pj.metersToEquatorPixels(mAccuracy);
+            SafePaint circle = new SafePaint();
+            circle.setARGB(0, 100, 100, 255);
+
+            // Fill
+            circle.setAlpha(40);
+            circle.setStyle(Paint.Style.FILL);
+            c.drawCircle(center.x, center.y, radius, circle);
+
+            // Border
+            circle.setAlpha(165);
+            circle.setStyle(Paint.Style.STROKE);
+            c.drawCircle(center.x, center.y, radius, circle);
+        }
     }
 
     private ItemizedOverlay<OverlayItem> getMapMarker(GeoPoint point) {
         ArrayList<OverlayItem> items = new ArrayList<OverlayItem>();
         items.add(new OverlayItem(null, null, point));
         return new ItemizedOverlayWithFocus<OverlayItem>(
-            getApplicationContext(),
+            MapActivity.this,
             items,
             new ItemizedIconOverlay.OnItemGestureListener<OverlayItem>() {
                 @Override
@@ -176,15 +250,11 @@ public final class MapActivity extends Activity {
         }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        return false;
-    }
-
     private final class GetLocationAndMapItTask extends AsyncTask<String, Void, String> {
         private String mStatus="";
-        private float mLat=0;
-        private float mLon=0;
+        private float mLat = 0;
+        private float mLon = 0;
+        private float mAccuracy = 0;
 
         @Override
         public String doInBackground(String... params) {
@@ -224,6 +294,7 @@ public final class MapActivity extends Activity {
                 mStatus = searcher.getStatus();
                 mLat = searcher.getLat();
                 mLon = searcher.getLon();
+                mAccuracy = searcher.getAccuracy();
             } else {
                 mStatus = STATUS_FAILED;
             }
@@ -235,7 +306,7 @@ public final class MapActivity extends Activity {
         @Override
         protected void onPostExecute(String result) {
             if (STATUS_OK.equals(mStatus)) {
-                positionMapAt(mLat, mLon);
+                positionMapAt(mLat, mLon, mAccuracy);
             } else if (STATUS_NOT_FOUND.equals(mStatus)) {
                 Toast.makeText(MapActivity.this,
                         getResources().getString(R.string.location_not_found),

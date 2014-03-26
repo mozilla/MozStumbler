@@ -14,7 +14,7 @@
     <string name="visible_wifi_access_points">Punts d\'accés WiFi visibles: %1$s</string>
     <string name="cells_scanned">Cel·les escanejades: %1$d</string>
     <string name="cells_visible">Cel·les visibles: %1$d</string>
-    <string name="gps_satellites">Satèl·lits GPS: %1$d</string>
+    <string name="gps_satellites">Satèl·lits GPS: %1$d/%2$d</string>
     <string name="last_location">Última posició: %1$s</string>
     <string name="locations_scanned">Posicions escanejades: %1$d</string>
     <string name="last_upload_time">Temps de l\'ùltima càrrega: %1$s</string>

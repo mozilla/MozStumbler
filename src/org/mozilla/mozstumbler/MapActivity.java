@@ -1,5 +1,6 @@
 package org.mozilla.mozstumbler;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -10,6 +11,7 @@ import android.graphics.Paint;
 import android.graphics.Point;
 import android.net.wifi.ScanResult;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -121,11 +123,14 @@ public final class MapActivity extends Activity {
         Log.d(LOGTAG, "onCreate");
     }
 
+    @TargetApi(11)
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        menu.add(Menu.NONE,MENU_REFRESH,Menu.NONE,R.string.refresh_map)
-                .setIcon(R.drawable.ic_action_refresh)
-                .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        MenuItem item = menu.add(Menu.NONE,MENU_REFRESH,Menu.NONE,R.string.refresh_map)
+                .setIcon(R.drawable.ic_action_refresh);
+        if (Build.VERSION.SDK_INT >= 11) {
+            item.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+        }
         return true;
     }
 

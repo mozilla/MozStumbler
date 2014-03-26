@@ -96,13 +96,24 @@ abstract class AbstractCommunicator {
         mCode = httpURLConnection.getResponseCode();
         if (mCode != getCorrectResponse()) {
             HttpErrorException ex = new HttpErrorException(mCode);
-            BufferedReader reader = new BufferedReader(new InputStreamReader(httpURLConnection.getInputStream()));
-            StringBuilder outstr = new StringBuilder();
-            String line;
-            while ((line = reader.readLine()) != null) {
-                outstr.append(line);
+            BufferedReader r = null;
+            try {
+                InputStream in = new BufferedInputStream(httpURLConnection.getInputStream());
+                r = new BufferedReader(new InputStreamReader(in));
+                StringBuilder total = new StringBuilder(in.available());
+                String line;
+                while ((line = r.readLine()) != null) {
+                    total.append(line);
+                }
+                ex.setMessage(total.toString());
+            } catch (Exception e) {
+                Log.e(LOGTAG, "", e);
+            } finally {
+                if (r != null) {
+                    r.close();
+                    r = null;
+                }
             }
-            ex.setMessage(outstr.toString());
             throw new HttpErrorException(mCode);
         }
     }

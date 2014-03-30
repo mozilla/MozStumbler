@@ -29,7 +29,7 @@
     <string name="enter_nickname_longtext">نام اختصاری شما در برد بالاترین‌های ظاهر خواهد شد.</string>
 
     <string name="power_saving_mode">حالت صرفه‌جویی انرژی</string>
-    <string name="power_saving_mode_longtext">هنگام فعال‌بودن، چمع‌کردن اطلاعات وقتی انجام می‌شود که شما در حال جرکت هستید.</string>
+    <string name="power_saving_mode_longtext">هنگام فعال‌بودن، جمع‌کردن اطلاعات وقتی انجام می‌شود که شما در حال حرکت هستید.</string>
 
     <string name="update_title">دریافت MozStumbler به‌روزشده؟</string>
     <string name="update_message">نسخهٔ نصب‌شده: %1$s\nآخرین نسخه: %2$s</string>
@@ -73,7 +73,7 @@
 
     <string name="geofencing_off">حصارهای جغرافیایی: خاموش</string>
     <string name="geofencing_explain">حصارهای جغرافیایی در موقیت صحیح بعدی یافت‌شده در هنگام اسکن‌کردن تنظیم خواهد شد.</string>
-    <string name="geofencing_desc">MozStumbler در ۱ کلیوکتری این طول و عرض موقعیت جغرافیایی متوقف خواهد شد.</string>
+    <string name="geofencing_desc">MozStumbler در ۱ کیلومتری این طول و عرض موقعیت جغرافیایی متوقف خواهد شد.</string>
     <string name="geofencing_on">حصار جغرافیایی @ %1$.3f، %2$.3f</string>
     <string name="geofencing_enable">حصار جغرافیایی این مکان</string>
 

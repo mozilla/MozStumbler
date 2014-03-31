@@ -78,7 +78,7 @@
     <string name="geofencing_enable">Geofence this location</string>
 
     <string name="wifi_scan_always_title">Always scan Wi-Fi</string>
-    <string name="wifi_scan_always_summary">Scan AP\'s even when Wi-Fi is turned off</string>
+    <string name="wifi_scan_always_summary">Scan APs even when Wi-Fi is turned off</string>
 
     <string name="refresh_map">Refresh location</string>
 

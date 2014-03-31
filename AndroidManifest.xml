@@ -65,6 +65,12 @@
         </service>
 
         <service
+            android:name=".StumblerService"
+            android:icon="@drawable/ic_launcher"
+            android:label="@string/service_name">
+        </service>
+
+        <service
             android:name=".sync.AuthenticatorService">
             <intent-filter>
                 <action android:name="android.accounts.AccountAuthenticator"/>

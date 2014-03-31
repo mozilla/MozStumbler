@@ -7,6 +7,8 @@ import org.mozilla.mozstumbler.sync.SyncUtils;
 
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
+import android.app.Notification;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -21,11 +23,11 @@ import android.net.Uri;
 import android.os.Build.VERSION;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.os.RemoteException;
 import android.os.StrictMode;
 import android.provider.Settings;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.content.LocalBroadcastManager;
@@ -39,11 +41,14 @@ import android.widget.TextView;
 public final class MainActivity extends FragmentActivity {
     private static final String LOGTAG = MainActivity.class.getName();
     private static final String LEADERBOARD_URL = "https://location.services.mozilla.com/leaders";
+    private static final String INTENT_TURN_OFF = "org.mozilla.mozstumbler.turnMeOff";
+    private static final int    NOTIFICATION_ID = 1;
 
     private Prefs                    mPrefs;
-    private ScannerServiceInterface  mConnectionRemote;
+    private StumblerService          mConnectionRemote;
     private ServiceConnection        mConnection;
     private ServiceBroadcastReceiver mReceiver;
+    private BroadcastReceiver        mTurnOffReceiver;
     private int                      mGpsFixes;
     private int                      mGpsSats;
     private boolean                  mNeedsUpdate = false;
@@ -84,16 +89,12 @@ public final class MainActivity extends FragmentActivity {
                         int enable = intent.getIntExtra("enable", -1);
 
                         if (mConnectionRemote != null) {
-                            try {
-                                if (enable == 1) {
-                                  Log.d(LOGTAG, "Enabling scanning");
-                                    mConnectionRemote.startScanning();
-                                } else if (enable == 0) {
-                                  Log.d(LOGTAG, "Disabling scanning");
-                                    mConnectionRemote.stopScanning();
-                                }
-                            } catch (RemoteException e) {
-                              Log.e(LOGTAG, "", e);
+                            if (enable == 1) {
+                                Log.d(LOGTAG, "Enabling scanning");
+                                startScanning();
+                            } else if (enable == 0) {
+                                Log.d(LOGTAG, "Disabling scanning");
+                                stopScanning();
                             }
                         }
                     }
@@ -173,7 +174,8 @@ public final class MainActivity extends FragmentActivity {
         mPrefs = new Prefs(this);
         mConnection = new ServiceConnection() {
             public void onServiceConnected(ComponentName className, IBinder binder) {
-                mConnectionRemote = ScannerServiceInterface.Stub.asInterface(binder);
+                StumblerService.StumblerBinder serviceBinder = (StumblerService.StumblerBinder) binder;
+                mConnectionRemote = serviceBinder.getService();
                 Log.d(LOGTAG, "Service connected");
 
                 /* FIXME
@@ -183,14 +185,10 @@ public final class MainActivity extends FragmentActivity {
                 // Instead, we should see if we were scanning do to an activity
                 // recognition.  If we were, don't stop.
                 if (mConnectionRemote != null) {
-                    try {
-                        if (mPrefs.getPowerSavingMode()) {
-                            mConnectionRemote.stopScanning();
-                        } else {
-                            mConnectionRemote.startScanning();
-                        }
-                    } catch (RemoteException e) {
-                        Log.e(LOGTAG, "", e);
+                    if (mPrefs.getPowerSavingMode()) {
+                        stopScanning();
+                    } else {
+                        startScanning();
                     }
                 }
                 */
@@ -203,7 +201,21 @@ public final class MainActivity extends FragmentActivity {
             }
         };
 
-        Intent intent = new Intent(this, ScannerService.class);
+        mTurnOffReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                Log.d(LOGTAG, "Got a request to turn off!");
+                if (mConnectionRemote.isScanning()) {
+                    stopScanning();
+                }
+            }
+        };
+
+        IntentFilter intentFilter = new IntentFilter(Intent.ACTION_BATTERY_LOW);
+        intentFilter.addAction(INTENT_TURN_OFF);
+        registerReceiver(mTurnOffReceiver, intentFilter);
+
+        Intent intent = new Intent(this, StumblerService.class);
         startService(intent);
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
 
@@ -232,11 +244,7 @@ public final class MainActivity extends FragmentActivity {
 
         Log.d(LOGTAG, "Updating UI");
         boolean scanning = false;
-        try {
-            scanning = mConnectionRemote.isScanning();
-        } catch (RemoteException e) {
-            Log.e(LOGTAG, "", e);
-        }
+        scanning = mConnectionRemote.isScanning();
 
         CompoundButton scanningBtn = (CompoundButton) findViewById(R.id.toggle_scanning);
         scanningBtn.setChecked(scanning);
@@ -251,20 +259,16 @@ public final class MainActivity extends FragmentActivity {
         int currentCellInfo = 0;
         boolean isGeofenced = false;
 
-        try {
-            scanning = mConnectionRemote.isScanning();
-            locationsScanned = mConnectionRemote.getLocationCount();
-            latitude = mConnectionRemote.getLatitude();
-            longitude = mConnectionRemote.getLongitude();
-            wifiStatus = mConnectionRemote.getWifiStatus();
-            APs = mConnectionRemote.getAPCount();
-            visibleAPs = mConnectionRemote.getVisibleAPCount();
-            cellInfoScanned = mConnectionRemote.getCellInfoCount();
-            currentCellInfo = mConnectionRemote.getCurrentCellInfoCount();
-            isGeofenced = mConnectionRemote.isGeofenced();
-        } catch (RemoteException e) {
-            Log.e(LOGTAG, "", e);
-        }
+        scanning = mConnectionRemote.isScanning();
+        locationsScanned = mConnectionRemote.getLocationCount();
+        latitude = mConnectionRemote.getLatitude();
+        longitude = mConnectionRemote.getLongitude();
+        wifiStatus = mConnectionRemote.getWifiStatus();
+        APs = mConnectionRemote.getAPCount();
+        visibleAPs = mConnectionRemote.getVisibleAPCount();
+        cellInfoScanned = mConnectionRemote.getCellInfoCount();
+        currentCellInfo = mConnectionRemote.getCurrentCellInfoCount();
+        isGeofenced = mConnectionRemote.isGeofenced();
 
         String lastLocationString = (mGpsFixes > 0 && locationsScanned > 0)
                                     ? formatLocation(latitude, longitude)
@@ -277,12 +281,8 @@ public final class MainActivity extends FragmentActivity {
         formatTextView(R.id.cells_visible, R.string.cells_visible, currentCellInfo);
         formatTextView(R.id.cells_scanned, R.string.cells_scanned, cellInfoScanned);
         formatTextView(R.id.locations_scanned, R.string.locations_scanned, locationsScanned);
-        if (mNeedsUpdate) try {
-            mConnectionRemote.checkPrefs();
-            mNeedsUpdate = false;
-        } catch (RemoteException e) {
-            Log.e(LOGTAG, "", e);
-        }
+        mConnectionRemote.checkPrefs();
+        mNeedsUpdate = false;
         if (mGeofenceHere) {
             if (mGpsFixes > 0 && locationsScanned > 0) {
                 mPrefs.setLatLonPref((float)latitude,(float)longitude);
@@ -297,7 +297,7 @@ public final class MainActivity extends FragmentActivity {
         geofence_tv.setTextColor(isGeofenced ? Color.RED : Color.BLACK);
     }
 
-    public void onToggleScanningClicked(View v) throws RemoteException {
+    public void onToggleScanningClicked(View v) {
         if (mConnectionRemote == null) {
             return;
         }
@@ -306,9 +306,9 @@ public final class MainActivity extends FragmentActivity {
         Log.d(LOGTAG, "Connection remote return: isScanning() = " + scanning);
 
         if (scanning) {
-            mConnectionRemote.stopScanning();
+            stopScanning();
         } else {
-            mConnectionRemote.startScanning();
+            startScanning();
             checkGps();
         }
     }
@@ -450,4 +450,38 @@ public final class MainActivity extends FragmentActivity {
 
         }
     };
+
+    private void startScanning() {
+        mConnectionRemote.startForeground(NOTIFICATION_ID, buildNotification());
+        mConnectionRemote.startScanning();
+    }
+
+    private void stopScanning() {
+        mConnectionRemote.stopForeground(true);
+        mConnectionRemote.stopScanning();
+    }
+
+    private Notification buildNotification() {
+        Context context = getApplicationContext();
+        Intent turnOffIntent = new Intent(INTENT_TURN_OFF);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, turnOffIntent, 0);
+
+        Intent notificationIntent = new Intent(context, MainActivity.class);
+        notificationIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_FROM_BACKGROUND);
+        PendingIntent contentIntent = PendingIntent.getActivity(context, NOTIFICATION_ID,
+                                                                notificationIntent,
+                                                                PendingIntent.FLAG_CANCEL_CURRENT);
+
+        return new NotificationCompat.Builder(context)
+                                     .setSmallIcon(R.drawable.ic_status_scanning)
+                                     .setContentTitle(getText(R.string.service_name))
+                                     .setContentText(getText(R.string.service_scanning))
+                                     .setContentIntent(contentIntent)
+                                     .setOngoing(true)
+                                     .setPriority(NotificationCompat.PRIORITY_LOW)
+                                     .addAction(R.drawable.ic_action_cancel,
+                                                getString(R.string.stop_scanning), pendingIntent)
+                                     .build();
+
+    }
 }

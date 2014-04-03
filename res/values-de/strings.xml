@@ -73,7 +73,7 @@
 
     <string name="geofencing_off">Geofencing: Aus</string>
     <string name="geofencing_explain">Das Geofencing wird an dem nächsten, gültigen, während des Scannens erhaltenen Standort festgelegt werden.</string>
-    <string name="geofencing_desc">MozStumbler wird den Scanvorgang in Umkreis von 1 km um diese Koordinaten (Breiten-/Längengrad) unterbrechen.</string>
+    <string name="geofencing_desc">MozStumbler wird den Scanvorgang im Umkreis von 1 km um diese Koordinaten (Breiten-/Längengrad) unterbrechen.</string>
     <string name="geofencing_on">Geofencing @ %1$.3f/%2$.3f</string>
     <string name="geofencing_enable">Geofencing für diesen Standort.</string>
     

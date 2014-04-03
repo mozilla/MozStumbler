@@ -16,7 +16,7 @@
     <string name="visible_wifi_access_points">Wi-Fi Zugangspunkte sichtbar: %1$s</string>
     <string name="cells_scanned">Funkzellen gescannt: %1$d</string>
     <string name="cells_visible">Funkzellen sichtbar: %1$d</string>
-    <string name="gps_satellites">GPS Satelliten Verwendet/Sichtbar: %1$d/%2$d</string>
+    <string name="gps_satellites">GPS Satelliten verwendet/sichtbar: %1$d/%2$d</string>
     <string name="last_location">Letzter Standort: %1$s</string>
     <string name="coordinate">%1$.4f, %2$.4f</string>
     <string name="locations_scanned">Standorte gescannt: %1$d</string>
@@ -73,11 +73,13 @@
 
     <string name="geofencing_off">Geofencing: Aus</string>
     <string name="geofencing_explain">Das Geofencing wird an dem nächsten, gültigen, während des Scannens erhaltenen Standort festgelegt werden.</string>
-    <string name="geofencing_desc">MozStumbler wird den Scanvorgang in Umkreis von 1 km um diese Koordinaten (Breite/Länge) unterbrechen.</string>
+    <string name="geofencing_desc">MozStumbler wird den Scanvorgang in Umkreis von 1 km um diese Koordinaten (Breiten-/Längengrad) unterbrechen.</string>
     <string name="geofencing_on">Geofencing @ %1$.3f/%2$.3f</string>
     <string name="geofencing_enable">Geofencing für diesen Standort.</string>
     
     <string name="wifi_scan_always_title">Wi-Fi immer scannen</string>
     <string name="wifi_scan_always_summary">Zugangspunkte auch bei abgeschaltetem Wi-Fi scannen</string>
+
+    <string name="refresh_map">Standort aktualisieren</string>
 
 </resources>

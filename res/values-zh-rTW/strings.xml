@@ -4,7 +4,7 @@
     <string name="app_name">MozStumbler</string>
     <string name="action_about">關於 MozStumbler</string>
     <string name="action_preferences">設定</string>
-    <!--<string name="action_upload_observations">Upload observations</string> translation missing-->
+    <string name="action_upload_observations">上傳觀測結果</string>
     <string name="start_scanning">開始掃描</string>
     <string name="stop_scanning">停止掃描</string>
     <string name="view_leaderboard">觀看排行榜</string>
@@ -12,11 +12,11 @@
     <string name="service_name">Mozilla Stumbler</string>
     <string name="activity_recognition_service">Mozilla Stumbler Activity Recognition Intent Service</string>
     <string name="wifi_access_points">已掃描 Wi-Fi 基地台數量: %1$d</string>
-    <!--<string name="wifi_disabled">0 (Wi-Fi disabled)</string> translation missing-->
+    <string name="wifi_disabled">0（已停用 Wi-Fi）</string>
     <string name="visible_wifi_access_points">可視 Wi-Fi 基地台數量: %1$s</string>
     <string name="cells_scanned">已掃描行動電話基地台數量: %1$d</string>
     <string name="cells_visible">可視行動電話基地台數量: %1$d</string>
-    <string name="gps_satellites">可視 GPS 衛星數量: %1$d</string><!--needs to be updated to: <string name="gps_satellites">GPS Satellites Used / Visible: %1$d/%2$d</string>-->
+    <string name="gps_satellites">接收到訊號的 GPS 衛星數量 %1$d / 可視數量: %2$d</string>
     <string name="last_location">最後定位位置: %1$s</string>
     <string name="coordinate">%1$.4f, %2$.4f</string>
     <string name="locations_scanned">已掃描位置數量: %1$d</string>
@@ -24,7 +24,7 @@
     <string name="reports_sent">已傳送報告數量: %1$d</string>
     <string name="service_scanning">正在掃描 Wi-Fi 與行動網路</string>
 
-    <string name="enter_nickname">輸入暱稱 (非必填)</string>
+    <string name="enter_nickname">輸入暱稱（非必填）</string>
     <string name="enter_nickname_title">暱稱: </string>
     <string name="enter_nickname_longtext">您的暱稱將顯示在排行榜中。</string>
 
@@ -37,7 +37,7 @@
     <string name="update_later">以後再更新</string>
 
     <string name="location_not_found">找不到位置</string>
-    <!--<string name="location_lookup_error">Location lookup error</string> translation missing-->
+    <string name="location_lookup_error">定位錯誤</string>
 
     <string name="gps_alert_msg">GPS 已關閉。您是否想要前往「設定」開啟 GPS？</string>
     <string name="yes">好</string>
@@ -61,9 +61,9 @@
     <string name="upload_observations_dialog_title">上傳觀測結果</string>
 
     <string name="detected_activity">偵測移動狀態: %1$s</string>
-    <string name="detected_activity_in_vehicle">移動中 (乘車)</string>
-    <string name="detected_activity_on_bicycle">移動中 (腳踏車)</string>
-    <string name="detected_activity_on_foot">移動中 (步行)</string>
+    <string name="detected_activity_in_vehicle">移動中（乘車）</string>
+    <string name="detected_activity_on_bicycle">移動中（腳踏車）</string>
+    <string name="detected_activity_on_foot">移動中（步行）</string>
     <string name="detected_activity_still">靜止不動</string>
     <string name="detected_activity_tilting">傾斜中</string>
     <string name="detected_activity_unknown">未知</string>
@@ -71,10 +71,15 @@
     <string name="upload_wifi_only_title">僅在使用 Wi-Fi 時上傳資料</string>
     <string name="upload_wifi_only_summary">此選項將可減少您的行動網路使用量。</string>
 
-    <string name="geofencing_off">Geofencing: 關</string>
-    <string name="geofencing_explain">將會在掃描到您移動至下一個有效地點後設定 Geofencing。</string>
-    <string name="geofencing_desc">MozStumbler 將會在此經緯度位置的方圓 1 公里內暫停掃描。</string>
-    <string name="geofencing_on">Geofencing @ %1$.3f, %2$.3f</string>
-    <string name="geofencing_enable">將此位置加入 Geofence</string>
+    <string name="geofencing_off">地理柵欄: 關閉</string>
+    <string name="geofencing_explain">將會在觀測到您移動至下一個有效地點後設定地理柵欄。</string>
+    <string name="geofencing_desc">MozStumbler 將會在此經緯度位置的方圓一公里內暫停掃描。</string>
+    <string name="geofencing_on">地理柵欄 @ %1$.3f, %2$.3f</string>
+    <string name="geofencing_enable">將此位置加入地理柵欄</string>
+
+    <string name="wifi_scan_always_title">總是掃描 Wi-Fi</string>
+    <string name="wifi_scan_always_summary">在 Wi-Fi 關閉時持續掃描基地台</string>
+
+    <string name="refresh_map">重新整理位置</string>
 
 </resources>

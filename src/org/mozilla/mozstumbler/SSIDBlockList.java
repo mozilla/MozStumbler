@@ -61,9 +61,9 @@ final class SSIDBlockList {
         "Telekom_ICE", // Deutsche Bahn on-train WiFi
         "TPE-Free Bus", // Taipei City on-bus WiFi (Taiwan)
         "THSR-VeeTIME", // Taiwan High Speed Rail on-train WiFi
-        "tmobile", //Nederlandse Spoorwegen on-train WiFi by T-Mobile (Netherlands)
         "TriangleTransitWiFi_", // Triangle Transit on-bus WiFi
         "VR-junaverkko", // VR on-train WiFi (Finland)
+        "WiFi in de trein", //Nederlandse Spoorwegen on-train WiFi (Netherlands)
     };
 
     private static final String[] SUFFIX_LIST = {

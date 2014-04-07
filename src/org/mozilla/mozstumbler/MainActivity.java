@@ -459,6 +459,7 @@ public final class MainActivity extends FragmentActivity {
     private void stopScanning() {
         mConnectionRemote.stopForeground(true);
         mConnectionRemote.stopScanning();
+        SyncUtils.TriggerRefresh(false);
     }
 
     private Notification buildNotification() {

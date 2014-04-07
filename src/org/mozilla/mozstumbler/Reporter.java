@@ -8,8 +8,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.location.Location;
 import android.net.wifi.ScanResult;
-import android.os.Handler;
-import android.os.Looper;
 import android.util.Log;
 
 import org.mozilla.mozstumbler.cellscanner.CellInfo;
@@ -53,12 +51,11 @@ final class Reporter extends BroadcastReceiver {
     private final Map<String, ScanResult> mWifiData = new HashMap<String, ScanResult>();
     private final Map<String, CellInfo> mCellData = new HashMap<String, CellInfo>();
 
-    Reporter(Context context, Looper looper) {
+    Reporter(Context context) {
         mContext = context;
         mContentResolver = context.getContentResolver();
         resetData();
-        Handler handler = new Handler(looper);
-        mContext.registerReceiver(this, new IntentFilter(ScannerService.MESSAGE_TOPIC), null, handler);
+        mContext.registerReceiver(this, new IntentFilter(ScannerService.MESSAGE_TOPIC));
     }
 
     private void resetData() {

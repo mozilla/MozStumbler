@@ -189,7 +189,7 @@ public final class ScannerService extends Service {
         mLooper = new LooperThread();
         mLooper.start();
         mLooper.waitUntilReady();
-        mReporter = new Reporter(this, mLooper.getLooper());
+        //mReporter = new Reporter(this, mLooper.getLooper());
     }
 
     @Override

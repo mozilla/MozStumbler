@@ -1,7 +1,5 @@
 package org.mozilla.mozstumbler;
 
-import org.mozilla.mozstumbler.sync.SyncUtils;
-
 import android.app.AlarmManager;
 import android.app.Service;
 import android.content.BroadcastReceiver;
@@ -23,7 +21,6 @@ public final class StumblerService extends Service {
     private static final String LOGTAG          = StumblerService.class.getName();
     private Scanner             mScanner;
     private Reporter            mReporter;
-    private LooperThread        mLooper;
     private boolean             mIsBound;
     private final IBinder       mBinder         = new StumblerBinder();
 
@@ -42,28 +39,16 @@ public final class StumblerService extends Service {
             return;
         }
 
-        mLooper.post(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    mScanner.startScanning();
-                } catch (Exception e) {
-                    Log.d(LOGTAG, "looper shat itself : " + e);
-                }
-            }
-        });
+        mScanner.startScanning();
     }
 
     public void stopScanning() {
         if (mScanner.isScanning()) {
-            mLooper.post(new Runnable() {
-                @Override
-                public void run() {
-                    mScanner.stopScanning();
-                    mReporter.flush();
-                    SyncUtils.TriggerRefresh(false);
-                }
-            });
+            mScanner.stopScanning();
+            mReporter.flush();
+            if (mIsBound == false) {
+                stopSelf();
+            }
         }
     }
 
@@ -107,33 +92,13 @@ public final class StumblerService extends Service {
         return mScanner.isGeofenced();
     }
 
-
-    private final class LooperThread extends HandlerThread {
-        private Handler mHandler;
-
-        public LooperThread() {
-            super("StumblerService");
-        }
-
-        public synchronized void waitUntilReady() {
-            mHandler = new Handler(getLooper());
-        }
-
-        void post(Runnable runnable) {
-            mHandler.post(runnable);
-        }
-    }
-
     @Override
     public void onCreate() {
         super.onCreate();
         Log.d(LOGTAG, "onCreate");
 
         mScanner = new Scanner(this);
-        mLooper = new LooperThread();
-        mLooper.start();
-        mLooper.waitUntilReady();
-        mReporter = new Reporter(this, mLooper.getLooper());
+        mReporter = new Reporter(this);
     }
 
     @Override
@@ -141,25 +106,8 @@ public final class StumblerService extends Service {
         super.onDestroy();
         Log.d(LOGTAG, "onDestroy");
 
-        // Quit the handler thread's looper safely.
-        try {
-            mLooper.post(new Runnable() {
-                @Override
-                public void run() {
-                    mReporter.shutdown();
-                    mLooper.quit();
-                }
-            });
-            Looper looper = mLooper.getLooper();
-            if (looper != null) {
-                looper.getThread().join(5000);
-            }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
+        mReporter.shutdown();
         mReporter = null;
-        mLooper = null;
         mScanner = null;
     }
 

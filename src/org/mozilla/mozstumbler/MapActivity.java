@@ -62,8 +62,7 @@ public final class MapActivity extends Activity {
 
     private MapView mMap;
     private AccuracyCircleOverlay mAccuracyOverlay;
-    private ItemizedOverlay<OverlayItem> mPointOverlay;
-    private AccuracyCircleOverlay mGPSAccuracyOverlay;
+    private ItemizedOverlay<OverlayItem> mGPSPointOverlay;
 
     private ReporterBroadcastReceiver mReceiver;
 
@@ -76,7 +75,6 @@ public final class MapActivity extends Activity {
         public void reset()
         {
             mMap.getOverlays().remove(mAccuracyOverlay);
-            mMap.getOverlays().remove(mPointOverlay);
             mDone = false;
         }
 
@@ -200,9 +198,7 @@ public final class MapActivity extends Activity {
         }
         mMap.getController().setZoom(zoomLevel);
         mMap.getController().animateTo(point);
-        mPointOverlay = getMapMarker(point);
         mAccuracyOverlay = new AccuracyCircleOverlay(MapActivity.this, point, accuracy);
-        mMap.getOverlays().add(mPointOverlay); // You are here!
         mMap.getOverlays().add(mAccuracyOverlay);
         mMap.invalidate();
     }
@@ -210,7 +206,6 @@ public final class MapActivity extends Activity {
     private static class AccuracyCircleOverlay extends SafeDrawOverlay {
         private GeoPoint mPoint;
         private float mAccuracy;
-        private int[] mARGB = {0, 100, 100, 255};
 
         public AccuracyCircleOverlay(Context ctx, GeoPoint point, float accuracy) {
             super(ctx);
@@ -218,12 +213,7 @@ public final class MapActivity extends Activity {
             this.mPoint = point;
             this.mAccuracy = accuracy;
         }
-        protected void setARGB(int a, int r, int g, int b) {
-            mARGB[0] = a;
-            mARGB[1] = r;
-            mARGB[2] = g;
-            mARGB[3] = b;
-        }
+
         protected void drawSafe(ISafeCanvas c, MapView osmv, boolean shadow) {
             if (shadow || mPoint == null) {
                 return;
@@ -232,7 +222,7 @@ public final class MapActivity extends Activity {
             Point center = pj.toPixels(mPoint, null);
             float radius = pj.metersToEquatorPixels(mAccuracy);
             SafePaint circle = new SafePaint();
-            circle.setARGB(mARGB[0],mARGB[1],mARGB[2],mARGB[3]);
+            circle.setARGB(0, 100, 100, 255);
 
             // Fill
             circle.setAlpha(40);
@@ -287,24 +277,23 @@ public final class MapActivity extends Activity {
 
         @Override
         protected void onPreExecute() {
-            mMap.getOverlays().remove(mGPSAccuracyOverlay);
-            mGPSAccuracyOverlay = null;
+            mMap.getOverlays().remove(mGPSPointOverlay);
+            mGPSPointOverlay = null;
         }
 
         @Override
         public Void doInBackground(Location... params) {
             if (params[0] != null) {
                 GeoPoint gpsPoint = new GeoPoint(params[0]);
-                mGPSAccuracyOverlay = new AccuracyCircleOverlay(MapActivity.this, gpsPoint, params[0].getAccuracy());
-                mGPSAccuracyOverlay.setARGB(0,50,50,255);
+                mGPSPointOverlay = getMapMarker(gpsPoint);
             }
             return null;
         }
 
         @Override
         protected void onPostExecute(Void v) {
-            if (mGPSAccuracyOverlay != null) {
-                mMap.getOverlays().add(mGPSAccuracyOverlay);
+            if (mGPSPointOverlay != null) {
+                mMap.getOverlays().add(mGPSPointOverlay);
             }
         }
     }

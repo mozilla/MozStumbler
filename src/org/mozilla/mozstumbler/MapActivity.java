@@ -16,6 +16,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.Window;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import java.lang.Void;
@@ -54,6 +56,8 @@ public final class MapActivity extends Activity {
     private static final String STATUS_FAILED       = "failed";
     private static final String COVERAGE_URL        = "https://location.services.mozilla.com/tiles/";
     private static final int MENU_REFRESH           = 1;
+    private static final int MAX_ZOOM_NEEDED        = 17;
+    private static final float ZOOM_SCALE_FACT      = -0.0002f;
 
     private MapView mMap;
     private AccuracyCircleOverlay mAccuracyOverlay;
@@ -103,6 +107,7 @@ public final class MapActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         setContentView(R.layout.activity_map);
 
         mWifiData = Collections.emptyList();
@@ -140,6 +145,7 @@ public final class MapActivity extends Activity {
             case MENU_REFRESH:
                 if (mReceiver != null) {
                     mReceiver.reset();
+                    setProgressBarIndeterminateVisibility(true);
                     return true;
                 }
                 return false;
@@ -175,7 +181,13 @@ public final class MapActivity extends Activity {
 
     private void positionMapAt(float lat, float lon, float accuracy) {
         GeoPoint point = new GeoPoint(lat, lon);
-        mMap.getController().setZoom(16);
+        int zoomLevel = Math.round(accuracy*ZOOM_SCALE_FACT+MAX_ZOOM_NEEDED);
+        if (zoomLevel < 0) {
+            zoomLevel = 0;
+        } else if (zoomLevel > MAX_ZOOM_NEEDED) {
+            zoomLevel = MAX_ZOOM_NEEDED; // this code will only execute if accuracy is negative, which "should" never happen...
+        }
+        mMap.getController().setZoom(zoomLevel);
         mMap.getController().animateTo(point);
         mPointOverlay = getMapMarker(point);
         mAccuracyOverlay = new AccuracyCircleOverlay(MapActivity.this, point, accuracy);
@@ -322,6 +334,7 @@ public final class MapActivity extends Activity {
                         Toast.LENGTH_LONG).show();
                 Log.e(LOGTAG, "", new IllegalStateException("mStatus=" + mStatus));
             }
+            setProgressBarIndeterminateVisibility(false);
         }
     }
 }

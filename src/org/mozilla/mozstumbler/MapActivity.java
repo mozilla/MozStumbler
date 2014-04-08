@@ -9,6 +9,7 @@ import android.content.IntentFilter;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
+import android.location.Location;
 import android.net.wifi.ScanResult;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -62,6 +63,8 @@ public final class MapActivity extends Activity {
     private MapView mMap;
     private AccuracyCircleOverlay mAccuracyOverlay;
     private ItemizedOverlay<OverlayItem> mPointOverlay;
+    private AccuracyCircleOverlay mGPSAccuracyOverlay;
+    private ItemizedOverlay<OverlayItem> mGPSPointOverlay;
 
     private ReporterBroadcastReceiver mReceiver;
 
@@ -80,10 +83,6 @@ public final class MapActivity extends Activity {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (mDone) {
-                return;
-            }
-
             String action = intent.getAction();
             if (!action.equals(ScannerService.MESSAGE_TOPIC)) {
                 Log.e(LOGTAG, "Received an unknown intent: " + action);
@@ -91,6 +90,19 @@ public final class MapActivity extends Activity {
             }
 
             String subject = intent.getStringExtra(Intent.EXTRA_SUBJECT);
+
+            if (GPSScanner.GPS_SCANNER_EXTRA_SUBJECT.equals(subject)) {
+                Location location = intent.getParcelableExtra(GPSScanner.GPS_SCANNER_ARG_LOCATION);
+                if (location != null) {
+                    new GetGPSAndMapItTask().execute(location);
+                }
+                return;
+            }
+
+            if (mDone) {
+                return;
+            }
+
             if (WifiScanner.WIFI_SCANNER_EXTRA_SUBJECT.equals(subject)) {
                 mWifiData = intent.getParcelableArrayListExtra(WifiScanner.WIFI_SCANNER_ARG_SCAN_RESULTS);
             } else if (CellScanner.CELL_SCANNER_EXTRA_SUBJECT.equals(subject)) {
@@ -266,7 +278,41 @@ public final class MapActivity extends Activity {
             mReceiver = null;
         }
     }
+    private final class GetGPSAndMapItTask extends AsyncTask<Location, Void, Void> {
 
+        @Override
+        protected void onPreExecute() {
+            mMap.getOverlays().remove(mGPSAccuracyOverlay);
+            mMap.getOverlays().remove(mGPSPointOverlay);
+            mGPSAccuracyOverlay = null;
+            mGPSPointOverlay = null;
+        }
+
+        @Override
+        public Void doInBackground(Location... params) {
+
+            if (params[0] != null) {
+                GeoPoint gpsPoint = new GeoPoint(params[0]);
+                mGPSPointOverlay = getMapMarker(gpsPoint);
+                mGPSPointOverlay.getItem(0).setMarker(MapActivity.this.getResources().getDrawable(android.R.drawable.ic_menu_mylocation));
+                mGPSAccuracyOverlay = new AccuracyCircleOverlay(MapActivity.this, gpsPoint, params[0].getAccuracy());
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void v) {
+            if (mGPSPointOverlay != null) {
+                mMap.getOverlays().add(mGPSPointOverlay);
+            }
+            else {
+                return;
+            }
+            if (mGPSAccuracyOverlay != null) {
+                mMap.getOverlays().add(mGPSAccuracyOverlay);
+            }
+        }
+    }
     private final class GetLocationAndMapItTask extends AsyncTask<String, Void, String> {
         private String mStatus="";
         private float mLat = 0;

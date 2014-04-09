@@ -50,9 +50,7 @@ final class Reporter extends BroadcastReceiver {
     private final ContentResolver mContentResolver;
     private final int             mPhoneType;
 
-    private Location            mGpsPosition;
-    private final Map<String, ScanResult> mWifiData = new HashMap<String, ScanResult>();
-    private final Map<String, CellInfo> mCellData = new HashMap<String, CellInfo>();
+    private StumblerBundle     mBundle;
 
     Reporter(Context context) {
         mContext = context;
@@ -65,9 +63,7 @@ final class Reporter extends BroadcastReceiver {
     }
 
     private void resetData() {
-        mWifiData.clear();
-        mCellData.clear();
-        mGpsPosition = null;
+        mBundle = null;
     }
 
     void flush() {
@@ -92,7 +88,9 @@ final class Reporter extends BroadcastReceiver {
         long time = intent.getLongExtra("time", System.currentTimeMillis());
         String subject = intent.getStringExtra(Intent.EXTRA_SUBJECT);
 
-        if (mGpsPosition != null && Math.abs(time - mGpsPosition.getTime()) > REPORTER_WINDOW) {
+        Location currentPosition = mBundle != null ? mBundle.getGpsPosition() : null;
+
+        if (currentPosition != null && Math.abs(time - currentPosition.getTime()) > REPORTER_WINDOW) {
             reportCollectedLocation();
         }
 
@@ -104,84 +102,108 @@ final class Reporter extends BroadcastReceiver {
             putCellResults(results);
         } else if (GPSScanner.GPS_SCANNER_EXTRA_SUBJECT.equals(subject)) {
             reportCollectedLocation();
-            mGpsPosition = intent.getParcelableExtra(GPSScanner.GPS_SCANNER_ARG_LOCATION);
+            Location newPosition = intent.getParcelableExtra(GPSScanner.GPS_SCANNER_ARG_LOCATION);
+            mBundle = newPosition != null ? new StumblerBundle(newPosition) : mBundle;
         } else {
             Log.d(LOGTAG, "Intent ignored with Subject: " + subject);
             return; // Intent not aimed at the Reporter (it is possibly for UI instead)
         }
 
-        if (mGpsPosition != null &&
-                (mWifiData.size() > WIFI_COUNT_WATERMARK || mCellData.size() > CELLS_COUNT_WATERMARK)) {
+        if (mBundle != null &&
+            (mBundle.getWifiData().size() > WIFI_COUNT_WATERMARK ||
+             mBundle.getCellData().size() > CELLS_COUNT_WATERMARK)) {
             reportCollectedLocation();
         }
     }
 
     private void putWifiResults(List<ScanResult> results) {
-        if (mGpsPosition == null) {
+        if (mBundle == null) {
             return;
         }
+
+        Map<String, ScanResult> currentWifiData = mBundle.getWifiData();
         for (ScanResult result : results) {
             String key = result.BSSID;
-            if (!mWifiData.containsKey(key)) {
-                mWifiData.put(key, result);
+            if (!currentWifiData.containsKey(key)) {
+                currentWifiData.put(key, result);
             }
         }
     }
 
     private void putCellResults(List<CellInfo> cells) {
-        if (mGpsPosition == null) {
+        if (mBundle == null) {
             return;
         }
+
+        Map<String, CellInfo> currentCellData = mBundle.getCellData();
         for (CellInfo result : cells) {
             String key = result.getCellIdentity();
-            if (!mCellData.containsKey(key)) {
-                mCellData.put(key, result);
+            if (!currentCellData.containsKey(key)) {
+                currentCellData.put(key, result);
             }
         }
     }
 
     private void reportCollectedLocation() {
-        if (mGpsPosition == null) {
+        if (mBundle == null) {
             return;
         }
 
-        Collection<CellInfo> cells = mCellData.values();
-        Collection<ScanResult> wifis = mWifiData.values();
+        Location position = mBundle.getGpsPosition();
+        Collection<CellInfo> cells = mBundle.getCellData().values();
+        Collection<ScanResult> wifis = mBundle.getWifiData().values();
 
+        if (!cells.isEmpty()) {
+            Map<String, List<CellInfo>> groupByRadio = new HashMap<String, List<CellInfo>>();
+            for (CellInfo cell : cells) {
+                List<CellInfo> list;
+                String radio = cell.getRadio();
+                list = groupByRadio.get(radio);
+                if (list == null) {
+                    list = new ArrayList<CellInfo>();
+                    groupByRadio.put(radio, list);
+                }
+                list.add(cell);
+            }
+            for (String radio : groupByRadio.keySet()) {
+                reportCollectedLocation(position, wifis, radio, groupByRadio.get(radio));
+            }
+        }
 
+        if (!wifis.isEmpty()) {
+            Collection<CellInfo> emptyList = Collections.emptyList();
+            reportCollectedLocation(position, wifis, "", emptyList);
+        }
+
+        position.setTime(System.currentTimeMillis());
+    }
+
+    private void reportCollectedLocation(Location gpsPosition, Collection<ScanResult> wifiInfo, String radioType,
+                                         Collection<CellInfo> cellInfo) {
+        if (gpsPosition == null) {
+            return;
+        }
         ContentValues values = new ContentValues(10);
-        values.put(Reports.TIME, mGpsPosition.getTime());
-        values.put(Reports.LAT, Math.floor(mGpsPosition.getLatitude() * 1.0E6) / 1.0E6);
-        values.put(Reports.LON, Math.floor(mGpsPosition.getLongitude() * 1.0E6) / 1.0E6);
+        values.put(Reports.TIME, gpsPosition.getTime());
+        values.put(Reports.LAT, Math.floor(gpsPosition.getLatitude() * 1.0E6) / 1.0E6);
+        values.put(Reports.LON, Math.floor(gpsPosition.getLongitude() * 1.0E6) / 1.0E6);
 
-        if (mGpsPosition.hasAltitude()) {
-            values.put(Reports.ALTITUDE, Math.round(mGpsPosition.getAltitude()));
+        if (gpsPosition.hasAltitude()) {
+            values.put(Reports.ALTITUDE, Math.round(gpsPosition.getAltitude()));
         }
-
-        if (mGpsPosition.hasAccuracy()) {
-            values.put(Reports.ACCURACY, (int) Math.ceil(mGpsPosition.getAccuracy()));
-        }
-
-
-        // only upload cell data if it's GSM or CDMA
-        if (mPhoneType == TelephonyManager.PHONE_TYPE_GSM) {
-            values.put(Reports.RADIO, "gsm");
-        } else if (mPhoneType == TelephonyManager.PHONE_TYPE_CDMA) {
-            values.put(Reports.RADIO, "cdma");
-        } else {
-            values.put(Reports.RADIO, "");
+        if (gpsPosition.hasAccuracy()) {
+            values.put(Reports.ACCURACY, (int) Math.ceil(gpsPosition.getAccuracy()));
         }
 
         JSONArray cellJSON = new JSONArray();
-        for (CellInfo cell : cells) {
+        for (CellInfo cell : cellInfo) {
             cellJSON.put(cell.toJSONObject());
         }
-
         values.put(Reports.CELL, cellJSON.toString());
         values.put(Reports.CELL_COUNT, cellJSON.length());
 
         JSONArray wifiJSON = new JSONArray();
-        for (ScanResult wifi : wifis) {
+        for (ScanResult wifi : wifiInfo) {
             try {
                 JSONObject jsonItem = new JSONObject();
                 jsonItem.put("key", wifi.BSSID);
@@ -192,15 +214,10 @@ final class Reporter extends BroadcastReceiver {
                 Log.w(LOGTAG, "JSON exception while serializing wifi data: " + exc);
             }
         }
-        mCellData.clear();
-        mWifiData.clear();
         values.put(Reports.WIFI, wifiJSON.toString());
         values.put(Reports.WIFI_COUNT, wifiJSON.length());
 
         mContentResolver.insert(Reports.CONTENT_URI, values);
-        if (mGpsPosition != null) {
-            mGpsPosition.setTime(System.currentTimeMillis());
-        }
     }
 }
 

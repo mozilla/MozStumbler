@@ -143,6 +143,12 @@ final class Reporter extends BroadcastReceiver {
             return;
         }
 
+        /*
+        Intent broadcast = new Intent(StumblerService.MESSAGE_TOPIC);
+        broadcast.putExtra("stumblerBundle", mBundle);
+        mContext.sendBroadcast(broadcast);
+        */
+
         Location position = mBundle.getGpsPosition();
         Collection<CellInfo> cells = mBundle.getCellData().values();
         Collection<ScanResult> wifis = mBundle.getWifiData().values();

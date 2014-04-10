@@ -58,6 +58,13 @@
             android:name=".AboutActivity" >
         </activity>
 
+        <receiver android:name=".TurnOffReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BATTERY_LOW"/>
+                <action android:name="org.mozilla.mozstumbler.turnMeOff"/>
+            </intent-filter>
+        </receiver>
+
         <service
             android:name=".ScannerService"
             android:icon="@drawable/ic_launcher"

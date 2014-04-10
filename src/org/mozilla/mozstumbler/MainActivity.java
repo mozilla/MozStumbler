@@ -48,7 +48,6 @@ public final class MainActivity extends FragmentActivity {
     private StumblerService          mConnectionRemote;
     private ServiceConnection        mConnection;
     private ServiceBroadcastReceiver mReceiver;
-    private BroadcastReceiver        mTurnOffReceiver;
     private int                      mGpsFixes;
     private int                      mGpsSats;
     private boolean                  mNeedsUpdate = false;
@@ -200,20 +199,6 @@ public final class MainActivity extends FragmentActivity {
                 Log.d(LOGTAG, "Service disconnected", new Exception());
             }
         };
-
-        mTurnOffReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                Log.d(LOGTAG, "Got a request to turn off!");
-                if (mConnectionRemote.isScanning()) {
-                    stopScanning();
-                }
-            }
-        };
-
-        IntentFilter intentFilter = new IntentFilter(Intent.ACTION_BATTERY_LOW);
-        intentFilter.addAction(INTENT_TURN_OFF);
-        registerReceiver(mTurnOffReceiver, intentFilter);
 
         Intent intent = new Intent(this, StumblerService.class);
         startService(intent);

@@ -78,6 +78,8 @@
     <string name="geofencing_explain">Geofencing will be set at the next valid location obtained during scanning.</string>
     <string name="geofencing_desc">MozStumbler will pause scanning within 1 km of this lat/long position.</string>
     <string name="geofencing_on">Geofencing @ %1$.3f, %2$.3f</string>
-    <string name="geofencing_enable">Geofence this location</string>-->
+    <string name="geofencing_enable">Geofence this location</string>
+
+    <string name="refresh_map">Refresh location</string>-->
 
 </resources>

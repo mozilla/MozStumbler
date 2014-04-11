@@ -79,5 +79,7 @@
 
     <string name="wifi_scan_always_title">همیشه وای‌فای را اسکن کن</string>
     <string name="wifi_scan_always_summary">اسکن نقاط دسترسی وای‌فای حتی هنگامی که وای‌فای خاموش شده‌است</string>
+    
+    <!--missing translation <string name="refresh_map">Refresh location</string>-->
 
 </resources>

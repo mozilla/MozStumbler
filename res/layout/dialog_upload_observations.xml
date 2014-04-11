@@ -12,7 +12,9 @@
         android:paddingTop="4dp"
         android:paddingBottom="4dp"
         android:paddingLeft="16dp"
-        android:paddingRight="16dp" >
+        android:paddingStart="16dp"
+        android:paddingRight="16dp"
+        android:paddingEnd="16dp" >
 
         <TextView
             android:id="@+id/sent_header"
@@ -20,6 +22,7 @@
             android:layout_height="wrap_content"
             android:text="@string/upload_observations_sent_title"
             android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
             android:textAppearance="?android:textAppearanceMedium" />
 
         <TextView
@@ -28,6 +31,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/sent_header"
             android:layout_toLeftOf="@+id/last_upload_time_value"
+            android:layout_toStartOf="@+id/last_upload_time_value"
             android:text="@string/upload_observations_last_upload_time_title" />
 
         <TextView
@@ -36,7 +40,9 @@
             android:layout_height="wrap_content"
             android:layout_alignBottom="@id/last_upload_time_title"
             android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
             android:layout_marginLeft="4sp"
+            android:layout_marginStart="4sp"
             android:minWidth="64dp"
             tools:text="16.02.14 13:07" />
 
@@ -45,8 +51,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
             android:layout_below="@id/last_upload_time_title"
             android:layout_alignRight="@id/last_upload_time_title"
+            android:layout_alignEnd="@id/last_upload_time_title"
             android:text="@string/upload_observations_observations_sent_title" />
 
         <TextView
@@ -54,8 +62,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toRightOf="@id/observations_sent_title"
+            android:layout_toEndOf="@id/observations_sent_title"
             android:layout_alignBottom="@id/observations_sent_title"
             android:layout_alignLeft="@id/last_upload_time_value"
+            android:layout_alignStart="@id/last_upload_time_value"
             tools:text="100" />
 
         <TextView
@@ -63,8 +73,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
             android:layout_below="@id/observations_sent_title"
             android:layout_alignRight="@id/last_upload_time_title"
+            android:layout_alignEnd="@id/last_upload_time_title"
             android:text="@string/upload_observations_cells_sent_title" />
 
         <TextView
@@ -72,8 +84,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toRightOf="@id/observations_sent_title"
+            android:layout_toEndOf="@id/observations_sent_title"
             android:layout_alignBottom="@id/cells_sent_title"
             android:layout_alignLeft="@id/last_upload_time_value"
+            android:layout_alignStart="@id/last_upload_time_value"
             tools:text="50" />
 
         <TextView
@@ -81,8 +95,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
             android:layout_below="@id/cells_sent_title"
             android:layout_alignRight="@id/last_upload_time_title"
+            android:layout_alignEnd="@id/last_upload_time_title"
             android:text="@string/upload_observations_wifis_sent_title" />
 
         <TextView
@@ -90,8 +106,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toRightOf="@id/wifis_sent_title"
+            android:layout_toEndOf="@id/wifis_sent_title"
             android:layout_alignBottom="@id/wifis_sent_title"
             android:layout_alignLeft="@id/last_upload_time_value"
+            android:layout_alignStart="@id/last_upload_time_value"
             tools:text="500" />
 
         <TextView
@@ -99,6 +117,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
             android:layout_below="@id/wifis_sent_title"
             android:layout_marginTop="4dp"
             android:text="@string/upload_observations_in_queue_title"
@@ -109,8 +128,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
             android:layout_below="@id/queued_header"
             android:layout_alignRight="@id/last_upload_time_title"
+            android:layout_alignEnd="@id/last_upload_time_title"
             android:text="@string/upload_observations_observations_queued_title" />
 
         <TextView
@@ -118,8 +139,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toRightOf="@id/observations_queued_title"
+            android:layout_toEndOf="@id/observations_queued_title"
             android:layout_alignBottom="@id/observations_queued_title"
             android:layout_alignLeft="@id/last_upload_time_value"
+            android:layout_alignStart="@id/last_upload_time_value"
             tools:text="50" />
 
         <TextView
@@ -127,8 +150,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
             android:layout_below="@id/observations_queued_title"
             android:layout_alignRight="@id/last_upload_time_title"
+            android:layout_alignEnd="@id/last_upload_time_title"
             android:text="@string/upload_observations_cells_queued_title" />
 
         <TextView
@@ -136,8 +161,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toRightOf="@id/cells_queued_title"
+            android:layout_toEndOf="@id/cells_queued_title"
             android:layout_alignBottom="@id/cells_queued_title"
             android:layout_alignLeft="@id/last_upload_time_value"
+            android:layout_alignStart="@id/last_upload_time_value"
             tools:text="10" />
 
         <TextView
@@ -145,8 +172,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
             android:layout_below="@id/cells_queued_title"
             android:layout_alignRight="@id/last_upload_time_title"
+            android:layout_alignEnd="@id/last_upload_time_title"
             android:text="@string/upload_observations_wifis_queued_title" />
 
         <TextView
@@ -154,8 +183,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toRightOf="@id/wifis_queued_title"
+            android:layout_toEndOf="@id/wifis_queued_title"
             android:layout_alignBottom="@id/wifis_queued_title"
             android:layout_alignLeft="@id/last_upload_time_value"
+            android:layout_alignStart="@id/last_upload_time_value"
             tools:text="50" />
 
         <Button
@@ -164,6 +195,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/wifis_queued_title"
             android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
             android:layout_marginTop="8dp"
             android:enabled="false"
             android:text="@string/upload_observations_button" />
@@ -174,6 +206,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/wifis_queued_title"
             android:layout_alignLeft="@id/last_upload_time_value"
+            android:layout_alignStart="@id/last_upload_time_value"
             android:layout_marginTop="8dp"
             android:visibility="invisible"
             tools:visibility="visible" />

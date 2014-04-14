@@ -27,7 +27,7 @@ public final class ScannerService extends Service {
     private static final String LOGTAG          = ScannerService.class.getName();
     private static final int    NOTIFICATION_ID = 1;
     private static final int    WAKE_TIMEOUT    = 5 * 1000;
-    private static final String INTENT_TURN_OFF = MESSAGE_TOPIC + ".turnMeOff";
+    private static final String INTENT_TURN_OFF = MESSAGE_TOPIC + ".TURN_ME_OFF";
     private Scanner             mScanner;
     private Reporter            mReporter;
     private LooperThread        mLooper;

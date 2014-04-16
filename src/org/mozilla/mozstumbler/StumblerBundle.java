@@ -5,14 +5,20 @@ import android.net.wifi.ScanResult;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.os.Parcel;
+import android.telephony.TelephonyManager;
 
 import org.mozilla.mozstumbler.cellscanner.CellInfo;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
 final class StumblerBundle implements Parcelable {
+    private final int mPhoneType;
     private final Location mGpsPosition;
     private final Map<String, ScanResult> mWifiData;
     private final Map<String, CellInfo> mCellData;
@@ -39,6 +45,7 @@ final class StumblerBundle implements Parcelable {
         out.writeBundle(wifiBundle);
         out.writeBundle(cellBundle);
         out.writeParcelable(mGpsPosition, 0);
+        out.writeInt(mPhoneType);
     }
 
     public static final Parcelable.Creator<StumblerBundle> CREATOR
@@ -72,10 +79,12 @@ final class StumblerBundle implements Parcelable {
         }
 
         mGpsPosition = in.readParcelable(Location.class.getClassLoader());
+        mPhoneType = in.readInt();
     }
 
-    public StumblerBundle(Location position) {
+    public StumblerBundle(Location position, int phoneType) {
         mGpsPosition = position;
+        mPhoneType = phoneType;
         mWifiData = new HashMap<String, ScanResult>();
         mCellData = new HashMap<String, CellInfo>();
     }
@@ -90,5 +99,44 @@ final class StumblerBundle implements Parcelable {
 
     public Map<String, CellInfo> getCellData() {
         return mCellData;
+    }
+
+    public JSONObject toMLSJSON() throws JSONException {
+        JSONObject item = new JSONObject();
+
+        item.put("time", mGpsPosition.getTime());
+        item.put("lat", Math.floor(mGpsPosition.getLatitude() * 1.0E6) / 1.0E6);
+        item.put("lon", Math.floor(mGpsPosition.getLongitude() * 1.0E6) / 1.0E6);
+
+        if (mGpsPosition.hasAccuracy()) {
+            item.put("accuracy", (int) Math.ceil(mGpsPosition.getAccuracy()));
+        }
+
+        if (mGpsPosition.hasAltitude()) {
+            item.put("altitude", Math.round(mGpsPosition.getAltitude()));
+        }
+
+        if (mPhoneType == TelephonyManager.PHONE_TYPE_GSM ||
+            mPhoneType == TelephonyManager.PHONE_TYPE_CDMA) {
+
+            item.put("radio", (mPhoneType == TelephonyManager.PHONE_TYPE_GSM) ? "gsm" : "cdma");
+            JSONArray cells = new JSONArray();
+            item.put("cell", cells);
+            for (CellInfo c : mCellData.values()) {
+               cells.put(c.toJSONObject());
+            }
+        }
+
+        JSONArray wifis = new JSONArray();
+        item.put("wifi", wifis);
+        for (ScanResult s : mWifiData.values()) {
+            JSONObject wifiEntry = new JSONObject();
+            wifiEntry.put("key", s.BSSID);
+            wifiEntry.put("frequency", s.frequency);
+            wifiEntry.put("signal", s.level);
+            wifis.put(wifiEntry);
+        }
+
+        return item;
     }
 }

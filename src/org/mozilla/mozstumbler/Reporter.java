@@ -58,6 +58,7 @@ final class Reporter extends BroadcastReceiver {
         resetData();
         LocalBroadcastManager.getInstance(mContext).registerReceiver(this,
                 new IntentFilter(ScannerService.MESSAGE_TOPIC));
+
         TelephonyManager tm = (TelephonyManager) mContext.getSystemService(Context.TELEPHONY_SERVICE);
         mPhoneType = tm.getPhoneType();
     }
@@ -103,7 +104,7 @@ final class Reporter extends BroadcastReceiver {
         } else if (GPSScanner.GPS_SCANNER_EXTRA_SUBJECT.equals(subject)) {
             reportCollectedLocation();
             Location newPosition = intent.getParcelableExtra(GPSScanner.GPS_SCANNER_ARG_LOCATION);
-            mBundle = newPosition != null ? new StumblerBundle(newPosition) : mBundle;
+            mBundle = newPosition != null ? new StumblerBundle(newPosition, mPhoneType) : mBundle;
         } else {
             Log.d(LOGTAG, "Intent ignored with Subject: " + subject);
             return; // Intent not aimed at the Reporter (it is possibly for UI instead)
@@ -155,33 +156,14 @@ final class Reporter extends BroadcastReceiver {
         mContext.sendBroadcast(broadcast);
         */
 
-        Location position = mBundle.getGpsPosition();
-        Collection<CellInfo> cells = mBundle.getCellData().values();
-        Collection<ScanResult> wifis = mBundle.getWifiData().values();
-
-        if (!cells.isEmpty()) {
-            Map<String, List<CellInfo>> groupByRadio = new HashMap<String, List<CellInfo>>();
-            for (CellInfo cell : cells) {
-                List<CellInfo> list;
-                String radio = cell.getRadio();
-                list = groupByRadio.get(radio);
-                if (list == null) {
-                    list = new ArrayList<CellInfo>();
-                    groupByRadio.put(radio, list);
-                }
-                list.add(cell);
-            }
-            for (String radio : groupByRadio.keySet()) {
-                reportCollectedLocation(position, wifis, radio, groupByRadio.get(radio));
-            }
+        try {
+            JSONObject mlsObject = mBundle.toMLSJSON();
+            Log.d(LOGTAG, mlsObject.toString());
+            mBundle.getGpsPosition().setTime(System.currentTimeMillis());
+        } catch (JSONException e) {
+            Log.w(LOGTAG, "JSON exception: ", e);
+            // FIXME clear mBundle?
         }
-
-        if (!wifis.isEmpty()) {
-            Collection<CellInfo> emptyList = Collections.emptyList();
-            reportCollectedLocation(position, wifis, "", emptyList);
-        }
-
-        position.setTime(System.currentTimeMillis());
     }
 
     private void reportCollectedLocation(Location gpsPosition, Collection<ScanResult> wifiInfo, String radioType,
@@ -189,6 +171,7 @@ final class Reporter extends BroadcastReceiver {
         if (gpsPosition == null) {
             return;
         }
+
         ContentValues values = new ContentValues(10);
         values.put(Reports.TIME, gpsPosition.getTime());
         values.put(Reports.LAT, Math.floor(gpsPosition.getLatitude() * 1.0E6) / 1.0E6);

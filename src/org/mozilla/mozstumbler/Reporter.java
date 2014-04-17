@@ -1,8 +1,6 @@
 package org.mozilla.mozstumbler;
 
 import android.content.BroadcastReceiver;
-import android.content.ContentResolver;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -14,18 +12,12 @@ import android.util.Log;
 import org.mozilla.mozstumbler.cellscanner.CellInfo;
 import org.mozilla.mozstumbler.cellscanner.CellScanner;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static org.mozilla.mozstumbler.provider.DatabaseContract.*;
 
 final class Reporter extends BroadcastReceiver {
     private static final String LOGTAG          = Reporter.class.getName();
@@ -46,14 +38,12 @@ final class Reporter extends BroadcastReceiver {
     private static final int CELLS_COUNT_WATERMARK = 50;
 
     private final Context       mContext;
-    private final ContentResolver mContentResolver;
     private final int             mPhoneType;
 
     private StumblerBundle     mBundle;
 
     Reporter(Context context) {
         mContext = context;
-        mContentResolver = context.getContentResolver();
         resetData();
         mContext.registerReceiver(this, new IntentFilter(ScannerService.MESSAGE_TOPIC));
 
@@ -148,62 +138,11 @@ final class Reporter extends BroadcastReceiver {
             return;
         }
 
-        /*
         Intent broadcast = new Intent(StumblerService.MESSAGE_TOPIC);
-        broadcast.putExtra("stumblerBundle", mBundle);
+        broadcast.putExtra(Intent.EXTRA_SUBJECT, "StumblerBundle");
+        broadcast.putExtra("StumblerBundle", mBundle);
         mContext.sendBroadcast(broadcast);
-        */
 
-        try {
-            JSONObject mlsObject = mBundle.toMLSJSON();
-            Log.d(LOGTAG, mlsObject.toString());
-            mBundle.getGpsPosition().setTime(System.currentTimeMillis());
-        } catch (JSONException e) {
-            Log.w(LOGTAG, "JSON exception: ", e);
-            // FIXME clear mBundle?
-        }
-    }
-
-    private void reportCollectedLocation(Location gpsPosition, Collection<ScanResult> wifiInfo, String radioType,
-                                 Collection<CellInfo> cellInfo) {
-        if (gpsPosition == null) {
-            return;
-        }
-
-        ContentValues values = new ContentValues(10);
-        values.put(Reports.TIME, gpsPosition.getTime());
-        values.put(Reports.LAT, Math.floor(gpsPosition.getLatitude() * 1.0E6) / 1.0E6);
-        values.put(Reports.LON, Math.floor(gpsPosition.getLongitude() * 1.0E6) / 1.0E6);
-        if (gpsPosition.hasAltitude()) {
-            values.put(Reports.ALTITUDE, Math.round(gpsPosition.getAltitude()));
-        }
-        if (gpsPosition.hasAccuracy()) {
-            values.put(Reports.ACCURACY, (int) Math.ceil(gpsPosition.getAccuracy()));
-        }
-
-        values.put(Reports.RADIO, radioType);
-        JSONArray cellJSON = new JSONArray();
-        for (CellInfo cell : cellInfo) {
-            cellJSON.put(cell.toJSONObject());
-        }
-        values.put(Reports.CELL, cellJSON.toString());
-        values.put(Reports.CELL_COUNT, cellJSON.length());
-
-        JSONArray wifiJSON = new JSONArray();
-        try {
-        for (ScanResult wifi : wifiInfo) {
-            JSONObject jsonItem = new JSONObject();
-            jsonItem.put("key", wifi.BSSID);
-            jsonItem.put("frequency", wifi.frequency);
-            jsonItem.put("signal", wifi.level);
-            wifiJSON.put(jsonItem);
-        }
-        }catch (JSONException jsonex) {
-            Log.w(LOGTAG, "JSON exception", jsonex);
-        }
-        values.put(Reports.WIFI, wifiJSON.toString());
-        values.put(Reports.WIFI_COUNT, wifiJSON.length());
-
-        mContentResolver.insert(Reports.CONTENT_URI, values);
+        mBundle.getGpsPosition().setTime(System.currentTimeMillis());
     }
 }

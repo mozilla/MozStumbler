@@ -12,6 +12,8 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -37,6 +39,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.TextView;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public final class MainActivity extends FragmentActivity {
     private static final String LOGTAG = MainActivity.class.getName();
@@ -104,6 +110,11 @@ public final class MainActivity extends FragmentActivity {
                 }
                 if (subject.equals("WifiScanner")||subject.equals("GPSScanner")||subject.equals("CellScanner")) {
                     // We know and expect those to appear - they can be safely ignored.
+                    return;
+                }
+                if (subject.equals("StumblerBundle")) {
+                    StumblerBundle bundle = intent.getParcelableExtra("StumblerBundle");
+                    onReceiveStumblerBundle(bundle);
                     return;
                 }
                 Log.e(LOGTAG, "", new IllegalArgumentException("Unknown scanner message: " + subject));
@@ -469,5 +480,46 @@ public final class MainActivity extends FragmentActivity {
                                                 getString(R.string.stop_scanning), pendingIntent)
                                      .build();
 
+    }
+
+    private void onReceiveStumblerBundle(StumblerBundle bundle) {
+        ContentValues values = new ContentValues(10);
+
+        JSONObject mlsObj = null;
+        try {
+            mlsObj = bundle.toMLSJSON();
+            Log.d(LOGTAG, "Received bundle: " + mlsObj.toString());
+
+            values.put(DatabaseContract.Reports.TIME, mlsObj.getLong("time"));
+            values.put(DatabaseContract.Reports.LAT, mlsObj.getDouble("lat"));
+            values.put(DatabaseContract.Reports.LON, mlsObj.getDouble("lon"));
+
+            if (mlsObj.has("altitude")) {
+                values.put(DatabaseContract.Reports.ALTITUDE, mlsObj.getInt("altitude"));
+            }
+
+            if (mlsObj.has("accuracy")) {
+                values.put(DatabaseContract.Reports.ACCURACY, mlsObj.getInt("accuracy"));
+            }
+
+            if (mlsObj.has("radio")) {
+                values.put(DatabaseContract.Reports.RADIO, mlsObj.getString("radio"));
+            }
+
+            if (mlsObj.has("cell")) {
+                JSONArray cells = mlsObj.getJSONArray("cell");
+                values.put(DatabaseContract.Reports.CELL, cells.toString());
+                values.put(DatabaseContract.Reports.CELL_COUNT, cells.length());
+            }
+
+            JSONArray wifis = mlsObj.getJSONArray("wifi");
+            values.put(DatabaseContract.Reports.WIFI, wifis.toString());
+            values.put(DatabaseContract.Reports.WIFI_COUNT, wifis.length());
+        } catch (JSONException e) {
+            Log.w(LOGTAG, "Failed to convert bundle to JSON: " + e);
+            return;
+        }
+
+        getContentResolver().insert(DatabaseContract.Reports.CONTENT_URI, values);
     }
 }

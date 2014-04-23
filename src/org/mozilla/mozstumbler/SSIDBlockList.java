@@ -40,6 +40,7 @@ final class SSIDBlockList {
         "Amtrak_",
         "amtrak_",
         "arriva", //Arriva Nederland on-train Wifi (Netherlands)
+        "Barcelona Bus Turistic ", // Barcelona tourisitic buses http://barcelonabusturistic.cat
         "Boreal_Kundenett", // Tromso on-boat (and probably bus) WiFi (Norway)
         "Bus4You-", // Bus4You on-bus WiFi (Norway)
         "CapitalBus", // Capital Bus on-bus WiFi (Taiwan)
@@ -48,6 +49,7 @@ final class SSIDBlockList {
         "EMT-Madrid",  // Empresa municipal de transportes de Madrid http://buswifi.com/
         "Flybussekspressen", // Oslo airport transportation on-bus WiFi (Norway)
         "Flybussen", // Airport transportation on-bus WiFi all over Norway (Norway)
+        "Flygbussarna Free WiFi ", // Flygbussarna.se on-bus WiFi (Sweden)
         "GBUS",
         "GBusWifi",
         "gogoinflight", // Gogo in-flight WiFi
@@ -60,10 +62,12 @@ final class SSIDBlockList {
         "KOLUMBUS", // Stavanger public transport on-bus WiFi (Norway)
         "Kystbussen_Kundennett", // Kystbussen on-bus WiFi (Norway)
         "MAVSTART-WiFi", // Hungarian State Railways onboard hotspot on InterCity trains (Hungary)
+        "NationalExpress", // National Express on-bus WiFi (United Kingdom)
         "Norgesbuss", // Norgesbuss on-bus WiFi (Norway)
         "Norwegian Internet Access", // Norwegian in-flight WiFi (Norway)
         "NSB_INTERAKTIV", // NSB on-train WiFi (Norway)
         "Omni-WiFi", // Omnibus transportation services (Israel)
+        "Oxford Tube", // Oxford Tube on-bus WiFi (United Kindom)
         "QbuzzWIFI", //Qbuzz on-bus WiFi (Netherlands)
         "SF Shuttle Wireless",
         "ShuttleWiFi",

@@ -65,6 +65,12 @@
             </intent-filter>
         </receiver>
 
+        <receiver android:name=".StumblerBundleReceiver">
+            <intent-filter>
+                <action android:name="org.mozilla.mozstumbler.stumblerBundle"/>
+            </intent-filter>
+        </receiver>
+
         <service
             android:name=".ScannerService"
             android:icon="@drawable/ic_launcher"

@@ -140,7 +140,7 @@ final class Reporter extends BroadcastReceiver {
             return;
         }
 
-        Intent broadcast = new Intent(StumblerService.MESSAGE_TOPIC);
+        Intent broadcast = new Intent("org.mozilla.mozstumbler.stumblerBundle");
         broadcast.putExtra(Intent.EXTRA_SUBJECT, "StumblerBundle");
         broadcast.putExtra("StumblerBundle", mBundle);
         mContext.sendBroadcast(broadcast);

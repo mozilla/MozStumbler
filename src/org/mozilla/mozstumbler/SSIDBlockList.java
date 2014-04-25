@@ -14,6 +14,7 @@ final class SSIDBlockList {
         "Galaxy Tab",
         "HTC ",
         "iPhone",
+        "Lenovo P780_ROW",
         "LG-MS770",
         "LG-MS870",
         "LG VS910 4G",

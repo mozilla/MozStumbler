@@ -170,7 +170,6 @@ public class WifiScanner extends BroadcastReceiver {
         i.putExtra(Intent.EXTRA_SUBJECT, WIFI_SCANNER_EXTRA_SUBJECT);
         i.putParcelableArrayListExtra(WIFI_SCANNER_ARG_SCAN_RESULTS, scanResults);
         i.putExtra("time", System.currentTimeMillis());
-        Log.d(LOGTAG, "^^^ WiFiSCanner broadcast");
         LocalBroadcastManager.getInstance(mContext).sendBroadcast(i);
     }
 }

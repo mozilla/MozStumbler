@@ -81,12 +81,10 @@ public final class MapActivity extends Activity {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.d(LOGTAG, "^^^ Map activity receive 1");
             if (mDone) {
                 return;
             }
-            Log.d(LOGTAG, "^^^ Map activity receive 2");
-
+            
             String action = intent.getAction();
             if (!action.equals(ScannerService.MESSAGE_TOPIC)) {
                 Log.e(LOGTAG, "Received an unknown intent: " + action);
@@ -95,11 +93,9 @@ public final class MapActivity extends Activity {
 
             String subject = intent.getStringExtra(Intent.EXTRA_SUBJECT);
             if (WifiScanner.WIFI_SCANNER_EXTRA_SUBJECT.equals(subject)) {
-                Log.d(LOGTAG, "^^^ Map activity wifi update ************************");
                 mWifiData = intent.getParcelableArrayListExtra(WifiScanner.WIFI_SCANNER_ARG_SCAN_RESULTS);
             } else if (CellScanner.CELL_SCANNER_EXTRA_SUBJECT.equals(subject)) {
                 mCellData = intent.getParcelableArrayListExtra(CellScanner.CELL_SCANNER_ARG_CELLS);
-                Log.d(LOGTAG, "^^^ Map activity cell update __________________________");
             } else {
                 return;
             }
@@ -131,8 +127,6 @@ public final class MapActivity extends Activity {
 
 
         mMap.getController().setZoom(2);
-
-        Log.d(LOGTAG, "^^^ onCreate, hooked up mapactivity listener");
     }
 
     @TargetApi(11)

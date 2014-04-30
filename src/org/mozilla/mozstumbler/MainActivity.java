@@ -329,7 +329,10 @@ public final class MainActivity extends FragmentActivity {
                 startActivity(new Intent(getApplication(), PreferencesScreen.class));
                 return true;
             case R.id.action_view_leaderboard:
-                Intent openLeaderboard = new Intent(Intent.ACTION_VIEW, Uri.parse(LEADERBOARD_URL));
+                Uri.Builder builder = Uri.parse(LEADERBOARD_URL).buildUpon();
+                builder.fragment(mPrefs.getNickname());
+                Uri leaderboardUri = builder.build();
+                Intent openLeaderboard = new Intent(Intent.ACTION_VIEW, leaderboardUri);
                 startActivity(openLeaderboard);
                 return true;
             case R.id.action_test_mls:

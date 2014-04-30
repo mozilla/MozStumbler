@@ -9,6 +9,7 @@ import android.content.IntentFilter;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
+import android.location.Location;
 import android.net.wifi.ScanResult;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -61,7 +62,7 @@ public final class MapActivity extends Activity {
 
     private MapView mMap;
     private AccuracyCircleOverlay mAccuracyOverlay;
-    private ItemizedOverlay<OverlayItem> mPointOverlay;
+    private ItemizedOverlay<OverlayItem> mGPSPointOverlay;
 
     private ReporterBroadcastReceiver mReceiver;
 
@@ -74,16 +75,11 @@ public final class MapActivity extends Activity {
         public void reset()
         {
             mMap.getOverlays().remove(mAccuracyOverlay);
-            mMap.getOverlays().remove(mPointOverlay);
             mDone = false;
         }
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (mDone) {
-                return;
-            }
-
             String action = intent.getAction();
             if (!action.equals(ScannerService.MESSAGE_TOPIC)) {
                 Log.e(LOGTAG, "Received an unknown intent: " + action);
@@ -91,6 +87,19 @@ public final class MapActivity extends Activity {
             }
 
             String subject = intent.getStringExtra(Intent.EXTRA_SUBJECT);
+
+            if (GPSScanner.GPS_SCANNER_EXTRA_SUBJECT.equals(subject)) {
+                Location location = intent.getParcelableExtra(GPSScanner.GPS_SCANNER_ARG_LOCATION);
+                if (location != null) {
+                    new GetGPSAndMapItTask().execute(location);
+                }
+                return;
+            }
+
+            if (mDone) {
+                return;
+            }
+
             if (WifiScanner.WIFI_SCANNER_EXTRA_SUBJECT.equals(subject)) {
                 mWifiData = intent.getParcelableArrayListExtra(WifiScanner.WIFI_SCANNER_ARG_SCAN_RESULTS);
             } else if (CellScanner.CELL_SCANNER_EXTRA_SUBJECT.equals(subject)) {
@@ -189,9 +198,7 @@ public final class MapActivity extends Activity {
         }
         mMap.getController().setZoom(zoomLevel);
         mMap.getController().animateTo(point);
-        mPointOverlay = getMapMarker(point);
         mAccuracyOverlay = new AccuracyCircleOverlay(MapActivity.this, point, accuracy);
-        mMap.getOverlays().add(mPointOverlay); // You are here!
         mMap.getOverlays().add(mAccuracyOverlay);
         mMap.invalidate();
     }
@@ -266,7 +273,30 @@ public final class MapActivity extends Activity {
             mReceiver = null;
         }
     }
+    private final class GetGPSAndMapItTask extends AsyncTask<Location, Void, Void> {
 
+        @Override
+        protected void onPreExecute() {
+            mMap.getOverlays().remove(mGPSPointOverlay);
+            mGPSPointOverlay = null;
+        }
+
+        @Override
+        public Void doInBackground(Location... params) {
+            if (params[0] != null) {
+                GeoPoint gpsPoint = new GeoPoint(params[0]);
+                mGPSPointOverlay = getMapMarker(gpsPoint);
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void v) {
+            if (mGPSPointOverlay != null) {
+                mMap.getOverlays().add(mGPSPointOverlay);
+            }
+        }
+    }
     private final class GetLocationAndMapItTask extends AsyncTask<String, Void, String> {
         private String mStatus="";
         private float mLat = 0;

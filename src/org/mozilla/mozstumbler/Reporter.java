@@ -10,6 +10,7 @@ import android.location.Location;
 import android.net.wifi.ScanResult;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import org.mozilla.mozstumbler.cellscanner.CellInfo;
@@ -58,7 +59,8 @@ final class Reporter extends BroadcastReceiver {
         mContentResolver = context.getContentResolver();
         resetData();
         Handler handler = new Handler(looper);
-        mContext.registerReceiver(this, new IntentFilter(ScannerService.MESSAGE_TOPIC), null, handler);
+        LocalBroadcastManager.getInstance(mContext).registerReceiver(this,
+                new IntentFilter(ScannerService.MESSAGE_TOPIC));
     }
 
     private void resetData() {
@@ -74,7 +76,7 @@ final class Reporter extends BroadcastReceiver {
     void shutdown() {
         Log.d(LOGTAG, "shutdown");
         flush();
-        mContext.unregisterReceiver(this);
+        LocalBroadcastManager.getInstance(mContext).unregisterReceiver(this);
     }
 
     @Override

@@ -82,7 +82,7 @@ final class SSIDBlockList {
         "WiFi in de trein", //Nederlandse Spoorwegen on-train WiFi (Netherlands)
         "wifi@boreal.no", // Boreal on-bus WiFi (Norway)
         "wifi@nettbuss.no", // Nettbuss on-bus WiFi (Norway)
-        "first-wifi" // First Bus wifi 
+        "first-wifi" // First Bus wifi (United Kingdom)
     };
 
     private static final String[] SUFFIX_LIST = {

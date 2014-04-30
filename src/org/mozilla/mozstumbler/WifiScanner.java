@@ -1,5 +1,6 @@
 package org.mozilla.mozstumbler;
 
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
@@ -55,12 +56,12 @@ public class WifiScanner extends BroadcastReceiver {
 
         IntentFilter i = new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
         if (!scanAlways) i.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION);
-        mContext.registerReceiver(this, i);
+        LocalBroadcastManager.getInstance(mContext).registerReceiver(this, i);
     }
 
     public synchronized void stop() {
         if (mStarted) {
-            mContext.unregisterReceiver(this);
+            LocalBroadcastManager.getInstance(mContext).unregisterReceiver(this);
         }
         deactivatePeriodicScan();
         mStarted = false;
@@ -169,6 +170,7 @@ public class WifiScanner extends BroadcastReceiver {
         i.putExtra(Intent.EXTRA_SUBJECT, WIFI_SCANNER_EXTRA_SUBJECT);
         i.putParcelableArrayListExtra(WIFI_SCANNER_ARG_SCAN_RESULTS, scanResults);
         i.putExtra("time", System.currentTimeMillis());
-        mContext.sendBroadcast(i);
+        Log.d(LOGTAG, "^^^ WiFiSCanner broadcast");
+        LocalBroadcastManager.getInstance(mContext).sendBroadcast(i);
     }
 }

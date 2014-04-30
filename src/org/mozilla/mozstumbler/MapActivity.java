@@ -13,6 +13,7 @@ import android.net.wifi.ScanResult;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -80,9 +81,11 @@ public final class MapActivity extends Activity {
 
         @Override
         public void onReceive(Context context, Intent intent) {
+            Log.d(LOGTAG, "^^^ Map activity receive 1");
             if (mDone) {
                 return;
             }
+            Log.d(LOGTAG, "^^^ Map activity receive 2");
 
             String action = intent.getAction();
             if (!action.equals(ScannerService.MESSAGE_TOPIC)) {
@@ -92,9 +95,11 @@ public final class MapActivity extends Activity {
 
             String subject = intent.getStringExtra(Intent.EXTRA_SUBJECT);
             if (WifiScanner.WIFI_SCANNER_EXTRA_SUBJECT.equals(subject)) {
+                Log.d(LOGTAG, "^^^ Map activity wifi update ************************");
                 mWifiData = intent.getParcelableArrayListExtra(WifiScanner.WIFI_SCANNER_ARG_SCAN_RESULTS);
             } else if (CellScanner.CELL_SCANNER_EXTRA_SUBJECT.equals(subject)) {
                 mCellData = intent.getParcelableArrayListExtra(CellScanner.CELL_SCANNER_ARG_CELLS);
+                Log.d(LOGTAG, "^^^ Map activity cell update __________________________");
             } else {
                 return;
             }
@@ -121,11 +126,13 @@ public final class MapActivity extends Activity {
         mMap.getOverlays().add(coverageTilesOverlay);
 
         mReceiver = new ReporterBroadcastReceiver();
-        registerReceiver(mReceiver, new IntentFilter(ScannerService.MESSAGE_TOPIC));
+        LocalBroadcastManager.getInstance(getApplicationContext()).
+                registerReceiver(mReceiver, new IntentFilter(ScannerService.MESSAGE_TOPIC));
+
 
         mMap.getController().setZoom(2);
 
-        Log.d(LOGTAG, "onCreate");
+        Log.d(LOGTAG, "^^^ onCreate, hooked up mapactivity listener");
     }
 
     @TargetApi(11)
@@ -251,7 +258,7 @@ public final class MapActivity extends Activity {
         Intent i = new Intent(ScannerService.MESSAGE_TOPIC);
         i.putExtra(Intent.EXTRA_SUBJECT, "Scanner");
         i.putExtra("enable", 1);
-        context.sendBroadcast(i);
+        LocalBroadcastManager.getInstance(context).sendBroadcast(i);
         Log.d(LOGTAG, "onStart");
     }
 
@@ -259,10 +266,11 @@ public final class MapActivity extends Activity {
     protected void onStop() {
         super.onStop();
 
-        Log.d(LOGTAG, "onStop");
+        Log.d(LOGTAG, "^^^ onStop map activity");
         mMap.getTileProvider().clearTileCache();
         if (mReceiver != null) {
-            unregisterReceiver(mReceiver);
+            LocalBroadcastManager.getInstance(getApplicationContext()).
+                    unregisterReceiver(mReceiver);
             mReceiver = null;
         }
     }

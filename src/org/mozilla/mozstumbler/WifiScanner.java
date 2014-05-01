@@ -1,5 +1,6 @@
 package org.mozilla.mozstumbler;
 
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
@@ -169,6 +170,7 @@ public class WifiScanner extends BroadcastReceiver {
         i.putExtra(Intent.EXTRA_SUBJECT, WIFI_SCANNER_EXTRA_SUBJECT);
         i.putParcelableArrayListExtra(WIFI_SCANNER_ARG_SCAN_RESULTS, scanResults);
         i.putExtra("time", System.currentTimeMillis());
-        mContext.sendBroadcast(i);
+        LocalBroadcastManager.getInstance(mContext).sendBroadcast(i);
+     //   mContext.sendBroadcast(i);
     }
 }

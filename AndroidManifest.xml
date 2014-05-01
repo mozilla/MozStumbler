@@ -60,7 +60,6 @@
 
         <service
             android:name=".ScannerService"
-            android:process=":.ScannerService"
             android:icon="@drawable/ic_launcher"
             android:label="@string/service_name">
         </service>
@@ -76,8 +75,7 @@
         </service>
 
         <service
-            android:name=".sync.SyncService"
-            android:process=":.ScannerService">
+            android:name=".sync.SyncService">
             <intent-filter>
                 <action android:name="android.content.SyncAdapter"/>
             </intent-filter>
@@ -90,7 +88,7 @@
             android:authorities="org.mozilla.mozstumbler.provider"
             android:exported="false"
             android:syncable="true"
-            android:process=":.ScannerService" />
+             />
 
     </application>
 

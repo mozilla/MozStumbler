@@ -12,7 +12,6 @@ import org.mozilla.mozstumbler.preferences.Prefs;
 
 import android.location.LocationProvider;
 import android.os.Bundle;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 public class GPSScanner implements LocationListener {
@@ -156,14 +155,14 @@ public class GPSScanner implements LocationListener {
         i.putExtra(Intent.EXTRA_SUBJECT, GPS_SCANNER_EXTRA_SUBJECT);
         i.putExtra(GPS_SCANNER_ARG_LOCATION, location);
         i.putExtra("time", System.currentTimeMillis());
-        LocalBroadcastManager.getInstance(mContext).sendBroadcast(i);
+        mContext.sendBroadcast(i);
     }
 
     private void reportLocationLost() {
         Intent i = new Intent(ScannerService.MESSAGE_TOPIC);
         i.putExtra(Intent.EXTRA_SUBJECT, GPS_SCANNER_EXTRA_SUBJECT);
         i.putExtra("time", System.currentTimeMillis());
-        LocalBroadcastManager.getInstance(mContext).sendBroadcast(i);
+        mContext.sendBroadcast(i);
     }
 
     private void reportNewGpsStatus(int fixes, int sats) {
@@ -171,6 +170,6 @@ public class GPSScanner implements LocationListener {
         i.putExtra(Intent.EXTRA_SUBJECT, "Scanner");
         i.putExtra("fixes", fixes);
         i.putExtra("sats", sats);
-        LocalBroadcastManager.getInstance(mContext).sendBroadcast(i);
+        mContext.sendBroadcast(i);
     }
 }

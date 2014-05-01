@@ -3,7 +3,6 @@ package org.mozilla.mozstumbler.cellscanner;
 import android.content.Context;
 import android.content.Intent;
 
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -73,7 +72,7 @@ public class CellScanner {
                 intent.putExtra(Intent.EXTRA_SUBJECT, CELL_SCANNER_EXTRA_SUBJECT);
                 intent.putParcelableArrayListExtra(CELL_SCANNER_ARG_CELLS, cells);
                 intent.putExtra("time", curTime);
-                LocalBroadcastManager.getInstance(mContext).sendBroadcast(intent);
+                mContext.sendBroadcast(intent);
             }
         }, 0, CELL_MIN_UPDATE_TIME);
     }

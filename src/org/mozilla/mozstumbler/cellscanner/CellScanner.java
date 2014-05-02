@@ -2,11 +2,9 @@ package org.mozilla.mozstumbler.cellscanner;
 
 import android.content.Context;
 import android.content.Intent;
-
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
-import org.json.JSONArray;
 import org.mozilla.mozstumbler.ScannerService;
 
 import java.util.ArrayList;

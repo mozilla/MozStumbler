@@ -7,13 +7,12 @@ import android.location.GpsStatus;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-
-import org.mozilla.mozstumbler.preferences.Prefs;
-
 import android.location.LocationProvider;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+
+import org.mozilla.mozstumbler.preferences.Prefs;
 
 public class GPSScanner implements LocationListener {
     public static final String GPS_SCANNER_EXTRA_SUBJECT = "GPSScanner";

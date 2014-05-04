@@ -63,7 +63,7 @@ final class SSIDBlockList {
         "KOLUMBUS", // Stavanger public transport on-bus WiFi (Norway)
         "Kystbussen_Kundennett", // Kystbussen on-bus WiFi (Norway)
         "MAVSTART-WiFi", // Hungarian State Railways onboard hotspot on InterCity trains (Hungary)
-       "NATEEV-WIFI", // Nateev Express transportation services (Israel)
+        "Nateev-WiFi", // Nateev Express transportation services (Israel)
         "NationalExpress", // National Express on-bus WiFi (United Kingdom)
         "Norgesbuss", // Norgesbuss on-bus WiFi (Norway)
         "Norwegian Internet Access", // Norwegian in-flight WiFi (Norway)

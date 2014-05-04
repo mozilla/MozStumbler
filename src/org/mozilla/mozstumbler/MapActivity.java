@@ -163,7 +163,7 @@ public final class MapActivity extends Activity {
                                 null,
                                 1, 20, 256,
                                 ".png",
-                                BuildConfig.TILE_SERVER_URL);
+                                new String[] { BuildConfig.TILE_SERVER_URL });
     }
 
     private static TilesOverlay CoverageTilesOverlay(Context context) {
@@ -172,7 +172,7 @@ public final class MapActivity extends Activity {
                 null,
                 1, 13, 256,
                 ".png",
-                COVERAGE_URL);
+                new String[] { COVERAGE_URL });
         coverageTileProvider.setTileSource(coverageTileSource);
         final TilesOverlay coverageTileOverlay = new TilesOverlay(coverageTileProvider,context);
         coverageTileOverlay.setLoadingBackgroundColor(Color.TRANSPARENT);

@@ -32,6 +32,7 @@ import org.json.JSONObject;
 import org.mozilla.mozstumbler.cellscanner.CellInfo;
 import org.mozilla.mozstumbler.cellscanner.CellScanner;
 import org.mozilla.mozstumbler.communicator.Searcher;
+import org.osmdroid.tileprovider.BitmapPool;
 import org.osmdroid.tileprovider.MapTileProviderBasic;
 import org.osmdroid.tileprovider.tilesource.ITileSource;
 import org.osmdroid.tileprovider.tilesource.OnlineTileSourceBase;
@@ -261,6 +262,7 @@ public final class MapActivity extends Activity {
 
         Log.d(LOGTAG, "onStop");
         mMap.getTileProvider().clearTileCache();
+        BitmapPool.getInstance().clearBitmapPool();
         if (mReceiver != null) {
             unregisterReceiver(mReceiver);
             mReceiver = null;

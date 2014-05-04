@@ -10,6 +10,8 @@ import android.location.Location;
 import android.net.wifi.ScanResult;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Message;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import org.mozilla.mozstumbler.cellscanner.CellInfo;
@@ -48,6 +50,7 @@ final class Reporter extends BroadcastReceiver {
 
     private final Context       mContext;
     private final ContentResolver mContentResolver;
+    private final Handler mHandler;
 
     private Location            mGpsPosition;
     private final Map<String, ScanResult> mWifiData = new HashMap<String, ScanResult>();
@@ -57,8 +60,16 @@ final class Reporter extends BroadcastReceiver {
         mContext = context;
         mContentResolver = context.getContentResolver();
         resetData();
-        Handler handler = new Handler(looper);
-        mContext.registerReceiver(this, new IntentFilter(ScannerService.MESSAGE_TOPIC), null, handler);
+        mHandler = new Handler(looper, new Handler.Callback() {
+            @Override
+            public boolean handleMessage(Message msg) {
+                Intent intent = (Intent) msg.obj;
+                onReceive(intent);
+                return true;
+            }
+        });
+        LocalBroadcastManager.getInstance(mContext).registerReceiver(this,
+                new IntentFilter(ScannerService.MESSAGE_TOPIC));
     }
 
     private void resetData() {
@@ -74,11 +85,17 @@ final class Reporter extends BroadcastReceiver {
     void shutdown() {
         Log.d(LOGTAG, "shutdown");
         flush();
-        mContext.unregisterReceiver(this);
+        LocalBroadcastManager.getInstance(mContext).unregisterReceiver(this);
     }
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        Message m = mHandler.obtainMessage();
+        m.obj = intent;
+        m.sendToTarget();
+    }
+
+    void onReceive(Intent intent) {
         String action = intent.getAction();
 
         if (!ScannerService.MESSAGE_TOPIC.equals(action)) {

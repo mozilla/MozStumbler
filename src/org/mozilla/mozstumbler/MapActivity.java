@@ -13,6 +13,7 @@ import android.net.wifi.ScanResult;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -121,7 +122,8 @@ public final class MapActivity extends Activity {
         mMap.getOverlays().add(coverageTilesOverlay);
 
         mReceiver = new ReporterBroadcastReceiver();
-        registerReceiver(mReceiver, new IntentFilter(ScannerService.MESSAGE_TOPIC));
+        LocalBroadcastManager.getInstance(this).registerReceiver(mReceiver,
+                new IntentFilter(ScannerService.MESSAGE_TOPIC));
 
         mMap.getController().setZoom(2);
 
@@ -247,11 +249,10 @@ public final class MapActivity extends Activity {
     protected void onStart() {
         super.onStart();
 
-        Context context = getApplicationContext();
         Intent i = new Intent(ScannerService.MESSAGE_TOPIC);
         i.putExtra(Intent.EXTRA_SUBJECT, "Scanner");
         i.putExtra("enable", 1);
-        context.sendBroadcast(i);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(i);
         Log.d(LOGTAG, "onStart");
     }
 
@@ -262,7 +263,7 @@ public final class MapActivity extends Activity {
         Log.d(LOGTAG, "onStop");
         mMap.getTileProvider().clearTileCache();
         if (mReceiver != null) {
-            unregisterReceiver(mReceiver);
+            LocalBroadcastManager.getInstance(this).unregisterReceiver(mReceiver);
             mReceiver = null;
         }
     }

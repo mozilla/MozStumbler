@@ -28,6 +28,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -53,14 +54,15 @@ public final class MainActivity extends FragmentActivity {
 
         public void register() {
             if (!mReceiverIsRegistered) {
-                registerReceiver(this, new IntentFilter(ScannerService.MESSAGE_TOPIC));
+                LocalBroadcastManager.getInstance(MainActivity.this).registerReceiver(this,
+                        new IntentFilter(ScannerService.MESSAGE_TOPIC));
                 mReceiverIsRegistered = true;
             }
         }
 
         public void unregister() {
             if (mReceiverIsRegistered) {
-                unregisterReceiver(this);
+                LocalBroadcastManager.getInstance(MainActivity.this).unregisterReceiver(this);
                 mReceiverIsRegistered = false;
             }
         }

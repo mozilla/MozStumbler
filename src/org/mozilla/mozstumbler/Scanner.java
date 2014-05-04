@@ -2,6 +2,7 @@ package org.mozilla.mozstumbler;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import org.mozilla.mozstumbler.cellscanner.CellScanner;
@@ -39,7 +40,7 @@ class Scanner {
     // for now all we want is to update the UI anyway
     Intent startIntent = new Intent(ScannerService.MESSAGE_TOPIC);
     startIntent.putExtra(Intent.EXTRA_SUBJECT, "Scanner");
-    mContext.sendBroadcast(startIntent);
+    LocalBroadcastManager.getInstance(mContext).sendBroadcast(startIntent);
   }
 
   void stopScanning() {
@@ -60,7 +61,7 @@ class Scanner {
     Intent stopIntent = new Intent(ScannerService.MESSAGE_TOPIC);
     stopIntent.putExtra(Intent.EXTRA_SUBJECT, "Scanner");
     stopIntent.putExtra("fixes", 0);
-    mContext.sendBroadcast(stopIntent);
+    LocalBroadcastManager.getInstance(mContext).sendBroadcast(stopIntent);
   }
 
   boolean isScanning() {

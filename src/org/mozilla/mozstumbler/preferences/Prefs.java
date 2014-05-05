@@ -5,12 +5,9 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Build.VERSION;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.Log;
-
 import org.mozilla.mozstumbler.BuildConfig;
 import org.mozilla.mozstumbler.R;
 

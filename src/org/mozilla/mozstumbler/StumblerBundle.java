@@ -3,19 +3,16 @@ package org.mozilla.mozstumbler;
 import android.location.Location;
 import android.net.wifi.ScanResult;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.os.Parcel;
+import android.os.Parcelable;
 import android.telephony.TelephonyManager;
-
-import org.mozilla.mozstumbler.cellscanner.CellInfo;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.mozilla.mozstumbler.cellscanner.CellInfo;
 
 final class StumblerBundle implements Parcelable {
     private final int mPhoneType;

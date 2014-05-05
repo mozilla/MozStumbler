@@ -1,14 +1,13 @@
 package org.mozilla.mozstumbler.provider;
 
-import android.content.ContentProviderOperation;
-import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.provider.BaseColumns;
 import android.util.Log;
-
-import static org.mozilla.mozstumbler.provider.DatabaseContract.*;
+import static org.mozilla.mozstumbler.provider.DatabaseContract.ReportsColumns;
+import static org.mozilla.mozstumbler.provider.DatabaseContract.Stats;
+import static org.mozilla.mozstumbler.provider.DatabaseContract.StatsColumns;
 
 public class Database extends SQLiteOpenHelper {
     private static final String LOGTAG = Database.class.getName();

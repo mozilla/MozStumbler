@@ -15,8 +15,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.RemoteException;
 import android.util.Log;
-
-import org.apache.http.conn.ConnectTimeoutException;
+import java.util.ArrayList;
+import java.util.Collections;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -26,12 +26,8 @@ import org.mozilla.mozstumbler.NetworkUtils;
 import org.mozilla.mozstumbler.communicator.Submitter;
 import org.mozilla.mozstumbler.preferences.Prefs;
 import org.mozilla.mozstumbler.provider.DatabaseContract;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-
-import static org.mozilla.mozstumbler.provider.DatabaseContract.*;
+import static org.mozilla.mozstumbler.provider.DatabaseContract.Reports;
+import static org.mozilla.mozstumbler.provider.DatabaseContract.Stats;
 
 public class SyncAdapter extends AbstractThreadedSyncAdapter {
     static final String SYNC_EXTRAS_IGNORE_WIFI_STATUS = "org.mozilla.mozstumbler.sync.ignore_wifi_status";

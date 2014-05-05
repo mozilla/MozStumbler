@@ -2,12 +2,9 @@ package org.mozilla.mozstumbler.communicator;
 
 import android.content.Context;
 import android.util.Log;
-
-import org.apache.http.conn.ConnectTimeoutException;
-import org.mozilla.mozstumbler.preferences.Prefs;
-
 import java.io.IOException;
 import java.net.HttpURLConnection;
+import org.mozilla.mozstumbler.preferences.Prefs;
 
 public class Submitter extends AbstractCommunicator {
     private static final String SUBMIT_URL = "https://location.services.mozilla.com/v1/submit";

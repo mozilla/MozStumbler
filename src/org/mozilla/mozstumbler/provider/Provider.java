@@ -14,12 +14,12 @@ import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.provider.BaseColumns;
 import android.support.v4.database.DatabaseUtilsCompat;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
-import static org.mozilla.mozstumbler.provider.DatabaseContract.*;
+import static org.mozilla.mozstumbler.provider.DatabaseContract.CONTENT_AUTHORITY;
+import static org.mozilla.mozstumbler.provider.DatabaseContract.Reports;
+import static org.mozilla.mozstumbler.provider.DatabaseContract.Stats;
 
 public class Provider extends ContentProvider {
     private static final String LOGTAG = Provider.class.getName();

@@ -3,12 +3,6 @@ package org.mozilla.mozstumbler.communicator;
 import android.content.Context;
 import android.os.Build;
 import android.util.Log;
-
-import org.mozilla.mozstumbler.BuildConfig;
-import org.mozilla.mozstumbler.NetworkUtils;
-import org.mozilla.mozstumbler.PackageUtils;
-import org.mozilla.mozstumbler.R;
-
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -18,6 +12,9 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.zip.GZIPOutputStream;
+import org.mozilla.mozstumbler.BuildConfig;
+import org.mozilla.mozstumbler.PackageUtils;
+import org.mozilla.mozstumbler.R;
 
 abstract class AbstractCommunicator {
 

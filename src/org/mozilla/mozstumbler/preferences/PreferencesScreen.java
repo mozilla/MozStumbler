@@ -1,26 +1,19 @@
 package org.mozilla.mozstumbler.preferences;
 
-import org.mozilla.mozstumbler.R;
-import org.mozilla.mozstumbler.preferences.Prefs;
-import org.mozilla.mozstumbler.ScannerService;
-
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
-import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.Preference;
+import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.PreferenceActivity;
-import android.preference.PreferenceManager;
-import android.util.Log;
 import android.text.TextUtils;
-import android.widget.EditText;
+import org.mozilla.mozstumbler.R;
 
 public class PreferencesScreen extends PreferenceActivity {
     private static final int REQUEST_CODE_WIFI_SCAN_ALWAYS = 1;

@@ -64,7 +64,7 @@ final class Reporter extends BroadcastReceiver {
             @Override
             public boolean handleMessage(Message msg) {
                 Intent intent = (Intent) msg.obj;
-                onReceive(intent);
+                onReceiveScannerResults(intent);
                 return true;
             }
         });
@@ -95,7 +95,7 @@ final class Reporter extends BroadcastReceiver {
         m.sendToTarget();
     }
 
-    void onReceive(Intent intent) {
+    void onReceiveScannerResults(Intent intent) {
         String action = intent.getAction();
 
         if (!ScannerService.MESSAGE_TOPIC.equals(action)) {

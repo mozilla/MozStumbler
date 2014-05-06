@@ -8,9 +8,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.location.Location;
 import android.net.wifi.ScanResult;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
@@ -50,24 +47,15 @@ final class Reporter extends BroadcastReceiver {
 
     private final Context       mContext;
     private final ContentResolver mContentResolver;
-    private final Handler mHandler;
 
     private Location            mGpsPosition;
     private final Map<String, ScanResult> mWifiData = new HashMap<String, ScanResult>();
     private final Map<String, CellInfo> mCellData = new HashMap<String, CellInfo>();
 
-    Reporter(Context context, Looper looper) {
+    Reporter(Context context) {
         mContext = context;
         mContentResolver = context.getContentResolver();
         resetData();
-        mHandler = new Handler(looper, new Handler.Callback() {
-            @Override
-            public boolean handleMessage(Message msg) {
-                Intent intent = (Intent) msg.obj;
-                onReceiveScannerResults(intent);
-                return true;
-            }
-        });
         LocalBroadcastManager.getInstance(mContext).registerReceiver(this,
                 new IntentFilter(ScannerService.MESSAGE_TOPIC));
     }
@@ -90,12 +78,6 @@ final class Reporter extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        Message m = mHandler.obtainMessage();
-        m.obj = intent;
-        m.sendToTarget();
-    }
-
-    void onReceiveScannerResults(Intent intent) {
         String action = intent.getAction();
 
         if (!ScannerService.MESSAGE_TOPIC.equals(action)) {

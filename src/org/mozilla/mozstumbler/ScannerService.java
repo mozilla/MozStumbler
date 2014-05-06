@@ -2,7 +2,6 @@ package org.mozilla.mozstumbler;
 
 import org.mozilla.mozstumbler.sync.SyncUtils;
 
-import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -28,7 +27,6 @@ public final class ScannerService extends Service {
     private static final String INTENT_TURN_OFF = MESSAGE_TOPIC + ".TURN_ME_OFF";
     private Scanner             mScanner;
     private Reporter            mReporter;
-    private PendingIntent       mWakeIntent;
     private BroadcastReceiver   mTurnOffReceiver;
     private boolean             mIsBound;
 
@@ -48,22 +46,11 @@ public final class ScannerService extends Service {
             CharSequence text = getResources().getText(R.string.service_scanning);
             postNotification(title, text);
             mScanner.startScanning();
-
-            // keep us awake.
-            Context cxt = getApplicationContext();
-            Calendar cal = Calendar.getInstance();
-            Intent intent = new Intent(cxt, ScannerService.class);
-            mWakeIntent = PendingIntent.getService(cxt, 0, intent, 0);
-            AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-            alarm.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), WAKE_TIMEOUT, mWakeIntent);
         }
 
         @Override
         public void stopScanning() throws RemoteException {
             if (mScanner.isScanning()) {
-                AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-                alarm.cancel(mWakeIntent);
-
                 cancelNotification();
                 stopForeground(true);
 

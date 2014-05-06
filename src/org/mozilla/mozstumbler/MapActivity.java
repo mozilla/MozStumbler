@@ -32,6 +32,7 @@ import org.json.JSONObject;
 import org.mozilla.mozstumbler.cellscanner.CellInfo;
 import org.mozilla.mozstumbler.cellscanner.CellScanner;
 import org.mozilla.mozstumbler.communicator.Searcher;
+import org.osmdroid.tileprovider.BitmapPool;
 import org.osmdroid.tileprovider.MapTileProviderBasic;
 import org.osmdroid.tileprovider.tilesource.ITileSource;
 import org.osmdroid.tileprovider.tilesource.OnlineTileSourceBase;
@@ -163,7 +164,7 @@ public final class MapActivity extends Activity {
                                 null,
                                 1, 20, 256,
                                 ".png",
-                                BuildConfig.TILE_SERVER_URL);
+                                new String[] { BuildConfig.TILE_SERVER_URL });
     }
 
     private static TilesOverlay CoverageTilesOverlay(Context context) {
@@ -172,7 +173,7 @@ public final class MapActivity extends Activity {
                 null,
                 1, 13, 256,
                 ".png",
-                COVERAGE_URL);
+                new String[] { COVERAGE_URL });
         coverageTileProvider.setTileSource(coverageTileSource);
         final TilesOverlay coverageTileOverlay = new TilesOverlay(coverageTileProvider,context);
         coverageTileOverlay.setLoadingBackgroundColor(Color.TRANSPARENT);
@@ -261,6 +262,7 @@ public final class MapActivity extends Activity {
 
         Log.d(LOGTAG, "onStop");
         mMap.getTileProvider().clearTileCache();
+        BitmapPool.getInstance().clearBitmapPool();
         if (mReceiver != null) {
             unregisterReceiver(mReceiver);
             mReceiver = null;

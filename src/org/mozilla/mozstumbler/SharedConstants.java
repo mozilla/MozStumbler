@@ -8,4 +8,7 @@ public class SharedConstants {
      * the specific intent action has its own constant that is assigned to this
      * for example, ACTION_WIFIS_SCANNED_ARG_TIME */
     public static final String ACTION_ARG_TIME = "time";
+
+    public static final String SYNC_EXTRAS_IGNORE_WIFI_STATUS =
+            "org.mozilla.mozstumbler.sync.ignore_wifi_status";
 }

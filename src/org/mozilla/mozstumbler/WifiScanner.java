@@ -19,10 +19,13 @@ import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicInteger;
+import org.mozilla.mozstumbler.preferences.Prefs;
 
 public class WifiScanner extends BroadcastReceiver {
-    public static final String WIFI_SCANNER_EXTRA_SUBJECT = "WifiScanner";
-    public static final String WIFI_SCANNER_ARG_SCAN_RESULTS = "org.mozilla.mozstumbler.WifiScanner.scan_results";
+    public static final String ACTION_BASE = SharedConstants.ACTION_NAMESPACE + ".WifiScanner.";
+    public static final String ACTION_WIFIS_SCANNED = ACTION_BASE + "WIFIS_SCANNED";
+    public static final String ACTION_WIFIS_SCANNED_ARG_RESULTS = "scan_results";
+    public static final String ACTION_WIFIS_SCANNED_ARG_TIME = SharedConstants.ACTION_ARG_TIME;
 
     public static final int STATUS_IDLE = 0;
     public static final int STATUS_ACTIVE = 1;
@@ -166,10 +169,9 @@ public class WifiScanner extends BroadcastReceiver {
 
     private void reportScanResults(ArrayList<ScanResult> scanResults) {
         if (scanResults.isEmpty()) return;
-        Intent i = new Intent(ScannerService.MESSAGE_TOPIC);
-        i.putExtra(Intent.EXTRA_SUBJECT, WIFI_SCANNER_EXTRA_SUBJECT);
-        i.putParcelableArrayListExtra(WIFI_SCANNER_ARG_SCAN_RESULTS, scanResults);
-        i.putExtra("time", System.currentTimeMillis());
+        Intent i = new Intent(ACTION_WIFIS_SCANNED);
+        i.putParcelableArrayListExtra(ACTION_WIFIS_SCANNED_ARG_RESULTS, scanResults);
+        i.putExtra(ACTION_WIFIS_SCANNED_ARG_TIME, System.currentTimeMillis());
         LocalBroadcastManager.getInstance(mContext).sendBroadcast(i);
     }
 }

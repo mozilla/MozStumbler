@@ -72,12 +72,6 @@
         </receiver>
 
         <service
-            android:name=".ScannerService"
-            android:icon="@drawable/ic_launcher"
-            android:label="@string/service_name">
-        </service>
-
-        <service
             android:name=".StumblerService"
             android:icon="@drawable/ic_launcher"
             android:label="@string/service_name">

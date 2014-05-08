@@ -1,5 +1,6 @@
 package org.mozilla.mozstumbler;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.location.GpsSatellite;
@@ -11,12 +12,20 @@ import android.location.LocationProvider;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import org.mozilla.mozstumbler.preferences.Prefs;
 
 import org.mozilla.mozstumbler.preferences.Prefs;
 
 public class GPSScanner implements LocationListener {
-    public static final String GPS_SCANNER_EXTRA_SUBJECT = "GPSScanner";
-    public static final String GPS_SCANNER_ARG_LOCATION = "org.mozilla.mozstumbler.GPSScanner.location";
+    public static final String ACTION_BASE = SharedConstants.ACTION_NAMESPACE + ".GPSScanner.";
+    public static final String ACTION_GPS_UPDATED = ACTION_BASE + "GPS_UPDATED";
+    public static final String ACTION_ARG_TIME = SharedConstants.ACTION_ARG_TIME;
+    public static final String SUBJECT_NEW_STATUS = "new_status";
+    public static final String SUBJECT_LOCATION_LOST = "location_lost";
+    public static final String SUBJECT_NEW_LOCATION = "new_location";
+    public static final String NEW_STATUS_ARG_FIXES = "fixes";
+    public static final String NEW_STATUS_ARG_SATS = "sats";
+    public static final String NEW_LOCATION_ARG_LOCATION = "location";
 
     private static final String   LOGTAG                  = Scanner.class.getName();
     private static final long     GEO_MIN_UPDATE_TIME     = 1000;
@@ -103,7 +112,9 @@ public class GPSScanner implements LocationListener {
         mAutoGeofencing = prefs.getGeofenceHere();
     }
 
-    public boolean isGeofenced() { return (mBlockList!=null) ? mBlockList.isGeofenced() : false ; }
+    public boolean isGeofenced() {
+        return (mBlockList != null) && mBlockList.isGeofenced();
+    }
 
     @Override
     public void onLocationChanged(Location location) {
@@ -151,25 +162,26 @@ public class GPSScanner implements LocationListener {
     }
 
     private void reportNewLocationReceived(Location location) {
-        Intent i = new Intent(ScannerService.MESSAGE_TOPIC);
-        i.putExtra(Intent.EXTRA_SUBJECT, GPS_SCANNER_EXTRA_SUBJECT);
-        i.putExtra(GPS_SCANNER_ARG_LOCATION, location);
-        i.putExtra("time", System.currentTimeMillis());
+        Intent i = new Intent(ACTION_GPS_UPDATED);
+        i.putExtra(Intent.EXTRA_SUBJECT, SUBJECT_NEW_LOCATION);
+        i.putExtra(NEW_LOCATION_ARG_LOCATION, location);
+        i.putExtra(ACTION_ARG_TIME, System.currentTimeMillis());
         LocalBroadcastManager.getInstance(mContext).sendBroadcast(i);
     }
 
     private void reportLocationLost() {
-        Intent i = new Intent(ScannerService.MESSAGE_TOPIC);
-        i.putExtra(Intent.EXTRA_SUBJECT, GPS_SCANNER_EXTRA_SUBJECT);
-        i.putExtra("time", System.currentTimeMillis());
+        Intent i = new Intent(ACTION_GPS_UPDATED);
+        i.putExtra(Intent.EXTRA_SUBJECT, SUBJECT_LOCATION_LOST);
+        i.putExtra(ACTION_ARG_TIME, System.currentTimeMillis());
         LocalBroadcastManager.getInstance(mContext).sendBroadcast(i);
     }
 
     private void reportNewGpsStatus(int fixes, int sats) {
-        Intent i = new Intent(ScannerService.MESSAGE_TOPIC);
-        i.putExtra(Intent.EXTRA_SUBJECT, "Scanner");
-        i.putExtra("fixes", fixes);
-        i.putExtra("sats", sats);
+        Intent i = new Intent(ACTION_GPS_UPDATED);
+        i.putExtra(Intent.EXTRA_SUBJECT, SUBJECT_NEW_STATUS);
+        i.putExtra(NEW_STATUS_ARG_FIXES, fixes);
+        i.putExtra(NEW_STATUS_ARG_SATS, sats);
+        i.putExtra(ACTION_ARG_TIME, System.currentTimeMillis());
         LocalBroadcastManager.getInstance(mContext).sendBroadcast(i);
     }
 }

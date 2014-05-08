@@ -5,18 +5,19 @@ import android.content.Intent;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
-import org.mozilla.mozstumbler.ScannerService;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
+import org.mozilla.mozstumbler.SharedConstants;
 
 public class CellScanner {
-    public static final String CELL_SCANNER_EXTRA_SUBJECT = "CellScanner";
-    public static final String CELL_SCANNER_ARG_CELLS = "org.mozilla.mozstumbler.cellscanner.CellScanner.cells";
+    public static final String ACTION_BASE = SharedConstants.ACTION_NAMESPACE + ".CellScanner.";
+    public static final String ACTION_CELLS_SCANNED = ACTION_BASE + "CELLS_SCANNED";
+    public static final String ACTION_CELLS_SCANNED_ARG_CELLS = "cells";
+    public static final String ACTION_CELLS_SCANNED_ARG_TIME = SharedConstants.ACTION_ARG_TIME;
 
     private static final String LOGTAG = CellScanner.class.getName();
     private static final long CELL_MIN_UPDATE_TIME = 1000; // milliseconds
@@ -67,10 +68,9 @@ public class CellScanner {
                 }
                 for (CellInfo cell: cells) mCells.add(cell.getCellIdentity());
 
-                Intent intent = new Intent(ScannerService.MESSAGE_TOPIC);
-                intent.putExtra(Intent.EXTRA_SUBJECT, CELL_SCANNER_EXTRA_SUBJECT);
-                intent.putParcelableArrayListExtra(CELL_SCANNER_ARG_CELLS, cells);
-                intent.putExtra("time", curTime);
+                Intent intent = new Intent(ACTION_CELLS_SCANNED);
+                intent.putParcelableArrayListExtra(ACTION_CELLS_SCANNED_ARG_CELLS, cells);
+                intent.putExtra(ACTION_CELLS_SCANNED_ARG_TIME, curTime);
                 LocalBroadcastManager.getInstance(mContext).sendBroadcast(intent);
             }
         }, 0, CELL_MIN_UPDATE_TIME);

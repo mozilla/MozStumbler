@@ -1,10 +1,5 @@
 package org.mozilla.mozstumbler;
 
-import org.mozilla.mozstumbler.preferences.PreferencesScreen;
-import org.mozilla.mozstumbler.preferences.Prefs;
-import org.mozilla.mozstumbler.provider.DatabaseContract;
-import org.mozilla.mozstumbler.sync.SyncUtils;
-
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.Notification;
@@ -37,9 +32,21 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.TextView;
+import org.mozilla.mozstumbler.cellscanner.CellScanner;
+import org.mozilla.mozstumbler.preferences.PreferencesScreen;
+import org.mozilla.mozstumbler.preferences.Prefs;
+import org.mozilla.mozstumbler.provider.DatabaseContract;
+import org.mozilla.mozstumbler.sync.SyncUtils;
 
 public final class MainActivity extends FragmentActivity {
     private static final String LOGTAG = MainActivity.class.getName();
+
+    public static final String ACTION_BASE = SharedConstants.ACTION_NAMESPACE + ".MainActivity.";
+    public static final String ACTION_UPDATE_UI = ACTION_BASE + "UPDATE_UI";
+
+    /** if mConnectionRemote exists, start scanning, otherwise do nothing  */
+    public static final String ACTION_UNPAUSE_SCANNING = ACTION_BASE + "UNPAUSE_SCANNING";
+
     private static final String LEADERBOARD_URL = "https://location.services.mozilla.com/leaders";
     private static final String INTENT_TURN_OFF = "org.mozilla.mozstumbler.turnMeOff";
     private static final int    NOTIFICATION_ID = 1;
@@ -58,8 +65,15 @@ public final class MainActivity extends FragmentActivity {
 
         public void register() {
             if (!mReceiverIsRegistered) {
+                IntentFilter intentFilter = new IntentFilter();
+                intentFilter.addAction(WifiScanner.ACTION_WIFIS_SCANNED);
+                intentFilter.addAction(CellScanner.ACTION_CELLS_SCANNED);
+                intentFilter.addAction(GPSScanner.ACTION_GPS_UPDATED);
+                intentFilter.addAction(MainActivity.ACTION_UNPAUSE_SCANNING);
+                intentFilter.addAction(MainActivity.ACTION_UPDATE_UI);
+                registerReceiver(this, intentFilter);
                 LocalBroadcastManager.getInstance(MainActivity.this).registerReceiver(this,
-                        new IntentFilter(ScannerService.MESSAGE_TOPIC));
+                        intentFilter);
                 mReceiverIsRegistered = true;
             }
         }
@@ -71,44 +85,26 @@ public final class MainActivity extends FragmentActivity {
             }
         }
 
+        private void receivedGpsMessage(Intent intent) {
+            String subject = intent.getStringExtra(Intent.EXTRA_SUBJECT);
+            if (subject.equals(GPSScanner.SUBJECT_NEW_STATUS)) {
+                mGpsFixes = intent.getIntExtra(GPSScanner.NEW_STATUS_ARG_FIXES ,0);
+                mGpsSats = intent.getIntExtra(GPSScanner.NEW_STATUS_ARG_SATS, 0);
+            }
+        }
+
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
 
-            if (action.equals(ScannerService.MESSAGE_TOPIC)) {
-
-                String subject = intent.getStringExtra(Intent.EXTRA_SUBJECT);
-
-                if (subject.equals("Scanner")) {
-                    if (intent.hasExtra("fixes")) {
-                        mGpsFixes = intent.getIntExtra("fixes", 0);
-                        mGpsSats = intent.getIntExtra("sats",0);
-                    }
-                    else if (intent.hasExtra("enable")) {
-                        int enable = intent.getIntExtra("enable", -1);
-
-                        if (mConnectionRemote != null) {
-                            if (enable == 1) {
-                                Log.d(LOGTAG, "Enabling scanning");
-                                startScanning();
-                            } else if (enable == 0) {
-                                Log.d(LOGTAG, "Disabling scanning");
-                                stopScanning();
-                            }
-                        }
-                    }
-
-                    updateUI();
-                    Log.d(LOGTAG, "Received a scanner intent...");
-                    return;
-                }
-                if (subject.equals("WifiScanner")||subject.equals("GPSScanner")||subject.equals("CellScanner")) {
-                    // We know and expect those to appear - they can be safely ignored.
-                    return;
-                }
-                Log.e(LOGTAG, "", new IllegalArgumentException("Unknown scanner message: " + subject));
-                return;
+            if (action.equals(GPSScanner.ACTION_GPS_UPDATED)) {
+                receivedGpsMessage(intent);
+            } else if (action.equals(MainActivity.ACTION_UNPAUSE_SCANNING) &&
+                       null != mConnectionRemote) {
+                startScanning();
             }
+
+            updateUI();
         }
     }
 
@@ -259,7 +255,7 @@ public final class MainActivity extends FragmentActivity {
                                     ? formatLocation(latitude, longitude)
                                     : "-";
 
-        formatTextView(R.id.gps_satellites, R.string.gps_satellites, mGpsFixes,mGpsSats);
+        formatTextView(R.id.gps_satellites, R.string.gps_satellites, mGpsFixes, mGpsSats);
         formatTextView(R.id.last_location, R.string.last_location, lastLocationString);
         formatTextView(R.id.wifi_access_points, R.string.wifi_access_points, APs);
         setVisibleAccessPoints(scanning, wifiStatus, visibleAPs);

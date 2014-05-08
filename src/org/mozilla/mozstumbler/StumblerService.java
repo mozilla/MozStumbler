@@ -1,23 +1,12 @@
 package org.mozilla.mozstumbler;
 
-import android.app.AlarmManager;
 import android.app.Service;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.os.Handler;
-import android.os.HandlerThread;
 import android.os.Binder;
 import android.os.IBinder;
-import android.os.Looper;
 import android.util.Log;
 
-import java.util.Calendar;
-
 public final class StumblerService extends Service {
-    public static final String  MESSAGE_TOPIC   = "org.mozilla.mozstumbler.serviceMessage"; // FIXME remove this
-
     private static final String LOGTAG          = StumblerService.class.getName();
     private Scanner             mScanner;
     private Reporter            mReporter;
@@ -46,7 +35,7 @@ public final class StumblerService extends Service {
         if (mScanner.isScanning()) {
             mScanner.stopScanning();
             mReporter.flush();
-            if (mIsBound == false) {
+            if (!mIsBound) {
                 stopSelf();
             }
         }

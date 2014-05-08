@@ -21,5 +21,8 @@ public final class TurnOffReceiver extends BroadcastReceiver {
             StumblerService service = serviceBinder.getService();
             service.stopScanning();
         }
+
+        // In the case where the MainActivity is in the foreground, we need to tell it to update
+        context.sendBroadcast(new Intent(MainActivity.ACTION_UPDATE_UI));
     }
 }

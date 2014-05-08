@@ -8,16 +8,10 @@ import android.location.Location;
 import android.net.wifi.ScanResult;
 import android.telephony.TelephonyManager;
 import android.util.Log;
-
-import org.mozilla.mozstumbler.cellscanner.CellInfo;
-import org.mozilla.mozstumbler.cellscanner.CellScanner;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.mozilla.mozstumbler.cellscanner.CellInfo;
+import org.mozilla.mozstumbler.cellscanner.CellScanner;
 
 final class Reporter extends BroadcastReceiver {
     private static final String LOGTAG          = Reporter.class.getName();
@@ -45,7 +39,12 @@ final class Reporter extends BroadcastReceiver {
     Reporter(Context context) {
         mContext = context;
         resetData();
-        mContext.registerReceiver(this, new IntentFilter(ScannerService.MESSAGE_TOPIC));
+
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(WifiScanner.ACTION_WIFIS_SCANNED);
+        intentFilter.addAction(CellScanner.ACTION_CELLS_SCANNED);
+        intentFilter.addAction(GPSScanner.ACTION_GPS_UPDATED);
+        mContext.registerReceiver(this, intentFilter);
 
         TelephonyManager tm = (TelephonyManager) mContext.getSystemService(Context.TELEPHONY_SERVICE);
         mPhoneType = tm.getPhoneType();
@@ -65,42 +64,50 @@ final class Reporter extends BroadcastReceiver {
         mContext.unregisterReceiver(this);
     }
 
+    private void receivedWifiMessage(Intent intent) {
+        List<ScanResult> results = intent.getParcelableArrayListExtra(WifiScanner.ACTION_WIFIS_SCANNED_ARG_RESULTS);
+        putWifiResults(results);
+    }
+
+    private void receivedCellMessage(Intent intent) {
+        List<CellInfo> results = intent.getParcelableArrayListExtra(CellScanner.ACTION_CELLS_SCANNED_ARG_CELLS);
+        putCellResults(results);
+    }
+
+    private void receivedGpsMessage(Intent intent) {
+        String subject = intent.getStringExtra(Intent.EXTRA_SUBJECT);
+        if (subject.equals(GPSScanner.SUBJECT_NEW_LOCATION)) {
+            reportCollectedLocation();
+            Location newPosition = intent.getParcelableExtra(GPSScanner.NEW_LOCATION_ARG_LOCATION);
+            mBundle = (newPosition != null) ? new StumblerBundle(newPosition, mPhoneType) : mBundle;
+        }
+    }
+
     @Override
     public void onReceive(Context context, Intent intent) {
         String action = intent.getAction();
 
-        if (!ScannerService.MESSAGE_TOPIC.equals(action)) {
-            Log.e(LOGTAG, "Received an unknown intent");
-            return;
+        if (action.equals(WifiScanner.ACTION_WIFIS_SCANNED)) {
+            receivedWifiMessage(intent);
+        } else if (action.equals(CellScanner.ACTION_CELLS_SCANNED)) {
+            receivedCellMessage(intent);
+        } else if (action.equals(GPSScanner.ACTION_GPS_UPDATED)) {
+            // Calls reportCollectedLocation, this is the ideal case
+            receivedGpsMessage(intent);
         }
-
-        long time = intent.getLongExtra("time", System.currentTimeMillis());
-        String subject = intent.getStringExtra(Intent.EXTRA_SUBJECT);
 
         Location currentPosition = mBundle != null ? mBundle.getGpsPosition() : null;
 
+        long time = intent.getLongExtra(SharedConstants.ACTION_ARG_TIME, System.currentTimeMillis());
         if (currentPosition != null && Math.abs(time - currentPosition.getTime()) > REPORTER_WINDOW) {
+            // no gps for a while, just bundle what we have
             reportCollectedLocation();
-        }
-
-        if (WifiScanner.WIFI_SCANNER_EXTRA_SUBJECT.equals(subject)) {
-            List<ScanResult> results = intent.getParcelableArrayListExtra(WifiScanner.WIFI_SCANNER_ARG_SCAN_RESULTS);
-            putWifiResults(results);
-        } else if (CellScanner.CELL_SCANNER_EXTRA_SUBJECT.equals(subject)) {
-            List<CellInfo> results = intent.getParcelableArrayListExtra(CellScanner.CELL_SCANNER_ARG_CELLS);
-            putCellResults(results);
-        } else if (GPSScanner.GPS_SCANNER_EXTRA_SUBJECT.equals(subject)) {
-            reportCollectedLocation();
-            Location newPosition = intent.getParcelableExtra(GPSScanner.GPS_SCANNER_ARG_LOCATION);
-            mBundle = newPosition != null ? new StumblerBundle(newPosition, mPhoneType) : mBundle;
-        } else {
-            Log.d(LOGTAG, "Intent ignored with Subject: " + subject);
-            return; // Intent not aimed at the Reporter (it is possibly for UI instead)
         }
 
         if (mBundle != null &&
             (mBundle.getWifiData().size() > WIFI_COUNT_WATERMARK ||
              mBundle.getCellData().size() > CELLS_COUNT_WATERMARK)) {
+            // no gps for a while, have too much data, just bundle it
             reportCollectedLocation();
         }
     }
@@ -138,9 +145,9 @@ final class Reporter extends BroadcastReceiver {
             return;
         }
 
-        Intent broadcast = new Intent("org.mozilla.mozstumbler.stumblerBundle");
-        broadcast.putExtra(Intent.EXTRA_SUBJECT, "StumblerBundle");
+        Intent broadcast = new Intent("org.mozilla.mozstumbler.intent.action.STUMBLER_BUNDLE"); // FIXME make into a constant
         broadcast.putExtra("StumblerBundle", mBundle);
+        // send to StumblerBundleReceiver
         mContext.sendBroadcast(broadcast);
 
         mBundle.getGpsPosition().setTime(System.currentTimeMillis());

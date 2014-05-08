@@ -261,7 +261,7 @@ final class Updater {
 
         //First stop the service so it is not running more
         Intent service = new Intent();
-        service.setClass(context, ScannerService.class);
+        service.setClass(context, StumblerService.class);
         context.stopService(service);
 
         Intent intent = new Intent(Intent.ACTION_VIEW);

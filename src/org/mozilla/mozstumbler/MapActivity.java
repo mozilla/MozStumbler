@@ -17,18 +17,13 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
-import android.widget.ProgressBar;
 import android.widget.Toast;
-
-import java.lang.Void;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import org.mozilla.mozstumbler.cellscanner.CellInfo;
 import org.mozilla.mozstumbler.cellscanner.CellScanner;
 import org.mozilla.mozstumbler.communicator.Searcher;
@@ -85,18 +80,11 @@ public final class MapActivity extends Activity {
             }
 
             String action = intent.getAction();
-            if (!action.equals(ScannerService.MESSAGE_TOPIC)) {
-                Log.e(LOGTAG, "Received an unknown intent: " + action);
-                return;
-            }
 
-            String subject = intent.getStringExtra(Intent.EXTRA_SUBJECT);
-            if (WifiScanner.WIFI_SCANNER_EXTRA_SUBJECT.equals(subject)) {
-                mWifiData = intent.getParcelableArrayListExtra(WifiScanner.WIFI_SCANNER_ARG_SCAN_RESULTS);
-            } else if (CellScanner.CELL_SCANNER_EXTRA_SUBJECT.equals(subject)) {
-                mCellData = intent.getParcelableArrayListExtra(CellScanner.CELL_SCANNER_ARG_CELLS);
-            } else {
-                return;
+            if (action.equals(WifiScanner.ACTION_WIFIS_SCANNED)) {
+                mWifiData = intent.getParcelableArrayListExtra(WifiScanner.ACTION_WIFIS_SCANNED_ARG_RESULTS);
+            } else if (action.equals(CellScanner.ACTION_CELLS_SCANNED)) {
+                mCellData = intent.getParcelableArrayListExtra(CellScanner.ACTION_CELLS_SCANNED_ARG_CELLS);
             }
 
             new GetLocationAndMapItTask().execute("");
@@ -121,7 +109,10 @@ public final class MapActivity extends Activity {
         mMap.getOverlays().add(coverageTilesOverlay);
 
         mReceiver = new ReporterBroadcastReceiver();
-        registerReceiver(mReceiver, new IntentFilter(ScannerService.MESSAGE_TOPIC));
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(WifiScanner.ACTION_WIFIS_SCANNED);
+        intentFilter.addAction(CellScanner.ACTION_CELLS_SCANNED);
+        registerReceiver(mReceiver, intentFilter);
 
         mMap.getController().setZoom(2);
 
@@ -248,9 +239,7 @@ public final class MapActivity extends Activity {
         super.onStart();
 
         Context context = getApplicationContext();
-        Intent i = new Intent(ScannerService.MESSAGE_TOPIC);
-        i.putExtra(Intent.EXTRA_SUBJECT, "Scanner");
-        i.putExtra("enable", 1);
+        Intent i = new Intent(MainActivity.ACTION_UNPAUSE_SCANNING);
         context.sendBroadcast(i);
         Log.d(LOGTAG, "onStart");
     }

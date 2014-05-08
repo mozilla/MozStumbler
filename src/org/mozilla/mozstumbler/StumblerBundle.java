@@ -12,9 +12,9 @@ import java.util.Map;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.mozilla.mozstumbler.cellscanner.CellInfo;
+import org.mozilla.mozstumbler.service.scanners.cellscanner.CellInfo;
 
-final class StumblerBundle implements Parcelable {
+public final class StumblerBundle implements Parcelable {
     private final int mPhoneType;
     private final Location mGpsPosition;
     private final Map<String, ScanResult> mWifiData;

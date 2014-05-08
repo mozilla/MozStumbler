@@ -35,7 +35,7 @@
         android:theme="@style/AppTheme"
         android:supportsRtl="true" >
         <activity
-            android:name="org.mozilla.mozstumbler.MainActivity"
+            android:name=".client.MainActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -43,29 +43,29 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="org.mozilla.mozstumbler.preferences.PreferencesScreen"
+            android:name=".client.PreferencesScreen"
             android:label="@string/app_name" >
         </activity>
 
         <activity
-            android:name="org.mozilla.mozstumbler.MapActivity"
+            android:name=".client.mapview.MapActivity"
             android:label="@string/app_name"
             android:hardwareAccelerated="false" >
         </activity>
 
         <activity
             android:label="@string/app_name"
-            android:name=".AboutActivity" >
+            android:name=".client.AboutActivity" >
         </activity>
 
-        <receiver android:name=".TurnOffReceiver">
+        <receiver android:name=".client.TurnOffReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BATTERY_LOW"/>
                 <action android:name="org.mozilla.mozstumbler.turnMeOff"/>
             </intent-filter>
         </receiver>
 
-        <receiver android:name=".StumblerBundleReceiver">
+        <receiver android:name=".client.StumblerBundleReceiver">
             <intent-filter>
                 <action android:name="org.mozilla.mozstumbler.stumblerBundle"/>
             </intent-filter>
@@ -79,13 +79,13 @@
         </service>
 
         <service
-            android:name=".StumblerService"
+            android:name=".service.StumblerService"
             android:icon="@drawable/ic_launcher"
             android:label="@string/service_name">
         </service>
 
         <service
-            android:name=".sync.AuthenticatorService">
+            android:name=".client.sync.AuthenticatorService">
             <intent-filter>
                 <action android:name="android.accounts.AccountAuthenticator"/>
             </intent-filter>
@@ -95,7 +95,7 @@
         </service>
 
         <service
-            android:name=".sync.SyncService"
+            android:name=".service.sync.SyncService"
             android:process=":.ScannerService">
             <intent-filter>
                 <action android:name="android.content.SyncAdapter"/>
@@ -105,7 +105,7 @@
         </service>
 
         <provider
-            android:name="org.mozilla.mozstumbler.provider.Provider"
+            android:name=".service.Provider"
             android:authorities="org.mozilla.mozstumbler.provider"
             android:exported="false"
             android:syncable="true"

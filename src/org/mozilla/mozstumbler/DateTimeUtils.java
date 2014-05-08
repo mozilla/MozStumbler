@@ -12,7 +12,7 @@ public final class DateTimeUtils {
     private static final DateFormat sLocaleFormat = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);
     private static final DateFormat sISO8601Format = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
 
-    static final long MILLISECONDS_PER_DAY = 86400000;  // milliseconds/day
+    public static final long MILLISECONDS_PER_DAY = 86400000;  // milliseconds/day
 
     static {
         sISO8601Format.setTimeZone(TimeZone.getTimeZone("UTC"));
@@ -37,7 +37,7 @@ public final class DateTimeUtils {
         return formatDate(new Date(time));
     }
 
-    static String formatTimeForLocale(long time) {
+    public static String formatTimeForLocale(long time) {
         return sLocaleFormat.format(time);
     }
 

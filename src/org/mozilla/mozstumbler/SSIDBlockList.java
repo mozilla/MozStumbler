@@ -46,6 +46,7 @@ final class SSIDBlockList {
         "Bus4You-", // Bus4You on-bus WiFi (Norway)
         "CapitalBus", // Capital Bus on-bus WiFi (Taiwan)
         "CDWiFi",           // Ceske drahy (Czech railways): http://www.cd.cz/cd-online/-15765/
+	"CommuteNet", // Copenhagen S-Tog on-train WiFi: http://www.dsb.dk/s-tog/kampagner/fri-internet-i-s-tog
         "csadplzen_bus",    // CSAD Plzen bus hotspots: http://www.csadplzen.cz/?ob=aktuality#wifi7
         "EMT-Madrid",  // Empresa municipal de transportes de Madrid http://buswifi.com/
         "Flybussekspressen", // Oslo airport transportation on-bus WiFi (Norway)
@@ -75,6 +76,7 @@ final class SSIDBlockList {
         "ShuttleWiFi",
         "Southwest WiFi", // Southwest Airlines in-flight WiFi
         "SST-PR-1", // Sears Home Service van hotspot?!
+	"stagecoach-wifi", // Stagecoach on-bus WiFi (United Kingdom)
         "Telekom_ICE", // Deutsche Bahn on-train WiFi
         "TPE-Free Bus", // Taipei City on-bus WiFi (Taiwan)
         "THSR-VeeTIME", // Taiwan High Speed Rail on-train WiFi

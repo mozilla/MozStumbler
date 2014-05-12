@@ -52,6 +52,7 @@ final class SSIDBlockList {
 	"CommuteNet", // Copenhagen S-Tog on-train WiFi: http://www.dsb.dk/s-tog/kampagner/fri-internet-i-s-tog
         "csadplzen_bus",    // CSAD Plzen bus hotspots: http://www.csadplzen.cz/?ob=aktuality#wifi7
         "EMT-Madrid",  // Empresa municipal de transportes de Madrid http://buswifi.com/
+        "FlixBus", // FlixBus on-bus WiFi (Germany)
         "Flybussekspressen", // Oslo airport transportation on-bus WiFi (Norway)
         "Flybussen", // Airport transportation on-bus WiFi all over Norway (Norway)
         "Flygbussarna Free WiFi ", // Flygbussarna.se on-bus WiFi (Sweden)

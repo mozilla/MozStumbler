@@ -1,4 +1,4 @@
-package org.mozilla.mozstumbler;
+package org.mozilla.mozstumbler.service;
 
 import android.location.Location;
 import android.net.wifi.ScanResult;

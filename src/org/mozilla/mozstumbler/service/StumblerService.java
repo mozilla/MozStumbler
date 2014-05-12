@@ -2,17 +2,26 @@ package org.mozilla.mozstumbler.service;
 
 import android.app.Service;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
+import org.mozilla.mozstumbler.SharedConstants;
 import org.mozilla.mozstumbler.service.Reporter;
 
 public final class StumblerService extends Service {
+    public  static final String ACTION_BASE = SharedConstants.ACTION_NAMESPACE;
+    public  static final String ACTION_STUMBLER_BUNDLE = ACTION_BASE + ".STUMBLER_BUNDLE";
+
     private static final String LOGTAG          = StumblerService.class.getName();
-    private Scanner             mScanner;
-    private Reporter            mReporter;
-    private boolean             mIsBound;
-    private final IBinder       mBinder         = new StumblerBinder();
+    private Scanner                mScanner;
+    private Reporter               mReporter;
+
+    // our default receiver for StumblerBundles. we may want to
+    // let the application disable this in the future.
+    private StumblerBundleReceiver mStumblerBundleReceiver;
+    private boolean                mIsBound;
+    private final IBinder          mBinder         = new StumblerBinder();
 
     public final class StumblerBinder extends Binder {
         public StumblerService getService() {
@@ -30,6 +39,7 @@ public final class StumblerService extends Service {
         }
 
         mScanner.startScanning();
+        registerReceiver(mStumblerBundleReceiver, new IntentFilter(ACTION_STUMBLER_BUNDLE));
     }
 
     public void stopScanning() {
@@ -38,6 +48,7 @@ public final class StumblerService extends Service {
             mReporter.flush();
             if (!mIsBound) {
                 stopSelf();
+                unregisterReceiver(mStumblerBundleReceiver);
             }
         }
     }

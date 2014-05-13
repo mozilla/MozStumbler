@@ -36,19 +36,23 @@ final class SSIDBlockList {
 
         // Transportation Wi-Fi
         "ac_transit_wifi_bus",
+        "ADAC_Postbus", // ADAC Postbus on-bus WiFi (Germany)
         "AirportExpressZone", // Oslo airport express train on-train WiFi (Norway)
         "AmtrakConnect",
         "Amtrak_",
         "amtrak_",
         "arriva", //Arriva Nederland on-train Wifi (Netherlands)
+        "AutoPostale", // Swiss municipial busses on-bus WiFi (Italian speaking part)
         "Barcelona Bus Turistic ", // Barcelona tourisitic buses http://barcelonabusturistic.cat
         "Boreal_Kundenett", // Tromso on-boat (and probably bus) WiFi (Norway)
         "Bus4You-", // Bus4You on-bus WiFi (Norway)
         "CapitalBus", // Capital Bus on-bus WiFi (Taiwan)
+        "CarPostal", // Swiss municipial busses on-bus WiFi (French speaking part)
         "CDWiFi",           // Ceske drahy (Czech railways): http://www.cd.cz/cd-online/-15765/
 	"CommuteNet", // Copenhagen S-Tog on-train WiFi: http://www.dsb.dk/s-tog/kampagner/fri-internet-i-s-tog
         "csadplzen_bus",    // CSAD Plzen bus hotspots: http://www.csadplzen.cz/?ob=aktuality#wifi7
         "EMT-Madrid",  // Empresa municipal de transportes de Madrid http://buswifi.com/
+        "FlixBus", // FlixBus on-bus WiFi (Germany)
         "Flybussekspressen", // Oslo airport transportation on-bus WiFi (Norway)
         "Flybussen", // Airport transportation on-bus WiFi all over Norway (Norway)
         "Flygbussarna Free WiFi ", // Flygbussarna.se on-bus WiFi (Sweden)
@@ -64,6 +68,7 @@ final class SSIDBlockList {
         "KOLUMBUS", // Stavanger public transport on-bus WiFi (Norway)
         "Kystbussen_Kundennett", // Kystbussen on-bus WiFi (Norway)
         "MAVSTART-WiFi", // Hungarian State Railways onboard hotspot on InterCity trains (Hungary)
+        "MeinFernbus-", // MeinFernbus on-bus WiFi (Germany)
         "Nateev-WiFi", // Nateev Express transportation services (Israel)
         "NationalExpress", // National Express on-bus WiFi (United Kingdom)
         "Norgesbuss", // Norgesbuss on-bus WiFi (Norway)
@@ -71,6 +76,7 @@ final class SSIDBlockList {
         "NSB_INTERAKTIV", // NSB on-train WiFi (Norway)
         "Omni-WiFi", // Omnibus transportation services (Israel)
         "Oxford Tube", // Oxford Tube on-bus WiFi (United Kindom)
+        "PostAuto", // Swiss municipial busses on-bus WiFi (German speaking part)
         "QbuzzWIFI", //Qbuzz on-bus WiFi (Netherlands)
         "SF Shuttle Wireless",
         "ShuttleWiFi",

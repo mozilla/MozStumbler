@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Binder;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import org.mozilla.mozstumbler.SharedConstants;
 import org.mozilla.mozstumbler.service.Reporter;
@@ -22,6 +23,7 @@ public final class StumblerService extends Service {
     private StumblerBundleReceiver mStumblerBundleReceiver;
     private boolean                mIsBound;
     private final IBinder          mBinder         = new StumblerBinder();
+    private Prefs mPrefs;
 
     public final class StumblerBinder extends Binder {
         public StumblerService getService() {
@@ -52,6 +54,8 @@ public final class StumblerService extends Service {
             }
         }
     }
+
+    public Prefs getPrefs() { return mPrefs; }
 
     public void checkPrefs() {
         mScanner.checkPrefs();
@@ -98,6 +102,7 @@ public final class StumblerService extends Service {
         super.onCreate();
         Log.d(LOGTAG, "onCreate");
 
+        mPrefs = new Prefs(this);
         mScanner = new Scanner(this);
         mReporter = new Reporter(this);
     }

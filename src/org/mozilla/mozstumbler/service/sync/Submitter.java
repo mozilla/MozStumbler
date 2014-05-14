@@ -5,7 +5,7 @@ import android.util.Log;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import org.mozilla.mozstumbler.AbstractCommunicator;
-import org.mozilla.mozstumbler.Prefs;
+import org.mozilla.mozstumbler.service.Prefs;
 
 public class Submitter extends AbstractCommunicator {
     private static final String SUBMIT_URL = "https://location.services.mozilla.com/v1/submit";

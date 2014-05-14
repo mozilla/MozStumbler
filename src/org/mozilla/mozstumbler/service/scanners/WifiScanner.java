@@ -20,7 +20,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.mozilla.mozstumbler.blocklist.BSSIDBlockList;
 import org.mozilla.mozstumbler.blocklist.SSIDBlockList;
 import org.mozilla.mozstumbler.SharedConstants;
-import org.mozilla.mozstumbler.Prefs;
+import org.mozilla.mozstumbler.service.Prefs;
 
 public class WifiScanner extends BroadcastReceiver {
     public static final String ACTION_BASE = SharedConstants.ACTION_NAMESPACE + ".WifiScanner.";

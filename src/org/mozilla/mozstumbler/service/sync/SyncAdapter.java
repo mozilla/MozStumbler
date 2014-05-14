@@ -23,7 +23,7 @@ import org.json.JSONObject;
 import org.mozilla.mozstumbler.BuildConfig;
 import org.mozilla.mozstumbler.DateTimeUtils;
 import org.mozilla.mozstumbler.NetworkUtils;
-import org.mozilla.mozstumbler.Prefs;
+import org.mozilla.mozstumbler.service.Prefs;
 import org.mozilla.mozstumbler.DatabaseContract;
 import org.mozilla.mozstumbler.SharedConstants;
 import static org.mozilla.mozstumbler.DatabaseContract.Reports;

@@ -13,6 +13,7 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.database.Cursor;
 import android.graphics.Color;
+import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Build.VERSION;
@@ -117,9 +118,9 @@ public final class MainActivity extends FragmentActivity {
     protected void onResume() {
         super.onResume();
         mGeofenceHere = mConnectionRemote.getPrefs().getGeofenceHere();
-        if (mGeofenceHere)
+        if (mGeofenceHere) {
             mConnectionRemote.getPrefs().setGeofenceEnabled(false);
-
+        }
         setGeofenceText();
         mNeedsUpdate = true;
     }
@@ -271,7 +272,10 @@ public final class MainActivity extends FragmentActivity {
         mNeedsUpdate = false;
         if (mGeofenceHere) {
             if (mGpsFixes > 0 && locationsScanned > 0) {
-                mConnectionRemote.getPrefs().setGeofenceLatLong((float)latitude, (float)longitude);
+                Location coord = new Location(SharedConstants.LOCATION_ORIGIN_INTERNAL);
+                coord.setLatitude(latitude);
+                coord.setLongitude(longitude);
+                mConnectionRemote.getPrefs().setGeofenceLocation(coord);
                 mConnectionRemote.getPrefs().setGeofenceEnabled(true);
                 mConnectionRemote.getPrefs().setGeofenceHere(false);
                 mGeofenceHere = false;
@@ -392,8 +396,9 @@ public final class MainActivity extends FragmentActivity {
 
     private void setGeofenceText() {
         if (mConnectionRemote.getPrefs().getGeofenceEnabled()) {
-            float latLong[] = mConnectionRemote.getPrefs().getGeofenceLatLong();
-            formatTextView(R.id.geofence_status, R.string.geofencing_on, latLong[0], latLong[1]);
+            Location coord = mConnectionRemote.getPrefs().getGeofenceLocation();
+            formatTextView(R.id.geofence_status, R.string.geofencing_on,
+                    coord.getLatitude(), coord.getLongitude());
         } else {
             formatTextView(R.id.geofence_status, R.string.geofencing_off);
         }

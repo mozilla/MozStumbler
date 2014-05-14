@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.location.Location;
 import android.os.Build;
 import android.os.Build.VERSION;
 import android.preference.PreferenceManager;
@@ -12,6 +13,7 @@ import android.util.Log;
 
 import org.mozilla.mozstumbler.BuildConfig;
 import org.mozilla.mozstumbler.R;
+import org.mozilla.mozstumbler.SharedConstants;
 
 
 public final class Prefs {
@@ -35,17 +37,17 @@ public final class Prefs {
 
     @SuppressLint("InlinedApi")
     public void setDefaultValues() {
-
         if (getPrefs().getInt(VALUES_VERSION_PREF, -1) != BuildConfig.VERSION_CODE) {
             Log.i(LOGTAG, "Version of the application has changed. Updating default values.");
             // Remove old keys
-            prefs.edit()
+            getPrefs().edit()
                     .remove("reports")
                     .remove("power_saving_mode")
                     .commit();
             PreferenceManager.setDefaultValues(mContext, PREFS_FILE,
                     Context.MODE_MULTI_PROCESS, R.xml.preferences, true);
             getPrefs().edit().putInt(VALUES_VERSION_PREF, BuildConfig.VERSION_CODE).commit();
+            getPrefs().edit().commit();
         }
     }
 
@@ -54,19 +56,18 @@ public final class Prefs {
     ///
 
     public void setGeofenceEnabled(boolean state) {
-        setBoolPref(GEOFENCE_SWITCH,state);
+        setBoolPref(GEOFENCE_SWITCH, state);
     }
 
     public void setGeofenceHere(boolean flag) {
-        setBoolPref(GEOFENCE_HERE,flag);
+        setBoolPref(GEOFENCE_HERE, flag);
     }
 
-    public void setGeofenceLatLong(float la, float lo) {
+    public void setGeofenceLocation(Location location) {
         SharedPreferences.Editor editor = getPrefs().edit();
-        editor.putFloat(LAT_PREF,la);
-        editor.putFloat(LON_PREF,lo);
+        editor.putFloat(LAT_PREF, (float)location.getLatitude());
+        editor.putFloat(LON_PREF, (float) location.getLongitude());
         apply(editor);
-        Log.d(LOGTAG, "Geofence set: " + la + "," + lo);
     }
 
     ///
@@ -78,15 +79,14 @@ public final class Prefs {
     }
 
     public boolean getGeofenceHere() {
-        return getBoolPref(GEOFENCE_HERE,false);
+        return getBoolPref(GEOFENCE_HERE);
     }
 
-    /** Array is ordered lat,long (matches order in method name) */
-    public float[] getGeofenceLatLong() {
-        float latLong[] = new float[2];
-        latLong[0] = getPrefs().getFloat(LAT_PREF, 0);
-        latLong[1] = getPrefs().getFloat(LON_PREF,0);
-        return latLong;
+    public Location getGeofenceLocation() {
+        Location loc = new Location(SharedConstants.LOCATION_ORIGIN_INTERNAL);
+        loc.setLatitude(getPrefs().getFloat(LAT_PREF, 0));
+        loc.setLongitude(getPrefs().getFloat(LON_PREF,0));
+        return loc;
     }
 
     public String getNickname() {
@@ -98,7 +98,7 @@ public final class Prefs {
     }
 
     public boolean getWifi() {
-        return getBoolPref(WIFI_ONLY);
+        return getBoolPref(WIFI_ONLY, true);
     }
 
     public boolean getWifiScanAlways() {

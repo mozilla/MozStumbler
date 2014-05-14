@@ -17,8 +17,7 @@ public final class LocationBlockList {
     private static final double GEOFENCE_RADIUS = 0.01;      // .01 degrees is approximately 1km
 
     private Context mContext;
-    private double mBlockedLat;
-    private double mBlockedLon;
+    private Location mBlockedLocation;
     private boolean mGeofencingEnabled;
     private boolean mIsGeofenced = false;
 
@@ -29,9 +28,7 @@ public final class LocationBlockList {
 
     public void update_blocks()    {
         Prefs prefs = new Prefs(mContext);
-        float latLong[] = prefs.getGeofenceLatLong();
-        mBlockedLat = latLong[0];
-        mBlockedLon = latLong[1];
+        mBlockedLocation = prefs.getGeofenceLocation();
         mGeofencingEnabled = prefs.getGeofenceEnabled();
     }
 
@@ -88,10 +85,12 @@ public final class LocationBlockList {
             Log.w(LOGTAG, "Bogus timestamp: " + timestamp + " (" + DateTimeUtils.formatTime(timestamp) + ")");
         }
 
-        if (mGeofencingEnabled && Math.abs(location.getLatitude()-mBlockedLat) < GEOFENCE_RADIUS && Math.abs(location.getLongitude()-mBlockedLon) < GEOFENCE_RADIUS) {
+        if (mGeofencingEnabled &&
+                Math.abs(location.getLatitude() - mBlockedLocation.getLatitude()) < GEOFENCE_RADIUS &&
+                Math.abs(location.getLongitude() - mBlockedLocation.getLongitude()) < GEOFENCE_RADIUS) {
             block = true;
             mIsGeofenced = true;
-            Log.i(LOGTAG, "Hit the geofence: " + mBlockedLat +" / " + mBlockedLon);
+            Log.i(LOGTAG, "Hit the geofence: " + mBlockedLocation.getLatitude() +" / " + mBlockedLocation.getLongitude());
         }
 
         return block;

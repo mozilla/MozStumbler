@@ -11,4 +11,7 @@ public class SharedConstants {
 
     public static final String SYNC_EXTRAS_IGNORE_WIFI_STATUS =
             "org.mozilla.mozstumbler.sync.ignore_wifi_status";
+
+    /** Location constructor requires a named origin, these are created in the app  */
+    public static final String LOCATION_ORIGIN_INTERNAL = "internal";
 }

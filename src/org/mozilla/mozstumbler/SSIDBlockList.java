@@ -37,6 +37,7 @@ final class SSIDBlockList {
         // Transportation Wi-Fi
         "ac_transit_wifi_bus",
         "ADAC_Postbus", // ADAC Postbus on-bus WiFi (Germany)
+        "Afifi", // Nazareen express transportation services (Israel)
         "AirportExpressZone", // Oslo airport express train on-train WiFi (Norway)
         "AmtrakConnect",
         "Amtrak_",

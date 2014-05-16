@@ -148,6 +148,7 @@ final class Reporter extends BroadcastReceiver {
         Collection<CellInfo> cells = mCellData.values();
         Collection<ScanResult> wifis = mWifiData.values();
 
+
         ContentValues values = new ContentValues(10);
         values.put(Reports.TIME, mGpsPosition.getTime());
         values.put(Reports.LAT, Math.floor(mGpsPosition.getLatitude() * 1.0E6) / 1.0E6);
@@ -189,7 +190,8 @@ final class Reporter extends BroadcastReceiver {
                 Log.w(LOGTAG, "JSON exception while serializing wifi data: " + exc);
             }
         }
-
+        mCellData.clear();
+        mWifiData.clear();
         values.put(Reports.WIFI, wifiJSON.toString());
         values.put(Reports.WIFI_COUNT, wifiJSON.length());
 

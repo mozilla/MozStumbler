@@ -80,6 +80,6 @@
     <string name="wifi_scan_always_title">Toujours détecter le Wi-Fi</string>
     <string name="wifi_scan_always_summary">Détecter les points d\'accès même si le Wi-Fi est arrêté</string>
 
-    <string name="refresh_map">Refresh location</string>
+    <string name="refresh_map">Rafraichir la position</string>
     
 </resources>

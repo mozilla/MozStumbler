@@ -60,8 +60,8 @@ This release process ought to be automated.
 3. `git commit -m "MozStumbler v$MOZSTUMBLER_VERSION" AndroidManifest.xml.in VERSION`
 4. Push the new version branch to GitHub and file a new pull requests so Travis can start building it.
 5. `./gradlew build`
-6. `mv build/apk/MozStumbler-release.apk build/apk/MozStumbler-$MOZSTUMBLER_VERSION.apk`
-7. Browse to https://github.com/dougt/MozStumbler/releases.
+6. `mv build/apk/MozStumbler-release.apk build/apk/MozStumbler-v$MOZSTUMBLER_VERSION.apk`
+7. Browse to https://github.com/mozilla/MozStumbler/releases.
 8. "Draft a new release" with the release title "MozStumbler v$MOZSTUMBLER_VERSION" and tag version "v$MOZSTUMBLER_VERSION".
 9. Add some release notes and give @credit to contributors!
 10. Drag and drop the new MozStumbler-v$MOZSTUMBLER_VERSION.apk to the "Attach binaries for this release by dropping them here." box.

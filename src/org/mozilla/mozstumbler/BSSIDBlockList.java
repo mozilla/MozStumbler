@@ -22,6 +22,16 @@ final class BSSIDBlockList {
         "7cc537",
         "88c663",
         "8c7712",
+        
+        // Motorola Mobility OUIs:
+        "1430c6",
+        "34bb26",
+        "60beb5",
+        "b07994",
+        "ccc3ea",
+        "e0757d",
+        "f8e079",
+        "f8f1b6",
 
          // Adelaide Metro WiFi Network OUIs:
         "a854b2",

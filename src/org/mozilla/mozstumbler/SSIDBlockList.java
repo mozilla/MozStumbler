@@ -79,6 +79,7 @@ final class SSIDBlockList {
         "Oxford Tube", // Oxford Tube on-bus WiFi (United Kindom)
         "PostAuto", // Swiss municipial busses on-bus WiFi (German speaking part)
         "QbuzzWIFI", //Qbuzz on-bus WiFi (Netherlands)
+        "quickshuttle_", //Quick Shuttle on-bus WiFi (United States WA/Canada BC) 
         "SF Shuttle Wireless",
         "ShuttleWiFi",
         "Southwest WiFi", // Southwest Airlines in-flight WiFi

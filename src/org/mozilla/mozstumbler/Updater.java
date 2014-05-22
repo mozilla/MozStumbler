@@ -169,7 +169,9 @@ final class Updater {
 
             @Override
             public void onPostExecute(File result){
-                installPackage(context, result);
+                if (result != null) {
+                    installPackage(context, result);
+                }
             }
         }.execute();
     }

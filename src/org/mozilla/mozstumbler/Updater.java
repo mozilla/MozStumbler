@@ -257,6 +257,9 @@ final class Updater {
     }
 
     private static void installPackage(Context context, File apkFile) {
+        if (apkFile == null) {
+            return;
+        }
         Uri apkURI = Uri.fromFile(apkFile);
         Log.d(LOGTAG, "Installing: " + apkURI);
 

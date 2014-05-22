@@ -162,21 +162,24 @@ final class Reporter extends BroadcastReceiver {
             values.put(Reports.ACCURACY, (int) Math.ceil(mGpsPosition.getAccuracy()));
         }
 
+
         // only upload cell data if it's GSM or CDMA
-        if (mPhoneType == TelephonyManager.PHONE_TYPE_GSM ||
-            mPhoneType == TelephonyManager.PHONE_TYPE_CDMA) {
-
-            values.put(Reports.RADIO,
-                       (mPhoneType == TelephonyManager.PHONE_TYPE_GSM) ? "gsm" : "cdma");
-
-            JSONArray cellJSON = new JSONArray();
-            for (CellInfo cell : cells) {
-                cellJSON.put(cell.toJSONObject());
-            }
-
-            values.put(Reports.CELL, cellJSON.toString());
-            values.put(Reports.CELL_COUNT, cellJSON.length());
+        if (mPhoneType == TelephonyManager.PHONE_TYPE_GSM) {
+            values.put(Reports.RADIO, "gsm");
+        } else if (mPhoneType == TelephonyManager.PHONE_TYPE_CDMA) {
+            values.put(Reports.RADIO, "cdma");
+        } else {
+            values.put(Reports.RADIO, "");
         }
+
+        JSONArray cellJSON = new JSONArray();
+        for (CellInfo cell : cells) {
+            cellJSON.put(cell.toJSONObject());
+        }
+
+        String strCellJSON = cellJSON.toString();
+        values.put(Reports.CELL, ((strCellJSON == null)? "" : strCellJSON));
+        values.put(Reports.CELL_COUNT, cellJSON.length());
 
         JSONArray wifiJSON = new JSONArray();
         for (ScanResult wifi : wifis) {

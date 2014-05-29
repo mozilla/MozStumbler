@@ -18,7 +18,6 @@ public final class Prefs {
     private static final String     LOGTAG        = Prefs.class.getName();
             static final String     PREFS_FILE    = Prefs.class.getName();
     private static final String     NICKNAME_PREF = "nickname";
-    private static final String     POWER_SAVING_MODE_PREF = "power_saving_mode";
     private static final String     VALUES_VERSION_PREF = "values_version";
     private static final String     WIFI_ONLY = "wifi_only";
     private static final String     LAT_PREF = "lat_pref";
@@ -38,6 +37,11 @@ public final class Prefs {
         final SharedPreferences prefs = getPrefs();
         if (prefs.getInt(VALUES_VERSION_PREF, -1) != BuildConfig.VERSION_CODE) {
             Log.i(LOGTAG, "Version of the application has changed. Updating default values.");
+            // Remove old keys
+            prefs.edit()
+                    .remove("reports")
+                    .remove("power_saving_mode")
+                    .commit();
             PreferenceManager.setDefaultValues(mContext, PREFS_FILE,
                     Context.MODE_MULTI_PROCESS, R.xml.preferences, true);
             prefs.edit().putInt(VALUES_VERSION_PREF, BuildConfig.VERSION_CODE).commit();

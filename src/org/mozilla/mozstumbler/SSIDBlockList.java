@@ -19,6 +19,7 @@ final class SSIDBlockList {
         "LG-MS870",
         "LG VS910 4G",
         "LG Vortex",
+        "MB526 ", // Motorola Defy Plus, matching regex "^MB526 \d{4}$"
         "MIFI",
         "MiFi",
         "myLGNet",
@@ -31,6 +32,7 @@ final class SSIDBlockList {
         "Verizon-",
         "VirginMobile MiFi",
         "VodafoneMobileWiFi-",
+        "XT320-", // Motorola Defy Mini, matching regex "^XT320-\d{4}$"
         "FirefoxHotspot",
         "Mobile Hotspot", // BlackBerry OS 10
 

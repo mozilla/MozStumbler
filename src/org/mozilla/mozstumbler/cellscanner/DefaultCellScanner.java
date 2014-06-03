@@ -33,6 +33,7 @@ public class DefaultCellScanner implements CellScanner.CellScannerImpl {
 
     private static final GetAllCellInfoScannerImpl sGetAllInfoCellScanner;
 
+    private final ScreenMonitor mScreenMonitor;
     private final TelephonyManager mTelephonyManager;
 
     private final int mPhoneType;
@@ -66,6 +67,8 @@ public class DefaultCellScanner implements CellScanner.CellScannerImpl {
         }
         mSignalStrength = CellInfo.UNKNOWN_SIGNAL;
         mCdmaDbm = CellInfo.UNKNOWN_SIGNAL;
+
+        mScreenMonitor = new ScreenMonitor(context);
     }
 
     @Override
@@ -73,11 +76,13 @@ public class DefaultCellScanner implements CellScanner.CellScannerImpl {
         mSignalStrength = CellInfo.UNKNOWN_SIGNAL;
         mCdmaDbm = CellInfo.UNKNOWN_SIGNAL;
         mTelephonyManager.listen(mPhoneStateListener, PhoneStateListener.LISTEN_SIGNAL_STRENGTHS);
+        mScreenMonitor.start();
     }
 
     @Override
     public void stop() {
         mTelephonyManager.listen(mPhoneStateListener, PhoneStateListener.LISTEN_NONE);
+        mScreenMonitor.stop();
         mSignalStrength = CellInfo.UNKNOWN_SIGNAL;
         mCdmaDbm = CellInfo.UNKNOWN_SIGNAL;
     }
@@ -116,6 +121,10 @@ public class DefaultCellScanner implements CellScanner.CellScannerImpl {
         final CellLocation currentCell;
         currentCell = mTelephonyManager.getCellLocation();
         if (currentCell == null) {
+            return null;
+        }
+        mScreenMonitor.putLocation(currentCell);
+        if (!mScreenMonitor.isLocationValid()) {
             return null;
         }
         try {

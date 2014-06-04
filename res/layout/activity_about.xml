@@ -16,6 +16,15 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="@string/app_name" />
 
+   <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:paddingTop="32dp"
+        android:autoLink="web"
+        android:text="Map view tiles © OpenStreetMap contributors\nhttp://www.openstreetmap.org "/>
+
     <TextView
         android:id="@+id/about_version"
         android:layout_width="match_parent"

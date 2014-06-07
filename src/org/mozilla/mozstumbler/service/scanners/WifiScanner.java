@@ -17,9 +17,9 @@ import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicInteger;
-import org.mozilla.mozstumbler.blocklist.BSSIDBlockList;
-import org.mozilla.mozstumbler.blocklist.SSIDBlockList;
-import org.mozilla.mozstumbler.SharedConstants;
+import org.mozilla.mozstumbler.service.blocklist.BSSIDBlockList;
+import org.mozilla.mozstumbler.service.blocklist.SSIDBlockList;
+import org.mozilla.mozstumbler.service.SharedConstants;
 import org.mozilla.mozstumbler.service.Prefs;
 
 public class WifiScanner extends BroadcastReceiver {

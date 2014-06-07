@@ -1,8 +1,13 @@
-package org.mozilla.mozstumbler;
+package org.mozilla.mozstumbler.service;
 
 import android.content.Context;
 import android.os.Build;
 import android.util.Log;
+
+import org.mozilla.mozstumbler.BuildConfig;
+import org.mozilla.mozstumbler.R;
+import org.mozilla.mozstumbler.service.utils.PackageUtils;
+
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

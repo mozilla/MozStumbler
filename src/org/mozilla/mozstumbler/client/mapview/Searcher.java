@@ -10,7 +10,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.mozilla.mozstumbler.AbstractCommunicator;
+import org.mozilla.mozstumbler.service.AbstractCommunicator;
 
 public class Searcher extends AbstractCommunicator {
     private static final String LOGTAG = Searcher.class.getName();

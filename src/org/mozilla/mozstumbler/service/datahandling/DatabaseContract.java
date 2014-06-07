@@ -1,4 +1,4 @@
-package org.mozilla.mozstumbler;
+package org.mozilla.mozstumbler.service.datahandling;
 
 import android.content.ContentProviderOperation;
 import android.content.ContentResolver;

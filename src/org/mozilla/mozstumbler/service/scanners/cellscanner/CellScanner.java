@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
-import org.mozilla.mozstumbler.SharedConstants;
+import org.mozilla.mozstumbler.service.SharedConstants;
 
 public class CellScanner {
     public static final String ACTION_BASE = SharedConstants.ACTION_NAMESPACE + ".CellScanner.";

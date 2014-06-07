@@ -72,7 +72,7 @@
         </service>
 
         <service
-            android:name=".client.sync.AuthenticatorService">
+            android:name=".service.sync.AuthenticatorService">
             <intent-filter>
                 <action android:name="android.accounts.AccountAuthenticator"/>
             </intent-filter>
@@ -91,7 +91,7 @@
         </service>
 
         <provider
-            android:name=".service.Provider"
+            android:name=".service.datahandling.Provider"
             android:authorities="org.mozilla.mozstumbler.provider"
             android:exported="false"
             android:syncable="true"

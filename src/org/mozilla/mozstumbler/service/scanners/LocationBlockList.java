@@ -3,7 +3,7 @@ package org.mozilla.mozstumbler.service.scanners;
 import android.content.Context;
 import android.location.Location;
 import android.util.Log;
-import org.mozilla.mozstumbler.DateTimeUtils;
+import org.mozilla.mozstumbler.service.utils.DateTimeUtils;
 import org.mozilla.mozstumbler.service.Prefs;
 
 

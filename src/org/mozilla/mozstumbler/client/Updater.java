@@ -25,7 +25,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.List;
-import org.mozilla.mozstumbler.PackageUtils;
+import org.mozilla.mozstumbler.service.utils.PackageUtils;
 import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.service.StumblerService;
 

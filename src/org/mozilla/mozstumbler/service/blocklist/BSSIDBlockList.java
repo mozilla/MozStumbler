@@ -1,4 +1,4 @@
-package org.mozilla.mozstumbler.blocklist;
+package org.mozilla.mozstumbler.service.blocklist;
 
 import android.net.wifi.ScanResult;
 import android.util.Log;

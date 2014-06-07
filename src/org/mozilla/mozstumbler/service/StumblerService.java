@@ -5,10 +5,10 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Binder;
 import android.os.IBinder;
-import android.preference.PreferenceManager;
 import android.util.Log;
-import org.mozilla.mozstumbler.SharedConstants;
-import org.mozilla.mozstumbler.service.Reporter;
+
+import org.mozilla.mozstumbler.service.datahandling.StumblerBundleReceiver;
+import org.mozilla.mozstumbler.service.sync.SyncUtils;
 
 public final class StumblerService extends Service {
     public  static final String ACTION_BASE = SharedConstants.ACTION_NAMESPACE;
@@ -52,6 +52,7 @@ public final class StumblerService extends Service {
                 stopSelf();
                 unregisterReceiver(mStumblerBundleReceiver);
             }
+            SyncUtils.TriggerRefresh(false);
         }
     }
 
@@ -105,6 +106,8 @@ public final class StumblerService extends Service {
         mPrefs = new Prefs(this);
         mScanner = new Scanner(this);
         mReporter = new Reporter(this);
+
+        SyncUtils.CreateSyncAccount(this);
     }
 
     @Override

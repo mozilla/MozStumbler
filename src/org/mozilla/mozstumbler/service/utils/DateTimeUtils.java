@@ -1,4 +1,4 @@
-package org.mozilla.mozstumbler;
+package org.mozilla.mozstumbler.service.utils;
 
 import android.annotation.SuppressLint;
 import java.text.DateFormat;

@@ -19,11 +19,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import org.mozilla.mozstumbler.BuildConfig;
-import org.mozilla.mozstumbler.DateTimeUtils;
+import org.mozilla.mozstumbler.service.utils.DateTimeUtils;
 import org.mozilla.mozstumbler.R;
-import org.mozilla.mozstumbler.DatabaseContract;
-import org.mozilla.mozstumbler.client.sync.AuthenticatorService;
-import org.mozilla.mozstumbler.client.sync.SyncUtils;
+import org.mozilla.mozstumbler.service.datahandling.DatabaseContract;
+import org.mozilla.mozstumbler.service.sync.AuthenticatorService;
+import org.mozilla.mozstumbler.service.sync.SyncUtils;
 
 public class UploadReportsDialog extends DialogFragment {
     private static final String LOGTAG = UploadReportsDialog.class.getName();

@@ -1,4 +1,4 @@
-package org.mozilla.mozstumbler.client.sync;
+package org.mozilla.mozstumbler.service.sync;
 
 import android.accounts.Account;
 import android.app.Service;

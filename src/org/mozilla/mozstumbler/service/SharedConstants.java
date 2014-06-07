@@ -1,4 +1,4 @@
-package org.mozilla.mozstumbler;
+package org.mozilla.mozstumbler.service;
 
 public class SharedConstants {
     /** All intent actions start with this string  */

@@ -4,7 +4,7 @@ import android.content.Context;
 import android.util.Log;
 import java.io.IOException;
 import java.net.HttpURLConnection;
-import org.mozilla.mozstumbler.AbstractCommunicator;
+import org.mozilla.mozstumbler.service.AbstractCommunicator;
 import org.mozilla.mozstumbler.service.Prefs;
 
 public class Submitter extends AbstractCommunicator {

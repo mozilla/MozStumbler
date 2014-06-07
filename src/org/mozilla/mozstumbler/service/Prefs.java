@@ -5,15 +5,11 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.location.Location;
-import android.os.Build;
 import android.os.Build.VERSION;
-import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.Log;
 
 import org.mozilla.mozstumbler.BuildConfig;
-import org.mozilla.mozstumbler.R;
-import org.mozilla.mozstumbler.SharedConstants;
 
 
 public final class Prefs {

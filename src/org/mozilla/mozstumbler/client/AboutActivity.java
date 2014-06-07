@@ -7,7 +7,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
 import android.widget.TextView;
-import org.mozilla.mozstumbler.PackageUtils;
+import org.mozilla.mozstumbler.service.utils.PackageUtils;
 import org.mozilla.mozstumbler.R;
 
 public class AboutActivity extends Activity {

@@ -11,7 +11,7 @@ import android.location.LocationProvider;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
-import org.mozilla.mozstumbler.SharedConstants;
+import org.mozilla.mozstumbler.service.SharedConstants;
 import org.mozilla.mozstumbler.service.Prefs;
 
 public class GPSScanner implements LocationListener {

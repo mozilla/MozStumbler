@@ -1,4 +1,4 @@
-package org.mozilla.mozstumbler.service;
+package org.mozilla.mozstumbler.service.datahandling;
 
 import android.content.ContentProvider;
 import android.content.ContentProviderOperation;
@@ -14,12 +14,13 @@ import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.provider.BaseColumns;
 import android.support.v4.database.DatabaseUtilsCompat;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import static org.mozilla.mozstumbler.DatabaseContract.CONTENT_AUTHORITY;
-import static org.mozilla.mozstumbler.DatabaseContract.Reports;
-import static org.mozilla.mozstumbler.DatabaseContract.Stats;
+import static org.mozilla.mozstumbler.service.datahandling.DatabaseContract.CONTENT_AUTHORITY;
+import static org.mozilla.mozstumbler.service.datahandling.DatabaseContract.Reports;
+import static org.mozilla.mozstumbler.service.datahandling.DatabaseContract.Stats;
 
 public class Provider extends ContentProvider {
     private static final String LOGTAG = Provider.class.getName();

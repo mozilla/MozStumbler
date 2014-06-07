@@ -21,13 +21,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.mozilla.mozstumbler.BuildConfig;
-import org.mozilla.mozstumbler.DateTimeUtils;
-import org.mozilla.mozstumbler.NetworkUtils;
+import org.mozilla.mozstumbler.service.utils.DateTimeUtils;
+import org.mozilla.mozstumbler.service.utils.NetworkUtils;
 import org.mozilla.mozstumbler.service.Prefs;
-import org.mozilla.mozstumbler.DatabaseContract;
-import org.mozilla.mozstumbler.SharedConstants;
-import static org.mozilla.mozstumbler.DatabaseContract.Reports;
-import static org.mozilla.mozstumbler.DatabaseContract.Stats;
+import org.mozilla.mozstumbler.service.datahandling.DatabaseContract;
+import org.mozilla.mozstumbler.service.SharedConstants;
+import static org.mozilla.mozstumbler.service.datahandling.DatabaseContract.Reports;
+import static org.mozilla.mozstumbler.service.datahandling.DatabaseContract.Stats;
 
 public class SyncAdapter extends AbstractThreadedSyncAdapter {
     private static final String LOGTAG = SyncAdapter.class.getName();

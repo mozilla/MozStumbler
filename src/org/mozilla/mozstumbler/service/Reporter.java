@@ -11,8 +11,8 @@ import android.telephony.TelephonyManager;
 import android.util.Log;
 import java.util.List;
 import java.util.Map;
-import org.mozilla.mozstumbler.SharedConstants;
-import org.mozilla.mozstumbler.service.StumblerBundle;
+
+import org.mozilla.mozstumbler.service.datahandling.StumblerBundle;
 import org.mozilla.mozstumbler.service.scanners.cellscanner.CellInfo;
 import org.mozilla.mozstumbler.service.scanners.cellscanner.CellScanner;
 import org.mozilla.mozstumbler.service.scanners.GPSScanner;

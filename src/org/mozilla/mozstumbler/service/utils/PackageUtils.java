@@ -1,8 +1,10 @@
-package org.mozilla.mozstumbler;
+package org.mozilla.mozstumbler.service.utils;
 
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
+
+import org.mozilla.mozstumbler.BuildConfig;
 
 final public class PackageUtils {
     private PackageUtils() {

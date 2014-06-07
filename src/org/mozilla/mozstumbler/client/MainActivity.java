@@ -34,16 +34,15 @@ import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 import org.mozilla.mozstumbler.BuildConfig;
-import org.mozilla.mozstumbler.DateTimeUtils;
+import org.mozilla.mozstumbler.service.utils.DateTimeUtils;
 import org.mozilla.mozstumbler.client.mapview.MapActivity;
 import org.mozilla.mozstumbler.service.scanners.GPSScanner;
 import org.mozilla.mozstumbler.R;
-import org.mozilla.mozstumbler.SharedConstants;
+import org.mozilla.mozstumbler.service.SharedConstants;
 import org.mozilla.mozstumbler.service.StumblerService;
 import org.mozilla.mozstumbler.service.scanners.WifiScanner;
 import org.mozilla.mozstumbler.service.scanners.cellscanner.CellScanner;
-import org.mozilla.mozstumbler.DatabaseContract;
-import org.mozilla.mozstumbler.client.sync.SyncUtils;
+import org.mozilla.mozstumbler.service.datahandling.DatabaseContract;
 
 public final class MainActivity extends FragmentActivity {
     private static final String LOGTAG = MainActivity.class.getName();
@@ -117,11 +116,13 @@ public final class MainActivity extends FragmentActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        mGeofenceHere = mConnectionRemote.getPrefs().getGeofenceHere();
-        if (mGeofenceHere) {
-            mConnectionRemote.getPrefs().setGeofenceEnabled(false);
+        if (mConnectionRemote != null) {
+            mGeofenceHere = mConnectionRemote.getPrefs().getGeofenceHere();
+            if (mGeofenceHere) {
+                mConnectionRemote.getPrefs().setGeofenceEnabled(false);
+            }
+            setGeofenceText();
         }
-        setGeofenceText();
         mNeedsUpdate = true;
     }
 
@@ -130,8 +131,6 @@ public final class MainActivity extends FragmentActivity {
         if (BuildConfig.DEBUG) enableStrictMode();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        SyncUtils.CreateSyncAccount(this);
 
         if (BuildConfig.MOZILLA_API_KEY != null) {
             Updater.checkForUpdates(this);
@@ -452,7 +451,6 @@ public final class MainActivity extends FragmentActivity {
     private void stopScanning() {
         mConnectionRemote.stopForeground(true);
         mConnectionRemote.stopScanning();
-        SyncUtils.TriggerRefresh(false);
     }
 
     private Notification buildNotification() {

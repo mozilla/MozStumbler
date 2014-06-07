@@ -1,4 +1,4 @@
-package org.mozilla.mozstumbler.client.sync;
+package org.mozilla.mozstumbler.service.sync;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
@@ -6,8 +6,8 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.os.Bundle;
 
-import org.mozilla.mozstumbler.DatabaseContract;
-import org.mozilla.mozstumbler.SharedConstants;
+import org.mozilla.mozstumbler.service.datahandling.DatabaseContract;
+import org.mozilla.mozstumbler.service.SharedConstants;
 
 public final class SyncUtils {
     // private static final long SYNC_FREQUENCY = 3 * 60 * 60;  // 3 hours (in seconds)

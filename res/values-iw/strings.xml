@@ -16,7 +16,7 @@
   <string name="visible_wifi_access_points">נקודות Wi-Fi גלויות: %1$s</string>
   <string name="cells_scanned">אנטנות שנסרקו: %1$d</string>
   <string name="cells_visible">אנטנות גלויות: %1$d</string>
-  <string name="gps_satellites">לווייני GPS בשימוש / גלויים: %1$d/%2$d</string>-->
+  <string name="gps_satellites">לווייני GPS בשימוש / גלויים: %1$d/%2$d</string>
   <string name="last_location">מיקום אחרון: %1$s</string>
   <string name="coordinate">%1$.4f, %2$.4f</string>
   <string name="locations_scanned">מיקומים שנסרקו: %1$d</string>
@@ -81,6 +81,6 @@
   <string name="wifi_scan_always_title">תמיד לסרוק Wi-Fi</string>
     <string name="wifi_scan_always_summary">לסרוק נקודות גישה אפילו כשה־Wi-Fi כבוי</string>
 
-    <string name="refresh_map">רענון המיקום</string>-->
+    <string name="refresh_map">רענון המיקום</string>
 
 </resources>

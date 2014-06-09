@@ -16,7 +16,7 @@
     <string name="visible_wifi_access_points">Points d\'accès Wi-Fi visibles : %1$s</string>
     <string name="cells_scanned">Antennes cellulaires détectées : %1$d</string>
     <string name="cells_visible">Antennes cellulaires visibles : %1$d</string>
-    <string name="gps_satellites">Satellites GPS utilisés/visibles : %1$d/%2$d</string>-->
+    <string name="gps_satellites">Satellites GPS utilisés/visibles : %1$d/%2$d</string>
     <string name="last_location">Dernier emplacement : %1$s</string>
     <string name="coordinate">%1$.4f, %2$.4f</string>
     <string name="locations_scanned">Emplacements enregistrés : %1$d</string>

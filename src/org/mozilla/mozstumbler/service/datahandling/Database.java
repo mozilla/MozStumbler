@@ -3,8 +3,11 @@ package org.mozilla.mozstumbler.service.datahandling;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.os.Environment;
 import android.provider.BaseColumns;
 import android.util.Log;
+
+import org.mozilla.mozstumbler.BuildConfig;
 
 /** Used by Provider */
 public class Database extends SQLiteOpenHelper {
@@ -15,7 +18,10 @@ public class Database extends SQLiteOpenHelper {
     static final String TABLE_STATS = "stats";
 
     public Database(Context context) {
-        super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        super(context, (BuildConfig.DEBUG)?
+                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS) + "/" + DATABASE_NAME :
+                DATABASE_NAME,
+                null, DATABASE_VERSION);
     }
 
     @Override

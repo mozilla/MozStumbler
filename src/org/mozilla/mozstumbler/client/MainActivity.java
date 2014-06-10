@@ -76,9 +76,8 @@ public final class MainActivity extends FragmentActivity {
                 intentFilter.addAction(GPSScanner.ACTION_GPS_UPDATED);
                 intentFilter.addAction(MainActivity.ACTION_UNPAUSE_SCANNING);
                 intentFilter.addAction(MainActivity.ACTION_UPDATE_UI);
-                registerReceiver(this, intentFilter);
                 LocalBroadcastManager.getInstance(MainActivity.this).registerReceiver(this,
-                        intentFilter);
+                                                                                      intentFilter);
                 mReceiverIsRegistered = true;
             }
         }
@@ -228,7 +227,6 @@ public final class MainActivity extends FragmentActivity {
             return;
         }
 
-        Log.d(LOGTAG, "Updating UI");
         boolean scanning = false;
         scanning = mConnectionRemote.isScanning();
 

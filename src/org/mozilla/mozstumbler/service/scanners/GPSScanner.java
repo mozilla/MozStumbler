@@ -104,7 +104,6 @@ public class GPSScanner implements LocationListener {
         return mLongitude;
     }
     public void checkPrefs() {
-        Log.d(LOGTAG,"Updating blocking data.");
         if (mBlockList!=null) mBlockList.update_blocks();
         Prefs prefs = new Prefs(mContext);
         mAutoGeofencing = prefs.getGeofenceHere();

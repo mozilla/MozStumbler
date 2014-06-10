@@ -6,11 +6,11 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.Build.VERSION;
+import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.Log;
-
 import org.mozilla.mozstumbler.BuildConfig;
-
+import org.mozilla.mozstumbler.R;
 
 public final class Prefs {
     private static final String     LOGTAG        = Prefs.class.getName();

@@ -5,6 +5,7 @@ import android.net.wifi.ScanResult;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.provider.ContactsContract;
 import android.telephony.TelephonyManager;
 import java.util.Collection;
 import java.util.HashMap;
@@ -19,6 +20,12 @@ public final class StumblerBundle implements Parcelable {
     private final Location mGpsPosition;
     private final Map<String, ScanResult> mWifiData;
     private final Map<String, CellInfo> mCellData;
+
+    public void wasSent() {
+        mGpsPosition.setTime(System.currentTimeMillis());
+        mWifiData.clear();
+        mCellData.clear();
+    }
 
     @Override
     public int describeContents() {
@@ -98,34 +105,40 @@ public final class StumblerBundle implements Parcelable {
         return mCellData;
     }
 
-    public JSONObject toMLSJSON() throws JSONException {
+    public JSONObject  toMLSJSON() throws JSONException {
         JSONObject item = new JSONObject();
 
-        item.put("time", mGpsPosition.getTime());
-        item.put("lat", Math.floor(mGpsPosition.getLatitude() * 1.0E6) / 1.0E6);
-        item.put("lon", Math.floor(mGpsPosition.getLongitude() * 1.0E6) / 1.0E6);
+        item.put(DatabaseContract.Reports.TIME, mGpsPosition.getTime());
+        item.put(DatabaseContract.Reports.LAT, Math.floor(mGpsPosition.getLatitude() * 1.0E6) / 1.0E6);
+        item.put(DatabaseContract.Reports.LON, Math.floor(mGpsPosition.getLongitude() * 1.0E6) / 1.0E6);
 
         if (mGpsPosition.hasAccuracy()) {
-            item.put("accuracy", (int) Math.ceil(mGpsPosition.getAccuracy()));
+            item.put(DatabaseContract.Reports.ACCURACY, (int) Math.ceil(mGpsPosition.getAccuracy()));
         }
 
         if (mGpsPosition.hasAltitude()) {
-            item.put("altitude", Math.round(mGpsPosition.getAltitude()));
+            item.put(DatabaseContract.Reports.ALTITUDE, Math.round(mGpsPosition.getAltitude()));
         }
 
-        if (mPhoneType == TelephonyManager.PHONE_TYPE_GSM ||
-            mPhoneType == TelephonyManager.PHONE_TYPE_CDMA) {
-
-            item.put("radio", (mPhoneType == TelephonyManager.PHONE_TYPE_GSM) ? "gsm" : "cdma");
-            JSONArray cells = new JSONArray();
-            item.put("cell", cells);
-            for (CellInfo c : mCellData.values()) {
-               cells.put(c.toJSONObject());
-            }
+        if (mPhoneType == TelephonyManager.PHONE_TYPE_GSM) {
+            item.put(DatabaseContract.Reports.RADIO, "gsm");
+        } else if (mPhoneType == TelephonyManager.PHONE_TYPE_CDMA) {
+            item.put(DatabaseContract.Reports.RADIO, "cdma");
+        } else {
+            // issue #598. investigate this case further in future
+            item.put(DatabaseContract.Reports.RADIO, "");
         }
+
+        JSONArray cellJSON = new JSONArray();
+        for (CellInfo c : mCellData.values()) {
+            JSONObject obj = c.toJSONObject();
+            cellJSON.put(obj);
+        }
+        item.put(DatabaseContract.Reports.CELL, cellJSON);
+        item.put(DatabaseContract.Reports.CELL_COUNT, cellJSON.length());
 
         JSONArray wifis = new JSONArray();
-        item.put("wifi", wifis);
+        item.put(DatabaseContract.Reports.WIFI, wifis);
         for (ScanResult s : mWifiData.values()) {
             JSONObject wifiEntry = new JSONObject();
             wifiEntry.put("key", s.BSSID);

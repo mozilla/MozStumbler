@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.mozilla.mozstumbler.service.datahandling.StumblerBundle;
+import org.mozilla.mozstumbler.service.datahandling.StumblerBundleReceiver;
 import org.mozilla.mozstumbler.service.scanners.cellscanner.CellInfo;
 import org.mozilla.mozstumbler.service.scanners.cellscanner.CellScanner;
 import org.mozilla.mozstumbler.service.scanners.GPSScanner;
@@ -40,6 +41,14 @@ final class Reporter extends BroadcastReceiver {
     private final int             mPhoneType;
 
     private StumblerBundle mBundle;
+
+    private StumblerBundleReceiver mStumblerBundleReceiver;
+    public void registerBundleReceiver(StumblerBundleReceiver b) {
+        mStumblerBundleReceiver = b;
+    }
+    public void unregisterBundleReceiver() {
+        mStumblerBundleReceiver = null;
+    }
 
     Reporter(Context context) {
         mContext = context;
@@ -77,6 +86,10 @@ final class Reporter extends BroadcastReceiver {
     private void receivedCellMessage(Intent intent) {
         List<CellInfo> results = intent.getParcelableArrayListExtra(CellScanner.ACTION_CELLS_SCANNED_ARG_CELLS);
         putCellResults(results);
+
+        for (CellInfo inf : results){
+            Log.d(LOGTAG, inf.toJSONObject().toString());
+        }
     }
 
     private void receivedGpsMessage(Intent intent) {
@@ -146,14 +159,13 @@ final class Reporter extends BroadcastReceiver {
     }
 
     private void reportCollectedLocation() {
-        if (mBundle == null) {
+        if (mBundle == null || mStumblerBundleReceiver == null) {
             return;
         }
 
-        Intent broadcast = new Intent(StumblerService.ACTION_STUMBLER_BUNDLE);
-        broadcast.putExtra("StumblerBundle", mBundle);
-        mContext.sendBroadcast(broadcast);
-        mBundle.getGpsPosition().setTime(System.currentTimeMillis());
+        mStumblerBundleReceiver.handleBundle(mContext, mBundle);
+
+        mBundle.wasSent();
     }
 }
 

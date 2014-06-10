@@ -17,8 +17,11 @@ import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import org.mozilla.mozstumbler.service.SharedConstants;
 import org.mozilla.mozstumbler.service.blocklist.BSSIDBlockList;
 import org.mozilla.mozstumbler.service.blocklist.SSIDBlockList;
+import org.mozilla.mozstumbler.service.SharedConstants.ActiveOrPassiveStumbling;
 import org.mozilla.mozstumbler.service.SharedConstants;
 import org.mozilla.mozstumbler.service.Prefs;
 
@@ -46,7 +49,7 @@ public class WifiScanner extends BroadcastReceiver {
         mContext = c;
     }
 
-    public synchronized void start() {
+    public synchronized void start(final ActiveOrPassiveStumbling stumblingMode) {
         if (mStarted) {
             return;
         }
@@ -55,7 +58,7 @@ public class WifiScanner extends BroadcastReceiver {
         boolean scanAlways = new Prefs(mContext).getWifiScanAlways();
 
         if (scanAlways || getWifiManager().isWifiEnabled()) {
-            activatePeriodicScan();
+            activatePeriodicScan(stumblingMode);
         }
 
         IntentFilter i = new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
@@ -77,7 +80,7 @@ public class WifiScanner extends BroadcastReceiver {
         if (WifiManager.WIFI_STATE_CHANGED_ACTION.equals(action)) {
             Log.v(LOGTAG, "WIFI_STATE_CHANGED_ACTION new state: " + intent.getIntExtra(WifiManager.EXTRA_WIFI_STATE, -1));
             if (getWifiManager().isWifiEnabled()) {
-                activatePeriodicScan();
+                activatePeriodicScan(ActiveOrPassiveStumbling.ACTIVE_STUMBLING);
             } else {
                 deactivatePeriodicScan();
             }
@@ -114,22 +117,28 @@ public class WifiScanner extends BroadcastReceiver {
         return STATUS_ACTIVE;
     }
 
-    private synchronized void activatePeriodicScan() {
+    private synchronized void activatePeriodicScan(final ActiveOrPassiveStumbling stumblingMode) {
         if (mWifiScanTimer != null) {
             return;
         }
 
         Log.v(LOGTAG, "Activate Periodic Scan");
 
-        mWifiLock = getWifiManager().createWifiLock(WifiManager.WIFI_MODE_SCAN_ONLY,
-                "MozStumbler");
+        mWifiLock = getWifiManager().createWifiLock(WifiManager.WIFI_MODE_SCAN_ONLY, "MozStumbler");
         mWifiLock.acquire();
 
         // Ensure that we are constantly scanning for new access points.
         mWifiScanTimer = new Timer();
         mWifiScanTimer.schedule(new TimerTask() {
+            int mPassiveScanCount;
             @Override
             public void run() {
+                if (stumblingMode == ActiveOrPassiveStumbling.PASSIVE_STUMBLING &&
+                    mPassiveScanCount++ > SharedConstants.PASSIVE_MODE_MAX_SCANS_PER_GPS)
+                {
+                    stop(); // set mWifiScanTimer to null
+                    return;
+                }
                 Log.d(LOGTAG, "WiFi Scanning Timer fired");
                 getWifiManager().startScan();
             }

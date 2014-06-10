@@ -11,6 +11,8 @@ import org.mozilla.mozstumbler.service.datahandling.StumblerBundleReceiver;
 import org.mozilla.mozstumbler.service.sync.SyncUtils;
 
 public final class StumblerService extends Service {
+    public  static final String ACTION_BASE = SharedConstants.ACTION_NAMESPACE;
+    public  static final String ACTION_START_PASSIVE = ACTION_BASE + ".START_PASSIVE";
     private static final String LOGTAG          = StumblerService.class.getName();
     private Scanner                mScanner;
     private Reporter               mReporter;
@@ -21,6 +23,8 @@ public final class StumblerService extends Service {
     private boolean                mIsBound;
     private final IBinder          mBinder         = new StumblerBinder();
     private Prefs mPrefs;
+
+    private boolean mIsPassiveGpsListenerStarted;
 
     public final class StumblerBinder extends Binder {
         public StumblerService getService() {
@@ -120,6 +124,11 @@ public final class StumblerService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        if (intent.getBooleanExtra(ACTION_START_PASSIVE, false)) {
+            mScanner.setPassiveMode(true);
+            startScanning();
+        }
+
         // keep running!
         return Service.START_STICKY;
     }

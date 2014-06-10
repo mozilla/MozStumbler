@@ -5,22 +5,33 @@ import android.util.Log;
 import org.mozilla.mozstumbler.service.scanners.cellscanner.CellScanner;
 import org.mozilla.mozstumbler.service.scanners.GPSScanner;
 import org.mozilla.mozstumbler.service.scanners.WifiScanner;
+import org.mozilla.mozstumbler.service.SharedConstants.ActiveOrPassiveStumbling;
 
-class Scanner {
+public class Scanner {
   private static final String LOGTAG = Scanner.class.getName();
 
   private final Context  mContext;
   private boolean        mIsScanning;
+  private GPSScanner    mGPSScanner;
+  private WifiScanner   mWifiScanner;
+  private CellScanner   mCellScanner;
+  private ActiveOrPassiveStumbling mStumblingMode = ActiveOrPassiveStumbling.ACTIVE_STUMBLING;
 
-  private GPSScanner mGPSScanner;
-  private WifiScanner mWifiScanner;
-  private CellScanner    mCellScanner;
-
-  Scanner(Context context) {
+  public Scanner(Context context) {
     mContext = context;
-    mGPSScanner  = new GPSScanner(context);
+    mGPSScanner  = new GPSScanner(context, this);
     mWifiScanner = new WifiScanner(context);
     mCellScanner = new CellScanner(context);
+  }
+
+  public void newPassiveGpsLocation() {
+      mWifiScanner.start(ActiveOrPassiveStumbling.PASSIVE_STUMBLING);
+      mCellScanner.start(ActiveOrPassiveStumbling.PASSIVE_STUMBLING);
+  }
+
+  void setPassiveMode(boolean on) {
+       mStumblingMode = (on)? ActiveOrPassiveStumbling.PASSIVE_STUMBLING :
+               ActiveOrPassiveStumbling.ACTIVE_STUMBLING;
   }
 
   void startScanning() {
@@ -29,10 +40,12 @@ class Scanner {
     }
     Log.d(LOGTAG, "Scanning started...");
 
-    mGPSScanner.start();
-    mWifiScanner.start();
-    mCellScanner.start();
-
+    mGPSScanner.start(mStumblingMode);
+    if (mStumblingMode == ActiveOrPassiveStumbling.ACTIVE_STUMBLING) {
+        mWifiScanner.start(mStumblingMode);
+        mCellScanner.start(mStumblingMode);
+        // in passive mode, these scans are started by passive gps notifications
+    }
     mIsScanning = true;
   }
 

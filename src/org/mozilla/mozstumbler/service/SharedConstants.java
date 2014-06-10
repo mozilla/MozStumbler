@@ -14,4 +14,9 @@ public class SharedConstants {
 
     /** Location constructor requires a named origin, these are created in the app  */
     public static final String LOCATION_ORIGIN_INTERNAL = "internal";
+
+    public enum ActiveOrPassiveStumbling { ACTIVE_STUMBLING, PASSIVE_STUMBLING };
+
+    // In passive mode, only scan this many times for each gps
+    public static final int PASSIVE_MODE_MAX_SCANS_PER_GPS = 3;
 }

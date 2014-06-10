@@ -12,6 +12,8 @@ import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import org.mozilla.mozstumbler.service.SharedConstants;
+import org.mozilla.mozstumbler.service.SharedConstants.ActiveOrPassiveStumbling;
+
 
 public class CellScanner {
     public static final String ACTION_BASE = SharedConstants.ACTION_NAMESPACE + ".CellScanner.";
@@ -21,6 +23,7 @@ public class CellScanner {
 
     private static final String LOGTAG = CellScanner.class.getName();
     private static final long CELL_MIN_UPDATE_TIME = 1000; // milliseconds
+    private static final int PASSIVE_MODE_MAX_SCANS = 3;
 
     private final Context mContext;
     private CellScannerImpl mImpl;
@@ -40,7 +43,7 @@ public class CellScanner {
         mContext = context;
     }
 
-    public void start() {
+    public void start(final ActiveOrPassiveStumbling stumblingMode) {
         if (mImpl != null) {
             return;
         }
@@ -57,8 +60,15 @@ public class CellScanner {
         mCellScanTimer = new Timer();
 
         mCellScanTimer.schedule(new TimerTask() {
+            int mPassiveScanCount;
             @Override
             public void run() {
+                if (stumblingMode == ActiveOrPassiveStumbling.PASSIVE_STUMBLING &&
+                    mPassiveScanCount++ > SharedConstants.PASSIVE_MODE_MAX_SCANS_PER_GPS)
+                {
+                    stop();
+                    return;
+                }
                 Log.d(LOGTAG, "Cell Scanning Timer fired");
                 final long curTime = System.currentTimeMillis();
                 ArrayList<CellInfo> cells = new ArrayList<CellInfo>(mImpl.getCellInfo());

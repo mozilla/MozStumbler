@@ -215,7 +215,7 @@ public class DefaultCellScanner implements CellScanner.CellScannerImpl {
                     cells.add(cell);
                 } else if (observedCell instanceof CellInfoLte) {
                     CellIdentityLte ident = ((CellInfoLte) observedCell).getCellIdentity();
-                    if (ident.getMnc() != Integer.MAX_VALUE && ident.getMnc() != Integer.MAX_VALUE) {
+                    if (ident.getMnc() != Integer.MAX_VALUE && ident.getMcc() != Integer.MAX_VALUE) {
                         CellInfo cell = new CellInfo(tm.getPhoneType());
                         CellSignalStrengthLte strength = ((CellInfoLte) observedCell).getCellSignalStrength();
                         cell.setLteCellInfo(ident.getMcc(),
@@ -228,7 +228,7 @@ public class DefaultCellScanner implements CellScanner.CellScannerImpl {
                     }
                 } else if (observedCell instanceof CellInfoWcdma) {
                     CellIdentityWcdma ident = ((CellInfoWcdma) observedCell).getCellIdentity();
-                    if (ident.getMnc() != Integer.MAX_VALUE && ident.getMnc() != Integer.MAX_VALUE) {
+                    if (ident.getMnc() != Integer.MAX_VALUE && ident.getMcc() != Integer.MAX_VALUE) {
                         CellInfo cell = new CellInfo(tm.getPhoneType());
                         CellSignalStrengthWcdma strength = ((CellInfoWcdma) observedCell).getCellSignalStrength();
                         cell.setWcmdaCellInfo(ident.getMcc(),

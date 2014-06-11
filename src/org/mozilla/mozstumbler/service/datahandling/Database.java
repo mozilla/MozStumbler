@@ -18,8 +18,9 @@ public class Database extends SQLiteOpenHelper {
     static final String TABLE_STATS = "stats";
 
     public Database(Context context) {
-        super(context, (BuildConfig.DEBUG)?
-                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS) + "/" + DATABASE_NAME :
+        super(context, 
+                // Uncomment for dev use to get db in public location 
+                // (BuildConfig.DEBUG)? Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS) + "/" + DATABASE_NAME :
                 DATABASE_NAME,
                 null, DATABASE_VERSION);
     }

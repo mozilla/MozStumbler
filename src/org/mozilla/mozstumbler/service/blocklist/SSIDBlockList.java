@@ -37,6 +37,7 @@ public final class SSIDBlockList {
         "Mobile Hotspot", // BlackBerry OS 10
 
         // Transportation Wi-Fi
+        ".DeinBus.de", // DeinBus on-bus WiFi (Germany)
         "ac_transit_wifi_bus",
         "ADAC_Postbus", // ADAC Postbus on-bus WiFi (Germany)
         "Afifi", // Nazareen express transportation services (Israel)

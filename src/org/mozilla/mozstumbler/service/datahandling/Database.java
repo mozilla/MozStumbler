@@ -19,8 +19,9 @@ public class Database extends SQLiteOpenHelper {
     public static String getFullPathToDb(AndroidTestCase restricted) { return sFullPathToDbForTest; }
 
     public Database(Context context) {
-        super(context,
-               // (debug)?Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS) + "/" + DATABASE_NAME :
+        super(context, 
+                // for dev use to get db in public location 
+                // (debug)? Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS) + "/" + DATABASE_NAME :
                 DATABASE_NAME,
                 null, DATABASE_VERSION);
 

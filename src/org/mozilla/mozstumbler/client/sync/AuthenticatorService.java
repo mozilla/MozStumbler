@@ -1,4 +1,4 @@
-package org.mozilla.mozstumbler.service.sync;
+package org.mozilla.mozstumbler.client.sync;
 
 import android.accounts.Account;
 import android.app.Service;
@@ -18,7 +18,7 @@ public class AuthenticatorService extends Service {
 
     @Override
     public void onCreate() {
-        // Create a new authenticator object
+        // Create a new stumbler_authenticator object
         mAuthenticator = new Authenticator(this);
     }
 

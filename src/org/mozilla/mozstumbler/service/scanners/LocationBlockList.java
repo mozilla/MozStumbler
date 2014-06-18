@@ -16,20 +16,17 @@ public final class LocationBlockList {
     private static final long   MIN_TIMESTAMP   = 946684801; // 2000-01-01 00:00:01
     private static final double GEOFENCE_RADIUS = 0.01;      // .01 degrees is approximately 1km
 
-    private Context mContext;
     private Location mBlockedLocation;
     private boolean mGeofencingEnabled;
     private boolean mIsGeofenced = false;
 
-    public LocationBlockList(Context context) {
-        mContext = context;
+    public LocationBlockList() {
         update_blocks();
     }
 
     public void update_blocks()    {
-        Prefs prefs = new Prefs(mContext);
-        mBlockedLocation = prefs.getGeofenceLocation();
-        mGeofencingEnabled = prefs.getGeofenceEnabled();
+        mBlockedLocation = Prefs.getInstance().getGeofenceLocation();
+        mGeofencingEnabled = Prefs.getInstance().getGeofenceEnabled();
     }
 
     public boolean contains(Location location) {

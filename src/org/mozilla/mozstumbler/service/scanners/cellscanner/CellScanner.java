@@ -31,6 +31,8 @@ public class CellScanner {
     private final Set<String> mCells = new HashSet<String>();
     private int mCurrentCellInfoCount;
 
+    public ArrayList<CellInfo> sTestingModeCellInfoArray;
+
     interface CellScannerImpl {
         public void start();
 
@@ -66,12 +68,16 @@ public class CellScanner {
                 if (stumblingMode == ActiveOrPassiveStumbling.PASSIVE_STUMBLING &&
                     mPassiveScanCount++ > SharedConstants.PASSIVE_MODE_MAX_SCANS_PER_GPS)
                 {
+                    mPassiveScanCount = 0;
                     stop();
                     return;
                 }
-                Log.d(LOGTAG, "Cell Scanning Timer fired");
+                if (SharedConstants.isDebug) Log.d(LOGTAG, "Cell Scanning Timer fired");
                 final long curTime = System.currentTimeMillis();
-                ArrayList<CellInfo> cells = new ArrayList<CellInfo>(mImpl.getCellInfo());
+
+                ArrayList<CellInfo> cells = (sTestingModeCellInfoArray != null)? sTestingModeCellInfoArray :
+                                            new ArrayList<CellInfo>(mImpl.getCellInfo());
+
                 mCurrentCellInfoCount = cells.size();
                 if (cells.isEmpty()) {
                     return;

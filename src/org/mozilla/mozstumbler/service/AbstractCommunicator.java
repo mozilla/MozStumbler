@@ -1,12 +1,7 @@
 package org.mozilla.mozstumbler.service;
 
-import android.content.Context;
 import android.os.Build;
 import android.util.Log;
-
-import org.mozilla.mozstumbler.BuildConfig;
-import org.mozilla.mozstumbler.R;
-import org.mozilla.mozstumbler.service.utils.PackageUtils;
 
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
@@ -35,16 +30,15 @@ public abstract class AbstractCommunicator {
         return null;
     }
 
-    public AbstractCommunicator(Context ctx) {
-        String appName = ctx.getString(R.string.app_name);
-        String appVersion = PackageUtils.getAppVersion(ctx);
+    public AbstractCommunicator() {
+        String appName = SharedConstants.appName;
         // "MozStumbler/X.Y.Z"
-        mUserAgent = appName + '/' + appVersion;;
+        mUserAgent = appName + '/' + SharedConstants.appVersionName;
     }
 
     private void setHeaders() {
         try {
-            URL url = new URL(getUrlString() + "?key=" + BuildConfig.MOZILLA_API_KEY);
+            URL url = new URL(getUrlString() + "?key=" + SharedConstants.mozillaApiKey);
             httpURLConnection = (HttpURLConnection) url.openConnection();
         } catch (MalformedURLException e) {
             throw new IllegalArgumentException(e);

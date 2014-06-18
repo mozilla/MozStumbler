@@ -39,7 +39,7 @@ public class PreferencesScreen extends PreferenceActivity {
 
         assert(sPrefs != null);
 
-        addPreferencesFromResource(R.xml.preferences);
+        addPreferencesFromResource(R.xml.stumbler_preferences);
 
         CheckBoxPreference mWifiPreference;
         mNicknamePreference = (EditTextPreference) getPreferenceManager().findPreference("nickname");
@@ -49,7 +49,7 @@ public class PreferencesScreen extends PreferenceActivity {
         mWifiScanAlwaysSwitch = (CheckBoxPreference)getPreferenceManager().findPreference(Prefs.WIFI_SCAN_ALWAYS);
 
         setNicknamePreferenceTitle(sPrefs.getNickname());
-        mWifiPreference.setChecked(sPrefs.getWifi());
+        mWifiPreference.setChecked(sPrefs.getUseWifiOnly());
         setGeofenceSwitchTitle();
         boolean geofence_here = sPrefs.getGeofenceHere();
         if(geofence_here) {

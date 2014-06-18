@@ -8,6 +8,7 @@ import android.util.Log;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.mozilla.mozstumbler.service.SharedConstants;
 
 public final class StumblerBundleReceiver {
     private static final String LOGTAG = StumblerBundleReceiver.class.getName();
@@ -18,7 +19,7 @@ public final class StumblerBundleReceiver {
         JSONObject mlsObj = null;
         try {
             mlsObj = bundle.toMLSJSON();
-            Log.d(LOGTAG, "Received bundle: " + mlsObj.toString());
+            if (SharedConstants.isDebug) Log.d(LOGTAG, "Received bundle: " + mlsObj.toString());
 
             values.put(DatabaseContract.Reports.TIME, mlsObj.getLong("time"));
             values.put(DatabaseContract.Reports.LAT, mlsObj.getDouble("lat"));

@@ -1,4 +1,4 @@
-package org.mozilla.mozstumbler.service.sync;
+package org.mozilla.mozstumbler.client.sync;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
@@ -6,6 +6,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.os.Bundle;
 
+import org.mozilla.mozstumbler.client.sync.AuthenticatorService;
 import org.mozilla.mozstumbler.service.datahandling.DatabaseContract;
 import org.mozilla.mozstumbler.service.SharedConstants;
 

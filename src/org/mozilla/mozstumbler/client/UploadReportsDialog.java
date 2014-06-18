@@ -18,16 +18,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import org.mozilla.mozstumbler.BuildConfig;
+import org.mozilla.mozstumbler.service.SharedConstants;
 import org.mozilla.mozstumbler.service.utils.DateTimeUtils;
 import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.service.datahandling.DatabaseContract;
-import org.mozilla.mozstumbler.service.sync.AuthenticatorService;
-import org.mozilla.mozstumbler.service.sync.SyncUtils;
+import org.mozilla.mozstumbler.client.sync.AuthenticatorService;
+import org.mozilla.mozstumbler.client.sync.SyncUtils;
 
 public class UploadReportsDialog extends DialogFragment {
     private static final String LOGTAG = UploadReportsDialog.class.getName();
-    private static final boolean DBG = BuildConfig.DEBUG;
 
     private TextView mLastUpdateTimeView;
     private TextView mObservationsSentView;
@@ -226,7 +225,7 @@ public class UploadReportsDialog extends DialogFragment {
 
         @Override
         public void onStatusChanged(final int which) {
-            if (DBG) Log.v(LOGTAG, "onStatusChanged() " + which);
+            if (SharedConstants.isDebug) Log.v(LOGTAG, "onStatusChanged() " + which);
             mHandler.post(new Runnable() {
                 @Override
                 public void run() {

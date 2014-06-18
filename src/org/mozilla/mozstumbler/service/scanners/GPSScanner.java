@@ -38,7 +38,7 @@ public class GPSScanner implements LocationListener {
     private int mLocationCount;
     private double mLatitude;
     private double mLongitude;
-    private LocationBlockList mBlockList;
+    private LocationBlockList mBlockList = new LocationBlockList();
     private boolean mAutoGeofencing;
     private boolean mIsPassiveMode;
 
@@ -56,7 +56,6 @@ public class GPSScanner implements LocationListener {
         } else {
             startActiveMode();
         }
-        mBlockList = new LocationBlockList(mContext);
     }
 
     private void startPassiveMode() {
@@ -91,7 +90,7 @@ public class GPSScanner implements LocationListener {
                         if (fixes < MIN_SAT_USED_IN_FIX) {
                             reportLocationLost();
                         }
-                        Log.d(LOGTAG, "onGpsStatusChange - satellites: " + satellites + " fixes: " + fixes);
+                        if (SharedConstants.isDebug) Log.d(LOGTAG, "onGpsStatusChange - satellites: " + satellites + " fixes: " + fixes);
                     } else if (event == GpsStatus.GPS_EVENT_STOPPED) {
                         reportLocationLost();
                     }
@@ -99,7 +98,6 @@ public class GPSScanner implements LocationListener {
             };
 
         lm.addGpsStatusListener(mGPSListener);
-        mBlockList = new LocationBlockList(mContext);
     }
 
     public void stop() {
@@ -127,8 +125,8 @@ public class GPSScanner implements LocationListener {
 
     public void checkPrefs() {
         if (mBlockList!=null) mBlockList.update_blocks();
-        Prefs prefs = new Prefs(mContext);
-        mAutoGeofencing = prefs.getGeofenceHere();
+
+        mAutoGeofencing = Prefs.getInstance().getGeofenceHere();
     }
 
     public boolean isGeofenced() {
@@ -137,14 +135,14 @@ public class GPSScanner implements LocationListener {
 
     @Override
     public void onLocationChanged(Location location) {
-        String provider = location.getProvider();
-        if (!provider.toLowerCase().contains("gps")) {
-            // only interested in GPS locations
+        if (location == null) { // TODO: is this even possible??
+            reportLocationLost();
             return;
         }
 
-        if (location == null) {
-            reportLocationLost();
+        String provider = location.getProvider();
+        if (!provider.toLowerCase().contains("gps")) {
+            // only interested in GPS locations
             return;
         }
 
@@ -154,7 +152,7 @@ public class GPSScanner implements LocationListener {
             return;
         }
 
-        Log.d(LOGTAG, "New location: " + location);
+        if (SharedConstants.isDebug) Log.d(LOGTAG, "New location: " + location);
 
         mLongitude = location.getLongitude();
         mLatitude = location.getLatitude();

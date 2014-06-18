@@ -19,4 +19,12 @@ public class SharedConstants {
 
     // In passive mode, only scan this many times for each gps
     public static final int PASSIVE_MODE_MAX_SCANS_PER_GPS = 3;
+
+    /** These are set on startup */
+    public static String appVersionName = "0.0.0";
+    public static int appVersionCode = 0;
+    public static String appName = "StumblerService";
+    public static boolean isDebug;
+    public static String mozillaApiKey;
 }
+

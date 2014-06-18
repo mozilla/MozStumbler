@@ -51,7 +51,7 @@ public class CellInfo implements Parcelable {
     private int mTa;
     private int mPsc;
 
-    CellInfo(int phoneType) {
+    public CellInfo(int phoneType) {
         reset();
         setRadio(phoneType);
     }

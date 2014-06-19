@@ -8,3 +8,5 @@ build
 gradle.properties
 *.keystore
 local.properties
+project.properties
+

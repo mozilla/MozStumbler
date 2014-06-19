@@ -22,8 +22,8 @@ public class Searcher extends AbstractCommunicator {
     private static final String JSON_ACCURACY = "accuracy";
     private JSONObject mResponse;
 
-    public Searcher (Context ctx) {
-        super(ctx);
+    public Searcher() {
+        super();
     }
 
     @Override

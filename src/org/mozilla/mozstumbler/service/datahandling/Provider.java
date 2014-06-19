@@ -14,7 +14,7 @@ import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.provider.BaseColumns;
 import android.support.v4.database.DatabaseUtilsCompat;
-
+import org.mozilla.mozstumbler.service.SharedConstants;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

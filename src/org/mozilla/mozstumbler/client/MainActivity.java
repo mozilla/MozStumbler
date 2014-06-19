@@ -34,6 +34,7 @@ import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 import org.mozilla.mozstumbler.BuildConfig;
+import org.mozilla.mozstumbler.service.Prefs;
 import org.mozilla.mozstumbler.service.utils.DateTimeUtils;
 import org.mozilla.mozstumbler.client.mapview.MapActivity;
 import org.mozilla.mozstumbler.service.scanners.GPSScanner;
@@ -43,6 +44,7 @@ import org.mozilla.mozstumbler.service.StumblerService;
 import org.mozilla.mozstumbler.service.scanners.WifiScanner;
 import org.mozilla.mozstumbler.service.scanners.cellscanner.CellScanner;
 import org.mozilla.mozstumbler.service.datahandling.DatabaseContract;
+import org.mozilla.mozstumbler.service.utils.NetworkUtils;
 
 public final class MainActivity extends FragmentActivity {
     private static final String LOGTAG = MainActivity.class.getName();
@@ -127,7 +129,7 @@ public final class MainActivity extends FragmentActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        if (BuildConfig.DEBUG) enableStrictMode();
+        if (SharedConstants.isDebug) enableStrictMode();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -167,6 +169,13 @@ public final class MainActivity extends FragmentActivity {
     @Override
     protected void onStart() {
         super.onStart();
+
+        SharedConstants.isDebug = BuildConfig.DEBUG;
+        SharedConstants.appVersionName = BuildConfig.VERSION_NAME;
+        SharedConstants.appVersionCode = BuildConfig.VERSION_CODE;
+        SharedConstants.appName = getResources().getString(R.string.app_name);
+        Prefs.createGlobalInstance(this);
+        NetworkUtils.createGlobalInstance(this);
 
         mReceiver = new ServiceBroadcastReceiver();
         mReceiver.register();
@@ -414,7 +423,7 @@ public final class MainActivity extends FragmentActivity {
         public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
             long lastUploadTime = 0;
             long observationsSent = 0;
-            if (BuildConfig.DEBUG) Log.v(LOGTAG, "mSyncStatsLoaderCallbacks.onLoadFinished()");
+            if (SharedConstants.isDebug) Log.v(LOGTAG, "mSyncStatsLoaderCallbacks.onLoadFinished()");
 
             if (cursor != null) {
                 cursor.moveToPosition(-1);

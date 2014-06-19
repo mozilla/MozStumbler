@@ -1,6 +1,5 @@
 package org.mozilla.mozstumbler.service.sync;
 
-import android.content.Context;
 import android.util.Log;
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -13,10 +12,9 @@ public class Submitter extends AbstractCommunicator {
     private static final int CORRECT_RESPONSE = HttpURLConnection.HTTP_NO_CONTENT;
     private final String mNickname;
 
-    public Submitter(Context ctx) {
-        super(ctx);
-        final Prefs prefs = new Prefs(ctx);
-        mNickname = prefs.getNickname();
+    public Submitter() {
+        super();
+        mNickname = Prefs.getInstance().getNickname();
     }
 
     @Override

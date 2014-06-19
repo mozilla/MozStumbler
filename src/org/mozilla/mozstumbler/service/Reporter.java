@@ -20,7 +20,9 @@ import org.mozilla.mozstumbler.service.scanners.GPSScanner;
 import org.mozilla.mozstumbler.service.scanners.WifiScanner;
 
 final class Reporter extends BroadcastReceiver {
-    private static final String LOGTAG          = Reporter.class.getName();
+    private static final String LOGTAG = Reporter.class.getName();
+    public  static final String ACTION_BASE = SharedConstants.ACTION_NAMESPACE;
+    public  static final String ACTION_FLUSH_TO_DB = ACTION_BASE + ".FLUSH";
 
     /**
      * The maximum time of observation
@@ -41,22 +43,17 @@ final class Reporter extends BroadcastReceiver {
     private final int             mPhoneType;
 
     private StumblerBundle mBundle;
-
     private StumblerBundleReceiver mStumblerBundleReceiver;
-    public void registerBundleReceiver(StumblerBundleReceiver b) {
-        mStumblerBundleReceiver = b;
-    }
-    public void unregisterBundleReceiver() {
-        mStumblerBundleReceiver = null;
-    }
 
-    Reporter(Context context) {
+    Reporter(Context context, StumblerBundleReceiver bundleReceiver) {
         mContext = context;
+        mStumblerBundleReceiver = bundleReceiver;
         resetData();
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(WifiScanner.ACTION_WIFIS_SCANNED);
         intentFilter.addAction(CellScanner.ACTION_CELLS_SCANNED);
         intentFilter.addAction(GPSScanner.ACTION_GPS_UPDATED);
+        intentFilter.addAction(ACTION_FLUSH_TO_DB);
         LocalBroadcastManager.getInstance(mContext).registerReceiver(this,
                 intentFilter);
 
@@ -86,10 +83,6 @@ final class Reporter extends BroadcastReceiver {
     private void receivedCellMessage(Intent intent) {
         List<CellInfo> results = intent.getParcelableArrayListExtra(CellScanner.ACTION_CELLS_SCANNED_ARG_CELLS);
         putCellResults(results);
-
-        for (CellInfo inf : results){
-            Log.d(LOGTAG, inf.toJSONObject().toString());
-        }
     }
 
     private void receivedGpsMessage(Intent intent) {
@@ -105,7 +98,10 @@ final class Reporter extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         String action = intent.getAction();
 
-        if (action.equals(WifiScanner.ACTION_WIFIS_SCANNED)) {
+        if (action.equals(ACTION_FLUSH_TO_DB)) {
+            flush();
+            return;
+        } else if (action.equals(WifiScanner.ACTION_WIFIS_SCANNED)) {
             receivedWifiMessage(intent);
         } else if (action.equals(CellScanner.ACTION_CELLS_SCANNED)) {
             receivedCellMessage(intent);

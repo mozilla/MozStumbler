@@ -9,15 +9,12 @@ import android.os.PowerManager;
 import android.telephony.CellLocation;
 import android.util.Log;
 
-import org.mozilla.mozstumbler.BuildConfig;
-
 /**
  * Determine whether the cell location is updated when the screen is off
  * https://code.google.com/p/android/issues/detail?id=10931
  */
 public class ScreenMonitor {
     private static final String LOGTAG = "ScreenOffWorkaround";
-    private static final boolean DBG = BuildConfig.DEBUG;
 
     private static final String PREFS_FILE = ScreenMonitor.class.getName();
     private static final String LOCATION_UPDATES_COUNT_PREF = "location_updates_count";

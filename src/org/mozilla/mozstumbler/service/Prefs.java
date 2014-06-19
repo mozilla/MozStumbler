@@ -6,11 +6,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.Build.VERSION;
-import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.Log;
-import org.mozilla.mozstumbler.BuildConfig;
-import org.mozilla.mozstumbler.R;
 
 public final class Prefs {
     private static final String     LOGTAG        = Prefs.class.getName();
@@ -24,27 +21,34 @@ public final class Prefs {
     private static final String     GEOFENCE_SWITCH = "geofence_switch";
     public  static final String     WIFI_SCAN_ALWAYS = "wifi_scan_always";
 
-    private final Context mContext;
+    private final SharedPreferences mSharedPrefs;
+    static private Prefs sInstance;
 
-    public Prefs(Context context) {
-        mContext = context;
-        setDefaultValues();
-    }
-
-    @SuppressLint("InlinedApi")
-    public void setDefaultValues() {
-        if (getPrefs().getInt(VALUES_VERSION_PREF, -1) != BuildConfig.VERSION_CODE) {
+    private Prefs(Context context) {
+        mSharedPrefs = context.getSharedPreferences(PREFS_FILE, Context.MODE_MULTI_PROCESS | Context.MODE_PRIVATE);
+        if (getPrefs().getInt(VALUES_VERSION_PREF, -1) != SharedConstants.appVersionCode) {
             Log.i(LOGTAG, "Version of the application has changed. Updating default values.");
             // Remove old keys
             getPrefs().edit()
                     .remove("reports")
                     .remove("power_saving_mode")
                     .commit();
-            PreferenceManager.setDefaultValues(mContext, PREFS_FILE,
-                    Context.MODE_MULTI_PROCESS, R.xml.preferences, true);
-            getPrefs().edit().putInt(VALUES_VERSION_PREF, BuildConfig.VERSION_CODE).commit();
+
+            getPrefs().edit().putInt(VALUES_VERSION_PREF, SharedConstants.appVersionCode).commit();
             getPrefs().edit().commit();
         }
+    }
+
+    /** Prefs must be created on application startup or service startup.
+     * TODO: turn into regular singleton if Context dependency can be removed. */
+    public static void createGlobalInstance(Context c) {
+        sInstance = new Prefs(c);
+    }
+
+    /** Only access after CreatePrefsInstance(Context) has been called at startup. */
+    public static Prefs getInstance() {
+        assert(sInstance != null);
+        return sInstance;
     }
 
     ///
@@ -71,11 +75,11 @@ public final class Prefs {
     ///
 
     public boolean getGeofenceEnabled() {
-        return getBoolPref(GEOFENCE_SWITCH);
+        return getBoolPrefWithDefault(GEOFENCE_SWITCH, false);
     }
 
     public boolean getGeofenceHere() {
-        return getBoolPref(GEOFENCE_HERE);
+        return getBoolPrefWithDefault(GEOFENCE_HERE, false);
     }
 
     public Location getGeofenceLocation() {
@@ -93,12 +97,12 @@ public final class Prefs {
         return TextUtils.isEmpty(nickname) ? null : nickname;
     }
 
-    public boolean getWifi() {
-        return getBoolPref(WIFI_ONLY, true);
+    public boolean getUseWifiOnly() {
+        return getBoolPrefWithDefault(WIFI_ONLY, true);
     }
 
     public boolean getWifiScanAlways() {
-        return getBoolPref(WIFI_SCAN_ALWAYS);
+        return getBoolPrefWithDefault(WIFI_SCAN_ALWAYS, false);
     }
 
     ///
@@ -109,11 +113,8 @@ public final class Prefs {
         return getPrefs().getString(key, null);
     }
 
-    private boolean getBoolPref(String key) {
-        return getPrefs().getBoolean(key, false);
-    }
 
-    private boolean getBoolPref(String key, boolean def) {
+    private boolean getBoolPrefWithDefault(String key, boolean def) {
         return getPrefs().getBoolean(key, def);
     }
 
@@ -140,6 +141,6 @@ public final class Prefs {
 
     @SuppressLint("InlinedApi")
     private SharedPreferences getPrefs() {
-        return mContext.getSharedPreferences(PREFS_FILE, Context.MODE_MULTI_PROCESS | Context.MODE_PRIVATE);
+        return mSharedPrefs;
     }
 }

@@ -302,7 +302,7 @@ public final class MapActivity extends Activity {
             }
             String data = wrapper.toString();
             byte[] bytes = data.getBytes();
-            Searcher searcher = new Searcher(MapActivity.this);
+            Searcher searcher = new Searcher();
             if (searcher.cleanSend(bytes)) {
                 mStatus = searcher.getStatus();
                 mLat = searcher.getLat();

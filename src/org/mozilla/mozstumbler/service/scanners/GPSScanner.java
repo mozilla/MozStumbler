@@ -12,7 +12,9 @@ import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import org.mozilla.mozstumbler.service.SharedConstants;
+import org.mozilla.mozstumbler.service.SharedConstants.ActiveOrPassiveStumbling;
 import org.mozilla.mozstumbler.service.Prefs;
+import org.mozilla.mozstumbler.service.Scanner;
 
 public class GPSScanner implements LocationListener {
     public static final String ACTION_BASE = SharedConstants.ACTION_NAMESPACE + ".GPSScanner.";
@@ -36,19 +38,37 @@ public class GPSScanner implements LocationListener {
     private int mLocationCount;
     private double mLatitude;
     private double mLongitude;
-    private LocationBlockList mBlockList;
+    private LocationBlockList mBlockList = new LocationBlockList();
     private boolean mAutoGeofencing;
+    private boolean mIsPassiveMode;
 
-    public GPSScanner(Context context) {
+    private Scanner mScanner;
+
+    public GPSScanner(Context context, Scanner scanner) {
         mContext = context;
+        mScanner = scanner;
     }
 
-    public void start() {
+    public void start(final ActiveOrPassiveStumbling stumblingMode) {
+        mIsPassiveMode = (stumblingMode == ActiveOrPassiveStumbling.PASSIVE_STUMBLING);
+        if (mIsPassiveMode ) {
+            startPassiveMode();
+        } else {
+            startActiveMode();
+        }
+    }
+
+    private void startPassiveMode() {
+        LocationManager locationManager = (LocationManager)mContext.getSystemService(Context.LOCATION_SERVICE);
+        locationManager.requestLocationUpdates(LocationManager.PASSIVE_PROVIDER, 0, 0, this);
+    }
+
+    private void startActiveMode() {
         LocationManager lm = getLocationManager();
         lm.requestLocationUpdates(LocationManager.GPS_PROVIDER,
-                                                            GEO_MIN_UPDATE_TIME,
-                                                            GEO_MIN_UPDATE_DISTANCE,
-                                                            this);
+                                  GEO_MIN_UPDATE_TIME,
+                                  GEO_MIN_UPDATE_DISTANCE,
+                                  this);
 
         reportLocationLost();
         mGPSListener = new GpsStatus.Listener() {
@@ -70,7 +90,7 @@ public class GPSScanner implements LocationListener {
                         if (fixes < MIN_SAT_USED_IN_FIX) {
                             reportLocationLost();
                         }
-                        Log.d(LOGTAG, "onGpsStatusChange - satellites: " + satellites + " fixes: " + fixes);
+                        if (SharedConstants.isDebug) Log.d(LOGTAG, "onGpsStatusChange - satellites: " + satellites + " fixes: " + fixes);
                     } else if (event == GpsStatus.GPS_EVENT_STOPPED) {
                         reportLocationLost();
                     }
@@ -78,7 +98,6 @@ public class GPSScanner implements LocationListener {
             };
 
         lm.addGpsStatusListener(mGPSListener);
-        mBlockList = new LocationBlockList(mContext);
     }
 
     public void stop() {
@@ -103,10 +122,11 @@ public class GPSScanner implements LocationListener {
     public double getLongitude() {
         return mLongitude;
     }
+
     public void checkPrefs() {
         if (mBlockList!=null) mBlockList.update_blocks();
-        Prefs prefs = new Prefs(mContext);
-        mAutoGeofencing = prefs.getGeofenceHere();
+
+        mAutoGeofencing = Prefs.getInstance().getGeofenceHere();
     }
 
     public boolean isGeofenced() {
@@ -115,8 +135,14 @@ public class GPSScanner implements LocationListener {
 
     @Override
     public void onLocationChanged(Location location) {
-        if (location == null) {
+        if (location == null) { // TODO: is this even possible??
             reportLocationLost();
+            return;
+        }
+
+        String provider = location.getProvider();
+        if (!provider.toLowerCase().contains("gps")) {
+            // only interested in GPS locations
             return;
         }
 
@@ -126,13 +152,17 @@ public class GPSScanner implements LocationListener {
             return;
         }
 
-        Log.d(LOGTAG, "New location: " + location);
+        if (SharedConstants.isDebug) Log.d(LOGTAG, "New location: " + location);
 
         mLongitude = location.getLongitude();
         mLatitude = location.getLatitude();
 
         if (!mAutoGeofencing) { reportNewLocationReceived(location); }
         mLocationCount++;
+
+        if (mIsPassiveMode) {
+            mScanner.newPassiveGpsLocation();
+        }
     }
 
     @Override

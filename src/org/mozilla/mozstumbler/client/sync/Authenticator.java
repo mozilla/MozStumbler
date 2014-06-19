@@ -1,4 +1,4 @@
-package org.mozilla.mozstumbler.service.sync;
+package org.mozilla.mozstumbler.client.sync;
 
 import android.accounts.AbstractAccountAuthenticator;
 import android.accounts.Account;

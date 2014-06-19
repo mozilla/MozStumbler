@@ -2,16 +2,21 @@ package org.mozilla.mozstumbler.service;
 
 import android.app.Service;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
-
 import org.mozilla.mozstumbler.service.datahandling.StumblerBundleReceiver;
-import org.mozilla.mozstumbler.service.sync.SyncUtils;
+import org.mozilla.mozstumbler.client.sync.SyncUtils;
+import org.mozilla.mozstumbler.service.sync.AsyncUploader;
+import org.mozilla.mozstumbler.service.utils.NetworkUtils;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public final class StumblerService extends Service {
+    public  static final String ACTION_BASE = SharedConstants.ACTION_NAMESPACE;
+    public  static final String ACTION_START_PASSIVE = ACTION_BASE + ".START_PASSIVE";
     private static final String LOGTAG          = StumblerService.class.getName();
+
     private Scanner                mScanner;
     private Reporter               mReporter;
 
@@ -20,7 +25,6 @@ public final class StumblerService extends Service {
     private StumblerBundleReceiver mStumblerBundleReceiver = new StumblerBundleReceiver();
     private boolean                mIsBound;
     private final IBinder          mBinder         = new StumblerBinder();
-    private Prefs mPrefs;
 
     public final class StumblerBinder extends Binder {
         public StumblerService getService() {
@@ -38,8 +42,6 @@ public final class StumblerService extends Service {
         }
 
         mScanner.startScanning();
-
-        mReporter.registerBundleReceiver(mStumblerBundleReceiver);
     }
 
     public void stopScanning() {
@@ -48,13 +50,12 @@ public final class StumblerService extends Service {
             mReporter.flush();
             if (!mIsBound) {
                 stopSelf();
-                mReporter.unregisterBundleReceiver();
             }
             SyncUtils.TriggerRefresh(false);
         }
     }
 
-    public Prefs getPrefs() { return mPrefs; }
+    public Prefs getPrefs() { return Prefs.getInstance(); }
 
     public void checkPrefs() {
         mScanner.checkPrefs();
@@ -99,11 +100,20 @@ public final class StumblerService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        Log.d(LOGTAG, "onCreate");
+        if (SharedConstants.isDebug) Log.d(LOGTAG, "onCreate");
 
-        mPrefs = new Prefs(this);
+        if (SharedConstants.appVersionCode < 1) {
+            //TODO look at how to set these
+            //SharedConstants.appVersionName =;
+            //SharedConstants.appVersionCode =;
+            SharedConstants.isDebug = true;
+        }
+
+        Prefs.createGlobalInstance(this);
+        NetworkUtils.createGlobalInstance(this);
+
         mScanner = new Scanner(this);
-        mReporter = new Reporter(this);
+        mReporter = new Reporter(this, mStumblerBundleReceiver);
 
         SyncUtils.CreateSyncAccount(this);
     }
@@ -111,7 +121,7 @@ public final class StumblerService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.d(LOGTAG, "onDestroy");
+        if (SharedConstants.isDebug) Log.d(LOGTAG, "onDestroy");
 
         mReporter.shutdown();
         mReporter = null;
@@ -120,6 +130,24 @@ public final class StumblerService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        if (intent.getBooleanExtra(ACTION_START_PASSIVE, false)) {
+            mScanner.setPassiveMode(true);
+            startScanning();
+
+            // TODO way more logic here. Decide on the timing. Perhaps trigger based on wake from sleep, or when network status changed.
+            long delay_ms = 10 * 60 * 1000; // ten mins
+            long period_ms = 60 * 60 * 1000; // one hour
+            new Timer().schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    if (!mScanner.isBatteryLow()) {
+                        AsyncUploader uploader = new AsyncUploader(null /*ignoring result for now*/, getContentResolver());
+                        uploader.execute();
+                    }
+                }
+            }, delay_ms, period_ms);
+        }
+
         // keep running!
         return Service.START_STICKY;
     }
@@ -127,13 +155,13 @@ public final class StumblerService extends Service {
     @Override
     public IBinder onBind(Intent intent) {
         mIsBound = true;
-        Log.d(LOGTAG, "onBind");
+        if (SharedConstants.isDebug)Log.d(LOGTAG, "onBind");
         return mBinder;
     }
 
     @Override
     public boolean onUnbind(Intent intent) {
-        Log.d(LOGTAG, "onUnbind");
+        if (SharedConstants.isDebug) Log.d(LOGTAG, "onUnbind");
         if (!mScanner.isScanning()) {
             stopSelf();
         }
@@ -144,6 +172,6 @@ public final class StumblerService extends Service {
     @Override
     public void onRebind(Intent intent) {
         mIsBound = true;
-        Log.d(LOGTAG,"onRebind");
+        if (SharedConstants.isDebug)Log.d(LOGTAG,"onRebind");
     }
 }

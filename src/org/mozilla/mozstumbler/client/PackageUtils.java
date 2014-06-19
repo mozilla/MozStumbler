@@ -1,4 +1,4 @@
-package org.mozilla.mozstumbler.service.utils;
+package org.mozilla.mozstumbler.client;
 
 import android.content.Context;
 import android.content.pm.PackageManager;

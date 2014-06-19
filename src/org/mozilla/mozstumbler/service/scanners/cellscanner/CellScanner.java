@@ -12,6 +12,8 @@ import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import org.mozilla.mozstumbler.service.SharedConstants;
+import org.mozilla.mozstumbler.service.SharedConstants.ActiveOrPassiveStumbling;
+
 
 public class CellScanner {
     public static final String ACTION_BASE = SharedConstants.ACTION_NAMESPACE + ".CellScanner.";
@@ -21,12 +23,15 @@ public class CellScanner {
 
     private static final String LOGTAG = CellScanner.class.getName();
     private static final long CELL_MIN_UPDATE_TIME = 1000; // milliseconds
+    private static final int PASSIVE_MODE_MAX_SCANS = 3;
 
     private final Context mContext;
     private CellScannerImpl mImpl;
     private Timer mCellScanTimer;
     private final Set<String> mCells = new HashSet<String>();
     private int mCurrentCellInfoCount;
+
+    public ArrayList<CellInfo> sTestingModeCellInfoArray;
 
     interface CellScannerImpl {
         public void start();
@@ -40,7 +45,7 @@ public class CellScanner {
         mContext = context;
     }
 
-    public void start() {
+    public void start(final ActiveOrPassiveStumbling stumblingMode) {
         if (mImpl != null) {
             return;
         }
@@ -57,11 +62,22 @@ public class CellScanner {
         mCellScanTimer = new Timer();
 
         mCellScanTimer.schedule(new TimerTask() {
+            int mPassiveScanCount;
             @Override
             public void run() {
-                Log.d(LOGTAG, "Cell Scanning Timer fired");
+                if (stumblingMode == ActiveOrPassiveStumbling.PASSIVE_STUMBLING &&
+                    mPassiveScanCount++ > SharedConstants.PASSIVE_MODE_MAX_SCANS_PER_GPS)
+                {
+                    mPassiveScanCount = 0;
+                    stop();
+                    return;
+                }
+                if (SharedConstants.isDebug) Log.d(LOGTAG, "Cell Scanning Timer fired");
                 final long curTime = System.currentTimeMillis();
-                ArrayList<CellInfo> cells = new ArrayList<CellInfo>(mImpl.getCellInfo());
+
+                ArrayList<CellInfo> cells = (sTestingModeCellInfoArray != null)? sTestingModeCellInfoArray :
+                                            new ArrayList<CellInfo>(mImpl.getCellInfo());
+
                 mCurrentCellInfoCount = cells.size();
                 if (cells.isEmpty()) {
                     return;

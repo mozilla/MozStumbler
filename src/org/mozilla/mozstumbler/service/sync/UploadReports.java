@@ -1,43 +1,31 @@
 package org.mozilla.mozstumbler.service.sync;
 
-import android.accounts.Account;
-import android.annotation.TargetApi;
-import android.content.AbstractThreadedSyncAdapter;
-import android.content.ContentProviderClient;
 import android.content.ContentProviderOperation;
 import android.content.ContentResolver;
-import android.content.Context;
 import android.content.OperationApplicationException;
 import android.content.SyncResult;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.Build;
-import android.os.Bundle;
 import android.os.RemoteException;
 import android.util.Log;
-import java.util.ArrayList;
-import java.util.Collections;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.mozilla.mozstumbler.BuildConfig;
+import org.mozilla.mozstumbler.service.Prefs;
+import org.mozilla.mozstumbler.service.SharedConstants;
+import org.mozilla.mozstumbler.service.datahandling.DatabaseContract;
 import org.mozilla.mozstumbler.service.utils.DateTimeUtils;
 import org.mozilla.mozstumbler.service.utils.NetworkUtils;
-import org.mozilla.mozstumbler.service.Prefs;
-import org.mozilla.mozstumbler.service.datahandling.DatabaseContract;
-import org.mozilla.mozstumbler.service.SharedConstants;
-import static org.mozilla.mozstumbler.service.datahandling.DatabaseContract.Reports;
-import static org.mozilla.mozstumbler.service.datahandling.DatabaseContract.Stats;
+import java.util.ArrayList;
+import java.util.Collections;
 
-public class SyncAdapter extends AbstractThreadedSyncAdapter {
-    private static final String LOGTAG = SyncAdapter.class.getName();
-    private static final boolean DBG = BuildConfig.DEBUG;
+public class UploadReports {
     private static final int REQUEST_BATCH_SIZE = 50;
     private static final int MAX_RETRY_COUNT = 3;
 
     private final ContentResolver mContentResolver;
-    private final Prefs mPrefs;
 
+    static final String LOGTAG = UploadReports.class.getName();
 
     private static class BatchRequestStats {
         final byte[] body;
@@ -57,59 +45,34 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         }
     }
 
-    public SyncAdapter(Context context, boolean autoInitialize) {
-        super(context, autoInitialize);
-        mPrefs = new Prefs(context);
-        mContentResolver = context.getContentResolver();
+    public UploadReports(ContentResolver contentResolver) {
+        mContentResolver = contentResolver;
     }
 
-    /**
-     * Set up the sync adapter. This form of the
-     * constructor maintains compatibility with Android 3.0
-     * and later platform versions
-     */
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    public SyncAdapter(
-            Context context,
-            boolean autoInitialize,
-            boolean allowParallelSyncs) {
-        super(context, autoInitialize, allowParallelSyncs);
-        mPrefs = new Prefs(context);
-        mContentResolver = context.getContentResolver();
-    }
-
-    @Override
-    public void onPerformSync(Account account, Bundle extras, String authority,
-                              ContentProviderClient provider, SyncResult syncResult) {
-        final boolean ignoreNetworkStatus = extras.getBoolean(SharedConstants.SYNC_EXTRAS_IGNORE_WIFI_STATUS, false);
-        uploadReports(ignoreNetworkStatus, syncResult);
-        Log.i(LOGTAG, "Network synchronization complete");
-    }
-
-    private void uploadReports(boolean ignoreNetworkStatus, SyncResult syncResult) {
+    public void uploadReports(boolean ignoreNetworkStatus, SyncResult syncResult) {
         long uploadedObservations = 0;
         long uploadedCells = 0;
         long uploadedWifis = 0;
         long queueMinId, queueMaxId;
 
-        if (!ignoreNetworkStatus && mPrefs.getWifi() && !NetworkUtils.isWifiAvailable(getContext())) {
-            Log.d(LOGTAG, "not on WiFi, not sending");
+        if (!ignoreNetworkStatus && Prefs.getInstance().getUseWifiOnly() && !NetworkUtils.getInstance().isWifiAvailable()) {
+            if (SharedConstants.isDebug) Log.d(LOGTAG, "not on WiFi, not sending");
             syncResult.stats.numIoExceptions += 1;
             return;
         }
 
-        Uri uri = Reports.CONTENT_URI.buildUpon()
-                .appendQueryParameter("limit", String.valueOf(REQUEST_BATCH_SIZE))
-                .build();
+        Uri uri = DatabaseContract.Reports.CONTENT_URI.buildUpon()
+                .appendQueryParameter("limit", String.valueOf(REQUEST_BATCH_SIZE)).build();
         queueMinId = 0;
         queueMaxId = getMaxId();
-        Submitter submitter = new Submitter(getContext());
-        for (; queueMinId < queueMaxId; ) {
+        Submitter submitter = new Submitter();
+        while (queueMinId < queueMaxId) {
             BatchRequestStats batch = null;
             Cursor cursor = mContentResolver.query(uri, null,
-                    Reports._ID + " > ? AND " + Reports._ID + " <= ?",
+                    DatabaseContract.Reports._ID + " > ? AND " + DatabaseContract.Reports._ID + " <= ?",
                     new String[]{String.valueOf(queueMinId), String.valueOf(queueMaxId)},
-                    Reports._ID);
+                    DatabaseContract.Reports._ID);
+
             if (cursor == null) {
                 break;
             }
@@ -120,9 +83,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
                     break;
                 }
 
-
                 if (submitter.cleanSend(batch.body)) {
-                    deleteObservations(batch.minId, batch.maxId);
+                    //deleteObservations(batch.minId, batch.maxId);
                     uploadedObservations += batch.observations;
                     uploadedWifis += batch.wifis;
                     uploadedCells += batch.cells;
@@ -135,11 +97,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
                 submitter.close();
             }
 
-            if (batch != null) {
-                queueMinId = batch.maxId;
-            } else {
-                queueMinId += REQUEST_BATCH_SIZE;
-            }
+            queueMinId = batch.maxId;
         }
 
         try {
@@ -155,8 +113,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
     }
 
     private long getMaxId() {
-        Cursor c = mContentResolver.query(Reports.CONTENT_URI_SUMMARY,
-                new String[]{Reports.MAX_ID}, null, null, null);
+        Cursor c = mContentResolver.query(DatabaseContract.Reports.CONTENT_URI_SUMMARY,
+                new String[]{DatabaseContract.Reports.MAX_ID}, null, null, null);
         if (c != null) {
             try {
                 if (c.moveToFirst()) {
@@ -174,17 +132,17 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         int cellCount = 0;
         JSONArray items = new JSONArray();
 
-        int columnId = cursor.getColumnIndex(Reports._ID);
-        int columnTime = cursor.getColumnIndex(Reports.TIME);
-        int columnLat = cursor.getColumnIndex(Reports.LAT);
-        int columnLon = cursor.getColumnIndex(Reports.LON);
-        int columnAltitude = cursor.getColumnIndex(Reports.ALTITUDE);
-        int columnAccuracy = cursor.getColumnIndex(Reports.ACCURACY);
-        int columnRadio = cursor.getColumnIndex(Reports.RADIO);
-        int columnCell = cursor.getColumnIndex(Reports.CELL);
-        int columnWifi = cursor.getColumnIndex(Reports.WIFI);
-        int columnCellCount = cursor.getColumnIndex(Reports.CELL_COUNT);
-        int columnWifiCount = cursor.getColumnIndex(Reports.WIFI_COUNT);
+        int columnId = cursor.getColumnIndex(DatabaseContract.Reports._ID);
+        int columnTime = cursor.getColumnIndex(DatabaseContract.Reports.TIME);
+        int columnLat = cursor.getColumnIndex(DatabaseContract.Reports.LAT);
+        int columnLon = cursor.getColumnIndex(DatabaseContract.Reports.LON);
+        int columnAltitude = cursor.getColumnIndex(DatabaseContract.Reports.ALTITUDE);
+        int columnAccuracy = cursor.getColumnIndex(DatabaseContract.Reports.ACCURACY);
+        int columnRadio = cursor.getColumnIndex(DatabaseContract.Reports.RADIO);
+        int columnCell = cursor.getColumnIndex(DatabaseContract.Reports.CELL);
+        int columnWifi = cursor.getColumnIndex(DatabaseContract.Reports.WIFI);
+        int columnCellCount = cursor.getColumnIndex(DatabaseContract.Reports.CELL_COUNT);
+        int columnWifiCount = cursor.getColumnIndex(DatabaseContract.Reports.WIFI_COUNT);
 
         cursor.moveToPosition(-1);
         try {
@@ -227,7 +185,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
     }
 
     private void deleteObservations(long minId, long maxId) {
-        mContentResolver.delete(Reports.CONTENT_URI, Reports._ID + " BETWEEN ? AND ?",
+        mContentResolver.delete(DatabaseContract.Reports.CONTENT_URI, DatabaseContract.Reports._ID + " BETWEEN ? AND ?",
                 new String[]{String.valueOf(minId), String.valueOf(maxId)});
     }
 
@@ -237,20 +195,20 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         int deletes = 0;
 
         cursor.moveToPosition(-1);
-        int columnId = cursor.getColumnIndex(Reports._ID);
-        int columnRetry = cursor.getColumnIndex(Reports.RETRY_NUMBER);
+        int columnId = cursor.getColumnIndex(DatabaseContract.Reports._ID);
+        int columnRetry = cursor.getColumnIndex(DatabaseContract.Reports.RETRY_NUMBER);
         while (cursor.moveToNext()) {
             int retry = cursor.getInt(columnRetry) + 1;
             if (retry >= MAX_RETRY_COUNT) {
-                batch.add(ContentProviderOperation.newDelete(Reports.CONTENT_URI)
-                        .withSelection(Reports._ID + "=?", new String[]{cursor.getString(columnId)})
-                        .build()
+                batch.add(ContentProviderOperation.newDelete(DatabaseContract.Reports.CONTENT_URI)
+                                .withSelection(DatabaseContract.Reports._ID + "=?", new String[]{cursor.getString(columnId)})
+                                .build()
                 );
                 deletes += 1;
             } else {
-                batch.add(ContentProviderOperation.newUpdate(Reports.CONTENT_URI)
-                        .withSelection(Reports._ID + "=?", new String[]{cursor.getString(columnId)})
-                        .withValue(Reports.RETRY_NUMBER, retry)
+                batch.add(ContentProviderOperation.newUpdate(DatabaseContract.Reports.CONTENT_URI)
+                        .withSelection(DatabaseContract.Reports._ID + "=?", new String[]{cursor.getString(columnId)})
+                        .withValue(DatabaseContract.Reports.RETRY_NUMBER, retry)
                         .build());
                 updates += 1;
             }
@@ -280,18 +238,18 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         if (observations == 0 && cells == 0 && wifis == 0) {
             return;
         }
-        syncStats = mContentResolver.query(Stats.CONTENT_URI, null, null, null, null);
+        syncStats = mContentResolver.query(DatabaseContract.Stats.CONTENT_URI, null, null, null, null);
         if (syncStats != null) {
             try {
                 while (syncStats.moveToNext()) {
-                    String key = syncStats.getString(syncStats.getColumnIndex(Stats.KEY));
-                    String value = syncStats.getString(syncStats.getColumnIndex(Stats.VALUE));
+                    String key = syncStats.getString(syncStats.getColumnIndex(DatabaseContract.Stats.KEY));
+                    String value = syncStats.getString(syncStats.getColumnIndex(DatabaseContract.Stats.VALUE));
 
-                    if (Stats.KEY_OBSERVATIONS_SENT.equals(key)) {
+                    if (DatabaseContract.Stats.KEY_OBSERVATIONS_SENT.equals(key)) {
                         totalObservations += Long.valueOf(value);
-                    } else if (Stats.KEY_CELLS_SENT.equals(key)) {
+                    } else if (DatabaseContract.Stats.KEY_CELLS_SENT.equals(key)) {
                         totalCells += Long.valueOf(value);
-                    } else if (Stats.KEY_WIFIS_SENT.equals(key)) {
+                    } else if (DatabaseContract.Stats.KEY_WIFIS_SENT.equals(key)) {
                         totalWifis += Long.valueOf(value);
                     }
                 }
@@ -301,10 +259,10 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         }
 
         ArrayList<ContentProviderOperation> updateBatch = new ArrayList<ContentProviderOperation>(4);
-        updateBatch.add(Stats.updateOperation(Stats.KEY_LAST_UPLOAD_TIME, System.currentTimeMillis()));
-        updateBatch.add(Stats.updateOperation(Stats.KEY_OBSERVATIONS_SENT, totalObservations));
-        updateBatch.add(Stats.updateOperation(Stats.KEY_CELLS_SENT, totalCells));
-        updateBatch.add(Stats.updateOperation(Stats.KEY_WIFIS_SENT, totalWifis));
+        updateBatch.add(DatabaseContract.Stats.updateOperation(DatabaseContract.Stats.KEY_LAST_UPLOAD_TIME, System.currentTimeMillis()));
+        updateBatch.add(DatabaseContract.Stats.updateOperation(DatabaseContract.Stats.KEY_OBSERVATIONS_SENT, totalObservations));
+        updateBatch.add(DatabaseContract.Stats.updateOperation(DatabaseContract.Stats.KEY_CELLS_SENT, totalCells));
+        updateBatch.add(DatabaseContract.Stats.updateOperation(DatabaseContract.Stats.KEY_WIFIS_SENT, totalWifis));
         mContentResolver.applyBatch(DatabaseContract.CONTENT_AUTHORITY, updateBatch);
     }
 }

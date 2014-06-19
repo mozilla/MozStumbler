@@ -1,9 +1,8 @@
-package org.mozilla.mozstumbler.service.sync;
+package org.mozilla.mozstumbler.client.sync;
 
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
-import org.mozilla.mozstumbler.service.sync.SyncAdapter;
 
 public class SyncService extends Service {
     private static SyncAdapter sSyncAdapter = null;

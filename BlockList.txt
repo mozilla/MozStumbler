@@ -89,6 +89,9 @@
 { "pattern":".*MIFI$" , "info":"" },
 { "pattern":".*MiFi$" , "info":"" },
 { "pattern":".*MyWi$" , "info":"" },
-{ "pattern":".*Phone$" , "info":"" }
+{ "pattern":".*Phone$" , "info":"" },
+{ "pattern":".*Portable Hotspot$" , "info":"" },
+{ "pattern":".*[Tt]ether$" , "info":"" },
+{ "pattern":".*_nomap$" , "info":"Standard identifier to request SSID is ignored by scanners" }
 ]
 }

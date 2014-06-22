@@ -84,7 +84,7 @@ public class UploadReports {
                 }
 
                 if (submitter.cleanSend(batch.body)) {
-                    //deleteObservations(batch.minId, batch.maxId);
+                    deleteObservations(batch.minId, batch.maxId);
                     uploadedObservations += batch.observations;
                     uploadedWifis += batch.wifis;
                     uploadedCells += batch.cells;

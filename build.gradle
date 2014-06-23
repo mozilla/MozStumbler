@@ -4,7 +4,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:0.9.+'
+        classpath 'com.android.tools.build:gradle:0.11.+'
     }
 }
 
@@ -17,12 +17,12 @@ repositories {
 
 android {
     compileSdkVersion 19
-    buildToolsVersion '19.0.3'
+    buildToolsVersion '19.1.0'
 
     dependencies {
         compile "org.osmdroid:osmdroid-android:4.1"
         compile 'org.slf4j:slf4j-android:1.7.7'
-        compile "com.android.support:support-v4:19.0.+"
+        compile "com.android.support:support-v4:19.1.+"
     }
 
     sourceSets {

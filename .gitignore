@@ -1,6 +1,8 @@
 .DS_Store
 .gradle
 .settings
+.idea
+*.iml
 assets
 bin
 gen

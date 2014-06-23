@@ -15,10 +15,6 @@ repositories {
     mavenCentral()
 }
 
-dependencies {
-    compile 'com.android.support:appcompat-v7:19.+'
-}
-
 android {
     compileSdkVersion 19
     buildToolsVersion '19.1.0'

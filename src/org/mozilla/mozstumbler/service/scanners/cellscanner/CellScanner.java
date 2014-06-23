@@ -26,14 +26,14 @@ public class CellScanner {
     private static final int PASSIVE_MODE_MAX_SCANS = 3;
 
     private final Context mContext;
-    private CellScannerImpl mImpl;
+    private static CellScannerImpl sImpl;
     private Timer mCellScanTimer;
     private final Set<String> mCells = new HashSet<String>();
     private int mCurrentCellInfoCount;
 
     public ArrayList<CellInfo> sTestingModeCellInfoArray;
 
-    interface CellScannerImpl {
+    public interface CellScannerImpl {
         public void start();
 
         public void stop();
@@ -45,19 +45,25 @@ public class CellScanner {
         mContext = context;
     }
 
+    /** Fennec doesn't support the apis needed for full scanning, we have different implementations.*/
+    public static void setCellScannerClass(CellScannerImpl cellScanner, boolean overrideExisting) {
+        if (!overrideExisting && sImpl != null)
+            return;
+
+        sImpl = cellScanner;
+    }
+
     public void start(final ActiveOrPassiveStumbling stumblingMode) {
-        if (mImpl != null) {
+        if (sImpl == null) {
             return;
         }
 
         try {
-            mImpl = new DefaultCellScanner(mContext);
+            sImpl.start();
         } catch (UnsupportedOperationException uoe) {
             Log.e(LOGTAG, "Cell scanner probe failed", uoe);
             return;
         }
-
-        mImpl.start();
 
         mCellScanTimer = new Timer();
 
@@ -76,7 +82,7 @@ public class CellScanner {
                 final long curTime = System.currentTimeMillis();
 
                 ArrayList<CellInfo> cells = (sTestingModeCellInfoArray != null)? sTestingModeCellInfoArray :
-                                            new ArrayList<CellInfo>(mImpl.getCellInfo());
+                                            new ArrayList<CellInfo>(sImpl.getCellInfo());
 
                 mCurrentCellInfoCount = cells.size();
                 if (cells.isEmpty()) {
@@ -97,9 +103,8 @@ public class CellScanner {
             mCellScanTimer.cancel();
             mCellScanTimer = null;
         }
-        if (mImpl != null) {
-            mImpl.stop();
-            mImpl = null;
+        if (sImpl != null) {
+            sImpl.stop();
         }
     }
 

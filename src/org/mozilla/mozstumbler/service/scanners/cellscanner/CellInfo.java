@@ -25,8 +25,8 @@ public class CellInfo implements Parcelable {
     public static final String CELL_RADIO_CDMA = "cdma";
     public static final String CELL_RADIO_LTE = "lte";
 
-    static final int UNKNOWN_CID = -1;
-    static final int UNKNOWN_SIGNAL = -1000;
+    public static final int UNKNOWN_CID = -1;
+    public static final int UNKNOWN_SIGNAL = -1000;
 
     public static final Parcelable.Creator<CellInfo> CREATOR
             = new Parcelable.Creator<CellInfo>() {
@@ -237,7 +237,7 @@ public class CellInfo implements Parcelable {
         mAsu = asu;
     }
 
-    void setWcmdaCellInfo(int mcc, int mnc, int lac, int cid, int psc, int asu) {
+    public void setWcmdaCellInfo(int mcc, int mnc, int lac, int cid, int psc, int asu) {
         mCellRadio = CELL_RADIO_UMTS;
         mMcc = mcc != Integer.MAX_VALUE ? mcc : UNKNOWN_CID;
         mMnc = mnc != Integer.MAX_VALUE ? mnc : UNKNOWN_CID;

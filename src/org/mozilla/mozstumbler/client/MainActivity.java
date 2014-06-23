@@ -34,6 +34,7 @@ import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 import org.mozilla.mozstumbler.BuildConfig;
+import org.mozilla.mozstumbler.client.sync.SyncUtils;
 import org.mozilla.mozstumbler.service.Prefs;
 import org.mozilla.mozstumbler.service.utils.DateTimeUtils;
 import org.mozilla.mozstumbler.client.mapview.MapActivity;
@@ -66,6 +67,9 @@ public final class MainActivity extends FragmentActivity {
     private int                      mGpsSats;
     private boolean                  mNeedsUpdate = false;
     private boolean                  mGeofenceHere = false;
+
+    private static final LogActivity.LogMessageReceiver sLogMessageReceiver =
+            new LogActivity.LogMessageReceiver();
 
     private class ServiceBroadcastReceiver extends BroadcastReceiver {
         private boolean mReceiverIsRegistered;
@@ -130,6 +134,8 @@ public final class MainActivity extends FragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         CellScanner.setCellScannerClass(new DefaultCellScanner(this), true);
+
+        sLogMessageReceiver.register(this);
 
         if (SharedConstants.isDebug) enableStrictMode();
         super.onCreate(savedInstanceState);
@@ -336,9 +342,12 @@ public final class MainActivity extends FragmentActivity {
                 Intent openLeaderboard = new Intent(Intent.ACTION_VIEW, leaderboardUri);
                 startActivity(openLeaderboard);
                 return true;
-            case R.id.action_test_mls:
+            case R.id.action_view_map:
                 Intent intent = new Intent(this, MapActivity.class);
                 startActivity(intent);
+                return true;
+            case R.id.action_view_log:
+                startActivity(new Intent(getApplication(), LogActivity.class));
                 return true;
             case R.id.action_upload_observations:
                 UploadReportsDialog newFragment = new UploadReportsDialog();

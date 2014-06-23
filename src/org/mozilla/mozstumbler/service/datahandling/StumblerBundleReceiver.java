@@ -1,9 +1,9 @@
 package org.mozilla.mozstumbler.service.datahandling;
 
-import android.content.BroadcastReceiver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -15,10 +15,8 @@ public final class StumblerBundleReceiver {
 
     public void handleBundle(Context context, StumblerBundle bundle) {
         ContentValues values = new ContentValues();
-
-        JSONObject mlsObj = null;
         try {
-            mlsObj = bundle.toMLSJSON();
+            JSONObject mlsObj = bundle.toMLSJSON();
             if (SharedConstants.isDebug) Log.d(LOGTAG, "Received bundle: " + mlsObj.toString());
 
             values.put(DatabaseContract.Reports.TIME, mlsObj.getLong("time"));
@@ -46,6 +44,10 @@ public final class StumblerBundleReceiver {
             JSONArray wifis = mlsObj.getJSONArray("wifi");
             values.put(DatabaseContract.Reports.WIFI, wifis.toString());
             values.put(DatabaseContract.Reports.WIFI_COUNT, wifis.length());
+
+            Intent message = new Intent(SharedConstants.ACTION_GUI_LOG_MESSAGE);
+            message.putExtra(SharedConstants.ACTION_GUI_LOG_MESSAGE_EXTRA, mlsObj.toString());
+            LocalBroadcastManager.getInstance(context).sendBroadcast(message);
         } catch (JSONException e) {
             Log.w(LOGTAG, "Failed to convert bundle to JSON: " + e);
             return;

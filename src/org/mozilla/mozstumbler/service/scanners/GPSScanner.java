@@ -15,6 +15,7 @@ import org.mozilla.mozstumbler.service.SharedConstants;
 import org.mozilla.mozstumbler.service.SharedConstants.ActiveOrPassiveStumbling;
 import org.mozilla.mozstumbler.service.Prefs;
 import org.mozilla.mozstumbler.service.Scanner;
+import java.text.SimpleDateFormat;
 
 public class GPSScanner implements LocationListener {
     public static final String ACTION_BASE = SharedConstants.ACTION_NAMESPACE + ".GPSScanner.";
@@ -133,6 +134,12 @@ public class GPSScanner implements LocationListener {
         return (mBlockList != null) && mBlockList.isGeofenced();
     }
 
+    private void sendToLogActivity(String msg) {
+        Intent message = new Intent(SharedConstants.ACTION_GUI_LOG_MESSAGE);
+        message.putExtra(SharedConstants.ACTION_GUI_LOG_MESSAGE_EXTRA,msg);
+        LocalBroadcastManager.getInstance(mContext).sendBroadcast(message);
+    }
+
     @Override
     public void onLocationChanged(Location location) {
         if (location == null) { // TODO: is this even possible??
@@ -140,11 +147,21 @@ public class GPSScanner implements LocationListener {
             return;
         }
 
+        String logMsg = (mIsPassiveMode)? "[Passive] " : "[Active] ";
+
         String provider = location.getProvider();
         if (!provider.toLowerCase().contains("gps")) {
+            sendToLogActivity(logMsg + "Discard fused/network location.");
             // only interested in GPS locations
             return;
         }
+
+        java.util.Date date = new java.util.Date(location.getTime());
+        SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
+        String time = formatter.format(date);
+        logMsg += String.format("%s Coord: %.4f,%.4f, Acc: %.0f, Speed: %.0f, Alt: %.0f, Bearing: %.1f", time, location.getLatitude(),
+                location.getLongitude(), location.getAccuracy(), location.getSpeed(), location.getAltitude(), location.getBearing());
+        sendToLogActivity(logMsg);
 
         if (mBlockList.contains(location)) {
             Log.w(LOGTAG, "Blocked location: " + location);

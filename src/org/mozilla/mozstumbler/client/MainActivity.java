@@ -129,6 +129,8 @@ public final class MainActivity extends FragmentActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        CellScanner.setCellScannerClass(new DefaultCellScanner(this), true);
+
         if (SharedConstants.isDebug) enableStrictMode();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);

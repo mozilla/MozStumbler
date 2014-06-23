@@ -41,20 +41,31 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:paddingTop="32dp"
         android:autoLink="web"
-        android:text="Map view tiles © OpenStreetMap contributors\nhttp://www.openstreetmap.org "/>
+      android:text="@string/about_openstreetmap" />
 
-    <TextView
+            <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:paddingTop="32dp"
+                android:onClick="onClick_ViewMore"
+                android:clickable="true"
+                android:text="@string/about_mapbox_title" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+
         android:onClick="onClick_ViewMapboxAttribution"
         android:clickable="true"
-        android:textColor="#00e"
-        android:text="@string/about_mapbox" />
+                android:textColor="#4abde8"
+                android:text="@string/about_mapbox"
+                android:singleLine="false" />
 
-    <TextView
+            <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
@@ -62,7 +73,7 @@
         android:paddingTop="32dp"
         android:onClick="onClick_ViewMore"
         android:clickable="true"
-        android:textColor="#00e"
+                android:textColor="#4abde8"
         android:text="@string/about_more" />
 
     <TextView

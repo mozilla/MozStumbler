@@ -7,6 +7,8 @@ import android.os.IBinder;
 import android.util.Log;
 import org.mozilla.mozstumbler.service.datahandling.StumblerBundleReceiver;
 import org.mozilla.mozstumbler.client.sync.SyncUtils;
+import org.mozilla.mozstumbler.service.scanners.cellscanner.CellScanner;
+import org.mozilla.mozstumbler.service.scanners.cellscanner.CellScannerNoWCDMA;
 import org.mozilla.mozstumbler.service.sync.AsyncUploader;
 import org.mozilla.mozstumbler.service.utils.NetworkUtils;
 import java.util.Timer;
@@ -112,6 +114,7 @@ public final class StumblerService extends Service {
         Prefs.createGlobalInstance(this);
         NetworkUtils.createGlobalInstance(this);
 
+        CellScanner.setCellScannerClass(new CellScannerNoWCDMA(this), false);
         mScanner = new Scanner(this);
         mReporter = new Reporter(this, mStumblerBundleReceiver);
 

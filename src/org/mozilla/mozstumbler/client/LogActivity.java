@@ -78,7 +78,6 @@ public class LogActivity extends Activity {
         void init(Context context) {
             tv = new TextView(context);
             addView(tv);
-            tv.setTextColor(Color.WHITE);
             tv.setTextSize(13.0f);
             tv.setClickable(false);
             enableScroll(true);

@@ -133,8 +133,6 @@ public final class MainActivity extends FragmentActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        CellScanner.setCellScannerClass(new DefaultCellScanner(this), true);
-
         sLogMessageReceiver.register(this);
 
         if (SharedConstants.isDebug) enableStrictMode();
@@ -462,11 +460,15 @@ public final class MainActivity extends FragmentActivity {
     };
 
     private void startScanning() {
+        if (!mConnectionRemote.isScanning()) {
+            CellScanner.setCellScannerClass(new DefaultCellScanner(this));
+        }
         mConnectionRemote.startForeground(NOTIFICATION_ID, buildNotification());
         mConnectionRemote.startScanning();
     }
 
     private void stopScanning() {
+        CellScanner.setCellScannerClass(null);
         mConnectionRemote.stopForeground(true);
         mConnectionRemote.stopScanning();
     }

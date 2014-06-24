@@ -46,10 +46,7 @@ public class CellScanner {
     }
 
     /** Fennec doesn't support the apis needed for full scanning, we have different implementations.*/
-    public static void setCellScannerClass(CellScannerImpl cellScanner, boolean overrideExisting) {
-        if (!overrideExisting && sImpl != null)
-            return;
-
+    public static void setCellScannerClass(CellScannerImpl cellScanner) {
         sImpl = cellScanner;
     }
 

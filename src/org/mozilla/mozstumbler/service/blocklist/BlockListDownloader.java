@@ -37,7 +37,7 @@ public class BlockListDownloader {
             //connection code
             HttpClient client = new DefaultHttpClient();
             HttpConnectionParams.setConnectionTimeout(client.getParams(), 10000); //Timeout Limit
-            HttpGet get = new HttpGet("https://api.github.com/repos/mozilla/MozStumbler/contents/res/raw/BlockList.txt");
+            HttpGet get = new HttpGet("https://api.github.com/repos/mozilla/MozStumbler/contents/res/blocklists/blocklist.txt");
             HttpResponse response = client.execute(get);
             InputStream is = new BufferedHttpEntity(response.getEntity()).getContent();
             BufferedReader r = new BufferedReader(new InputStreamReader(is));
@@ -72,7 +72,7 @@ public class BlockListDownloader {
         try {
             //download the new file
 
-            URL url = new URL("https://raw.githubusercontent.com/mozilla/MozStumbler/master/res/raw/BlockList.txt");
+            URL url = new URL("https://raw.githubusercontent.com/mozilla/MozStumbler/master/res/blocklists/blocklist.txt");
             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
 
             Log.d("******************************************************", "@HttpURLConnection opened");

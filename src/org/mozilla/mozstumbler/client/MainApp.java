@@ -60,7 +60,7 @@ public class MainApp extends Application {
         Prefs.createGlobalInstance(this);
         NetworkUtils.createGlobalInstance(this);
         LogActivity.LogMessageReceiver.createGlobalInstance(this);
-        CellScanner.setCellScannerClass(new DefaultCellScanner(this));
+        CellScanner.setCellScannerImpl(new DefaultCellScanner(this));
 
         if (SharedConstants.isDebug) {
             enableStrictMode();

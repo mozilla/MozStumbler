@@ -117,8 +117,7 @@ public class ServiceTest extends ServiceTestCase<StumblerService> implements Asy
 
         Method method = getMethod(CellInfo.class, "setGsmCellInfo");
         assert (method != null);
-        method.invoke(cell, new Integer(mcc), new Integer(mnc), new Integer(lac),
-                new Integer(cid), new Integer(asu));
+        method.invoke(cell, mcc, mnc, lac, cid, asu);
         return cell;
     }
 

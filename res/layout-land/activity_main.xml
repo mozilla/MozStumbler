@@ -110,19 +110,30 @@
         android:text="@string/geofencing_off"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
-    <ToggleButton
-        android:id="@+id/toggle_scanning"
+    <FrameLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="false"
-        android:layout_alignParentStart="false"
+        android:layout_height="fill_parent"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:onClick="onToggleScanningClicked"
-        android:textOff="@string/start_scanning"
-        android:textOn="@string/stop_scanning"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:layout_alignParentTop="true" />
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/gps_satellites">
+
+        <ToggleButton
+            android:id="@+id/toggle_scanning"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:onClick="onToggleScanningClicked"
+            android:textOff="@string/start_scanning"
+            android:textOn="@string/stop_scanning"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:layout_alignParentTop="true"
+            android:layout_alignBottom="@+id/locations_scanned"
+            android:layout_toRightOf="@+id/gps_satellites"
+            android:width="130dp"
+            android:layout_gravity="center" />
+    </FrameLayout>
 
 </RelativeLayout>

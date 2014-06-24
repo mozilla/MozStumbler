@@ -44,6 +44,8 @@
     <string name="no">No</string>
 
     <string name="about_version">Version %1$s</string>
+    <string name="about_openstreetmap">Map view tiles © OpenStreetMap contributors\nhttp://www.openstreetmap.org </string>
+    <string name="about_mapbox_title">MapBox</string>
     <string name="about_mapbox">Learn more about our mapping provider…</string>
     <string name="about_more">More…</string>
     <string name="about_legal_aosp">Some iconography in this app is reproduced from work created and shared by the Android Open Source Project and used according to terms described in the Creative Commons 2.5 Attribution License.</string>

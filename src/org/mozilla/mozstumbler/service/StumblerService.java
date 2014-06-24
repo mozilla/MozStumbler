@@ -114,7 +114,9 @@ public final class StumblerService extends Service {
         Prefs.createGlobalInstance(this);
         NetworkUtils.createGlobalInstance(this);
 
-        CellScanner.setCellScannerClass(new CellScannerNoWCDMA(this));
+        if (!CellScanner.isCellScannerImplSet()) {
+            CellScanner.setCellScannerImpl(new CellScannerNoWCDMA(this));
+        }
         mScanner = new Scanner(this);
         mReporter = new Reporter(this, mStumblerBundleReceiver);
 

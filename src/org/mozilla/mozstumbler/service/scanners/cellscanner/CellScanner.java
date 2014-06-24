@@ -45,18 +45,22 @@ public class CellScanner {
         mContext = context;
     }
 
+    private static synchronized CellScannerImpl getImplementation() {
+        return sImpl;
+    }
+
     /** Fennec doesn't support the apis needed for full scanning, we have different implementations.*/
-    public static void setCellScannerClass(CellScannerImpl cellScanner) {
+    public static synchronized void setCellScannerClass(CellScannerImpl cellScanner) {
         sImpl = cellScanner;
     }
 
     public void start(final ActiveOrPassiveStumbling stumblingMode) {
-        if (sImpl == null) {
+        if (getImplementation() == null) {
             return;
         }
 
         try {
-            sImpl.start();
+            getImplementation().start();
         } catch (UnsupportedOperationException uoe) {
             Log.e(LOGTAG, "Cell scanner probe failed", uoe);
             return;
@@ -68,8 +72,12 @@ public class CellScanner {
             int mPassiveScanCount;
             @Override
             public void run() {
+                if (getImplementation() == null) {
+                    return;
+                }
+
                 if (stumblingMode == ActiveOrPassiveStumbling.PASSIVE_STUMBLING &&
-                    mPassiveScanCount++ > SharedConstants.PASSIVE_MODE_MAX_SCANS_PER_GPS)
+                        mPassiveScanCount++ > SharedConstants.PASSIVE_MODE_MAX_SCANS_PER_GPS)
                 {
                     mPassiveScanCount = 0;
                     stop();
@@ -79,7 +87,7 @@ public class CellScanner {
                 final long curTime = System.currentTimeMillis();
 
                 ArrayList<CellInfo> cells = (sTestingModeCellInfoArray != null)? sTestingModeCellInfoArray :
-                                            new ArrayList<CellInfo>(sImpl.getCellInfo());
+                        new ArrayList<CellInfo>(getImplementation().getCellInfo());
 
                 mCurrentCellInfoCount = cells.size();
                 if (cells.isEmpty()) {
@@ -100,8 +108,8 @@ public class CellScanner {
             mCellScanTimer.cancel();
             mCellScanTimer = null;
         }
-        if (sImpl != null) {
-            sImpl.stop();
+        if (getImplementation() != null) {
+            getImplementation().stop();
         }
     }
 

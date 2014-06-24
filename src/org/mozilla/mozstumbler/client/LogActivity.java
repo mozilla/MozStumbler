@@ -20,16 +20,17 @@ public class LogActivity extends Activity {
     static final int MAX_SIZE = 1000;
 
     public static class LogMessageReceiver extends BroadcastReceiver {
-        boolean mIsRegistered;
+        private static LogMessageReceiver sInstance;
 
-        public void register(Context context) {
-            if (mIsRegistered)
-                return;
+        public static void createGlobalInstance(Context context) {
+            sInstance = new LogMessageReceiver(context);
+        }
 
+        LogMessageReceiver(Context context) {
             LocalBroadcastManager.getInstance(context).registerReceiver(this,
                     new IntentFilter(SharedConstants.ACTION_GUI_LOG_MESSAGE));
-            mIsRegistered = true;
         }
+
         @Override
         public void onReceive(Context c, Intent intent) {
             String s = intent.getStringExtra(SharedConstants.ACTION_GUI_LOG_MESSAGE_EXTRA);

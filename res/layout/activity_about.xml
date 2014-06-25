@@ -1,7 +1,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:context=".AboutActivity">
 
     <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
@@ -10,7 +12,7 @@
         android:layout_height="wrap_content">
 
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:tools="http://schemas.android.com/tools"
+
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -52,16 +54,7 @@
         android:paddingTop="32dp"
         android:onClick="onClick_ViewMapboxAttribution"
         android:clickable="true"
-                android:text="@string/mapbox_name" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:onClick="onClick_ViewMapboxAttribution"
-                android:clickable="true"
-                android:textColor="#4ABDE8"
+                android:textColor="#00e"
         android:text="@string/about_mapbox" />
 
     <TextView
@@ -72,7 +65,7 @@
         android:paddingTop="32dp"
         android:onClick="onClick_ViewMore"
         android:clickable="true"
-        android:textColor="#4ABDE8"
+        android:textColor="#00e"
         android:text="@string/about_more" />
 
     <TextView

@@ -1,6 +1,7 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
 
     <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
@@ -11,15 +12,15 @@
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:tools="http://schemas.android.com/tools"
             android:orientation="vertical"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context=".AboutActivity" >
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingBottom="@dimen/activity_vertical_margin"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingRight="@dimen/activity_horizontal_margin"
+            android:paddingTop="@dimen/activity_vertical_margin"
+            tools:context=".AboutActivity">
 
-    <TextView
+            <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
@@ -43,7 +44,7 @@
         android:autoLink="web"
         android:text="Map view tiles © OpenStreetMap contributors\nhttp://www.openstreetmap.org "/>
 
-    <TextView
+            <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
@@ -51,7 +52,16 @@
         android:paddingTop="32dp"
         android:onClick="onClick_ViewMapboxAttribution"
         android:clickable="true"
-        android:textColor="#00e"
+                android:text="@string/mapbox_name" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:onClick="onClick_ViewMapboxAttribution"
+                android:clickable="true"
+                android:textColor="#4ABDE8"
         android:text="@string/about_mapbox" />
 
     <TextView
@@ -62,7 +72,7 @@
         android:paddingTop="32dp"
         android:onClick="onClick_ViewMore"
         android:clickable="true"
-        android:textColor="#00e"
+        android:textColor="#4ABDE8"
         android:text="@string/about_more" />
 
     <TextView
@@ -75,4 +85,4 @@
 
 </LinearLayout>
     </ScrollView>
-</RelativeLayout>
+</LinearLayout>

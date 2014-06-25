@@ -1,23 +1,25 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-   xmlns:tools="http://schemas.android.com/tools"
+xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
     tools:context=".AboutActivity">
  <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:layout_width="fill_parent"
+   android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        tools:context=".AboutActivity">
 
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-     android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+
+            android:orientation="vertical"
+           android:layout_height="match_parent"
             android:paddingBottom="@dimen/activity_vertical_margin"
             android:paddingLeft="@dimen/activity_horizontal_margin"
             android:paddingRight="@dimen/activity_horizontal_margin"
             android:paddingTop="@dimen/activity_vertical_margin"
-            tools:context=".AboutActivity">
+          tools:context=".AboutActivity">
 
             <TextView
         android:layout_width="match_parent"
@@ -25,30 +27,40 @@
         android:gravity="center"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="@string/app_name" />
-
-    <TextView
-        android:id="@+id/about_version"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="@string/about_version" />
-
-  <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:paddingTop="32dp"
-        android:autoLink="web"
-      android:text="@string/about_openstreetmap" />
+=======
+            tools:context=".AboutActivity" >
 
             <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:paddingTop="32dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="@string/app_name" />
+>>>>>>> b0bf1784f93e94ac9a2db6dd47d9b755c867db44
+
+            <TextView
+                android:id="@+id/about_version"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="@string/about_version" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:paddingTop="32dp"
+                android:autoLink="web"
+                android:text="@string/about_openstreetmap" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:paddingTop="32dp"
                 android:onClick="onClick_ViewMore"
                 android:clickable="true"
                 android:text="@string/about_mapbox_title" />
@@ -58,32 +70,29 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-
-                android:onClick="onClick_ViewMapboxAttribution"
+      android:onClick="onClick_ViewMapboxAttribution"
                 android:clickable="true"
                 android:textColor="#4abde8"
-                android:text="@string/about_mapbox"
-                android:singleLine="false" />
+                android:text="@string/about_mapbox" />
+
+           <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:onClick="onClick_ViewMore"
+                android:clickable="true"
+                android:textColor="#4abde8"
+                android:text="@string/about_more" />
 
             <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:paddingTop="32dp"
-        android:onClick="onClick_ViewMore"
-        android:clickable="true"
-                android:textColor="#4abde8"
-        android:text="@string/about_more" />
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:paddingTop="32dp"
+                android:text="@string/about_legal_aosp" />
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:paddingTop="32dp"
-        android:text="@string/about_legal_aosp" />
-
-</LinearLayout>
+        </LinearLayout>
     </ScrollView>
 </LinearLayout>

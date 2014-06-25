@@ -1,7 +1,7 @@
 package org.mozilla.mozstumbler.service.blocklist;
 
 import android.content.Context;
-import android.util.Log;
+import android.os.Environment;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -37,7 +37,7 @@ public class BlockListDownloader {
             //connection code
             HttpClient client = new DefaultHttpClient();
             HttpConnectionParams.setConnectionTimeout(client.getParams(), 10000); //Timeout Limit
-            HttpGet get = new HttpGet("https://api.github.com/repos/mozilla/MozStumbler/contents/res/blocklists/BlockList.txt");
+            HttpGet get = new HttpGet("https://api.github.com/repos/mozilla/MozStumbler/contents/res/raw/blocklist.json");
             HttpResponse response = client.execute(get);
             InputStream is = new BufferedHttpEntity(response.getEntity()).getContent();
             BufferedReader r = new BufferedReader(new InputStreamReader(is));
@@ -59,23 +59,21 @@ public class BlockListDownloader {
         return !a.equals(b);
     }
 
-    void updatePrefs(String sha) {
+    void setBlockListSha(String sha) {
         //update the shared preference with the value of sha
         Prefs.getInstance().setSha("SHA", sha);
     }
 
     boolean getFile() {
-        Log.d("******************************************************", "@Entering getFile()");
 
 
         boolean flag = true;
         try {
             //download the new file
 
-            URL url = new URL("https://raw.githubusercontent.com/mozilla/MozStumbler/master/res/blocklists/BlockList.txt");
+            URL url = new URL("https://raw.githubusercontent.com/mozilla/MozStumbler/master/res/raw/blocklist.json");
             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
 
-            Log.d("******************************************************", "@HttpURLConnection opened");
             //set up some things on the connection
             urlConnection.setRequestMethod("GET");
             urlConnection.setDoOutput(true);
@@ -83,21 +81,16 @@ public class BlockListDownloader {
             //connect
             urlConnection.connect();
 
-            Log.d("******************************************************", "@connection made");
-
-            File file = new File("/sdcard/MozStumblerData/BlockList.txt");
+            String path = Environment.getExternalStorageDirectory().getPath();
+            File file = new File(path + "/MozStumblerData/BlockList.txt");
             if (!file.exists()) {
                 file.getParentFile().mkdirs();
                 file.createNewFile();
             }
-            Log.d("******************************************************", "@File object created");
             FileOutputStream fileOutput = new FileOutputStream(file);
-
-            Log.d("******************************************************", "@FileOutputStream made");
             //this will be used in reading the data from the internet
             InputStream inputStream = urlConnection.getInputStream();
 
-            Log.d("******************************************************", "@Connection InputStream obtained");
 
             //create a buffer...
             byte[] buffer = new byte[1024];
@@ -112,48 +105,36 @@ public class BlockListDownloader {
             }
             //close the output stream when done
             fileOutput.close();
-            Log.d("******************************************************", "@FileOutputStream closed");
 
             inputStream.close();
 
-            Log.d("******************************************************", "@InputStream closed");
         } catch (Exception e) {
             flag = false;
-
-            Log.d("******************************************************", "@Exception is " + e.getMessage());
+            e.printStackTrace();
         }
 
-
-        Log.d("******************************************************", "@Leaving getFile()");
 
         return flag;
     }
 
     public void checkForNewList() {
 
-        Log.d("******************************************************", "@Check for new list entered");
 
 
         String oldSha = Prefs.getInstance().getSha("sha");
-        Log.d("******************************************************", "@The old sha obtained is " + oldSha + "!");
 
         String newSha = getSha();
-        Log.d("******************************************************", "@The new sha obtained is " + newSha + "!");
 
         boolean isNew = isNewSha(oldSha, newSha);
-        Log.d("******************************************************", "@The old and new shas checked:" + isNew);
 
         if (!isNew)
             return;
         boolean isOk = getFile();
-        Log.d("******************************************************", "@getFile() Result is: " + isOk);
 
         if (isOk) {
-            Log.d("******************************************************", "@File got");
-            updatePrefs(newSha);
-            Log.d("******************************************************", "@Prefs updated");
+
+            setBlockListSha(newSha);
         }
 
-        Log.d("******************************************************", "@Leaving method");
     }
 }

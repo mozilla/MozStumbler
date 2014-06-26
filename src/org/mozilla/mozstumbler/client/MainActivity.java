@@ -23,6 +23,8 @@ import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 import org.mozilla.mozstumbler.BuildConfig;
+import org.mozilla.mozstumbler.client.datahandling.ClientContentResolver;
+import org.mozilla.mozstumbler.service.datahandling.ServerContentResolver;
 import org.mozilla.mozstumbler.service.utils.DateTimeUtils;
 import org.mozilla.mozstumbler.client.mapview.MapActivity;
 import org.mozilla.mozstumbler.R;
@@ -44,13 +46,12 @@ public final class MainActivity extends FragmentActivity {
    
     int                      mGpsFixes;
     int                      mGpsSats;
-    private boolean          mNeedsUpdate = false;
     private boolean          mGeofenceHere = false;
 
     private MainApp getApp() {
         return (MainApp) this.getApplication();
     }
-    
+
     @Override
     protected void onStart() {
         super.onStart();
@@ -66,7 +67,6 @@ public final class MainActivity extends FragmentActivity {
             getApp().getPrefs().setGeofenceEnabled(false);
         }
         setGeofenceText();
-        mNeedsUpdate = true;
 
         updateUI();
     }
@@ -81,6 +81,8 @@ public final class MainActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        SharedConstants.stumblerContentResolver = new ClientContentResolver(getContentResolver());
 
         if (BuildConfig.MOZILLA_API_KEY != null) {
             Updater.checkForUpdates(this);
@@ -158,7 +160,6 @@ public final class MainActivity extends FragmentActivity {
         formatTextView(R.id.cells_scanned, R.string.cells_scanned, cellInfoScanned);
         formatTextView(R.id.locations_scanned, R.string.locations_scanned, locationsScanned);
         service.checkPrefs();
-        mNeedsUpdate = false;
         if (mGeofenceHere) {
             if (mGpsFixes > 0 && locationsScanned > 0) {
                 Location coord = new Location(SharedConstants.LOCATION_ORIGIN_INTERNAL);
@@ -170,7 +171,6 @@ public final class MainActivity extends FragmentActivity {
                 mGeofenceHere = false;
                 setGeofenceText();
             }
-            mNeedsUpdate = true;
         }
         TextView geofence_tv = (TextView) findViewById(R.id.geofence_status);
         geofence_tv.setTextColor(isGeofenced ? Color.RED : Color.BLACK);

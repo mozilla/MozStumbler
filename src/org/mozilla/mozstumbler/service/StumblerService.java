@@ -5,8 +5,9 @@ import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
+
+import org.mozilla.mozstumbler.service.datahandling.ServerContentResolver;
 import org.mozilla.mozstumbler.service.datahandling.StumblerBundleReceiver;
-import org.mozilla.mozstumbler.client.sync.SyncUtils;
 import org.mozilla.mozstumbler.service.scanners.cellscanner.CellScanner;
 import org.mozilla.mozstumbler.service.scanners.cellscanner.CellScannerNoWCDMA;
 import org.mozilla.mozstumbler.service.sync.AsyncUploader;
@@ -53,7 +54,6 @@ public final class StumblerService extends Service {
             if (!mIsBound) {
                 stopSelf();
             }
-            SyncUtils.TriggerRefresh(false);
         }
     }
 
@@ -119,8 +119,6 @@ public final class StumblerService extends Service {
         }
         mScanner = new Scanner(this);
         mReporter = new Reporter(this, mStumblerBundleReceiver);
-
-        SyncUtils.CreateSyncAccount(this);
     }
 
     @Override
@@ -128,6 +126,10 @@ public final class StumblerService extends Service {
         super.onDestroy();
         if (SharedConstants.isDebug) Log.d(LOGTAG, "onDestroy");
 
+        if (SharedConstants.stumblerContentResolver != null &&
+            SharedConstants.stumblerContentResolver instanceof ServerContentResolver) {
+            SharedConstants.stumblerContentResolver.shutdown();
+        }
         mReporter.shutdown();
         mReporter = null;
         mScanner = null;
@@ -136,6 +138,10 @@ public final class StumblerService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (intent.getBooleanExtra(ACTION_START_PASSIVE, false)) {
+            if (SharedConstants.stumblerContentResolver == null) {
+                SharedConstants.stumblerContentResolver = new ServerContentResolver(this);
+            }
+
             mScanner.setPassiveMode(true);
             startScanning();
 
@@ -146,7 +152,7 @@ public final class StumblerService extends Service {
                 @Override
                 public void run() {
                     if (!mScanner.isBatteryLow()) {
-                        AsyncUploader uploader = new AsyncUploader(null /*ignoring result for now*/, getContentResolver());
+                        AsyncUploader uploader = new AsyncUploader(null /* don't need to listen for completion */);
                         uploader.execute();
                     }
                 }

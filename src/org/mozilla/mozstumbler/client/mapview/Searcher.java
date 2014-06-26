@@ -1,6 +1,5 @@
 package org.mozilla.mozstumbler.client.mapview;
 
-import android.content.Context;
 import android.util.Log;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;

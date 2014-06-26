@@ -117,7 +117,7 @@
         </service>
 
         <provider
-            android:name=".service.datahandling.Provider"
+            android:name=".client.datahandling.Provider"
             android:authorities="org.mozilla.mozstumbler.provider"
             android:exported="false"
             android:syncable="true"

@@ -87,7 +87,9 @@ public class CellScannerNoWCDMA implements CellScanner.CellScannerImpl {
     @Override
     public void stop() {
         mTelephonyManager.listen(mPhoneStateListener, PhoneStateListener.LISTEN_NONE);
-        mScreenMonitor.stop();
+        try {
+            mScreenMonitor.stop();
+        } catch (IllegalArgumentException ex) {}
         mSignalStrength = CellInfo.UNKNOWN_SIGNAL;
         mCdmaDbm = CellInfo.UNKNOWN_SIGNAL;
     }

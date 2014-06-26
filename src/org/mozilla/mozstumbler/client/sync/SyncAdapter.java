@@ -19,7 +19,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
     public SyncAdapter(Context context, boolean autoInitialize) {
         super(context, autoInitialize);
-        mUploadReports = new UploadReports(context.getContentResolver());
+        mUploadReports = new UploadReports();
     }
 
     /**
@@ -34,7 +34,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
             boolean allowParallelSyncs) {
         super(context, autoInitialize, allowParallelSyncs);
 
-        mUploadReports = new UploadReports(context.getContentResolver());
+        mUploadReports = new UploadReports();
     }
 
     @Override

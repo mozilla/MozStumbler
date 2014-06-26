@@ -23,7 +23,6 @@ public class CellScanner {
 
     private static final String LOGTAG = CellScanner.class.getName();
     private static final long CELL_MIN_UPDATE_TIME = 1000; // milliseconds
-    private static final int PASSIVE_MODE_MAX_SCANS = 3;
 
     private final Context mContext;
     private static CellScannerImpl sImpl;
@@ -87,7 +86,7 @@ public class CellScanner {
                     stop();
                     return;
                 }
-                if (SharedConstants.isDebug) Log.d(LOGTAG, "Cell Scanning Timer fired");
+                //if (SharedConstants.isDebug) Log.d(LOGTAG, "Cell Scanning Timer fired");
                 final long curTime = System.currentTimeMillis();
 
                 ArrayList<CellInfo> cells = (sTestingModeCellInfoArray != null)? sTestingModeCellInfoArray :

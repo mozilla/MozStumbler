@@ -1,6 +1,5 @@
 package org.mozilla.mozstumbler.service.sync;
 
-import android.content.ContentResolver;
 import android.content.SyncResult;
 import android.os.AsyncTask;
 
@@ -13,16 +12,14 @@ public class AsyncUploader extends AsyncTask<Void, Void, SyncResult> {
 
     private AsyncUploaderListener mListener;
     private SyncResult mSyncResult;
-    private ContentResolver mContentResolver;
 
     private static boolean sIsUploading;
 
     // TODO: clarify how we want this accessed
     public boolean mShouldIgnoreWifiStatus = false;
 
-    public AsyncUploader(AsyncUploaderListener listener, ContentResolver contentResolver) {
+    public AsyncUploader(AsyncUploaderListener listener) {
         mListener = listener;
-        mContentResolver = contentResolver;
     }
 
     @Override
@@ -32,7 +29,7 @@ public class AsyncUploader extends AsyncTask<Void, Void, SyncResult> {
 
         sIsUploading = true;
         mSyncResult = new SyncResult();
-        UploadReports uploadReports = new UploadReports(mContentResolver);
+        UploadReports uploadReports = new UploadReports();
         uploadReports.uploadReports(mShouldIgnoreWifiStatus, mSyncResult);
         //TODO consider checking result for error, trying again after sleep
 

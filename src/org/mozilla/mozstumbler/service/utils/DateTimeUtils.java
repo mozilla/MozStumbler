@@ -40,8 +40,4 @@ public final class DateTimeUtils {
     public static String formatTimeForLocale(long time) {
         return sLocaleFormat.format(time);
     }
-
-    static String formatCurrentTime() {
-        return formatTimeForLocale(System.currentTimeMillis());
-    }
 }

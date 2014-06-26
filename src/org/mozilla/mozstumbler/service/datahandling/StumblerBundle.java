@@ -5,7 +5,6 @@ import android.net.wifi.ScanResult;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.provider.ContactsContract;
 import android.telephony.TelephonyManager;
 import java.util.Collection;
 import java.util.HashMap;

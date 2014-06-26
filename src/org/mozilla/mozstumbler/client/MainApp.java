@@ -18,6 +18,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import org.mozilla.mozstumbler.BuildConfig;
 import org.mozilla.mozstumbler.R;
+import org.mozilla.mozstumbler.client.sync.SyncUtils;
 import org.mozilla.mozstumbler.service.Prefs;
 import org.mozilla.mozstumbler.service.SharedConstants;
 import org.mozilla.mozstumbler.service.StumblerService;
@@ -66,6 +67,8 @@ public class MainApp extends Application {
             enableStrictMode();
         }
 
+        SyncUtils.CreateSyncAccount(this);
+
         mReceiver = new ServiceBroadcastReceiver();
         mReceiver.register();
 
@@ -109,6 +112,7 @@ public class MainApp extends Application {
     private void stopScanning() {
         mStumblerService.stopForeground(true);
         mStumblerService.stopScanning();
+        SyncUtils.TriggerRefresh(false);
     }
 
     public void toggleScanning(MainActivity caller) {

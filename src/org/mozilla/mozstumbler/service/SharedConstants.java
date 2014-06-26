@@ -1,5 +1,7 @@
 package org.mozilla.mozstumbler.service;
 
+import org.mozilla.mozstumbler.service.datahandling.ContentResolverInterface;
+
 public class SharedConstants {
     /** All intent actions start with this string  */
     public static final String ACTION_NAMESPACE = "org.mozilla.mozstumbler.intent.action";
@@ -19,7 +21,7 @@ public class SharedConstants {
     /** Location constructor requires a named origin, these are created in the app  */
     public static final String LOCATION_ORIGIN_INTERNAL = "internal";
 
-    public enum ActiveOrPassiveStumbling { ACTIVE_STUMBLING, PASSIVE_STUMBLING };
+    public enum ActiveOrPassiveStumbling { ACTIVE_STUMBLING, PASSIVE_STUMBLING }
 
     // In passive mode, only scan this many times for each gps
     public static final int PASSIVE_MODE_MAX_SCANS_PER_GPS = 3;
@@ -30,5 +32,8 @@ public class SharedConstants {
     public static String appName = "StumblerService";
     public static boolean isDebug;
     public static String mozillaApiKey;
+
+
+    public static ContentResolverInterface stumblerContentResolver;
 }
 

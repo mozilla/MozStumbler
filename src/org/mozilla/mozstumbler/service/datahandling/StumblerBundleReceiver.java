@@ -53,6 +53,6 @@ public final class StumblerBundleReceiver {
             return;
         }
 
-        context.getContentResolver().insert(DatabaseContract.Reports.CONTENT_URI, values);
+        SharedConstants.stumblerContentResolver.insert(DatabaseContract.Reports.CONTENT_URI, values);
     }
 }

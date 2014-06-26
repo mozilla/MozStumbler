@@ -5,7 +5,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Color;
 import android.support.v4.content.LocalBroadcastManager;
 import android.os.Bundle;
 import android.util.AttributeSet;
@@ -18,9 +17,9 @@ import java.util.LinkedList;
 public class LogActivity extends Activity {
     static LinkedList<String> buffer = new LinkedList<String>();
     static final int MAX_SIZE = 1000;
+    private static LogMessageReceiver sInstance;
 
     public static class LogMessageReceiver extends BroadcastReceiver {
-        private static LogMessageReceiver sInstance;
 
         public static void createGlobalInstance(Context context) {
             sInstance = new LogMessageReceiver(context);

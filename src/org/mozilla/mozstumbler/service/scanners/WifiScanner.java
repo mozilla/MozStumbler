@@ -23,7 +23,6 @@ import org.mozilla.mozstumbler.service.SharedConstants;
 import org.mozilla.mozstumbler.service.blocklist.BSSIDBlockList;
 import org.mozilla.mozstumbler.service.blocklist.SSIDBlockList;
 import org.mozilla.mozstumbler.service.SharedConstants.ActiveOrPassiveStumbling;
-import org.mozilla.mozstumbler.service.SharedConstants;
 import org.mozilla.mozstumbler.service.Prefs;
 
 public class WifiScanner extends BroadcastReceiver {
@@ -56,7 +55,7 @@ public class WifiScanner extends BroadcastReceiver {
         mContext = c;
     }
 
-    private boolean isWifiEnabled() { return (sIsTestMode)? true : getWifiManager().isWifiEnabled(); }
+    private boolean isWifiEnabled() { return (sIsTestMode) ||  getWifiManager().isWifiEnabled(); }
 
     private List<ScanResult> getScanResults() { return (sIsTestMode)? mTestModeFakeScanResults : getWifiManager().getScanResults(); }
 

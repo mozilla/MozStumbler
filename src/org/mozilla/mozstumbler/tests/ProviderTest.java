@@ -1,16 +1,13 @@
 package org.mozilla.mozstumbler.tests;
-import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
-import android.provider.UserDictionary;
 import android.test.ProviderTestCase2;
 
 import org.json.JSONArray;
-import org.mozilla.mozstumbler.service.datahandling.Database;
 import org.mozilla.mozstumbler.service.datahandling.DatabaseContract;
-import org.mozilla.mozstumbler.service.datahandling.Provider;
+import org.mozilla.mozstumbler.client.datahandling.Provider;
 
 public class ProviderTest extends ProviderTestCase2<Provider> {
 

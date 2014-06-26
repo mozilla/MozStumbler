@@ -1,7 +1,5 @@
 package org.mozilla.mozstumbler.service.sync;
 
-import android.content.ContentProviderOperation;
-import android.content.ContentResolver;
 import android.content.OperationApplicationException;
 import android.content.SyncResult;
 import android.database.Cursor;
@@ -13,17 +11,20 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.mozilla.mozstumbler.service.Prefs;
 import org.mozilla.mozstumbler.service.SharedConstants;
+import org.mozilla.mozstumbler.service.datahandling.ContentResolverInterface;
 import org.mozilla.mozstumbler.service.datahandling.DatabaseContract;
 import org.mozilla.mozstumbler.service.utils.DateTimeUtils;
 import org.mozilla.mozstumbler.service.utils.NetworkUtils;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 public class UploadReports {
     private static final int REQUEST_BATCH_SIZE = 50;
     private static final int MAX_RETRY_COUNT = 3;
 
-    private final ContentResolver mContentResolver;
+    private final ContentResolverInterface mContentResolver;
 
     static final String LOGTAG = UploadReports.class.getName();
 
@@ -45,8 +46,8 @@ public class UploadReports {
         }
     }
 
-    public UploadReports(ContentResolver contentResolver) {
-        mContentResolver = contentResolver;
+    public UploadReports() {
+        mContentResolver = SharedConstants.stumblerContentResolver;
     }
 
     public void uploadReports(boolean ignoreNetworkStatus, SyncResult syncResult) {
@@ -190,9 +191,8 @@ public class UploadReports {
     }
 
     private void increaseRetryCounter(Cursor cursor, SyncResult result) {
-        ArrayList<ContentProviderOperation> batch = new ArrayList<ContentProviderOperation>();
-        int updates = 0;
-        int deletes = 0;
+        ArrayList<String> idsToDelete = new ArrayList<String>();
+        Map<String, String> idAndValuesToUpdate = new HashMap<String, String>();
 
         cursor.moveToPosition(-1);
         int columnId = cursor.getColumnIndex(DatabaseContract.Reports._ID);
@@ -200,32 +200,17 @@ public class UploadReports {
         while (cursor.moveToNext()) {
             int retry = cursor.getInt(columnRetry) + 1;
             if (retry >= MAX_RETRY_COUNT) {
-                batch.add(ContentProviderOperation.newDelete(DatabaseContract.Reports.CONTENT_URI)
-                                .withSelection(DatabaseContract.Reports._ID + "=?", new String[]{cursor.getString(columnId)})
-                                .build()
-                );
-                deletes += 1;
+                idsToDelete.add(cursor.getString(columnId));
             } else {
-                batch.add(ContentProviderOperation.newUpdate(DatabaseContract.Reports.CONTENT_URI)
-                        .withSelection(DatabaseContract.Reports._ID + "=?", new String[]{cursor.getString(columnId)})
-                        .withValue(DatabaseContract.Reports.RETRY_NUMBER, retry)
-                        .build());
-                updates += 1;
+                idAndValuesToUpdate.put(cursor.getString(columnId), "" + retry);
             }
         }
 
-        try {
-            mContentResolver.applyBatch(DatabaseContract.CONTENT_AUTHORITY, batch);
-            result.stats.numDeletes += deletes;
-            result.stats.numUpdates += updates;
-        } catch (OperationApplicationException oae) {
-            Log.e(LOGTAG, "increaseRetryCounter() error", oae);
-            result.databaseError = true;
-
-        } catch (RemoteException remoteex) {
-            Log.e(LOGTAG, "increaseRetryCounter() error", remoteex);
-            result.databaseError = true;
-        }
+        mContentResolver.bulkDelete(DatabaseContract.Reports.CONTENT_URI, idsToDelete);
+        mContentResolver.bulkUpdateOneColumn(DatabaseContract.Reports.CONTENT_URI,
+                DatabaseContract.Reports.RETRY_NUMBER, idAndValuesToUpdate);
+        result.stats.numDeletes += idsToDelete.size();
+        result.stats.numUpdates += idAndValuesToUpdate.size();
     }
 
     private void updateSyncStats(long observations, long cells, long wifis) throws RemoteException,
@@ -258,11 +243,6 @@ public class UploadReports {
             }
         }
 
-        ArrayList<ContentProviderOperation> updateBatch = new ArrayList<ContentProviderOperation>(4);
-        updateBatch.add(DatabaseContract.Stats.updateOperation(DatabaseContract.Stats.KEY_LAST_UPLOAD_TIME, System.currentTimeMillis()));
-        updateBatch.add(DatabaseContract.Stats.updateOperation(DatabaseContract.Stats.KEY_OBSERVATIONS_SENT, totalObservations));
-        updateBatch.add(DatabaseContract.Stats.updateOperation(DatabaseContract.Stats.KEY_CELLS_SENT, totalCells));
-        updateBatch.add(DatabaseContract.Stats.updateOperation(DatabaseContract.Stats.KEY_WIFIS_SENT, totalWifis));
-        mContentResolver.applyBatch(DatabaseContract.CONTENT_AUTHORITY, updateBatch);
+        mContentResolver.updateSyncStats(System.currentTimeMillis(), totalObservations, totalCells, totalWifis);
     }
 }

@@ -123,17 +123,13 @@
             android:id="@+id/toggle_scanning"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"
             android:onClick="onToggleScanningClicked"
             android:textOff="@string/start_scanning"
             android:textOn="@string/stop_scanning"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:layout_alignParentTop="true"
-            android:layout_alignBottom="@+id/locations_scanned"
-            android:layout_toRightOf="@+id/gps_satellites"
             android:width="130dp"
-            android:layout_gravity="center" />
+            android:layout_gravity="center"
+            android:paddingBottom="12dp" />
     </FrameLayout>
 
 </RelativeLayout>

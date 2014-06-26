@@ -52,9 +52,6 @@ public final class DatabaseContract {
         public static final String TOTAL_WIFI_COUNT = "total_wifi_count";
         public static final String MAX_ID = "max_id";
 
-        public static Uri buildReportUri(long reportId) {
-            return ContentUris.withAppendedId(CONTENT_URI, reportId);
-        }
     }
 
     public static class Stats implements StatsColumns {

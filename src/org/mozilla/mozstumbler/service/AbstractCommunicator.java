@@ -20,7 +20,6 @@ public abstract class AbstractCommunicator {
     private static final String USER_AGENT_HEADER = "User-Agent";
     private HttpURLConnection httpURLConnection;
     private final String mUserAgent;
-    private int mCode;
 
     public abstract String getUrlString();
     public abstract int getCorrectResponse();
@@ -84,9 +83,9 @@ public abstract class AbstractCommunicator {
         OutputStream out = new BufferedOutputStream(httpURLConnection.getOutputStream());
         out.write(data);
         out.flush();
-        mCode = httpURLConnection.getResponseCode();
-        if (mCode != getCorrectResponse()) {
-            throw new HttpErrorException(mCode);
+        int code = httpURLConnection.getResponseCode();
+        if (code != getCorrectResponse()) {
+            throw new HttpErrorException(code);
         }
     }
 

@@ -43,10 +43,6 @@ public class DefaultCellScanner extends CellScannerNoWCDMA {
                 if (SharedConstants.isDebug) Log.d(LOGTAG, String.format("Invalid-> mnc:%d mcc:%d", ident.getMnc(), ident.getMcc()));
             }
         }
-        if (!added) {
-            return super.addCellToList(cells, observedCell, tm);
-        } else {
-            return true;
-        }
+        return added || super.addCellToList(cells, observedCell, tm);
     }
 }

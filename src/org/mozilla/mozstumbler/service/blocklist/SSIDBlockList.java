@@ -45,6 +45,7 @@ public final class SSIDBlockList {
         "AmtrakConnect",
         "Amtrak_",
         "amtrak_",
+        "Arcticbus Wifi", // Arcticbus on-bus WiFi (Sweden)
         "arriva", //Arriva Nederland on-train Wifi (Netherlands)
         "AutoPostale", // Swiss municipial busses on-bus WiFi (Italian speaking part)
         "Barcelona Bus Turistic ", // Barcelona tourisitic buses http://barcelonabusturistic.cat

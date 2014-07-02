@@ -137,7 +137,7 @@ public final class StumblerService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if (intent.getBooleanExtra(ACTION_START_PASSIVE, false)) {
+        if (intent != null && intent.getBooleanExtra(ACTION_START_PASSIVE, false)) {
             if (SharedConstants.stumblerContentResolver == null) {
                 SharedConstants.stumblerContentResolver = new ServerContentResolver(this);
             }

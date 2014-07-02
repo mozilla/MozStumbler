@@ -80,6 +80,7 @@ public final class SSIDBlockList {
         "Norwegian Internet Access", // Norwegian in-flight WiFi (Norway)
         "NSB_INTERAKTIV", // NSB on-train WiFi (Norway)
         "Omni-WiFi", // Omnibus transportation services (Israel)
+        "onnibus.com", // OnniBus.com Oy on-bus WiFi (Finland)
         "Oxford Tube", // Oxford Tube on-bus WiFi (United Kindom)
         "PostAuto", // Swiss municipial busses on-bus WiFi (German speaking part)
         "QbuzzWIFI", //Qbuzz on-bus WiFi (Netherlands)

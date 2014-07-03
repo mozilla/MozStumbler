@@ -27,12 +27,6 @@ public class PassiveServiceStarter extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         String action = intent.getAction();
 
-        if (!action.contains("GPS_ENABLED_CHANGE") &&
-            !action.contains("GPS_FIX_CHANGE")) {
-            Log.e(LOGTAG, "Unhandled notification. Please fix.");
-            return;
-        }
-
         if (SharedConstants.isDebug) Log.d(LOGTAG, "Starting Passively");
         if (SharedConstants.mozillaApiKey == null) {
             try {

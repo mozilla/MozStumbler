@@ -100,6 +100,7 @@ public final class SSIDBlockList {
         "TriangleTransitWiFi_", // Triangle Transit on-bus WiFi
         "VR-junaverkko", // VR on-train WiFi (Finland)
         "WiFi in de trein", //Nederlandse Spoorwegen on-train WiFi (Netherlands)
+        "WiFi PPLUS" //Primera Plus passenger buses
         "wifi@boreal.no", // Boreal on-bus WiFi (Norway)
         "wifi@nettbuss.no", // Nettbuss on-bus WiFi (Norway)
         "first-wifi" // First Bus wifi (United Kingdom)

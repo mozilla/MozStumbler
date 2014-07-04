@@ -5,14 +5,22 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.content.LocalBroadcastManager;
 import android.os.Bundle;
+import android.text.Html;
 import android.util.AttributeSet;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.service.SharedConstants;
+
+import java.util.Date;
 import java.util.LinkedList;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class LogActivity extends Activity {
     static LinkedList<String> buffer = new LinkedList<String>();
@@ -21,18 +29,33 @@ public class LogActivity extends Activity {
 
     public static class LogMessageReceiver extends BroadcastReceiver {
 
+        Timer mFlushMessagesTimer = new Timer();
+        Handler mMainThreadHandler = new Handler() {
+            public void handleMessage(Message m) {
+                String msg = SharedConstants.guiLogMessageBuffer.poll();
+                addMessageToBuffer(msg);
+            }
+        };
+
         public static void createGlobalInstance(Context context) {
             sInstance = new LogMessageReceiver(context);
+            SharedConstants.guiLogMessageBuffer = new ConcurrentLinkedQueue<String>();
         }
 
         LogMessageReceiver(Context context) {
             LocalBroadcastManager.getInstance(context).registerReceiver(this,
                     new IntentFilter(SharedConstants.ACTION_GUI_LOG_MESSAGE));
+
+            final int kMillis = 1000 * 3;
+            mFlushMessagesTimer.scheduleAtFixedRate(new TimerTask() {
+                @Override
+                public void run() {
+                    mMainThreadHandler.obtainMessage().sendToTarget();
+                }
+            }, kMillis, kMillis);
         }
 
-        @Override
-        public void onReceive(Context c, Intent intent) {
-            String s = intent.getStringExtra(SharedConstants.ACTION_GUI_LOG_MESSAGE_EXTRA);
+        void addMessageToBuffer(String s) {
             if (s == null)
                 return;
 
@@ -43,6 +66,12 @@ public class LogActivity extends Activity {
             if (sConsoleView != null) {
                 sConsoleView.println(s);
             }
+        }
+
+        @Override
+        public void onReceive(Context c, Intent intent) {
+            String s = intent.getStringExtra(SharedConstants.ACTION_GUI_LOG_MESSAGE_EXTRA);
+            addMessageToBuffer(s);
         }
     }
 
@@ -103,7 +132,7 @@ public class LogActivity extends Activity {
         }
 
         public void print(String str){
-            tv.append(str);
+            tv.append(Html.fromHtml(str + "<br />"));
 
             if (enable_scroll) {
                 scrollTo(0,tv.getBottom());

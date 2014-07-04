@@ -139,9 +139,8 @@ public class GPSScanner implements LocationListener {
     }
 
     private void sendToLogActivity(String msg) {
-        Intent message = new Intent(SharedConstants.ACTION_GUI_LOG_MESSAGE);
-        message.putExtra(SharedConstants.ACTION_GUI_LOG_MESSAGE_EXTRA,msg);
-        LocalBroadcastManager.getInstance(mContext).sendBroadcast(message);
+        if (SharedConstants.guiLogMessageBuffer != null)
+            SharedConstants.guiLogMessageBuffer.add("<font color='#33ccff'>" + msg + "</font>");
     }
 
     @Override

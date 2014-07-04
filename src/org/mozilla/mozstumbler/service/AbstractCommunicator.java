@@ -24,6 +24,7 @@ public abstract class AbstractCommunicator {
     private static final String USER_AGENT_HEADER = "User-Agent";
     private HttpURLConnection httpURLConnection;
     private final String mUserAgent;
+    private static int sBytesSentTotal = 0;
 
     public abstract String getUrlString();
     public abstract int getCorrectResponse();
@@ -95,14 +96,26 @@ public abstract class AbstractCommunicator {
 
     public void send(byte[] data) throws IOException {
         setHeaders();
+        String logMsg;
         try {
-            sendData(zipData(data));
+            byte[] zipped = zipData(data);
+            sendData(zipped);
+            sBytesSentTotal += zipped.length;
+            logMsg = "Send zipped: " + String.format("%.2f", zipped.length / 1024.0) + " kB";
         } catch (IOException e) {
             Log.e(LOGTAG, "Couldn't compress and send data, falling back to plain-text: ", e);
             close();
             setHeaders();
             sendData(data);
+            sBytesSentTotal += data.length;
+            logMsg = "Send plain: " + String.format("%.2f", data.length / 1024.0)  + " kB";
         }
+
+        logMsg += " Session Total:" + String.format("%.2f", sBytesSentTotal / 1024.0) + " kB";
+        if (SharedConstants.guiLogMessageBuffer != null) {
+            SharedConstants.guiLogMessageBuffer.add("<font color='#FFFFCC'><b>" + logMsg + "</b></font>");
+        }
+        Log.d(LOGTAG, logMsg);
     }
 
     public InputStream getInputStream() {

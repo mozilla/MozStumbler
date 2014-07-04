@@ -49,9 +49,8 @@ public final class StumblerBundleReceiver {
             values.put(DatabaseContract.Reports.WIFI, wifis.toString());
             values.put(DatabaseContract.Reports.WIFI_COUNT, wifis.length());
 
-            Intent message = new Intent(SharedConstants.ACTION_GUI_LOG_MESSAGE);
-            message.putExtra(SharedConstants.ACTION_GUI_LOG_MESSAGE_EXTRA, mlsObj.toString());
-            LocalBroadcastManager.getInstance(context).sendBroadcast(message);
+            if (SharedConstants.guiLogMessageBuffer != null)
+                SharedConstants.guiLogMessageBuffer.add(mlsObj.toString());
         } catch (JSONException e) {
             Log.w(LOGTAG, "Failed to convert bundle to JSON: " + e);
             return;

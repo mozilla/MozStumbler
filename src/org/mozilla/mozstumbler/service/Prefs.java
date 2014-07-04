@@ -59,6 +59,10 @@ public final class Prefs {
     /// Setters
     ///
 
+    public void setUseWifiOnly(boolean state) {
+        setBoolPref(WIFI_ONLY, state);
+    }
+
     public void setGeofenceEnabled(boolean state) {
         setBoolPref(GEOFENCE_SWITCH, state);
     }

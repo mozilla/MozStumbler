@@ -24,6 +24,7 @@ public class PreferencesScreen extends PreferenceActivity {
     private CheckBoxPreference mGeofenceSwitch;
     private Preference mGeofenceHere;
     private CheckBoxPreference mWifiScanAlwaysSwitch;
+    private CheckBoxPreference mWifiPreference;
 
     private static Prefs sPrefs;
 
@@ -41,7 +42,6 @@ public class PreferencesScreen extends PreferenceActivity {
 
         addPreferencesFromResource(R.xml.stumbler_preferences);
 
-        CheckBoxPreference mWifiPreference;
         mNicknamePreference = (EditTextPreference) getPreferenceManager().findPreference("nickname");
         mWifiPreference = (CheckBoxPreference) getPreferenceManager().findPreference("wifi_only");
         mGeofenceSwitch = (CheckBoxPreference) getPreferenceManager().findPreference("geofence_switch");
@@ -99,6 +99,15 @@ public class PreferencesScreen extends PreferenceActivity {
                     sPrefs.setGeofenceHere(false);
                     setGeofenceHereDesc(false);
                 }
+                sPrefs.setGeofenceEnabled(newValue.equals(true));
+                return true;
+            }
+        });
+
+        mWifiPreference.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                sPrefs.setUseWifiOnly(newValue.equals(true));
                 return true;
             }
         });

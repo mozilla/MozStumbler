@@ -166,7 +166,9 @@ public class CellScannerNoWCDMA implements CellScanner.CellScannerImpl {
             try {
                 final CellInfo record = new CellInfo(mPhoneType);
                 record.setNeighboringCellInfo(nci, networkOperator);
-                records.add(record);
+                if (record.isCellRadioValid()) {
+                    records.add(record);
+                }
             } catch (IllegalArgumentException iae) {
                 Log.e(LOGTAG, "Skip invalid or incomplete NeighboringCellInfo: " + nci, iae);
             }
@@ -245,7 +247,7 @@ public class CellScannerNoWCDMA implements CellScanner.CellScannerImpl {
             List<CellInfo> cells = new ArrayList<CellInfo>(observed.size());
             for (android.telephony.CellInfo observedCell : observed) {
                 if (!addCellToList(cells, observedCell, tm)) {
-                    Log.i(LOGTAG, "Skipped CellInfo of unknown class: " + observedCell.toString());
+                    //Log.i(LOGTAG, "Skipped CellInfo of unknown class: " + observedCell.toString());
                 }
             }
             return cells;

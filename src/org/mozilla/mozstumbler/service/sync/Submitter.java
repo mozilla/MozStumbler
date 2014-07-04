@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import org.mozilla.mozstumbler.service.AbstractCommunicator;
 import org.mozilla.mozstumbler.service.Prefs;
+import org.mozilla.mozstumbler.service.SharedConstants;
 
 public class Submitter extends AbstractCommunicator {
     private static final String SUBMIT_URL = "https://location.services.mozilla.com/v1/submit";
@@ -43,7 +44,10 @@ public class Submitter extends AbstractCommunicator {
             this.send(data);
             result = true;
         } catch (IOException ex) {
-            Log.e(LOGTAG,"Error submitting: ", ex);
+            String msg = "Error submitting: " + ex;
+            Log.e(LOGTAG, msg);
+            if (SharedConstants.guiLogMessageBuffer != null)
+                SharedConstants.guiLogMessageBuffer.add("<font color='red'><b>" + msg + "</b></font>");
         }
         return result;
     }

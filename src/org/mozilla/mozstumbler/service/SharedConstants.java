@@ -6,6 +6,8 @@ package org.mozilla.mozstumbler.service;
 
 import org.mozilla.mozstumbler.service.datahandling.ContentResolverInterface;
 
+import java.util.concurrent.ConcurrentLinkedQueue;
+
 public class SharedConstants {
     /** All intent actions start with this string  */
     public static final String ACTION_NAMESPACE = "org.mozilla.mozstumbler.intent.action";
@@ -37,6 +39,8 @@ public class SharedConstants {
     public static boolean isDebug;
     public static String mozillaApiKey;
 
+    /* The log activity will clear this periodically, and display the messages */
+    public static ConcurrentLinkedQueue<String> guiLogMessageBuffer;
 
     public static ContentResolverInterface stumblerContentResolver;
 }

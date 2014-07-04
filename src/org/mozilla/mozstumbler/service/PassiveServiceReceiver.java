@@ -17,21 +17,21 @@ import android.util.Log;
  * Using GPS_* event changes during development, switch to using the existing permissions for a
  * service on Fennec.
  <meta-data name="MOZILLA_API_KEY" value="aValue">
- <receiver android:name=".service.PassiveServiceStarter">
+ <receiver android:name=".service.PassiveServiceReceiver">
  <intent-filter>
  <action android:name="android.location.GPS_ENABLED_CHANGE" />
  <action android:name="android.location.GPS_FIX_CHANGE" />
  </intent-filter>
  </receiver>
  */
-public class PassiveServiceStarter extends BroadcastReceiver {
-    final static String LOGTAG = PassiveServiceStarter.class.getName();
+public class PassiveServiceReceiver extends BroadcastReceiver {
+    final static String LOGTAG = PassiveServiceReceiver.class.getName();
 
     @Override
     public void onReceive(Context context, Intent intent) {
         String action = intent.getAction();
 
-        if (SharedConstants.isDebug) Log.d(LOGTAG, "Starting Passively");
+       if (SharedConstants.isDebug) Log.d(LOGTAG, "Starting Passively");
         if (SharedConstants.mozillaApiKey == null) {
             try {
                 ApplicationInfo ai = context.getPackageManager().

@@ -73,6 +73,10 @@ public class CellInfo implements Parcelable {
         mPsc = in.readInt();
     }
 
+    public boolean isCellRadioValid() {
+        return mCellRadio != null && (mCellRadio.length() > 0) && !mCellRadio.equals("0");
+    }
+
     public String getRadio() {
         return mRadio;
     }

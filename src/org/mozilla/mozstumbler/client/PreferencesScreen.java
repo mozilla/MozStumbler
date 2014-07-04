@@ -99,6 +99,7 @@ public class PreferencesScreen extends PreferenceActivity {
                     sPrefs.setGeofenceHere(false);
                     setGeofenceHereDesc(false);
                 }
+                sPrefs.setGeofenceEnabled(newValue.equals(true));
                 return true;
             }
         });

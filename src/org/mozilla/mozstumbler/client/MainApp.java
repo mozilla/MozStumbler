@@ -58,6 +58,14 @@ public class MainApp extends Application {
         SharedConstants.appVersionName = BuildConfig.VERSION_NAME;
         SharedConstants.appVersionCode = BuildConfig.VERSION_CODE;
         SharedConstants.appName = this.getResources().getString(R.string.app_name);
+
+        final String OLD_NAME = "org.mozilla.mozstumbler.preferences.Prefs.xml";
+        File dir = this.getDir("shared_prefs", Context.MODE_PRIVATE);
+        File oldPrefs = new File(dir, OLD_NAME);
+        if (oldPrefs.exists()) {
+          oldPrefs.renameTo(new File(dir, Prefs.PREFS_FILE));
+        }
+
         Prefs.createGlobalInstance(this);
         NetworkUtils.createGlobalInstance(this);
         LogActivity.LogMessageReceiver.createGlobalInstance(this);

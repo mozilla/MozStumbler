@@ -6,6 +6,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
@@ -40,14 +41,13 @@ import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.tileprovider.tilesource.XYTileSource;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
+import org.osmdroid.views.Projection;
 import org.osmdroid.views.overlay.ItemizedIconOverlay;
 import org.osmdroid.views.overlay.ItemizedOverlay;
 import org.osmdroid.views.overlay.ItemizedOverlayWithFocus;
+import org.osmdroid.views.overlay.Overlay;
 import org.osmdroid.views.overlay.OverlayItem;
-import org.osmdroid.views.overlay.SafeDrawOverlay;
 import org.osmdroid.views.overlay.TilesOverlay;
-import org.osmdroid.views.safecanvas.ISafeCanvas;
-import org.osmdroid.views.safecanvas.SafePaint;
 
 public final class MapActivity extends Activity {
     private static final String LOGTAG = MapActivity.class.getName();
@@ -194,7 +194,7 @@ public final class MapActivity extends Activity {
         mMap.invalidate();
     }
 
-    private static class AccuracyCircleOverlay extends SafeDrawOverlay {
+    private static class AccuracyCircleOverlay extends Overlay {
         private GeoPoint mPoint;
         private float mAccuracy;
 
@@ -205,14 +205,14 @@ public final class MapActivity extends Activity {
             this.mAccuracy = accuracy;
         }
 
-        protected void drawSafe(ISafeCanvas c, MapView osmv, boolean shadow) {
+        protected void draw(Canvas c, MapView osmv, boolean shadow) {
             if (shadow || mPoint == null) {
                 return;
             }
-            MapView.Projection pj = osmv.getProjection();
+            Projection pj = osmv.getProjection();
             Point center = pj.toPixels(mPoint, null);
             float radius = pj.metersToEquatorPixels(mAccuracy);
-            SafePaint circle = new SafePaint();
+            Paint circle = new Paint();
             circle.setARGB(0, 100, 100, 255);
 
             // Fill

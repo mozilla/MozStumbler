@@ -46,6 +46,8 @@ public final class MapActivity extends Activity {
 
     private static final String COVERAGE_URL        = "https://location.services.mozilla.com/tiles/";
     private static final int MENU_REFRESH           = 1;
+    private static final String ZOOM_KEY = "zoom";
+    private static final int DEFAULT_ZOOM = 2;
 
     private MapView mMap;
     private ItemizedOverlay<OverlayItem> mPointOverlay;
@@ -85,13 +87,18 @@ public final class MapActivity extends Activity {
         mMap.getOverlays().add(coverageTilesOverlay);
 
         mFirstLocationFix = true;
+        int zoomLevel = DEFAULT_ZOOM; // Default to seeing the world, until we get a fix
+        if (savedInstanceState != null) {
+            mFirstLocationFix = false;
+            zoomLevel = savedInstanceState.getInt(ZOOM_KEY, DEFAULT_ZOOM);
+        }
+        mMap.getController().setZoom(zoomLevel);
+
         mReceiver = new ReporterBroadcastReceiver();
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(GPSScanner.ACTION_GPS_UPDATED);
         LocalBroadcastManager.getInstance(this).registerReceiver(mReceiver,
                 intentFilter);
-
-        mMap.getController().setZoom(2);
 
         Log.d(LOGTAG, "onCreate");
     }
@@ -217,6 +224,12 @@ public final class MapActivity extends Activity {
         Intent i = new Intent(MainActivity.ACTION_UNPAUSE_SCANNING);
         LocalBroadcastManager.getInstance(this).sendBroadcast(i);
         Log.d(LOGTAG, "onStart");
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle bundle) {
+        super.onSaveInstanceState(bundle);
+        bundle.putInt(ZOOM_KEY, mMap.getZoomLevel());
     }
 
     @Override

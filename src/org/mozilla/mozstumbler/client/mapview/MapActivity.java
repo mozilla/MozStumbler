@@ -251,12 +251,19 @@ public final class MapActivity extends Activity {
     }
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        Log.d(LOGTAG, "onDestroy");
+        mMap.getTileProvider().clearTileCache();
+        BitmapPool.getInstance().clearBitmapPool();
+    }
+
+    @Override
     protected void onStop() {
         super.onStop();
 
         Log.d(LOGTAG, "onStop");
-        mMap.getTileProvider().clearTileCache();
-        BitmapPool.getInstance().clearBitmapPool();
         if (mReceiver != null) {
             LocalBroadcastManager.getInstance(this).unregisterReceiver(mReceiver);
             mReceiver = null;

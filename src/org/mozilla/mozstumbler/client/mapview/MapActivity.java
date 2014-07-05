@@ -2,6 +2,8 @@ package org.mozilla.mozstumbler.client.mapview;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.Context;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -11,7 +13,9 @@ import android.view.Window;
 
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.overlay.GpsLocationProvider;
+import com.mapbox.mapboxsdk.overlay.TilesOverlay;
 import com.mapbox.mapboxsdk.overlay.UserLocationOverlay;
+import com.mapbox.mapboxsdk.tileprovider.MapTileLayerBasic;
 import com.mapbox.mapboxsdk.tileprovider.tilesource.MapboxTileLayer;
 import com.mapbox.mapboxsdk.tileprovider.tilesource.TileLayer;
 import com.mapbox.mapboxsdk.tileprovider.tilesource.WebSourceTileLayer;
@@ -38,8 +42,11 @@ public final class MapActivity extends Activity {
         setContentView(R.layout.activity_map);
 
         mMap = (MapView) this.findViewById(R.id.map);
-        mMap.setTileSource(mlsCoverageTileLayer());
-        mMap.addTileSource(getTileSource());
+        mMap.setTileSource(getTileSource());
+
+        TilesOverlay coverageTilesOverlay = mlsCoverageTilesOverlay(this, mMap);
+        mMap.getOverlays().add(coverageTilesOverlay);
+
         mUserLocationOverlay = addLocationOverlay(this, mMap);
 
         float zoomLevel = 13; // Default to the max that the Coverage Map provides
@@ -106,6 +113,13 @@ public final class MapActivity extends Activity {
             return openStreetMapTileLayer();
         }
         return new MapboxTileLayer(BuildConfig.TILE_SERVER_URL);
+    }
+
+    private static TilesOverlay mlsCoverageTilesOverlay(Context context, MapView mapView) {
+        final MapTileLayerBasic coverageTileProvider = new MapTileLayerBasic(context, mlsCoverageTileLayer(), mapView);
+        final TilesOverlay coverageTileOverlay = new TilesOverlay(coverageTileProvider);
+        coverageTileOverlay.setLoadingBackgroundColor(Color.TRANSPARENT);
+        return coverageTileOverlay;
     }
 
     private static TileLayer openStreetMapTileLayer() {

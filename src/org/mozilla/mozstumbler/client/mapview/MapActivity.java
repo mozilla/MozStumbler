@@ -148,12 +148,17 @@ public final class MapActivity extends Activity {
     }
 
     private void positionMapAt(GeoPoint point) {
-        mMap.getController().animateTo(point);
+        if (mPointOverlay != null) {
+            mMap.getOverlays().remove(mPointOverlay); // You are no longer here
+        }
         mPointOverlay = getMapMarker(point);
         mMap.getOverlays().add(mPointOverlay); // You are here!
         if (mFirstLocationFix) {
             mMap.getController().setZoom(13);
             mFirstLocationFix = false;
+            mMap.getController().setCenter(point);
+        } else {
+            mMap.getController().animateTo(point);
         }
         mMap.invalidate();
     }

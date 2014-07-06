@@ -44,6 +44,9 @@
     <string name="no">No</string>
 
     <string name="about_version">Versió %1$s</string>
+	<!--translations missing
+	<string name="about_openstreetmap">Map view tiles © OpenStreetMap contributors\nhttp://www.openstreetmap.org</string>
+    <string name="about_mapbox_title">MapBox</string>-->
     <string name="about_mapbox">Apren més sobre el nostre proveïdor de dades de mapa…</string>
     <string name="about_more">Més…</string>
     <!--translation missing <string name="about_legal_aosp">Some iconography in this app is reproduced from work created and shared by the Android Open Source Project and used according to terms described in the Creative Commons 2.5 Attribution License.</string>-->
@@ -80,6 +83,13 @@
     <string name="wifi_scan_always_title">Always scan Wi-Fi</string>
     <string name="wifi_scan_always_summary">Scan APs even when Wi-Fi is turned off</string>
 
-    <string name="refresh_map">Refresh location</string>-->
+    <string name="refresh_map">Refresh location</string>
+	
+	<string name="title_activity_log">Log</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_view_log">View Log</string>
+    <string name="scroll_to_start">Scroll to Top</string>
+    <string name="scroll_to_end">Scroll to End</string>-->
 
 </resources>

@@ -44,6 +44,9 @@
     <string name="no">否</string>
 
     <string name="about_version">版本 %1$s</string>
+	<!--translations missing
+	<string name="about_openstreetmap">Map view tiles © OpenStreetMap contributors\nhttp://www.openstreetmap.org</string>
+    <string name="about_mapbox_title">MapBox</string>-->
     <string name="about_mapbox">了解我们的地图提供商…</string>
     <string name="about_more">更多…</string>
     <string name="about_legal_aosp">本应用中的部分图标是 Android 开源项目创作并以知识共享 2.5 署名许可协议分享的作品</string>
@@ -81,5 +84,13 @@
     <string name="wifi_scan_always_summary">即使 Wi-Fi 在关闭状态也扫描接入点</string>
 
     <string name="refresh_map">刷新位置</string>
+	
+	<!--translations missing
+	<string name="title_activity_log">Log</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_view_log">View Log</string>
+    <string name="scroll_to_start">Scroll to Top</string>
+    <string name="scroll_to_end">Scroll to End</string>-->
 
 </resources>

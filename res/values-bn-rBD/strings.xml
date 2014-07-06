@@ -42,11 +42,14 @@
     <string name="gps_alert_msg">জিপিএস বন্ধ আছে। আপনি কি সেটিংস থেকে তা চালু করতে চান?</string>
     <string name="yes">হ্যাঁ</string>
     <string name="no">না</string>
-	<string name="about_legal_aosp">এই এপ্লিকেশনের কিছু কিছু আইকন বা গ্রাফিক্স সংক্রান্ত কাজ Android Open Source Project থেকে নেয়া হয়েছে এবং তা Creative Commons 2.5 Attribution License এর আওতায় ব্যবহৃত হয়েছে।</string>
 
     <string name="about_version">সংস্করণ %1$s</string>
+	<!--translations missing
+	<string name="about_openstreetmap">Map view tiles © OpenStreetMap contributors\nhttp://www.openstreetmap.org</string>
+    <string name="about_mapbox_title">MapBox</string>-->
     <string name="about_mapbox">ম্যাপিং প্রোভাইডার সম্পর্কে আরও জানুন</string>
     <string name="about_more">আরও</string>
+	<string name="about_legal_aosp">এই এপ্লিকেশনের কিছু কিছু আইকন বা গ্রাফিক্স সংক্রান্ত কাজ Android Open Source Project থেকে নেয়া হয়েছে এবং তা Creative Commons 2.5 Attribution License এর আওতায় ব্যবহৃত হয়েছে।</string>
 	
 	<string name="upload_observations_sent_title">আপলোডকৃত</string>
     <string name="upload_observations_last_upload_time_title">সর্বশেষ আপলোডের সময়:</string>
@@ -81,5 +84,13 @@
     <string name="wifi_scan_always_summary">ওয়াই-ফাই বন্ধ থাকলেও এক্সেস পয়েন্টগুলো স্ক্যান করা হবে।</string>
 
     <string name="refresh_map">অবস্থান রিফ্রেশ কর</string>
+	
+	<!--translations missing
+	<string name="title_activity_log">Log</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_view_log">View Log</string>
+    <string name="scroll_to_start">Scroll to Top</string>
+    <string name="scroll_to_end">Scroll to End</string>-->
 
 </resources>

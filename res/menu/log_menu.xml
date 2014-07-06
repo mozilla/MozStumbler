@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item
+        android:id="@+id/scroll_to_start"
+        android:icon="@android:drawable/arrow_up_float"
+        android:showAsAction="always"
+        android:title="@string/scroll_to_start"/>
+    <item
+        android:id="@+id/scroll_to_end"
+        android:icon="@android:drawable/arrow_down_float"
+        android:showAsAction="always"
+        android:title="@string/scroll_to_end"/>
+</menu>

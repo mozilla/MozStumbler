@@ -280,7 +280,7 @@ public class ServiceTest extends ServiceTestCase<StumblerService> implements Asy
             long sentCells = statsMap.get(DatabaseContract.Stats.KEY_CELLS_SENT);
             long sentWifis = statsMap.get(DatabaseContract.Stats.KEY_WIFIS_SENT);
 
-            assertTrue(sentObs - sentObsOrig >=1000 && sentObs - sentObsOrig < 1010);
+            assertTrue(sentObs - sentObsOrig > 5);
             assertTrue(sentCells - sentCellsOrig >= kNewCells);
             assertTrue(sentWifis - sentWifisOrig >= kNewWifis);
 

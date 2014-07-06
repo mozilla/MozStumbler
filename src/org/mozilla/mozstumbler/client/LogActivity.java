@@ -11,6 +11,9 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.os.Bundle;
 import android.text.Html;
 import android.util.AttributeSet;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import org.mozilla.mozstumbler.R;
@@ -32,8 +35,11 @@ public class LogActivity extends Activity {
         Timer mFlushMessagesTimer = new Timer();
         Handler mMainThreadHandler = new Handler() {
             public void handleMessage(Message m) {
-                String msg = SharedConstants.guiLogMessageBuffer.poll();
-                addMessageToBuffer(msg);
+                String msg = null;
+                do {
+                    msg = SharedConstants.guiLogMessageBuffer.poll();
+                    addMessageToBuffer(msg);
+                } while (msg != null);
             }
         };
 
@@ -62,6 +68,11 @@ public class LogActivity extends Activity {
             if (buffer.size() > MAX_SIZE) {
                 buffer.removeFirst();
             }
+
+            if (s.length() > 100) {
+                s = s.substring(0, 100) + " ...";
+            }
+
             buffer.add(s);
             if (sConsoleView != null) {
                 sConsoleView.println(s);
@@ -146,6 +157,27 @@ public class LogActivity extends Activity {
         public void clear() {
             tv.setText("");
             this.scrollTo(0, 0);
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.log_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.scroll_to_start:
+                this.mConsoleView.fullScroll(View.FOCUS_UP);
+                return true;
+            case R.id.scroll_to_end:
+                this.mConsoleView.fullScroll(View.FOCUS_DOWN);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 }

@@ -6,10 +6,10 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
-import android.net.wifi.ScanResult;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -18,20 +18,13 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
-import android.widget.Toast;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.mozilla.mozstumbler.service.blocklist.BSSIDBlockList;
+import org.mozilla.mozstumbler.client.MainApp;
+import org.mozilla.mozstumbler.service.StumblerService;
 import org.mozilla.mozstumbler.BuildConfig;
 import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.client.MainActivity;
-import org.mozilla.mozstumbler.service.scanners.WifiScanner;
-import org.mozilla.mozstumbler.service.scanners.cellscanner.CellInfo;
-import org.mozilla.mozstumbler.service.scanners.cellscanner.CellScanner;
+import org.mozilla.mozstumbler.service.scanners.GPSScanner;
 import org.osmdroid.tileprovider.BitmapPool;
 import org.osmdroid.tileprovider.MapTileProviderBasic;
 import org.osmdroid.tileprovider.tilesource.ITileSource;
@@ -40,61 +33,44 @@ import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.tileprovider.tilesource.XYTileSource;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
+import org.osmdroid.views.Projection;
 import org.osmdroid.views.overlay.ItemizedIconOverlay;
 import org.osmdroid.views.overlay.ItemizedOverlay;
 import org.osmdroid.views.overlay.ItemizedOverlayWithFocus;
+import org.osmdroid.views.overlay.Overlay;
 import org.osmdroid.views.overlay.OverlayItem;
-import org.osmdroid.views.overlay.SafeDrawOverlay;
 import org.osmdroid.views.overlay.TilesOverlay;
-import org.osmdroid.views.safecanvas.ISafeCanvas;
-import org.osmdroid.views.safecanvas.SafePaint;
 
 public final class MapActivity extends Activity {
     private static final String LOGTAG = MapActivity.class.getName();
 
-    private static final String STATUS_OK           = "ok";
-    private static final String STATUS_NOT_FOUND    = "not_found";
-    private static final String STATUS_FAILED       = "failed";
     private static final String COVERAGE_URL        = "https://location.services.mozilla.com/tiles/";
     private static final int MENU_REFRESH           = 1;
-    private static final int MAX_ZOOM_NEEDED        = 17;
-    private static final float ZOOM_SCALE_FACT      = -0.0002f;
+    private static final String ZOOM_KEY = "zoom";
+    private static final int DEFAULT_ZOOM = 2;
+    private static final String LAT_KEY = "latitude";
+    private static final String LON_KEY = "longitude";
 
     private MapView mMap;
-    private AccuracyCircleOverlay mAccuracyOverlay;
     private ItemizedOverlay<OverlayItem> mPointOverlay;
+    private boolean mFirstLocationFix;
 
     private ReporterBroadcastReceiver mReceiver;
 
-    private List<ScanResult> mWifiData;
-    private List<CellInfo> mCellData;
-
     private class ReporterBroadcastReceiver extends BroadcastReceiver {
-        private boolean mDone;
-
         public void reset()
         {
-            mMap.getOverlays().remove(mAccuracyOverlay);
             mMap.getOverlays().remove(mPointOverlay);
-            mDone = false;
         }
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (mDone) {
-                return;
-            }
-
             String action = intent.getAction();
 
-            if (action.equals(WifiScanner.ACTION_WIFIS_SCANNED)) {
-                mWifiData = intent.getParcelableArrayListExtra(WifiScanner.ACTION_WIFIS_SCANNED_ARG_RESULTS);
-            } else if (action.equals(CellScanner.ACTION_CELLS_SCANNED)) {
-                mCellData = intent.getParcelableArrayListExtra(CellScanner.ACTION_CELLS_SCANNED_ARG_CELLS);
+            if (action.equals(GPSScanner.ACTION_GPS_UPDATED)) {
+                MainApp app = (MainApp) getApplication();
+                new GetLocationAndMapItTask().execute(app.getService());
             }
-
-            new GetLocationAndMapItTask().execute("");
-            mDone = true;
         }
     }
 
@@ -104,8 +80,6 @@ public final class MapActivity extends Activity {
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         setContentView(R.layout.activity_map);
 
-        mWifiData = Collections.emptyList();
-
         mMap = (MapView) this.findViewById(R.id.map);
         mMap.setTileSource(getTileSource());
         mMap.setBuiltInZoomControls(true);
@@ -114,14 +88,24 @@ public final class MapActivity extends Activity {
         TilesOverlay coverageTilesOverlay = CoverageTilesOverlay(this);
         mMap.getOverlays().add(coverageTilesOverlay);
 
+        mFirstLocationFix = true;
+        int zoomLevel = DEFAULT_ZOOM; // Default to seeing the world, until we get a fix
+        if (savedInstanceState != null) {
+            mFirstLocationFix = false;
+            zoomLevel = savedInstanceState.getInt(ZOOM_KEY, DEFAULT_ZOOM);
+            if (savedInstanceState.containsKey(LAT_KEY) && savedInstanceState.containsKey(LON_KEY)) {
+                final double latitude = savedInstanceState.getDouble(LAT_KEY);
+                final double longitude = savedInstanceState.getDouble(LON_KEY);
+                mMap.getController().setCenter(new GeoPoint(latitude, longitude));
+            }
+        }
+        mMap.getController().setZoom(zoomLevel);
+
         mReceiver = new ReporterBroadcastReceiver();
         IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(WifiScanner.ACTION_WIFIS_SCANNED);
-        intentFilter.addAction(CellScanner.ACTION_CELLS_SCANNED);
+        intentFilter.addAction(GPSScanner.ACTION_GPS_UPDATED);
         LocalBroadcastManager.getInstance(this).registerReceiver(mReceiver,
                 intentFilter);
-
-        mMap.getController().setZoom(2);
 
         Log.d(LOGTAG, "onCreate");
     }
@@ -177,24 +161,23 @@ public final class MapActivity extends Activity {
         return coverageTileOverlay;
     }
 
-    private void positionMapAt(float lat, float lon, float accuracy) {
-        GeoPoint point = new GeoPoint(lat, lon);
-        int zoomLevel = Math.round(accuracy*ZOOM_SCALE_FACT+MAX_ZOOM_NEEDED);
-        if (zoomLevel < 0) {
-            zoomLevel = 0;
-        } else if (zoomLevel > MAX_ZOOM_NEEDED) {
-            zoomLevel = MAX_ZOOM_NEEDED; // this code will only execute if accuracy is negative, which "should" never happen...
+    private void positionMapAt(GeoPoint point) {
+        if (mPointOverlay != null) {
+            mMap.getOverlays().remove(mPointOverlay); // You are no longer here
         }
-        mMap.getController().setZoom(zoomLevel);
-        mMap.getController().animateTo(point);
         mPointOverlay = getMapMarker(point);
-        mAccuracyOverlay = new AccuracyCircleOverlay(MapActivity.this, point, accuracy);
         mMap.getOverlays().add(mPointOverlay); // You are here!
-        mMap.getOverlays().add(mAccuracyOverlay);
+        if (mFirstLocationFix) {
+            mMap.getController().setZoom(13);
+            mFirstLocationFix = false;
+            mMap.getController().setCenter(point);
+        } else {
+            mMap.getController().animateTo(point);
+        }
         mMap.invalidate();
     }
 
-    private static class AccuracyCircleOverlay extends SafeDrawOverlay {
+    private static class AccuracyCircleOverlay extends Overlay {
         private GeoPoint mPoint;
         private float mAccuracy;
 
@@ -205,14 +188,14 @@ public final class MapActivity extends Activity {
             this.mAccuracy = accuracy;
         }
 
-        protected void drawSafe(ISafeCanvas c, MapView osmv, boolean shadow) {
+        protected void draw(Canvas c, MapView osmv, boolean shadow) {
             if (shadow || mPoint == null) {
                 return;
             }
-            MapView.Projection pj = osmv.getProjection();
+            Projection pj = osmv.getProjection();
             Point center = pj.toPixels(mPoint, null);
             float radius = pj.metersToEquatorPixels(mAccuracy);
-            SafePaint circle = new SafePaint();
+            Paint circle = new Paint();
             circle.setARGB(0, 100, 100, 255);
 
             // Fill
@@ -251,86 +234,45 @@ public final class MapActivity extends Activity {
     }
 
     @Override
+    protected void onSaveInstanceState(Bundle bundle) {
+        super.onSaveInstanceState(bundle);
+        bundle.putInt(ZOOM_KEY, mMap.getZoomLevel());
+        bundle.putDouble(LON_KEY, mMap.getMapCenter().getLongitude());
+        bundle.putDouble(LAT_KEY, mMap.getMapCenter().getLatitude());
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        Log.d(LOGTAG, "onDestroy");
+        mMap.getTileProvider().clearTileCache();
+        BitmapPool.getInstance().clearBitmapPool();
+    }
+
+    @Override
     protected void onStop() {
         super.onStop();
 
         Log.d(LOGTAG, "onStop");
-        mMap.getTileProvider().clearTileCache();
-        BitmapPool.getInstance().clearBitmapPool();
         if (mReceiver != null) {
             LocalBroadcastManager.getInstance(this).unregisterReceiver(mReceiver);
             mReceiver = null;
         }
     }
 
-    private final class GetLocationAndMapItTask extends AsyncTask<String, Void, String> {
-        private String mStatus="";
-        private float mLat = 0;
-        private float mLon = 0;
-        private float mAccuracy = 0;
-
+    private final class GetLocationAndMapItTask extends AsyncTask<StumblerService, Void, GeoPoint> {
         @Override
-        public String doInBackground(String... params) {
+        public GeoPoint doInBackground(StumblerService... params) {
             Log.d(LOGTAG, "requesting location...");
 
-            JSONObject wrapper;
-            try {
-                wrapper = new JSONObject("{}");
-                if (mCellData != null) {
-                    wrapper.put("radio", mCellData.get(0).getRadio());
-                    JSONArray cellData = new JSONArray();
-                    for (CellInfo info : mCellData) {
-                        JSONObject item = info.toJSONObject();
-                        cellData.put(item);
-                    }
-                    wrapper.put("cell", cellData);
-                }
-                if (mWifiData != null) {
-                    JSONArray wifiData = new JSONArray();
-                    for (ScanResult result : mWifiData) {
-                        JSONObject item = new JSONObject();
-                        item.put("key", BSSIDBlockList.canonicalizeBSSID(result.BSSID));
-                        item.put("frequency", result.frequency);
-                        item.put("signal", result.level);
-                        wifiData.put(item);
-                    }
-                    wrapper.put("wifi", wifiData);
-                }
-            } catch (JSONException jsonex) {
-                Log.w(LOGTAG, "json exception", jsonex);
-                return "";
-            }
-            String data = wrapper.toString();
-            byte[] bytes = data.getBytes();
-            Searcher searcher = new Searcher();
-            if (searcher.cleanSend(bytes)) {
-                mStatus = searcher.getStatus();
-                mLat = searcher.getLat();
-                mLon = searcher.getLon();
-                mAccuracy = searcher.getAccuracy();
-            } else {
-                mStatus = STATUS_FAILED;
-            }
-            searcher.close();
-            Log.d(LOGTAG, "Upload status: " + mStatus);
-            return mStatus;
+            StumblerService service = params[0];
+            return new GeoPoint(service.getLatitude(), service.getLongitude());
         }
 
         @Override
-        protected void onPostExecute(String result) {
-            if (STATUS_OK.equals(mStatus)) {
-                positionMapAt(mLat, mLon, mAccuracy);
-            } else if (STATUS_NOT_FOUND.equals(mStatus)) {
-                Toast.makeText(MapActivity.this,
-                        getResources().getString(R.string.location_not_found),
-                        Toast.LENGTH_LONG).show();
-            } else {
-                Toast.makeText(MapActivity.this,
-                        getResources().getString(R.string.location_lookup_error),
-                        Toast.LENGTH_LONG).show();
-                Log.e(LOGTAG, "", new IllegalStateException("mStatus=" + mStatus));
-            }
-            setProgressBarIndeterminateVisibility(false);
+        protected void onPostExecute(GeoPoint result) {
+            positionMapAt(result);
         }
     }
 }

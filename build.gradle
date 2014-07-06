@@ -20,8 +20,12 @@ android {
     buildToolsVersion '19.1.0'
 
     dependencies {
-        compile "org.osmdroid:osmdroid-android:4.1"
-        compile 'org.slf4j:slf4j-android:1.7.7'
+        compile ('com.mapbox.mapboxsdk:mapbox-android-sdk:0.3.0@aar'){
+            transitive=true
+        }
+        compile ('com.cocoahero.android:geojson:1.0.0@aar'){
+            transitive=true
+        }
         compile "com.android.support:support-v4:19.1.+"
     }
 

@@ -69,8 +69,16 @@ public class LogActivity extends Activity {
                 buffer.removeFirst();
             }
 
-            if (s.length() > 100) {
-                s = s.substring(0, 100) + " ...";
+            int kMaxChars = 150;
+            int kBufSizeBeforeTruncate = 30;
+            if (buffer.size() == kBufSizeBeforeTruncate + 1) {
+                String msg = "BUFFER REACHED " + kBufSizeBeforeTruncate +" MESSAGES. TRUNCATING MESSAGES.";
+                buffer.add(msg);
+                if (sConsoleView != null)
+                    sConsoleView.println(msg);
+            }
+            if (buffer.size() > kBufSizeBeforeTruncate && s.length() > kMaxChars) {
+                s = s.substring(0, kMaxChars) + " ...";
             }
 
             buffer.add(s);

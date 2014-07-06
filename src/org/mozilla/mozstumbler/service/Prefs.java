@@ -105,6 +105,15 @@ public final class Prefs {
         return TextUtils.isEmpty(nickname) ? null : nickname;
     }
 
+    public void setSha(String a, String b) {
+        SharedPreferences.Editor editor = getPrefs().edit();
+        editor.putString(a, b);
+        apply(editor);
+    }
+
+    public String getSha(String a) {
+        return getPrefs().getString(a, "first");
+    }
     public boolean getUseWifiOnly() {
         return getBoolPrefWithDefault(WIFI_ONLY, true);
     }

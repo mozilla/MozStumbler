@@ -105,6 +105,15 @@ public final class Prefs {
         return TextUtils.isEmpty(nickname) ? null : nickname;
     }
 
+    public void setNickname(String nick) {
+        if (nick != null) {
+            nick = nick.trim();
+            if (nick.length() > 0) {
+                setStringPref(NICKNAME_PREF, nick);
+            }
+        }
+    }
+
     public boolean getUseWifiOnly() {
         return getBoolPrefWithDefault(WIFI_ONLY, true);
     }
@@ -113,6 +122,9 @@ public final class Prefs {
         return getBoolPrefWithDefault(WIFI_SCAN_ALWAYS, false);
     }
 
+    public void setWifiScanAlways(boolean b) {
+        setBoolPref(WIFI_SCAN_ALWAYS, b);
+    }
     ///
     /// Privates
     ///

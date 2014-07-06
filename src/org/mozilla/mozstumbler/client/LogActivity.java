@@ -70,7 +70,7 @@ public class LogActivity extends Activity {
             }
 
             int kMaxChars = 150;
-            int kBufSizeBeforeTruncate = 100;
+            int kBufSizeBeforeTruncate = 30;
             if (buffer.size() == kBufSizeBeforeTruncate + 1) {
                 String msg = "BUFFER REACHED " + kBufSizeBeforeTruncate +" MESSAGES. TRUNCATING MESSAGES.";
                 buffer.add(msg);

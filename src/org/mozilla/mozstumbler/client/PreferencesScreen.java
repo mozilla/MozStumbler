@@ -75,6 +75,7 @@ public class PreferencesScreen extends PreferenceActivity {
         mNicknamePreference.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
+                sPrefs.setNickname(newValue.toString());
                 setNicknamePreferenceTitle(newValue.toString());
                 return true;
             }
@@ -151,18 +152,21 @@ public class PreferencesScreen extends PreferenceActivity {
         mWifiScanAlwaysSwitch.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object checked) {
+                boolean result = false;
                 if ((Boolean) checked) {
                     WifiManager wm = (WifiManager) getSystemService(Context.WIFI_SERVICE);
                     if (wm.isScanAlwaysAvailable()) {
-                        return true;
+                        result = true;
                     } else {
                         Intent i = new Intent(WifiManager.ACTION_REQUEST_SCAN_ALWAYS_AVAILABLE);
                         startActivityForResult(i, REQUEST_CODE_WIFI_SCAN_ALWAYS);
-                        return false;
+                        result = false;
                     }
                 } else {
-                    return true;
+                    result = true;
                 }
+                sPrefs.setWifiScanAlways(result);
+                return result;
             }
         });
     }

@@ -48,6 +48,8 @@ public final class MapActivity extends Activity {
     private static final int MENU_REFRESH           = 1;
     private static final String ZOOM_KEY = "zoom";
     private static final int DEFAULT_ZOOM = 2;
+    private static final String LAT_KEY = "latitude";
+    private static final String LON_KEY = "longitude";
 
     private MapView mMap;
     private ItemizedOverlay<OverlayItem> mPointOverlay;
@@ -91,6 +93,11 @@ public final class MapActivity extends Activity {
         if (savedInstanceState != null) {
             mFirstLocationFix = false;
             zoomLevel = savedInstanceState.getInt(ZOOM_KEY, DEFAULT_ZOOM);
+            if (savedInstanceState.containsKey(LAT_KEY) && savedInstanceState.containsKey(LON_KEY)) {
+                final double latitude = savedInstanceState.getDouble(LAT_KEY);
+                final double longitude = savedInstanceState.getDouble(LON_KEY);
+                mMap.getController().setCenter(new GeoPoint(latitude, longitude));
+            }
         }
         mMap.getController().setZoom(zoomLevel);
 
@@ -230,6 +237,8 @@ public final class MapActivity extends Activity {
     protected void onSaveInstanceState(Bundle bundle) {
         super.onSaveInstanceState(bundle);
         bundle.putInt(ZOOM_KEY, mMap.getZoomLevel());
+        bundle.putDouble(LON_KEY, mMap.getMapCenter().getLongitude());
+        bundle.putDouble(LAT_KEY, mMap.getMapCenter().getLatitude());
     }
 
     @Override

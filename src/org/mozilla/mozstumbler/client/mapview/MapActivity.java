@@ -18,8 +18,14 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.mozilla.mozstumbler.client.MainApp;
+import org.mozilla.mozstumbler.service.SharedConstants;
 import org.mozilla.mozstumbler.service.StumblerService;
 import org.mozilla.mozstumbler.BuildConfig;
 import org.mozilla.mozstumbler.R;
@@ -44,7 +50,8 @@ import org.osmdroid.views.overlay.TilesOverlay;
 public final class MapActivity extends Activity {
     private static final String LOGTAG = MapActivity.class.getName();
 
-    private static final String COVERAGE_URL        = "https://location.services.mozilla.com/tiles/";
+    private static final String COVERAGE_REDIRECT_URL = "https://location.services.mozilla.com/map.json";
+    private static String sCoverageUrl = null;
     private static final int MENU_REFRESH           = 1;
     private static final String ZOOM_KEY = "zoom";
     private static final int DEFAULT_ZOOM = 2;
@@ -54,8 +61,9 @@ public final class MapActivity extends Activity {
     private MapView mMap;
     private ItemizedOverlay<OverlayItem> mPointOverlay;
     private boolean mFirstLocationFix;
-
     private ReporterBroadcastReceiver mReceiver;
+    Timer mGetUrl = new Timer();
+    TilesOverlay mCoverageTilesOverlay = null;
 
     private class ReporterBroadcastReceiver extends BroadcastReceiver {
         public void reset()
@@ -85,9 +93,6 @@ public final class MapActivity extends Activity {
         mMap.setBuiltInZoomControls(true);
         mMap.setMultiTouchControls(true);
 
-        TilesOverlay coverageTilesOverlay = CoverageTilesOverlay(this);
-        mMap.getOverlays().add(coverageTilesOverlay);
-
         mFirstLocationFix = true;
         int zoomLevel = DEFAULT_ZOOM; // Default to seeing the world, until we get a fix
         if (savedInstanceState != null) {
@@ -108,6 +113,33 @@ public final class MapActivity extends Activity {
                 intentFilter);
 
         Log.d(LOGTAG, "onCreate");
+
+        // @TODO: we do a similar "read from URL" in Updater, AbstractCommunicator, make one function for this
+        if (sCoverageUrl == null) {
+            mGetUrl.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    java.util.Scanner scanner;
+                    try {
+                        scanner = new java.util.Scanner(new URL(COVERAGE_REDIRECT_URL).openStream(), "UTF-8");
+                    } catch (Exception ex) {
+                        Log.d(LOGTAG, ex.toString());
+                        if (SharedConstants.guiLogMessageBuffer != null)
+                            SharedConstants.guiLogMessageBuffer.add("Failed to get coverage url:" + ex.toString());
+                        return;
+                    }
+                    scanner.useDelimiter("\\A");
+                    String result = scanner.next();
+                    try {
+                        sCoverageUrl = new JSONObject(result).getString("tiles_url");
+                    } catch (JSONException ex) {
+                        if (SharedConstants.guiLogMessageBuffer != null)
+                            SharedConstants.guiLogMessageBuffer.add("Failed to get coverage url:" + ex.toString());
+                    }
+                    scanner.close();
+                }
+            }, 0);
+        }
     }
 
     @TargetApi(11)
@@ -154,7 +186,7 @@ public final class MapActivity extends Activity {
                 null,
                 1, 13, 256,
                 ".png",
-                new String[] { COVERAGE_URL });
+                new String[] { sCoverageUrl });
         coverageTileProvider.setTileSource(coverageTileSource);
         final TilesOverlay coverageTileOverlay = new TilesOverlay(coverageTileProvider,context);
         coverageTileOverlay.setLoadingBackgroundColor(Color.TRANSPARENT);
@@ -162,6 +194,11 @@ public final class MapActivity extends Activity {
     }
 
     private void positionMapAt(GeoPoint point) {
+        if  (mCoverageTilesOverlay == null && sCoverageUrl != null) {
+            mCoverageTilesOverlay = CoverageTilesOverlay(this);
+            mMap.getOverlays().add(mCoverageTilesOverlay);
+        }
+
         if (mPointOverlay != null) {
             mMap.getOverlays().remove(mPointOverlay); // You are no longer here
         }

@@ -44,9 +44,8 @@
     <string name="no">No</string>
 
     <string name="about_version">Versión %1$s</string>
-	<!--translations missing
-	<string name="about_openstreetmap">Map view tiles © OpenStreetMap contributors\nhttp://www.openstreetmap.org</string>
-    <string name="about_mapbox_title">MapBox</string>-->
+    <string name="about_openstreetmap">Mosaico para construir los mapas © colaboradores de OpenStreetMap \nhttp://www.openstreetmap.org</string>
+    <string name="about_mapbox_title">MapBox</string>
     <string name="about_mapbox">Aprenda más acerca de nuestro proveedor de cartografía…</string>
     <string name="about_more">Más…</string>
     <string name="about_legal_aosp">Algunos iconos en esta aplicación son reproducidos de trabajo creado y compartido por el Proyecto de código abierto de Android y se usa de acuerdo a los términos descritos en la Licencia 2.5 de Creative Commons.</string>
@@ -85,12 +84,11 @@
 
     <string name="refresh_map">Recargar ubicación</string>
 	
-	<!--translations missing
-	<string name="title_activity_log">Log</string>
-    <string name="hello_world">Hello world!</string>
-    <string name="action_settings">Settings</string>
-    <string name="action_view_log">View Log</string>
-    <string name="scroll_to_start">Scroll to Top</string>
-    <string name="scroll_to_end">Scroll to End</string>-->
+    <string name="title_activity_log">Log</string>
+    <string name="hello_world">¡Hola mundo!</string>
+    <string name="action_settings">Preferencias</string>
+    <string name="action_view_log">Ver log</string>
+    <string name="scroll_to_start">Ir al principio</string>
+    <string name="scroll_to_end">Ir al final</string>-->
     
 </resources>

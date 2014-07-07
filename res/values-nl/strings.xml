@@ -44,6 +44,9 @@
     <string name="no">Nee</string>
 
     <string name="about_version">Versie %1$s</string>
+	<!--translations missing
+	<string name="about_openstreetmap">Map view tiles © OpenStreetMap contributors\nhttp://www.openstreetmap.org</string>
+    <string name="about_mapbox_title">MapBox</string>-->
     <string name="about_mapbox">Ontdek meer over mapbox…</string>
     <string name="about_more">Meer…</string>
     <string name="about_legal_aosp">Sommige iconografie in deze app is overgenomen uit het werk gemaakt en gedeeld door het Android Open Source Project en gebruikt volgens de voorwaarden zoals beschreven in de Creative Commons Attribution 2.5 License.</string>
@@ -78,9 +81,17 @@
     <string name="geofencing_on">Geofencing @ %1$.3f, %2$.3f</string>
     <string name="geofencing_enable">Geofence deze lokatie</string>
 
-    <!--translations missing <string name="wifi_scan_always_title">Always scan Wi-Fi</string>
+    <!--translations missing
+	<string name="wifi_scan_always_title">Always scan Wi-Fi</string>
     <string name="wifi_scan_always_summary">Scan APs even when Wi-Fi is turned off</string>
 
-    <string name="refresh_map">Refresh location</string>-->
+    <string name="refresh_map">Refresh location</string>
+	
+	<string name="title_activity_log">Log</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_view_log">View Log</string>
+    <string name="scroll_to_start">Scroll to Top</string>
+    <string name="scroll_to_end">Scroll to End</string>-->
 
 </resources>

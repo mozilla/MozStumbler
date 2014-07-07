@@ -14,7 +14,6 @@
     <string name="wifi_access_points">तपासलेले Wi-Fi प्रवेश बिंदू: %1$d</string>
     <string name="wifi_disabled">० (Wi-Fi बंद आहे)</string>
     <string name="visible_wifi_access_points">दिसणारे Wi-Fi प्रवेश बिंदू:: %1$s</string>
-    
     <string name="cells_scanned">शोधलेले भ्रमणध्वनी जाळे: %1$d</string>
     <string name="cells_visible">दिसणारे भ्रमणध्वनी जाळे: %1$d</string>
     <string name="gps_satellites">वापरलेले/दिसणारे GPS उपग्रह: %1$d/%2$d</string>
@@ -45,10 +44,12 @@
     <string name="no">नाही</string>
 
     <string name="about_version">आवृत्ती %1$s</string>
+	<!--translations missing
+	<string name="about_openstreetmap">Map view tiles © OpenStreetMap contributors\nhttp://www.openstreetmap.org</string>
+    <string name="about_mapbox_title">MapBox</string>-->
     <string name="about_mapbox">आमच्या नकाशा पुरवठादाराविषयी अधिक जाणून घ्या…</string>
     <string name="about_more">आणखी…</string>
     <string name="about_legal_aosp">या अनुप्रयोगामधे वापरण्यात आलेल्या काही प्रतिमा अँड्रॉइड मुक्त स्रोत प्रकल्पाने तयार करून विभागून दिलेल्या आहेत व त्या क्रिएटीव कॉमन्स २.५ विशेष परवाना अटींनुसार वापरल्या आहेत.</string>
-
     
     <string name="upload_observations_sent_title">पाठवलेली निरीक्षणे</string>
     <string name="upload_observations_last_upload_time_title">शेवटची निरीक्षणे पाठवण्याची वेळ:</string>
@@ -83,5 +84,13 @@
     <string name="wifi_scan_always_summary">Wi-Fi बंद असताना सुद्धा प्रवेश बिंदू शोधा</string>
 
     <string name="refresh_map">स्थळ अद्यतन करा</string>
+	
+	<!--translations missing
+	<string name="title_activity_log">Log</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_view_log">View Log</string>
+    <string name="scroll_to_start">Scroll to Top</string>
+    <string name="scroll_to_end">Scroll to End</string>-->
 
 </resources>

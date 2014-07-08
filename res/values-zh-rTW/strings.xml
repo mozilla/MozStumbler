@@ -44,9 +44,8 @@
     <string name="no">不要</string>
 
     <string name="about_version">%1$s 版</string>
-	<!--translations missing
-	<string name="about_openstreetmap">Map view tiles © OpenStreetMap contributors\nhttp://www.openstreetmap.org</string>
-    <string name="about_mapbox_title">MapBox</string>-->
+    <string name="about_openstreetmap">圖資來源著作權 © OpenStreetMap 貢獻者\nhttp://www.openstreetmap.org</string>
+    <string name="about_mapbox_title">MapBox</string>
     <string name="about_mapbox">了解我們的地圖資料提供者資訊…</string>
     <string name="about_more">更多…</string>
     <string name="about_legal_aosp">此應用程式中的某些圖示係重製自 Android Open Source Project 之創作，並依照創用 CC 姓名標示 2.5 版授權條款使用。</string>
@@ -85,12 +84,11 @@
 
     <string name="refresh_map">重新整理位置</string>
 	
-	<!--translations missing
-	<string name="title_activity_log">Log</string>
+    <string name="title_activity_log">紀錄</string>
     <string name="hello_world">Hello world!</string>
-    <string name="action_settings">Settings</string>
-    <string name="action_view_log">View Log</string>
-    <string name="scroll_to_start">Scroll to Top</string>
-    <string name="scroll_to_end">Scroll to End</string>-->
+    <string name="action_settings">選項</string>
+    <string name="action_view_log">檢視紀錄</string>
+    <string name="scroll_to_start">滾動到頂端</string>
+    <string name="scroll_to_end">滾動到底端</string>
 
 </resources>

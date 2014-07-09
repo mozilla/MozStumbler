@@ -64,7 +64,7 @@ public class Scanner {
 
         // how often to flush a leftover bundle to the reports table
         // If there is a bundle, and nothing happens for 10sec, then flush it
-        final int flushRate_ms = (SharedConstants.isDebug)? 3000 : 10000;
+        final int flushRate_ms = 10000;
 
         if (mPassiveModeFlushTimer != null) {
             mPassiveModeFlushTimer.cancel();

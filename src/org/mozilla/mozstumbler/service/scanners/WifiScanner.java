@@ -40,7 +40,7 @@ public class WifiScanner extends BroadcastReceiver {
     public static final int STATUS_WIFI_DISABLED = -1;
 
     private static final String LOGTAG = WifiScanner.class.getName();
-    private static final long WIFI_MIN_UPDATE_TIME = 1000; // milliseconds
+    private static final long WIFI_MIN_UPDATE_TIME = 5000; // milliseconds
 
     private boolean mStarted;
     private final Context mContext;

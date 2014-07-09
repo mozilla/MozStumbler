@@ -164,7 +164,7 @@ public final class StumblerService extends Service {
         }
 
         // keep running!
-        return Service.START_STICKY;
+        return Service.START_REDELIVER_INTENT;
     }
 
     @Override

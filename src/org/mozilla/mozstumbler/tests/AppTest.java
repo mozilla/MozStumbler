@@ -60,11 +60,11 @@ public class AppTest extends ApplicationTestCase<MainApp> {
             values.put(DatabaseContract.Reports.CELL_COUNT, 2);
             values.put(DatabaseContract.Reports.WIFI_COUNT, 7);
 
-            for (int i = 0; i < 10000; i++) {
+            for (int i = 0; i < 100; i++) {
                 db.insert("reports", null, values);
                 values.put(DatabaseContract.Reports.TIME, 666 + i);
             }
-
+            db.close();
             signal.countDown();
         }
     };

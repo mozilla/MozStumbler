@@ -27,22 +27,35 @@ import android.util.Log;
 public class PassiveServiceReceiver extends BroadcastReceiver {
     final static String LOGTAG = PassiveServiceReceiver.class.getName();
 
+    static boolean sIsStarted;
+
     @Override
     public void onReceive(Context context, Intent intent) {
-        String action = intent.getAction();
+        Prefs.createGlobalInstance(context);
 
-       if (SharedConstants.isDebug) Log.d(LOGTAG, "Starting Passively");
+        String action = intent.getAction();
+        if (action.contains(".STUMBLER_PREF")) {
+            boolean isOn = intent.getBooleanExtra("enabled", false);
+            Log.d(LOGTAG, "PREF:" + intent.getStringExtra("pref") + ":" + isOn);
+            Prefs.getInstance().setFirefoxScanEnabled(isOn);
+        }
+
+        if (!Prefs.getInstance().getFirefoxScanEnabled()) {
+            context.stopService(new Intent(context, StumblerService.class));
+            sIsStarted = false;
+            return;
+        }
+
+        if (sIsStarted) {
+            return;
+        }
+        sIsStarted = true;
+        
+        if (SharedConstants.isDebug) Log.d(LOGTAG, "Starting Passively");
+
         if (SharedConstants.mozillaApiKey == null) {
-            try {
-                ApplicationInfo ai = context.getPackageManager().
-                        getApplicationInfo(context.getPackageName(), PackageManager.GET_META_DATA);
-                Bundle aBundle = ai.metaData;
-                if (ai.metaData != null) {
-                    SharedConstants.mozillaApiKey = aBundle.getString("MOZILLA_API_KEY");
-                }
-            } catch (PackageManager.NameNotFoundException ex) {
-                Log.d(SharedConstants.appName, "Exception getting service upload key");
-            }
+           //TODO: get this sent from Firefox
+           // TODO: get isDebug from Firefox also
         }
 
         Intent startServiceIntent = new Intent(context, StumblerService.class);

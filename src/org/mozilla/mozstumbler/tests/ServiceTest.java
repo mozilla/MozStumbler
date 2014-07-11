@@ -244,7 +244,7 @@ public class ServiceTest extends ServiceTestCase<StumblerService> implements Asy
                 Intent intent = new Intent(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
                 wifiScanner.onReceive(mContext, intent);
 
-                //sendWifiAndCell(wifiScanner, cellScanner);
+                sendWifiAndCell(wifiScanner, cellScanner);
             }
 
             Thread.sleep(3500);
@@ -286,6 +286,7 @@ public class ServiceTest extends ServiceTestCase<StumblerService> implements Asy
 
             Log.d(SharedConstants.appName, "•••••••••••••••••••• done passive scan test •••••••••••••••");
 
+            db.close();
         } catch (Exception e) {
             e.printStackTrace();
             assertTrue(false);

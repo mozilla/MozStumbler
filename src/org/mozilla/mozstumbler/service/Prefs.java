@@ -24,6 +24,7 @@ public final class Prefs {
     private static final String     GEOFENCE_HERE = "geofence_here";
     private static final String     GEOFENCE_SWITCH = "geofence_switch";
     public  static final String     WIFI_SCAN_ALWAYS = "wifi_scan_always";
+    public  static final String     FIREFOX_SCAN_ENABLED = "firefox_scan_on";
 
     private final SharedPreferences mSharedPrefs;
     static private Prefs sInstance;
@@ -46,6 +47,8 @@ public final class Prefs {
     /** Prefs must be created on application startup or service startup.
      * TODO: turn into regular singleton if Context dependency can be removed. */
     public static void createGlobalInstance(Context c) {
+        if (sInstance != null)
+            return;
         sInstance = new Prefs(c);
     }
 
@@ -81,6 +84,9 @@ public final class Prefs {
     ///
     /// Getters
     ///
+    public boolean getFirefoxScanEnabled() {
+        return getBoolPrefWithDefault(FIREFOX_SCAN_ENABLED, false);
+    }
 
     public boolean getGeofenceEnabled() {
         return getBoolPrefWithDefault(GEOFENCE_SWITCH, false);
@@ -105,6 +111,10 @@ public final class Prefs {
         return TextUtils.isEmpty(nickname) ? null : nickname;
     }
 
+    public void setFirefoxScanEnabled(boolean on) {
+        setBoolPref(FIREFOX_SCAN_ENABLED, on);
+    }
+
     public void setNickname(String nick) {
         if (nick != null) {
             nick = nick.trim();
@@ -125,6 +135,7 @@ public final class Prefs {
     public void setWifiScanAlways(boolean b) {
         setBoolPref(WIFI_SCAN_ALWAYS, b);
     }
+
     ///
     /// Privates
     ///
@@ -132,7 +143,6 @@ public final class Prefs {
     private String getStringPref(String key) {
         return getPrefs().getString(key, null);
     }
-
 
     private boolean getBoolPrefWithDefault(String key, boolean def) {
         return getPrefs().getBoolean(key, def);

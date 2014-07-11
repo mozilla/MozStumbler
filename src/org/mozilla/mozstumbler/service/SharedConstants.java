@@ -37,7 +37,6 @@ public class SharedConstants {
     public static int appVersionCode = 0;
     public static String appName = "StumblerService";
     public static boolean isDebug;
-    public static String mozillaApiKey;
 
     /* The log activity will clear this periodically, and display the messages */
     public static ConcurrentLinkedQueue<String> guiLogMessageBuffer;

@@ -7,9 +7,6 @@ package org.mozilla.mozstumbler.service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageManager;
-import android.os.Bundle;
 import android.util.Log;
 
 /**
@@ -34,13 +31,17 @@ public class PassiveServiceReceiver extends BroadcastReceiver {
         Prefs.createGlobalInstance(context);
 
         String action = intent.getAction();
+        String mozApiKey = null;
+
         if (action.contains(".STUMBLER_PREF")) {
-            boolean isOn = intent.getBooleanExtra("enabled", false);
-            Log.d(LOGTAG, "PREF:" + intent.getStringExtra("pref") + ":" + isOn);
-            Prefs.getInstance().setFirefoxScanEnabled(isOn);
+            SharedConstants.isDebug = intent.getBooleanExtra("is_debug", false);
+            StumblerService.sFirefoxStumblingEnabled = intent.getBooleanExtra("enabled", false) ?
+                    StumblerService.FirefoxStumbleState.ON :
+                    StumblerService.FirefoxStumbleState.OFF;
+            mozApiKey = intent.getStringExtra("moz_mozilla_api_key");
         }
 
-        if (!Prefs.getInstance().getFirefoxScanEnabled()) {
+        if (StumblerService.sFirefoxStumblingEnabled == StumblerService.FirefoxStumbleState.OFF) {
             context.stopService(new Intent(context, StumblerService.class));
             sIsStarted = false;
             return;
@@ -50,16 +51,13 @@ public class PassiveServiceReceiver extends BroadcastReceiver {
             return;
         }
         sIsStarted = true;
-        
-        if (SharedConstants.isDebug) Log.d(LOGTAG, "Starting Passively");
 
-        if (SharedConstants.mozillaApiKey == null) {
-           //TODO: get this sent from Firefox
-           // TODO: get isDebug from Firefox also
-        }
+        if (SharedConstants.isDebug) Log.d(LOGTAG, "Starting Passively");
 
         Intent startServiceIntent = new Intent(context, StumblerService.class);
         startServiceIntent.putExtra(StumblerService.ACTION_START_PASSIVE, true);
+        startServiceIntent.putExtra(StumblerService.ACTION_EXTRA_MOZ_API_KEY, mozApiKey);
+
         context.startService(startServiceIntent);
     }
 }

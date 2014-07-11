@@ -25,9 +25,15 @@ import java.util.TimerTask;
 
 public final class StumblerService extends PersistentIntentService
         implements ServerContentResolver.DatabaseIsEmptyTracker {
-    public  static final String ACTION_BASE = SharedConstants.ACTION_NAMESPACE;
-    public  static final String ACTION_START_PASSIVE = ACTION_BASE + ".START_PASSIVE";
     private static final String LOGTAG          = StumblerService.class.getName();
+    public static final String ACTION_BASE = SharedConstants.ACTION_NAMESPACE;
+    public static final String ACTION_START_PASSIVE = ACTION_BASE + ".START_PASSIVE";
+    public static final String ACTION_EXTRA_MOZ_API_KEY = ACTION_BASE + ".MOZKEY";
+
+    public enum FirefoxStumbleState {
+        UNKNOWN, ON, OFF
+    }
+    public static FirefoxStumbleState sFirefoxStumblingEnabled = FirefoxStumbleState.UNKNOWN;
 
     private Scanner                mScanner;
     private Reporter               mReporter;
@@ -124,13 +130,10 @@ public final class StumblerService extends PersistentIntentService
         super.onCreate();
         setIntentRedelivery(true);
 
-        if (SharedConstants.isDebug) Log.d(LOGTAG, "onCreate");
-
         if (SharedConstants.appVersionCode < 1) {
             //TODO look at how to set these
             //SharedConstants.appVersionName =;
             //SharedConstants.appVersionCode =;
-            SharedConstants.isDebug = true;
         }
 
         Prefs.createGlobalInstance(this);
@@ -146,6 +149,11 @@ public final class StumblerService extends PersistentIntentService
     @Override
     public void onDestroy() {
         super.onDestroy();
+
+        if (sFirefoxStumblingEnabled == FirefoxStumbleState.OFF) {
+            Prefs.getInstance().setFirefoxScanEnabled(false);
+        }
+
         if (SharedConstants.isDebug) Log.d(LOGTAG, "onDestroy");
 
         if (SharedConstants.stumblerContentResolver != null &&
@@ -165,6 +173,19 @@ public final class StumblerService extends PersistentIntentService
                 if (!SharedConstants.stumblerContentResolver.isDbEmpty()) {
                     startPassiveModeUploadTimer();
                 }
+            }
+
+            if (sFirefoxStumblingEnabled == FirefoxStumbleState.UNKNOWN) {
+                if (!Prefs.getInstance().getFirefoxScanEnabled()) {
+                    stopSelf();
+                }
+            }
+
+            Prefs.getInstance().setFirefoxScanEnabled(true);
+
+            String apiKey = intent.getStringExtra(ACTION_EXTRA_MOZ_API_KEY);
+            if (apiKey != null) {
+                Prefs.getInstance().setMozApiKey(apiKey);
             }
 
             mScanner.setPassiveMode(true);

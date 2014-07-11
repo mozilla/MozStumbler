@@ -24,7 +24,8 @@ public final class Prefs {
     private static final String     GEOFENCE_HERE = "geofence_here";
     private static final String     GEOFENCE_SWITCH = "geofence_switch";
     public  static final String     WIFI_SCAN_ALWAYS = "wifi_scan_always";
-    public  static final String     FIREFOX_SCAN_ENABLED = "firefox_scan_on";
+    private static final String     FIREFOX_SCAN_ENABLED = "firefox_scan_on";
+    private static final String     MOZ_API_KEY = "moz_api_key";
 
     private final SharedPreferences mSharedPrefs;
     static private Prefs sInstance;
@@ -81,11 +82,20 @@ public final class Prefs {
         apply(editor);
     }
 
+    public void setMozApiKey(String s) {
+        setStringPref(MOZ_API_KEY, s);
+    }
+
     ///
     /// Getters
     ///
     public boolean getFirefoxScanEnabled() {
         return getBoolPrefWithDefault(FIREFOX_SCAN_ENABLED, false);
+    }
+
+    public String getMozApiKey() {
+        String s = getStringPref(MOZ_API_KEY);
+        return (s == null)? "no-mozilla-api-key" : s;
     }
 
     public boolean getGeofenceEnabled() {

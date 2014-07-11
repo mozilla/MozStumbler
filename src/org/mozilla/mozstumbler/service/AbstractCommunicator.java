@@ -40,9 +40,14 @@ public abstract class AbstractCommunicator {
         mUserAgent = appName + '/' + SharedConstants.appVersionName;
     }
 
+    private static String sMozApiKey;
+
     private void setHeaders() {
         try {
-            URL url = new URL(getUrlString() + "?key=" + SharedConstants.mozillaApiKey);
+            if (sMozApiKey == null) {
+                sMozApiKey = Prefs.getInstance().getMozApiKey();
+            }
+            URL url = new URL(getUrlString() + "?key=" + sMozApiKey);
             httpURLConnection = (HttpURLConnection) url.openConnection();
         } catch (MalformedURLException e) {
             throw new IllegalArgumentException(e);

@@ -35,14 +35,17 @@ public class GPSScanner implements LocationListener {
     private static final String   LOGTAG                  = GPSScanner.class.getName();
     private static final long     GEO_MIN_UPDATE_TIME     = 1000;
     private static final float    GEO_MIN_UPDATE_DISTANCE = 10;
+    private static final long     PASSIVE_GEO_MIN_UPDATE_TIME     = 3000;
+    private static final float    PASSIVE_GEO_MIN_UPDATE_DISTANCE = 30;
     private static final int      MIN_SAT_USED_IN_FIX     = 3;
 
     private final Context         mContext;
     private GpsStatus.Listener    mGPSListener;
 
     private int mLocationCount;
-    private double mLatitude;
-    private double mLongitude;
+
+    private Location mLocation = new Location("internal");
+
     private LocationBlockList mBlockList = new LocationBlockList();
     private boolean mAutoGeofencing;
     private boolean mIsPassiveMode;
@@ -65,7 +68,9 @@ public class GPSScanner implements LocationListener {
 
     private void startPassiveMode() {
         LocationManager locationManager = (LocationManager)mContext.getSystemService(Context.LOCATION_SERVICE);
-        locationManager.requestLocationUpdates(LocationManager.PASSIVE_PROVIDER, 0, 0, this);
+        locationManager.requestLocationUpdates(LocationManager.PASSIVE_PROVIDER,
+                                               0,
+                                               0, this);
     }
 
     private void startActiveMode() {
@@ -121,11 +126,11 @@ public class GPSScanner implements LocationListener {
     }
 
     public double getLatitude() {
-        return mLatitude;
+        return mLocation.getLatitude();
     }
 
     public double getLongitude() {
-        return mLongitude;
+        return mLocation.getLongitude();
     }
 
     public void checkPrefs() {
@@ -159,6 +164,16 @@ public class GPSScanner implements LocationListener {
             return;
         }
 
+        // Seem to get greater likelihood of non-fused location with higher update freq.
+        // Check dist and time threshold here, not set on the listener.
+        if (mIsPassiveMode &&
+            (location.distanceTo(mLocation) < PASSIVE_GEO_MIN_UPDATE_DISTANCE ||
+             location.getTime() - mLocation.getTime() < PASSIVE_GEO_MIN_UPDATE_TIME))
+        {
+            //if (SharedConstants.isDebug) Log.d(LOGTAG, "Distance/time below threshold:" + (location.getTime() - mLocation.getTime()));
+            return;
+        }
+
         java.util.Date date = new java.util.Date(location.getTime());
         SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
         String time = formatter.format(date);
@@ -174,8 +189,7 @@ public class GPSScanner implements LocationListener {
 
         if (SharedConstants.isDebug) Log.d(LOGTAG, "New location: " + location);
 
-        mLongitude = location.getLongitude();
-        mLatitude = location.getLatitude();
+        mLocation = location;
 
         if (!mAutoGeofencing) { reportNewLocationReceived(location); }
         mLocationCount++;
@@ -213,14 +227,14 @@ public class GPSScanner implements LocationListener {
         i.putExtra(Intent.EXTRA_SUBJECT, SUBJECT_NEW_LOCATION);
         i.putExtra(NEW_LOCATION_ARG_LOCATION, location);
         i.putExtra(ACTION_ARG_TIME, System.currentTimeMillis());
-        LocalBroadcastManager.getInstance(mContext).sendBroadcast(i);
+        LocalBroadcastManager.getInstance(mContext).sendBroadcastSync(i);
     }
 
     private void reportLocationLost() {
         Intent i = new Intent(ACTION_GPS_UPDATED);
         i.putExtra(Intent.EXTRA_SUBJECT, SUBJECT_LOCATION_LOST);
         i.putExtra(ACTION_ARG_TIME, System.currentTimeMillis());
-        LocalBroadcastManager.getInstance(mContext).sendBroadcast(i);
+        LocalBroadcastManager.getInstance(mContext).sendBroadcastSync(i);
     }
 
     private void reportNewGpsStatus(int fixes, int sats) {
@@ -229,6 +243,6 @@ public class GPSScanner implements LocationListener {
         i.putExtra(NEW_STATUS_ARG_FIXES, fixes);
         i.putExtra(NEW_STATUS_ARG_SATS, sats);
         i.putExtra(ACTION_ARG_TIME, System.currentTimeMillis());
-        LocalBroadcastManager.getInstance(mContext).sendBroadcast(i);
+        LocalBroadcastManager.getInstance(mContext).sendBroadcastSync(i);
     }
 }

@@ -31,4 +31,8 @@ public interface ContentResolverInterface {
     public void bulkUpdateOneColumn(Uri uri, String columnName, Map<String, String> idAndValuesToUpdate);
 
     public void shutdown();
+
+    public void notifyDbIsEmpty(boolean isEmpty);
+
+    public boolean isDbEmpty();
 }

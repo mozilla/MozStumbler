@@ -73,6 +73,10 @@ public class CellScanner {
             return;
         }
 
+        if (mCellScanTimer != null) {
+            return;
+        }
+
         mCellScanTimer = new Timer();
 
         mCellScanTimer.schedule(new TimerTask() {
@@ -105,7 +109,7 @@ public class CellScanner {
                 Intent intent = new Intent(ACTION_CELLS_SCANNED);
                 intent.putParcelableArrayListExtra(ACTION_CELLS_SCANNED_ARG_CELLS, cells);
                 intent.putExtra(ACTION_CELLS_SCANNED_ARG_TIME, curTime);
-                LocalBroadcastManager.getInstance(mContext).sendBroadcast(intent);
+                LocalBroadcastManager.getInstance(mContext).sendBroadcastSync(intent);
             }
         }, 0, CELL_MIN_UPDATE_TIME);
     }

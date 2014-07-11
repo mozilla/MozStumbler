@@ -4,12 +4,15 @@
 
 package org.mozilla.mozstumbler.service;
 
-import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Binder;
 import android.os.IBinder;
+import android.os.PowerManager;
+import android.provider.BaseColumns;
 import android.util.Log;
-
+import org.mozilla.mozstumbler.service.datahandling.DatabaseContract;
 import org.mozilla.mozstumbler.service.datahandling.ServerContentResolver;
 import org.mozilla.mozstumbler.service.datahandling.StumblerBundleReceiver;
 import org.mozilla.mozstumbler.service.scanners.cellscanner.CellScanner;
@@ -19,19 +22,27 @@ import org.mozilla.mozstumbler.service.utils.NetworkUtils;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public final class StumblerService extends Service {
+public final class StumblerService extends PersistentIntentService
+        implements ServerContentResolver.DatabaseIsEmptyTracker {
     public  static final String ACTION_BASE = SharedConstants.ACTION_NAMESPACE;
     public  static final String ACTION_START_PASSIVE = ACTION_BASE + ".START_PASSIVE";
     private static final String LOGTAG          = StumblerService.class.getName();
 
     private Scanner                mScanner;
     private Reporter               mReporter;
-
-    // our default receiver for StumblerBundles. we may want to
-    // let the application disable this in the future.
     private StumblerBundleReceiver mStumblerBundleReceiver = new StumblerBundleReceiver();
     private boolean                mIsBound;
     private final IBinder          mBinder         = new StumblerBinder();
+    private Timer                  mPassiveUploadTimer;
+    private static boolean sDidCheckForStaleDatabase;
+
+    public StumblerService() {
+        super("StumblerService");
+    }
+
+    public StumblerService(String name) {
+        super(name);
+    }
 
     public final class StumblerBinder extends Binder {
         public StumblerService getService() {
@@ -106,6 +117,8 @@ public final class StumblerService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+        setIntentRedelivery(true);
+
         if (SharedConstants.isDebug) Log.d(LOGTAG, "onCreate");
 
         if (SharedConstants.appVersionCode < 1) {
@@ -140,31 +153,18 @@ public final class StumblerService extends Service {
     }
 
     @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
+    protected void onHandleIntent(Intent intent) {
         if (intent != null && intent.getBooleanExtra(ACTION_START_PASSIVE, false)) {
             if (SharedConstants.stumblerContentResolver == null) {
-                SharedConstants.stumblerContentResolver = new ServerContentResolver(this);
+                SharedConstants.stumblerContentResolver = new ServerContentResolver(this, this);
+                if (!SharedConstants.stumblerContentResolver.isDbEmpty()) {
+                    startPassiveModeUploadTimer();
+                }
             }
 
             mScanner.setPassiveMode(true);
             startScanning();
-
-            // TODO way more logic here. Decide on the timing. Perhaps trigger based on wake from sleep, or when network status changed.
-            long delay_ms = 10 * 60 * 1000; // ten mins
-            long period_ms = 60 * 60 * 1000; // one hour
-            new Timer().schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    if (!mScanner.isBatteryLow()) {
-                        AsyncUploader uploader = new AsyncUploader(null /* don't need to listen for completion */);
-                        uploader.execute();
-                    }
-                }
-            }, delay_ms, period_ms);
         }
-
-        // keep running!
-        return Service.START_STICKY;
     }
 
     @Override
@@ -189,4 +189,62 @@ public final class StumblerService extends Service {
         mIsBound = true;
         if (SharedConstants.isDebug)Log.d(LOGTAG,"onRebind");
     }
+
+    void startPassiveModeUploadTimer() {
+        if (mPassiveUploadTimer != null)
+            return;
+
+        mPassiveUploadTimer = new Timer();
+
+        // Periodically check if wifi is available, screen is on, upload any bundles
+        long delay_ms = 3 * 60 * 1000;
+        long period_ms = 3 * 60 * 1000;
+
+        mPassiveUploadTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                String[] projection = { DatabaseContract.Reports.TIME };
+                Cursor cursor = SharedConstants.stumblerContentResolver.query(DatabaseContract.Reports.CONTENT_URI,
+                        projection, null, null, BaseColumns._ID + " limit 1");
+                if (cursor.getCount() < 1) {
+                    cursor.close();
+                    databaseIsEmpty(true);
+                    return;
+                }
+
+                cursor.moveToLast();
+                long time = cursor.getLong(cursor.getColumnIndex(DatabaseContract.Reports.TIME));
+                cursor.close();
+                if (time > 0 && !sDidCheckForStaleDatabase) {
+                    sDidCheckForStaleDatabase = true;
+                    long currentTime = System.currentTimeMillis();
+                    long msPerWeek = 604800 * 1000;
+                    if (currentTime - time > 2 * msPerWeek) {
+                        SharedConstants.stumblerContentResolver.delete(DatabaseContract.Reports.CONTENT_URI, null, null);
+                        databaseIsEmpty(true);
+                        return;
+                    }
+                }
+
+                PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+                if (!mScanner.isBatteryLow() && NetworkUtils.getInstance().isWifiAvailable() &&
+                    pm.isScreenOn())
+                {
+                    AsyncUploader uploader = new AsyncUploader(null /* don't need to listen for completion */);
+                    uploader.execute();
+                }
+            }
+        }, delay_ms, period_ms);
+    }
+
+
+    public void databaseIsEmpty(boolean isEmpty) {
+        if (isEmpty && mPassiveUploadTimer != null) {
+            mPassiveUploadTimer.cancel();
+            mPassiveUploadTimer = null;
+        } else {
+            startPassiveModeUploadTimer();
+        }
+    }
+
 }

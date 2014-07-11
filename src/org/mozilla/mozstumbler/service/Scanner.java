@@ -77,7 +77,7 @@ public class Scanner {
           @Override
           public void run() {
               Intent flush = new Intent(Reporter.ACTION_FLUSH_TO_DB);
-              LocalBroadcastManager.getInstance(mContext).sendBroadcast(flush);
+              LocalBroadcastManager.getInstance(mContext).sendBroadcastSync(flush);
           }
         }, when);
     }

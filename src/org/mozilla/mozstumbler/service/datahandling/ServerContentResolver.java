@@ -16,15 +16,25 @@ import java.util.Map;
 
 public class ServerContentResolver implements ContentResolverInterface {
 
-    DbCommunicator mDbCommunicator;
+    public interface DatabaseIsEmptyTracker {
+        public void databaseIsEmpty(boolean isEmpty);
+    }
 
-    public ServerContentResolver(Context c) {
+    DbCommunicator mDbCommunicator;
+    DatabaseIsEmptyTracker mTracker;
+
+    public ServerContentResolver(Context c, DatabaseIsEmptyTracker tracker) {
         mDbCommunicator = new DbCommunicator(c);
+        mTracker = tracker;
     }
 
     @Override
     public android.net.Uri insert(android.net.Uri url, android.content.ContentValues values) {
-        return mDbCommunicator.insert(url, values);
+        Uri uri = mDbCommunicator.insert(url, values);
+        if (uri != null) {
+            notifyDbIsEmpty(false);
+        }
+        return uri;
     }
 
     @Override
@@ -80,5 +90,16 @@ public class ServerContentResolver implements ContentResolverInterface {
     public void shutdown() {
         mDbCommunicator.closeDb();
     }
+
+    @Override
+    public void notifyDbIsEmpty(boolean isEmpty) {
+        if (mTracker != null)
+            mTracker.databaseIsEmpty(isEmpty);
+    }
+
+    public boolean isDbEmpty() {
+        return mDbCommunicator.isDbEmpty();
+    }
+
 
 }

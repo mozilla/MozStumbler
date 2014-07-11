@@ -7,6 +7,7 @@ import android.content.OperationApplicationException;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.RemoteException;
+import android.provider.BaseColumns;
 import android.util.Log;
 import org.mozilla.mozstumbler.service.datahandling.ContentResolverInterface;
 import org.mozilla.mozstumbler.service.datahandling.DatabaseContract;
@@ -20,6 +21,16 @@ public class ClientContentResolver implements ContentResolverInterface {
 
     public ClientContentResolver(ContentResolver contentResolver) {
         mContentResolver = contentResolver;
+    }
+
+    @Override
+    public void notifyDbIsEmpty(boolean isEmpty) {}
+
+    @Override
+    public boolean isDbEmpty() {
+        Cursor c = mContentResolver.query(DatabaseContract.Reports.CONTENT_URI,
+                null, null, null, BaseColumns._ID + " limit 1");
+        return c.getCount() == 0;
     }
 
     @Override

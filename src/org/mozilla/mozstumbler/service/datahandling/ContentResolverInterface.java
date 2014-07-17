@@ -15,9 +15,6 @@ public interface ContentResolverInterface {
 
     public android.net.Uri insert(android.net.Uri url, android.content.ContentValues values);
 
-    public android.content.ContentProviderResult[] applyBatch(java.lang.String authority, java.util.ArrayList<android.content.ContentProviderOperation> operations)
-            throws android.os.RemoteException, android.content.OperationApplicationException;
-
     public int delete(android.net.Uri url, java.lang.String where, java.lang.String[] selectionArgs);
 
     public int update(android.net.Uri uri, android.content.ContentValues values, java.lang.String where, java.lang.String[] selectionArgs);

@@ -1,7 +1,6 @@
 package org.mozilla.mozstumbler.client;
 
 import android.app.AlertDialog;
-
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -13,9 +12,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -23,7 +19,6 @@ import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 import org.mozilla.mozstumbler.BuildConfig;
-import org.mozilla.mozstumbler.client.datahandling.ClientContentResolver;
 import org.mozilla.mozstumbler.service.datahandling.ServerContentResolver;
 import org.mozilla.mozstumbler.service.utils.DateTimeUtils;
 import org.mozilla.mozstumbler.client.mapview.MapActivity;
@@ -43,7 +38,7 @@ public final class MainActivity extends FragmentActivity {
     public static final String ACTION_UNPAUSE_SCANNING = ACTION_BASE + "UNPAUSE_SCANNING";
 
     private static final String LEADERBOARD_URL = "https://location.services.mozilla.com/leaders";
-   
+
     int                      mGpsFixes;
     int                      mGpsSats;
     private boolean          mGeofenceHere = false;
@@ -82,13 +77,9 @@ public final class MainActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        SharedConstants.stumblerContentResolver = new ClientContentResolver(getContentResolver());
-
         if (BuildConfig.MOZILLA_API_KEY != null) {
             Updater.checkForUpdates(this);
         }
-
-        getSupportLoaderManager().initLoader(0, null, mSyncStatsLoaderCallbacks);
 
         Log.d(LOGTAG, "onCreate");
     }
@@ -182,7 +173,8 @@ public final class MainActivity extends FragmentActivity {
         }
         TextView geofence_tv = (TextView) findViewById(R.id.geofence_status);
         geofence_tv.setTextColor(isGeofenced ? Color.RED : Color.BLACK);
-    }
+        showUploadStats();
+   }
 
     public void onToggleScanningClicked(View v) {
         getApp().toggleScanning(this);
@@ -274,45 +266,36 @@ public final class MainActivity extends FragmentActivity {
         }
     }
 
-    private final LoaderManager.LoaderCallbacks<Cursor> mSyncStatsLoaderCallbacks =
-            new LoaderManager.LoaderCallbacks<Cursor>() {
+    public void showUploadStats() {
+        if (SharedConstants.stumblerContentResolver == null)
+            return;
 
-        @Override
-        public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-            return new CursorLoader(MainActivity.this, DatabaseContract.Stats.CONTENT_URI,
-                    null, null, null, null);
-        }
+        long lastUploadTime = 0;
+        long observationsSent = 0;
 
-        @Override
-        public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-            long lastUploadTime = 0;
-            long observationsSent = 0;
-            if (SharedConstants.isDebug) Log.v(LOGTAG, "mSyncStatsLoaderCallbacks.onLoadFinished()");
-
-            if (cursor != null) {
+        Cursor cursor = SharedConstants.stumblerContentResolver.query(DatabaseContract.Stats.CONTENT_URI, null, null, null, null);
+        if (cursor != null) {
+            try {
                 cursor.moveToPosition(-1);
                 while (cursor.moveToNext()) {
                     String key = cursor.getString(cursor.getColumnIndex(DatabaseContract.Stats.KEY));
                     String value = cursor.getString(cursor.getColumnIndex(DatabaseContract.Stats.VALUE));
                     if (DatabaseContract.Stats.KEY_LAST_UPLOAD_TIME.equals(key)) {
                         lastUploadTime = Long.valueOf(value);
-                    }else if (DatabaseContract.Stats.KEY_OBSERVATIONS_SENT.equals(key)) {
+                    } else if (DatabaseContract.Stats.KEY_OBSERVATIONS_SENT.equals(key)) {
                         observationsSent = Long.valueOf(value);
                     }
                 }
+            } finally {
+                cursor.close();
             }
-            String lastUploadTimeString = (lastUploadTime > 0)
-                    ? DateTimeUtils.formatTimeForLocale(lastUploadTime)
-                    : "-";
-            formatTextView(R.id.last_upload_time, R.string.last_upload_time, lastUploadTimeString);
-            formatTextView(R.id.reports_sent, R.string.reports_sent, observationsSent);
         }
-
-        @Override
-        public void onLoaderReset(Loader<Cursor> cursorLoader) {
-
-        }
-    };
+        String lastUploadTimeString = (lastUploadTime > 0)
+                ? DateTimeUtils.formatTimeForLocale(lastUploadTime)
+                : "-";
+        formatTextView(R.id.last_upload_time, R.string.last_upload_time, lastUploadTimeString);
+        formatTextView(R.id.reports_sent, R.string.reports_sent, observationsSent);
+    }
 
 
 }

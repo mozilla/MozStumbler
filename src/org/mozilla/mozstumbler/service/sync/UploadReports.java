@@ -54,7 +54,7 @@ public class UploadReports {
         mContentResolver = SharedConstants.stumblerContentResolver;
     }
 
-    public void uploadReports(boolean ignoreNetworkStatus, SyncResult syncResult) {
+    public void uploadReports(boolean ignoreNetworkStatus, SyncResult syncResult, Runnable progressListener) {
         long uploadedObservations = 0;
         long uploadedCells = 0;
         long uploadedWifis = 0;
@@ -103,6 +103,8 @@ public class UploadReports {
             }
 
             queueMinId = batch.maxId;
+            if (progressListener != null)
+                progressListener.run();
         }
 
         try {
@@ -118,6 +120,7 @@ public class UploadReports {
     }
 
     private long getMaxId() {
+        assert(mContentResolver != null); // trying to sniff out https://github.com/mozilla/MozStumbler/issues/696
         Cursor c = mContentResolver.query(DatabaseContract.Reports.CONTENT_URI_SUMMARY,
                 new String[]{DatabaseContract.Reports.MAX_ID}, null, null, null);
         if (c != null) {

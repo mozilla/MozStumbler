@@ -194,12 +194,14 @@ public class WifiScanner extends BroadcastReceiver {
     }
 
     private void reportScanResults(ArrayList<ScanResult> scanResults) {
-        if (scanResults.isEmpty()) return;
+        if (scanResults.isEmpty())
+            return;
+
+        if (SharedConstants.isDebug) Log.d(LOGTAG, scanResults.toString());
+
         Intent i = new Intent(ACTION_WIFIS_SCANNED);
         i.putParcelableArrayListExtra(ACTION_WIFIS_SCANNED_ARG_RESULTS, scanResults);
         i.putExtra(ACTION_WIFIS_SCANNED_ARG_TIME, System.currentTimeMillis());
         LocalBroadcastManager.getInstance(mContext).sendBroadcastSync(i);
     }
-
-
 }

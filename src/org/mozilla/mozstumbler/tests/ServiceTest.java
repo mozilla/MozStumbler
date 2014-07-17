@@ -12,12 +12,12 @@ import android.telephony.TelephonyManager;
 import android.test.ServiceTestCase;
 import android.util.Log;
 
-import org.mozilla.mozstumbler.client.datahandling.ClientContentResolver;
 import org.mozilla.mozstumbler.service.Scanner;
 import org.mozilla.mozstumbler.service.SharedConstants;
 import org.mozilla.mozstumbler.service.StumblerService;
 import org.mozilla.mozstumbler.service.datahandling.Database;
 import org.mozilla.mozstumbler.service.datahandling.DatabaseContract;
+import org.mozilla.mozstumbler.service.datahandling.ServerContentResolver;
 import org.mozilla.mozstumbler.service.scanners.GPSScanner;
 import org.mozilla.mozstumbler.service.scanners.WifiScanner;
 import org.mozilla.mozstumbler.service.scanners.cellscanner.CellInfo;
@@ -39,6 +39,9 @@ public class ServiceTest extends ServiceTestCase<StumblerService> implements Asy
     public ServiceTest() {
         super(StumblerService.class);
     }
+
+    @Override
+    public void onUploadProgress() {}
 
     @Override
     protected void setUp() throws Exception {
@@ -217,7 +220,7 @@ public class ServiceTest extends ServiceTestCase<StumblerService> implements Asy
         WifiScanner.sIsTestMode = true;
 
         StumblerService service = startPassiveService();
-        SharedConstants.stumblerContentResolver= new ClientContentResolver(getContext().getContentResolver());
+        SharedConstants.stumblerContentResolver= new ServerContentResolver(this.getContext(), null);
         try {
             SQLiteDatabase db = getStumblerDatabase();
             long[] cellAndWifiOrig = new long[2];

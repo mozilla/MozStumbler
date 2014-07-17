@@ -12,18 +12,26 @@ import android.os.AsyncTask;
 public class AsyncUploader extends AsyncTask<Void, Void, SyncResult> {
     public interface AsyncUploaderListener {
         public void onUploadComplete(SyncResult result);
+        public void onUploadProgress();
     }
 
+    private final Object mListenerLock = new Object();
     private AsyncUploaderListener mListener;
     private SyncResult mSyncResult;
 
-    private static boolean sIsUploading;
+    public static boolean sIsUploading;
 
     // TODO: clarify how we want this accessed
     public boolean mShouldIgnoreWifiStatus = false;
 
     public AsyncUploader(AsyncUploaderListener listener) {
         mListener = listener;
+    }
+
+    public void clearListener() {
+        synchronized (mListenerLock) {
+            mListener = null;
+        }
     }
 
     @Override
@@ -34,22 +42,42 @@ public class AsyncUploader extends AsyncTask<Void, Void, SyncResult> {
         sIsUploading = true;
         mSyncResult = new SyncResult();
         UploadReports uploadReports = new UploadReports();
-        uploadReports.uploadReports(mShouldIgnoreWifiStatus, mSyncResult);
+        Runnable progressListener = null;
+
+        // no need to lock here, lock is checked again later
+        if (mListener != null) {
+            progressListener = new Runnable() {
+                @Override
+                public void run() {
+                    synchronized (mListenerLock) {
+                        if (mListener != null)
+                            mListener.onUploadProgress();
+                    }
+                }
+            };
+        }
+
+        uploadReports.uploadReports(mShouldIgnoreWifiStatus, mSyncResult, progressListener);
+
         //TODO consider checking result for error, trying again after sleep
 
         return mSyncResult;
     }
     @Override
     protected void onPostExecute(SyncResult result) {
-        if (mListener != null){
-            mListener.onUploadComplete(result);
-        }
         sIsUploading = false;
+        synchronized (mListenerLock) {
+            if (mListener != null) {
+                mListener.onUploadComplete(result);
+            }
+        }
     }
     @Override
     protected void onCancelled(SyncResult result) {
         sIsUploading = false;
     }
 
-    public SyncResult getSyncResult() { return mSyncResult; }
+    public SyncResult getSyncResult() {
+        return mSyncResult;
+    }
 }

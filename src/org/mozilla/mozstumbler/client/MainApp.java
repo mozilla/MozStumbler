@@ -19,13 +19,13 @@ import android.util.Log;
 import java.io.File;
 import org.mozilla.mozstumbler.BuildConfig;
 import org.mozilla.mozstumbler.R;
-import org.mozilla.mozstumbler.client.sync.SyncUtils;
 import org.mozilla.mozstumbler.service.Prefs;
 import org.mozilla.mozstumbler.service.SharedConstants;
 import org.mozilla.mozstumbler.service.StumblerService;
 import org.mozilla.mozstumbler.service.scanners.GPSScanner;
 import org.mozilla.mozstumbler.service.scanners.WifiScanner;
 import org.mozilla.mozstumbler.service.scanners.cellscanner.CellScanner;
+import org.mozilla.mozstumbler.service.sync.AsyncUploader;
 import org.mozilla.mozstumbler.service.utils.NetworkUtils;
 
 public class MainApp extends Application {
@@ -76,7 +76,6 @@ public class MainApp extends Application {
             enableStrictMode();
         }
 
-        SyncUtils.CreateSyncAccount(this);
 
         mReceiver = new ServiceBroadcastReceiver();
         mReceiver.register();
@@ -123,7 +122,9 @@ public class MainApp extends Application {
     private void stopScanning() {
         mStumblerService.stopForeground(true);
         mStumblerService.stopScanning();
-        SyncUtils.TriggerRefresh(false);
+
+        AsyncUploader uploader = new AsyncUploader(null /* don't need to listen for completion */);
+        uploader.execute();
     }
 
     public void toggleScanning(MainActivity caller) {

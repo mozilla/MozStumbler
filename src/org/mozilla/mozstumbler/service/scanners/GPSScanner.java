@@ -100,7 +100,7 @@ public class GPSScanner implements LocationListener {
                         if (fixes < MIN_SAT_USED_IN_FIX) {
                             reportLocationLost();
                         }
-                        if (SharedConstants.isDebug) Log.d(LOGTAG, "onGpsStatusChange - satellites: " + satellites + " fixes: " + fixes);
+                        //if (SharedConstants.isDebug) Log.d(LOGTAG, "onGpsStatusChange - satellites: " + satellites + " fixes: " + fixes);
                     } else if (event == GpsStatus.GPS_EVENT_STOPPED) {
                         reportLocationLost();
                     }

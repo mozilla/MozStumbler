@@ -38,12 +38,6 @@ public class ServerContentResolver implements ContentResolverInterface {
     }
 
     @Override
-    public android.content.ContentProviderResult[] applyBatch(java.lang.String authority, java.util.ArrayList<android.content.ContentProviderOperation> operations)
-            throws android.os.RemoteException, android.content.OperationApplicationException {
-        return null;
-    }
-
-    @Override
     public int delete(android.net.Uri url, java.lang.String where, java.lang.String[] selectionArgs) {
         return mDbCommunicator.delete(url, where, selectionArgs);
     }

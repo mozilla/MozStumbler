@@ -120,7 +120,7 @@ public class UploadReports {
     private long getMaxId() {
         Cursor c = mContentResolver.query(DatabaseContract.Reports.CONTENT_URI_SUMMARY,
                 new String[]{DatabaseContract.Reports.MAX_ID}, null, null, null);
-        if (c != null && c.getCount() > 0) {
+        if (c != null) {
             try {
                 if (c.moveToFirst()) {
                     return c.getLong(0);

@@ -58,7 +58,7 @@ public final class SSIDBlockList {
         "CapitalBus", // Capital Bus on-bus WiFi (Taiwan)
         "CarPostal", // Swiss municipial busses on-bus WiFi (French speaking part)
         "CDWiFi",           // Ceske drahy (Czech railways): http://www.cd.cz/cd-online/-15765/
-	"CommuteNet", // Copenhagen S-Tog on-train WiFi: http://www.dsb.dk/s-tog/kampagner/fri-internet-i-s-tog
+        "CommuteNet", // Copenhagen S-Tog on-train WiFi: http://www.dsb.dk/s-tog/kampagner/fri-internet-i-s-tog
         "csadplzen_bus",    // CSAD Plzen bus hotspots: http://www.csadplzen.cz/?ob=aktuality#wifi7
         "EMT-Madrid",  // Empresa municipal de transportes de Madrid http://buswifi.com/
         "FlixBus", // FlixBus on-bus WiFi (Germany)
@@ -93,7 +93,7 @@ public final class SSIDBlockList {
         "ShuttleWiFi",
         "Southwest WiFi", // Southwest Airlines in-flight WiFi
         "SST-PR-1", // Sears Home Service van hotspot?!
-	"stagecoach-wifi", // Stagecoach on-bus WiFi (United Kingdom)
+        "stagecoach-wifi", // Stagecoach on-bus WiFi (United Kingdom)
         "Telekom_ICE", // Deutsche Bahn on-train WiFi
         "TPE-Free Bus", // Taipei City on-bus WiFi (Taiwan)
         "THSR-VeeTIME", // Taiwan High Speed Rail on-train WiFi
@@ -110,7 +110,6 @@ public final class SSIDBlockList {
         // Mobile devices
         "iPhone",
         "iphone",
-        "MIFI",
         "MIFI",
         "MiFi",
         "Mifi",

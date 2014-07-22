@@ -199,7 +199,13 @@ public class MainApp extends Application {
             }
 
             if (mMainActivity != null) {
-                mMainActivity.updateUI();
+                mMainActivity.runOnUiThread(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        mMainActivity.updateUI();
+                    }
+                });
             }
         }
     }

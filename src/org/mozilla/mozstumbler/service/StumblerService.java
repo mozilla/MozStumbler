@@ -7,6 +7,7 @@ package org.mozilla.mozstumbler.service;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.location.Location;
 import android.os.Binder;
 import android.os.IBinder;
 import android.os.PowerManager;
@@ -88,6 +89,10 @@ public final class StumblerService extends PersistentIntentService
 
     public double getLongitude() {
         return mScanner.getLongitude();
+    }
+
+    public Location getLocation() {
+        return mScanner.getLocation();
     }
 
     public int getWifiStatus() {

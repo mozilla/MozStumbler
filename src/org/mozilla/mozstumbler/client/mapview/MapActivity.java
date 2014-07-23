@@ -308,9 +308,7 @@ public final class MapActivity extends Activity {
             Log.d(LOGTAG, "requesting location...");
 
             StumblerService service = params[0];
-            final Location result = new Location("MozStumbler");
-            result.setLatitude(service.getLatitude());
-            result.setLongitude(service.getLongitude());
+            final Location result = service.getLocation();
             return result;
         }
 

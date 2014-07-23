@@ -216,11 +216,28 @@ public final class MapActivity extends Activity {
     private static class AccuracyCircleOverlay extends Overlay {
         private GeoPoint mPoint;
         private float mAccuracy;
+        private Paint mCircleFillPaint = new Paint();
+        private Paint mCircleStrokePaint = new Paint();
+        private Paint mCenterPaint = new Paint();
+        private Paint mCenterStrokePaint = new Paint();
 
         public AccuracyCircleOverlay(Context ctx, Location location) {
             super(ctx);
             mPoint = new GeoPoint(location.getLatitude(), location.getLongitude());
             mAccuracy = location.getAccuracy();
+
+            mCircleFillPaint.setARGB(40, 100, 100, 255);
+            mCircleFillPaint.setStyle(Paint.Style.FILL);
+
+            mCircleStrokePaint.setARGB(165, 100, 100, 255);
+            mCircleStrokePaint.setStyle(Paint.Style.STROKE);
+
+            mCenterPaint.setARGB(255, 100, 100, 255);
+            mCenterPaint.setStyle(Paint.Style.FILL);
+
+            mCenterStrokePaint.setARGB(255, 255, 255, 255);
+            mCenterStrokePaint.setStyle(Paint.Style.STROKE);
+            mCenterStrokePaint.setStrokeWidth(5);
         }
 
         protected void draw(Canvas c, MapView osmv, boolean shadow) {
@@ -230,23 +247,16 @@ public final class MapActivity extends Activity {
             Projection pj = osmv.getProjection();
             Point center = pj.toPixels(mPoint, null);
             float radius = pj.metersToEquatorPixels(mAccuracy);
-            Paint circle = new Paint();
-            circle.setARGB(0, 100, 100, 255);
 
             // Fill
-            circle.setAlpha(40);
-            circle.setStyle(Paint.Style.FILL);
-            c.drawCircle(center.x, center.y, radius, circle);
+            c.drawCircle(center.x, center.y, radius, mCircleFillPaint);
 
             // Border
-            circle.setAlpha(165);
-            circle.setStyle(Paint.Style.STROKE);
-            c.drawCircle(center.x, center.y, radius, circle);
+            c.drawCircle(center.x, center.y, radius, mCircleStrokePaint);
 
             // Center
-            circle.setAlpha(255);
-            circle.setStyle(Paint.Style.FILL);
-            c.drawCircle(center.x, center.y, 10, circle);
+            c.drawCircle(center.x, center.y, 15, mCenterPaint);
+            c.drawCircle(center.x, center.y, 15, mCenterStrokePaint);
         }
 
         public void setLocation(final Location location) {

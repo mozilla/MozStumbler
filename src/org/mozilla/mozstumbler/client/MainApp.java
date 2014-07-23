@@ -87,7 +87,7 @@ public class MainApp extends Application {
                 mStumblerService = serviceBinder.getService();
                 Log.d(LOGTAG, "Service connected");
                 if (mMainActivity != null) {
-                    mMainActivity.updateUI();
+                    mMainActivity.updateUiOnMainThread();
                 }
             }
 
@@ -199,7 +199,7 @@ public class MainApp extends Application {
             }
 
             if (mMainActivity != null) {
-                mMainActivity.updateUI();
+                mMainActivity.updateUiOnMainThread();
             }
         }
     }

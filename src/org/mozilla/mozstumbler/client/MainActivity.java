@@ -68,7 +68,7 @@ public final class MainActivity extends FragmentActivity {
         }
         setGeofenceText();
 
-        updateUI();
+        updateUiOnMainThread();
     }
 
     @Override
@@ -117,7 +117,16 @@ public final class MainActivity extends FragmentActivity {
         }
     }
 
-    protected void updateUI() {
+    protected void updateUiOnMainThread() {
+        this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                updateUI();
+            }
+        });
+    }
+
+    private void updateUI() {
         StumblerService service = getApp().getService();
         if (service == null) {
             return;
@@ -148,9 +157,8 @@ public final class MainActivity extends FragmentActivity {
         currentCellInfo = service.getCurrentCellInfoCount();
         isGeofenced = service.isGeofenced();
 
-        String lastLocationString = (mGpsFixes > 0 && locationsScanned > 0)
-                                    ? formatLocation(latitude, longitude)
-                                    : "-";
+        String lastLocationString = (mGpsFixes > 0 && locationsScanned > 0)?
+                                    formatLocation(latitude, longitude) : "-";
 
         formatTextView(R.id.gps_satellites, R.string.gps_satellites, mGpsFixes, mGpsSats);
         formatTextView(R.id.last_location, R.string.last_location, lastLocationString);

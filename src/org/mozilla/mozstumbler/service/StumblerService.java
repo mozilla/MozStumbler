@@ -4,24 +4,24 @@
 
 package org.mozilla.mozstumbler.service;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.location.Location;
 import android.os.Binder;
 import android.os.IBinder;
-import android.os.PowerManager;
-import android.provider.BaseColumns;
+import android.os.SystemClock;
 import android.util.Log;
-import org.mozilla.mozstumbler.service.datahandling.DatabaseContract;
+
 import org.mozilla.mozstumbler.service.datahandling.ServerContentResolver;
 import org.mozilla.mozstumbler.service.datahandling.StumblerBundleReceiver;
 import org.mozilla.mozstumbler.service.scanners.cellscanner.CellScanner;
 import org.mozilla.mozstumbler.service.scanners.cellscanner.CellScannerNoWCDMA;
-import org.mozilla.mozstumbler.service.sync.AsyncUploader;
+import org.mozilla.mozstumbler.service.sync.UploadAlarmReceiver;
 import org.mozilla.mozstumbler.service.utils.NetworkUtils;
-import java.util.Timer;
-import java.util.TimerTask;
+import org.mozilla.mozstumbler.service.utils.PersistentIntentService;
 
 public final class StumblerService extends PersistentIntentService
         implements ServerContentResolver.DatabaseIsEmptyTracker {
@@ -39,9 +39,8 @@ public final class StumblerService extends PersistentIntentService
     private Reporter               mReporter;
     private StumblerBundleReceiver mStumblerBundleReceiver = new StumblerBundleReceiver();
     private boolean                mIsBound;
-    private final IBinder          mBinder         = new StumblerBinder();
-    private Timer                  mPassiveUploadTimer;
-    private static boolean sDidCheckForStaleDatabase;
+    private final IBinder          mBinder = new StumblerBinder();
+    private PendingIntent          mAlarmIntent;
 
     public StumblerService() {
         super("StumblerService");
@@ -171,7 +170,8 @@ public final class StumblerService extends PersistentIntentService
             if (SharedConstants.stumblerContentResolver == null) {
                 SharedConstants.stumblerContentResolver = new ServerContentResolver(this, this);
                 if (!SharedConstants.stumblerContentResolver.isDbEmpty()) {
-                    startPassiveModeUploadTimer();
+                    // non-empty on startup, schedule an upload
+                    UploadAlarmReceiver.scheduleAlarm(this);
                 }
             }
 
@@ -216,60 +216,11 @@ public final class StumblerService extends PersistentIntentService
         if (SharedConstants.isDebug)Log.d(LOGTAG,"onRebind");
     }
 
-    void startPassiveModeUploadTimer() {
-        if (mPassiveUploadTimer != null)
-            return;
-
-        mPassiveUploadTimer = new Timer();
-
-        // Periodically check if wifi is available, screen is on, upload any bundles
-        long delay_ms = 3 * 60 * 1000;
-        long period_ms = 3 * 60 * 1000;
-
-        mPassiveUploadTimer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                String[] projection = { DatabaseContract.Reports.TIME };
-                Cursor cursor = SharedConstants.stumblerContentResolver.query(DatabaseContract.Reports.CONTENT_URI,
-                        projection, null, null, BaseColumns._ID + " limit 1");
-                if (cursor.getCount() < 1) {
-                    cursor.close();
-                    databaseIsEmpty(true);
-                    return;
-                }
-
-                cursor.moveToLast();
-                long time = cursor.getLong(cursor.getColumnIndex(DatabaseContract.Reports.TIME));
-                cursor.close();
-                if (time > 0 && !sDidCheckForStaleDatabase) {
-                    sDidCheckForStaleDatabase = true;
-                    long currentTime = System.currentTimeMillis();
-                    long msPerWeek = 604800 * 1000;
-                    if (currentTime - time > 2 * msPerWeek) {
-                        SharedConstants.stumblerContentResolver.delete(DatabaseContract.Reports.CONTENT_URI, null, null);
-                        databaseIsEmpty(true);
-                        return;
-                    }
-                }
-
-                PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-                if (!mScanner.isBatteryLow() && NetworkUtils.getInstance().isWifiAvailable() &&
-                    pm.isScreenOn())
-                {
-                    AsyncUploader uploader = new AsyncUploader(null /* don't need to listen for completion */);
-                    uploader.execute();
-                }
-            }
-        }, delay_ms, period_ms);
-    }
-
-
     public void databaseIsEmpty(boolean isEmpty) {
-        if (isEmpty && mPassiveUploadTimer != null) {
-            mPassiveUploadTimer.cancel();
-            mPassiveUploadTimer = null;
+        if (isEmpty) {
+            UploadAlarmReceiver.cancelAlarm(this);
         } else {
-            startPassiveModeUploadTimer();
+            UploadAlarmReceiver.scheduleAlarm(this);
         }
     }
 

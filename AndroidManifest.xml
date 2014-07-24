@@ -95,6 +95,8 @@
         </service>
 
 
+        <receiver android:name=".service.sync.UploadAlarmReceiver" />
+        <service android:name=".service.sync.UploadAlarmReceiver$UploadAlarmService" />
     </application>
 
 </manifest>

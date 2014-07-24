@@ -19,6 +19,7 @@ import android.widget.TextView;
 import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.service.SharedConstants;
 
+import java.lang.ref.WeakReference;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.Timer;
@@ -32,19 +33,30 @@ public class LogActivity extends Activity {
 
     public static class LogMessageReceiver extends BroadcastReceiver {
 
-        Timer mFlushMessagesTimer = new Timer();
-        Handler mMainThreadHandler = new Handler() {
+        // Ensure that the message buffer used by the GUI is accessed only on the main thread
+        static class AddToBufferOnMain extends Handler {
+            WeakReference<LogMessageReceiver> mParentClass;
+
+            public AddToBufferOnMain(WeakReference<LogMessageReceiver> parent) {
+                mParentClass = parent;
+            }
+
             public void handleMessage(Message m) {
                 String msg = null;
                 do {
                     msg = SharedConstants.guiLogMessageBuffer.poll();
-                    addMessageToBuffer(msg);
+                    if (mParentClass.get() != null)
+                        mParentClass.get().addMessageToBuffer(msg);
                 } while (msg != null);
             }
-        };
+        }
+
+        Timer mFlushMessagesTimer = new Timer();
+        AddToBufferOnMain mMainThreadHandler;
 
         public static void createGlobalInstance(Context context) {
             sInstance = new LogMessageReceiver(context);
+            sInstance.mMainThreadHandler = new AddToBufferOnMain(new WeakReference<LogMessageReceiver>(sInstance));
             SharedConstants.guiLogMessageBuffer = new ConcurrentLinkedQueue<String>();
         }
 

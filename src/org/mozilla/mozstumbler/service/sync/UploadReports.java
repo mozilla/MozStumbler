@@ -26,7 +26,7 @@ import java.util.Map;
 
 public class UploadReports {
     private static final int REQUEST_BATCH_SIZE = 50;
-    private static final int MAX_RETRY_COUNT = 3;
+    private static final int MAX_RETRY_COUNT = 100;
 
     private final ContentResolverInterface mContentResolver;
 
@@ -88,7 +88,9 @@ public class UploadReports {
                     break;
                 }
 
-                if (submitter.cleanSend(batch.body)) {
+                int resultCode = submitter.cleanSend(batch.body);
+                // no error, or HTTP response codes 4xx (error)
+                if (resultCode == 0 || resultCode/100 == 4) {
                     deleteObservations(batch.minId, batch.maxId);
                     uploadedObservations += batch.observations;
                     uploadedWifis += batch.wifis;

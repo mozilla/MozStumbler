@@ -27,8 +27,9 @@ public abstract class AbstractCommunicator {
     private static int sBytesSentTotal = 0;
 
     public abstract String getUrlString();
-    public abstract int getCorrectResponse();
-    public abstract boolean cleanSend(byte[] data);
+
+    /** Return non-zero for error, http error code if available */
+    public abstract int cleanSend(byte[] data);
 
     public String getNickname() {
         return null;
@@ -88,13 +89,17 @@ public abstract class AbstractCommunicator {
         return output;
     }
 
+    public boolean isCorrectResponse(int httpCode) {
+        return httpCode/100 == 2;
+    }
+
     private void sendData(byte[] data) throws IOException{
         httpURLConnection.setFixedLengthStreamingMode(data.length);
         OutputStream out = new BufferedOutputStream(httpURLConnection.getOutputStream());
         out.write(data);
         out.flush();
         int code = httpURLConnection.getResponseCode();
-        if (code != getCorrectResponse()) {
+        if (!isCorrectResponse(code)) {
             throw new HttpErrorException(code);
         }
     }

@@ -14,7 +14,6 @@ import org.mozilla.mozstumbler.service.SharedConstants;
 public class Submitter extends AbstractCommunicator {
     private static final String SUBMIT_URL = "https://location.services.mozilla.com/v1/submit";
     private static final String LOGTAG = Submitter.class.getName();
-    private static final int CORRECT_RESPONSE = HttpURLConnection.HTTP_NO_CONTENT;
     private final String mNickname;
 
     public Submitter() {
@@ -28,26 +27,26 @@ public class Submitter extends AbstractCommunicator {
     }
 
     @Override
-    public int getCorrectResponse() {
-        return CORRECT_RESPONSE;
-    }
-
-    @Override
     public String getNickname(){
         return mNickname;
     }
 
     @Override
-    public boolean cleanSend(byte[] data) {
-        boolean result = false;
+    public int cleanSend(byte[] data) {
+       int result = -1;
+
         try {
             this.send(data);
-            result = true;
+            result = 0;
         } catch (IOException ex) {
             String msg = "Error submitting: " + ex;
             Log.e(LOGTAG, msg);
             if (SharedConstants.guiLogMessageBuffer != null)
                 SharedConstants.guiLogMessageBuffer.add("<font color='red'><b>" + msg + "</b></font>");
+
+            if (ex instanceof HttpErrorException) {
+                result = ((HttpErrorException) ex).responseCode;
+            }
         }
         return result;
     }

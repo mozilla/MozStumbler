@@ -19,6 +19,7 @@ import android.util.Log;
 import java.io.File;
 import org.mozilla.mozstumbler.BuildConfig;
 import org.mozilla.mozstumbler.R;
+import org.mozilla.mozstumbler.client.cellscanner.DefaultCellScanner;
 import org.mozilla.mozstumbler.service.Prefs;
 import org.mozilla.mozstumbler.service.SharedConstants;
 import org.mozilla.mozstumbler.service.StumblerService;

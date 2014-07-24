@@ -10,6 +10,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
+import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -19,7 +20,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 import org.json.JSONException;
@@ -40,11 +40,7 @@ import org.osmdroid.tileprovider.tilesource.XYTileSource;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.Projection;
-import org.osmdroid.views.overlay.ItemizedIconOverlay;
-import org.osmdroid.views.overlay.ItemizedOverlay;
-import org.osmdroid.views.overlay.ItemizedOverlayWithFocus;
 import org.osmdroid.views.overlay.Overlay;
-import org.osmdroid.views.overlay.OverlayItem;
 import org.osmdroid.views.overlay.TilesOverlay;
 
 public final class MapActivity extends Activity {
@@ -59,7 +55,7 @@ public final class MapActivity extends Activity {
     private static final String LON_KEY = "longitude";
 
     private MapView mMap;
-    private ItemizedOverlay<OverlayItem> mPointOverlay;
+    private AccuracyCircleOverlay mAccuracyOverlay;
     private boolean mFirstLocationFix;
     private ReporterBroadcastReceiver mReceiver;
     Timer mGetUrl = new Timer();
@@ -68,7 +64,7 @@ public final class MapActivity extends Activity {
     private class ReporterBroadcastReceiver extends BroadcastReceiver {
         public void reset()
         {
-            mMap.getOverlays().remove(mPointOverlay);
+            mMap.getOverlays().remove(mAccuracyOverlay);
         }
 
         @Override
@@ -193,17 +189,20 @@ public final class MapActivity extends Activity {
         return coverageTileOverlay;
     }
 
-    private void positionMapAt(GeoPoint point) {
+    private void positionMapAt(Location location) {
         if  (mCoverageTilesOverlay == null && sCoverageUrl != null) {
             mCoverageTilesOverlay = CoverageTilesOverlay(this);
             mMap.getOverlays().add(mCoverageTilesOverlay);
         }
 
-        if (mPointOverlay != null) {
-            mMap.getOverlays().remove(mPointOverlay); // You are no longer here
+        if (mAccuracyOverlay == null) {
+            mAccuracyOverlay = new AccuracyCircleOverlay(this, location);
+            mMap.getOverlays().add(mAccuracyOverlay);
+        } else {
+            mAccuracyOverlay.setLocation(location);
         }
-        mPointOverlay = getMapMarker(point);
-        mMap.getOverlays().add(mPointOverlay); // You are here!
+
+        final GeoPoint point = new GeoPoint(location.getLatitude(), location.getLongitude());
         if (mFirstLocationFix) {
             mMap.getController().setZoom(13);
             mFirstLocationFix = false;
@@ -217,12 +216,28 @@ public final class MapActivity extends Activity {
     private static class AccuracyCircleOverlay extends Overlay {
         private GeoPoint mPoint;
         private float mAccuracy;
+        private Paint mCircleFillPaint = new Paint();
+        private Paint mCircleStrokePaint = new Paint();
+        private Paint mCenterPaint = new Paint();
+        private Paint mCenterStrokePaint = new Paint();
 
-        public AccuracyCircleOverlay(Context ctx, GeoPoint point, float accuracy) {
+        public AccuracyCircleOverlay(Context ctx, Location location) {
             super(ctx);
-            //this.mPoint = (GeoPoint) point.clone();
-            this.mPoint = point;
-            this.mAccuracy = accuracy;
+            mPoint = new GeoPoint(location.getLatitude(), location.getLongitude());
+            mAccuracy = location.getAccuracy();
+
+            mCircleFillPaint.setARGB(40, 100, 100, 255);
+            mCircleFillPaint.setStyle(Paint.Style.FILL);
+
+            mCircleStrokePaint.setARGB(165, 100, 100, 255);
+            mCircleStrokePaint.setStyle(Paint.Style.STROKE);
+
+            mCenterPaint.setARGB(255, 100, 100, 255);
+            mCenterPaint.setStyle(Paint.Style.FILL);
+
+            mCenterStrokePaint.setARGB(255, 255, 255, 255);
+            mCenterStrokePaint.setStyle(Paint.Style.STROKE);
+            mCenterStrokePaint.setStrokeWidth(5);
         }
 
         protected void draw(Canvas c, MapView osmv, boolean shadow) {
@@ -232,33 +247,22 @@ public final class MapActivity extends Activity {
             Projection pj = osmv.getProjection();
             Point center = pj.toPixels(mPoint, null);
             float radius = pj.metersToEquatorPixels(mAccuracy);
-            Paint circle = new Paint();
-            circle.setARGB(0, 100, 100, 255);
 
             // Fill
-            circle.setAlpha(40);
-            circle.setStyle(Paint.Style.FILL);
-            c.drawCircle(center.x, center.y, radius, circle);
+            c.drawCircle(center.x, center.y, radius, mCircleFillPaint);
 
             // Border
-            circle.setAlpha(165);
-            circle.setStyle(Paint.Style.STROKE);
-            c.drawCircle(center.x, center.y, radius, circle);
-        }
-    }
+            c.drawCircle(center.x, center.y, radius, mCircleStrokePaint);
 
-    private ItemizedOverlay<OverlayItem> getMapMarker(GeoPoint point) {
-        ArrayList<OverlayItem> items = new ArrayList<OverlayItem>();
-        items.add(new OverlayItem(null, null, point));
-        return new ItemizedOverlayWithFocus<OverlayItem>(
-            MapActivity.this,
-            items,
-            new ItemizedIconOverlay.OnItemGestureListener<OverlayItem>() {
-                @Override
-                public boolean onItemSingleTapUp(int index, OverlayItem item) { return false; }
-                @Override
-                public boolean onItemLongPress(int index, OverlayItem item) { return false; }
-            });
+            // Center
+            c.drawCircle(center.x, center.y, 15, mCenterPaint);
+            c.drawCircle(center.x, center.y, 15, mCenterStrokePaint);
+        }
+
+        public void setLocation(final Location location) {
+            mAccuracy = location.getAccuracy();
+            mPoint = new GeoPoint(location.getLatitude(), location.getLongitude());
+        }
     }
 
     @Override
@@ -298,17 +302,18 @@ public final class MapActivity extends Activity {
         }
     }
 
-    private final class GetLocationAndMapItTask extends AsyncTask<StumblerService, Void, GeoPoint> {
+    private final class GetLocationAndMapItTask extends AsyncTask<StumblerService, Void, Location> {
         @Override
-        public GeoPoint doInBackground(StumblerService... params) {
+        public Location doInBackground(StumblerService... params) {
             Log.d(LOGTAG, "requesting location...");
 
             StumblerService service = params[0];
-            return new GeoPoint(service.getLatitude(), service.getLongitude());
+            final Location result = service.getLocation();
+            return result;
         }
 
         @Override
-        protected void onPostExecute(GeoPoint result) {
+        protected void onPostExecute(Location result) {
             positionMapAt(result);
         }
     }

@@ -133,6 +133,10 @@ public class GPSScanner implements LocationListener {
         return mLocation.getLongitude();
     }
 
+    public Location getLocation() {
+        return mLocation;
+    }
+
     public void checkPrefs() {
         if (mBlockList!=null) mBlockList.update_blocks();
 

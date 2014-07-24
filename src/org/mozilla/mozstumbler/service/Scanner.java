@@ -7,6 +7,7 @@ package org.mozilla.mozstumbler.service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.location.Location;
 import android.os.BatteryManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
@@ -150,6 +151,10 @@ public class Scanner {
 
     double getLongitude() {
         return mGPSScanner.getLongitude();
+    }
+
+    Location getLocation() {
+        return mGPSScanner.getLocation();
     }
 
     void checkPrefs() {

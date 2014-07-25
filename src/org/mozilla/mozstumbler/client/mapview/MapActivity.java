@@ -24,6 +24,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import org.json.JSONException;
@@ -48,6 +50,7 @@ import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.Projection;
 import org.osmdroid.views.overlay.Overlay;
+import org.osmdroid.views.overlay.PathOverlay;
 import org.osmdroid.views.overlay.TilesOverlay;
 
 public final class MapActivity extends Activity {
@@ -55,13 +58,18 @@ public final class MapActivity extends Activity {
 
     private static final String COVERAGE_REDIRECT_URL = "https://location.services.mozilla.com/map.json";
     private static String sCoverageUrl = null;
+    private static int sGPSColor;
     private static final int MENU_REFRESH           = 1;
     private static final String ZOOM_KEY = "zoom";
     private static final int DEFAULT_ZOOM = 2;
     private static final String LAT_KEY = "latitude";
     private static final String LON_KEY = "longitude";
+    private static final String LOCATIONS_KEY = "locations";
+
+    private final ArrayList<GeoPoint> mLocations = new ArrayList<GeoPoint>();
 
     private MapView mMap;
+    private PathOverlay mPathOverlay;
     private AccuracyCircleOverlay mAccuracyOverlay;
     private boolean mFirstLocationFix;
     private boolean mUserPanning = false;
@@ -108,6 +116,10 @@ public final class MapActivity extends Activity {
 
         listenForPanning(mMap);
 
+        sGPSColor = getResources().getColor(R.color.gps_track);
+        mPathOverlay = new PathOverlay(sGPSColor, this);
+        mMap.getOverlays().add(mPathOverlay);
+
         mFirstLocationFix = true;
         int zoomLevel = DEFAULT_ZOOM; // Default to seeing the world, until we get a fix
         if (savedInstanceState != null) {
@@ -117,6 +129,14 @@ public final class MapActivity extends Activity {
                 final double latitude = savedInstanceState.getDouble(LAT_KEY);
                 final double longitude = savedInstanceState.getDouble(LON_KEY);
                 mMap.getController().setCenter(new GeoPoint(latitude, longitude));
+            }
+            if (savedInstanceState.containsKey(LOCATIONS_KEY)) {
+                final List<GeoPoint> prevLocations = savedInstanceState.getParcelableArrayList(LOCATIONS_KEY);
+                mLocations.clear();
+                mLocations.addAll(prevLocations);
+                for (GeoPoint p: prevLocations) {
+                    mPathOverlay.addPoint(p);
+                }
             }
         } else {
             final StumblerService service = ((MainApp) getApplication()).getService();
@@ -247,7 +267,7 @@ public final class MapActivity extends Activity {
             mCircleStrokePaint.setARGB(165, 100, 100, 255);
             mCircleStrokePaint.setStyle(Paint.Style.STROKE);
 
-            mCenterPaint.setARGB(255, 100, 100, 255);
+            mCenterPaint.setColor(sGPSColor);
             mCenterPaint.setStyle(Paint.Style.FILL);
 
             mCenterStrokePaint.setARGB(255, 255, 255, 255);
@@ -326,6 +346,7 @@ public final class MapActivity extends Activity {
         bundle.putInt(ZOOM_KEY, mMap.getZoomLevel());
         bundle.putDouble(LON_KEY, mMap.getMapCenter().getLongitude());
         bundle.putDouble(LAT_KEY, mMap.getMapCenter().getLatitude());
+        bundle.putParcelableArrayList(LOCATIONS_KEY, mLocations);
     }
 
     @Override
@@ -362,6 +383,15 @@ public final class MapActivity extends Activity {
 
             StumblerService service = params[0];
             final Location result = service.getLocation();
+
+            // Don't map (0,0)
+            final double latitude = result.getLatitude();
+            final double longitude = result.getLongitude();
+            if (Math.abs(latitude) >= 0.01 && Math.abs(longitude) >= 0.01) {
+                final GeoPoint point = new GeoPoint(result.getLatitude(), result.getLongitude());
+                mLocations.add(point);
+                mPathOverlay.addPoint(point);
+            }
             return result;
         }
 

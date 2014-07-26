@@ -187,7 +187,7 @@ public final class MapActivity extends Activity {
         return coverageTileOverlay;
     }
 
-    private void positionMapAt(Location location) {
+    private void setUserPositionAt(Location location) {
         if  (mCoverageTilesOverlay == null && sCoverageUrl != null) {
             mCoverageTilesOverlay = CoverageTilesOverlay(this);
             mMap.getOverlays().add(mCoverageTilesOverlay);
@@ -199,7 +199,10 @@ public final class MapActivity extends Activity {
         } else {
             mAccuracyOverlay.setLocation(location);
         }
+        mMap.invalidate();
+    }
 
+    private void positionMapAt(Location location) {
         final GeoPoint point = new GeoPoint(location.getLatitude(), location.getLongitude());
         if (mFirstLocationFix) {
             mMap.getController().setZoom(13);
@@ -317,6 +320,7 @@ public final class MapActivity extends Activity {
 
         @Override
         protected void onPostExecute(Location result) {
+            setUserPositionAt(result);
             positionMapAt(result);
         }
     }

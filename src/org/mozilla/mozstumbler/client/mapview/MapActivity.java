@@ -102,12 +102,6 @@ public final class MapActivity extends Activity {
         }
         mMap.getController().setZoom(zoomLevel);
 
-        mReceiver = new ReporterBroadcastReceiver();
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(GPSScanner.ACTION_GPS_UPDATED);
-        LocalBroadcastManager.getInstance(this).registerReceiver(mReceiver,
-                intentFilter);
-
         Log.d(LOGTAG, "onCreate");
 
         // @TODO: we do a similar "read from URL" in Updater, AbstractCommunicator, make one function for this
@@ -271,6 +265,11 @@ public final class MapActivity extends Activity {
 
         Intent i = new Intent(MainActivity.ACTION_UNPAUSE_SCANNING);
         LocalBroadcastManager.getInstance(this).sendBroadcast(i);
+
+        mReceiver = new ReporterBroadcastReceiver();
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(GPSScanner.ACTION_GPS_UPDATED);
+        LocalBroadcastManager.getInstance(this).registerReceiver(mReceiver, intentFilter);
         Log.d(LOGTAG, "onStart");
     }
 

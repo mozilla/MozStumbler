@@ -18,6 +18,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.Window;
 import java.net.URL;
 import java.util.Timer;
@@ -31,6 +32,9 @@ import org.mozilla.mozstumbler.BuildConfig;
 import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.client.MainActivity;
 import org.mozilla.mozstumbler.service.scanners.GPSScanner;
+import org.osmdroid.events.MapListener;
+import org.osmdroid.events.ScrollEvent;
+import org.osmdroid.events.ZoomEvent;
 import org.osmdroid.tileprovider.BitmapPool;
 import org.osmdroid.tileprovider.MapTileProviderBasic;
 import org.osmdroid.tileprovider.tilesource.ITileSource;
@@ -57,6 +61,7 @@ public final class MapActivity extends Activity {
     private MapView mMap;
     private AccuracyCircleOverlay mAccuracyOverlay;
     private boolean mFirstLocationFix;
+    private boolean mUserPanning = false;
     private ReporterBroadcastReceiver mReceiver;
     Timer mGetUrl = new Timer();
     TilesOverlay mCoverageTilesOverlay = null;
@@ -88,6 +93,8 @@ public final class MapActivity extends Activity {
         mMap.setTileSource(getTileSource());
         mMap.setBuiltInZoomControls(true);
         mMap.setMultiTouchControls(true);
+
+        listenForPanning(mMap);
 
         mFirstLocationFix = true;
         int zoomLevel = DEFAULT_ZOOM; // Default to seeing the world, until we get a fix
@@ -151,12 +158,8 @@ public final class MapActivity extends Activity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case MENU_REFRESH:
-                if (mReceiver != null) {
-                    mReceiver.reset();
-                    setProgressBarIndeterminateVisibility(true);
-                    return true;
-                }
-                return false;
+                mUserPanning = false;
+                return true;
             default:
                 return false;
         }
@@ -208,6 +211,7 @@ public final class MapActivity extends Activity {
             mMap.getController().setZoom(13);
             mFirstLocationFix = false;
             mMap.getController().setCenter(point);
+            mUserPanning = false;
         } else {
             mMap.getController().animateTo(point);
         }
@@ -266,6 +270,32 @@ public final class MapActivity extends Activity {
         }
     }
 
+    // An overlay for the sole purpose of reporting a user swiping on the map
+    private static class SwipeListeningOverlay extends Overlay {
+        private static interface OnSwipeListener {
+            public void onSwipe();
+        }
+
+        OnSwipeListener mOnSwipe;
+        SwipeListeningOverlay(Context ctx, OnSwipeListener onSwipe) {
+            super(ctx);
+            mOnSwipe = onSwipe;
+        }
+
+        @Override
+        protected void draw(Canvas c, MapView osmv, boolean shadow) {
+            // Nothing to draw
+        }
+
+        @Override
+        public boolean onTouchEvent(final MotionEvent event, final MapView mapView) {
+            if (mOnSwipe != null && event.getAction() == MotionEvent.ACTION_MOVE) {
+                mOnSwipe.onSwipe();
+            }
+            return false;
+        }
+    }
+
     @Override
     protected void onStart() {
         super.onStart();
@@ -321,7 +351,18 @@ public final class MapActivity extends Activity {
         @Override
         protected void onPostExecute(Location result) {
             setUserPositionAt(result);
-            positionMapAt(result);
+            if (!mUserPanning) {
+                positionMapAt(result);
+            }
         }
+    }
+
+    private void listenForPanning(MapView map) {
+        map.getOverlays().add(new SwipeListeningOverlay(this, new SwipeListeningOverlay.OnSwipeListener() {
+            @Override
+            public void onSwipe() {
+                mUserPanning = true;
+            }
+        }));
     }
 }

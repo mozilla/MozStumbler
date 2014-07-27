@@ -363,6 +363,8 @@ public final class MapActivity extends Activity {
             if (!mUserPanning) {
                 positionMapAt(result);
             }
+            formatTextView(R.id.latitude_text, "%1$.4f", result.getLatitude());
+            formatTextView(R.id.longitude_text, "%1$.4f", result.getLongitude());
         }
     }
 
@@ -376,8 +378,12 @@ public final class MapActivity extends Activity {
     }
 
     private void formatTextView(int textViewId, int stringId, Object... args) {
-        TextView textView = (TextView) findViewById(textViewId);
         String str = getResources().getString(stringId);
+        formatTextView(textViewId, str, args);
+    }
+
+    private void formatTextView(int textViewId, String str, Object... args) {
+        TextView textView = (TextView) findViewById(textViewId);
         str = String.format(str, args);
         textView.setText(str);
     }

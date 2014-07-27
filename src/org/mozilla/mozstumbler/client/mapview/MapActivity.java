@@ -99,6 +99,10 @@ public final class MapActivity extends Activity {
                 final double longitude = savedInstanceState.getDouble(LON_KEY);
                 mMap.getController().setCenter(new GeoPoint(latitude, longitude));
             }
+        } else {
+            final StumblerService service = ((MainApp) getApplication()).getService();
+            final GeoPoint lastLoc = new GeoPoint(service.getLatitude(), service.getLongitude());
+            mMap.getController().setCenter(lastLoc);
         }
         mMap.getController().setZoom(zoomLevel);
 

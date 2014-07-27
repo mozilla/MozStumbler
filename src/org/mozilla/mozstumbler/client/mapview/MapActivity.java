@@ -80,8 +80,9 @@ public final class MapActivity extends Activity {
             String action = intent.getAction();
 
             if (action.equals(GPSScanner.ACTION_GPS_UPDATED)) {
-                MainApp app = (MainApp) getApplication();
-                new GetLocationAndMapItTask().execute(app.getService());
+                final StumblerService service = ((MainApp) getApplication()).getService();
+                new GetLocationAndMapItTask().execute(service);
+                updateUI(service);
                 if (GPSScanner.SUBJECT_NEW_STATUS.equals(intent.getStringExtra(Intent.EXTRA_SUBJECT))) {
                     final int fixes = intent.getIntExtra(GPSScanner.NEW_STATUS_ARG_FIXES, 0);
                     final int sats = intent.getIntExtra(GPSScanner.NEW_STATUS_ARG_SATS, 0);
@@ -345,6 +346,13 @@ public final class MapActivity extends Activity {
             LocalBroadcastManager.getInstance(this).unregisterReceiver(mReceiver);
             mReceiver = null;
         }
+    }
+
+    private void updateUI(StumblerService service) {
+        formatTextView(R.id.cell_info_text, R.string.cells_info, service.getCurrentCellInfoCount(),
+                service.getCellInfoCount());
+        formatTextView(R.id.wifi_info_text, R.string.wifi_info, service.getVisibleAPCount(),
+                service.getAPCount());
     }
 
     private final class GetLocationAndMapItTask extends AsyncTask<StumblerService, Void, Location> {

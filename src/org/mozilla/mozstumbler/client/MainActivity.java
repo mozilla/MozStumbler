@@ -19,19 +19,21 @@ import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 import org.mozilla.mozstumbler.BuildConfig;
-import org.mozilla.mozstumbler.service.datahandling.ServerContentResolver;
+import org.mozilla.mozstumbler.service.AppGlobals;
+import org.mozilla.mozstumbler.service.datahandling.DataStorageContract;
 import org.mozilla.mozstumbler.service.utils.DateTimeUtils;
 import org.mozilla.mozstumbler.client.mapview.MapActivity;
 import org.mozilla.mozstumbler.R;
-import org.mozilla.mozstumbler.service.SharedConstants;
 import org.mozilla.mozstumbler.service.StumblerService;
 import org.mozilla.mozstumbler.service.scanners.WifiScanner;
-import org.mozilla.mozstumbler.service.datahandling.DatabaseContract;
+
+import java.io.IOException;
+import java.util.Properties;
 
 public final class MainActivity extends FragmentActivity {
     private static final String LOGTAG = MainActivity.class.getName();
 
-    public static final String ACTION_BASE = SharedConstants.ACTION_NAMESPACE + ".MainActivity.";
+    public static final String ACTION_BASE = AppGlobals.ACTION_NAMESPACE + ".MainActivity.";
     public static final String ACTION_UPDATE_UI = ACTION_BASE + "UPDATE_UI";
 
     /** if service exists, start scanning, otherwise do nothing  */
@@ -161,7 +163,7 @@ public final class MainActivity extends FragmentActivity {
         service.checkPrefs();
         if (mGeofenceHere) {
             if (mGpsFixes > 0 && locationsScanned > 0) {
-                Location coord = new Location(SharedConstants.LOCATION_ORIGIN_INTERNAL);
+                Location coord = new Location(AppGlobals.LOCATION_ORIGIN_INTERNAL);
                 coord.setLatitude(latitude);
                 coord.setLongitude(longitude);
                 service.getPrefs().setGeofenceLocation(coord);
@@ -267,34 +269,21 @@ public final class MainActivity extends FragmentActivity {
     }
 
     public void showUploadStats() {
-        if (SharedConstants.stumblerContentResolver == null)
+        if (AppGlobals.dataStorageManager == null)
             return;
 
-        long lastUploadTime = 0;
-        long observationsSent = 0;
+        try {
+            Properties props = AppGlobals.dataStorageManager.readSyncStats();
+            long lastUploadTime = Long.parseLong(props.getProperty(DataStorageContract.Stats.KEY_LAST_UPLOAD_TIME, "0"));
+            String value = (lastUploadTime > 0)? DateTimeUtils.formatTimeForLocale(lastUploadTime) : "-";
+            formatTextView(R.id.last_upload_time, R.string.last_upload_time, value);
 
-        Cursor cursor = SharedConstants.stumblerContentResolver.query(DatabaseContract.Stats.CONTENT_URI, null, null, null, null);
-        if (cursor != null) {
-            try {
-                cursor.moveToPosition(-1);
-                while (cursor.moveToNext()) {
-                    String key = cursor.getString(cursor.getColumnIndex(DatabaseContract.Stats.KEY));
-                    String value = cursor.getString(cursor.getColumnIndex(DatabaseContract.Stats.VALUE));
-                    if (DatabaseContract.Stats.KEY_LAST_UPLOAD_TIME.equals(key)) {
-                        lastUploadTime = Long.valueOf(value);
-                    } else if (DatabaseContract.Stats.KEY_OBSERVATIONS_SENT.equals(key)) {
-                        observationsSent = Long.valueOf(value);
-                    }
-                }
-            } finally {
-                cursor.close();
-            }
+            value = (props.getProperty(DataStorageContract.Stats.KEY_OBSERVATIONS_SENT, "0"));
+            formatTextView(R.id.reports_sent, R.string.reports_sent, Integer.parseInt(value));
         }
-        String lastUploadTimeString = (lastUploadTime > 0)
-                ? DateTimeUtils.formatTimeForLocale(lastUploadTime)
-                : "-";
-        formatTextView(R.id.last_upload_time, R.string.last_upload_time, lastUploadTimeString);
-        formatTextView(R.id.reports_sent, R.string.reports_sent, observationsSent);
+        catch (IOException ex) {
+            Log.e(LOGTAG, "Exception in showUploadStats():" + ex.toString());
+        }
     }
 
 

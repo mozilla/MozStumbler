@@ -17,10 +17,9 @@ import android.view.View;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import org.mozilla.mozstumbler.R;
-import org.mozilla.mozstumbler.service.SharedConstants;
+import org.mozilla.mozstumbler.service.AppGlobals;
 
 import java.lang.ref.WeakReference;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -44,7 +43,7 @@ public class LogActivity extends Activity {
             public void handleMessage(Message m) {
                 String msg = null;
                 do {
-                    msg = SharedConstants.guiLogMessageBuffer.poll();
+                    msg = AppGlobals.guiLogMessageBuffer.poll();
                     if (mParentClass.get() != null)
                         mParentClass.get().addMessageToBuffer(msg);
                 } while (msg != null);
@@ -57,12 +56,12 @@ public class LogActivity extends Activity {
         public static void createGlobalInstance(Context context) {
             sInstance = new LogMessageReceiver(context);
             sInstance.mMainThreadHandler = new AddToBufferOnMain(new WeakReference<LogMessageReceiver>(sInstance));
-            SharedConstants.guiLogMessageBuffer = new ConcurrentLinkedQueue<String>();
+            AppGlobals.guiLogMessageBuffer = new ConcurrentLinkedQueue<String>();
         }
 
         LogMessageReceiver(Context context) {
             LocalBroadcastManager.getInstance(context).registerReceiver(this,
-                    new IntentFilter(SharedConstants.ACTION_GUI_LOG_MESSAGE));
+                    new IntentFilter(AppGlobals.ACTION_GUI_LOG_MESSAGE));
 
             final int kMillis = 1000 * 3;
             mFlushMessagesTimer.scheduleAtFixedRate(new TimerTask() {
@@ -101,7 +100,7 @@ public class LogActivity extends Activity {
 
         @Override
         public void onReceive(Context c, Intent intent) {
-            String s = intent.getStringExtra(SharedConstants.ACTION_GUI_LOG_MESSAGE_EXTRA);
+            String s = intent.getStringExtra(AppGlobals.ACTION_GUI_LOG_MESSAGE_EXTRA);
             addMessageToBuffer(s);
         }
     }

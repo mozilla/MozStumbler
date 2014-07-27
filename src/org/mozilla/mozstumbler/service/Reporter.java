@@ -23,9 +23,9 @@ import org.mozilla.mozstumbler.service.scanners.cellscanner.CellScanner;
 import org.mozilla.mozstumbler.service.scanners.GPSScanner;
 import org.mozilla.mozstumbler.service.scanners.WifiScanner;
 
-final class Reporter extends BroadcastReceiver {
+final public class Reporter extends BroadcastReceiver {
     private static final String LOGTAG = Reporter.class.getName();
-    public  static final String ACTION_BASE = SharedConstants.ACTION_NAMESPACE;
+    public  static final String ACTION_BASE = AppGlobals.ACTION_NAMESPACE;
     public  static final String ACTION_FLUSH_TO_DB = ACTION_BASE + ".FLUSH";
 
     /**
@@ -116,7 +116,7 @@ final class Reporter extends BroadcastReceiver {
 
         Location currentPosition = mBundle != null ? mBundle.getGpsPosition() : null;
 
-        long time = intent.getLongExtra(SharedConstants.ACTION_ARG_TIME, System.currentTimeMillis());
+        long time = intent.getLongExtra(AppGlobals.ACTION_ARG_TIME, System.currentTimeMillis());
         if (currentPosition != null && Math.abs(time - currentPosition.getTime()) > REPORTER_WINDOW) {
             // no gps for a while, just bundle what we have
             reportCollectedLocation();
@@ -163,7 +163,7 @@ final class Reporter extends BroadcastReceiver {
             return;
         }
 
-        mStumblerBundleReceiver.handleBundle(mContext, mBundle);
+        mStumblerBundleReceiver.handleBundle(mBundle);
 
         mBundle.wasSent();
     }

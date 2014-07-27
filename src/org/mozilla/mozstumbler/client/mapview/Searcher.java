@@ -45,11 +45,11 @@ public class Searcher extends AbstractCommunicator {
     }
 
     @Override
-    public int cleanSend(byte[] data) {
-        int result = -1;
+    public NetworkSendResult cleanSend(byte[] data) {
+        NetworkSendResult result = new NetworkSendResult();
         try {
-            send(data);
-            result = 0;
+            result.bytesSent = send(data, ZippedState.eNotZipped);
+            result.errorCode = 0;
         } catch (IOException e) {
             // do nothing
         }

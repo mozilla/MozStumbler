@@ -85,10 +85,10 @@
     <string name="refresh_map">Standort aktualisieren</string>
 	
     <string name="title_activity_log">Protokoll</string>
-    <string name="hello_world">Hallo Welt!</string>
     <string name="action_settings">Einstellungen</string>
     <string name="action_view_log">Protokoll anzeigen</string>
     <string name="scroll_to_start">Nach Oben scrollen</string>
     <string name="scroll_to_end">Ans Ende scrollen</string>
+    <string name="upload_observations_data_size">Size (KB):</string>
 
 </resources>

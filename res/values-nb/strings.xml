@@ -79,6 +79,7 @@
     <string name="geofencing_desc">MozStumbler vil stoppe innsamling nærmere enn én kilometer fra denne plasseringen.</string>
     <string name="geofencing_on">Geofencing @ %1$.3f, %2$.3f</string>
     <string name="geofencing_enable">Geofence denne plasseringen</string>
+    <string name="upload_observations_data_size">Size (KB):</string>
 
     <!--translations missing
 	<string name="wifi_scan_always_title">Always scan Wi-Fi</string>
@@ -87,7 +88,7 @@
     <string name="refresh_map">Refresh location</string>
 	
 	<string name="title_activity_log">Log</string>
-    <string name="hello_world">Hello world!</string>
+
     <string name="action_settings">Settings</string>
     <string name="action_view_log">View Log</string>
     <string name="scroll_to_start">Scroll to Top</string>

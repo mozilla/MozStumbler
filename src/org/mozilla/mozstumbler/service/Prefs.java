@@ -32,7 +32,7 @@ public final class Prefs {
 
     private Prefs(Context context) {
         mSharedPrefs = context.getSharedPreferences(PREFS_FILE, Context.MODE_MULTI_PROCESS | Context.MODE_PRIVATE);
-        if (getPrefs().getInt(VALUES_VERSION_PREF, -1) != SharedConstants.appVersionCode) {
+        if (getPrefs().getInt(VALUES_VERSION_PREF, -1) != AppGlobals.appVersionCode) {
             Log.i(LOGTAG, "Version of the application has changed. Updating default values.");
             // Remove old keys
             getPrefs().edit()
@@ -40,7 +40,7 @@ public final class Prefs {
                     .remove("power_saving_mode")
                     .commit();
 
-            getPrefs().edit().putInt(VALUES_VERSION_PREF, SharedConstants.appVersionCode).commit();
+            getPrefs().edit().putInt(VALUES_VERSION_PREF, AppGlobals.appVersionCode).commit();
             getPrefs().edit().commit();
         }
     }
@@ -107,7 +107,7 @@ public final class Prefs {
     }
 
     public Location getGeofenceLocation() {
-        Location loc = new Location(SharedConstants.LOCATION_ORIGIN_INTERNAL);
+        Location loc = new Location(AppGlobals.LOCATION_ORIGIN_INTERNAL);
         loc.setLatitude(getPrefs().getFloat(LAT_PREF, 0));
         loc.setLongitude(getPrefs().getFloat(LON_PREF,0));
         return loc;

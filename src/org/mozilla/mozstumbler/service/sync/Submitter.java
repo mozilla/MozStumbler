@@ -6,10 +6,10 @@ package org.mozilla.mozstumbler.service.sync;
 
 import android.util.Log;
 import java.io.IOException;
-import java.net.HttpURLConnection;
+
 import org.mozilla.mozstumbler.service.AbstractCommunicator;
+import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.Prefs;
-import org.mozilla.mozstumbler.service.SharedConstants;
 
 public class Submitter extends AbstractCommunicator {
     private static final String SUBMIT_URL = "https://location.services.mozilla.com/v1/submit";
@@ -32,21 +32,19 @@ public class Submitter extends AbstractCommunicator {
     }
 
     @Override
-    public int cleanSend(byte[] data) {
-       int result = -1;
-
+    public NetworkSendResult cleanSend(byte[] data) {
+        NetworkSendResult result = new NetworkSendResult();
         try {
-            this.send(data);
-            result = 0;
+            result.bytesSent = this.send(data, ZippedState.eAlreadyZipped);
+            result.errorCode = 0;
         } catch (IOException ex) {
             String msg = "Error submitting: " + ex;
-            Log.e(LOGTAG, msg);
-            if (SharedConstants.guiLogMessageBuffer != null)
-                SharedConstants.guiLogMessageBuffer.add("<font color='red'><b>" + msg + "</b></font>");
-
             if (ex instanceof HttpErrorException) {
-                result = ((HttpErrorException) ex).responseCode;
+                result.errorCode = ((HttpErrorException) ex).responseCode;
+                msg += " Code:" + result.errorCode;
             }
+            Log.e(LOGTAG, msg);
+            AppGlobals.guiLogError(msg);
         }
         return result;
     }

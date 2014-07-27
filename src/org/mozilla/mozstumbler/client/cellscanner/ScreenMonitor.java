@@ -41,8 +41,8 @@ public class ScreenMonitor {
         load();
         PowerManager pm = (PowerManager) mContext.getSystemService(Context.POWER_SERVICE);
         mScreenIsOn = pm.isScreenOn();
-      //  Log.i(LOGTAG, "Total cell location updates when the screen is off: " +
-      //          (mLocationUpdatesCount == NO_DATA ? " no data" : mLocationUpdatesCount));
+        Log.v(LOGTAG, "Total cell location updates when the screen is off: " +
+                (mLocationUpdatesCount == NO_DATA ? " no data" : mLocationUpdatesCount));
         IntentFilter filter = new IntentFilter();
         filter.addAction(Intent.ACTION_SCREEN_OFF);
         filter.addAction(Intent.ACTION_SCREEN_ON);

@@ -17,6 +17,8 @@
     <string name="cells_scanned">Cells Scanned: %1$d</string>
     <string name="cells_visible">Cells Visible: %1$d</string>
     <string name="gps_satellites">GPS Satellites Used / Visible: %1$d/%2$d</string>
+    <string name="num_used">%1d Used</string>
+    <string name="num_visible">%1d Visible</string>
     <string name="last_location">Last Location: %1$s</string>
     <string name="coordinate">%1$.4f, %2$.4f</string>
     <string name="locations_scanned">Locations Scanned: %1$d</string>

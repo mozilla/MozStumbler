@@ -202,7 +202,6 @@ public final class MapActivity extends Activity {
         } else {
             mAccuracyOverlay.setLocation(location);
         }
-        mMap.invalidate();
     }
 
     private void positionMapAt(Location location) {
@@ -215,7 +214,6 @@ public final class MapActivity extends Activity {
         } else {
             mMap.getController().animateTo(point);
         }
-        mMap.invalidate();
     }
 
     private static class AccuracyCircleOverlay extends Overlay {

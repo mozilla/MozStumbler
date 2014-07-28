@@ -44,9 +44,8 @@
     <string name="no">नाही</string>
 
     <string name="about_version">आवृत्ती %1$s</string>
-	<!--translations missing
-	<string name="about_openstreetmap">Map view tiles © OpenStreetMap contributors\nhttp://www.openstreetmap.org</string>
-    <string name="about_mapbox_title">MapBox</string>-->
+    <string name="about_openstreetmap">नकाशा दर्शक टाईल्स © OpenStreetMap सदस्य\nhttp://www.openstreetmap.org</string>
+    <string name="about_mapbox_title">मॅपबॉक्स</string>
     <string name="about_mapbox">आमच्या नकाशा पुरवठादाराविषयी अधिक जाणून घ्या…</string>
     <string name="about_more">आणखी…</string>
     <string name="about_legal_aosp">या अनुप्रयोगामधे वापरण्यात आलेल्या काही प्रतिमा अँड्रॉइड मुक्त स्रोत प्रकल्पाने तयार करून विभागून दिलेल्या आहेत व त्या क्रिएटीव कॉमन्स २.५ विशेष परवाना अटींनुसार वापरल्या आहेत.</string>
@@ -84,13 +83,12 @@
     <string name="wifi_scan_always_summary">Wi-Fi बंद असताना सुद्धा प्रवेश बिंदू शोधा</string>
 
     <string name="refresh_map">स्थळ अद्यतन करा</string>
-	
-	<!--translations missing
-	<string name="title_activity_log">Log</string>
-    <string name="hello_world">Hello world!</string>
-    <string name="action_settings">Settings</string>
-    <string name="action_view_log">View Log</string>
-    <string name="scroll_to_start">Scroll to Top</string>
-    <string name="scroll_to_end">Scroll to End</string>-->
+
+    <string name="title_activity_log">नोंदवही</string>
+    <string name="hello_world">नमस्ते!</string>
+    <string name="action_settings">सेटिंग</string>
+    <string name="action_view_log">नोंदी बघा</string>
+    <string name="scroll_to_start">सुरुवात बघा</string>
+    <string name="scroll_to_end">शेवट बघा</string>
 
 </resources>

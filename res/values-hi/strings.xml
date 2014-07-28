@@ -44,9 +44,8 @@
     <string name="no">नहीं</string>
 
     <string name="about_version">संस्करण %1$s</string>
-	<!--translations missing
-	<string name="about_openstreetmap">Map view tiles © OpenStreetMap contributors\nhttp://www.openstreetmap.org</string>
-    <string name="about_mapbox_title">MapBox</string>-->
+    <string name="about_openstreetmap">नक्शा दर्शक टाइल्स © OpenStreetMap योगदानकर्ता\nhttp://www.openstreetmap.org</string>
+    <string name="about_mapbox_title">मैपबॉक्स</string>
     <string name="about_mapbox">हमारे नक्शा प्रदाता के बारेमे अधिक जानें…</string>
     <string name="about_more">अधिक…</string>
     <string name="about_legal_aosp">इस अनुप्रयोगमें इस्तेमाल की गयी कुछ आकृतियाँ अँड्रॉइड मुक्त स्रोत परियोजना द्वारा बनाई गयी और विभाजित की गयी है तथा क्रिएटीव कॉमन्स २.५ विशेष प्रयोग शर्त अनुसार इस्तेमाल कि गयी है.</string>
@@ -85,12 +84,11 @@
 
     <string name="refresh_map">स्थान अद्यतन करेंं</string>
 	
-	<!--translations missing
-	<string name="title_activity_log">Log</string>
-    <string name="hello_world">Hello world!</string>
-    <string name="action_settings">Settings</string>
-    <string name="action_view_log">View Log</string>
-    <string name="scroll_to_start">Scroll to Top</string>
-    <string name="scroll_to_end">Scroll to End</string>-->
+    <string name="title_activity_log">पंजी</string>
+    <string name="hello_world">नमस्ते!</string>
+    <string name="action_settings">सेटिंग</string>
+    <string name="action_view_log">पंजी देखें </string>
+    <string name="scroll_to_start">शुरुआत में जाएं</string>
+    <string name="scroll_to_end">अंत में जाएं</string>
 
 </resources>

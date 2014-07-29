@@ -14,9 +14,13 @@
     <string name="wifi_access_points">Wi-Fi Access Points Scanned: %1$d</string>
     <string name="wifi_disabled">0 (Wi-Fi disabled)</string>
     <string name="visible_wifi_access_points">Wi-Fi Access Points Visible: %1$s</string>
+    <string name="wifi_info">WiFi: %1$d Visible, %2$d Scanned</string>
     <string name="cells_scanned">Cells Scanned: %1$d</string>
     <string name="cells_visible">Cells Visible: %1$d</string>
+    <string name="cells_info">Cells: %1$d Visible, %2$d Scanned</string>
     <string name="gps_satellites">GPS Satellites Used / Visible: %1$d/%2$d</string>
+    <string name="num_used">%1d Used</string>
+    <string name="num_visible">%1d Visible</string>
     <string name="last_location">Last Location: %1$s</string>
     <string name="coordinate">%1$.4f, %2$.4f</string>
     <string name="locations_scanned">Locations Scanned: %1$d</string>

@@ -20,6 +20,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.Window;
+import android.widget.ImageView;
+import android.widget.TextView;
+
 import java.net.URL;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -77,8 +80,17 @@ public final class MapActivity extends Activity {
             String action = intent.getAction();
 
             if (action.equals(GPSScanner.ACTION_GPS_UPDATED)) {
-                MainApp app = (MainApp) getApplication();
-                new GetLocationAndMapItTask().execute(app.getService());
+                final StumblerService service = ((MainApp) getApplication()).getService();
+                new GetLocationAndMapItTask().execute(service);
+                updateUI(service);
+                if (GPSScanner.SUBJECT_NEW_STATUS.equals(intent.getStringExtra(Intent.EXTRA_SUBJECT))) {
+                    final int fixes = intent.getIntExtra(GPSScanner.NEW_STATUS_ARG_FIXES, 0);
+                    final int sats = intent.getIntExtra(GPSScanner.NEW_STATUS_ARG_SATS, 0);
+                    formatTextView(R.id.satellites_used, R.string.num_used, fixes);
+                    formatTextView(R.id.satellites_visible, R.string.num_visible,sats);
+                    int icon = fixes > 0 ? R.drawable.ic_gps_receiving : R.drawable.ic_gps;
+                    ((ImageView) findViewById(R.id.fix_indicator)).setImageResource(icon);
+                }
             }
         }
     }
@@ -336,6 +348,13 @@ public final class MapActivity extends Activity {
         }
     }
 
+    private void updateUI(StumblerService service) {
+        formatTextView(R.id.cell_info_text, R.string.cells_info, service.getCurrentCellInfoCount(),
+                service.getCellInfoCount());
+        formatTextView(R.id.wifi_info_text, R.string.wifi_info, service.getVisibleAPCount(),
+                service.getAPCount());
+    }
+
     private final class GetLocationAndMapItTask extends AsyncTask<StumblerService, Void, Location> {
         @Override
         public Location doInBackground(StumblerService... params) {
@@ -352,6 +371,8 @@ public final class MapActivity extends Activity {
             if (!mUserPanning) {
                 positionMapAt(result);
             }
+            formatTextView(R.id.latitude_text, "%1$.4f", result.getLatitude());
+            formatTextView(R.id.longitude_text, "%1$.4f", result.getLongitude());
         }
     }
 
@@ -362,5 +383,16 @@ public final class MapActivity extends Activity {
                 mUserPanning = true;
             }
         }));
+    }
+
+    private void formatTextView(int textViewId, int stringId, Object... args) {
+        String str = getResources().getString(stringId);
+        formatTextView(textViewId, str, args);
+    }
+
+    private void formatTextView(int textViewId, String str, Object... args) {
+        TextView textView = (TextView) findViewById(textViewId);
+        str = String.format(str, args);
+        textView.setText(str);
     }
 }

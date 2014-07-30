@@ -82,12 +82,13 @@
 
     <string name="wifi_scan_always_title">همیشه وای‌فای را اسکن کن</string>
     <string name="wifi_scan_always_summary">اسکن نقاط دسترسی وای‌فای حتی هنگامی که وای‌فای خاموش شده‌است</string>
-    
+    <string name="upload_observations_data_size">Size (KB):</string>
+
     <!--translations missing
 	<string name="refresh_map">Refresh location</string>
 	
 	<string name="title_activity_log">Log</string>
-    <string name="hello_world">Hello world!</string>
+
     <string name="action_settings">Settings</string>
     <string name="action_view_log">View Log</string>
     <string name="scroll_to_start">Scroll to Top</string>

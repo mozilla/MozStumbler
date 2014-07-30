@@ -70,7 +70,8 @@
     <string name="detected_activity_still">Quietud</string>
     <string name="detected_activity_tilting">Inclinant-se</string>
     <string name="detected_activity_unknown">Desconegut</string>
-    
+    <string name="upload_observations_data_size">Size (KB):</string>
+
     <!--translations missing <string name="upload_wifi_only_title">Upload only on WiFi</string>
     <string name="upload_wifi_only_summary">This option will reduce your data usage over the cellular network.</string>
 
@@ -86,7 +87,7 @@
     <string name="refresh_map">Refresh location</string>
 	
 	<string name="title_activity_log">Log</string>
-    <string name="hello_world">Hello world!</string>
+
     <string name="action_settings">Settings</string>
     <string name="action_view_log">View Log</string>
     <string name="scroll_to_start">Scroll to Top</string>

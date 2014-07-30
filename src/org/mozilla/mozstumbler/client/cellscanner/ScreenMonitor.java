@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package org.mozilla.mozstumbler.service.scanners.cellscanner;
+package org.mozilla.mozstumbler.client.cellscanner;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -41,7 +41,7 @@ public class ScreenMonitor {
         load();
         PowerManager pm = (PowerManager) mContext.getSystemService(Context.POWER_SERVICE);
         mScreenIsOn = pm.isScreenOn();
-        Log.i(LOGTAG, "Total cell location updates when the screen is off: " +
+        Log.v(LOGTAG, "Total cell location updates when the screen is off: " +
                 (mLocationUpdatesCount == NO_DATA ? " no data" : mLocationUpdatesCount));
         IntentFilter filter = new IntentFilter();
         filter.addAction(Intent.ACTION_SCREEN_OFF);

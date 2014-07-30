@@ -24,14 +24,15 @@ public final class Prefs {
     private static final String     GEOFENCE_HERE = "geofence_here";
     private static final String     GEOFENCE_SWITCH = "geofence_switch";
     public  static final String     WIFI_SCAN_ALWAYS = "wifi_scan_always";
-    public  static final String     FIREFOX_SCAN_ENABLED = "firefox_scan_on";
+    private static final String     FIREFOX_SCAN_ENABLED = "firefox_scan_on";
+    private static final String     MOZ_API_KEY = "moz_api_key";
 
     private final SharedPreferences mSharedPrefs;
     static private Prefs sInstance;
 
     private Prefs(Context context) {
         mSharedPrefs = context.getSharedPreferences(PREFS_FILE, Context.MODE_MULTI_PROCESS | Context.MODE_PRIVATE);
-        if (getPrefs().getInt(VALUES_VERSION_PREF, -1) != SharedConstants.appVersionCode) {
+        if (getPrefs().getInt(VALUES_VERSION_PREF, -1) != AppGlobals.appVersionCode) {
             Log.i(LOGTAG, "Version of the application has changed. Updating default values.");
             // Remove old keys
             getPrefs().edit()
@@ -39,7 +40,7 @@ public final class Prefs {
                     .remove("power_saving_mode")
                     .commit();
 
-            getPrefs().edit().putInt(VALUES_VERSION_PREF, SharedConstants.appVersionCode).commit();
+            getPrefs().edit().putInt(VALUES_VERSION_PREF, AppGlobals.appVersionCode).commit();
             getPrefs().edit().commit();
         }
     }
@@ -81,11 +82,20 @@ public final class Prefs {
         apply(editor);
     }
 
+    public void setMozApiKey(String s) {
+        setStringPref(MOZ_API_KEY, s);
+    }
+
     ///
     /// Getters
     ///
     public boolean getFirefoxScanEnabled() {
         return getBoolPrefWithDefault(FIREFOX_SCAN_ENABLED, false);
+    }
+
+    public String getMozApiKey() {
+        String s = getStringPref(MOZ_API_KEY);
+        return (s == null)? "no-mozilla-api-key" : s;
     }
 
     public boolean getGeofenceEnabled() {
@@ -97,7 +107,7 @@ public final class Prefs {
     }
 
     public Location getGeofenceLocation() {
-        Location loc = new Location(SharedConstants.LOCATION_ORIGIN_INTERNAL);
+        Location loc = new Location(AppGlobals.LOCATION_ORIGIN_INTERNAL);
         loc.setLatitude(getPrefs().getFloat(LAT_PREF, 0));
         loc.setLongitude(getPrefs().getFloat(LON_PREF,0));
         return loc;

@@ -83,12 +83,12 @@
     <string name="wifi_scan_always_summary">Skannaa Wi-Fiä vaikka Wi-Fi olisi pois päältä</string>
 
     <string name="refresh_map">Päivitä sijainti</string>
-	
     <string name="title_activity_log">Loki</string>
-    <string name="hello_world">Hei maailma!</string>
     <string name="action_settings">Asetukset</string>
     <string name="action_view_log">Näytä loki</string>
     <string name="scroll_to_start">Siirry alkuun</string>
     <string name="scroll_to_end">Siirry loppuun</string>
+
+    <string name="upload_observations_data_size">Size (KB):</string>
 
 </resources>

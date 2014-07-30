@@ -83,12 +83,11 @@
     <string name="wifi_scan_always_summary">Skanowanie punktów dostępowych nawet, jeśli Wi-Fi jest wyłączone</string>
 
     <string name="refresh_map">Odśwież położenie</string>
-	
 	<string name="title_activity_log">Dziennik</string>
-	<string name="hello_world">Witaj, świecie!</string>
 	<string name="action_settings">Ustawienia</string>
 	<string name="action_view_log">Wyświetl dziennik</string>
 	<string name="scroll_to_start">Przewiń do góry</string>
 	<string name="scroll_to_end">Przewiń na dół</string>
 
+  <string name="upload_observations_data_size">Size (KB):</string>
 </resources>

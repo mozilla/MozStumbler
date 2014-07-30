@@ -34,7 +34,7 @@ public class PassiveServiceReceiver extends BroadcastReceiver {
         String mozApiKey = null;
 
         if (action.contains(".STUMBLER_PREF")) {
-            SharedConstants.isDebug = intent.getBooleanExtra("is_debug", false);
+            AppGlobals.isDebug = intent.getBooleanExtra("is_debug", false);
             StumblerService.sFirefoxStumblingEnabled = intent.getBooleanExtra("enabled", false) ?
                     StumblerService.FirefoxStumbleState.ON :
                     StumblerService.FirefoxStumbleState.OFF;
@@ -52,7 +52,7 @@ public class PassiveServiceReceiver extends BroadcastReceiver {
         }
         sIsStarted = true;
 
-        if (SharedConstants.isDebug) Log.d(LOGTAG, "Starting Passively");
+        if (AppGlobals.isDebug) Log.d(LOGTAG, "Starting Passively");
 
         Intent startServiceIntent = new Intent(context, StumblerService.class);
         startServiceIntent.putExtra(StumblerService.ACTION_START_PASSIVE, true);

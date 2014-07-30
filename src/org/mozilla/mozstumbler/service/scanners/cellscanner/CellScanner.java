@@ -15,15 +15,16 @@ import java.util.List;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
-import org.mozilla.mozstumbler.service.SharedConstants;
-import org.mozilla.mozstumbler.service.SharedConstants.ActiveOrPassiveStumbling;
+
+import org.mozilla.mozstumbler.service.AppGlobals;
+import org.mozilla.mozstumbler.service.AppGlobals.ActiveOrPassiveStumbling;
 
 
 public class CellScanner {
-    public static final String ACTION_BASE = SharedConstants.ACTION_NAMESPACE + ".CellScanner.";
+    public static final String ACTION_BASE = AppGlobals.ACTION_NAMESPACE + ".CellScanner.";
     public static final String ACTION_CELLS_SCANNED = ACTION_BASE + "CELLS_SCANNED";
     public static final String ACTION_CELLS_SCANNED_ARG_CELLS = "cells";
-    public static final String ACTION_CELLS_SCANNED_ARG_TIME = SharedConstants.ACTION_ARG_TIME;
+    public static final String ACTION_CELLS_SCANNED_ARG_TIME = AppGlobals.ACTION_ARG_TIME;
 
     private static final String LOGTAG = CellScanner.class.getName();
     private static final long CELL_MIN_UPDATE_TIME = 1000; // milliseconds
@@ -88,7 +89,7 @@ public class CellScanner {
                 }
 
                 if (stumblingMode == ActiveOrPassiveStumbling.PASSIVE_STUMBLING &&
-                        mPassiveScanCount++ > SharedConstants.PASSIVE_MODE_MAX_SCANS_PER_GPS)
+                        mPassiveScanCount++ > AppGlobals.PASSIVE_MODE_MAX_SCANS_PER_GPS)
                 {
                     mPassiveScanCount = 0;
                     stop();

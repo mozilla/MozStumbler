@@ -15,16 +15,17 @@ import android.location.LocationProvider;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
-import org.mozilla.mozstumbler.service.SharedConstants;
-import org.mozilla.mozstumbler.service.SharedConstants.ActiveOrPassiveStumbling;
+
+import org.mozilla.mozstumbler.service.AppGlobals;
+import org.mozilla.mozstumbler.service.AppGlobals.ActiveOrPassiveStumbling;
 import org.mozilla.mozstumbler.service.Prefs;
-import org.mozilla.mozstumbler.service.Scanner;
+
 import java.text.SimpleDateFormat;
 
 public class GPSScanner implements LocationListener {
-    public static final String ACTION_BASE = SharedConstants.ACTION_NAMESPACE + ".GPSScanner.";
+    public static final String ACTION_BASE = AppGlobals.ACTION_NAMESPACE + ".GPSScanner.";
     public static final String ACTION_GPS_UPDATED = ACTION_BASE + "GPS_UPDATED";
-    public static final String ACTION_ARG_TIME = SharedConstants.ACTION_ARG_TIME;
+    public static final String ACTION_ARG_TIME = AppGlobals.ACTION_ARG_TIME;
     public static final String SUBJECT_NEW_STATUS = "new_status";
     public static final String SUBJECT_LOCATION_LOST = "location_lost";
     public static final String SUBJECT_NEW_LOCATION = "new_location";
@@ -50,11 +51,11 @@ public class GPSScanner implements LocationListener {
     private boolean mAutoGeofencing;
     private boolean mIsPassiveMode;
 
-    private Scanner mScanner;
+    private ScanManager mScanManager;
 
-    public GPSScanner(Context context, Scanner scanner) {
+    public GPSScanner(Context context, ScanManager scanManager) {
         mContext = context;
-        mScanner = scanner;
+        mScanManager = scanManager;
     }
 
     public void start(final ActiveOrPassiveStumbling stumblingMode) {
@@ -100,7 +101,8 @@ public class GPSScanner implements LocationListener {
                         if (fixes < MIN_SAT_USED_IN_FIX) {
                             reportLocationLost();
                         }
-                        //if (SharedConstants.isDebug) Log.d(LOGTAG, "onGpsStatusChange - satellites: " + satellites + " fixes: " + fixes);
+
+                        if (AppGlobals.isDebug) Log.v(LOGTAG, "onGpsStatusChange - satellites: " + satellites + " fixes: " + fixes);
                     } else if (event == GpsStatus.GPS_EVENT_STOPPED) {
                         reportLocationLost();
                     }
@@ -148,8 +150,7 @@ public class GPSScanner implements LocationListener {
     }
 
     private void sendToLogActivity(String msg) {
-        if (SharedConstants.guiLogMessageBuffer != null)
-            SharedConstants.guiLogMessageBuffer.add("<font color='#33ccff'>" + msg + "</font>");
+        AppGlobals.guiLogInfo(msg, "#33ccff", false);
     }
 
     @Override
@@ -191,15 +192,17 @@ public class GPSScanner implements LocationListener {
             return;
         }
 
-        if (SharedConstants.isDebug) Log.d(LOGTAG, "New location: " + location);
+        if (AppGlobals.isDebug) Log.d(LOGTAG, "New location: " + location);
 
         mLocation = location;
 
-        if (!mAutoGeofencing) { reportNewLocationReceived(location); }
+        if (!mAutoGeofencing) {
+            reportNewLocationReceived(location);
+        }
         mLocationCount++;
 
         if (mIsPassiveMode) {
-            mScanner.newPassiveGpsLocation();
+            mScanManager.newPassiveGpsLocation();
         }
     }
 

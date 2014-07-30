@@ -1,23 +1,51 @@
-package org.mozilla.mozstumbler.client;
+package org.mozilla.mozstumbler.client.cellscanner;
 
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.telephony.CellIdentityWcdma;
 import android.telephony.CellInfoWcdma;
+import android.telephony.CellLocation;
 import android.telephony.CellSignalStrengthWcdma;
 import android.telephony.TelephonyManager;
-import android.util.Log;
 
-import org.mozilla.mozstumbler.service.SharedConstants;
 import org.mozilla.mozstumbler.service.scanners.cellscanner.CellInfo;
 import org.mozilla.mozstumbler.service.scanners.cellscanner.CellScannerNoWCDMA;
 import java.util.List;
 
 public class DefaultCellScanner extends CellScannerNoWCDMA {
 
+    ScreenMonitor mScreenMonitor;
+
     public DefaultCellScanner(Context context) {
         super(context);
         LOGTAG = DefaultCellScanner.class.getName();
+        mScreenMonitor = new ScreenMonitor(mContext);
+    }
+
+    @Override
+    public void start() {
+        super.start();
+        mScreenMonitor.start();
+    }
+
+    @Override
+    public void stop() {
+        try {
+            mScreenMonitor.stop();
+        } catch (IllegalArgumentException ex) {}
+    }
+
+    @Override
+    protected CellInfo getCurrentCellInfo() {
+        final CellLocation currentCell = mTelephonyManager.getCellLocation();
+        if (currentCell == null) {
+            return null;
+        }
+        mScreenMonitor.putLocation(currentCell);
+        if (!mScreenMonitor.isLocationValid()) {
+            return null;
+        }
+        return super.getCurrentCellInfo();
     }
 
     @TargetApi(18)

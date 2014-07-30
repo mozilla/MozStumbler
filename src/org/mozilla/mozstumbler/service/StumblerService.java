@@ -16,6 +16,7 @@ import org.mozilla.mozstumbler.service.datahandling.StumblerBundleReceiver;
 import org.mozilla.mozstumbler.service.scanners.ScanManager;
 import org.mozilla.mozstumbler.service.scanners.cellscanner.CellScanner;
 import org.mozilla.mozstumbler.service.scanners.cellscanner.CellScannerNoWCDMA;
+import org.mozilla.mozstumbler.service.sync.UploadAlarmReceiver;
 import org.mozilla.mozstumbler.service.utils.NetworkUtils;
 import org.mozilla.mozstumbler.service.utils.PersistentIntentService;
 
@@ -175,6 +176,7 @@ public final class StumblerService extends PersistentIntentService
                 AppGlobals.dataStorageManager = new DataStorageManager(this, this);
                 if (!AppGlobals.dataStorageManager.isDirEmpty()) {
                     // non-empty on startup, schedule an upload
+                    UploadAlarmReceiver.scheduleAlarm(this);
                 }
             }
 

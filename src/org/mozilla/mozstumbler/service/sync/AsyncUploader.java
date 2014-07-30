@@ -4,22 +4,21 @@
 
 package org.mozilla.mozstumbler.service.sync;
 
-import android.content.SyncResult;
 import android.os.AsyncTask;
+import org.mozilla.mozstumbler.service.AbstractCommunicator.SyncSummary;
+
 
 /* Only one at a time may be uploading. If executed while another upload is in progress
 * it will return immediately, and SyncResult is null. */
-public class AsyncUploader extends AsyncTask<Void, Void, SyncResult> {
+public class AsyncUploader extends AsyncTask<Void, Void, SyncSummary> {
     public interface AsyncUploaderListener {
-        public void onUploadComplete(SyncResult result);
+        public void onUploadComplete(SyncSummary result);
         public void onUploadProgress();
     }
 
     private final Object mListenerLock = new Object();
     private AsyncUploaderListener mListener;
-    private SyncResult mSyncResult;
-
-    public static boolean sIsUploading;
+    private static boolean sIsUploading;
 
     // TODO: clarify how we want this accessed
     public boolean mShouldIgnoreWifiStatus = false;
@@ -34,13 +33,17 @@ public class AsyncUploader extends AsyncTask<Void, Void, SyncResult> {
         }
     }
 
+    public static boolean getIsUploading() {
+        return sIsUploading;
+    }
+
     @Override
-    protected SyncResult doInBackground(Void... voids) {
+    protected SyncSummary doInBackground(Void... voids) {
         if (sIsUploading)
             return null;
 
         sIsUploading = true;
-        mSyncResult = new SyncResult();
+        SyncSummary result = new SyncSummary();
         UploadReports uploadReports = new UploadReports();
         Runnable progressListener = null;
 
@@ -57,15 +60,14 @@ public class AsyncUploader extends AsyncTask<Void, Void, SyncResult> {
             };
         }
 
-        uploadReports.uploadReports(mShouldIgnoreWifiStatus, mSyncResult, progressListener);
+        uploadReports.uploadReports(mShouldIgnoreWifiStatus, result, progressListener);
 
-        //TODO consider checking result for error, trying again after sleep
-
-        return mSyncResult;
+        return result;
     }
     @Override
-    protected void onPostExecute(SyncResult result) {
+    protected void onPostExecute(SyncSummary result) {
         sIsUploading = false;
+
         synchronized (mListenerLock) {
             if (mListener != null) {
                 mListener.onUploadComplete(result);
@@ -73,11 +75,7 @@ public class AsyncUploader extends AsyncTask<Void, Void, SyncResult> {
         }
     }
     @Override
-    protected void onCancelled(SyncResult result) {
+    protected void onCancelled(SyncSummary result) {
         sIsUploading = false;
-    }
-
-    public SyncResult getSyncResult() {
-        return mSyncResult;
     }
 }

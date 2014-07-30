@@ -6,15 +6,14 @@ package org.mozilla.mozstumbler.service.sync;
 
 import android.util.Log;
 import java.io.IOException;
-import java.net.HttpURLConnection;
+
 import org.mozilla.mozstumbler.service.AbstractCommunicator;
+import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.Prefs;
-import org.mozilla.mozstumbler.service.SharedConstants;
 
 public class Submitter extends AbstractCommunicator {
     private static final String SUBMIT_URL = "https://location.services.mozilla.com/v1/submit";
     private static final String LOGTAG = Submitter.class.getName();
-    private static final int CORRECT_RESPONSE = HttpURLConnection.HTTP_NO_CONTENT;
     private final String mNickname;
 
     public Submitter() {
@@ -28,26 +27,24 @@ public class Submitter extends AbstractCommunicator {
     }
 
     @Override
-    public int getCorrectResponse() {
-        return CORRECT_RESPONSE;
-    }
-
-    @Override
     public String getNickname(){
         return mNickname;
     }
 
     @Override
-    public boolean cleanSend(byte[] data) {
-        boolean result = false;
+    public NetworkSendResult cleanSend(byte[] data) {
+        NetworkSendResult result = new NetworkSendResult();
         try {
-            this.send(data);
-            result = true;
+            result.bytesSent = this.send(data, ZippedState.eAlreadyZipped);
+            result.errorCode = 0;
         } catch (IOException ex) {
             String msg = "Error submitting: " + ex;
+            if (ex instanceof HttpErrorException) {
+                result.errorCode = ((HttpErrorException) ex).responseCode;
+                msg += " Code:" + result.errorCode;
+            }
             Log.e(LOGTAG, msg);
-            if (SharedConstants.guiLogMessageBuffer != null)
-                SharedConstants.guiLogMessageBuffer.add("<font color='red'><b>" + msg + "</b></font>");
+            AppGlobals.guiLogError(msg);
         }
         return result;
     }

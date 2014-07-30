@@ -111,25 +111,25 @@ public final class StumblerBundle implements Parcelable {
     public JSONObject  toMLSJSON() throws JSONException {
         JSONObject item = new JSONObject();
 
-        item.put(DatabaseContract.Reports.TIME, mGpsPosition.getTime());
-        item.put(DatabaseContract.Reports.LAT, Math.floor(mGpsPosition.getLatitude() * 1.0E6) / 1.0E6);
-        item.put(DatabaseContract.Reports.LON, Math.floor(mGpsPosition.getLongitude() * 1.0E6) / 1.0E6);
+        item.put(DataStorageContract.ReportsColumns.TIME, mGpsPosition.getTime());
+        item.put(DataStorageContract.ReportsColumns.LAT, Math.floor(mGpsPosition.getLatitude() * 1.0E6) / 1.0E6);
+        item.put(DataStorageContract.ReportsColumns.LON, Math.floor(mGpsPosition.getLongitude() * 1.0E6) / 1.0E6);
 
         if (mGpsPosition.hasAccuracy()) {
-            item.put(DatabaseContract.Reports.ACCURACY, (int) Math.ceil(mGpsPosition.getAccuracy()));
+            item.put(DataStorageContract.ReportsColumns.ACCURACY, (int) Math.ceil(mGpsPosition.getAccuracy()));
         }
 
         if (mGpsPosition.hasAltitude()) {
-            item.put(DatabaseContract.Reports.ALTITUDE, Math.round(mGpsPosition.getAltitude()));
+            item.put(DataStorageContract.ReportsColumns.ALTITUDE, Math.round(mGpsPosition.getAltitude()));
         }
 
         if (mPhoneType == TelephonyManager.PHONE_TYPE_GSM) {
-            item.put(DatabaseContract.Reports.RADIO, "gsm");
+            item.put(DataStorageContract.ReportsColumns.RADIO, "gsm");
         } else if (mPhoneType == TelephonyManager.PHONE_TYPE_CDMA) {
-            item.put(DatabaseContract.Reports.RADIO, "cdma");
+            item.put(DataStorageContract.ReportsColumns.RADIO, "cdma");
         } else {
             // issue #598. investigate this case further in future
-            item.put(DatabaseContract.Reports.RADIO, "");
+            item.put(DataStorageContract.ReportsColumns.RADIO, "");
         }
 
         JSONArray cellJSON = new JSONArray();
@@ -137,11 +137,10 @@ public final class StumblerBundle implements Parcelable {
             JSONObject obj = c.toJSONObject();
             cellJSON.put(obj);
         }
-        item.put(DatabaseContract.Reports.CELL, cellJSON);
-        item.put(DatabaseContract.Reports.CELL_COUNT, cellJSON.length());
+        item.put(DataStorageContract.ReportsColumns.CELL, cellJSON);
+        item.put(DataStorageContract.ReportsColumns.CELL_COUNT, cellJSON.length());
 
         JSONArray wifis = new JSONArray();
-        item.put(DatabaseContract.Reports.WIFI, wifis);
         for (ScanResult s : mWifiData.values()) {
             JSONObject wifiEntry = new JSONObject();
             wifiEntry.put("key", s.BSSID);
@@ -149,6 +148,8 @@ public final class StumblerBundle implements Parcelable {
             wifiEntry.put("signal", s.level);
             wifis.put(wifiEntry);
         }
+        item.put(DataStorageContract.ReportsColumns.WIFI, wifis);
+        item.put(DataStorageContract.ReportsColumns.WIFI_COUNT, wifis.length());
 
         return item;
     }

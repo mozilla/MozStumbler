@@ -51,6 +51,7 @@
     <string name="about_mapbox_title">MapBox</string>-->
     <string name="about_mapbox">Zjistit více informací o mapových datech…</string>
     <string name="about_more">Více…</string>
+    <string name="upload_observations_data_size">Size (KB):</string>
     <!--<string name="about_legal_aosp">Some iconography in this app is reproduced from work created and shared by the Android Open Source Project and used according to terms described in the Creative Commons 2.5 Attribution License.</string> translation missing-->
 
     <!--translations missing
@@ -89,7 +90,7 @@
     <string name="refresh_map">Refresh location</string>
 
     <string name="title_activity_log">Log</string>
-    <string name="hello_world">Hello world!</string>
+
     <string name="action_settings">Settings</string>
     <string name="action_view_log">View Log</string>
     <string name="scroll_to_start">Scroll to Top</string>

@@ -9,6 +9,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.utils.Zipper;
 
@@ -21,6 +22,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.ResourceBundle;
 
 /** Stores reports in memory (mCurrentReports) until MAX_REPORTS_IN_MEMORY,
  * then writes them to disk as a .gz file. The name of the file has
@@ -104,6 +106,15 @@ public class DataStorageManager {
         int cellCount;
         long filesOnDiskBytes;
 
+        public ReportFileList() {}
+        public ReportFileList(ReportFileList other) {
+            files = other.files.clone();
+            reportCount = other.reportCount;
+            wifiCount = other.wifiCount;
+            cellCount = other.cellCount;
+            filesOnDiskBytes = other.filesOnDiskBytes;
+        }
+
         void update(File directory) {
             files = directory.listFiles();
             if (files == null)
@@ -134,8 +145,13 @@ public class DataStorageManager {
     }
 
     private static class ReportBatchIterator {
+        public ReportBatchIterator(ReportFileList list) {
+            fileList = new ReportFileList(list);
+        }
+
         static final int BATCH_INDEX_FOR_MEM_BUFFER  = -1;
         public int currentIndex = BATCH_INDEX_FOR_MEM_BUFFER;
+        public final ReportFileList fileList;
     }
 
     public interface DatabaseIsEmptyTracker {
@@ -274,7 +290,7 @@ public class DataStorageManager {
         if (dirEmpty && mCurrentReports.reports.size() < 1)
             return null;
 
-        mReportBatchIterator = new ReportBatchIterator();
+        mReportBatchIterator = new ReportBatchIterator(mFileList);
 
         if (mCurrentReports.reports.size() > 0) {
             ReportBatch result = new ReportBatch();
@@ -302,11 +318,11 @@ public class DataStorageManager {
 
         mReportBatchIterator.currentIndex++;
         if (mReportBatchIterator.currentIndex < 0 ||
-            mReportBatchIterator.currentIndex > mFileList.files.length - 1) {
+            mReportBatchIterator.currentIndex > mReportBatchIterator.fileList.files.length - 1) {
             return null;
         }
 
-        File f = mFileList.files[mReportBatchIterator.currentIndex];
+        File f = mReportBatchIterator.fileList.files[mReportBatchIterator.currentIndex];
         ReportBatch result = new ReportBatch();
         result.filename = f.getName();
         result.reportCount = (int)getLongFromFilename(f.getName(), SEP_REPORT_COUNT);
@@ -315,7 +331,6 @@ public class DataStorageManager {
         result.data = readFile(f);
         return result;
     }
-
 
     File createFile(int reportCount, int wifiCount, int cellCount) {
         long time = System.currentTimeMillis();

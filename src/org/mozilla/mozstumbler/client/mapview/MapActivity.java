@@ -66,8 +66,6 @@ public final class MapActivity extends Activity {
     private static final String LON_KEY = "longitude";
     private static final String LOCATIONS_KEY = "locations";
 
-    private final ArrayList<GeoPoint> mLocations = new ArrayList<GeoPoint>();
-
     private MapView mMap;
     private PathOverlay mPathOverlay;
     private AccuracyCircleOverlay mAccuracyOverlay;
@@ -76,6 +74,34 @@ public final class MapActivity extends Activity {
     private ReporterBroadcastReceiver mReceiver;
     Timer mGetUrl = new Timer();
     TilesOverlay mCoverageTilesOverlay = null;
+
+    static GpsTrackLocationReceiver sGpsTrackLocationReceiver;
+
+    public static void createGpsTrackLocationReceiver(Context context) {
+        sGpsTrackLocationReceiver = new GpsTrackLocationReceiver();
+        LocalBroadcastManager.getInstance(context).registerReceiver(sGpsTrackLocationReceiver, new IntentFilter(GPSScanner.ACTION_GPS_UPDATED));
+        Log.d(LOGTAG, "Received location");
+    }
+
+    // Create in MainApp, used to grab locations at all times, for drawing the GPS track on the map
+    // The location list stored here is only used in MapActivity onCreate to bootstrap the mPathOverlay
+    public static class GpsTrackLocationReceiver extends BroadcastReceiver {
+        ArrayList<GeoPoint> mLocations = new ArrayList<GeoPoint>();
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            String subject = intent.getStringExtra(Intent.EXTRA_SUBJECT);
+            assert (action.equals(GPSScanner.ACTION_GPS_UPDATED));
+            if (!subject.equals(GPSScanner.SUBJECT_NEW_LOCATION))
+                return;
+
+            Location newPosition = intent.getParcelableExtra(GPSScanner.NEW_LOCATION_ARG_LOCATION);
+            if (newPosition != null) {
+                mLocations.add(new GeoPoint(newPosition));
+            }
+        }
+    }
 
     private class ReporterBroadcastReceiver extends BroadcastReceiver {
         public void reset()
@@ -119,6 +145,7 @@ public final class MapActivity extends Activity {
         sGPSColor = getResources().getColor(R.color.gps_track);
         mPathOverlay = new PathOverlay(sGPSColor, this);
         mMap.getOverlays().add(mPathOverlay);
+        mPathOverlay.getPaint().setStrokeWidth(8.0f);
 
         mFirstLocationFix = true;
         int zoomLevel = DEFAULT_ZOOM; // Default to seeing the world, until we get a fix
@@ -130,20 +157,16 @@ public final class MapActivity extends Activity {
                 final double longitude = savedInstanceState.getDouble(LON_KEY);
                 mMap.getController().setCenter(new GeoPoint(latitude, longitude));
             }
-            if (savedInstanceState.containsKey(LOCATIONS_KEY)) {
-                final List<GeoPoint> prevLocations = savedInstanceState.getParcelableArrayList(LOCATIONS_KEY);
-                mLocations.clear();
-                mLocations.addAll(prevLocations);
-                for (GeoPoint p: prevLocations) {
-                    mPathOverlay.addPoint(p);
-                }
-            }
         } else {
             final StumblerService service = ((MainApp) getApplication()).getService();
             final GeoPoint lastLoc = new GeoPoint(service.getLatitude(), service.getLongitude());
             mMap.getController().setCenter(lastLoc);
         }
         mMap.getController().setZoom(zoomLevel);
+
+        for (GeoPoint p : sGpsTrackLocationReceiver.mLocations) {
+            mPathOverlay.addPoint(p);
+        }
 
         Log.d(LOGTAG, "onCreate");
 
@@ -344,7 +367,6 @@ public final class MapActivity extends Activity {
         bundle.putInt(ZOOM_KEY, mMap.getZoomLevel());
         bundle.putDouble(LON_KEY, mMap.getMapCenter().getLongitude());
         bundle.putDouble(LAT_KEY, mMap.getMapCenter().getLatitude());
-        bundle.putParcelableArrayList(LOCATIONS_KEY, mLocations);
     }
 
     @Override
@@ -374,6 +396,7 @@ public final class MapActivity extends Activity {
                 service.getAPCount());
     }
 
+
     private final class GetLocationAndMapItTask extends AsyncTask<StumblerService, Void, Location> {
         @Override
         public Location doInBackground(StumblerService... params) {
@@ -387,7 +410,6 @@ public final class MapActivity extends Activity {
             final double longitude = result.getLongitude();
             if (Math.abs(latitude) >= 0.01 && Math.abs(longitude) >= 0.01) {
                 final GeoPoint point = new GeoPoint(result.getLatitude(), result.getLongitude());
-                mLocations.add(point);
                 mPathOverlay.addPoint(point);
             }
             return result;

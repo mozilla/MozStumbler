@@ -14,7 +14,6 @@ import org.mozilla.mozstumbler.service.AbstractCommunicator;
 public class Searcher extends AbstractCommunicator {
     private static final String LOGTAG = Searcher.class.getName();
     private static final String SEARCH_URL = "https://location.services.mozilla.com/v1/search";
-    private static final int CORRECT_RESPONSE = HttpURLConnection.HTTP_OK;
     private static final String RESPONSE_OK_TEXT = "ok";
     private static final String JSON_LATITUDE = "lat";
     private static final String JSON_LONGITUDE = "lon";
@@ -28,11 +27,6 @@ public class Searcher extends AbstractCommunicator {
     @Override
     public String getUrlString() {
         return SEARCH_URL;
-    }
-
-    @Override
-    public int getCorrectResponse() {
-        return CORRECT_RESPONSE;
     }
 
     private void initResponse() throws IOException,JSONException {
@@ -51,11 +45,11 @@ public class Searcher extends AbstractCommunicator {
     }
 
     @Override
-    public boolean cleanSend(byte[] data) {
-        boolean result = false;
+    public NetworkSendResult cleanSend(byte[] data) {
+        NetworkSendResult result = new NetworkSendResult();
         try {
-            send(data);
-            result = true;
+            result.bytesSent = send(data, ZippedState.eNotZipped);
+            result.errorCode = 0;
         } catch (IOException e) {
             // do nothing
         }

@@ -19,13 +19,14 @@ import android.util.Log;
 import java.io.File;
 import org.mozilla.mozstumbler.BuildConfig;
 import org.mozilla.mozstumbler.R;
-import org.mozilla.mozstumbler.client.sync.SyncUtils;
+import org.mozilla.mozstumbler.client.cellscanner.DefaultCellScanner;
+import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.Prefs;
-import org.mozilla.mozstumbler.service.SharedConstants;
 import org.mozilla.mozstumbler.service.StumblerService;
 import org.mozilla.mozstumbler.service.scanners.GPSScanner;
 import org.mozilla.mozstumbler.service.scanners.WifiScanner;
 import org.mozilla.mozstumbler.service.scanners.cellscanner.CellScanner;
+import org.mozilla.mozstumbler.service.sync.AsyncUploader;
 import org.mozilla.mozstumbler.service.utils.NetworkUtils;
 
 public class MainApp extends Application {
@@ -35,7 +36,8 @@ public class MainApp extends Application {
     private ServiceConnection mConnection;
     private ServiceBroadcastReceiver mReceiver;
     private MainActivity mMainActivity;
-
+    private final long MAX_BYTES_DISK_STORAGE = 1000 * 1000 * 20; // 20MB for MozStumbler by default, is ok?
+    private final int MAX_WEEKS_OLD_STORED = 4;
     private static final String INTENT_TURN_OFF = "org.mozilla.mozstumbler.turnMeOff";
     private static final int    NOTIFICATION_ID = 1;
 
@@ -55,10 +57,10 @@ public class MainApp extends Application {
     public void onCreate() {
         super.onCreate();
 
-        SharedConstants.isDebug = BuildConfig.DEBUG;
-        SharedConstants.appVersionName = BuildConfig.VERSION_NAME;
-        SharedConstants.appVersionCode = BuildConfig.VERSION_CODE;
-        SharedConstants.appName = this.getResources().getString(R.string.app_name);
+        AppGlobals.isDebug = BuildConfig.DEBUG;
+        AppGlobals.appVersionName = BuildConfig.VERSION_NAME;
+        AppGlobals.appVersionCode = BuildConfig.VERSION_CODE;
+        AppGlobals.appName = this.getResources().getString(R.string.app_name);
 
         final String OLD_NAME = "org.mozilla.mozstumbler.preferences.Prefs.xml";
         File dir = this.getDir("shared_prefs", Context.MODE_PRIVATE);
@@ -72,11 +74,9 @@ public class MainApp extends Application {
         LogActivity.LogMessageReceiver.createGlobalInstance(this);
         CellScanner.setCellScannerImpl(new DefaultCellScanner(this));
 
-        if (SharedConstants.isDebug) {
+        if (AppGlobals.isDebug) {
             enableStrictMode();
         }
-
-        SyncUtils.CreateSyncAccount(this);
 
         mReceiver = new ServiceBroadcastReceiver();
         mReceiver.register();
@@ -85,6 +85,9 @@ public class MainApp extends Application {
             public void onServiceConnected(ComponentName className, IBinder binder) {
                 StumblerService.StumblerBinder serviceBinder = (StumblerService.StumblerBinder) binder;
                 mStumblerService = serviceBinder.getService();
+
+                AppGlobals.dataStorageManager.setMaxStorageOnDisk(MAX_BYTES_DISK_STORAGE);
+                AppGlobals.dataStorageManager.setMaxWeeksStored(MAX_WEEKS_OLD_STORED);
                 Log.d(LOGTAG, "Service connected");
                 if (mMainActivity != null) {
                     mMainActivity.updateUiOnMainThread();
@@ -123,7 +126,9 @@ public class MainApp extends Application {
     private void stopScanning() {
         mStumblerService.stopForeground(true);
         mStumblerService.stopScanning();
-        SyncUtils.TriggerRefresh(false);
+
+        AsyncUploader uploader = new AsyncUploader(null /* don't need to listen for completion */);
+        uploader.execute();
     }
 
     public void toggleScanning(MainActivity caller) {

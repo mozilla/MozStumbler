@@ -1,4 +1,4 @@
-package org.mozilla.mozstumbler.service;
+package org.mozilla.mozstumbler.service.utils;
 
 /*
  * Copyright (C) 2008 The Android Open Source Project

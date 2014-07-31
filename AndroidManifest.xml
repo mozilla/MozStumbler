@@ -40,7 +40,6 @@
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -95,33 +94,9 @@
             android:label="@string/service_name">
         </service>
 
-        <service
-            android:name=".client.sync.AuthenticatorService"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="android.accounts.AccountAuthenticator"/>
-            </intent-filter>
-            <meta-data
-                android:name="android.accounts.AccountAuthenticator"
-                android:resource="@xml/stumbler_authenticator" />
-        </service>
 
-        <service
-            android:name=".client.sync.SyncService"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="android.content.SyncAdapter"/>
-            </intent-filter>
-            <meta-data android:name="android.content.SyncAdapter"
-                android:resource="@xml/stumbler_syncadapter" />
-        </service>
-
-        <provider
-            android:name=".client.datahandling.Provider"
-            android:authorities="org.mozilla.mozstumbler.provider"
-            android:exported="false"
-            android:syncable="true"
-             />
+        <receiver android:name=".service.sync.UploadAlarmReceiver" />
+        <service android:name=".service.sync.UploadAlarmReceiver$UploadAlarmService" />
     </application>
 
 </manifest>

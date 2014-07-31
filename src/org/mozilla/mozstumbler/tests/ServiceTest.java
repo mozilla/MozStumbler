@@ -1,10 +1,6 @@
 package org.mozilla.mozstumbler.tests;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SyncResult;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
@@ -12,25 +8,24 @@ import android.telephony.TelephonyManager;
 import android.test.ServiceTestCase;
 import android.util.Log;
 
-import org.mozilla.mozstumbler.client.datahandling.ClientContentResolver;
-import org.mozilla.mozstumbler.service.Scanner;
-import org.mozilla.mozstumbler.service.SharedConstants;
+import org.mozilla.mozstumbler.service.AbstractCommunicator;
+import org.mozilla.mozstumbler.service.AppGlobals;
+import org.mozilla.mozstumbler.service.scanners.ScanManager;
 import org.mozilla.mozstumbler.service.StumblerService;
-import org.mozilla.mozstumbler.service.datahandling.Database;
-import org.mozilla.mozstumbler.service.datahandling.DatabaseContract;
+import org.mozilla.mozstumbler.service.datahandling.DataStorageManager;
 import org.mozilla.mozstumbler.service.scanners.GPSScanner;
 import org.mozilla.mozstumbler.service.scanners.WifiScanner;
 import org.mozilla.mozstumbler.service.scanners.cellscanner.CellInfo;
 import org.mozilla.mozstumbler.service.scanners.cellscanner.CellScanner;
 import org.mozilla.mozstumbler.service.sync.AsyncUploader;
+import org.mozilla.mozstumbler.service.utils.Zipper;
 
+import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 
@@ -41,12 +36,11 @@ public class ServiceTest extends ServiceTestCase<StumblerService> implements Asy
     }
 
     @Override
+    public void onUploadProgress() {}
+
+    @Override
     protected void setUp() throws Exception {
         super.setUp();
-        String path = mContext.getFilesDir().getPath();
-        SQLiteDatabase db = SQLiteDatabase.openDatabase(path + "/../databases/stumbler.db", null, 0);
-        db.execSQL("delete from " + Database.TABLE_REPORTS);
-        db.close();
     }
 
     // setActivityIntent
@@ -55,10 +49,10 @@ public class ServiceTest extends ServiceTestCase<StumblerService> implements Asy
         super.tearDown();
     }
 
-    Object getScanner(Scanner scanner, String privateMember) throws NoSuchFieldException, IllegalAccessException {
-        Field field = Scanner.class.getDeclaredField(privateMember);
+    Object getScanner(ScanManager scanManager, String privateMember) throws NoSuchFieldException, IllegalAccessException {
+        Field field = ScanManager.class.getDeclaredField(privateMember);
         field.setAccessible(true);
-        return field.get(scanner);
+        return field.get(scanManager);
     }
 
 
@@ -76,15 +70,16 @@ public class ServiceTest extends ServiceTestCase<StumblerService> implements Asy
         return service;
     }
 
-    public void sendLocation(Scanner scanner) throws NoSuchFieldException, IllegalAccessException {
+    static double c = 0.01;
+    public void sendLocation(ScanManager scanManager) throws NoSuchFieldException, IllegalAccessException, InterruptedException {
         Location loc = new Location("gps");
-        loc.setLatitude(89.9);
+        loc.setLatitude(89.9 + c);
+        c += 0.01;
         loc.setLongitude(-179.9);
         loc.setTime(System.currentTimeMillis());
 
-        GPSScanner gpsScanner = (GPSScanner) getScanner(scanner, "mGPSScanner");
+        GPSScanner gpsScanner = (GPSScanner) getScanner(scanManager, "mGPSScanner");
         gpsScanner.onLocationChanged(loc);
-
     }
 
     public void checkWifi_nomap(WifiScanner wifiScanner) {
@@ -93,13 +88,16 @@ public class ServiceTest extends ServiceTestCase<StumblerService> implements Asy
             sr.BSSID = "00:00:00:00:00:11";
             sr.SSID = "test of _nomap";
 
+            Set<String> wifiOrig = wifiScanner.getAccessPoints(this);
+
+            wifiScanner.mTestModeFakeScanResults.clear();
             wifiScanner.mTestModeFakeScanResults.add(sr);
 
             Intent i = new Intent(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
             wifiScanner.onReceive(mContext, i);
 
             Set<String> wifis = wifiScanner.getAccessPoints(this);
-            assertTrue(wifis.size() == 0);
+            assertTrue(wifis.size() == wifiOrig.size());
         } catch (Exception ex) {
             assertTrue(false);
         }
@@ -130,7 +128,7 @@ public class ServiceTest extends ServiceTestCase<StumblerService> implements Asy
         try {
             ScanResult sr = makeScanResult();
             sr.BSSID = "01:00:5e:90:10:00"; // known test value on server
-            sr.SSID = "log me";
+            sr.SSID = "log_me";
 
             wifiScanner.mTestModeFakeScanResults.add(sr);
 
@@ -143,8 +141,6 @@ public class ServiceTest extends ServiceTestCase<StumblerService> implements Asy
             cellScanner.sTestingModeCellInfoArray = new ArrayList<CellInfo>();
             cellScanner.sTestingModeCellInfoArray.add(makeCellInfo(1, 1, 60330, 1660199, 19));
             cellScanner.sTestingModeCellInfoArray.add(makeCellInfo(1, 1, -1, -1, -1));
-            // now wait for cell scanner thread to run and pick up changes
-            Thread.sleep(2000);
         } catch (Exception ex) {
             ex.printStackTrace();
             assertTrue(false);
@@ -170,126 +166,71 @@ public class ServiceTest extends ServiceTestCase<StumblerService> implements Asy
         return null;
     }
 
-    SQLiteDatabase getStumblerDatabase() {
-        String dbPath = Database.getFullPathToDb(this);
-        assertTrue(dbPath != null);
-        int endPos = dbPath.lastIndexOf('/');
-        dbPath = dbPath.substring(0, endPos) + "/" + Database.DATABASE_NAME;
-        SQLiteDatabase db = SQLiteDatabase.openDatabase(dbPath, null, 0);
-        return db;
-    }
 
     // for pausing to wait for asynctask
     final CountDownLatch signal = new CountDownLatch(1);
-    public void onUploadComplete(SyncResult result) {
+    public void onUploadComplete(AbstractCommunicator.SyncSummary result) {
         signal.countDown();
-    }
-
-    public void getCellAndWifiCountFromReportsLastRow(SQLiteDatabase db, long[] cellAndWifi) {
-        Cursor cursor = db.rawQuery("select * from " + Database.TABLE_REPORTS, null);
-        if (cursor.getCount() < 1) {
-            cursor.close();
-            return;
-        }
-        cursor.moveToLast();
-        cellAndWifi[0] = cursor.getLong(cursor.getColumnIndex(DatabaseContract.Reports.CELL_COUNT));
-        cellAndWifi[1] = cursor.getLong(cursor.getColumnIndex(DatabaseContract.Reports.WIFI_COUNT));
-        cursor.close();
-    }
-
-    public Map<String, Long> getStats(SQLiteDatabase db) {
-        Cursor cursor = db.rawQuery("select * from " + Database.TABLE_STATS, null);
-        assertTrue(cursor.getCount() > 0);
-        cursor.moveToFirst();
-        Map<String, Long> kv = new HashMap<String, Long>();
-        while (!cursor.isAfterLast()) {
-            String key = cursor.getString(cursor.getColumnIndex(DatabaseContract.Stats.KEY));
-            Long value = cursor.getLong(cursor.getColumnIndex(DatabaseContract.Stats.VALUE));
-            kv.put(key, value);
-            cursor.moveToNext();
-        }
-        cursor.close();
-        assertTrue(kv.size() == 4);
-        return kv;
     }
 
     public void testPassiveService() {
         WifiScanner.sIsTestMode = true;
-
+        ScanManager scanManager = null;
+        WifiScanner wifiScanner = null;
+        CellScanner cellScanner = null;
         StumblerService service = startPassiveService();
-        SharedConstants.stumblerContentResolver= new ClientContentResolver(getContext().getContentResolver());
+        assertTrue(AppGlobals.dataStorageManager != null);
         try {
-            SQLiteDatabase db = getStumblerDatabase();
-            long[] cellAndWifiOrig = new long[2];
-            getCellAndWifiCountFromReportsLastRow(db, cellAndWifiOrig);
 
-            Field field = StumblerService.class.getDeclaredField("mScanner");
+            Field field = StumblerService.class.getDeclaredField("mScanManager");
             field.setAccessible(true);
-            Scanner scanner = (Scanner) field.get(service);
+            scanManager = (ScanManager) field.get(service);
+            wifiScanner = (WifiScanner) getScanner(scanManager, "mWifiScanner");
+            cellScanner = (CellScanner) getScanner(scanManager, "mCellScanner");
+        } catch (Exception ex) {
+            assertTrue(false);
+            return;
+        }
 
-            sendLocation(scanner);
-
-            WifiScanner wifiScanner = (WifiScanner) getScanner(scanner, "mWifiScanner");
-
-            checkWifi_nomap(wifiScanner);
-
-            CellScanner cellScanner = (CellScanner) getScanner(scanner, "mCellScanner");
-
-            final int kNewCells = 2;
-            final int kNewWifis = 1;
+        for (int i = 0; i < 2; i++) {
+            try {
+                sendLocation(scanManager);
+            } catch (Exception ex) {}
             sendWifiAndCell(wifiScanner, cellScanner);
+            Intent intent = new Intent(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
+            wifiScanner.onReceive(mContext, intent);
+            // now wait for cell scanner thread to run and pick up changes
+            try {
+                Thread.sleep(3200); // 3 seconds between gps locations
+            } catch (Exception ex) {}
+        }
 
-            for (int i = 0; i < 3; i++) {
-                sendLocation(scanner);
-                Intent intent = new Intent(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
-                wifiScanner.onReceive(mContext, intent);
+        try {
+            sendLocation(scanManager);
+            Thread.sleep(5000);
+        } catch (Exception ex) {}
 
-                sendWifiAndCell(wifiScanner, cellScanner);
-            }
-
-            Thread.sleep(3500);
-
-            long[] cellAndWifi = new long[2];
-            getCellAndWifiCountFromReportsLastRow(db, cellAndWifi);
-            assertTrue(cellAndWifi[0] == cellAndWifiOrig[0] + kNewCells);
-            assertTrue(cellAndWifi[1] == cellAndWifiOrig[1] + kNewWifis);
-
-            Cursor cursor = db.rawQuery("select * from " + Database.TABLE_REPORTS, null);
-            assertTrue(cursor.getCount() > 0);
-            cursor.moveToLast();
-            String s = cursor.getString(cursor.getColumnIndex(DatabaseContract.Reports.CELL));
-            assertTrue(s.equals("[{\"asu\":19,\"radio\":\"gsm\",\"mnc\":1,\"cid\":1660199,\"mcc\":1,\"lac\":60330},{\"asu\":-1,\"mcc\":1,\"radio\":\"gsm\",\"mnc\":1}]"));
-            s = cursor.getString(cursor.getColumnIndex(DatabaseContract.Reports.WIFI));
-            assertTrue(s.equals("[{\"signal\":0,\"key\":\"01005e901000\",\"frequency\":0}]"));
-            cursor.close();
-
-            Map<String, Long> statsMap = getStats(db);
-            long sentObsOrig = statsMap.get(DatabaseContract.Stats.KEY_OBSERVATIONS_SENT);
-            long sentCellsOrig = statsMap.get(DatabaseContract.Stats.KEY_CELLS_SENT);
-            long sentWifisOrig = statsMap.get(DatabaseContract.Stats.KEY_WIFIS_SENT);
-
-            AsyncUploader upper = new AsyncUploader(this);
-            upper.mShouldIgnoreWifiStatus = true;
-            upper.execute();
-            signal.await();
-            SyncResult syncResult = upper.getSyncResult();
-            assertTrue(!syncResult.hasError() && !syncResult.madeSomeProgress());
-
-            statsMap = getStats(db);
-            long sentObs = statsMap.get(DatabaseContract.Stats.KEY_OBSERVATIONS_SENT);
-            long sentCells = statsMap.get(DatabaseContract.Stats.KEY_CELLS_SENT);
-            long sentWifis = statsMap.get(DatabaseContract.Stats.KEY_WIFIS_SENT);
-
-            assertTrue(sentObs - sentObsOrig > 5);
-            assertTrue(sentCells - sentCellsOrig >= kNewCells);
-            assertTrue(sentWifis - sentWifisOrig >= kNewWifis);
-
-            Log.d(SharedConstants.appName, "•••••••••••••••••••• done passive scan test •••••••••••••••");
-
-            db.close();
-        } catch (Exception e) {
-            e.printStackTrace();
+        try {
+            DataStorageManager.ReportBatch batch = AppGlobals.dataStorageManager.getFirstBatch();
+            Log.d("test", "c:" + batch.reportCount);
+            String val = Zipper.unzipData(batch.data);
+            Log.d("test", "d:" + val);
+        } catch (IOException ex) {
             assertTrue(false);
         }
+
+    //    assertTrue(s.equals("[{\"asu\":19,\"radio\":\"gsm\",\"mnc\":1,\"cid\":1660199,\"mcc\":1,\"lac\":60330},{\"asu\":-1,\"mcc\":1,\"radio\":\"gsm\",\"mnc\":1}]"));
+      //  assertTrue(s.equals("[{\"signal\":0,\"key\":\"01005e901000\",\"frequency\":0}]"));
+
+        AsyncUploader upper = new AsyncUploader(this);
+        upper.mShouldIgnoreWifiStatus = true;
+        upper.execute();
+        try {
+            signal.await();
+        } catch (Exception ex) {}
+
+        checkWifi_nomap(wifiScanner);
+
+        Log.d(AppGlobals.appName, "•••••••••••••••••••• done passive scan test •••••••••••••••");
     }
 }

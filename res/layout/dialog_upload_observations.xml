@@ -8,7 +8,6 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@android:color/background_light"
         android:paddingTop="4dp"
         android:paddingBottom="4dp"
         android:paddingLeft="16dp"
@@ -24,7 +23,7 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:textAppearance="?android:textAppearanceMedium"
-            android:textColor="#ff000000" />
+             />
 
         <TextView
             android:id="@+id/last_upload_time_title"
@@ -34,7 +33,7 @@
             android:layout_toLeftOf="@+id/last_upload_time_value"
             android:layout_toStartOf="@+id/last_upload_time_value"
             android:text="@string/upload_observations_last_upload_time_title"
-            android:textColor="#ff000000" />
+             />
 
         <TextView
             android:id="@id/last_upload_time_value"
@@ -47,7 +46,28 @@
             android:layout_marginStart="4sp"
             android:minWidth="64dp"
             tools:text="16.02.14 13:07"
-            android:textColor="#ff000000" />
+             />
+
+        <TextView
+            android:id="@+id/total_kb_sent_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/last_upload_time_title"
+            android:layout_alignRight="@id/last_upload_time_title"
+            android:layout_alignEnd="@id/last_upload_time_title"
+            android:text="@string/upload_observations_data_size"
+             />
+
+        <TextView
+            android:id="@+id/data_kb_sent_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/total_kb_sent_title"
+            android:layout_alignBottom="@id/total_kb_sent_title"
+            android:layout_alignLeft="@id/last_upload_time_value"
+            android:layout_alignStart="@id/last_upload_time_value"
+            tools:text="-"
+             />
 
         <TextView
             android:id="@+id/observations_sent_title"
@@ -55,11 +75,11 @@
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-            android:layout_below="@id/last_upload_time_title"
+            android:layout_below="@id/total_kb_sent_title"
             android:layout_alignRight="@id/last_upload_time_title"
             android:layout_alignEnd="@id/last_upload_time_title"
             android:text="@string/upload_observations_observations_sent_title"
-            android:textColor="#ff000000" />
+             />
 
         <TextView
             android:id="@+id/observations_sent_value"
@@ -71,7 +91,7 @@
             android:layout_alignLeft="@id/last_upload_time_value"
             android:layout_alignStart="@id/last_upload_time_value"
             tools:text="100"
-            android:textColor="#ff000000" />
+             />
 
         <TextView
             android:id="@+id/cells_sent_title"
@@ -83,7 +103,7 @@
             android:layout_alignRight="@id/last_upload_time_title"
             android:layout_alignEnd="@id/last_upload_time_title"
             android:text="@string/upload_observations_cells_sent_title"
-            android:textColor="#ff000000" />
+             />
 
         <TextView
             android:id="@+id/cells_sent_value"
@@ -95,7 +115,7 @@
             android:layout_alignLeft="@id/last_upload_time_value"
             android:layout_alignStart="@id/last_upload_time_value"
             tools:text="50"
-            android:textColor="#ff000000" />
+             />
 
         <TextView
             android:id="@+id/wifis_sent_title"
@@ -107,7 +127,7 @@
             android:layout_alignRight="@id/last_upload_time_title"
             android:layout_alignEnd="@id/last_upload_time_title"
             android:text="@string/upload_observations_wifis_sent_title"
-            android:textColor="#ff000000" />
+             />
 
         <TextView
             android:id="@+id/wifis_sent_value"
@@ -119,7 +139,7 @@
             android:layout_alignLeft="@id/last_upload_time_value"
             android:layout_alignStart="@id/last_upload_time_value"
             tools:text="500"
-            android:textColor="#ff000000" />
+             />
 
         <TextView
             android:id="@+id/queued_header"
@@ -131,19 +151,17 @@
             android:layout_marginTop="4dp"
             android:text="@string/upload_observations_in_queue_title"
             android:textAppearance="?android:textAppearanceMedium"
-            android:textColor="#ff000000" />
+             />
 
         <TextView
             android:id="@+id/observations_queued_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_below="@id/queued_header"
-            android:layout_alignRight="@id/last_upload_time_title"
-            android:layout_alignEnd="@id/last_upload_time_title"
             android:text="@string/upload_observations_observations_queued_title"
-            android:textColor="#ff000000" />
+            
+            android:layout_below="@+id/data_queued_title"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
 
         <TextView
             android:id="@+id/observations_queued_value"
@@ -155,7 +173,7 @@
             android:layout_alignLeft="@id/last_upload_time_value"
             android:layout_alignStart="@id/last_upload_time_value"
             tools:text="50"
-            android:textColor="#ff000000" />
+             />
 
         <TextView
             android:id="@+id/cells_queued_title"
@@ -167,7 +185,7 @@
             android:layout_alignRight="@id/last_upload_time_title"
             android:layout_alignEnd="@id/last_upload_time_title"
             android:text="@string/upload_observations_cells_queued_title"
-            android:textColor="#ff000000" />
+             />
 
         <TextView
             android:id="@+id/cells_queued_value"
@@ -179,7 +197,7 @@
             android:layout_alignLeft="@id/last_upload_time_value"
             android:layout_alignStart="@id/last_upload_time_value"
             tools:text="10"
-            android:textColor="#ff000000" />
+             />
 
         <TextView
             android:id="@+id/wifis_queued_title"
@@ -191,7 +209,7 @@
             android:layout_alignRight="@id/last_upload_time_title"
             android:layout_alignEnd="@id/last_upload_time_title"
             android:text="@string/upload_observations_wifis_queued_title"
-            android:textColor="#ff000000" />
+             />
 
         <TextView
             android:id="@+id/wifis_queued_value"
@@ -203,7 +221,7 @@
             android:layout_alignLeft="@id/last_upload_time_value"
             android:layout_alignStart="@id/last_upload_time_value"
             tools:text="50"
-            android:textColor="#ff000000" />
+             />
 
         <Button
             android:id="@+id/upload_observations_button"
@@ -226,6 +244,24 @@
             android:layout_marginTop="8dp"
             android:visibility="invisible"
             tools:visibility="visible" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/upload_observations_data_size"
+            android:id="@+id/data_queued_title"
+            android:layout_below="@+id/queued_header"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="-"
+            android:id="@+id/data_kb_queued_value"
+            android:layout_above="@+id/observations_queued_value"
+            android:layout_alignLeft="@+id/observations_queued_value"
+            android:layout_alignStart="@+id/observations_queued_value" />
 
     </RelativeLayout>
 </ScrollView>

@@ -34,7 +34,6 @@ public class CellScannerNoWCDMA implements CellScanner.CellScannerImpl {
 
     protected  GetAllCellInfoScannerImpl mGetAllInfoCellScanner;
 
-    protected final ScreenMonitor mScreenMonitor;
     protected TelephonyManager mTelephonyManager;
 
     protected int mPhoneType;
@@ -55,7 +54,6 @@ public class CellScannerNoWCDMA implements CellScanner.CellScannerImpl {
 
     public CellScannerNoWCDMA(Context context) {
         mContext = context;
-        mScreenMonitor = new ScreenMonitor(mContext);
     }
 
     @Override
@@ -85,15 +83,12 @@ public class CellScannerNoWCDMA implements CellScanner.CellScannerImpl {
         mSignalStrength = CellInfo.UNKNOWN_SIGNAL;
         mCdmaDbm = CellInfo.UNKNOWN_SIGNAL;
         mTelephonyManager.listen(mPhoneStateListener, PhoneStateListener.LISTEN_SIGNAL_STRENGTHS);
-        mScreenMonitor.start();
+
     }
 
     @Override
     public void stop() {
         mTelephonyManager.listen(mPhoneStateListener, PhoneStateListener.LISTEN_NONE);
-        try {
-            mScreenMonitor.stop();
-        } catch (IllegalArgumentException ex) {}
         mSignalStrength = CellInfo.UNKNOWN_SIGNAL;
         mCdmaDbm = CellInfo.UNKNOWN_SIGNAL;
     }
@@ -128,16 +123,12 @@ public class CellScannerNoWCDMA implements CellScanner.CellScannerImpl {
         return networkOperator;
     }
 
-    private CellInfo getCurrentCellInfo() {
-        final CellLocation currentCell;
-        currentCell = mTelephonyManager.getCellLocation();
+    protected CellInfo getCurrentCellInfo() {
+        final CellLocation currentCell = mTelephonyManager.getCellLocation();
         if (currentCell == null) {
             return null;
         }
-        mScreenMonitor.putLocation(currentCell);
-        if (!mScreenMonitor.isLocationValid()) {
-            return null;
-        }
+
         try {
             final CellInfo info = new CellInfo(mPhoneType);
             final int signalStrength = mSignalStrength;

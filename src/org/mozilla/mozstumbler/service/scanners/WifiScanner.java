@@ -23,17 +23,17 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.mozilla.mozstumbler.service.SharedConstants;
+import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.blocklist.BSSIDBlockList;
 import org.mozilla.mozstumbler.service.blocklist.SSIDBlockList;
-import org.mozilla.mozstumbler.service.SharedConstants.ActiveOrPassiveStumbling;
+import org.mozilla.mozstumbler.service.AppGlobals.ActiveOrPassiveStumbling;
 import org.mozilla.mozstumbler.service.Prefs;
 
 public class WifiScanner extends BroadcastReceiver {
-    public static final String ACTION_BASE = SharedConstants.ACTION_NAMESPACE + ".WifiScanner.";
+    public static final String ACTION_BASE = AppGlobals.ACTION_NAMESPACE + ".WifiScanner.";
     public static final String ACTION_WIFIS_SCANNED = ACTION_BASE + "WIFIS_SCANNED";
     public static final String ACTION_WIFIS_SCANNED_ARG_RESULTS = "scan_results";
-    public static final String ACTION_WIFIS_SCANNED_ARG_TIME = SharedConstants.ACTION_ARG_TIME;
+    public static final String ACTION_WIFIS_SCANNED_ARG_TIME = AppGlobals.ACTION_ARG_TIME;
 
     public static final int STATUS_IDLE = 0;
     public static final int STATUS_ACTIVE = 1;
@@ -149,13 +149,13 @@ public class WifiScanner extends BroadcastReceiver {
             @Override
             public void run() {
                 if (stumblingMode == ActiveOrPassiveStumbling.PASSIVE_STUMBLING &&
-                    mPassiveScanCount++ > SharedConstants.PASSIVE_MODE_MAX_SCANS_PER_GPS)
+                    mPassiveScanCount++ > AppGlobals.PASSIVE_MODE_MAX_SCANS_PER_GPS)
                 {
                     mPassiveScanCount = 0;
                     stop(); // set mWifiScanTimer to null
                     return;
                 }
-                if (SharedConstants.isDebug) Log.d(LOGTAG, "WiFi Scanning Timer fired");
+                if (AppGlobals.isDebug) Log.d(LOGTAG, "WiFi Scanning Timer fired");
                 getWifiManager().startScan();
             }
         }, 0, WIFI_MIN_UPDATE_TIME);
@@ -194,12 +194,14 @@ public class WifiScanner extends BroadcastReceiver {
     }
 
     private void reportScanResults(ArrayList<ScanResult> scanResults) {
-        if (scanResults.isEmpty()) return;
+        if (scanResults.isEmpty())
+            return;
+
+        if (AppGlobals.isDebug) Log.d(LOGTAG, scanResults.toString());
+
         Intent i = new Intent(ACTION_WIFIS_SCANNED);
         i.putParcelableArrayListExtra(ACTION_WIFIS_SCANNED_ARG_RESULTS, scanResults);
         i.putExtra(ACTION_WIFIS_SCANNED_ARG_TIME, System.currentTimeMillis());
         LocalBroadcastManager.getInstance(mContext).sendBroadcastSync(i);
     }
-
-
 }

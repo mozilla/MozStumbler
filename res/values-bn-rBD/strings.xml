@@ -84,10 +84,11 @@
     <string name="wifi_scan_always_summary">ওয়াই-ফাই বন্ধ থাকলেও এক্সেস পয়েন্টগুলো স্ক্যান করা হবে।</string>
 
     <string name="refresh_map">অবস্থান রিফ্রেশ কর</string>
-	
-	<!--translations missing
-	<string name="title_activity_log">Log</string>
-    <string name="hello_world">Hello world!</string>
+    <string name="upload_observations_data_size">Size (KB):</string>
+
+    <!--translations missing
+    <string name="title_activity_log">Log</string>
+
     <string name="action_settings">Settings</string>
     <string name="action_view_log">View Log</string>
     <string name="scroll_to_start">Scroll to Top</string>

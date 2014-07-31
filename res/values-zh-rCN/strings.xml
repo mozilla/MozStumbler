@@ -84,10 +84,11 @@
     <string name="wifi_scan_always_summary">即使 Wi-Fi 在关闭状态也扫描接入点</string>
 
     <string name="refresh_map">刷新位置</string>
-	
-	<!--translations missing
-	<string name="title_activity_log">Log</string>
-    <string name="hello_world">Hello world!</string>
+    <string name="upload_observations_data_size">Size (KB):</string>
+
+    <!--translations missing
+    <string name="title_activity_log">Log</string>
+
     <string name="action_settings">Settings</string>
     <string name="action_view_log">View Log</string>
     <string name="scroll_to_start">Scroll to Top</string>

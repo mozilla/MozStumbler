@@ -1,46 +1,65 @@
 package org.mozilla.mozstumbler.client;
 
-import android.accounts.Account;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.ContentResolver;
 import android.content.DialogInterface;
-import android.content.SyncStatusObserver;
-import android.database.Cursor;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import org.mozilla.mozstumbler.service.SharedConstants;
+
+import org.mozilla.mozstumbler.service.AbstractCommunicator;
+import org.mozilla.mozstumbler.service.AppGlobals;
+import org.mozilla.mozstumbler.service.datahandling.DataStorageContract;
+import org.mozilla.mozstumbler.service.datahandling.DataStorageManager;
+import org.mozilla.mozstumbler.service.sync.AsyncUploader;
 import org.mozilla.mozstumbler.service.utils.DateTimeUtils;
 import org.mozilla.mozstumbler.R;
-import org.mozilla.mozstumbler.service.datahandling.DatabaseContract;
-import org.mozilla.mozstumbler.client.sync.AuthenticatorService;
-import org.mozilla.mozstumbler.client.sync.SyncUtils;
 
-public class UploadReportsDialog extends DialogFragment {
+import java.io.IOException;
+import java.util.Properties;
+
+public class UploadReportsDialog extends DialogFragment
+        implements AsyncUploader.AsyncUploaderListener {
     private static final String LOGTAG = UploadReportsDialog.class.getName();
 
     private TextView mLastUpdateTimeView;
     private TextView mObservationsSentView;
+    private TextView mTotalDataSentView;
     private TextView mCellsSentView;
     private TextView mWifisSentView;
-    private TextView mObservationsQueuedView;
-    private TextView mCellsQueuedView;
-    private TextView mWifisQueuedView;
+
+    private TextView mQueuedObservationsView;
+    private TextView mQueuedCellsView;
+    private TextView mQueuedWifisView;
+    private TextView mQueuedDataView;
+
     private View mUploadButton;
     private View mProgressbarView;
-
-    private Object mStatusChangeListener;
     private boolean hasQueuedObservations;
-    private final Account mAccount = AuthenticatorService.GetAccount();
+    private AsyncUploader mUploader;
+
+    private void updateUiThread() {
+        this.getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                update();
+            }
+        });
+    }
+
+    @Override
+    public void onUploadComplete(AbstractCommunicator.SyncSummary result) {
+        updateUiThread();
+    }
+
+    @Override
+    public void onUploadProgress() {
+        updateUiThread();
+    }
 
     public UploadReportsDialog() {
     }
@@ -55,16 +74,21 @@ public class UploadReportsDialog extends DialogFragment {
         mObservationsSentView = (TextView) rootView.findViewById(R.id.observations_sent_value);
         mCellsSentView = (TextView) rootView.findViewById(R.id.cells_sent_value);
         mWifisSentView = (TextView) rootView.findViewById(R.id.wifis_sent_value);
-        mObservationsQueuedView = (TextView) rootView.findViewById(R.id.observations_queued_value);
-        mCellsQueuedView = (TextView) rootView.findViewById(R.id.cells_queued_value);
-        mWifisQueuedView = (TextView) rootView.findViewById(R.id.wifis_queued_value);
+        mQueuedObservationsView = (TextView) rootView.findViewById(R.id.observations_queued_value);
+        mQueuedCellsView = (TextView) rootView.findViewById(R.id.cells_queued_value);
+        mQueuedWifisView = (TextView) rootView.findViewById(R.id.wifis_queued_value);
         mProgressbarView = rootView.findViewById(R.id.progress);
         mUploadButton = rootView.findViewById(R.id.upload_observations_button);
+
+        mTotalDataSentView = (TextView) rootView.findViewById(R.id.data_kb_sent_value);
+        mQueuedDataView = (TextView) rootView.findViewById(R.id.data_kb_queued_value);
 
         mUploadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SyncUtils.TriggerRefresh(true);
+                mUploader = new AsyncUploader(UploadReportsDialog.this);
+                mUploader.execute();
+                updateProgressbarStatus();
             }
         });
 
@@ -82,70 +106,64 @@ public class UploadReportsDialog extends DialogFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         hasQueuedObservations = false;
-
-        LoaderManager lm = getLoaderManager();
-        lm.initLoader(0, null, mSyncStatsLoaderCallbacks);
-        lm.initLoader(1, null, mReportsSummaryLoaderCallbacks);
     }
+
+    void update() {
+        updateSyncedStats();
+        updateQueuedStats();
+        updateProgressbarStatus();
+    }
+
 
     @Override
     public void onStart() {
         super.onStart();
-        mStatusChangeListener = ContentResolver.addStatusChangeListener(
-                ContentResolver.SYNC_OBSERVER_TYPE_ACTIVE, mSyncStatusObserver);
-        updateProgressbarStatus();
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        if (mStatusChangeListener != null) {
-            ContentResolver.removeStatusChangeListener(mStatusChangeListener);
-        }
+        update();
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        if (mUploader != null)
+            mUploader.clearListener();
+
         mLastUpdateTimeView = null;
         mObservationsSentView = null;
         mCellsSentView = null;
         mWifisSentView = null;
-        mObservationsQueuedView = null;
-        mCellsQueuedView = null;
-        mWifisQueuedView = null;
+        mQueuedObservationsView = null;
+        mQueuedCellsView = null;
+        mQueuedWifisView = null;
         mProgressbarView = null;
     }
 
-    void updateSyncStats(Cursor cursor) {
+    void updateSyncedStats() {
         if (mLastUpdateTimeView == null) {
             return;
         }
-        if (cursor != null) {
-            cursor.moveToPosition(-1);
-            while (cursor.moveToNext()) {
-                String key = cursor.getString(cursor.getColumnIndex(DatabaseContract.Stats.KEY));
-                String value = cursor.getString(cursor.getColumnIndex(DatabaseContract.Stats.VALUE));
 
-                if (DatabaseContract.Stats.KEY_LAST_UPLOAD_TIME.equals(key)) {
-                    long lastUploadTime = Long.valueOf(value);
-                    String lastUploadTimeString = (lastUploadTime > 0)
-                            ? DateTimeUtils.formatTimeForLocale(lastUploadTime)
-                            : "-";
-                    mLastUpdateTimeView.setText(lastUploadTimeString);
-                } else if (DatabaseContract.Stats.KEY_OBSERVATIONS_SENT.equals(key)) {
-                    mObservationsSentView.setText(value);
-                } else if (DatabaseContract.Stats.KEY_CELLS_SENT.equals(key)) {
-                    mCellsSentView.setText(String.valueOf(value));
-                } else if (DatabaseContract.Stats.KEY_WIFIS_SENT.equals(key)) {
-                    mWifisSentView.setText(String.valueOf(value));
-                }
-            }
-        } else {
-            mLastUpdateTimeView.setText("");
-            mObservationsSentView.setText("");
-            mCellsSentView.setText("");
-            mWifisSentView.setText("");
+        mLastUpdateTimeView.setText("");
+        mObservationsSentView.setText("");
+        mCellsSentView.setText("");
+        mWifisSentView.setText("");
+
+        try {
+            Properties props = AppGlobals.dataStorageManager.readSyncStats();
+            long lastUploadTime = Long.parseLong(props.getProperty(DataStorageContract.Stats.KEY_LAST_UPLOAD_TIME, "0"));
+            String value = (lastUploadTime > 0)? DateTimeUtils.formatTimeForLocale(lastUploadTime) : "-";
+            mLastUpdateTimeView.setText(value);
+            value = props.getProperty(DataStorageContract.Stats.KEY_OBSERVATIONS_SENT, "0");
+            mObservationsSentView.setText(value);
+            value = props.getProperty(DataStorageContract.Stats.KEY_CELLS_SENT, "0");
+            mCellsSentView.setText(String.valueOf(value));
+            value = props.getProperty(DataStorageContract.Stats.KEY_WIFIS_SENT, "0");
+            mWifisSentView.setText(String.valueOf(value));
+            value = props.getProperty(DataStorageContract.Stats.KEY_BYTES_SENT, "0");
+            float kilobytes = Long.parseLong(value) / 1000.0f;
+            mTotalDataSentView.setText(String.valueOf(kilobytes));
+        }
+        catch (IOException ex) {
+            Log.e(LOGTAG, "Exception in updateSyncedStats():" + ex.toString());
         }
     }
 
@@ -153,86 +171,20 @@ public class UploadReportsDialog extends DialogFragment {
         if (mProgressbarView == null) {
             return;
         }
-        boolean syncActive = ContentResolver.isSyncActive(mAccount, DatabaseContract.CONTENT_AUTHORITY);
+        boolean syncActive = AsyncUploader.getIsUploading();
         mProgressbarView.setVisibility(syncActive ? View.VISIBLE : View.INVISIBLE);
 
         boolean uploadButtonActive = hasQueuedObservations && !syncActive;
         mUploadButton.setEnabled(uploadButtonActive);
     }
 
-    void updateReportsSummary(Cursor cursor) {
-        if (mLastUpdateTimeView == null) {
-            return;
-        }
-        if (cursor != null && cursor.moveToFirst()) {
-            long observationQueued = cursor.getLong(cursor.getColumnIndex(DatabaseContract.Reports.TOTAL_OBSERVATION_COUNT));
-            long cellsQueued = cursor.getLong(cursor.getColumnIndex(DatabaseContract.Reports.TOTAL_CELL_COUNT));
-            long wifisQueued = cursor.getLong(cursor.getColumnIndex(DatabaseContract.Reports.TOTAL_WIFI_COUNT));
-
-            mObservationsQueuedView.setText(String.valueOf(observationQueued));
-            mCellsQueuedView.setText(String.valueOf(cellsQueued));
-            mWifisQueuedView.setText(String.valueOf(wifisQueued));
-            hasQueuedObservations = observationQueued != 0;
-        } else {
-            mObservationsQueuedView.setText("");
-            mCellsQueuedView.setText("");
-            mWifisQueuedView.setText("");
-            hasQueuedObservations = false;
-        }
+    void updateQueuedStats() {
+        DataStorageManager.QueuedCounts q = AppGlobals.dataStorageManager.getQueuedCounts();
+        mQueuedObservationsView.setText(String.valueOf(q.reportCount));
+        mQueuedCellsView.setText(String.valueOf(q.cellCount));
+        mQueuedWifisView.setText(String.valueOf(q.wifiCount));
+        mQueuedDataView.setText(String.valueOf(q.bytes / 1000.0));
+        hasQueuedObservations = q.reportCount != 0;
         updateProgressbarStatus();
     }
-
-    private final LoaderManager.LoaderCallbacks<Cursor> mSyncStatsLoaderCallbacks = new LoaderManager.LoaderCallbacks<Cursor>() {
-
-        @Override
-        public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-            return new CursorLoader(getActivity(), DatabaseContract.Stats.CONTENT_URI,
-                    null, null, null, null);
-        }
-
-        @Override
-        public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-            updateSyncStats(cursor);
-        }
-
-        @Override
-        public void onLoaderReset(Loader<Cursor> cursorLoader) {
-            updateSyncStats(null);
-        }
-    };
-
-    private final LoaderManager.LoaderCallbacks<Cursor> mReportsSummaryLoaderCallbacks = new LoaderManager.LoaderCallbacks<Cursor>() {
-        @Override
-        public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-            return new CursorLoader(getActivity(), DatabaseContract.Reports.CONTENT_URI_SUMMARY,
-                    null, null, null, null);
-        }
-
-        @Override
-        public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-            updateReportsSummary(cursor);
-        }
-
-        @Override
-        public void onLoaderReset(Loader<Cursor> cursorLoader) {
-            updateReportsSummary(null);
-        }
-    };
-
-    private final SyncStatusObserver mSyncStatusObserver = new SyncStatusObserver() {
-
-        private final Handler mHandler = new Handler();
-
-        @Override
-        public void onStatusChanged(final int which) {
-            if (SharedConstants.isDebug) Log.v(LOGTAG, "onStatusChanged() " + which);
-            mHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    updateProgressbarStatus();
-                }
-            });
-        }
-    };
-
 }

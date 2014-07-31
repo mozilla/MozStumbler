@@ -29,7 +29,7 @@ import java.util.TimerTask;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.mozilla.mozstumbler.client.MainApp;
-import org.mozilla.mozstumbler.service.SharedConstants;
+import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.StumblerService;
 import org.mozilla.mozstumbler.BuildConfig;
 import org.mozilla.mozstumbler.R;
@@ -137,8 +137,7 @@ public final class MapActivity extends Activity {
                         scanner = new java.util.Scanner(new URL(COVERAGE_REDIRECT_URL).openStream(), "UTF-8");
                     } catch (Exception ex) {
                         Log.d(LOGTAG, ex.toString());
-                        if (SharedConstants.guiLogMessageBuffer != null)
-                            SharedConstants.guiLogMessageBuffer.add("Failed to get coverage url:" + ex.toString());
+                        AppGlobals.guiLogInfo("Failed to get coverage url:" + ex.toString());
                         return;
                     }
                     scanner.useDelimiter("\\A");
@@ -146,8 +145,7 @@ public final class MapActivity extends Activity {
                     try {
                         sCoverageUrl = new JSONObject(result).getString("tiles_url");
                     } catch (JSONException ex) {
-                        if (SharedConstants.guiLogMessageBuffer != null)
-                            SharedConstants.guiLogMessageBuffer.add("Failed to get coverage url:" + ex.toString());
+                        AppGlobals.guiLogInfo("Failed to get coverage url:" + ex.toString());
                     }
                     scanner.close();
                 }

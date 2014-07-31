@@ -86,10 +86,10 @@
 	<string name="refresh_map">רענון המיקום</string>
 
 	<string name="title_activity_log">רישום</string>
-	<string name="hello_world">שלום עולם!</string>
 	<string name="action_settings">הגדרות</string>
 	<string name="action_view_log">צפייה ברישום</string>
 	<string name="scroll_to_start">גלילה לתחלהה</string>
 	<string name="scroll_to_end">גלילה לסוף</string>
 
+  <string name="upload_observations_data_size">Size (KB):</string>
 </resources>

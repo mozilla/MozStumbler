@@ -19,7 +19,7 @@ public class AboutActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_about);
     }
-	
+
     @Override
     protected void onStart()
     {
@@ -29,7 +29,7 @@ public class AboutActivity extends Activity {
         str = String.format(str, PackageUtils.getAppVersion(this));
         textView.setText(str);
     }
-	
+
     public void onClick_ViewMore(View v) {
         Intent openAboutPage = new Intent(Intent.ACTION_VIEW, Uri.parse(ABOUT_PAGE_URL));
         startActivity(openAboutPage);

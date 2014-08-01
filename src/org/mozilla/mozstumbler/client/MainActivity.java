@@ -282,7 +282,7 @@ public final class MainActivity extends FragmentActivity {
             formatTextView(R.id.reports_sent, R.string.reports_sent, Integer.parseInt(value));
         }
         catch (IOException ex) {
-            Log.e(LOGTAG, "Exception in showUploadStats():" + ex.toString());
+            Log.e(LOGTAG, "Exception in showUploadStats()", ex);
         }
     }
 

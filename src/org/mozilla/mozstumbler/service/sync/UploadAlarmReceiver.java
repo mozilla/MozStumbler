@@ -19,8 +19,12 @@ import org.mozilla.mozstumbler.service.utils.NetworkUtils;
 public class UploadAlarmReceiver extends BroadcastReceiver {
     static final String LOG_TAG = UploadAlarmReceiver.class.getName();
 
-    // Only if data is queued and device awake: every 5 min, check network availability and upload
+    // Only if data is queued and device awake: periodically check network availability and upload
+    // TODO Fennec will only use this as a secondary mechanism. The primary Fennec method
+    // notifying this class when a good time is to try upload.
     static final long INTERVAL_MS = 1000 * 60 * 5;
+
+    public static boolean sIsAlreadyScheduled;
 
     public UploadAlarmReceiver() {}
 
@@ -71,14 +75,21 @@ public class UploadAlarmReceiver extends BroadcastReceiver {
     }
 
     public static void cancelAlarm(Context c) {
+        Log.d(LOG_TAG, "cancelAlarm");
+        // this is to stop scheduleAlarm from constantly rescheduling, not to guard cancellation.
+        sIsAlreadyScheduled = false;
         AlarmManager alarmManager = (AlarmManager)c.getSystemService(Context.ALARM_SERVICE);
         PendingIntent pi = createIntent(c);
         alarmManager.cancel(pi);
     }
 
     public static void scheduleAlarm(Context c) {
-        cancelAlarm(c);
+        if (sIsAlreadyScheduled)
+            return;
 
+        Log.d(LOG_TAG, "schedule alarm (ms):" + INTERVAL_MS);
+
+        sIsAlreadyScheduled = true;
         AlarmManager alarmManager = (AlarmManager)c.getSystemService(Context.ALARM_SERVICE);
         PendingIntent pi = createIntent(c);
 

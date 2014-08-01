@@ -210,7 +210,7 @@ public class DataStorageManager {
         }
         return dir.getPath();
     }
-    
+
     public DataStorageManager(Context c, StorageIsEmptyTracker tracker) {
         mTracker = tracker;
         String baseDir = getStorageDir(c);
@@ -339,10 +339,10 @@ public class DataStorageManager {
 
     private File createFile(int reportCount, int wifiCount, int cellCount) {
         long time = System.currentTimeMillis();
-        String name = FILENAME_PREFIX + 
-                      SEP_TIME_MS + time + 
-                      SEP_REPORT_COUNT + reportCount + 
-                      SEP_WIFI_COUNT + wifiCount + 
+        String name = FILENAME_PREFIX +
+                      SEP_TIME_MS + time +
+                      SEP_REPORT_COUNT + reportCount +
+                      SEP_WIFI_COUNT + wifiCount +
                       SEP_CELL_COUNT + cellCount + ".gz";
         File file = new File(mReportsDir, name);
         return file;
@@ -368,7 +368,7 @@ public class DataStorageManager {
             return;
         }
 
-        saveToDisk(mCurrentReportsSendBuffer.data, 
+        saveToDisk(mCurrentReportsSendBuffer.data,
                    mCurrentReportsSendBuffer.reportCount,
                    mCurrentReportsSendBuffer.wifiCount,
                    mCurrentReportsSendBuffer.cellCount);

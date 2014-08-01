@@ -219,7 +219,7 @@ public class CellScannerNoWCDMA implements CellScanner.CellScannerImpl {
                         ident.getTac(),
                         strength.getAsuLevel(),
                         strength.getTimingAdvance());
-               cells.add(cell); 
+               cells.add(cell);
                added = true;
             }
         }

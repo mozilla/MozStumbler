@@ -30,8 +30,10 @@ public class Searcher extends AbstractCommunicator {
     }
 
     private void initResponse() throws IOException,JSONException {
-        if (mResponse!=null)
+        if (mResponse!=null) {
             return;
+        }
+
         InputStream in = new BufferedInputStream(super.getInputStream());
         BufferedReader r = new BufferedReader(new InputStreamReader(in));
         String line;

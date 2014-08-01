@@ -40,8 +40,9 @@ public class ScanManager {
 
     public boolean isBatteryLow() {
         Intent intent = mContext.registerReceiver(null, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
-        if (intent == null)
+        if (intent == null) {
             return false;
+        }
 
         int rawLevel = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
         int scale = intent.getIntExtra(BatteryManager.EXTRA_SCALE, -1);

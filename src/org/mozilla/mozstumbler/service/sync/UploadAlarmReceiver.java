@@ -84,8 +84,9 @@ public class UploadAlarmReceiver extends BroadcastReceiver {
     }
 
     public static void scheduleAlarm(Context c) {
-        if (sIsAlreadyScheduled)
+        if (sIsAlreadyScheduled) {
             return;
+        }
 
         Log.d(LOG_TAG, "schedule alarm (ms):" + INTERVAL_MS);
 

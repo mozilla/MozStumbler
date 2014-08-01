@@ -270,8 +270,9 @@ public final class MainActivity extends FragmentActivity {
     }
 
     public void showUploadStats() {
-        if (DataStorageManager.getInstance() == null)
+        if (DataStorageManager.getInstance() == null) {
             return;
+        }
 
         try {
             Properties props = DataStorageManager.getInstance().readSyncStats();

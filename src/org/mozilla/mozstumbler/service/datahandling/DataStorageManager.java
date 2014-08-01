@@ -407,8 +407,9 @@ public class DataStorageManager {
 
     private void saveToDisk(byte[] bytes, int reportCount, int wifiCount, int cellCount)
       throws IOException {
-        if (mFileList.mFilesOnDiskBytes > mMaxBytesDiskStorage)
+        if (mFileList.mFilesOnDiskBytes > mMaxBytesDiskStorage) {
             return;
+        }
 
         FileOutputStream fos = null;
         try {

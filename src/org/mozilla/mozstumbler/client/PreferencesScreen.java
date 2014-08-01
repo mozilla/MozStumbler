@@ -95,8 +95,7 @@ public class PreferencesScreen extends PreferenceActivity {
         mGeofenceSwitch.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
-                if (sPrefs.getGeofenceHere() && newValue.equals(false))
-                {
+                if (sPrefs.getGeofenceHere() && newValue.equals(false)) {
                     sPrefs.setGeofenceHere(false);
                     setGeofenceHereDesc(false);
                 }

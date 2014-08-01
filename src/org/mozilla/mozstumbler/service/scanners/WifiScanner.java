@@ -194,8 +194,9 @@ public class WifiScanner extends BroadcastReceiver {
     }
 
     private void reportScanResults(ArrayList<ScanResult> scanResults) {
-        if (scanResults.isEmpty())
+        if (scanResults.isEmpty()) {
             return;
+        }
 
         if (AppGlobals.isDebug) Log.v(LOG_TAG, scanResults.toString());
 

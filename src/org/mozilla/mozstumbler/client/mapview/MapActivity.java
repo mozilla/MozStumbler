@@ -93,8 +93,9 @@ public final class MapActivity extends Activity {
             String action = intent.getAction();
             String subject = intent.getStringExtra(Intent.EXTRA_SUBJECT);
             assert (action.equals(GPSScanner.ACTION_GPS_UPDATED));
-            if (!subject.equals(GPSScanner.SUBJECT_NEW_LOCATION))
+            if (!subject.equals(GPSScanner.SUBJECT_NEW_LOCATION)) {
                 return;
+            }
 
             Location newPosition = intent.getParcelableExtra(GPSScanner.NEW_LOCATION_ARG_LOCATION);
             if (newPosition != null) {

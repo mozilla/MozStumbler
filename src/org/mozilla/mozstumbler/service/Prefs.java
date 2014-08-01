@@ -48,8 +48,9 @@ public final class Prefs {
     /* Prefs must be created on application startup or service startup.
      * TODO: turn into regular singleton if Context dependency can be removed. */
     public static void createGlobalInstance(Context c) {
-        if (sInstance != null)
+        if (sInstance != null) {
             return;
+        }
         sInstance = new Prefs(c);
     }
 

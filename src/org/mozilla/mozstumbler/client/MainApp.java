@@ -113,12 +113,14 @@ public class MainApp extends Application {
     @Override
     public void onTerminate() {
         super.onTerminate();
-        if (mConnection != null)
+        if (mConnection != null) {
             unbindService(mConnection);
+        }
         mConnection = null;
         mStumblerService = null;
-        if (mReceiver != null)
+        if (mReceiver != null) {
             mReceiver.unregister();
+        }
         mReceiver = null;
         Log.d(LOG_TAG, "onStop");
     }

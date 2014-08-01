@@ -55,8 +55,9 @@ public class UploadReports {
                     syncResult.numIoExceptions += 1;
                 }
 
-                if (progressListener != null)
+                if (progressListener != null) {
                     progressListener.run();
+                }
 
                 batch = dm.getNextBatch();
             }

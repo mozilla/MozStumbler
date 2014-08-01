@@ -39,8 +39,9 @@ public class AsyncUploader extends AsyncTask<Void, Void, SyncSummary> {
 
     @Override
     protected SyncSummary doInBackground(Void... voids) {
-        if (sIsUploading)
+        if (sIsUploading) {
             return null;
+        }
 
         sIsUploading = true;
         SyncSummary result = new SyncSummary();
@@ -53,8 +54,9 @@ public class AsyncUploader extends AsyncTask<Void, Void, SyncSummary> {
                 @Override
                 public void run() {
                     synchronized (mListenerLock) {
-                        if (mListener != null)
+                        if (mListener != null) {
                             mListener.onUploadProgress();
+                        }
                     }
                 }
             };

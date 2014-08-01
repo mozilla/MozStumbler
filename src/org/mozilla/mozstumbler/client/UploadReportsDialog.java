@@ -124,8 +124,9 @@ public class UploadReportsDialog extends DialogFragment
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        if (mUploader != null)
+        if (mUploader != null) {
             mUploader.clearListener();
+        }
 
         mLastUpdateTimeView = null;
         mObservationsSentView = null;

@@ -351,10 +351,12 @@ public class CellInfo implements Parcelable {
 
     @Override
     public boolean equals(Object o) {
-        if (o == this)
+        if (o == this) {
             return true;
-        if (!(o instanceof CellInfo))
+        }
+        if (!(o instanceof CellInfo)) {
             return false;
+        }
         CellInfo ci = (CellInfo) o;
         return mRadio.equals(ci.mRadio)
                && mCellRadio.equals(ci.mCellRadio)

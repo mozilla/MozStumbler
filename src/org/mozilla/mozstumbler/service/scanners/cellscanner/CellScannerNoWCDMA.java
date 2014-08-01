@@ -27,7 +27,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-/** Fennec does not yet support the api level for WCDMA import */
+/* Fennec does not yet support the api level for WCDMA import */
 public class CellScannerNoWCDMA implements CellScanner.CellScannerImpl {
 
     protected static String LOGTAG = CellScannerNoWCDMA.class.getName();

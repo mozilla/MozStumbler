@@ -147,7 +147,7 @@ public class ServiceTest extends ServiceTestCase<StumblerService> implements Asy
         }
     }
 
-    /** This rather fragile, and is ok for test, but is there a better way to do this? */
+    /* This rather fragile, and is ok for test, but is there a better way to do this? */
     public ScanResult makeScanResult() throws IllegalAccessException, InstantiationException, InvocationTargetException {
         Constructor<?>[] ctors = ScanResult.class.getDeclaredConstructors();
         assertTrue(ctors.length > 0);
@@ -179,7 +179,7 @@ public class ServiceTest extends ServiceTestCase<StumblerService> implements Asy
         WifiScanner wifiScanner = null;
         CellScanner cellScanner = null;
         StumblerService service = startPassiveService();
-        assertTrue(AppGlobals.dataStorageManager != null);
+        assertTrue(DataStorageManager.getInstance() != null);
         try {
 
             Field field = StumblerService.class.getDeclaredField("mScanManager");
@@ -211,7 +211,7 @@ public class ServiceTest extends ServiceTestCase<StumblerService> implements Asy
         } catch (Exception ex) {}
 
         try {
-            DataStorageManager.ReportBatch batch = AppGlobals.dataStorageManager.getFirstBatch();
+            DataStorageManager.ReportBatch batch = DataStorageManager.getInstance().getFirstBatch();
             Log.d("test", "c:" + batch.reportCount);
             String val = Zipper.unzipData(batch.data);
             Log.d("test", "d:" + val);

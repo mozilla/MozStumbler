@@ -21,6 +21,7 @@ import android.widget.TextView;
 import org.mozilla.mozstumbler.BuildConfig;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.datahandling.DataStorageContract;
+import org.mozilla.mozstumbler.service.datahandling.DataStorageManager;
 import org.mozilla.mozstumbler.service.utils.DateTimeUtils;
 import org.mozilla.mozstumbler.client.mapview.MapActivity;
 import org.mozilla.mozstumbler.R;
@@ -269,11 +270,11 @@ public final class MainActivity extends FragmentActivity {
     }
 
     public void showUploadStats() {
-        if (AppGlobals.dataStorageManager == null)
+        if (DataStorageManager.getInstance() == null)
             return;
 
         try {
-            Properties props = AppGlobals.dataStorageManager.readSyncStats();
+            Properties props = DataStorageManager.getInstance().readSyncStats();
             long lastUploadTime = Long.parseLong(props.getProperty(DataStorageContract.Stats.KEY_LAST_UPLOAD_TIME, "0"));
             String value = (lastUploadTime > 0)? DateTimeUtils.formatTimeForLocale(lastUploadTime) : "-";
             formatTextView(R.id.last_upload_time, R.string.last_upload_time, value);

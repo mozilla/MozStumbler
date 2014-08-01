@@ -34,7 +34,7 @@ public final class StumblerBundleReceiver {
 
         try {
 
-            AppGlobals.dataStorageManager.insert(mlsObj.toString(), wifiCount, cellCount);
+            DataStorageManager.getInstance().insert(mlsObj.toString(), wifiCount, cellCount);
         } catch (IOException e) {
             Log.w(LOGTAG, e.toString());
         }

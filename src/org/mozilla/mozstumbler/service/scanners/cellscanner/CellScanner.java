@@ -57,7 +57,7 @@ public class CellScanner {
         return sImpl != null;
     }
 
-    /** Fennec doesn't support the apis needed for full scanning, we have different implementations.*/
+    /* Fennec doesn't support the apis needed for full scanning, we have different implementations.*/
     public static synchronized void setCellScannerImpl(CellScannerImpl cellScanner) {
         sImpl = cellScanner;
     }

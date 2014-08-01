@@ -148,7 +148,7 @@ public class UploadReportsDialog extends DialogFragment
         mWifisSentView.setText("");
 
         try {
-            Properties props = AppGlobals.dataStorageManager.readSyncStats();
+            Properties props = DataStorageManager.getInstance().readSyncStats();
             long lastUploadTime = Long.parseLong(props.getProperty(DataStorageContract.Stats.KEY_LAST_UPLOAD_TIME, "0"));
             String value = (lastUploadTime > 0)? DateTimeUtils.formatTimeForLocale(lastUploadTime) : "-";
             mLastUpdateTimeView.setText(value);
@@ -179,7 +179,7 @@ public class UploadReportsDialog extends DialogFragment
     }
 
     void updateQueuedStats() {
-        DataStorageManager.QueuedCounts q = AppGlobals.dataStorageManager.getQueuedCounts();
+        DataStorageManager.QueuedCounts q = DataStorageManager.getInstance().getQueuedCounts();
         mQueuedObservationsView.setText(String.valueOf(q.reportCount));
         mQueuedCellsView.setText(String.valueOf(q.cellCount));
         mQueuedWifisView.setText(String.valueOf(q.wifiCount));

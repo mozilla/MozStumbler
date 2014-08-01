@@ -136,8 +136,7 @@ public final class StumblerService extends PersistentIntentService
 
         Prefs.createGlobalInstance(this);
         NetworkUtils.createGlobalInstance(this);
-
-        AppGlobals.dataStorageManager = new DataStorageManager(this, this);
+        DataStorageManager.createGlobalInstance(this, this);
 
         if (!CellScanner.isCellScannerImplSet()) {
             CellScanner.setCellScannerImpl(new CellScannerNoWCDMA(this));
@@ -156,9 +155,9 @@ public final class StumblerService extends PersistentIntentService
 
         if (AppGlobals.isDebug) Log.d(LOGTAG, "onDestroy");
 
-        if (AppGlobals.dataStorageManager != null) {
+        if (DataStorageManager.getInstance() != null) {
             try {
-                AppGlobals.dataStorageManager.saveCurrentReportsToDisk();
+                DataStorageManager.getInstance().saveCurrentReportsToDisk();
             } catch (IOException ex) {
                 AppGlobals.guiLogInfo(ex.toString());
                 Log.e(LOGTAG, "Exception in onDestroy saving reports", ex);
@@ -172,9 +171,9 @@ public final class StumblerService extends PersistentIntentService
     @Override
     protected void onHandleIntent(Intent intent) {
         if (intent != null && intent.getBooleanExtra(ACTION_START_PASSIVE, false)) {
-            if (AppGlobals.dataStorageManager == null) {
-                AppGlobals.dataStorageManager = new DataStorageManager(this, this);
-                if (!AppGlobals.dataStorageManager.isDirEmpty()) {
+            if (DataStorageManager.getInstance() == null) {
+                DataStorageManager.createGlobalInstance(this, this);
+                if (!DataStorageManager.getInstance().isDirEmpty()) {
                     // non-empty on startup, schedule an upload
                     UploadAlarmReceiver.scheduleAlarm(this);
                 }

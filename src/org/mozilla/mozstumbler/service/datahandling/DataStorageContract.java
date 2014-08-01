@@ -14,16 +14,16 @@ import android.provider.BaseColumns;
 public final class DataStorageContract {
 
     public static class ReportsColumns {
-        public final static String LAT = "lat";
-        public final static String LON = "lon";
-        public final static String TIME = "timestamp";
-        public final static String ACCURACY = "accuracy";
-        public final static String ALTITUDE = "altitude";
-        public final static String RADIO = "radio";
-        public final static String CELL = "cell";
-        public final static String WIFI = "wifi";
-        public final static String CELL_COUNT = "cell_count";
-        public final static String WIFI_COUNT = "wifi_count";
+        public static final String LAT = "lat";
+        public static final String LON = "lon";
+        public static final String TIME = "timestamp";
+        public static final String ACCURACY = "accuracy";
+        public static final String ALTITUDE = "altitude";
+        public static final String RADIO = "radio";
+        public static final String CELL = "cell";
+        public static final String WIFI = "wifi";
+        public static final String CELL_COUNT = "cell_count";
+        public static final String WIFI_COUNT = "wifi_count";
     }
 
     public static class Stats {

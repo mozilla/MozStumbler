@@ -40,21 +40,21 @@ public class UploadAlarmReceiver extends BroadcastReceiver {
 
         @Override
         protected void onHandleIntent(Intent intent) {
-            if (AppGlobals.dataStorageManager == null) {
-                AppGlobals.dataStorageManager = new DataStorageManager(this, null);
+            if (DataStorageManager.getInstance() == null) {
+                DataStorageManager.createGlobalInstance(this, null);
             }
             upload();
         }
 
         void upload() {
             // Defensive approach:  if it is too old, delete all data
-            long oldestMs = AppGlobals.dataStorageManager.getOldestBatchTimeMs();
-            int maxWeeks = AppGlobals.dataStorageManager.getMaxWeeksStored();
+            long oldestMs = DataStorageManager.getInstance().getOldestBatchTimeMs();
+            int maxWeeks = DataStorageManager.getInstance().getMaxWeeksStored();
             if (oldestMs > 0) {
                 long currentTime = System.currentTimeMillis();
                 long msPerWeek = 604800 * 1000;
                 if (currentTime - oldestMs > maxWeeks * msPerWeek) {
-                    AppGlobals.dataStorageManager.deleteAll();
+                    DataStorageManager.getInstance().deleteAll();
                     UploadAlarmReceiver.cancelAlarm(this);
                     return;
                 }

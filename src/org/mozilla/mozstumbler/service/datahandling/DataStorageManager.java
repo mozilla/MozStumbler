@@ -7,6 +7,7 @@ package org.mozilla.mozstumbler.service.datahandling;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.provider.ContactsContract;
 import android.util.Log;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.utils.Zipper;
@@ -54,6 +55,7 @@ public class DataStorageManager {
     private StorageIsEmptyTracker mTracker;
     private ReportFileList mFileList;
     private Timer mFlushMemoryBuffersToDiskTimer;
+    private static DataStorageManager sInstance;
 
     final static String SEP_REPORT_COUNT = "-r";
     final static String SEP_WIFI_COUNT = "-w";
@@ -211,7 +213,15 @@ public class DataStorageManager {
         return dir.getPath();
     }
 
-    public DataStorageManager(Context c, StorageIsEmptyTracker tracker) {
+    public static void createGlobalInstance(Context context, StorageIsEmptyTracker tracker) {
+        sInstance =  new DataStorageManager(context, tracker);
+    }
+
+    public static DataStorageManager getInstance() {
+        return sInstance;
+    }
+
+    private DataStorageManager(Context c, StorageIsEmptyTracker tracker) {
         mTracker = tracker;
         String baseDir = getStorageDir(c);
         mStatsFile = new File(baseDir, "upload_stats.ini");

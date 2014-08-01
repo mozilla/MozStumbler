@@ -24,6 +24,7 @@ import org.mozilla.mozstumbler.client.mapview.MapActivity;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.Prefs;
 import org.mozilla.mozstumbler.service.StumblerService;
+import org.mozilla.mozstumbler.service.datahandling.DataStorageManager;
 import org.mozilla.mozstumbler.service.scanners.GPSScanner;
 import org.mozilla.mozstumbler.service.scanners.WifiScanner;
 import org.mozilla.mozstumbler.service.scanners.cellscanner.CellScanner;
@@ -87,8 +88,8 @@ public class MainApp extends Application {
                 StumblerService.StumblerBinder serviceBinder = (StumblerService.StumblerBinder) binder;
                 mStumblerService = serviceBinder.getService();
 
-                AppGlobals.dataStorageManager.setMaxStorageOnDisk(MAX_BYTES_DISK_STORAGE);
-                AppGlobals.dataStorageManager.setMaxWeeksStored(MAX_WEEKS_OLD_STORED);
+                DataStorageManager.getInstance().setMaxStorageOnDisk(MAX_BYTES_DISK_STORAGE);
+                DataStorageManager.getInstance().setMaxWeeksStored(MAX_WEEKS_OLD_STORED);
 
                 MapActivity.createGpsTrackLocationReceiver(MainApp.this);
 

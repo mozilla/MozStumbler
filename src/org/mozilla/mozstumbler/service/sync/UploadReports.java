@@ -28,7 +28,7 @@ public class UploadReports {
         }
 
         Submitter submitter = new Submitter();
-        DataStorageManager dm = AppGlobals.dataStorageManager;
+        DataStorageManager dm = DataStorageManager.getInstance();
 
         String error = null;
 
@@ -50,7 +50,7 @@ public class UploadReports {
                         // delete on 4xx, no point in resending
                         dm.delete(batch.filename);
                     } else {
-                        AppGlobals.dataStorageManager.saveCurrentReportsSendBufferToDisk();
+                        DataStorageManager.getInstance().saveCurrentReportsSendBufferToDisk();
                     }
                     syncResult.numIoExceptions += 1;
                 }

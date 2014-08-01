@@ -15,7 +15,7 @@ public class AppGlobals {
     public static final String ACTION_GUI_LOG_MESSAGE = AppGlobals.ACTION_NAMESPACE + ".LOG_MESSAGE";
     public static final String ACTION_GUI_LOG_MESSAGE_EXTRA = ACTION_GUI_LOG_MESSAGE + ".MESSAGE";
 
-    /** A common intent action argument, but you shouldn't need  to access this directly,
+    /** A common intent action argument, but you shouldn't need to access this directly,
      * the specific intent action has its own constant that is assigned to this
      * for example, ACTION_WIFIS_SCANNED_ARG_TIME */
     public static final String ACTION_ARG_TIME = "time";
@@ -55,7 +55,5 @@ public class AppGlobals {
             guiLogMessageBuffer.add("<font color='" + color +"'>" + msg + "</font>");
         }
     }
-
-    public static DataStorageManager dataStorageManager;
 }
 

@@ -20,6 +20,7 @@ import java.io.File;
 import org.mozilla.mozstumbler.BuildConfig;
 import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.client.cellscanner.DefaultCellScanner;
+import org.mozilla.mozstumbler.client.mapview.MapActivity;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.Prefs;
 import org.mozilla.mozstumbler.service.StumblerService;
@@ -88,6 +89,9 @@ public class MainApp extends Application {
 
                 AppGlobals.dataStorageManager.setMaxStorageOnDisk(MAX_BYTES_DISK_STORAGE);
                 AppGlobals.dataStorageManager.setMaxWeeksStored(MAX_WEEKS_OLD_STORED);
+
+                MapActivity.createGpsTrackLocationReceiver(MainApp.this);
+
                 Log.d(LOGTAG, "Service connected");
                 if (mMainActivity != null) {
                     mMainActivity.updateUiOnMainThread();

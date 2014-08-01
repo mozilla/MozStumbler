@@ -48,8 +48,8 @@ public class DataStorageManager {
     private long mMaxBytesDiskStorage = 1024 * 1024 * 3; // 3 megabytes max by default
     private int mMaxWeeksStored = 2;
     private ReportBatchBuilder mCurrentReports = new ReportBatchBuilder();
-    private File mReportsDir;
-    private File mStatsFile;
+    private final File mReportsDir;
+    private final File mStatsFile;
     private ReportBatch mCurrentReportsSendBuffer;
     private ReportBatchIterator mReportBatchIterator;
     private StorageIsEmptyTracker mTracker;
@@ -65,78 +65,99 @@ public class DataStorageManager {
     final static String MEMORY_BUFFER_NAME = "in memory send buffer";
 
     public static class QueuedCounts {
-        public int reportCount;
-        public int wifiCount;
-        public int cellCount;
-        public long bytes;
+        public final int mReportCount;
+        public final int mWifiCount;
+        public final int mCellCount;
+        public final long mBytes;
+
+        QueuedCounts(int reportCount, int wifiCount, int cellCount, long bytes) {
+            this.mReportCount = reportCount;
+            this.mWifiCount = wifiCount;
+            this.mCellCount = cellCount;
+            this.mBytes = bytes;
+        }
     }
 
     /* Some data is calculated on-demand, don't abuse this function */
     public QueuedCounts getQueuedCounts() {
-        QueuedCounts q = new QueuedCounts();
-        q.reportCount = mFileList.reportCount + mCurrentReports.reports.size();
-        q.wifiCount = mFileList.wifiCount + mCurrentReports.wifiCount;
-        q.cellCount = mFileList.cellCount + mCurrentReports.cellCount;
-        q.bytes = 0;
+        int reportCount = mFileList.mReportCount + mCurrentReports.reports.size();
+        int wifiCount = mFileList.mWifiCount + mCurrentReports.wifiCount;
+        int cellCount = mFileList.mCellCount + mCurrentReports.cellCount;
+        long bytes = 0;
 
         if (mCurrentReports.reports.size() > 0) {
             try {
-                q.bytes = Zipper.zipData(finalizeReports(mCurrentReports.reports).getBytes()).length;
+                bytes = Zipper.zipData(finalizeReports(mCurrentReports.reports).getBytes()).length;
             } catch (IOException ex) {
             }
 
-            if (mFileList.reportCount > 0) {
-                q.bytes += mFileList.filesOnDiskBytes;
+            if (mFileList.mReportCount > 0) {
+                bytes += mFileList.mFilesOnDiskBytes;
             }
         }
 
         if (mCurrentReportsSendBuffer != null) {
-            q.reportCount += mCurrentReportsSendBuffer.reportCount;
-            q.wifiCount += mCurrentReportsSendBuffer.wifiCount;
-            q.cellCount += mCurrentReportsSendBuffer.cellCount;
-            q.bytes += mCurrentReportsSendBuffer.data.length;
+            reportCount += mCurrentReportsSendBuffer.reportCount;
+            wifiCount += mCurrentReportsSendBuffer.wifiCount;
+            cellCount += mCurrentReportsSendBuffer.cellCount;
+            bytes += mCurrentReportsSendBuffer.data.length;
         }
-        return q;
+        return new QueuedCounts(reportCount, wifiCount, cellCount, bytes);
     }
 
     private static class ReportFileList {
-        File[] files;
-        int reportCount;
-        int wifiCount;
-        int cellCount;
-        long filesOnDiskBytes;
+        File[] mFiles;
+        int mReportCount;
+        int mWifiCount;
+        int mCellCount;
+        long mFilesOnDiskBytes;
 
         public ReportFileList() {}
         public ReportFileList(ReportFileList other) {
-            files = other.files.clone();
-            reportCount = other.reportCount;
-            wifiCount = other.wifiCount;
-            cellCount = other.cellCount;
-            filesOnDiskBytes = other.filesOnDiskBytes;
-        }
-
-        void update(File directory) {
-            files = directory.listFiles();
-            if (files == null) {
+            if (other == null) {
                 return;
             }
 
-            filesOnDiskBytes = reportCount = wifiCount = cellCount = 0;
-            for (File f : files) {
-                reportCount += (int)getLongFromFilename(f.getName(), SEP_REPORT_COUNT);
-                wifiCount += (int)getLongFromFilename(f.getName(), SEP_WIFI_COUNT);
-                cellCount += (int)getLongFromFilename(f.getName(), SEP_CELL_COUNT);
-                filesOnDiskBytes += f.length();
+            if (other.mFiles != null) {
+                mFiles = other.mFiles.clone();
+            }
+
+            mReportCount = other.mReportCount;
+            mWifiCount = other.mWifiCount;
+            mCellCount = other.mCellCount;
+            mFilesOnDiskBytes = other.mFilesOnDiskBytes;
+        }
+
+        void update(File directory) {
+            mFiles = directory.listFiles();
+            if (mFiles == null) {
+                return;
+            }
+
+            mFilesOnDiskBytes = mReportCount = mWifiCount = mCellCount = 0;
+            for (File f : mFiles) {
+                mReportCount += (int)getLongFromFilename(f.getName(), SEP_REPORT_COUNT);
+                mWifiCount += (int)getLongFromFilename(f.getName(), SEP_WIFI_COUNT);
+                mCellCount += (int)getLongFromFilename(f.getName(), SEP_CELL_COUNT);
+                mFilesOnDiskBytes += f.length();
             }
         }
     }
 
     public static class ReportBatch {
-        public byte[] data;
-        public String filename;
-        public int reportCount;
-        public int wifiCount;
-        public int cellCount;
+        public final String filename;
+        public final byte[] data;
+        public final int reportCount;
+        public final int wifiCount;
+        public final int cellCount;
+
+        public ReportBatch(String filename, byte[] data, int reportCount, int wifiCount, int cellCount) {
+            this.filename = filename;
+            this.data = data;
+            this.reportCount = reportCount;
+            this.wifiCount = wifiCount;
+            this.cellCount = cellCount;
+        }
     }
 
     private static class ReportBatchBuilder {
@@ -271,7 +292,7 @@ public class DataStorageManager {
     }
 
     public synchronized boolean isDirEmpty() {
-        return (mFileList.files == null || mFileList.files.length < 1);
+        return (mFileList.mFiles == null || mFileList.mFiles.length < 1);
     }
 
     /* Pass filename returned from dataToSend() */
@@ -307,14 +328,14 @@ public class DataStorageManager {
         mReportBatchIterator = new ReportBatchIterator(mFileList);
 
         if (mCurrentReports.reports.size() > 0) {
-            ReportBatch result = new ReportBatch();
-            mCurrentReportsSendBuffer = result;
-            result.filename = MEMORY_BUFFER_NAME;
-            result.reportCount = mCurrentReports.reports.size();
-            result.data = Zipper.zipData(finalizeReports(mCurrentReports.reports).getBytes());
-            result.wifiCount = mCurrentReports.wifiCount;
-            result.cellCount = mCurrentReports.cellCount;
+            String filename = MEMORY_BUFFER_NAME;
+            int reportCount = mCurrentReports.reports.size();
+            byte[] data = Zipper.zipData(finalizeReports(mCurrentReports.reports).getBytes());
+            int wifiCount = mCurrentReports.wifiCount;
+            int cellCount = mCurrentReports.cellCount;
             clearCurrentReports();
+            ReportBatch result = new ReportBatch(filename, data, reportCount, wifiCount, cellCount);
+            mCurrentReportsSendBuffer = result;
             return result;
         } else {
             return getNextBatch();
@@ -333,18 +354,17 @@ public class DataStorageManager {
 
         mReportBatchIterator.currentIndex++;
         if (mReportBatchIterator.currentIndex < 0 ||
-            mReportBatchIterator.currentIndex > mReportBatchIterator.fileList.files.length - 1) {
+            mReportBatchIterator.currentIndex > mReportBatchIterator.fileList.mFiles.length - 1) {
             return null;
         }
 
-        File f = mReportBatchIterator.fileList.files[mReportBatchIterator.currentIndex];
-        ReportBatch result = new ReportBatch();
-        result.filename = f.getName();
-        result.reportCount = (int)getLongFromFilename(f.getName(), SEP_REPORT_COUNT);
-        result.wifiCount = (int)getLongFromFilename(f.getName(), SEP_WIFI_COUNT);
-        result.cellCount = (int)getLongFromFilename(f.getName(), SEP_CELL_COUNT);
-        result.data = readFile(f);
-        return result;
+        File f = mReportBatchIterator.fileList.mFiles[mReportBatchIterator.currentIndex];
+        String filename = f.getName();
+        int reportCount = (int)getLongFromFilename(f.getName(), SEP_REPORT_COUNT);
+        int wifiCount = (int)getLongFromFilename(f.getName(), SEP_WIFI_COUNT);
+        int cellCount = (int)getLongFromFilename(f.getName(), SEP_CELL_COUNT);
+        byte[] data = readFile(f);
+        return new ReportBatch(filename, data, reportCount, wifiCount, cellCount);
     }
 
     private File createFile(int reportCount, int wifiCount, int cellCount) {
@@ -364,7 +384,7 @@ public class DataStorageManager {
         }
 
         long oldest = Long.MAX_VALUE;
-        for (File f : mFileList.files) {
+        for (File f : mFileList.mFiles) {
             long t = getLongFromFilename(f.getName(), SEP_TIME_MS);
             if (t < oldest) {
                 oldest = t;
@@ -387,7 +407,7 @@ public class DataStorageManager {
 
     private void saveToDisk(byte[] bytes, int reportCount, int wifiCount, int cellCount)
       throws IOException {
-        if (mFileList.filesOnDiskBytes > mMaxBytesDiskStorage)
+        if (mFileList.mFilesOnDiskBytes > mMaxBytesDiskStorage)
             return;
 
         FileOutputStream fos = null;
@@ -510,7 +530,7 @@ public class DataStorageManager {
     }
 
     public synchronized void deleteAll() {
-        for (File f : mFileList.files) {
+        for (File f : mFileList.mFiles) {
             f.delete();
         }
         mFileList.update(mReportsDir);

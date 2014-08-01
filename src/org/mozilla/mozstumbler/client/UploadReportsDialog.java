@@ -180,11 +180,11 @@ public class UploadReportsDialog extends DialogFragment
 
     void updateQueuedStats() {
         DataStorageManager.QueuedCounts q = DataStorageManager.getInstance().getQueuedCounts();
-        mQueuedObservationsView.setText(String.valueOf(q.reportCount));
-        mQueuedCellsView.setText(String.valueOf(q.cellCount));
-        mQueuedWifisView.setText(String.valueOf(q.wifiCount));
-        mQueuedDataView.setText(String.valueOf(q.bytes / 1000.0));
-        hasQueuedObservations = q.reportCount != 0;
+        mQueuedObservationsView.setText(String.valueOf(q.mReportCount));
+        mQueuedCellsView.setText(String.valueOf(q.mCellCount));
+        mQueuedWifisView.setText(String.valueOf(q.mWifiCount));
+        mQueuedDataView.setText(String.valueOf(q.mBytes / 1000.0));
+        hasQueuedObservations = q.mReportCount != 0;
         updateProgressbarStatus();
     }
 }

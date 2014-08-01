@@ -25,13 +25,12 @@ import org.mozilla.mozstumbler.service.scanners.WifiScanner;
 
 public final class Reporter extends BroadcastReceiver {
     private static final String LOG_TAG = Reporter.class.getSimpleName();
-    public  static final String ACTION_BASE = AppGlobals.ACTION_NAMESPACE;
-    public  static final String ACTION_FLUSH_TO_BUNDLE = ACTION_BASE + ".FLUSH";
+    public  static final String ACTION_FLUSH_TO_BUNDLE = AppGlobals.ACTION_NAMESPACE + ".FLUSH";
 
     /**
      * The maximum time of observation
      */
-    private static final int REPORTER_WINDOW  = 24 * 60 * 60 * 1000; //ms
+    private static final int REPORTER_WINDOW_MSEC  = 24 * 60 * 60 * 1000; //ms
 
     /**
      * The maximum number of Wi-Fi access points in a single observation
@@ -43,8 +42,8 @@ public final class Reporter extends BroadcastReceiver {
      */
     private static final int CELLS_COUNT_WATERMARK = 50;
 
-    private final Context       mContext;
-    private final int             mPhoneType;
+    private final Context mContext;
+    private final int mPhoneType;
 
     private StumblerBundle mBundle;
     private StumblerBundleReceiver mStumblerBundleReceiver;
@@ -117,7 +116,7 @@ public final class Reporter extends BroadcastReceiver {
         Location currentPosition = mBundle != null ? mBundle.getGpsPosition() : null;
 
         long time = intent.getLongExtra(AppGlobals.ACTION_ARG_TIME, System.currentTimeMillis());
-        if (currentPosition != null && Math.abs(time - currentPosition.getTime()) > REPORTER_WINDOW) {
+        if (currentPosition != null && Math.abs(time - currentPosition.getTime()) > REPORTER_WINDOW_MSEC) {
             // no gps for a while, just bundle what we have
             reportCollectedLocation();
         }

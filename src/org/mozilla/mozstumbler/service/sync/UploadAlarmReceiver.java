@@ -17,7 +17,7 @@ import org.mozilla.mozstumbler.service.datahandling.DataStorageManager;
 import org.mozilla.mozstumbler.service.utils.NetworkUtils;
 
 public class UploadAlarmReceiver extends BroadcastReceiver {
-    static final String LOG_TAG = UploadAlarmReceiver.class.getName();
+    static final String LOG_TAG = UploadAlarmReceiver.class.getSimpleName();
 
     // Only if data is queued and device awake: periodically check network availability and upload
     // TODO Fennec will only use this as a secondary mechanism. The primary Fennec method

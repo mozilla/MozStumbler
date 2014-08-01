@@ -11,7 +11,7 @@ import org.mozilla.mozstumbler.service.Prefs;
 
 
 public final class LocationBlockList {
-    private static final String LOGTAG          = LocationBlockList.class.getName();
+    private static final String LOG_TAG          = LocationBlockList.class.getSimpleName();
     private static final double MAX_ALTITUDE    = 8848;      // Mount Everest's altitude in meters
     private static final double MIN_ALTITUDE    = -418;      // Dead Sea's altitude in meters
     private static final float  MAX_SPEED       = 340.29f;   // Mach 1 in meters/second
@@ -47,42 +47,42 @@ public final class LocationBlockList {
 
         if (latitude == 0 && longitude == 0) {
             block = true;
-            Log.w(LOGTAG, "Bogus latitude,longitude: 0,0");
+            Log.w(LOG_TAG, "Bogus latitude,longitude: 0,0");
         } else {
             if (latitude < -90 || latitude > 90) {
                 block = true;
-                Log.w(LOGTAG, "Bogus latitude: " + latitude);
+                Log.w(LOG_TAG, "Bogus latitude: " + latitude);
             }
 
             if (longitude < -180 || longitude > 180) {
                 block = true;
-                Log.w(LOGTAG, "Bogus longitude: " + longitude);
+                Log.w(LOG_TAG, "Bogus longitude: " + longitude);
             }
         }
 
         if (location.hasAccuracy() && (inaccuracy < 0 || inaccuracy > MIN_ACCURACY)) {
             block = true;
-            Log.w(LOGTAG, "Insufficient accuracy: " + inaccuracy + " meters");
+            Log.w(LOG_TAG, "Insufficient accuracy: " + inaccuracy + " meters");
         }
 
         if (location.hasAltitude() && (altitude < MIN_ALTITUDE || altitude > MAX_ALTITUDE)) {
             block = true;
-            Log.w(LOGTAG, "Bogus altitude: " + altitude + " meters");
+            Log.w(LOG_TAG, "Bogus altitude: " + altitude + " meters");
         }
 
         if (location.hasBearing() && (bearing < 0 || bearing > 360)) {
             block = true;
-            Log.w(LOGTAG, "Bogus bearing: " + bearing + " degrees");
+            Log.w(LOG_TAG, "Bogus bearing: " + bearing + " degrees");
         }
 
         if (location.hasSpeed() && (speed < 0 || speed > MAX_SPEED)) {
             block = true;
-            Log.w(LOGTAG, "Bogus speed: " + speed + " meters/second");
+            Log.w(LOG_TAG, "Bogus speed: " + speed + " meters/second");
         }
 
         if (timestamp < MIN_TIMESTAMP || timestamp > tomorrow) {
             block = true;
-            Log.w(LOGTAG, "Bogus timestamp: " + timestamp + " (" + DateTimeUtils.formatTime(timestamp) + ")");
+            Log.w(LOG_TAG, "Bogus timestamp: " + timestamp + " (" + DateTimeUtils.formatTime(timestamp) + ")");
         }
 
         if (mGeofencingEnabled &&
@@ -90,7 +90,7 @@ public final class LocationBlockList {
                 Math.abs(location.getLongitude() - mBlockedLocation.getLongitude()) < GEOFENCE_RADIUS) {
             block = true;
             mIsGeofenced = true;
-            Log.i(LOGTAG, "Hit the geofence: " + mBlockedLocation.getLatitude() +" / " + mBlockedLocation.getLongitude());
+            Log.i(LOG_TAG, "Hit the geofence: " + mBlockedLocation.getLatitude() +" / " + mBlockedLocation.getLongitude());
         }
 
         return block;

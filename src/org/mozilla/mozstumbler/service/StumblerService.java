@@ -24,7 +24,7 @@ import java.io.IOException;
 
 public final class StumblerService extends PersistentIntentService
         implements DataStorageManager.StorageIsEmptyTracker {
-    private static final String LOGTAG          = StumblerService.class.getName();
+    private static final String LOG_TAG          = StumblerService.class.getSimpleName();
     public static final String ACTION_BASE = AppGlobals.ACTION_NAMESPACE;
     public static final String ACTION_START_PASSIVE = ACTION_BASE + ".START_PASSIVE";
     public static final String ACTION_EXTRA_MOZ_API_KEY = ACTION_BASE + ".MOZKEY";
@@ -153,14 +153,14 @@ public final class StumblerService extends PersistentIntentService
             Prefs.getInstance().setFirefoxScanEnabled(false);
         }
 
-        if (AppGlobals.isDebug) Log.d(LOGTAG, "onDestroy");
+        if (AppGlobals.isDebug) Log.d(LOG_TAG, "onDestroy");
 
         if (DataStorageManager.getInstance() != null) {
             try {
                 DataStorageManager.getInstance().saveCurrentReportsToDisk();
             } catch (IOException ex) {
                 AppGlobals.guiLogInfo(ex.toString());
-                Log.e(LOGTAG, "Exception in onDestroy saving reports", ex);
+                Log.e(LOG_TAG, "Exception in onDestroy saving reports", ex);
             }
         }
         mReporter.shutdown();
@@ -200,13 +200,13 @@ public final class StumblerService extends PersistentIntentService
     @Override
     public IBinder onBind(Intent intent) {
         mIsBound = true;
-        if (AppGlobals.isDebug)Log.d(LOGTAG, "onBind");
+        if (AppGlobals.isDebug)Log.d(LOG_TAG, "onBind");
         return mBinder;
     }
 
     @Override
     public boolean onUnbind(Intent intent) {
-        if (AppGlobals.isDebug) Log.d(LOGTAG, "onUnbind");
+        if (AppGlobals.isDebug) Log.d(LOG_TAG, "onUnbind");
         if (!mScanManager.isScanning()) {
             stopSelf();
         }
@@ -217,7 +217,7 @@ public final class StumblerService extends PersistentIntentService
     @Override
     public void onRebind(Intent intent) {
         mIsBound = true;
-        if (AppGlobals.isDebug)Log.d(LOGTAG,"onRebind");
+        if (AppGlobals.isDebug)Log.d(LOG_TAG,"onRebind");
     }
 
     public void storageIsEmpty(boolean isEmpty) {

@@ -10,7 +10,7 @@ import android.net.NetworkInfo;
 import android.util.Log;
 
 public final class NetworkUtils {
-    private static final String LOGTAG = NetworkUtils.class.getName();
+    private static final String LOG_TAG = NetworkUtils.class.getSimpleName();
 
     ConnectivityManager mConnectivityManager;
     static NetworkUtils sInstance;
@@ -29,7 +29,7 @@ public final class NetworkUtils {
 
     public boolean isWifiAvailable() {
         if (mConnectivityManager == null) {
-            Log.e(LOGTAG, "ConnectivityManager is null!");
+            Log.e(LOG_TAG, "ConnectivityManager is null!");
             return false;
         }
 

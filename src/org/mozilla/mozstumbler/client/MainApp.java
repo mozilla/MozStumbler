@@ -33,7 +33,7 @@ import org.mozilla.mozstumbler.service.utils.NetworkUtils;
 
 public class MainApp extends Application {
 
-    private final String LOGTAG = MainApp.class.getName();
+    private final String LOG_TAG = MainApp.class.getSimpleName();
     private StumblerService mStumblerService;
     private ServiceConnection mConnection;
     private ServiceBroadcastReceiver mReceiver;
@@ -93,7 +93,7 @@ public class MainApp extends Application {
 
                 MapActivity.createGpsTrackLocationReceiver(MainApp.this);
 
-                Log.d(LOGTAG, "Service connected");
+                Log.d(LOG_TAG, "Service connected");
                 if (mMainActivity != null) {
                     mMainActivity.updateUiOnMainThread();
                 }
@@ -101,7 +101,7 @@ public class MainApp extends Application {
 
             public void onServiceDisconnected(ComponentName className) {
                 mStumblerService = null;
-                Log.d(LOGTAG, "Service disconnected", new Exception());
+                Log.d(LOG_TAG, "Service disconnected", new Exception());
             }
         };
 
@@ -120,7 +120,7 @@ public class MainApp extends Application {
         if (mReceiver != null)
             mReceiver.unregister();
         mReceiver = null;
-        Log.d(LOGTAG, "onStop");
+        Log.d(LOG_TAG, "onStop");
     }
 
     private void startScanning() {

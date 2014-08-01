@@ -54,7 +54,7 @@ import org.osmdroid.views.overlay.PathOverlay;
 import org.osmdroid.views.overlay.TilesOverlay;
 
 public final class MapActivity extends Activity {
-    private static final String LOGTAG = MapActivity.class.getName();
+    private static final String LOG_TAG = MapActivity.class.getSimpleName();
 
     private static final String COVERAGE_REDIRECT_URL = "https://location.services.mozilla.com/map.json";
     private static String sCoverageUrl = null;
@@ -80,7 +80,7 @@ public final class MapActivity extends Activity {
     public static void createGpsTrackLocationReceiver(Context context) {
         sGpsTrackLocationReceiver = new GpsTrackLocationReceiver();
         LocalBroadcastManager.getInstance(context).registerReceiver(sGpsTrackLocationReceiver, new IntentFilter(GPSScanner.ACTION_GPS_UPDATED));
-        Log.d(LOGTAG, "Received location");
+        Log.d(LOG_TAG, "Received location");
     }
 
     // Create in MainApp, used to grab locations at all times, for drawing the GPS track on the map
@@ -168,7 +168,7 @@ public final class MapActivity extends Activity {
             mPathOverlay.addPoint(p);
         }
 
-        Log.d(LOGTAG, "onCreate");
+        Log.d(LOG_TAG, "onCreate");
 
         // @TODO: we do a similar "read from URL" in Updater, AbstractCommunicator, make one function for this
         if (sCoverageUrl == null) {
@@ -179,7 +179,7 @@ public final class MapActivity extends Activity {
                     try {
                         scanner = new java.util.Scanner(new URL(COVERAGE_REDIRECT_URL).openStream(), "UTF-8");
                     } catch (Exception ex) {
-                        Log.d(LOGTAG, ex.toString());
+                        Log.d(LOG_TAG, ex.toString());
                         AppGlobals.guiLogInfo("Failed to get coverage url:" + ex.toString());
                         return;
                     }
@@ -358,7 +358,7 @@ public final class MapActivity extends Activity {
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(GPSScanner.ACTION_GPS_UPDATED);
         LocalBroadcastManager.getInstance(this).registerReceiver(mReceiver, intentFilter);
-        Log.d(LOGTAG, "onStart");
+        Log.d(LOG_TAG, "onStart");
     }
 
     @Override
@@ -373,7 +373,7 @@ public final class MapActivity extends Activity {
     protected void onDestroy() {
         super.onDestroy();
 
-        Log.d(LOGTAG, "onDestroy");
+        Log.d(LOG_TAG, "onDestroy");
         mMap.getTileProvider().clearTileCache();
         BitmapPool.getInstance().clearBitmapPool();
     }
@@ -382,7 +382,7 @@ public final class MapActivity extends Activity {
     protected void onStop() {
         super.onStop();
 
-        Log.d(LOGTAG, "onStop");
+        Log.d(LOG_TAG, "onStop");
         if (mReceiver != null) {
             LocalBroadcastManager.getInstance(this).unregisterReceiver(mReceiver);
             mReceiver = null;
@@ -400,7 +400,7 @@ public final class MapActivity extends Activity {
     private final class GetLocationAndMapItTask extends AsyncTask<StumblerService, Void, Location> {
         @Override
         public Location doInBackground(StumblerService... params) {
-            Log.d(LOGTAG, "requesting location...");
+            Log.d(LOG_TAG, "requesting location...");
 
             StumblerService service = params[0];
             final Location result = service.getLocation();

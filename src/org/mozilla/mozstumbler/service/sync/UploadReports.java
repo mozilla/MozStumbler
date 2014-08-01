@@ -14,7 +14,7 @@ import java.io.IOException;
 
 public class UploadReports {
 
-    static final String LOG_TAG = UploadReports.class.getName();
+    static final String LOG_TAG = UploadReports.class.getSimpleName();
 
     public void uploadReports(boolean ignoreNetworkStatus, AbstractCommunicator.SyncSummary syncResult, Runnable progressListener) {
         long uploadedObservations = 0;

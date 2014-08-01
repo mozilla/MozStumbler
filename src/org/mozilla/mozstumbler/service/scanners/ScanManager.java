@@ -22,7 +22,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class ScanManager {
-    private static final String LOGTAG = ScanManager.class.getName();
+    private static final String LOG_TAG = ScanManager.class.getSimpleName();
     private Timer mPassiveModeFlushTimer;
     private final Context mContext;
     private boolean       mIsScanning;
@@ -58,7 +58,7 @@ public class ScanManager {
             return;
         }
 
-        if (AppGlobals.isDebug) Log.d(LOGTAG, "New passive location");
+        if (AppGlobals.isDebug) Log.d(LOG_TAG, "New passive location");
 
         mWifiScanner.start(ActiveOrPassiveStumbling.PASSIVE_STUMBLING);
         mCellScanner.start(ActiveOrPassiveStumbling.PASSIVE_STUMBLING);
@@ -77,7 +77,7 @@ public class ScanManager {
         mPassiveModeFlushTimer.schedule(new TimerTask() {
           @Override
           public void run() {
-              Intent flush = new Intent(Reporter.ACTION_FLUSH_TO_DB);
+              Intent flush = new Intent(Reporter.ACTION_FLUSH_TO_BUNDLE);
               LocalBroadcastManager.getInstance(mContext).sendBroadcastSync(flush);
           }
         }, when);
@@ -92,7 +92,7 @@ public class ScanManager {
         if (mIsScanning) {
             return;
         }
-        if (AppGlobals.isDebug) Log.d(LOGTAG, "Scanning started...");
+        if (AppGlobals.isDebug) Log.d(LOG_TAG, "Scanning started...");
 
         mGPSScanner.start(mStumblingMode);
         if (mStumblingMode == ActiveOrPassiveStumbling.ACTIVE_STUMBLING) {
@@ -108,7 +108,7 @@ public class ScanManager {
             return;
         }
 
-        if (AppGlobals.isDebug) Log.d(LOGTAG, "Scanning stopped");
+        if (AppGlobals.isDebug) Log.d(LOG_TAG, "Scanning stopped");
 
         mGPSScanner.stop();
         mWifiScanner.stop();

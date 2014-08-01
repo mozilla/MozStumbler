@@ -22,7 +22,7 @@ import android.util.Log;
  </receiver>
  */
 public class PassiveServiceReceiver extends BroadcastReceiver {
-    final static String LOGTAG = PassiveServiceReceiver.class.getName();
+    final static String LOG_TAG = PassiveServiceReceiver.class.getSimpleName();
 
     static boolean sIsStarted;
 
@@ -52,7 +52,7 @@ public class PassiveServiceReceiver extends BroadcastReceiver {
         }
         sIsStarted = true;
 
-        if (AppGlobals.isDebug) Log.d(LOGTAG, "Starting Passively");
+        if (AppGlobals.isDebug) Log.d(LOG_TAG, "Starting Passively");
 
         Intent startServiceIntent = new Intent(context, StumblerService.class);
         startServiceIntent.putExtra(StumblerService.ACTION_START_PASSIVE, true);

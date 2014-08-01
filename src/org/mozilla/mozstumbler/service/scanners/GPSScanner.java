@@ -33,7 +33,7 @@ public class GPSScanner implements LocationListener {
     public static final String NEW_STATUS_ARG_SATS = "sats";
     public static final String NEW_LOCATION_ARG_LOCATION = "location";
 
-    private static final String   LOGTAG                  = GPSScanner.class.getName();
+    private static final String   LOG_TAG                  = GPSScanner.class.getSimpleName();
     private static final long     GEO_MIN_UPDATE_TIME     = 1000;
     private static final float    GEO_MIN_UPDATE_DISTANCE = 10;
     private static final long     PASSIVE_GEO_MIN_UPDATE_TIME     = 3000;
@@ -102,7 +102,7 @@ public class GPSScanner implements LocationListener {
                             reportLocationLost();
                         }
 
-                        if (AppGlobals.isDebug) Log.v(LOGTAG, "onGpsStatusChange - satellites: " + satellites + " fixes: " + fixes);
+                        if (AppGlobals.isDebug) Log.v(LOG_TAG, "onGpsStatusChange - satellites: " + satellites + " fixes: " + fixes);
                     } else if (event == GpsStatus.GPS_EVENT_STOPPED) {
                         reportLocationLost();
                     }
@@ -175,7 +175,7 @@ public class GPSScanner implements LocationListener {
             (location.distanceTo(mLocation) < PASSIVE_GEO_MIN_UPDATE_DISTANCE ||
              location.getTime() - mLocation.getTime() < PASSIVE_GEO_MIN_UPDATE_TIME))
         {
-            //if (SharedConstants.isDebug) Log.d(LOGTAG, "Distance/time below threshold:" + (location.getTime() - mLocation.getTime()));
+            //if (SharedConstants.isDebug) Log.d(LOG_TAG, "Distance/time below threshold:" + (location.getTime() - mLocation.getTime()));
             return;
         }
 
@@ -187,12 +187,12 @@ public class GPSScanner implements LocationListener {
         sendToLogActivity(logMsg);
 
         if (mBlockList.contains(location)) {
-            Log.w(LOGTAG, "Blocked location: " + location);
+            Log.w(LOG_TAG, "Blocked location: " + location);
             reportLocationLost();
             return;
         }
 
-        if (AppGlobals.isDebug) Log.d(LOGTAG, "New location: " + location);
+        if (AppGlobals.isDebug) Log.d(LOG_TAG, "New location: " + location);
 
         mLocation = location;
 

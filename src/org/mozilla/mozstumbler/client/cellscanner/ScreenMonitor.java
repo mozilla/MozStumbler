@@ -18,9 +18,9 @@ import android.util.Log;
  * https://code.google.com/p/android/issues/detail?id=10931
  */
 public class ScreenMonitor {
-    private static final String LOGTAG = "ScreenOffWorkaround";
+    private static final String LOG_TAG = "ScreenOffWorkaround";
 
-    private static final String PREFS_FILE = ScreenMonitor.class.getName();
+    private static final String PREFS_FILE = ScreenMonitor.class.getSimpleName();
     private static final String LOCATION_UPDATES_COUNT_PREF = "location_updates_count";
     private static final long FIRST_LOCATION_MIN_TIME_MS = 2000;
     private static final long NO_DATA = -1;
@@ -41,7 +41,7 @@ public class ScreenMonitor {
         load();
         PowerManager pm = (PowerManager) mContext.getSystemService(Context.POWER_SERVICE);
         mScreenIsOn = pm.isScreenOn();
-        Log.v(LOGTAG, "Total cell location updates when the screen is off: " +
+        Log.v(LOG_TAG, "Total cell location updates when the screen is off: " +
                 (mLocationUpdatesCount == NO_DATA ? " no data" : mLocationUpdatesCount));
         IntentFilter filter = new IntentFilter();
         filter.addAction(Intent.ACTION_SCREEN_OFF);
@@ -54,7 +54,7 @@ public class ScreenMonitor {
 
         if (mFirstChangeTimestamp != 0) {
             if (Math.abs(System.nanoTime() - mFirstChangeTimestamp) > FIRST_LOCATION_MIN_TIME_MS * 1e6) {
-                Log.i(LOGTAG, "Received the first cell location update when the screen is off");
+                Log.i(LOG_TAG, "Received the first cell location update when the screen is off");
                 mLocationUpdatesCount = 1;
                 mFirstChangeTimestamp = 0;
             }

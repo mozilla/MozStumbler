@@ -18,7 +18,7 @@ public class DefaultCellScanner extends CellScannerNoWCDMA {
 
     public DefaultCellScanner(Context context) {
         super(context);
-        LOGTAG = DefaultCellScanner.class.getName();
+        LOG_TAG = DefaultCellScanner.class.getSimpleName();
         mScreenMonitor = new ScreenMonitor(mContext);
     }
 
@@ -68,7 +68,7 @@ public class DefaultCellScanner extends CellScannerNoWCDMA {
                 added = true;
             }
             else {
-                //if (SharedConstants.isDebug) Log.d(LOGTAG, String.format("Invalid-> mnc:%d mcc:%d", ident.getMnc(), ident.getMcc()));
+                //if (SharedConstants.isDebug) Log.d(LOG_TAG, String.format("Invalid-> mnc:%d mcc:%d", ident.getMnc(), ident.getMcc()));
             }
         }
         return added || super.addCellToList(cells, observedCell, tm);

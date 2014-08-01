@@ -13,7 +13,7 @@ import org.mozilla.mozstumbler.service.AppGlobals;
 import java.io.IOException;
 
 public final class StumblerBundleReceiver {
-    private static final String LOGTAG = StumblerBundleReceiver.class.getName();
+    private static final String LOG_TAG = StumblerBundleReceiver.class.getSimpleName();
 
     public void handleBundle(StumblerBundle bundle) {
         JSONObject mlsObj;
@@ -25,10 +25,10 @@ public final class StumblerBundleReceiver {
             cellCount = mlsObj.getInt(DataStorageContract.ReportsColumns.CELL_COUNT);
 
         } catch (JSONException e) {
-            Log.w(LOGTAG, "Failed to convert bundle to JSON: " + e);
+            Log.w(LOG_TAG, "Failed to convert bundle to JSON: " + e);
             return;
         }
-            if (AppGlobals.isDebug) Log.d(LOGTAG, "Received bundle: " + mlsObj.toString());
+            if (AppGlobals.isDebug) Log.d(LOG_TAG, "Received bundle: " + mlsObj.toString());
 
             AppGlobals.guiLogInfo(mlsObj.toString());
 
@@ -36,7 +36,7 @@ public final class StumblerBundleReceiver {
 
             DataStorageManager.getInstance().insert(mlsObj.toString(), wifiCount, cellCount);
         } catch (IOException e) {
-            Log.w(LOGTAG, e.toString());
+            Log.w(LOG_TAG, e.toString());
         }
     }
 }

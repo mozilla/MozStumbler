@@ -13,11 +13,11 @@ import org.mozilla.mozstumbler.service.StumblerService;
  * stumbler, and [X] Stop Scanning will appear.
  */
 public final class TurnOffReceiver extends BroadcastReceiver {
-    private static final String LOGTAG = TurnOffReceiver.class.getName();
+    private static final String LOG_TAG = TurnOffReceiver.class.getSimpleName();
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        Log.d(LOGTAG, "onReceive!");
+        Log.d(LOG_TAG, "onReceive!");
 
         Intent serviceIntent = new Intent(context, StumblerService.class);
         IBinder binder = peekService(context, serviceIntent);

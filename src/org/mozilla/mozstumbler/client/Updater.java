@@ -30,7 +30,7 @@ import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.service.StumblerService;
 
 final class Updater {
-    private static final String LOGTAG = Updater.class.getName();
+    private static final String LOG_TAG = Updater.class.getSimpleName();
     private static final String VERSION_URL = "https://raw.github.com/mozilla/MozStumbler/master/VERSION";
     private static final String APK_URL_FORMAT = "https://github.com/mozilla/MozStumbler/releases/download/v%s/MozStumbler-v%s.apk";
 
@@ -62,9 +62,9 @@ final class Updater {
                         }
                     }
                 } catch (FileNotFoundException fe) {
-                    Log.w(LOGTAG, "VERSION not found: " + VERSION_URL);
+                    Log.w(LOG_TAG, "VERSION not found: " + VERSION_URL);
                 } catch (IOException e) {
-                    Log.e(LOGTAG, "", e);
+                    Log.e(LOG_TAG, "", e);
                 }
 
                 return null;
@@ -74,8 +74,8 @@ final class Updater {
             public void onPostExecute(String latestVersion) {
                 String installedVersion = PackageUtils.getAppVersion(activity);
 
-                Log.d(LOGTAG, "Installed version: " + installedVersion);
-                Log.d(LOGTAG, "Latest version: " + latestVersion);
+                Log.d(LOG_TAG, "Installed version: " + installedVersion);
+                Log.d(LOG_TAG, "Latest version: " + latestVersion);
 
                 if (isVersionGreaterThan(latestVersion, installedVersion) && !activity.isFinishing()) {
                     showUpdateDialog(activity, installedVersion, latestVersion);
@@ -111,7 +111,7 @@ final class Updater {
                 return (an > bn);
             }
         } catch (NumberFormatException e) {
-            Log.w(LOGTAG, "a='" + a + "', b='" + b + "'", e);
+            Log.w(LOG_TAG, "a='" + a + "', b='" + b + "'", e);
             return false;
         }
 
@@ -139,7 +139,7 @@ final class Updater {
                                new Dialog.OnClickListener() {
                                    @Override
                                    public void onClick(DialogInterface di, int which) {
-                                       Log.d(LOGTAG, "Update Now");
+                                       Log.d(LOG_TAG, "Update Now");
                                        di.dismiss();
                                        downloadAndInstallUpdate(context, latestVersion);
                                    }
@@ -162,7 +162,7 @@ final class Updater {
                 URL apkURL = getUpdateURL(version);
                 File apk = downloadFile(context, apkURL);
                 if (apk == null || !apk.exists()) {
-                    Log.e(LOGTAG, "Update file not found!");
+                    Log.e(LOG_TAG, "Update file not found!");
                     return null;
                 }
 
@@ -188,7 +188,7 @@ final class Updater {
     }
 
     private static File downloadFile(Context context, URL url) {
-        Log.d(LOGTAG, "Downloading: " + url);
+        Log.d(LOG_TAG, "Downloading: " + url);
 
         File file = createTempFile(context);
         if (file == null) {
@@ -221,7 +221,7 @@ final class Updater {
                 }
             }
         } catch (IOException e) {
-            Log.e(LOGTAG, "", e);
+            Log.e(LOG_TAG, "", e);
             file.delete();
             return null;
         }
@@ -255,14 +255,14 @@ final class Updater {
         try {
             return File.createTempFile("update", ".apk", dir);
         } catch (IOException e) {
-            Log.e(LOGTAG, "", e);
+            Log.e(LOG_TAG, "", e);
             return null;
         }
     }
 
     private static void installPackage(Context context, File apkFile) {
         Uri apkURI = Uri.fromFile(apkFile);
-        Log.d(LOGTAG, "Installing: " + apkURI);
+        Log.d(LOG_TAG, "Installing: " + apkURI);
 
         //First stop the service so it is not running more
         Intent service = new Intent();

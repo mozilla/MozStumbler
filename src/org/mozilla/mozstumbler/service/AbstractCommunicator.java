@@ -19,7 +19,7 @@ import java.net.URL;
 
 public abstract class AbstractCommunicator {
 
-    private static final String LOGTAG = AbstractCommunicator.class.getName();
+    private static final String LOG_TAG = AbstractCommunicator.class.getSimpleName();
     private static final String NICKNAME_HEADER = "X-Nickname";
     private static final String USER_AGENT_HEADER = "User-Agent";
     private HttpURLConnection mHttpURLConnection;
@@ -78,7 +78,7 @@ public abstract class AbstractCommunicator {
         } catch (MalformedURLException e) {
             throw new IllegalArgumentException(e);
         } catch (IOException e) {
-            Log.e(LOGTAG, "Couldn't open a connection: " + e);
+            Log.e(LOG_TAG, "Couldn't open a connection: " + e);
         }
         mHttpURLConnection.setDoOutput(true);
         mHttpURLConnection.setRequestProperty(USER_AGENT_HEADER, mUserAgent);
@@ -126,7 +126,7 @@ public abstract class AbstractCommunicator {
             }
             mHttpURLConnection.setRequestProperty("Content-Encoding","gzip");
         } catch (IOException e) {
-            Log.e(LOGTAG, "Couldn't compress and send data, falling back to plain-text: ", e);
+            Log.e(LOG_TAG, "Couldn't compress and send data, falling back to plain-text: ", e);
             close();
         }
 
@@ -139,7 +139,7 @@ public abstract class AbstractCommunicator {
         logMsg = "Send data: " + String.format("%.2f", data.length / 1024.0) + " kB";
         logMsg += " Session Total:" + String.format("%.2f", sBytesSentTotal / 1024.0) + " kB";
         AppGlobals.guiLogInfo(logMsg, "#FFFFCC", true);
-        Log.d(LOGTAG, logMsg);
+        Log.d(LOG_TAG, logMsg);
         return data.length;
     }
 

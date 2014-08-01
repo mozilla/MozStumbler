@@ -13,7 +13,7 @@ import org.mozilla.mozstumbler.service.Prefs;
 
 public class Submitter extends AbstractCommunicator {
     private static final String SUBMIT_URL = "https://location.services.mozilla.com/v1/submit";
-    private static final String LOGTAG = Submitter.class.getName();
+    private static final String LOG_TAG = Submitter.class.getSimpleName();
     private final String mNickname;
 
     public Submitter() {
@@ -43,7 +43,7 @@ public class Submitter extends AbstractCommunicator {
                 result.errorCode = ((HttpErrorException) ex).responseCode;
                 msg += " Code:" + result.errorCode;
             }
-            Log.e(LOGTAG, msg);
+            Log.e(LOG_TAG, msg);
             AppGlobals.guiLogError(msg);
         }
         return result;

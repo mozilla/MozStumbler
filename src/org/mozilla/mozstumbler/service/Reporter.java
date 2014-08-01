@@ -23,10 +23,10 @@ import org.mozilla.mozstumbler.service.scanners.cellscanner.CellScanner;
 import org.mozilla.mozstumbler.service.scanners.GPSScanner;
 import org.mozilla.mozstumbler.service.scanners.WifiScanner;
 
-final public class Reporter extends BroadcastReceiver {
-    private static final String LOGTAG = Reporter.class.getName();
+public final class Reporter extends BroadcastReceiver {
+    private static final String LOG_TAG = Reporter.class.getSimpleName();
     public  static final String ACTION_BASE = AppGlobals.ACTION_NAMESPACE;
-    public  static final String ACTION_FLUSH_TO_DB = ACTION_BASE + ".FLUSH";
+    public  static final String ACTION_FLUSH_TO_BUNDLE = ACTION_BASE + ".FLUSH";
 
     /**
      * The maximum time of observation
@@ -57,7 +57,7 @@ final public class Reporter extends BroadcastReceiver {
         intentFilter.addAction(WifiScanner.ACTION_WIFIS_SCANNED);
         intentFilter.addAction(CellScanner.ACTION_CELLS_SCANNED);
         intentFilter.addAction(GPSScanner.ACTION_GPS_UPDATED);
-        intentFilter.addAction(ACTION_FLUSH_TO_DB);
+        intentFilter.addAction(ACTION_FLUSH_TO_BUNDLE);
         LocalBroadcastManager.getInstance(mContext).registerReceiver(this,
                 intentFilter);
 
@@ -74,7 +74,7 @@ final public class Reporter extends BroadcastReceiver {
     }
 
     void shutdown() {
-        Log.d(LOGTAG, "shutdown");
+        Log.d(LOG_TAG, "shutdown");
         flush();
         LocalBroadcastManager.getInstance(mContext).unregisterReceiver(this);
     }
@@ -102,7 +102,7 @@ final public class Reporter extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         String action = intent.getAction();
 
-        if (action.equals(ACTION_FLUSH_TO_DB)) {
+        if (action.equals(ACTION_FLUSH_TO_BUNDLE)) {
             flush();
             return;
         } else if (action.equals(WifiScanner.ACTION_WIFIS_SCANNED)) {

@@ -24,7 +24,7 @@ import java.util.Properties;
 
 public class UploadReportsDialog extends DialogFragment
         implements AsyncUploader.AsyncUploaderListener {
-    private static final String LOGTAG = UploadReportsDialog.class.getName();
+    private static final String LOG_TAG = UploadReportsDialog.class.getSimpleName();
 
     private TextView mLastUpdateTimeView;
     private TextView mObservationsSentView;
@@ -163,7 +163,7 @@ public class UploadReportsDialog extends DialogFragment
             mTotalDataSentView.setText(String.valueOf(kilobytes));
         }
         catch (IOException ex) {
-            Log.e(LOGTAG, "Exception in updateSyncedStats()", ex);
+            Log.e(LOG_TAG, "Exception in updateSyncedStats()", ex);
         }
     }
 

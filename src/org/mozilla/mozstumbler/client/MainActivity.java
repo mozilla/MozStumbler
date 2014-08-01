@@ -32,7 +32,7 @@ import java.io.IOException;
 import java.util.Properties;
 
 public final class MainActivity extends FragmentActivity {
-    private static final String LOGTAG = MainActivity.class.getName();
+    private static final String LOG_TAG = MainActivity.class.getSimpleName();
 
     public static final String ACTION_BASE = AppGlobals.ACTION_NAMESPACE + ".MainActivity.";
     public static final String ACTION_UPDATE_UI = ACTION_BASE + "UPDATE_UI";
@@ -84,7 +84,7 @@ public final class MainActivity extends FragmentActivity {
             Updater.checkForUpdates(this);
         }
 
-        Log.d(LOGTAG, "onCreate");
+        Log.d(LOG_TAG, "onCreate");
     }
 
     void checkGps() {
@@ -283,7 +283,7 @@ public final class MainActivity extends FragmentActivity {
             formatTextView(R.id.reports_sent, R.string.reports_sent, Integer.parseInt(value));
         }
         catch (IOException ex) {
-            Log.e(LOGTAG, "Exception in showUploadStats()", ex);
+            Log.e(LOG_TAG, "Exception in showUploadStats()", ex);
         }
     }
 

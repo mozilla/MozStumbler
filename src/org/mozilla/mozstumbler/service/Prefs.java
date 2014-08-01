@@ -14,8 +14,8 @@ import android.text.TextUtils;
 import android.util.Log;
 
 public final class Prefs {
-    private static final String     LOGTAG        = Prefs.class.getName();
-    public  static final String     PREFS_FILE    = Prefs.class.getName();
+    private static final String     LOG_TAG        = Prefs.class.getSimpleName();
+    public  static final String     PREFS_FILE    = Prefs.class.getSimpleName();
     private static final String     NICKNAME_PREF = "nickname";
     private static final String     VALUES_VERSION_PREF = "values_version";
     private static final String     WIFI_ONLY = "wifi_only";
@@ -33,7 +33,7 @@ public final class Prefs {
     private Prefs(Context context) {
         mSharedPrefs = context.getSharedPreferences(PREFS_FILE, Context.MODE_MULTI_PROCESS | Context.MODE_PRIVATE);
         if (getPrefs().getInt(VALUES_VERSION_PREF, -1) != AppGlobals.appVersionCode) {
-            Log.i(LOGTAG, "Version of the application has changed. Updating default values.");
+            Log.i(LOG_TAG, "Version of the application has changed. Updating default values.");
             // Remove old keys
             getPrefs().edit()
                     .remove("reports")
@@ -45,7 +45,7 @@ public final class Prefs {
         }
     }
 
-    /** Prefs must be created on application startup or service startup.
+    /* Prefs must be created on application startup or service startup.
      * TODO: turn into regular singleton if Context dependency can be removed. */
     public static void createGlobalInstance(Context c) {
         if (sInstance != null)
@@ -53,7 +53,7 @@ public final class Prefs {
         sInstance = new Prefs(c);
     }
 
-    /** Only access after CreatePrefsInstance(Context) has been called at startup. */
+    /* Only access after CreatePrefsInstance(Context) has been called at startup. */
     public static Prefs getInstance() {
         assert(sInstance != null);
         return sInstance;
@@ -175,7 +175,7 @@ public final class Prefs {
         if (VERSION.SDK_INT >= 9) {
             editor.apply();
         } else if (!editor.commit()) {
-            Log.e(LOGTAG, "", new IllegalStateException("commit() failed?!"));
+            Log.e(LOG_TAG, "", new IllegalStateException("commit() failed?!"));
         }
     }
 

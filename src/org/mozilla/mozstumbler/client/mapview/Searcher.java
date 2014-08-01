@@ -12,7 +12,7 @@ import org.json.JSONObject;
 import org.mozilla.mozstumbler.service.AbstractCommunicator;
 
 public class Searcher extends AbstractCommunicator {
-    private static final String LOGTAG = Searcher.class.getName();
+    private static final String LOG_TAG = Searcher.class.getSimpleName();
     private static final String SEARCH_URL = "https://location.services.mozilla.com/v1/search";
     private static final String RESPONSE_OK_TEXT = "ok";
     private static final String JSON_LATITUDE = "lat";
@@ -61,10 +61,10 @@ public class Searcher extends AbstractCommunicator {
             initResponse();
             return mResponse.getString("status");
         } catch (IOException e) {
-            Log.e(LOGTAG, "Couldn't process the response: ", e);
+            Log.e(LOG_TAG, "Couldn't process the response: ", e);
             return null;
         } catch (JSONException e) {
-            Log.e(LOGTAG, "JSON got confused: ", e);
+            Log.e(LOG_TAG, "JSON got confused: ", e);
             return null;
         }
     }
@@ -74,7 +74,7 @@ public class Searcher extends AbstractCommunicator {
             try {
                 return Float.parseFloat(mResponse.getString(JSON_LATITUDE));
             } catch (JSONException e) {
-                Log.e(LOGTAG, "Latitude JSON response problem: ", e);
+                Log.e(LOG_TAG, "Latitude JSON response problem: ", e);
             }
         }
         return 0f;
@@ -85,7 +85,7 @@ public class Searcher extends AbstractCommunicator {
             try {
                 return Float.parseFloat(mResponse.getString(JSON_LONGITUDE));
             } catch (JSONException e) {
-                Log.e(LOGTAG, "Longitude JSON response problem: ", e);
+                Log.e(LOG_TAG, "Longitude JSON response problem: ", e);
             }
         }
         return 0f;
@@ -96,7 +96,7 @@ public class Searcher extends AbstractCommunicator {
             try {
                 return Float.parseFloat(mResponse.getString(JSON_ACCURACY));
             } catch (JSONException e) {
-                Log.e(LOGTAG, "Accuracy JSON response problem: ", e);
+                Log.e(LOG_TAG, "Accuracy JSON response problem: ", e);
             }
         }
         return 0f;

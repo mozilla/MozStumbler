@@ -30,7 +30,7 @@ import java.util.List;
 /* Fennec does not yet support the api level for WCDMA import */
 public class CellScannerNoWCDMA implements CellScanner.CellScannerImpl {
 
-    protected static String LOGTAG = CellScannerNoWCDMA.class.getName();
+    protected static String LOG_TAG = CellScannerNoWCDMA.class.getSimpleName();
 
     protected  GetAllCellInfoScannerImpl mGetAllInfoCellScanner;
 
@@ -140,7 +140,7 @@ public class CellScannerNoWCDMA implements CellScanner.CellScannerImpl {
                     cdmaDbm == CellInfo.UNKNOWN_SIGNAL ? null : cdmaDbm);
             return info;
         } catch (IllegalArgumentException iae) {
-            Log.e(LOGTAG, "Skip invalid or incomplete CellLocation: " + currentCell, iae);
+            Log.e(LOG_TAG, "Skip invalid or incomplete CellLocation: " + currentCell, iae);
         }
         return null;
     }
@@ -161,7 +161,7 @@ public class CellScannerNoWCDMA implements CellScanner.CellScannerImpl {
                     records.add(record);
                 }
             } catch (IllegalArgumentException iae) {
-                Log.e(LOGTAG, "Skip invalid or incomplete NeighboringCellInfo: " + nci, iae);
+                Log.e(LOG_TAG, "Skip invalid or incomplete NeighboringCellInfo: " + nci, iae);
             }
         }
         return records;
@@ -238,7 +238,7 @@ public class CellScannerNoWCDMA implements CellScanner.CellScannerImpl {
             List<CellInfo> cells = new ArrayList<CellInfo>(observed.size());
             for (android.telephony.CellInfo observedCell : observed) {
                 if (!addCellToList(cells, observedCell, tm)) {
-                    //Log.i(LOGTAG, "Skipped CellInfo of unknown class: " + observedCell.toString());
+                    //Log.i(LOG_TAG, "Skipped CellInfo of unknown class: " + observedCell.toString());
                 }
             }
             return cells;

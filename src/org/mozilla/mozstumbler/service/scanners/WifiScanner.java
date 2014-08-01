@@ -39,7 +39,7 @@ public class WifiScanner extends BroadcastReceiver {
     public static final int STATUS_ACTIVE = 1;
     public static final int STATUS_WIFI_DISABLED = -1;
 
-    private static final String LOGTAG = WifiScanner.class.getName();
+    private static final String LOG_TAG = WifiScanner.class.getSimpleName();
     private static final long WIFI_MIN_UPDATE_TIME = 5000; // milliseconds
 
     private boolean mStarted;
@@ -93,7 +93,7 @@ public class WifiScanner extends BroadcastReceiver {
         String action = intent.getAction();
 
         if (WifiManager.WIFI_STATE_CHANGED_ACTION.equals(action)) {
-            Log.v(LOGTAG, "WIFI_STATE_CHANGED_ACTION new state: " + intent.getIntExtra(WifiManager.EXTRA_WIFI_STATE, -1));
+            Log.v(LOG_TAG, "WIFI_STATE_CHANGED_ACTION new state: " + intent.getIntExtra(WifiManager.EXTRA_WIFI_STATE, -1));
             if (isWifiEnabled()) {
                 activatePeriodicScan(ActiveOrPassiveStumbling.ACTIVE_STUMBLING);
             } else {
@@ -106,7 +106,7 @@ public class WifiScanner extends BroadcastReceiver {
                 if (shouldLog(scanResult)) {
                     scanResults.add(scanResult);
                     mAPs.add(scanResult.BSSID);
-                    //Log.v(LOGTAG, "BSSID=" + scanResult.BSSID + ", SSID=\"" + scanResult.SSID + "\", Signal=" + scanResult.level);
+                    //Log.v(LOG_TAG, "BSSID=" + scanResult.BSSID + ", SSID=\"" + scanResult.SSID + "\", Signal=" + scanResult.level);
                 }
             }
             mVisibleAPs.set(scanResults.size());
@@ -137,7 +137,7 @@ public class WifiScanner extends BroadcastReceiver {
             return;
         }
 
-        Log.v(LOGTAG, "Activate Periodic Scan");
+        Log.v(LOG_TAG, "Activate Periodic Scan");
 
         mWifiLock = getWifiManager().createWifiLock(WifiManager.WIFI_MODE_SCAN_ONLY, "MozStumbler");
         mWifiLock.acquire();
@@ -155,7 +155,7 @@ public class WifiScanner extends BroadcastReceiver {
                     stop(); // set mWifiScanTimer to null
                     return;
                 }
-                if (AppGlobals.isDebug) Log.v(LOGTAG, "WiFi Scanning Timer fired");
+                if (AppGlobals.isDebug) Log.v(LOG_TAG, "WiFi Scanning Timer fired");
                 getWifiManager().startScan();
             }
         }, 0, WIFI_MIN_UPDATE_TIME);
@@ -166,7 +166,7 @@ public class WifiScanner extends BroadcastReceiver {
             return;
         }
 
-        Log.v(LOGTAG, "Deactivate periodic scan");
+        Log.v(LOG_TAG, "Deactivate periodic scan");
 
         mWifiLock.release();
         mWifiLock = null;
@@ -179,11 +179,11 @@ public class WifiScanner extends BroadcastReceiver {
 
     public static boolean shouldLog(ScanResult scanResult) {
         if (BSSIDBlockList.contains(scanResult)) {
-            Log.w(LOGTAG, "Blocked BSSID: " + scanResult);
+            Log.w(LOG_TAG, "Blocked BSSID: " + scanResult);
             return false;
         }
         if (SSIDBlockList.contains(scanResult)) {
-            Log.w(LOGTAG, "Blocked SSID: " + scanResult);
+            Log.w(LOG_TAG, "Blocked SSID: " + scanResult);
             return false;
         }
         return true;
@@ -197,7 +197,7 @@ public class WifiScanner extends BroadcastReceiver {
         if (scanResults.isEmpty())
             return;
 
-        if (AppGlobals.isDebug) Log.v(LOGTAG, scanResults.toString());
+        if (AppGlobals.isDebug) Log.v(LOG_TAG, scanResults.toString());
 
         Intent i = new Intent(ACTION_WIFIS_SCANNED);
         i.putParcelableArrayListExtra(ACTION_WIFIS_SCANNED_ARG_RESULTS, scanResults);

@@ -18,7 +18,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class CellInfo implements Parcelable {
-    private static final String LOGTAG = CellInfo.class.getName();
+    private static final String LOG_TAG = CellInfo.class.getSimpleName();
 
     public static final String RADIO_GSM = "gsm";
     public static final String RADIO_CDMA = "cdma";
@@ -324,7 +324,7 @@ public class CellInfo implements Parcelable {
                 return CELL_RADIO_CDMA;
 
             default:
-                Log.e(LOGTAG, "", new IllegalArgumentException("Unexpected network type: " + networkType));
+                Log.e(LOG_TAG, "", new IllegalArgumentException("Unexpected network type: " + networkType));
                 return String.valueOf(networkType);
         }
     }
@@ -339,7 +339,7 @@ public class CellInfo implements Parcelable {
                 return RADIO_GSM;
 
             default:
-                Log.e(LOGTAG, "", new IllegalArgumentException("Unexpected phone type: " + phoneType));
+                Log.e(LOG_TAG, "", new IllegalArgumentException("Unexpected phone type: " + phoneType));
                 // fallthrough
 
             case TelephonyManager.PHONE_TYPE_NONE:

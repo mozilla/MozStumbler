@@ -23,7 +23,7 @@ import org.mozilla.mozstumbler.service.utils.PersistentIntentService;
 import java.io.IOException;
 
 public final class StumblerService extends PersistentIntentService
-        implements DataStorageManager.DatabaseIsEmptyTracker {
+        implements DataStorageManager.StorageIsEmptyTracker {
     private static final String LOGTAG          = StumblerService.class.getName();
     public static final String ACTION_BASE = AppGlobals.ACTION_NAMESPACE;
     public static final String ACTION_START_PASSIVE = ACTION_BASE + ".START_PASSIVE";
@@ -221,12 +221,11 @@ public final class StumblerService extends PersistentIntentService
         if (AppGlobals.isDebug)Log.d(LOGTAG,"onRebind");
     }
 
-    public void databaseIsEmpty(boolean isEmpty) {
+    public void storageIsEmpty(boolean isEmpty) {
         if (isEmpty) {
             UploadAlarmReceiver.cancelAlarm(this);
         } else {
             UploadAlarmReceiver.scheduleAlarm(this);
         }
     }
-
 }

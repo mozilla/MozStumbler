@@ -45,7 +45,7 @@ import java.util.TimerTask;
 public class DataStorageManager {
     private final String LOG_TAG = DataStorageManager.class.getSimpleName();
     private final int MAX_REPORTS_IN_MEMORY = 50;
-    private long mMaxBytesDiskStorage = 1024 * 1024 * 3; // 3 megabytes max by default
+    private long mMaxBytesDiskStorage = 1024 * 1024; // 1 megabyte max by default
     private int mMaxWeeksStored = 2;
     private ReportBatchBuilder mCurrentReports = new ReportBatchBuilder();
     private final File mReportsDir;
@@ -186,15 +186,12 @@ public class DataStorageManager {
             return null;
         }
 
-        SQLiteDatabase db = SQLiteDatabase.openDatabase(dbFile.toString(), null, 0);
-
-        Cursor cursor = null;
+        final SQLiteDatabase db = SQLiteDatabase.openDatabase(dbFile.toString(), null, 0);
+        final Cursor cursor = db.rawQuery("select * from stats", null);
+        if (cursor == null) {
+            return null;
+        }
         try {
-            cursor = db.rawQuery("select * from stats", null);
-            if (cursor == null) {
-                return null;
-            }
-
             cursor.moveToFirst();
             Map<String, Long> kv = new HashMap<String, Long>();
             while (!cursor.isAfterLast()) {
@@ -203,12 +200,9 @@ public class DataStorageManager {
                 kv.put(key, value);
                 cursor.moveToNext();
             }
-            assert(kv.size() == 4);
             return kv;
         } finally {
-            if (cursor != null) {
-                cursor.close();
-            }
+            cursor.close();
             db.close();
             dbFile.delete();
         }
@@ -222,15 +216,17 @@ public class DataStorageManager {
             if (dir != null) {
                 dir = new File(dir.getAbsolutePath() + "/mozstumbler");
             }
+
+            if (!dir.exists()) {
+                boolean ok = dir.mkdirs();
+                assert(ok);
+            }
         }
 
         if (dir == null) {
             dir = c.getFilesDir();
         }
 
-        if (!dir.exists()) {
-            dir.mkdirs();
-        }
         return dir.getPath();
     }
 
@@ -512,9 +508,11 @@ public class DataStorageManager {
     }
 
     private void writeSyncStats(long time, long bytesSent, long totalObs, long totalCells, long totalWifis) throws IOException {
-        FileOutputStream out = null;
+        FileOutputStream out = new FileOutputStream(mStatsFile);
+        if (out == null) {
+            return;
+        }
         try {
-            out = new FileOutputStream(mStatsFile);
             Properties props = new Properties();
             props.setProperty(DataStorageContract.Stats.KEY_LAST_UPLOAD_TIME, String.valueOf(time));
             props.setProperty(DataStorageContract.Stats.KEY_BYTES_SENT, String.valueOf(bytesSent));
@@ -524,9 +522,7 @@ public class DataStorageManager {
             props.setProperty(DataStorageContract.Stats.KEY_VERSION, String.valueOf(DataStorageContract.Stats.VERSION_CODE));
             props.store(out, null);
         } finally {
-            if (out != null) {
-                out.close();
-            }
+            out.close();
         }
     }
 

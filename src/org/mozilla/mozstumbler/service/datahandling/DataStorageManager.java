@@ -19,12 +19,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /* Stores reports in memory (mCurrentReports) until MAX_REPORTS_IN_MEMORY,
  * then writes them to disk as a .gz file. The name of the file has
  * the time written, the # of reports, and the # of cells and wifis.
  *
- * Each .gz file is typically 1-5KB.
+ * Each .gz file is typically 1-5KB. File name example: reports-t1406863343313-r4-w25-c7.gz
  *
  * The sync stats are written as a key-value pair file (not zipped).
  *
@@ -51,6 +53,7 @@ public class DataStorageManager {
     private ReportBatchIterator mReportBatchIterator;
     private StorageIsEmptyTracker mTracker;
     private ReportFileList mFileList;
+    private Timer mFlushMemoryBuffersToDiskTimer;
 
     final static String SEP_REPORT_COUNT = "-r";
     final static String SEP_WIFI_COUNT = "-w";
@@ -417,6 +420,11 @@ public class DataStorageManager {
     public synchronized void insert(String report, int wifiCount, int cellCount) throws IOException {
         notifyStorageIsEmpty(false);
 
+        if (mFlushMemoryBuffersToDiskTimer != null) {
+            mFlushMemoryBuffersToDiskTimer.cancel();
+            mFlushMemoryBuffersToDiskTimer = null;
+        }
+
         mCurrentReports.reports.add(report);
         mCurrentReports.wifiCount = wifiCount;
         mCurrentReports.cellCount = cellCount;
@@ -424,6 +432,21 @@ public class DataStorageManager {
         if (mCurrentReports.reports.size() >= MAX_REPORTS_IN_MEMORY) {
             // save to disk
             saveCurrentReportsToDisk();
+        } else {
+            // Schedule a timer to flush to disk after a few mins.
+            // If collection stops and wifi not available for uploading, the memory buffer is flushed to disk.
+            final int kMillis = 1000 * 60 * 3;
+            mFlushMemoryBuffersToDiskTimer = new Timer();
+            mFlushMemoryBuffersToDiskTimer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    try {
+                        saveCurrentReportsToDisk();
+                    } catch (IOException ex) {
+                        Log.e(LOG_TAG, "mFlushMemoryBuffersToDiskTimer exception", ex);
+                    }
+                }
+            }, kMillis);
         }
     }
 

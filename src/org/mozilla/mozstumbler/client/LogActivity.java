@@ -44,8 +44,9 @@ public class LogActivity extends Activity {
                 String msg = null;
                 do {
                     msg = AppGlobals.guiLogMessageBuffer.poll();
-                    if (mParentClass.get() != null)
+                    if (mParentClass.get() != null) {
                         mParentClass.get().addMessageToBuffer(msg);
+                    }
                 } while (msg != null);
             }
         }
@@ -73,8 +74,9 @@ public class LogActivity extends Activity {
         }
 
         void addMessageToBuffer(String s) {
-            if (s == null)
+            if (s == null) {
                 return;
+            }
 
             if (buffer.size() > MAX_SIZE) {
                 buffer.removeFirst();
@@ -85,8 +87,9 @@ public class LogActivity extends Activity {
             if (buffer.size() == kBufSizeBeforeTruncate + 1) {
                 String msg = "BUFFER REACHED " + kBufSizeBeforeTruncate +" MESSAGES. TRUNCATING MESSAGES.";
                 buffer.add(msg);
-                if (sConsoleView != null)
+                if (sConsoleView != null) {
                     sConsoleView.println(msg);
+                }
             }
             if (buffer.size() > kBufSizeBeforeTruncate && s.length() > kMaxChars) {
                 s = s.substring(0, kMaxChars) + " ...";

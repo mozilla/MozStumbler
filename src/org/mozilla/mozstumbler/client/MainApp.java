@@ -10,6 +10,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.os.IBinder;
 import android.os.StrictMode;
@@ -17,23 +19,26 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import org.mozilla.mozstumbler.BuildConfig;
 import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.client.cellscanner.DefaultCellScanner;
 import org.mozilla.mozstumbler.client.mapview.MapActivity;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.Prefs;
-import org.mozilla.mozstumbler.service.StumblerService;
-import org.mozilla.mozstumbler.service.scanners.GPSScanner;
-import org.mozilla.mozstumbler.service.scanners.WifiScanner;
-import org.mozilla.mozstumbler.service.scanners.cellscanner.CellScanner;
-import org.mozilla.mozstumbler.service.sync.AsyncUploader;
+import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageManager;
+import org.mozilla.mozstumbler.service.stumblerthread.scanners.GPSScanner;
+import org.mozilla.mozstumbler.service.stumblerthread.scanners.WifiScanner;
+import org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner.CellScanner;
+import org.mozilla.mozstumbler.service.uploadthread.AsyncUploader;
 import org.mozilla.mozstumbler.service.utils.NetworkUtils;
 
 public class MainApp extends Application {
 
-    private final String LOGTAG = MainApp.class.getName();
-    private StumblerService mStumblerService;
+    private final String LOG_TAG = AppGlobals.LOG_PREFIX + MainApp.class.getSimpleName();
+    private ClientStumblerService mStumblerService;
     private ServiceConnection mConnection;
     private ServiceBroadcastReceiver mReceiver;
     private MainActivity mMainActivity;
@@ -46,7 +51,7 @@ public class MainApp extends Application {
         return Prefs.getInstance();
     }
 
-    public StumblerService getService() {
+    public ClientStumblerService getService() {
         return mStumblerService;
     }
 
@@ -84,15 +89,27 @@ public class MainApp extends Application {
 
         mConnection = new ServiceConnection() {
             public void onServiceConnected(ComponentName className, IBinder binder) {
-                StumblerService.StumblerBinder serviceBinder = (StumblerService.StumblerBinder) binder;
-                mStumblerService = serviceBinder.getService();
-
-                AppGlobals.dataStorageManager.setMaxStorageOnDisk(MAX_BYTES_DISK_STORAGE);
-                AppGlobals.dataStorageManager.setMaxWeeksStored(MAX_WEEKS_OLD_STORED);
+                ClientStumblerService.StumblerBinder serviceBinder = (ClientStumblerService.StumblerBinder) binder;
+                mStumblerService = serviceBinder.getServiceAndInitialize(Thread.currentThread(),
+                        MAX_BYTES_DISK_STORAGE, MAX_WEEKS_OLD_STORED);
+                mStumblerService.setWifiBlockList(new WifiBlockLists());
+                // Upgrade the db, if needed
+                Map<String, Long> oldStats = getOldDbStats(MainApp.this);
+                if (oldStats != null) {
+                    long last_upload_time = oldStats.get("last_upload_time");
+                    long observations_sent = oldStats.get("observations_sent");
+                    long wifis_sent = oldStats.get("wifis_sent");
+                    long cells_sent = oldStats.get("cells_sent");
+                    try {
+                        DataStorageManager.getInstance().writeSyncStats(last_upload_time, 0, observations_sent, wifis_sent, cells_sent);
+                    } catch (IOException ex) {
+                        Log.e(LOG_TAG, "Exception in DataStorageManager upgrading db:", ex);
+                    }
+                }
 
                 MapActivity.createGpsTrackLocationReceiver(MainApp.this);
 
-                Log.d(LOGTAG, "Service connected");
+                Log.d(LOG_TAG, "Service connected");
                 if (mMainActivity != null) {
                     mMainActivity.updateUiOnMainThread();
                 }
@@ -100,26 +117,27 @@ public class MainApp extends Application {
 
             public void onServiceDisconnected(ComponentName className) {
                 mStumblerService = null;
-                Log.d(LOGTAG, "Service disconnected", new Exception());
+                Log.d(LOG_TAG, "Service disconnected", new Exception());
             }
         };
 
-        Intent intent = new Intent(this, StumblerService.class);
-        startService(intent);
+        Intent intent = new Intent(this, ClientStumblerService.class);
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
     }
 
     @Override
     public void onTerminate() {
         super.onTerminate();
-        if (mConnection != null)
+        if (mConnection != null) {
             unbindService(mConnection);
+        }
         mConnection = null;
         mStumblerService = null;
-        if (mReceiver != null)
+        if (mReceiver != null) {
             mReceiver.unregister();
+        }
         mReceiver = null;
-        Log.d(LOGTAG, "onStop");
+        Log.d(LOG_TAG, "onStop");
     }
 
     private void startScanning() {
@@ -131,7 +149,10 @@ public class MainApp extends Application {
         mStumblerService.stopForeground(true);
         mStumblerService.stopScanning();
 
-        AsyncUploader uploader = new AsyncUploader(null /* don't need to listen for completion */);
+        AsyncUploader.UploadSettings settings =
+            new AsyncUploader.UploadSettings(Prefs.getInstance().getWifiScanAlways(), Prefs.getInstance().getUseWifiOnly());
+        AsyncUploader uploader = new AsyncUploader(settings, null /* don't need to listen for completion */);
+        uploader.setNickname(Prefs.getInstance().getNickname());
         uploader.execute();
     }
 
@@ -235,5 +256,41 @@ public class MainApp extends Application {
                         getString(R.string.stop_scanning), pendingIntent)
                 .build();
 
+    }
+
+    private Map<String, Long> getOldDbStats(Context context) {
+        final File dbFile = new File(context.getFilesDir().getParent() + "/databases/" + "stumbler.db");
+        if (!dbFile.exists()) {
+            return null;
+        }
+
+        SQLiteDatabase db = null;
+        Cursor cursor = null;
+
+        try {
+            db = SQLiteDatabase.openDatabase(dbFile.toString(), null, 0);
+            cursor = db.rawQuery("select * from stats", null);
+            if (cursor == null || !cursor.moveToFirst()) {
+                if (db != null) {
+                    db.close();
+                }
+                return null;
+            }
+
+            Map<String, Long> kv = new HashMap<String, Long>();
+            while (!cursor.isAfterLast()) {
+                String key = cursor.getString(cursor.getColumnIndex("key"));
+                Long value = cursor.getLong(cursor.getColumnIndex("value"));
+                kv.put(key, value);
+                cursor.moveToNext();
+            }
+            return kv;
+        } finally {
+            cursor.close();
+            if (db != null) {
+                db.close();
+            }
+            dbFile.delete();
+        }
     }
 }

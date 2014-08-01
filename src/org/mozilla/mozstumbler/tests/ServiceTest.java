@@ -8,16 +8,17 @@ import android.telephony.TelephonyManager;
 import android.test.ServiceTestCase;
 import android.util.Log;
 
-import org.mozilla.mozstumbler.service.AbstractCommunicator;
+import org.mozilla.mozstumbler.service.utils.AbstractCommunicator;
 import org.mozilla.mozstumbler.service.AppGlobals;
-import org.mozilla.mozstumbler.service.scanners.ScanManager;
-import org.mozilla.mozstumbler.service.StumblerService;
-import org.mozilla.mozstumbler.service.datahandling.DataStorageManager;
-import org.mozilla.mozstumbler.service.scanners.GPSScanner;
-import org.mozilla.mozstumbler.service.scanners.WifiScanner;
-import org.mozilla.mozstumbler.service.scanners.cellscanner.CellInfo;
-import org.mozilla.mozstumbler.service.scanners.cellscanner.CellScanner;
-import org.mozilla.mozstumbler.service.sync.AsyncUploader;
+import org.mozilla.mozstumbler.service.stumblerthread.scanners.ScanManager;
+import org.mozilla.mozstumbler.service.stumblerthread.StumblerService;
+import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageManager;
+import org.mozilla.mozstumbler.service.stumblerthread.scanners.GPSScanner;
+import org.mozilla.mozstumbler.service.stumblerthread.scanners.WifiScanner;
+import org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner.CellInfo;
+import org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner.CellScanner;
+import org.mozilla.mozstumbler.service.uploadthread.AsyncUploader;
+import org.mozilla.mozstumbler.service.uploadthread.AsyncUploader.UploadSettings;
 import org.mozilla.mozstumbler.service.utils.Zipper;
 
 import java.io.IOException;
@@ -147,7 +148,7 @@ public class ServiceTest extends ServiceTestCase<StumblerService> implements Asy
         }
     }
 
-    /** This rather fragile, and is ok for test, but is there a better way to do this? */
+    /* This rather fragile, and is ok for test, but is there a better way to do this? */
     public ScanResult makeScanResult() throws IllegalAccessException, InstantiationException, InvocationTargetException {
         Constructor<?>[] ctors = ScanResult.class.getDeclaredConstructors();
         assertTrue(ctors.length > 0);
@@ -179,7 +180,7 @@ public class ServiceTest extends ServiceTestCase<StumblerService> implements Asy
         WifiScanner wifiScanner = null;
         CellScanner cellScanner = null;
         StumblerService service = startPassiveService();
-        assertTrue(AppGlobals.dataStorageManager != null);
+        assertTrue(DataStorageManager.getInstance() != null);
         try {
 
             Field field = StumblerService.class.getDeclaredField("mScanManager");
@@ -211,7 +212,7 @@ public class ServiceTest extends ServiceTestCase<StumblerService> implements Asy
         } catch (Exception ex) {}
 
         try {
-            DataStorageManager.ReportBatch batch = AppGlobals.dataStorageManager.getFirstBatch();
+            DataStorageManager.ReportBatch batch = DataStorageManager.getInstance().getFirstBatch();
             Log.d("test", "c:" + batch.reportCount);
             String val = Zipper.unzipData(batch.data);
             Log.d("test", "d:" + val);
@@ -222,8 +223,8 @@ public class ServiceTest extends ServiceTestCase<StumblerService> implements Asy
     //    assertTrue(s.equals("[{\"asu\":19,\"radio\":\"gsm\",\"mnc\":1,\"cid\":1660199,\"mcc\":1,\"lac\":60330},{\"asu\":-1,\"mcc\":1,\"radio\":\"gsm\",\"mnc\":1}]"));
       //  assertTrue(s.equals("[{\"signal\":0,\"key\":\"01005e901000\",\"frequency\":0}]"));
 
-        AsyncUploader upper = new AsyncUploader(this);
-        upper.mShouldIgnoreWifiStatus = true;
+        UploadSettings settings = new UploadSettings(true, false);
+        AsyncUploader upper = new AsyncUploader(settings, this);
         upper.execute();
         try {
             signal.await();

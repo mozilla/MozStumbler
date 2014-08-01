@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package org.mozilla.mozstumbler.service.scanners.cellscanner;
+package org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner;
 
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -22,24 +22,25 @@ import android.telephony.PhoneStateListener;
 import android.telephony.SignalStrength;
 import android.telephony.TelephonyManager;
 import android.util.Log;
+import org.mozilla.mozstumbler.service.AppGlobals;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-/** Fennec does not yet support the api level for WCDMA import */
+/* Fennec does not yet support the api level for WCDMA import */
 public class CellScannerNoWCDMA implements CellScanner.CellScannerImpl {
 
-    protected static String LOGTAG = CellScannerNoWCDMA.class.getName();
-
-    protected  GetAllCellInfoScannerImpl mGetAllInfoCellScanner;
-
+    protected static String LOG_TAG = AppGlobals.LOG_PREFIX + CellScannerNoWCDMA.class.getSimpleName();
+    protected GetAllCellInfoScannerImpl mGetAllInfoCellScanner;
     protected TelephonyManager mTelephonyManager;
-
+    protected boolean mIsStarted;
     protected int mPhoneType;
     protected final Context mContext;
     protected volatile int mSignalStrength;
     protected volatile int mCdmaDbm;
+
+    private PhoneStateListener mPhoneStateListener;
 
     private static class GetAllCellInfoScannerDummy implements GetAllCellInfoScannerImpl {
         @Override
@@ -58,6 +59,11 @@ public class CellScannerNoWCDMA implements CellScanner.CellScannerImpl {
 
     @Override
     public void start() {
+        if (mIsStarted) {
+            return;
+        }
+        mIsStarted = true;
+
         if (mTelephonyManager == null) {
             if (Build.VERSION.SDK_INT >= 18 /*Build.VERSION_CODES.JELLY_BEAN_MR2 */) { // Fennec: no Build.VERSION_CODES
                 mGetAllInfoCellScanner = new GetAllCellInfoScannerMr2();
@@ -82,13 +88,26 @@ public class CellScannerNoWCDMA implements CellScanner.CellScannerImpl {
 
         mSignalStrength = CellInfo.UNKNOWN_SIGNAL;
         mCdmaDbm = CellInfo.UNKNOWN_SIGNAL;
-        mTelephonyManager.listen(mPhoneStateListener, PhoneStateListener.LISTEN_SIGNAL_STRENGTHS);
 
+        mPhoneStateListener = new PhoneStateListener() {
+            @Override
+            public void onSignalStrengthsChanged(SignalStrength ss) {
+                if (ss.isGsm()) {
+                    mSignalStrength = ss.getGsmSignalStrength();
+                } else {
+                    mCdmaDbm = ss.getCdmaDbm();
+                }
+            }
+        };
+        mTelephonyManager.listen(mPhoneStateListener, PhoneStateListener.LISTEN_SIGNAL_STRENGTHS);
     }
 
     @Override
     public void stop() {
-        mTelephonyManager.listen(mPhoneStateListener, PhoneStateListener.LISTEN_NONE);
+        mIsStarted = false;
+        if (mTelephonyManager != null) {
+            mTelephonyManager.listen(mPhoneStateListener, PhoneStateListener.LISTEN_NONE);
+        }
         mSignalStrength = CellInfo.UNKNOWN_SIGNAL;
         mCdmaDbm = CellInfo.UNKNOWN_SIGNAL;
     }
@@ -140,7 +159,7 @@ public class CellScannerNoWCDMA implements CellScanner.CellScannerImpl {
                     cdmaDbm == CellInfo.UNKNOWN_SIGNAL ? null : cdmaDbm);
             return info;
         } catch (IllegalArgumentException iae) {
-            Log.e(LOGTAG, "Skip invalid or incomplete CellLocation: " + currentCell, iae);
+            Log.e(LOG_TAG, "Skip invalid or incomplete CellLocation: " + currentCell, iae);
         }
         return null;
     }
@@ -161,23 +180,11 @@ public class CellScannerNoWCDMA implements CellScanner.CellScannerImpl {
                     records.add(record);
                 }
             } catch (IllegalArgumentException iae) {
-                Log.e(LOGTAG, "Skip invalid or incomplete NeighboringCellInfo: " + nci, iae);
+                Log.e(LOG_TAG, "Skip invalid or incomplete NeighboringCellInfo: " + nci, iae);
             }
         }
         return records;
     }
-
-    private final PhoneStateListener mPhoneStateListener = new PhoneStateListener() {
-        @Override
-        public void onSignalStrengthsChanged(SignalStrength ss) {
-            if (ss.isGsm()) {
-                mSignalStrength = ss.getGsmSignalStrength();
-            } else {
-                mCdmaDbm = ss.getCdmaDbm();
-            }
-        }
-    };
-
 
     @TargetApi(18)
     protected boolean addCellToList(List<CellInfo> cells,
@@ -238,7 +245,7 @@ public class CellScannerNoWCDMA implements CellScanner.CellScannerImpl {
             List<CellInfo> cells = new ArrayList<CellInfo>(observed.size());
             for (android.telephony.CellInfo observedCell : observed) {
                 if (!addCellToList(cells, observedCell, tm)) {
-                    //Log.i(LOGTAG, "Skipped CellInfo of unknown class: " + observedCell.toString());
+                    //Log.i(LOG_TAG, "Skipped CellInfo of unknown class: " + observedCell.toString());
                 }
             }
             return cells;

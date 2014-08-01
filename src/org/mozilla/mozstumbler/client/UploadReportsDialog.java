@@ -11,20 +11,22 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import org.mozilla.mozstumbler.service.AbstractCommunicator;
+import org.mozilla.mozstumbler.service.utils.AbstractCommunicator;
 import org.mozilla.mozstumbler.service.AppGlobals;
-import org.mozilla.mozstumbler.service.datahandling.DataStorageContract;
-import org.mozilla.mozstumbler.service.datahandling.DataStorageManager;
-import org.mozilla.mozstumbler.service.sync.AsyncUploader;
-import org.mozilla.mozstumbler.service.utils.DateTimeUtils;
+import org.mozilla.mozstumbler.service.Prefs;
+import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageContract;
+import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageManager;
+import org.mozilla.mozstumbler.service.uploadthread.AsyncUploader;
 import org.mozilla.mozstumbler.R;
 
 import java.io.IOException;
 import java.util.Properties;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class UploadReportsDialog extends DialogFragment
         implements AsyncUploader.AsyncUploaderListener {
-    private static final String LOGTAG = UploadReportsDialog.class.getName();
+    private static final String LOG_TAG = AppGlobals.LOG_PREFIX + UploadReportsDialog.class.getSimpleName();
 
     private TextView mLastUpdateTimeView;
     private TextView mObservationsSentView;
@@ -41,6 +43,7 @@ public class UploadReportsDialog extends DialogFragment
     private View mProgressbarView;
     private boolean hasQueuedObservations;
     private AsyncUploader mUploader;
+    private final Timer mUpdateTimer = new Timer();
 
     private void updateUiThread() {
         this.getActivity().runOnUiThread(new Runnable() {
@@ -66,10 +69,9 @@ public class UploadReportsDialog extends DialogFragment
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        LayoutInflater inflater = getActivity().getLayoutInflater();
-
-        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.dialog_upload_observations, null);
+        final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        final LayoutInflater inflater = getActivity().getLayoutInflater();
+        final ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.dialog_upload_observations, null);
         mLastUpdateTimeView = (TextView) rootView.findViewById(R.id.last_upload_time_value);
         mObservationsSentView = (TextView) rootView.findViewById(R.id.observations_sent_value);
         mCellsSentView = (TextView) rootView.findViewById(R.id.cells_sent_value);
@@ -79,18 +81,29 @@ public class UploadReportsDialog extends DialogFragment
         mQueuedWifisView = (TextView) rootView.findViewById(R.id.wifis_queued_value);
         mProgressbarView = rootView.findViewById(R.id.progress);
         mUploadButton = rootView.findViewById(R.id.upload_observations_button);
-
         mTotalDataSentView = (TextView) rootView.findViewById(R.id.data_kb_sent_value);
         mQueuedDataView = (TextView) rootView.findViewById(R.id.data_kb_queued_value);
 
         mUploadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mUploader = new AsyncUploader(UploadReportsDialog.this);
+                AsyncUploader.UploadSettings settings =
+                        new AsyncUploader.UploadSettings(Prefs.getInstance().getWifiScanAlways(), Prefs.getInstance().getUseWifiOnly());
+                mUploader = new AsyncUploader(settings, UploadReportsDialog.this);
+                mUploader.setNickname(Prefs.getInstance().getNickname());
                 mUploader.execute();
                 updateProgressbarStatus();
             }
         });
+
+        // If already uploading check the stats in a few seconds
+        if (AsyncUploader.isUploading()) {
+            mUpdateTimer.scheduleAtFixedRate(new TimerTask() {
+                public void run() {
+                    updateUiThread();
+                }
+            }, 3000, 3000);
+        }
 
         builder.setView(rootView)
                 .setTitle(R.string.upload_observations_dialog_title)
@@ -109,11 +122,15 @@ public class UploadReportsDialog extends DialogFragment
     }
 
     void update() {
+        if (!AsyncUploader.isUploading()) {
+            mUpdateTimer.cancel();
+            mUpdateTimer.purge();
+        }
+
         updateSyncedStats();
         updateQueuedStats();
         updateProgressbarStatus();
     }
-
 
     @Override
     public void onStart() {
@@ -124,8 +141,13 @@ public class UploadReportsDialog extends DialogFragment
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        if (mUploader != null)
+
+        mUpdateTimer.cancel();
+        mUpdateTimer.purge();
+
+        if (mUploader != null) {
             mUploader.clearListener();
+        }
 
         mLastUpdateTimeView = null;
         mObservationsSentView = null;
@@ -148,7 +170,7 @@ public class UploadReportsDialog extends DialogFragment
         mWifisSentView.setText("");
 
         try {
-            Properties props = AppGlobals.dataStorageManager.readSyncStats();
+            Properties props = DataStorageManager.getInstance().readSyncStats();
             long lastUploadTime = Long.parseLong(props.getProperty(DataStorageContract.Stats.KEY_LAST_UPLOAD_TIME, "0"));
             String value = (lastUploadTime > 0)? DateTimeUtils.formatTimeForLocale(lastUploadTime) : "-";
             mLastUpdateTimeView.setText(value);
@@ -163,7 +185,7 @@ public class UploadReportsDialog extends DialogFragment
             mTotalDataSentView.setText(String.valueOf(kilobytes));
         }
         catch (IOException ex) {
-            Log.e(LOGTAG, "Exception in updateSyncedStats()", ex);
+            Log.e(LOG_TAG, "Exception in updateSyncedStats()", ex);
         }
     }
 
@@ -171,7 +193,7 @@ public class UploadReportsDialog extends DialogFragment
         if (mProgressbarView == null) {
             return;
         }
-        boolean syncActive = AsyncUploader.getIsUploading();
+        boolean syncActive = AsyncUploader.isUploading();
         mProgressbarView.setVisibility(syncActive ? View.VISIBLE : View.INVISIBLE);
 
         boolean uploadButtonActive = hasQueuedObservations && !syncActive;
@@ -179,12 +201,12 @@ public class UploadReportsDialog extends DialogFragment
     }
 
     void updateQueuedStats() {
-        DataStorageManager.QueuedCounts q = AppGlobals.dataStorageManager.getQueuedCounts();
-        mQueuedObservationsView.setText(String.valueOf(q.reportCount));
-        mQueuedCellsView.setText(String.valueOf(q.cellCount));
-        mQueuedWifisView.setText(String.valueOf(q.wifiCount));
-        mQueuedDataView.setText(String.valueOf(q.bytes / 1000.0));
-        hasQueuedObservations = q.reportCount != 0;
+        DataStorageManager.QueuedCounts q = DataStorageManager.getInstance().getQueuedCounts();
+        mQueuedObservationsView.setText(String.valueOf(q.mReportCount));
+        mQueuedCellsView.setText(String.valueOf(q.mCellCount));
+        mQueuedWifisView.setText(String.valueOf(q.mWifiCount));
+        mQueuedDataView.setText(String.valueOf(q.mBytes / 1000.0));
+        hasQueuedObservations = q.mReportCount != 0;
         updateProgressbarStatus();
     }
 }

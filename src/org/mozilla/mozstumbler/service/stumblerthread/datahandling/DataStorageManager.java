@@ -2,11 +2,9 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package org.mozilla.mozstumbler.service.datahandling;
+package org.mozilla.mozstumbler.service.stumblerthread.datahandling;
 
 import android.content.Context;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.utils.Zipper;
@@ -16,8 +14,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Properties;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -42,103 +38,150 @@ import java.util.TimerTask;
  * when the service is destroyed.
  */
 public class DataStorageManager {
-    private final String LOG_TAG = DataStorageManager.class.getName();
-    private final int MAX_REPORTS_IN_MEMORY = 50;
-    private long mMaxBytesDiskStorage = 1024 * 1024 * 3; // 3 megabytes max by default
-    private int mMaxWeeksStored = 2;
-    private ReportBatchBuilder mCurrentReports = new ReportBatchBuilder();
-    private File mReportsDir;
-    private File mStatsFile;
+    private static final String LOG_TAG = AppGlobals.LOG_PREFIX + DataStorageManager.class.getSimpleName();
+
+    // The max number of reports stored in the mCurrentReports. Each report is a GPS location plus wifi and cell scan.
+    // After this size is reached, data is persisted to disk, mCurrentReports is cleared.
+    private static final int MAX_REPORTS_IN_MEMORY = 50;
+
+    // Used to cap the amount of data stored. When this limit is hit, no more data is saved to disk
+    // until the data is uploaded, or and data exceeds DEFAULT_MAX_WEEKS_DATA_ON_DISK.
+    private static final long DEFAULT_MAX_BYTES_STORED_ON_DISK = 1024 * 250; // 250 KiB max by default
+
+    // Used as a safeguard to ensure stumbling data is not persisted. The intended use case of the stumbler lib is not
+    // for long-term storage, and so if ANY data on disk is this old, ALL data is wiped as a privacy mechanism.
+    private static final int DEFAULT_MAX_WEEKS_DATA_ON_DISK = 2;
+
+    // Set to the default value specified above.
+    private final long mMaxBytesDiskStorage;
+
+    // Set to the default value specified above.
+    private final int mMaxWeeksStored;
+
+    private final ReportBatchBuilder mCurrentReports = new ReportBatchBuilder();
+    private final File mReportsDir;
+    private final File mStatsFile;
+    private final StorageIsEmptyTracker mTracker;
+
+    private static DataStorageManager sInstance;
+
     private ReportBatch mCurrentReportsSendBuffer;
     private ReportBatchIterator mReportBatchIterator;
-    private StorageIsEmptyTracker mTracker;
     private ReportFileList mFileList;
     private Timer mFlushMemoryBuffersToDiskTimer;
 
-    final static String SEP_REPORT_COUNT = "-r";
-    final static String SEP_WIFI_COUNT = "-w";
-    final static String SEP_CELL_COUNT = "-c";
-    final static String SEP_TIME_MS = "-t";
-    final static String FILENAME_PREFIX = "reports";
-    final static String MEMORY_BUFFER_NAME = "in memory send buffer";
+    static final String SEP_REPORT_COUNT = "-r";
+    static final String SEP_WIFI_COUNT = "-w";
+    static final String SEP_CELL_COUNT = "-c";
+    static final String SEP_TIME_MS = "-t";
+    static final String FILENAME_PREFIX = "reports";
+    static final String MEMORY_BUFFER_NAME = "in memory send buffer";
 
     public static class QueuedCounts {
-        public int reportCount;
-        public int wifiCount;
-        public int cellCount;
-        public long bytes;
+        public final int mReportCount;
+        public final int mWifiCount;
+        public final int mCellCount;
+        public final long mBytes;
+
+        QueuedCounts(int reportCount, int wifiCount, int cellCount, long bytes) {
+            this.mReportCount = reportCount;
+            this.mWifiCount = wifiCount;
+            this.mCellCount = cellCount;
+            this.mBytes = bytes;
+        }
     }
 
     /* Some data is calculated on-demand, don't abuse this function */
     public QueuedCounts getQueuedCounts() {
-        QueuedCounts q = new QueuedCounts();
-        q.reportCount = mFileList.reportCount + mCurrentReports.reports.size();
-        q.wifiCount = mFileList.wifiCount + mCurrentReports.wifiCount;
-        q.cellCount = mFileList.cellCount + mCurrentReports.cellCount;
-        q.bytes = 0;
+        int reportCount = mFileList.mReportCount + mCurrentReports.reports.size();
+        int wifiCount = mFileList.mWifiCount + mCurrentReports.wifiCount;
+        int cellCount = mFileList.mCellCount + mCurrentReports.cellCount;
+        long bytes = 0;
 
         if (mCurrentReports.reports.size() > 0) {
             try {
-                q.bytes = Zipper.zipData(finalizeReports(mCurrentReports.reports).getBytes()).length;
+                bytes = Zipper.zipData(finalizeReports(mCurrentReports.reports).getBytes()).length;
             } catch (IOException ex) {
+                Log.e(LOG_TAG, "Zip error in getQueuedCounts()", ex);
             }
 
-            if (mFileList.reportCount > 0) {
-                q.bytes += mFileList.filesOnDiskBytes;
+            if (mFileList.mReportCount > 0) {
+                bytes += mFileList.mFilesOnDiskBytes;
             }
         }
 
         if (mCurrentReportsSendBuffer != null) {
-            q.reportCount += mCurrentReportsSendBuffer.reportCount;
-            q.wifiCount += mCurrentReportsSendBuffer.wifiCount;
-            q.cellCount += mCurrentReportsSendBuffer.cellCount;
-            q.bytes += mCurrentReportsSendBuffer.data.length;
+            reportCount += mCurrentReportsSendBuffer.reportCount;
+            wifiCount += mCurrentReportsSendBuffer.wifiCount;
+            cellCount += mCurrentReportsSendBuffer.cellCount;
+            bytes += mCurrentReportsSendBuffer.data.length;
         }
-        return q;
+        return new QueuedCounts(reportCount, wifiCount, cellCount, bytes);
     }
 
     private static class ReportFileList {
-        File[] files;
-        int reportCount;
-        int wifiCount;
-        int cellCount;
-        long filesOnDiskBytes;
+        File[] mFiles;
+        int mReportCount;
+        int mWifiCount;
+        int mCellCount;
+        long mFilesOnDiskBytes;
 
         public ReportFileList() {}
         public ReportFileList(ReportFileList other) {
-            files = other.files.clone();
-            reportCount = other.reportCount;
-            wifiCount = other.wifiCount;
-            cellCount = other.cellCount;
-            filesOnDiskBytes = other.filesOnDiskBytes;
-        }
-
-        void update(File directory) {
-            files = directory.listFiles();
-            if (files == null) {
+            if (other == null) {
                 return;
             }
 
-            filesOnDiskBytes = reportCount = wifiCount = cellCount = 0;
-            for (File f : files) {
-                reportCount += (int)getLongFromFilename(f.getName(), SEP_REPORT_COUNT);
-                wifiCount += (int)getLongFromFilename(f.getName(), SEP_WIFI_COUNT);
-                cellCount += (int)getLongFromFilename(f.getName(), SEP_CELL_COUNT);
-                filesOnDiskBytes += f.length();
+            if (other.mFiles != null) {
+                mFiles = other.mFiles.clone();
+            }
+
+            mReportCount = other.mReportCount;
+            mWifiCount = other.mWifiCount;
+            mCellCount = other.mCellCount;
+            mFilesOnDiskBytes = other.mFilesOnDiskBytes;
+        }
+
+        void update(File directory) {
+            mFiles = directory.listFiles();
+            if (mFiles == null) {
+                return;
+            }
+
+            if (AppGlobals.isDebug) {
+                for (File f : mFiles) {
+                    Log.d("StumblerFiles", f.getName());
+                }
+            }
+
+            mFilesOnDiskBytes = mReportCount = mWifiCount = mCellCount = 0;
+            for (File f : mFiles) {
+                mReportCount += (int) getLongFromFilename(f.getName(), SEP_REPORT_COUNT);
+                mWifiCount += (int) getLongFromFilename(f.getName(), SEP_WIFI_COUNT);
+                mCellCount += (int) getLongFromFilename(f.getName(), SEP_CELL_COUNT);
+                mFilesOnDiskBytes += f.length();
             }
         }
     }
 
     public static class ReportBatch {
-        public byte[] data;
-        public String filename;
-        public int reportCount;
-        public int wifiCount;
-        public int cellCount;
+        public final String filename;
+        public final byte[] data;
+        public final int reportCount;
+        public final int wifiCount;
+        public final int cellCount;
+
+        public ReportBatch(String filename, byte[] data, int reportCount, int wifiCount, int cellCount) {
+            this.filename = filename;
+            this.data = data;
+            this.reportCount = reportCount;
+            this.wifiCount = wifiCount;
+            this.cellCount = cellCount;
+        }
     }
 
     private static class ReportBatchBuilder {
-        public ArrayList<String> reports = new ArrayList<String>();
+        public final ArrayList<String> reports = new ArrayList<String>();
         public int wifiCount;
         public int cellCount;
     }
@@ -148,47 +191,13 @@ public class DataStorageManager {
             fileList = new ReportFileList(list);
         }
 
-        static final int BATCH_INDEX_FOR_MEM_BUFFER  = -1;
+        static final int BATCH_INDEX_FOR_MEM_BUFFER = -1;
         public int currentIndex = BATCH_INDEX_FOR_MEM_BUFFER;
         public final ReportFileList fileList;
     }
 
     public interface StorageIsEmptyTracker {
-        public void storageIsEmpty(boolean isEmpty);
-    }
-
-    private Map<String, Long> getOldDbStats(Context context) {
-        final File dbFile = new File(context.getFilesDir().getParent() + "/databases/" + "stumbler.db");
-        if (!dbFile.exists()) {
-            return null;
-        }
-
-        SQLiteDatabase db = SQLiteDatabase.openDatabase(dbFile.toString(), null, 0);
-
-        Cursor cursor = null;
-        try {
-            cursor = db.rawQuery("select * from stats", null);
-            if (cursor == null) {
-                return null;
-            }
-
-            cursor.moveToFirst();
-            Map<String, Long> kv = new HashMap<String, Long>();
-            while (!cursor.isAfterLast()) {
-                String key = cursor.getString(cursor.getColumnIndex("key"));
-                Long value = cursor.getLong(cursor.getColumnIndex("value"));
-                kv.put(key, value);
-                cursor.moveToNext();
-            }
-            assert(kv.size() == 4);
-            return kv;
-        } finally {
-            if (cursor != null) {
-                cursor.close();
-            }
-            db.close();
-            dbFile.delete();
-        }
+        public void notifyStorageStateEmpty(boolean isEmpty);
     }
 
     private String getStorageDir(Context c) {
@@ -206,14 +215,38 @@ public class DataStorageManager {
         }
 
         if (!dir.exists()) {
-            dir.mkdirs();
+            boolean ok = dir.mkdirs();
+            if (!ok) {
+                Log.d(LOG_TAG, "getStorageDir: error in mkdirs()");
+            }
         }
+
         return dir.getPath();
     }
 
-    public DataStorageManager(Context c, StorageIsEmptyTracker tracker) {
+    public static synchronized void createGlobalInstance(Context context, StorageIsEmptyTracker tracker) {
+        DataStorageManager.createGlobalInstance(context, tracker,
+                DEFAULT_MAX_BYTES_STORED_ON_DISK, DEFAULT_MAX_WEEKS_DATA_ON_DISK);
+    }
+
+    public static synchronized void createGlobalInstance(Context context, StorageIsEmptyTracker tracker,
+                                                         long maxBytesStoredOnDisk, int maxWeeksDataStored) {
+        if (sInstance != null) {
+            return;
+        }
+        sInstance = new DataStorageManager(context, tracker, maxBytesStoredOnDisk, maxWeeksDataStored);
+    }
+
+    public static synchronized DataStorageManager getInstance() {
+        return sInstance;
+    }
+
+    private DataStorageManager(Context c, StorageIsEmptyTracker tracker,
+                               long maxBytesStoredOnDisk, int maxWeeksDataStored) {
+        mMaxBytesDiskStorage = maxBytesStoredOnDisk;
+        mMaxWeeksStored = maxWeeksDataStored;
         mTracker = tracker;
-        String baseDir = getStorageDir(c);
+        final String baseDir = getStorageDir(c);
         mStatsFile = new File(baseDir, "upload_stats.ini");
         mReportsDir = new File(baseDir + "/reports");
         if (!mReportsDir.exists()) {
@@ -221,38 +254,16 @@ public class DataStorageManager {
         }
         mFileList = new ReportFileList();
         mFileList.update(mReportsDir);
-
-        // upgrade from db, if needed
-        Map<String, Long> oldStats = getOldDbStats(c);
-        if (oldStats != null) {
-            long last_upload_time = oldStats.get("last_upload_time");
-            long observations_sent = oldStats.get("observations_sent");
-            long wifis_sent = oldStats.get("wifis_sent");
-            long cells_sent = oldStats.get("cells_sent");
-            try {
-                writeSyncStats(last_upload_time, 0, observations_sent, wifis_sent, cells_sent);
-            } catch (IOException ex) {
-                Log.e(LOG_TAG, "Exception in DataStorageManager upgrading db:", ex);
-            }
-        }
     }
 
-    public void setMaxStorageOnDisk(long maxBytes) {
-        mMaxBytesDiskStorage = maxBytes;
-    }
-
-    public void setMaxWeeksStored(int weeks) {
-        mMaxWeeksStored = weeks;
-    }
-
-    public int getMaxWeeksStored() {
+    public synchronized int getMaxWeeksStored() {
         return mMaxWeeksStored;
     }
 
     private static byte[] readFile(File file) throws IOException {
-        RandomAccessFile f = new RandomAccessFile(file, "r");
+        final RandomAccessFile f = new RandomAccessFile(file, "r");
         try {
-            byte[] data = new byte[(int)f.length()];
+            final byte[] data = new byte[(int) f.length()];
             f.readFully(data);
             return data;
         } finally {
@@ -261,7 +272,7 @@ public class DataStorageManager {
     }
 
     public synchronized boolean isDirEmpty() {
-        return (mFileList.files == null || mFileList.files.length < 1);
+        return (mFileList.mFiles == null || mFileList.mFiles.length < 1);
     }
 
     /* Pass filename returned from dataToSend() */
@@ -271,14 +282,14 @@ public class DataStorageManager {
             return true;
         }
 
-        File file = new File(mReportsDir, filename);
-        boolean ok = file.delete();
+        final File file = new File(mReportsDir, filename);
+        final boolean ok = file.delete();
         mFileList.update(mReportsDir);
         return ok;
     }
 
     private static long getLongFromFilename(String name, String separator) {
-        int s = name.indexOf(separator) + separator.length();
+        final int s = name.indexOf(separator) + separator.length();
         int e = name.indexOf('-', s);
         if (e < 0) {
             e = name.indexOf('.', s);
@@ -289,22 +300,23 @@ public class DataStorageManager {
     /* return name of file used, or memory buffer sentinel value.
      * The return value is used to delete the file/buffer later. */
     public synchronized ReportBatch getFirstBatch() throws IOException {
-        boolean dirEmpty = isDirEmpty();
-        if (dirEmpty && mCurrentReports.reports.size() < 1) {
+        final boolean dirEmpty = isDirEmpty();
+        final int currentReportsCount = mCurrentReports.reports.size();
+
+        if (dirEmpty && currentReportsCount < 1) {
             return null;
         }
 
         mReportBatchIterator = new ReportBatchIterator(mFileList);
 
-        if (mCurrentReports.reports.size() > 0) {
-            ReportBatch result = new ReportBatch();
-            mCurrentReportsSendBuffer = result;
-            result.filename = MEMORY_BUFFER_NAME;
-            result.reportCount = mCurrentReports.reports.size();
-            result.data = Zipper.zipData(finalizeReports(mCurrentReports.reports).getBytes());
-            result.wifiCount = mCurrentReports.wifiCount;
-            result.cellCount = mCurrentReports.cellCount;
+        if (currentReportsCount > 0) {
+            final String filename = MEMORY_BUFFER_NAME;
+            final byte[] data = Zipper.zipData(finalizeReports(mCurrentReports.reports).getBytes());
+            final int wifiCount = mCurrentReports.wifiCount;
+            final int cellCount = mCurrentReports.cellCount;
             clearCurrentReports();
+            final ReportBatch result = new ReportBatch(filename, data, currentReportsCount, wifiCount, cellCount);
+            mCurrentReportsSendBuffer = result;
             return result;
         } else {
             return getNextBatch();
@@ -323,29 +335,27 @@ public class DataStorageManager {
 
         mReportBatchIterator.currentIndex++;
         if (mReportBatchIterator.currentIndex < 0 ||
-            mReportBatchIterator.currentIndex > mReportBatchIterator.fileList.files.length - 1) {
+            mReportBatchIterator.currentIndex > mReportBatchIterator.fileList.mFiles.length - 1) {
             return null;
         }
 
-        File f = mReportBatchIterator.fileList.files[mReportBatchIterator.currentIndex];
-        ReportBatch result = new ReportBatch();
-        result.filename = f.getName();
-        result.reportCount = (int)getLongFromFilename(f.getName(), SEP_REPORT_COUNT);
-        result.wifiCount = (int)getLongFromFilename(f.getName(), SEP_WIFI_COUNT);
-        result.cellCount = (int)getLongFromFilename(f.getName(), SEP_CELL_COUNT);
-        result.data = readFile(f);
-        return result;
+        final File f = mReportBatchIterator.fileList.mFiles[mReportBatchIterator.currentIndex];
+        final String filename = f.getName();
+        final int reportCount = (int) getLongFromFilename(f.getName(), SEP_REPORT_COUNT);
+        final int wifiCount = (int) getLongFromFilename(f.getName(), SEP_WIFI_COUNT);
+        final int cellCount = (int) getLongFromFilename(f.getName(), SEP_CELL_COUNT);
+        final byte[] data = readFile(f);
+        return new ReportBatch(filename, data, reportCount, wifiCount, cellCount);
     }
 
     private File createFile(int reportCount, int wifiCount, int cellCount) {
-        long time = System.currentTimeMillis();
-        String name = FILENAME_PREFIX +
+        final long time = System.currentTimeMillis();
+        final String name = FILENAME_PREFIX +
                       SEP_TIME_MS + time +
                       SEP_REPORT_COUNT + reportCount +
                       SEP_WIFI_COUNT + wifiCount +
                       SEP_CELL_COUNT + cellCount + ".gz";
-        File file = new File(mReportsDir, name);
-        return file;
+        return new File(mReportsDir, name);
     }
 
     public synchronized long getOldestBatchTimeMs() {
@@ -354,8 +364,8 @@ public class DataStorageManager {
         }
 
         long oldest = Long.MAX_VALUE;
-        for (File f : mFileList.files) {
-            long t = getLongFromFilename(f.getName(), SEP_TIME_MS);
+        for (File f : mFileList.mFiles) {
+            final long t = getLongFromFilename(f.getName(), SEP_TIME_MS);
             if (t < oldest) {
                 oldest = t;
             }
@@ -364,7 +374,7 @@ public class DataStorageManager {
     }
 
     public synchronized void saveCurrentReportsSendBufferToDisk() throws IOException {
-        if (mCurrentReportsSendBuffer == null) {
+        if (mCurrentReportsSendBuffer == null || mCurrentReportsSendBuffer.reportCount < 1) {
             return;
         }
 
@@ -377,17 +387,15 @@ public class DataStorageManager {
 
     private void saveToDisk(byte[] bytes, int reportCount, int wifiCount, int cellCount)
       throws IOException {
-        if (mFileList.filesOnDiskBytes > mMaxBytesDiskStorage)
+        if (mFileList.mFilesOnDiskBytes > mMaxBytesDiskStorage) {
             return;
+        }
 
-        FileOutputStream fos = null;
+        final FileOutputStream fos = new FileOutputStream(createFile(reportCount, wifiCount, cellCount));
         try {
-            fos = new FileOutputStream(createFile(reportCount, wifiCount, cellCount));
             fos.write(bytes);
         } finally {
-            if (fos != null) {
-                fos.close();
-            }
+            fos.close();
         }
         mFileList.update(mReportsDir);
     }
@@ -395,24 +403,29 @@ public class DataStorageManager {
     private String finalizeReports(ArrayList<String> reports) {
         final String kPrefix = "{\"items\":[";
         final String kSuffix = "]}";
-
-        StringBuilder sb = new StringBuilder();
-        sb.append(kPrefix);
+        final StringBuilder sb = new StringBuilder(kPrefix);
         String sep = "";
-        String separator = ",";
-        for(String s: reports) {
-            sb.append(sep).append(s);
-            sep = separator;
+        final String separator = ",";
+        if (reports != null) {
+            for(String s: reports) {
+                sb.append(sep).append(s);
+                sep = separator;
+            }
         }
 
-        String result = sb.append(kSuffix).toString();
-        Log.d(LOG_TAG, result);
+        final String result = sb.append(kSuffix).toString();
+        if (AppGlobals.isDebug) {
+            Log.d(LOG_TAG, result);
+        }
         return result;
     }
 
     public synchronized void saveCurrentReportsToDisk() throws IOException {
         saveCurrentReportsSendBufferToDisk();
-        byte[] bytes = Zipper.zipData(finalizeReports(mCurrentReports.reports).getBytes());
+        if (mCurrentReports.reports.size() < 1) {
+            return;
+        }
+        final byte[] bytes = Zipper.zipData(finalizeReports(mCurrentReports.reports).getBytes());
         saveToDisk(bytes, mCurrentReports.reports.size(), mCurrentReports.wifiCount, mCurrentReports.cellCount);
         clearCurrentReports();
     }
@@ -443,7 +456,7 @@ public class DataStorageManager {
                     try {
                         saveCurrentReportsToDisk();
                     } catch (IOException ex) {
-                        Log.e(LOG_TAG, "mFlushMemoryBuffersToDiskTimer exception", ex);
+                        Log.e(LOG_TAG, "mFlushMemoryBuffersToDiskTimer exception" + ex);
                     }
                 }
             }, kMillis);
@@ -455,13 +468,12 @@ public class DataStorageManager {
             return new Properties();
         }
 
-        FileInputStream input = new FileInputStream(mStatsFile);
+        final FileInputStream input = new FileInputStream(mStatsFile);
         try {
-            Properties props = new Properties();
+            final Properties props = new Properties();
             props.load(input);
             return props;
-        }
-        finally {
+        } finally {
             input.close();
         }
     }
@@ -471,8 +483,8 @@ public class DataStorageManager {
             return;
         }
 
-        Properties properties = readSyncStats();
-        long time = System.currentTimeMillis();
+        final Properties properties = readSyncStats();
+        final long time = System.currentTimeMillis();
         writeSyncStats(time,
             Long.parseLong(properties.getProperty(DataStorageContract.Stats.KEY_BYTES_SENT, "0")) + bytesSent,
             Long.parseLong(properties.getProperty(DataStorageContract.Stats.KEY_OBSERVATIONS_SENT, "0")) + reports,
@@ -480,11 +492,10 @@ public class DataStorageManager {
             Long.parseLong(properties.getProperty(DataStorageContract.Stats.KEY_WIFIS_SENT, "0")) + wifis);
     }
 
-    private void writeSyncStats(long time, long bytesSent, long totalObs, long totalCells, long totalWifis) throws IOException {
-        FileOutputStream out = null;
+    public void writeSyncStats(long time, long bytesSent, long totalObs, long totalCells, long totalWifis) throws IOException {
+        final FileOutputStream out = new FileOutputStream(mStatsFile);
         try {
-            out = new FileOutputStream(mStatsFile);
-            Properties props = new Properties();
+            final Properties props = new Properties();
             props.setProperty(DataStorageContract.Stats.KEY_LAST_UPLOAD_TIME, String.valueOf(time));
             props.setProperty(DataStorageContract.Stats.KEY_BYTES_SENT, String.valueOf(bytesSent));
             props.setProperty(DataStorageContract.Stats.KEY_OBSERVATIONS_SENT, String.valueOf(totalObs));
@@ -493,14 +504,16 @@ public class DataStorageManager {
             props.setProperty(DataStorageContract.Stats.KEY_VERSION, String.valueOf(DataStorageContract.Stats.VERSION_CODE));
             props.store(out, null);
         } finally {
-            if (out != null) {
-                out.close();
-            }
+            out.close();
         }
     }
 
     public synchronized void deleteAll() {
-        for (File f : mFileList.files) {
+        if (mFileList.mFiles == null) {
+            return;
+        }
+
+        for (File f : mFileList.mFiles) {
             f.delete();
         }
         mFileList.update(mReportsDir);
@@ -508,7 +521,7 @@ public class DataStorageManager {
 
     private void notifyStorageIsEmpty(boolean isEmpty) {
         if (mTracker != null) {
-            mTracker.storageIsEmpty(isEmpty);
+            mTracker.notifyStorageStateEmpty(isEmpty);
         }
     }
 }

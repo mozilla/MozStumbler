@@ -28,7 +28,7 @@ public class PreferencesScreen extends PreferenceActivity {
 
     private static Prefs sPrefs;
 
-    /** Precondition to using this class, call this method to set Prefs */
+    /* Precondition to using this class, call this method to set Prefs */
     public static void setPrefs(Prefs p) {
         sPrefs = p;
     }
@@ -46,7 +46,7 @@ public class PreferencesScreen extends PreferenceActivity {
         mWifiPreference = (CheckBoxPreference) getPreferenceManager().findPreference("wifi_only");
         mGeofenceSwitch = (CheckBoxPreference) getPreferenceManager().findPreference("geofence_switch");
         mGeofenceHere = getPreferenceManager().findPreference("geofence_here");
-        mWifiScanAlwaysSwitch = (CheckBoxPreference)getPreferenceManager().findPreference(Prefs.WIFI_SCAN_ALWAYS);
+        mWifiScanAlwaysSwitch = (CheckBoxPreference) getPreferenceManager().findPreference("wifi_scan_always");
 
         setNicknamePreferenceTitle(sPrefs.getNickname());
         mWifiPreference.setChecked(sPrefs.getUseWifiOnly());
@@ -95,8 +95,7 @@ public class PreferencesScreen extends PreferenceActivity {
         mGeofenceSwitch.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
-                if (sPrefs.getGeofenceHere() && newValue.equals(false))
-                {
+                if (sPrefs.getGeofenceHere() && newValue.equals(false)) {
                     sPrefs.setGeofenceHere(false);
                     setGeofenceHereDesc(false);
                 }

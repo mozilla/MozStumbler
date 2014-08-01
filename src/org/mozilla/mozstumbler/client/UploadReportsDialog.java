@@ -163,7 +163,7 @@ public class UploadReportsDialog extends DialogFragment
             mTotalDataSentView.setText(String.valueOf(kilobytes));
         }
         catch (IOException ex) {
-            Log.e(LOGTAG, "Exception in updateSyncedStats():" + ex.toString());
+            Log.e(LOGTAG, "Exception in updateSyncedStats()", ex);
         }
     }
 

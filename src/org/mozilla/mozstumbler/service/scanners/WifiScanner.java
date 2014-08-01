@@ -155,7 +155,7 @@ public class WifiScanner extends BroadcastReceiver {
                     stop(); // set mWifiScanTimer to null
                     return;
                 }
-                if (AppGlobals.isDebug) Log.d(LOGTAG, "WiFi Scanning Timer fired");
+                if (AppGlobals.isDebug) Log.v(LOGTAG, "WiFi Scanning Timer fired");
                 getWifiManager().startScan();
             }
         }, 0, WIFI_MIN_UPDATE_TIME);
@@ -197,7 +197,7 @@ public class WifiScanner extends BroadcastReceiver {
         if (scanResults.isEmpty())
             return;
 
-        if (AppGlobals.isDebug) Log.d(LOGTAG, scanResults.toString());
+        if (AppGlobals.isDebug) Log.v(LOGTAG, scanResults.toString());
 
         Intent i = new Intent(ACTION_WIFIS_SCANNED);
         i.putParcelableArrayListExtra(ACTION_WIFIS_SCANNED_ARG_RESULTS, scanResults);

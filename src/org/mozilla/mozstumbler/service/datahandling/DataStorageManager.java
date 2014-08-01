@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-import java.util.ResourceBundle;
 
 /** Stores reports in memory (mCurrentReports) until MAX_REPORTS_IN_MEMORY,
  * then writes them to disk as a .gz file. The name of the file has
@@ -230,7 +229,7 @@ public class DataStorageManager {
             try {
                 writeSyncStats(last_upload_time, 0, observations_sent, wifis_sent, cells_sent);
             } catch (IOException ex) {
-                Log.e(LOG_TAG, "Exception in DataStorageManager upgrading db:" + ex.toString());
+                Log.e(LOG_TAG, "Exception in DataStorageManager upgrading db:", ex);
             }
         }
     }
@@ -456,12 +455,12 @@ public class DataStorageManager {
         try {
             out = new FileOutputStream(mStatsFile);
             Properties props = new Properties();
-            props.setProperty(DataStorageContract.Stats.KEY_LAST_UPLOAD_TIME, "" + time);
-            props.setProperty(DataStorageContract.Stats.KEY_BYTES_SENT, "" + bytesSent);
-            props.setProperty(DataStorageContract.Stats.KEY_OBSERVATIONS_SENT, "" + totalObs);
-            props.setProperty(DataStorageContract.Stats.KEY_CELLS_SENT, "" + totalCells);
-            props.setProperty(DataStorageContract.Stats.KEY_WIFIS_SENT, "" + totalWifis);
-            props.setProperty(DataStorageContract.Stats.KEY_VERSION, "" + DataStorageContract.Stats.VERSION_CODE);
+            props.setProperty(DataStorageContract.Stats.KEY_LAST_UPLOAD_TIME, String.valueOf(time));
+            props.setProperty(DataStorageContract.Stats.KEY_BYTES_SENT, String.valueOf(bytesSent));
+            props.setProperty(DataStorageContract.Stats.KEY_OBSERVATIONS_SENT, String.valueOf(totalObs));
+            props.setProperty(DataStorageContract.Stats.KEY_CELLS_SENT, String.valueOf(totalCells));
+            props.setProperty(DataStorageContract.Stats.KEY_WIFIS_SENT, String.valueOf(totalWifis));
+            props.setProperty(DataStorageContract.Stats.KEY_VERSION, String.valueOf(DataStorageContract.Stats.VERSION_CODE));
             props.store(out, null);
         } finally {
             if (out != null)

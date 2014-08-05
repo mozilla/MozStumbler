@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/rank_list_item"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/leaderboard_list_item_height"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:background="@color/list_item_background_color">
+
+        <TextView
+            style="@style/LeaderboardListItemFont"
+            android:id="@+id/rank_position_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            style="@style/LeaderboardListItemFont"
+            android:id="@+id/rank_player_name_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/leaderboard_rank_title_left_margin"/>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <TextView
+                style="@style/LeaderboardListItemFont"
+                android:id="@+id/rank_player_points_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"/>
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/leaderboard_list_item_divider_height"
+        android:layout_below="@id/rank_list_item"
+        android:background="@color/list_item_divider_color"/>
+
+</RelativeLayout>

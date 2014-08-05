@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/developer_overlay_fragment"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/today_score_fragment_height">
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:alpha="0.9"
+        android:background="@drawable/firefox_light_grey_gradient" />
+
+    <LinearLayout
+        android:id="@+id/developer_overlay_container_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/coin_reward_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/developer_simulate_coin_reward_title"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"/>
+
+        <Button
+            android:id="@+id/stumbler_off_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/developer_simulate_stumbler_off_title"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"/>
+
+    </LinearLayout>
+
+</RelativeLayout>

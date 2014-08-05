@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/today_score_fragment"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/today_score_fragment_height"
+    android:background="@drawable/container_bottom_drop_shadow">
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:alpha="0.9"
+        android:background="@drawable/firefox_light_grey_gradient"/>
+
+    <LinearLayout
+        android:id="@+id/today_score_container_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:gravity="center">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:textStyle="bold"
+                android:text="@string/today_overlay_title" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_margin="@dimen/today_overlay_icon_margin">
+
+            <ImageView
+                android:id="@+id/star_image_view"
+                android:layout_width="@dimen/today_overlay_icon_size"
+                android:layout_height="@dimen/today_overlay_icon_size"
+                android:layout_centerVertical="true"
+                android:src="@drawable/star_score_board" />
+
+            <TextView
+                android:id="@+id/star_score_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="@dimen/today_overlay_score_left_margin"
+                android:layout_toRightOf="@id/star_image_view" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_margin="@dimen/today_overlay_icon_margin">
+
+            <ImageView
+                android:id="@+id/rainbow_image_view"
+                android:layout_width="@dimen/today_overlay_icon_size"
+                android:layout_height="@dimen/today_overlay_icon_size"
+                android:layout_centerVertical="true"
+                android:src="@drawable/rainbow_score_board" />
+
+            <TextView
+                android:id="@+id/rainbow_score_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="@dimen/today_overlay_score_left_margin"
+                android:layout_toRightOf="@id/rainbow_image_view" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_margin="@dimen/today_overlay_icon_margin">
+
+            <ImageView
+                android:id="@+id/coin_image_view"
+                android:layout_width="@dimen/today_overlay_icon_size"
+                android:layout_height="@dimen/today_overlay_icon_size"
+                android:layout_centerVertical="true"
+                android:src="@drawable/gold_coin_score_board" />
+
+            <TextView
+                android:id="@+id/coin_score_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="@dimen/today_overlay_score_left_margin"
+                android:layout_toRightOf="@id/coin_image_view" />
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+</RelativeLayout>

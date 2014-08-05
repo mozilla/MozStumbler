@@ -23,6 +23,10 @@ android {
         compile "org.osmdroid:osmdroid-android:4.2"
         compile 'org.slf4j:slf4j-android:1.7.7'
         compile "com.android.support:support-v4:19.1.+"
+
+        compile ('com.mapbox.mapboxsdk:mapbox-android-sdk:0.3.0@aar'){
+            transitive=true
+        }
     }
 
     sourceSets {

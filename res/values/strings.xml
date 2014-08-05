@@ -96,6 +96,9 @@
     <string name="scroll_to_end">Scroll to End</string>
     <string name="upload_observations_data_size">Size (KB):</string>
 
+    <!-- Mapbox SDK -->
+    <string name="map_id">""</string>
+
     <!-- Tab bar -->
     <string name="map_title">Map</string>
     <string name="leaderboard_title">Leaderboard</string>

@@ -14,9 +14,13 @@
     <string name="wifi_access_points">已掃描 Wi-Fi 基地台數量: %1$d</string>
     <string name="wifi_disabled">0（已停用 Wi-Fi）</string>
     <string name="visible_wifi_access_points">可視 Wi-Fi 基地台數量: %1$s</string>
+    <string name="wifi_info">Wi-Fi: 可視: %1$d，已掃描: %2$d</string>
     <string name="cells_scanned">已掃描行動電話基地台數量: %1$d</string>
     <string name="cells_visible">可視行動電話基地台數量: %1$d</string>
-    <string name="gps_satellites">接收到訊號的 GPS 衛星數量 %1$d / 可視數量: %2$d</string>
+    <string name="cells_info">基地台: 可視: %1$d，已掃描: %2$d</string>
+    <string name="gps_satellites">接收到訊號的 GPS 衛星: %1$d 顆，可視: %2$d 顆</string>
+    <string name="num_used">已接收 %1d 顆衛星</string>
+    <string name="num_visible">可視 %1d 顆衛星</string>
     <string name="last_location">最後定位位置: %1$s</string>
     <string name="coordinate">%1$.4f, %2$.4f</string>
     <string name="locations_scanned">已掃描位置數量: %1$d</string>
@@ -32,7 +36,7 @@
     <string name="power_saving_mode_longtext">啟動後，只會在您移動時收集資料</string>
 
     <string name="update_title">下載 MozStumbler 更新？</string>
-    <string name="update_message">已安裝版本: %1$s\n最新版本: %2$s</string>
+    <string name="update_message">目前版本: %1$s\n最新版本: %2$s</string>
     <string name="update_now">立刻更新</string>
     <string name="update_later">以後再更新</string>
 
@@ -90,6 +94,6 @@
     <string name="action_view_log">檢視紀錄</string>
     <string name="scroll_to_start">滾動到頂端</string>
     <string name="scroll_to_end">滾動到底端</string>
-    <string name="upload_observations_data_size">Size (KB):</string>
+    <string name="upload_observations_data_size">大小 (KB):</string>
 
 </resources>

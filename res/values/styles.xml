@@ -1,6 +1,6 @@
 <resources>
 
-    <style name="Theme.MyTheme" parent="@android:style/Theme.Black" />
+    <style name="Theme.MyTheme" parent="android:Theme.Holo.Light.DarkActionBar" />
 
     <style name="LeaderboardListSectionTitleFont" parent="android:TextAppearance.DeviceDefault.Large">
         <item name="android:textStyle">bold</item>

@@ -36,7 +36,9 @@
         android:supportsRtl="true"
         android:hardwareAccelerated="false" >
         <activity
-            android:name=".client.activities.MozStumblerActivity">
+            android:name=".client.activities.MozStumblerActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

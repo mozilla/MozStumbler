@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <EditTextPreference
+        android:key="nickname_key"
+        android:title="Nickname"/>
+
+    <SwitchPreference
+        android:key="wifi_upload_key"
+        android:title="Upload only on WiFi"/>
+
+    <SwitchPreference
+        android:key="persistent_scanning_key"
+        android:title="Persistent scanning"/>
+
+    <Preference
+        android:title="Force sync data"/>
+
+    <Preference
+        android:title="Send feedback"/>
+
+    <Preference
+        android:title="About Stumbler"/>
+
+</PreferenceScreen>

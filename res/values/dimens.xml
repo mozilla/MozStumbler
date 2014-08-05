@@ -4,4 +4,34 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
 
+    <!-- Tab bar -->
+    <dimen name="tab_bar_height">80dp</dimen>
+    <dimen name="tab_bar_divider_width">1dp</dimen>
+    <dimen name="tab_bar_divider_height">40dp</dimen>
+    <dimen name="tab_bar_back_arrow_left_margin">10dp</dimen>
+    <dimen name="tab_bar_back_button_left_margin">5dp</dimen>
+
+    <!-- Map -->
+    <dimen name="today_score_fragment_height">80dp</dimen>
+    <dimen name="today_overlay_icon_size">40dp</dimen>
+    <dimen name="today_overlay_icon_margin">20dp</dimen>
+    <dimen name="today_overlay_score_left_margin">10dp</dimen>
+
+    <!-- Leaderboard -->
+    <dimen name="leaderboard_settings_button_size">30dp</dimen>
+    <dimen name="leaderboard_list_item_height">60dp</dimen>
+    <dimen name="leaderboard_list_item_divider_height">1dp</dimen>
+    <dimen name="leaderboard_score_icon_size">20dp</dimen>
+
+    <dimen name="leaderboard_section_title_vertical_margin">20dp</dimen>
+    <dimen name="leaderboard_points_accumulated_title_left_margin">10dp</dimen>
+    <dimen name="leaderboard_score_title_left_margin">10dp</dimen>
+    <dimen name="leaderboard_rank_title_left_margin">10dp</dimen>
+
+    <dimen name="leaderboard_filter_dropdown_item_height">60dp</dimen>
+    <dimen name="leaderboard_filter_dropdown_arrow_size">20dp</dimen>
+
+    <!-- Stumbler Off Fragment -->
+    <dimen name="stumbler_off_turn_on_button_title_padding">10dp</dimen>
+
 </resources>

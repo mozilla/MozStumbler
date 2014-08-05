@@ -1,3 +1,19 @@
 <resources>
-        <style name="Theme.MyTheme" parent="@android:style/Theme.Black" />
+
+    <style name="Theme.MyTheme" parent="@android:style/Theme.Black" />
+
+    <style name="LeaderboardListSectionTitleFont" parent="android:TextAppearance.DeviceDefault.Large">
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="LeaderboardListSectionHeaderFont" parent="android:TextAppearance.DeviceDefault.Medium">
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="LeaderboardListItemFont" parent="android:TextAppearance.DeviceDefault.Medium"></style>
+
+    <style name="NotificationFragmentTitleFont" parent="android:TextAppearance.DeviceDefault.Large">
+        <item name="android:textStyle">bold</item>
+    </style>
+
 </resources>

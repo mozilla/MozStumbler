@@ -96,4 +96,24 @@
     <string name="scroll_to_end">Scroll to End</string>
     <string name="upload_observations_data_size">Size (KB):</string>
 
+    <!-- Tab bar -->
+    <string name="map_title">Map</string>
+    <string name="leaderboard_title">Leaderboard</string>
+    <string name="settings_title">Settings</string>
+    <string name="back_arrow">&lt;</string>
+
+    <!-- Map -->
+    <string name="today_overlay_title">Today</string>
+
+    <!-- Leaderboard -->
+    <string name="points_accumulated_title">Points Accumulated</string>
+    <string name="your_stats_title">Your Stats</string>
+    <string name="your_rank_title">Your Rank</string>
+    <string name="your_rank_points_title">Points</string>
+    <string name="top_ten_title">Top 10</string>
+
+    <!-- Developer Overlay -->
+    <string name="developer_simulate_coin_reward_title">Coin Reward</string>
+    <string name="developer_simulate_stumbler_off_title">Stumbler Off</string>
+
 </resources>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="leaderboard_filter_array">
+        <item>Last week</item>
+        <item>All time</item>
+    </string-array>
+</resources>

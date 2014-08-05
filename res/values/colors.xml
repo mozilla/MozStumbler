@@ -1,4 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="gps_track">#FF6464FF</color>
+
+    <color name="firefox_orange">#E66000</color>
+    <color name="firefox_light_blue">#0095DD</color>
+    <color name="firefox_light_white">#EAEFF2</color>
+    <color name="firefox_light_grey">#D4DDE4</color>
+
+    <color name="list_item_divider_color">#FFFFFF</color>
+    <color name="list_item_background_color">#EAEFF2</color>
 </resources>

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/tab_bar_height"
+    android:background="@color/firefox_orange">
+
+    <TextView
+        android:id="@+id/back_arrow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="@dimen/tab_bar_back_arrow_left_margin"
+        android:textColor="@android:color/white"
+        android:text="@string/back_arrow"
+        android:visibility="invisible"/>
+
+    <Button
+        android:id="@+id/back_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/back_arrow"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="@dimen/tab_bar_back_button_left_margin"
+        android:textColor="@android:color/white"
+        android:background="@android:color/transparent"
+        android:visibility="invisible"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerVertical="true"
+        android:orientation="horizontal"
+        android:gravity="center">
+
+        <Button
+            android:id="@+id/map_button"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:textColor="@android:color/white"
+            android:background="@android:color/transparent"
+            android:text="@string/map_title"/>
+
+        <View
+            android:id="@+id/tab_divider"
+            android:layout_width="@dimen/tab_bar_divider_width"
+            android:layout_height="@dimen/tab_bar_divider_height"
+            android:background="@android:color/white"/>
+
+        <Button
+            android:id="@+id/leaderboard_button"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:textColor="@android:color/white"
+            android:background="@android:color/transparent"
+            android:text="@string/leaderboard_title"/>
+
+    </LinearLayout>
+
+</RelativeLayout>

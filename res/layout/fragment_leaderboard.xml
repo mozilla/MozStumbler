@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/leaderboard_fragment"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white">
+
+    <RelativeLayout
+        android:id="@+id/leaderboard_header"
+        android:layout_width="match_parent"
+        android:layout_height="80dp">
+
+        <Spinner
+            android:id="@+id/leaderboard_filter_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:background="@android:color/transparent"/>
+
+        <ImageView
+            android:layout_width="@dimen/leaderboard_filter_dropdown_arrow_size"
+            android:layout_height="@dimen/leaderboard_filter_dropdown_arrow_size"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@id/leaderboard_filter_spinner"
+            android:scaleType="fitXY"
+            android:src="@drawable/dropdown_arrow"/>
+
+        <ImageButton
+            android:id="@+id/leaderboard_settings_image_button"
+            android:layout_width="@dimen/leaderboard_settings_button_size"
+            android:layout_height="@dimen/leaderboard_settings_button_size"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:src="@drawable/settings_gear"
+            android:scaleType="fitXY"
+            android:background="@android:color/transparent"/>
+
+    </RelativeLayout>
+
+    <ScrollView
+        android:id="@+id/leaderboard_scroll_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/leaderboard_header">
+
+        <LinearLayout
+            android:id="@+id/leaderboard_scroll_view_content_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+        </LinearLayout>
+
+    </ScrollView>
+
+</RelativeLayout>

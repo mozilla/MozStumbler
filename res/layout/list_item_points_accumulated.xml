@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/points_accumulated_list_item"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/leaderboard_list_item_height"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin">
+
+        <TextView
+            style="@style/LeaderboardListItemFont"
+            android:id="@+id/points_accumulated_title_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/white"
+            android:text="@string/points_accumulated_title"/>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <TextView
+                style="@style/LeaderboardListItemFont"
+                android:id="@+id/points_accumulated_points_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:textColor="@android:color/white"/>
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/leaderboard_list_item_divider_height"
+        android:layout_below="@id/points_accumulated_list_item"
+        android:background="@color/list_item_divider_color"/>
+
+</RelativeLayout>

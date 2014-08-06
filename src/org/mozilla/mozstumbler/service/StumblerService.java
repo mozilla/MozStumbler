@@ -171,11 +171,15 @@ public final class StumblerService extends PersistentIntentService
     @Override
     protected void onHandleIntent(Intent intent) {
         if (intent != null && intent.getBooleanExtra(ACTION_START_PASSIVE, false)) {
+            mScanManager.setPassiveMode(true);
+
             if (DataStorageManager.getInstance() == null) {
                 DataStorageManager.createGlobalInstance(this, this);
                 if (!DataStorageManager.getInstance().isDirEmpty()) {
                     // non-empty on startup, schedule an upload
-                    UploadAlarmReceiver.scheduleAlarm(this);
+                    // This is the only upload trigger in Firefox mode
+                    final int secondsToWait = 10;
+                    UploadAlarmReceiver.scheduleAlarm(this, secondsToWait, false /* no repeat*/);
                 }
             }
 
@@ -192,7 +196,6 @@ public final class StumblerService extends PersistentIntentService
                 Prefs.getInstance().setMozApiKey(apiKey);
             }
 
-            mScanManager.setPassiveMode(true);
             startScanning();
         }
     }
@@ -220,11 +223,13 @@ public final class StumblerService extends PersistentIntentService
         if (AppGlobals.isDebug)Log.d(LOG_TAG,"onRebind");
     }
 
+    // Note that in passive mode, having data isn't an upload trigger, it is triggered by the start intent
     public void storageIsEmpty(boolean isEmpty) {
         if (isEmpty) {
             UploadAlarmReceiver.cancelAlarm(this);
-        } else {
-            UploadAlarmReceiver.scheduleAlarm(this);
+        } else if (!mScanManager.isPassiveMode()) {
+            int secondsToWait = 5 * 60;
+            UploadAlarmReceiver.scheduleAlarm(this, secondsToWait, true /* repeating */);
         }
     }
 }

@@ -13,16 +13,15 @@ import android.content.Intent;
 import android.util.Log;
 
 import org.mozilla.mozstumbler.service.AppGlobals;
+import org.mozilla.mozstumbler.service.Prefs;
 import org.mozilla.mozstumbler.service.datahandling.DataStorageManager;
 import org.mozilla.mozstumbler.service.utils.NetworkUtils;
 
+// Only if data is queued and device awake: periodically check network availability and upload
+// TODO Fennec will only use this as a secondary mechanism. The primary Fennec method
+// notifying this class when a good time is to try upload.
 public class UploadAlarmReceiver extends BroadcastReceiver {
     static final String LOG_TAG = UploadAlarmReceiver.class.getSimpleName();
-
-    // Only if data is queued and device awake: periodically check network availability and upload
-    // TODO Fennec will only use this as a secondary mechanism. The primary Fennec method
-    // notifying this class when a good time is to try upload.
-    static final long INTERVAL_MS = 1000 * 60 * 5;
 
     public static boolean sIsAlreadyScheduled;
 
@@ -62,7 +61,9 @@ public class UploadAlarmReceiver extends BroadcastReceiver {
 
             if (NetworkUtils.getInstance().isWifiAvailable()) {
                 Log.d(LOG_TAG, "Alarm upload(), call AsyncUploader");
-                AsyncUploader uploader = new AsyncUploader(null);
+                AsyncUploader.UploadSettings settings =
+                        new AsyncUploader.UploadSettings(Prefs.getInstance().getWifiScanAlways(), Prefs.getInstance().getUseWifiOnly());
+                AsyncUploader uploader = new AsyncUploader(settings, null);
                 uploader.execute();
                 // we could listen for completion and cancel, instead, cancel on next alarm when db empty
             }
@@ -83,19 +84,24 @@ public class UploadAlarmReceiver extends BroadcastReceiver {
         alarmManager.cancel(pi);
     }
 
-    public static void scheduleAlarm(Context c) {
+    public static void scheduleAlarm(Context c, long secondsToWait, boolean isRepeating) {
         if (sIsAlreadyScheduled) {
             return;
         }
 
-        Log.d(LOG_TAG, "schedule alarm (ms):" + INTERVAL_MS);
+        long intervalMsec = secondsToWait * 1000;
+        Log.d(LOG_TAG, "schedule alarm (ms):" + intervalMsec);
 
         sIsAlreadyScheduled = true;
         AlarmManager alarmManager = (AlarmManager)c.getSystemService(Context.ALARM_SERVICE);
         PendingIntent pi = createIntent(c);
 
-        long triggerAtMs = System.currentTimeMillis() + INTERVAL_MS;
-        alarmManager.setInexactRepeating(AlarmManager.RTC, triggerAtMs, INTERVAL_MS, pi);
+        long triggerAtMs = System.currentTimeMillis() + intervalMsec;
+        if (isRepeating) {
+            alarmManager.setInexactRepeating(AlarmManager.RTC, triggerAtMs, intervalMsec, pi);
+        } else {
+            alarmManager.set(AlarmManager.RTC, triggerAtMs, pi);
+        }
     }
 
     @Override
@@ -104,4 +110,3 @@ public class UploadAlarmReceiver extends BroadcastReceiver {
         context.startService(startServiceIntent);
     }
 }
-

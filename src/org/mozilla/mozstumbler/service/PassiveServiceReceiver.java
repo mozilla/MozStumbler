@@ -24,8 +24,6 @@ import android.util.Log;
 public class PassiveServiceReceiver extends BroadcastReceiver {
     final static String LOG_TAG = PassiveServiceReceiver.class.getSimpleName();
 
-    static boolean sIsStarted;
-
     @Override
     public void onReceive(Context context, Intent intent) {
         Prefs.createGlobalInstance(context);
@@ -43,21 +41,14 @@ public class PassiveServiceReceiver extends BroadcastReceiver {
 
         if (StumblerService.sFirefoxStumblingEnabled == StumblerService.FirefoxStumbleState.OFF) {
             context.stopService(new Intent(context, StumblerService.class));
-            sIsStarted = false;
             return;
         }
 
-        if (sIsStarted) {
-            return;
-        }
-        sIsStarted = true;
-
-        if (AppGlobals.isDebug) Log.d(LOG_TAG, "Starting Passively");
+        if (AppGlobals.isDebug) Log.d(LOG_TAG, "Sending passive start message");
 
         Intent startServiceIntent = new Intent(context, StumblerService.class);
         startServiceIntent.putExtra(StumblerService.ACTION_START_PASSIVE, true);
         startServiceIntent.putExtra(StumblerService.ACTION_EXTRA_MOZ_API_KEY, mozApiKey);
-
         context.startService(startServiceIntent);
     }
 }

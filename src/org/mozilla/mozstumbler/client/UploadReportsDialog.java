@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import org.mozilla.mozstumbler.service.AbstractCommunicator;
 import org.mozilla.mozstumbler.service.AppGlobals;
+import org.mozilla.mozstumbler.service.Prefs;
 import org.mozilla.mozstumbler.service.datahandling.DataStorageContract;
 import org.mozilla.mozstumbler.service.datahandling.DataStorageManager;
 import org.mozilla.mozstumbler.service.sync.AsyncUploader;
@@ -86,7 +87,9 @@ public class UploadReportsDialog extends DialogFragment
         mUploadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mUploader = new AsyncUploader(UploadReportsDialog.this);
+                AsyncUploader.UploadSettings settings =
+                        new AsyncUploader.UploadSettings(Prefs.getInstance().getWifiScanAlways(), Prefs.getInstance().getUseWifiOnly());
+                mUploader = new AsyncUploader(settings, UploadReportsDialog.this);
                 mUploader.execute();
                 updateProgressbarStatus();
             }

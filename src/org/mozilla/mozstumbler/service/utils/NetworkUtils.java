@@ -27,7 +27,7 @@ public final class NetworkUtils {
         return sInstance;
     }
 
-    public boolean isWifiAvailable() {
+    public synchronized boolean isWifiAvailable() {
         if (mConnectivityManager == null) {
             Log.e(LOG_TAG, "ConnectivityManager is null!");
             return false;

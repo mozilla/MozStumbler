@@ -89,6 +89,10 @@ public class ScanManager {
                ActiveOrPassiveStumbling.ACTIVE_STUMBLING;
     }
 
+    public boolean isPassiveMode() {
+        return ActiveOrPassiveStumbling.PASSIVE_STUMBLING == mStumblingMode;
+    }
+
     public void startScanning() {
         if (mIsScanning) {
             return;

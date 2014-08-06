@@ -18,6 +18,7 @@ import org.mozilla.mozstumbler.service.scanners.WifiScanner;
 import org.mozilla.mozstumbler.service.scanners.cellscanner.CellInfo;
 import org.mozilla.mozstumbler.service.scanners.cellscanner.CellScanner;
 import org.mozilla.mozstumbler.service.sync.AsyncUploader;
+import org.mozilla.mozstumbler.service.sync.AsyncUploader.UploadSettings;
 import org.mozilla.mozstumbler.service.utils.Zipper;
 
 import java.io.IOException;
@@ -222,8 +223,8 @@ public class ServiceTest extends ServiceTestCase<StumblerService> implements Asy
     //    assertTrue(s.equals("[{\"asu\":19,\"radio\":\"gsm\",\"mnc\":1,\"cid\":1660199,\"mcc\":1,\"lac\":60330},{\"asu\":-1,\"mcc\":1,\"radio\":\"gsm\",\"mnc\":1}]"));
       //  assertTrue(s.equals("[{\"signal\":0,\"key\":\"01005e901000\",\"frequency\":0}]"));
 
-        AsyncUploader upper = new AsyncUploader(this);
-        upper.mShouldIgnoreWifiStatus = true;
+        UploadSettings settings = new UploadSettings(true, false);
+        AsyncUploader upper = new AsyncUploader(settings, this);
         upper.execute();
         try {
             signal.await();

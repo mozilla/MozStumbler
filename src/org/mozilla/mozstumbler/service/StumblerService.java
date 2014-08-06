@@ -11,6 +11,7 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
 
+import org.mozilla.mozstumbler.service.blocklist.WifiBlockListInterface;
 import org.mozilla.mozstumbler.service.datahandling.DataStorageManager;
 import org.mozilla.mozstumbler.service.datahandling.StumblerBundleReceiver;
 import org.mozilla.mozstumbler.service.scanners.ScanManager;
@@ -75,6 +76,10 @@ public final class StumblerService extends PersistentIntentService
                 stopSelf();
             }
         }
+    }
+
+    public void setWifiBlockList(WifiBlockListInterface list) {
+        mScanManager.setWifiBlockList(list);
     }
 
     public Prefs getPrefs() { return Prefs.getInstance(); }

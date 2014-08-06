@@ -88,6 +88,8 @@ public class MainApp extends Application {
                 StumblerService.StumblerBinder serviceBinder = (StumblerService.StumblerBinder) binder;
                 mStumblerService = serviceBinder.getService();
 
+                mStumblerService.setWifiBlockList(new WifiBlockLists());
+
                 DataStorageManager.getInstance().setMaxStorageOnDisk(MAX_BYTES_DISK_STORAGE);
                 DataStorageManager.getInstance().setMaxWeeksStored(MAX_WEEKS_OLD_STORED);
 

@@ -4,6 +4,7 @@
 
 package org.mozilla.mozstumbler.service;
 
+import org.mozilla.mozstumbler.service.blocklist.WifiBlockListInterface;
 import org.mozilla.mozstumbler.service.datahandling.DataStorageManager;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -19,9 +20,6 @@ public class AppGlobals {
      * the specific intent action has its own constant that is assigned to this
      * for example, ACTION_WIFIS_SCANNED_ARG_TIME */
     public static final String ACTION_ARG_TIME = "time";
-
-    public static final String SYNC_EXTRAS_IGNORE_WIFI_STATUS =
-            "org.mozilla.mozstumbler.sync.ignore_wifi_status";
 
     /** Location constructor requires a named origin, these are created in the app  */
     public static final String LOCATION_ORIGIN_INTERNAL = "internal";
@@ -50,8 +48,9 @@ public class AppGlobals {
 
     public static void guiLogInfo(String msg, String color, boolean isBold) {
         if (guiLogMessageBuffer != null) {
-            if (isBold)
+            if (isBold) {
                 msg = "<b>" + msg + "</b>";
+            }
             guiLogMessageBuffer.add("<font color='" + color +"'>" + msg + "</font>");
         }
     }

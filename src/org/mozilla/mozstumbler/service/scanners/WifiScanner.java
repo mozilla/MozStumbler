@@ -28,6 +28,7 @@ import org.mozilla.mozstumbler.service.blocklist.BSSIDBlockList;
 import org.mozilla.mozstumbler.service.blocklist.SSIDBlockList;
 import org.mozilla.mozstumbler.service.AppGlobals.ActiveOrPassiveStumbling;
 import org.mozilla.mozstumbler.service.Prefs;
+import org.mozilla.mozstumbler.service.blocklist.WifiBlockListInterface;
 
 public class WifiScanner extends BroadcastReceiver {
     public static final String ACTION_BASE = AppGlobals.ACTION_NAMESPACE + ".WifiScanner.";
@@ -112,6 +113,11 @@ public class WifiScanner extends BroadcastReceiver {
             mVisibleAPs.set(scanResults.size());
             reportScanResults(scanResults);
         }
+    }
+
+    public void setWifiBlockList(WifiBlockListInterface blockList) {
+        BSSIDBlockList.setFilterList(blockList.getBssidOuiList());
+        SSIDBlockList.setFilterLists(blockList.getSsidPrefixList(), blockList.getSsidSuffixList());
     }
 
     public int getAPCount() {

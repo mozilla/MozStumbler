@@ -14,6 +14,7 @@ import android.util.Log;
 
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.Reporter;
+import org.mozilla.mozstumbler.service.blocklist.WifiBlockListInterface;
 import org.mozilla.mozstumbler.service.scanners.cellscanner.CellScanner;
 import org.mozilla.mozstumbler.service.AppGlobals.ActiveOrPassiveStumbling;
 
@@ -120,6 +121,10 @@ public class ScanManager {
         mCellScanner.stop();
 
         mIsScanning = false;
+    }
+
+    public void setWifiBlockList(WifiBlockListInterface list) {
+        mWifiScanner.setWifiBlockList(list);
     }
 
     public boolean isScanning() {

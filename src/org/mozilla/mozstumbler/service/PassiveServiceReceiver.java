@@ -26,8 +26,6 @@ public class PassiveServiceReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        Prefs.createGlobalInstance(context);
-
         String action = intent.getAction();
         String mozApiKey = null;
 
@@ -44,7 +42,7 @@ public class PassiveServiceReceiver extends BroadcastReceiver {
             return;
         }
 
-        if (AppGlobals.isDebug) Log.d(LOG_TAG, "Sending passive start message");
+        Log.d(LOG_TAG, "Stumbler: Sending passive start message");
 
         Intent startServiceIntent = new Intent(context, StumblerService.class);
         startServiceIntent.putExtra(StumblerService.ACTION_START_PASSIVE, true);

@@ -94,7 +94,6 @@ public class WifiScanner extends BroadcastReceiver {
         String action = intent.getAction();
 
         if (WifiManager.WIFI_STATE_CHANGED_ACTION.equals(action)) {
-            Log.v(LOG_TAG, "WIFI_STATE_CHANGED_ACTION new state: " + intent.getIntExtra(WifiManager.EXTRA_WIFI_STATE, -1));
             if (isWifiEnabled()) {
                 activatePeriodicScan(ActiveOrPassiveStumbling.ACTIVE_STUMBLING);
             } else {
@@ -107,7 +106,6 @@ public class WifiScanner extends BroadcastReceiver {
                 if (shouldLog(scanResult)) {
                     scanResults.add(scanResult);
                     mAPs.add(scanResult.BSSID);
-                    //Log.v(LOG_TAG, "BSSID=" + scanResult.BSSID + ", SSID=\"" + scanResult.SSID + "\", Signal=" + scanResult.level);
                 }
             }
             mVisibleAPs.set(scanResults.size());
@@ -143,7 +141,7 @@ public class WifiScanner extends BroadcastReceiver {
             return;
         }
 
-        Log.v(LOG_TAG, "Activate Periodic Scan");
+        if (AppGlobals.isDebug) Log.v(LOG_TAG, "Activate Periodic Scan");
 
         mWifiLock = getWifiManager().createWifiLock(WifiManager.WIFI_MODE_SCAN_ONLY, "MozStumbler");
         mWifiLock.acquire();
@@ -172,7 +170,7 @@ public class WifiScanner extends BroadcastReceiver {
             return;
         }
 
-        Log.v(LOG_TAG, "Deactivate periodic scan");
+        if (AppGlobals.isDebug) Log.v(LOG_TAG, "Deactivate periodic scan");
 
         mWifiLock.release();
         mWifiLock = null;

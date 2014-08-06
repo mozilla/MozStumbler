@@ -24,7 +24,7 @@ public final class TurnOffReceiver extends BroadcastReceiver {
         if (binder != null) {
             // service is running, tell it to stop
             StumblerService.StumblerBinder serviceBinder = (StumblerService.StumblerBinder) binder;
-            StumblerService service = serviceBinder.getService();
+            StumblerService service = serviceBinder.getServiceAndInitialize(Thread.currentThread());
             service.stopScanning();
         }
 

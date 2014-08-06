@@ -130,6 +130,13 @@ public class DataStorageManager {
 
         void update(File directory) {
             mFiles = directory.listFiles();
+
+            if (AppGlobals.isDebug) {
+                for (File f : mFiles) {
+                    Log.d("StumblerFiles", f.getName());
+                }
+            }
+
             if (mFiles == null) {
                 return;
             }
@@ -231,6 +238,9 @@ public class DataStorageManager {
     }
 
     public static void createGlobalInstance(Context context, StorageIsEmptyTracker tracker) {
+        if (sInstance != null) {
+            return;
+        }
         sInstance =  new DataStorageManager(context, tracker);
     }
 

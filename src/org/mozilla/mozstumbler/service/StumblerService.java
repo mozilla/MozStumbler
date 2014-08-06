@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.location.Location;
 import android.os.Binder;
 import android.os.IBinder;
+import android.os.Looper;
 import android.util.Log;
 
 import org.mozilla.mozstumbler.service.blocklist.WifiBlockListInterface;
@@ -51,7 +52,13 @@ public final class StumblerService extends PersistentIntentService
     }
 
     public final class StumblerBinder extends Binder {
-        public StumblerService getService() {
+        // Only to be used in the non-standalone, non-passive case (MozStumbler). In the passive standalone usage
+        // of this class, everything, including initialization, is done on its dedicated thread
+        public StumblerService getServiceAndInitialize(Thread callingThread) {
+            if (Looper.getMainLooper().getThread() != callingThread) {
+                throw new RuntimeException("Only call from main thread");
+            };
+            init();
             return StumblerService.this;
         }
     }
@@ -128,16 +135,11 @@ public final class StumblerService extends PersistentIntentService
         return mScanManager.isGeofenced();
     }
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        setIntentRedelivery(true);
-
-        if (AppGlobals.appVersionCode < 1) {
-            //TODO look at how to set these
-            //SharedConstants.appVersionName =;
-            //SharedConstants.appVersionCode =;
-        }
+    // Previously this was done in onCreate(). Moved out of that so that in the passive standalone service
+    // use (i.e. Fennec), init() can be called from this class's dedicated thread.
+    private void init() {
+        if (DataStorageManager.getInstance() != null)
+            return;
 
         Prefs.createGlobalInstance(this);
         NetworkUtils.createGlobalInstance(this);
@@ -148,6 +150,18 @@ public final class StumblerService extends PersistentIntentService
         }
         mScanManager = new ScanManager(this);
         mReporter = new Reporter(this, mStumblerBundleReceiver);
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        setIntentRedelivery(true);
+
+        if (AppGlobals.appVersionCode < 1) {
+            //TODO look at how to set these
+            //SharedConstants.appVersionName =;
+            //SharedConstants.appVersionCode =;
+        }
     }
 
     @Override
@@ -176,10 +190,9 @@ public final class StumblerService extends PersistentIntentService
     @Override
     protected void onHandleIntent(Intent intent) {
         if (intent != null && intent.getBooleanExtra(ACTION_START_PASSIVE, false)) {
-            mScanManager.setPassiveMode(true);
-
             if (DataStorageManager.getInstance() == null) {
-                DataStorageManager.createGlobalInstance(this, this);
+                init();
+
                 if (!DataStorageManager.getInstance().isDirEmpty()) {
                     // non-empty on startup, schedule an upload
                     // This is the only upload trigger in Firefox mode
@@ -201,6 +214,7 @@ public final class StumblerService extends PersistentIntentService
                 Prefs.getInstance().setMozApiKey(apiKey);
             }
 
+            mScanManager.setPassiveMode(true);
             startScanning();
         }
     }

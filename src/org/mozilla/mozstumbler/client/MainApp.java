@@ -86,7 +86,7 @@ public class MainApp extends Application {
         mConnection = new ServiceConnection() {
             public void onServiceConnected(ComponentName className, IBinder binder) {
                 StumblerService.StumblerBinder serviceBinder = (StumblerService.StumblerBinder) binder;
-                mStumblerService = serviceBinder.getService();
+                mStumblerService = serviceBinder.getServiceAndInitialize(Thread.currentThread());
 
                 mStumblerService.setWifiBlockList(new WifiBlockLists());
 

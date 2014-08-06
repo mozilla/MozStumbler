@@ -43,7 +43,7 @@ import java.util.TimerTask;
  * when the service is destroyed.
  */
 public class DataStorageManager {
-    private final String LOG_TAG = DataStorageManager.class.getSimpleName();
+    private final String LOG_TAG = "Stumbler:" + DataStorageManager.class.getSimpleName();
     private final int MAX_REPORTS_IN_MEMORY = 50;
     private long mMaxBytesDiskStorage = 1024 * 1024; // 1 megabyte max by default
     private int mMaxWeeksStored = 2;

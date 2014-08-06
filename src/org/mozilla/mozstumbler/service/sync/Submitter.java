@@ -13,7 +13,7 @@ import org.mozilla.mozstumbler.service.Prefs;
 
 public class Submitter extends AbstractCommunicator {
     private static final String SUBMIT_URL = "https://location.services.mozilla.com/v1/submit";
-    private static final String LOG_TAG = Submitter.class.getSimpleName();
+    private static final String LOG_TAG = "Stumbler:" + Submitter.class.getSimpleName();
     private final String mNickname;
 
     public Submitter() {

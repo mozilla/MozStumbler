@@ -26,7 +26,7 @@ import java.io.IOException;
 
 public final class StumblerService extends PersistentIntentService
         implements DataStorageManager.StorageIsEmptyTracker {
-    private static final String LOG_TAG          = StumblerService.class.getSimpleName();
+    private static final String LOG_TAG = "Stumbler" + StumblerService.class.getSimpleName();
     public static final String ACTION_BASE = AppGlobals.ACTION_NAMESPACE;
     public static final String ACTION_START_PASSIVE = ACTION_BASE + ".START_PASSIVE";
     public static final String ACTION_EXTRA_MOZ_API_KEY = ACTION_BASE + ".MOZKEY";

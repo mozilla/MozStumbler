@@ -24,7 +24,7 @@ import org.mozilla.mozstumbler.service.scanners.GPSScanner;
 import org.mozilla.mozstumbler.service.scanners.WifiScanner;
 
 public final class Reporter extends BroadcastReceiver {
-    private static final String LOG_TAG = Reporter.class.getSimpleName();
+    private static final String LOG_TAG = "Stumbler:" + Reporter.class.getSimpleName();
     public  static final String ACTION_FLUSH_TO_BUNDLE = AppGlobals.ACTION_NAMESPACE + ".FLUSH";
 
     /**

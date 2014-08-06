@@ -99,7 +99,7 @@ public class AsyncUploader extends AsyncTask<Void, Void, SyncSummary> {
         sIsUploading = false;
     }
 
-    final String LOG_TAG = AsyncUploader.class.getSimpleName();
+    final String LOG_TAG = "Stumbler:" + AsyncUploader.class.getSimpleName();
 
     private void uploadReports(AbstractCommunicator.SyncSummary syncResult, Runnable progressListener) {
         long uploadedObservations = 0;

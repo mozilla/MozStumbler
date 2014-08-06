@@ -18,7 +18,7 @@ import android.util.Log;
  * https://code.google.com/p/android/issues/detail?id=10931
  */
 public class ScreenMonitor {
-    private static final String LOG_TAG = "ScreenOffWorkaround";
+    private static final String LOG_TAG = "Stumbler:" + "ScreenOffWorkaround";
 
     private static final String PREFS_FILE = ScreenMonitor.class.getSimpleName();
     private static final String LOCATION_UPDATES_COUNT_PREF = "location_updates_count";

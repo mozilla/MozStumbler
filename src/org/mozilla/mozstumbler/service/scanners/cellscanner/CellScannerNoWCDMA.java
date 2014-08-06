@@ -30,7 +30,7 @@ import java.util.List;
 /* Fennec does not yet support the api level for WCDMA import */
 public class CellScannerNoWCDMA implements CellScanner.CellScannerImpl {
 
-    protected static String LOG_TAG = CellScannerNoWCDMA.class.getSimpleName();
+    protected static String LOG_TAG = "Stumbler:" + CellScannerNoWCDMA.class.getSimpleName();
 
     protected  GetAllCellInfoScannerImpl mGetAllInfoCellScanner;
 

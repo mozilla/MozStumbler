@@ -54,7 +54,7 @@ import org.osmdroid.views.overlay.PathOverlay;
 import org.osmdroid.views.overlay.TilesOverlay;
 
 public final class MapActivity extends Activity {
-    private static final String LOG_TAG = MapActivity.class.getSimpleName();
+    private static final String LOG_TAG = "Stumbler:" + MapActivity.class.getSimpleName();
 
     private static final String COVERAGE_REDIRECT_URL = "https://location.services.mozilla.com/map.json";
     private static String sCoverageUrl = null;

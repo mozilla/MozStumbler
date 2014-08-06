@@ -13,7 +13,7 @@ import org.mozilla.mozstumbler.service.AppGlobals;
 import java.io.IOException;
 
 public final class StumblerBundleReceiver {
-    private static final String LOG_TAG = StumblerBundleReceiver.class.getSimpleName();
+    private static final String LOG_TAG = "Stumbler:" + StumblerBundleReceiver.class.getSimpleName();
 
     public void handleBundle(StumblerBundle bundle) {
         JSONObject mlsObj;

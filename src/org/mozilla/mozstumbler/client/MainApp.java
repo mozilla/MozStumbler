@@ -33,7 +33,7 @@ import org.mozilla.mozstumbler.service.utils.NetworkUtils;
 
 public class MainApp extends Application {
 
-    private final String LOG_TAG = MainApp.class.getSimpleName();
+    private final String LOG_TAG = "Stumbler:" + MainApp.class.getSimpleName();
     private StumblerService mStumblerService;
     private ServiceConnection mConnection;
     private ServiceBroadcastReceiver mReceiver;

@@ -18,7 +18,7 @@ public class DefaultCellScanner extends CellScannerNoWCDMA {
 
     public DefaultCellScanner(Context context) {
         super(context);
-        LOG_TAG = DefaultCellScanner.class.getSimpleName();
+        LOG_TAG = "Stumbler:" + DefaultCellScanner.class.getSimpleName();
         mScreenMonitor = new ScreenMonitor(mContext);
     }
 

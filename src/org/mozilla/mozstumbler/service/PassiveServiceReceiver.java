@@ -22,7 +22,7 @@ import android.util.Log;
  </receiver>
  */
 public class PassiveServiceReceiver extends BroadcastReceiver {
-    final static String LOG_TAG = PassiveServiceReceiver.class.getSimpleName();
+    final static String LOG_TAG = "Stumbler:" + PassiveServiceReceiver.class.getSimpleName();
 
     @Override
     public void onReceive(Context context, Intent intent) {

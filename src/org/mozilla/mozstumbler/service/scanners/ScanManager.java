@@ -23,7 +23,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class ScanManager {
-    private static final String LOG_TAG = ScanManager.class.getSimpleName();
+    private static final String LOG_TAG = "Stumbler:" + ScanManager.class.getSimpleName();
     private Timer mPassiveModeFlushTimer;
     private final Context mContext;
     private boolean       mIsScanning;

@@ -10,7 +10,7 @@ import android.net.NetworkInfo;
 import android.util.Log;
 
 public final class NetworkUtils {
-    private static final String LOG_TAG = NetworkUtils.class.getSimpleName();
+    private static final String LOG_TAG = "Stumbler:" + NetworkUtils.class.getSimpleName();
 
     ConnectivityManager mConnectivityManager;
     static NetworkUtils sInstance;

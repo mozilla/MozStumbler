@@ -21,7 +21,7 @@ import org.mozilla.mozstumbler.service.utils.NetworkUtils;
 // TODO Fennec will only use this as a secondary mechanism. The primary Fennec method
 // notifying this class when a good time is to try upload.
 public class UploadAlarmReceiver extends BroadcastReceiver {
-    static final String LOG_TAG = UploadAlarmReceiver.class.getSimpleName();
+    static final String LOG_TAG = "Stumbler:" + UploadAlarmReceiver.class.getSimpleName();
 
     public static boolean sIsAlreadyScheduled;
 

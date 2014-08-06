@@ -4,9 +4,11 @@ import android.app.Fragment;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.overlay.GpsLocationProvider;
@@ -15,6 +17,7 @@ import com.mapbox.mapboxsdk.overlay.UserLocationOverlay;
 import com.mapbox.mapboxsdk.views.MapView;
 
 import org.mozilla.mozstumbler.R;
+import org.mozilla.mozstumbler.client.MainActivity;
 import org.mozilla.mozstumbler.client.developers.DeveloperOverlayFragment;
 
 import java.util.Random;
@@ -31,10 +34,13 @@ public class MapFragment extends Fragment implements DeveloperOverlayFragment.De
     private UserLocationOverlay userLocationOverlay;
 
     private TodayOverlayFragment todayOverlayFragment;
-    private DeveloperOverlayFragment developerOverlayFragment;
 
     private Fragment currentNotificationFragment;
     private boolean allowShowingNotificationFragment;
+
+    private Button stumblingPowerButton;
+    private Button showStumblingDataButton;
+    private Button zoomToSelfButton;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -62,10 +68,31 @@ public class MapFragment extends Fragment implements DeveloperOverlayFragment.De
         todayOverlayFragment.setRainbowScore(150);
         todayOverlayFragment.setCoinScore(100);
 
-        developerOverlayFragment = (DeveloperOverlayFragment)getFragmentManager().findFragmentById(R.id.developer_overlay_fragment);
-        developerOverlayFragment.setDeveloperActionListener(this);
-
         allowShowingNotificationFragment = true;
+
+        stumblingPowerButton = (Button)rootView.findViewById(R.id.stumbling_power_button);
+        stumblingPowerButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ((MainActivity)getActivity()).toggleStumblerServices();
+            }
+        });
+
+        showStumblingDataButton = (Button)rootView.findViewById(R.id.show_stumbling_data_button);
+        showStumblingDataButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ((MainActivity)getActivity()).showStumblingDataFragment(R.id.map_window);
+            }
+        });
+
+        zoomToSelfButton = (Button)rootView.findViewById(R.id.zoom_to_self_button);
+        zoomToSelfButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                userLocationOverlay.goToMyPosition(true);
+            }
+        });
 
         return rootView;
     }

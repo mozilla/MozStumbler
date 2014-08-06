@@ -115,6 +115,11 @@
     <string name="your_rank_points_title">Points</string>
     <string name="top_ten_title">Top 10</string>
 
+    <!-- Stumbling Data -->
+    <string name="wifi_status_idle">Idle</string>
+    <string name="wifi_status_active">Active</string>
+    <string name="wifi_status_disabled">Disabled</string>
+
     <!-- Developer Overlay -->
     <string name="developer_simulate_coin_reward_title">Coin Reward</string>
     <string name="developer_simulate_stumbler_off_title">Stumbler Off</string>

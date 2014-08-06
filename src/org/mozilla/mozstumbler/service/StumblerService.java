@@ -25,9 +25,19 @@ import java.io.IOException;
 public final class StumblerService extends PersistentIntentService
         implements DataStorageManager.StorageIsEmptyTracker {
     private static final String LOGTAG          = StumblerService.class.getName();
+
     public static final String ACTION_BASE = AppGlobals.ACTION_NAMESPACE;
     public static final String ACTION_START_PASSIVE = ACTION_BASE + ".START_PASSIVE";
     public static final String ACTION_EXTRA_MOZ_API_KEY = ACTION_BASE + ".MOZKEY";
+
+    public static final String KEY_WIFI_STATUS = "KEY_WIFI_STATUS";
+    public static final String KEY_LATITUDE = "KEY_LATITUDE";
+    public static final String KEY_LONGITUDE = "KEY_LONGITUDE";
+    public static final String KEY_LOCATIONS_SCANNED = "KEY_LOCATIONS_SCANNED";
+    public static final String KEY_ACCESS_POINTS_SCANNED = "KEY_ACCESS_POINTS_SCANNED";
+    public static final String KEY_ACCESS_POINTS_VISIBLE = "KEY_ACCESS_POINTS_VISIBLE";
+    public static final String KEY_CELL_TOWERS_SCANNED = "KEY_CELL_TOWERS_SCANNED";
+    public static final String KEY_CELL_TOWERS_VISIBLE = "KEY_CELL_TOWERS_VISIBLE";
 
     public enum FirefoxStumbleState {
         UNKNOWN, ON, OFF

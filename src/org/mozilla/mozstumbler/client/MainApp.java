@@ -16,7 +16,7 @@ import android.os.StrictMode;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
-import java.io.File;
+
 import org.mozilla.mozstumbler.BuildConfig;
 import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.client.cellscanner.DefaultCellScanner;
@@ -29,6 +29,8 @@ import org.mozilla.mozstumbler.service.scanners.WifiScanner;
 import org.mozilla.mozstumbler.service.scanners.cellscanner.CellScanner;
 import org.mozilla.mozstumbler.service.sync.AsyncUploader;
 import org.mozilla.mozstumbler.service.utils.NetworkUtils;
+
+import java.io.File;
 
 public class MainApp extends Application {
 
@@ -86,6 +88,10 @@ public class MainApp extends Application {
             public void onServiceConnected(ComponentName className, IBinder binder) {
                 StumblerService.StumblerBinder serviceBinder = (StumblerService.StumblerBinder) binder;
                 mStumblerService = serviceBinder.getService();
+
+                if (mStumblerService != null) {
+                    startScanning();
+                }
 
                 AppGlobals.dataStorageManager.setMaxStorageOnDisk(MAX_BYTES_DISK_STORAGE);
                 AppGlobals.dataStorageManager.setMaxWeeksStored(MAX_WEEKS_OLD_STORED);

@@ -12,27 +12,60 @@
         android:background="@drawable/firefox_light_grey_gradient" />
 
     <LinearLayout
-        android:id="@+id/developer_overlay_container_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center"
-        android:orientation="horizontal">
+        android:orientation="vertical">
 
-        <Button
-            android:id="@+id/coin_reward_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/developer_simulate_coin_reward_title"
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
             android:layout_weight="1"
-            android:background="@android:color/transparent"/>
+            android:gravity="center"
+            android:orientation="horizontal">
 
-        <Button
-            android:id="@+id/stumbler_off_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/developer_simulate_stumbler_off_title"
+            <TextView
+                android:id="@+id/scanned_wifi_ap"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="Scanned WiFi: 25"/>
+
+            <TextView
+                android:id="@+id/visible_wifi_ap"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="Visible WiFi: 10"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/developer_overlay_container_view"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
             android:layout_weight="1"
-            android:background="@android:color/transparent"/>
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/coin_reward_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/developer_simulate_coin_reward_title"
+                android:layout_weight="1"
+                android:background="@android:color/transparent"/>
+
+            <Button
+                android:id="@+id/stumbler_off_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/developer_simulate_stumbler_off_title"
+                android:layout_weight="1"
+                android:background="@android:color/transparent"/>
+
+        </LinearLayout>
 
     </LinearLayout>
 

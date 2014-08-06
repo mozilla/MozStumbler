@@ -25,12 +25,40 @@
         android:layout_above="@id/developer_overlay_fragment"
         android:orientation="vertical">
     </LinearLayout>
-    
-    <fragment
-        class="org.mozilla.mozstumbler.client.developers.DeveloperOverlayFragment"
-        android:id="@+id/developer_overlay_fragment"
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/today_score_fragment_height"
-        android:layout_alignParentBottom="true"/>
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/stumbling_power_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Power"/>
+
+        <Button
+            android:id="@+id/show_stumbling_data_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Data"/>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="2"/>
+
+        <Button
+            android:id="@+id/zoom_to_self_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Zoom"/>
+
+    </LinearLayout>
 
 </RelativeLayout>

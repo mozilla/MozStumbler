@@ -1,6 +1,9 @@
 package org.mozilla.mozstumbler.client;
 
+import android.app.ActionBar;
+import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -19,6 +22,11 @@ import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 import org.mozilla.mozstumbler.BuildConfig;
+import org.mozilla.mozstumbler.client.fragments.SettingsFragment;
+import org.mozilla.mozstumbler.client.fragments.TabBarFragment;
+import org.mozilla.mozstumbler.client.fragments.leaderboard.LeaderboardFragment;
+import org.mozilla.mozstumbler.client.fragments.map.MapFragment;
+import org.mozilla.mozstumbler.client.fragments.monitor.StumblingDataFragment;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.datahandling.DataStorageContract;
 import org.mozilla.mozstumbler.service.utils.DateTimeUtils;
@@ -30,7 +38,10 @@ import org.mozilla.mozstumbler.service.scanners.WifiScanner;
 import java.io.IOException;
 import java.util.Properties;
 
-public final class MainActivity extends FragmentActivity {
+public final class MainActivity extends Activity implements TabBarFragment.OnTabSelectedListener,
+        LeaderboardFragment.OnSettingsSelectedListener, TabBarFragment.OnBackButtonPressedListener,
+        StumblingDataFragment.DismissStumblingDataFragmentListener {
+
     private static final String LOGTAG = MainActivity.class.getName();
 
     public static final String ACTION_BASE = AppGlobals.ACTION_NAMESPACE + ".MainActivity.";
@@ -44,6 +55,15 @@ public final class MainActivity extends FragmentActivity {
     int                      mGpsFixes;
     int                      mGpsSats;
     private boolean          mGeofenceHere = false;
+
+    private TabBarFragment tabBarFragment;
+
+    private MapFragment mapFragment;
+    private LeaderboardFragment leaderboardFragment;
+    private SettingsFragment settingsFragment;
+    private StumblingDataFragment stumblingDataFragment;
+
+    private Fragment currentContentFragment;
 
     private MainApp getApp() {
         return (MainApp) this.getApplication();
@@ -63,8 +83,8 @@ public final class MainActivity extends FragmentActivity {
         if (mGeofenceHere) {
             getApp().getPrefs().setGeofenceEnabled(false);
         }
-        setGeofenceText();
 
+        setGeofenceText();
         updateUiOnMainThread();
     }
 
@@ -78,6 +98,27 @@ public final class MainActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        final ActionBar actionBar = getActionBar();
+        actionBar.hide();
+
+        if (savedInstanceState == null) {
+            tabBarFragment = new TabBarFragment();
+            tabBarFragment.setTabSelectedListener(this);
+            tabBarFragment.setBackButtonPressedListener(this);
+
+            mapFragment = new MapFragment();
+            leaderboardFragment = new LeaderboardFragment();
+            leaderboardFragment.setSettingsSelectedListener(this);
+
+            settingsFragment = new SettingsFragment();
+
+            stumblingDataFragment = new StumblingDataFragment();
+            stumblingDataFragment.setDismissStumblingDataFragmentListener(this);
+
+            showTabBarFragment();
+            showMapFragment();
+        }
 
         if (BuildConfig.MOZILLA_API_KEY != null) {
             Updater.checkForUpdates(this);
@@ -125,63 +166,65 @@ public final class MainActivity extends FragmentActivity {
             return;
         }
 
-        boolean scanning = service.isScanning();
+//        boolean scanning = service.isScanning();
+//        CompoundButton scanningBtn = (CompoundButton) findViewById(R.id.toggle_scanning);
+//        scanningBtn.setChecked(scanning);
 
-        CompoundButton scanningBtn = (CompoundButton) findViewById(R.id.toggle_scanning);
-        scanningBtn.setChecked(scanning);
+        int wifiStatus = service.getWifiStatus();
+        double latitude = service.getLatitude();
+        double longitude = service.getLongitude();
 
-        int locationsScanned = 0;
-        double latitude = 0;
-        double longitude = 0;
-        int wifiStatus = WifiScanner.STATUS_IDLE;
-        int APs = 0;
-        int visibleAPs = 0;
-        int cellInfoScanned = 0;
-        int currentCellInfo = 0;
-        boolean isGeofenced = false;
+        int locationsScanned = service.getLocationCount();
+        int accessPointsScanned = service.getAPCount();
+        int accessPointsVisible = service.getVisibleAPCount();
 
-        locationsScanned = service.getLocationCount();
-        latitude = service.getLatitude();
-        longitude = service.getLongitude();
-        wifiStatus = service.getWifiStatus();
-        APs = service.getAPCount();
-        visibleAPs = service.getVisibleAPCount();
-        cellInfoScanned = service.getCellInfoCount();
-        currentCellInfo = service.getCurrentCellInfoCount();
-        isGeofenced = service.isGeofenced();
+        int cellTowersScanned = service.getCellInfoCount();
+        int cellTowersVisible = service.getCurrentCellInfoCount();
+
+        boolean isGeofenced = service.isGeofenced();
+
+        if (stumblingDataFragment != null) {
+            Bundle dataBundle = new Bundle();
+
+            dataBundle.putInt(StumblerService.KEY_WIFI_STATUS, wifiStatus);
+            dataBundle.putDouble(StumblerService.KEY_LATITUDE, latitude);
+            dataBundle.putDouble(StumblerService.KEY_LONGITUDE, longitude);
+            dataBundle.putInt(StumblerService.KEY_LOCATIONS_SCANNED, locationsScanned);
+            dataBundle.putInt(StumblerService.KEY_ACCESS_POINTS_SCANNED, accessPointsScanned);
+            dataBundle.putInt(StumblerService.KEY_ACCESS_POINTS_VISIBLE, accessPointsVisible);
+            dataBundle.putInt(StumblerService.KEY_CELL_TOWERS_SCANNED, cellTowersScanned);
+            dataBundle.putInt(StumblerService.KEY_CELL_TOWERS_VISIBLE, cellTowersVisible);
+
+            stumblingDataFragment.updateDataWithBundle(dataBundle);
+        }
 
         String lastLocationString = (mGpsFixes > 0 && locationsScanned > 0)?
                                     formatLocation(latitude, longitude) : "-";
 
-        formatTextView(R.id.gps_satellites, R.string.gps_satellites, mGpsFixes, mGpsSats);
-        formatTextView(R.id.last_location, R.string.last_location, lastLocationString);
-        formatTextView(R.id.wifi_access_points, R.string.wifi_access_points, APs);
-        setVisibleAccessPoints(scanning, wifiStatus, visibleAPs);
-        formatTextView(R.id.cells_visible, R.string.cells_visible, currentCellInfo);
-        formatTextView(R.id.cells_scanned, R.string.cells_scanned, cellInfoScanned);
-        formatTextView(R.id.locations_scanned, R.string.locations_scanned, locationsScanned);
-        service.checkPrefs();
-        if (mGeofenceHere) {
-            if (mGpsFixes > 0 && locationsScanned > 0) {
-                Location coord = new Location(AppGlobals.LOCATION_ORIGIN_INTERNAL);
-                coord.setLatitude(latitude);
-                coord.setLongitude(longitude);
-                service.getPrefs().setGeofenceLocation(coord);
-                service.getPrefs().setGeofenceEnabled(true);
-                service.getPrefs().setGeofenceHere(false);
-                mGeofenceHere = false;
-                setGeofenceText();
-            }
-        }
-        TextView geofence_tv = (TextView) findViewById(R.id.geofence_status);
-        geofence_tv.setTextColor(isGeofenced ? Color.RED : Color.BLACK);
-        showUploadStats();
+//        service.checkPrefs();
+//        if (mGeofenceHere) {
+//            if (mGpsFixes > 0 && locationsScanned > 0) {
+//                Location coord = new Location(AppGlobals.LOCATION_ORIGIN_INTERNAL);
+//                coord.setLatitude(latitude);
+//                coord.setLongitude(longitude);
+//                service.getPrefs().setGeofenceLocation(coord);
+//                service.getPrefs().setGeofenceEnabled(true);
+//                service.getPrefs().setGeofenceHere(false);
+//                mGeofenceHere = false;
+//                setGeofenceText();
+//            }
+//        }
+//        TextView geofence_tv = (TextView) findViewById(R.id.geofence_status);
+//        geofence_tv.setTextColor(isGeofenced ? Color.RED : Color.BLACK);
+
+//        showUploadStats();
    }
 
     public void onToggleScanningClicked(View v) {
         getApp().toggleScanning(this);
     }
 
+    /*
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -222,35 +265,13 @@ public final class MainActivity extends FragmentActivity {
 
         }
     }
-
-    private void setVisibleAccessPoints(boolean scanning, int wifiStatus, int apsCount) {
-        String status;
-        if (!scanning) {
-            status = "";
-        } else {
-            switch (wifiStatus) {
-                case WifiScanner.STATUS_IDLE:
-                    status = "";
-                    break;
-                case WifiScanner.STATUS_WIFI_DISABLED:
-                    status = getString(R.string.wifi_disabled);
-                    break;
-                case WifiScanner.STATUS_ACTIVE:
-                    status = String.valueOf(apsCount);
-                    break;
-                default:
-                    throw new IllegalArgumentException();
-            }
-        }
-
-        formatTextView(R.id.visible_wifi_access_points, R.string.visible_wifi_access_points, status);
-    }
+   */
 
     private void formatTextView(int textViewId, int stringId, Object... args) {
-        TextView textView = (TextView) findViewById(textViewId);
-        String str = getResources().getString(stringId);
-        str = String.format(str, args);
-        textView.setText(str);
+//        TextView textView = (TextView) findViewById(textViewId);
+//        String str = getResources().getString(stringId);
+//        str = String.format(str, args);
+//        textView.setText(str);
     }
 
     private String formatLocation(double latitude, double longitude) {
@@ -259,13 +280,13 @@ public final class MainActivity extends FragmentActivity {
     }
 
     private void setGeofenceText() {
-        if (getApp().getPrefs().getGeofenceEnabled()) {
-            Location coord = getApp().getPrefs().getGeofenceLocation();
-            formatTextView(R.id.geofence_status, R.string.geofencing_on,
-                    coord.getLatitude(), coord.getLongitude());
-        } else {
-            formatTextView(R.id.geofence_status, R.string.geofencing_off);
-        }
+//        if (getApp().getPrefs().getGeofenceEnabled()) {
+//            Location coord = getApp().getPrefs().getGeofenceLocation();
+//            formatTextView(R.id.geofence_status, R.string.geofencing_on,
+//                    coord.getLatitude(), coord.getLongitude());
+//        } else {
+//            formatTextView(R.id.geofence_status, R.string.geofencing_off);
+//        }
     }
 
     public void showUploadStats() {
@@ -286,5 +307,104 @@ public final class MainActivity extends FragmentActivity {
         }
     }
 
+    private void showTabBarFragment() {
+        getFragmentManager().beginTransaction()
+                .add(R.id.container, tabBarFragment)
+                .commit();
+    }
 
+    private void showMapFragment() {
+        if (currentContentFragment == null) {
+
+            getFragmentManager().beginTransaction()
+                    .add(R.id.content, mapFragment)
+                    .commit();
+
+            currentContentFragment = mapFragment;
+        }
+        else if (currentContentFragment != mapFragment) {
+
+            getFragmentManager().beginTransaction()
+                    .remove(currentContentFragment)
+                    .commit();
+
+            currentContentFragment = mapFragment;
+        }
+    }
+
+    private void showLeaderboardFragment() {
+        getFragmentManager().beginTransaction()
+                .add(R.id.content, leaderboardFragment)
+                .commit();
+
+        currentContentFragment = leaderboardFragment;
+    }
+
+    private void showSettingsFragment() {
+        getFragmentManager().beginTransaction()
+                .add(R.id.content, settingsFragment)
+                .commit();
+
+        currentContentFragment = settingsFragment;
+
+        tabBarFragment.toggleBackButton(true, getString(R.string.settings_title));
+    }
+
+    public void showStumblingDataFragment(int containerId) {
+        if (currentContentFragment == stumblingDataFragment) {
+            return;
+        }
+
+        getFragmentManager().beginTransaction()
+                .add(containerId, stumblingDataFragment)
+                .commit();
+
+        currentContentFragment = stumblingDataFragment;
+    }
+
+    public void toggleStumblerServices() {
+        getApp().toggleScanning(this);
+    }
+
+    @Override
+    public void tabSelected(TabBarFragment.SelectedTab selectedTab) {
+        switch (selectedTab) {
+            case MAP_TAB:
+                showMapFragment();
+                break;
+            case LEADERBOARD_TAB:
+                showLeaderboardFragment();
+                break;
+            default:
+                break;
+        }
+    }
+
+    @Override
+    public void settingsSelected() {
+        showSettingsFragment();
+    }
+
+    @Override
+    public void backButtonPressed() {
+        if (currentContentFragment == settingsFragment) {
+
+            getFragmentManager().beginTransaction()
+                    .remove(settingsFragment)
+                    .commit();
+
+            currentContentFragment = leaderboardFragment;
+
+            tabBarFragment.toggleBackButton(false, null);
+        }
+    }
+
+    @Override
+    public void dismissStumblingDataFragment() {
+        getFragmentManager().beginTransaction()
+                .remove(stumblingDataFragment)
+                .commit();
+
+        currentContentFragment = mapFragment;
+    }
 }

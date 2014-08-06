@@ -166,10 +166,6 @@ public final class MainActivity extends Activity implements TabBarFragment.OnTab
             return;
         }
 
-//        boolean scanning = service.isScanning();
-//        CompoundButton scanningBtn = (CompoundButton) findViewById(R.id.toggle_scanning);
-//        scanningBtn.setChecked(scanning);
-
         int wifiStatus = service.getWifiStatus();
         double latitude = service.getLatitude();
         double longitude = service.getLongitude();
@@ -198,8 +194,8 @@ public final class MainActivity extends Activity implements TabBarFragment.OnTab
             stumblingDataFragment.updateDataWithBundle(dataBundle);
         }
 
-        String lastLocationString = (mGpsFixes > 0 && locationsScanned > 0)?
-                                    formatLocation(latitude, longitude) : "-";
+//        String lastLocationString = (mGpsFixes > 0 && locationsScanned > 0)?
+//                                    formatLocation(latitude, longitude) : "-";
 
 //        service.checkPrefs();
 //        if (mGeofenceHere) {

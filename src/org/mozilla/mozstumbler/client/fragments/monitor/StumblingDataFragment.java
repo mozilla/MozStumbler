@@ -1,12 +1,12 @@
 package org.mozilla.mozstumbler.client.fragments.monitor;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.service.StumblerService;
@@ -66,6 +66,17 @@ public class StumblingDataFragment extends Fragment {
                 dismissStumblingDataFragmentListener.dismissStumblingDataFragment();
             }
         });
+
+        setWifiStatus(wifiStatus);
+        setLatitude(latitude);
+        setLongitude(longitude);
+
+        setLocationsScanned(locationsScanned);
+        setAccessPointsScanned(accessPointsScanned);
+        setAccessPointsVisible(accessPointsVisible);
+
+        setCellTowersScanned(cellTowersScanned);
+        setCellTowersVisible(cellTowersVisible);
 
         return rootView;
     }

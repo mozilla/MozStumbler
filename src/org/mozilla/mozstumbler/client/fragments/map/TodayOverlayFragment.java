@@ -8,11 +8,12 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import org.mozilla.mozstumbler.R;
+import org.mozilla.mozstumbler.client.models.User;
 
 /**
  * Created by JeremyChiang on 2014-08-05.
  */
-public class TodayOverlayFragment extends Fragment {
+public class TodayOverlayFragment extends Fragment implements User.UserScoreUpdatedListener {
 
     private TextView starScoreTextView;
     private TextView rainbowScoreTextView;
@@ -39,5 +40,12 @@ public class TodayOverlayFragment extends Fragment {
 
     public void setCoinScore(int newCoinScore) {
         coinScoreTextView.setText(Integer.toString(newCoinScore));
+    }
+
+    @Override
+    public void userScoreUpdated(User user) {
+        setStarScore(user.getStarScore());
+        setRainbowScore(user.getRainbowScore());
+        setCoinScore(user.getCoinScore());
     }
 }

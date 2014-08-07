@@ -21,6 +21,7 @@ import org.mozilla.mozstumbler.client.MainActivity;
 import org.mozilla.mozstumbler.client.developers.DeveloperOverlayFragment;
 import org.mozilla.mozstumbler.client.mapview.RainbowOverlay;
 import org.mozilla.mozstumbler.client.mapview.StarOverlay;
+import org.mozilla.mozstumbler.client.models.User;
 
 import java.util.ArrayList;
 import java.util.Timer;
@@ -33,6 +34,8 @@ public class MapFragment extends Fragment implements StarOverlay.StarOverlaySele
         RainbowOverlay.RainbowOverlaySelectedListener,
         DeveloperOverlayFragment.DeveloperActionListener,
         StumblerOffFragment.DismissStumblerOffListener {
+
+    private User user;
 
     private MapView mapView;
     private UserLocationOverlay userLocationOverlay;
@@ -51,35 +54,20 @@ public class MapFragment extends Fragment implements StarOverlay.StarOverlaySele
     private Button zoomToSelfButton;
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        user = new User("Steamclock");
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_map, container, false);
 
         mapView = (MapView)rootView.findViewById(R.id.map_view);
 
-        userLocationOverlay = new UserLocationOverlay(new GpsLocationProvider(getActivity()), mapView);
-        userLocationOverlay.enableMyLocation();
-        userLocationOverlay.setDrawAccuracyEnabled(true);
-        userLocationOverlay.setTrackingMode(UserLocationOverlay.TrackingMode.FOLLOW);
-        userLocationOverlay.setRequiredZoom(16.5f);
-
-        Bitmap stumblerMarkerBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.stumbler_marker_map);
-        userLocationOverlay.setPersonBitmap(stumblerMarkerBitmap);
-
-        mapView.setCenter(userLocationOverlay.getMyLocation());
-        mapView.getOverlays().add(userLocationOverlay);
-
-        overlayManager = mapView.getOverlayManager();
-
-        starOverlays = new ArrayList<Overlay>();
-        rainbowOverlays = new ArrayList<Overlay>();
-
-        generateRandomStars();
-        generateRandomRainbows();
-
-        todayOverlayFragment = (TodayOverlayFragment)getFragmentManager().findFragmentById(R.id.today_overlay_fragment);
-        todayOverlayFragment.setStarScore(125);
-        todayOverlayFragment.setRainbowScore(150);
-        todayOverlayFragment.setCoinScore(100);
+        setupUserLocationOverlay();
+        setupStarsAndRainbows();
+        setupTodayOverlayFragment();
 
         allowShowingNotificationFragment = true;
 
@@ -99,6 +87,43 @@ public class MapFragment extends Fragment implements StarOverlay.StarOverlaySele
             }
         });
 
+        setupZoomToSelfButton(rootView);
+
+        return rootView;
+    }
+
+    private void setupUserLocationOverlay() {
+        userLocationOverlay = new UserLocationOverlay(new GpsLocationProvider(getActivity()), mapView);
+        userLocationOverlay.enableMyLocation();
+        userLocationOverlay.setDrawAccuracyEnabled(true);
+        userLocationOverlay.setTrackingMode(UserLocationOverlay.TrackingMode.FOLLOW);
+        userLocationOverlay.setRequiredZoom(16.5f);
+
+        Bitmap stumblerMarkerBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.stumbler_marker_map);
+        userLocationOverlay.setPersonBitmap(stumblerMarkerBitmap);
+
+        mapView.setCenter(userLocationOverlay.getMyLocation());
+        mapView.getOverlays().add(userLocationOverlay);
+    }
+
+    private void setupStarsAndRainbows() {
+        overlayManager = mapView.getOverlayManager();
+        starOverlays = new ArrayList<Overlay>();
+        rainbowOverlays = new ArrayList<Overlay>();
+
+        generateRandomStars();
+        generateRandomRainbows();
+    }
+
+    private void setupTodayOverlayFragment() {
+        todayOverlayFragment = (TodayOverlayFragment)getFragmentManager().findFragmentById(R.id.today_overlay_fragment);
+        todayOverlayFragment.setStarScore(user.getStarScore());
+        todayOverlayFragment.setRainbowScore(user.getRainbowScore());
+        todayOverlayFragment.setCoinScore(user.getCoinScore());
+        user.setUserScoreUpdatedListener(todayOverlayFragment);
+    }
+
+    private void setupZoomToSelfButton(View rootView) {
         zoomToSelfButton = (Button)rootView.findViewById(R.id.zoom_to_self_button);
         zoomToSelfButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -106,8 +131,6 @@ public class MapFragment extends Fragment implements StarOverlay.StarOverlaySele
                 userLocationOverlay.goToMyPosition(true);
             }
         });
-
-        return rootView;
     }
 
     private void showCoinRewardFragment() {
@@ -175,6 +198,8 @@ public class MapFragment extends Fragment implements StarOverlay.StarOverlaySele
         if (starOverlays.contains(selectedStarOverlay)) {
             overlayManager.remove(selectedStarOverlay);
             mapView.invalidate();
+
+            user.incrementStarScore();
         }
     }
 
@@ -183,6 +208,8 @@ public class MapFragment extends Fragment implements StarOverlay.StarOverlaySele
         if (rainbowOverlays.contains(selectedRainbowOverlay)) {
             overlayManager.remove(selectedRainbowOverlay);
             mapView.invalidate();
+
+            user.incrementRainbowScore();
         }
     }
 

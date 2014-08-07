@@ -10,6 +10,10 @@ public class Score {
         COIN
     }
 
+    public static final int POINT_PER_STAR = 5;
+    public static final int POINT_PER_RAINBOW = 50;
+    public static final int POINT_PER_COIN = 100;
+
     private final String STAR_TITLE = "Stars";
     private final String RAINBOW_TITLE = "Rainbows";
     private final String COIN_TITLE = "Gold coins";

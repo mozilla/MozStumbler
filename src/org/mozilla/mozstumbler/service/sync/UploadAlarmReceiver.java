@@ -22,7 +22,7 @@ import org.mozilla.mozstumbler.service.utils.NetworkUtils;
 // notifying this class when a good time is to try upload.
 public class UploadAlarmReceiver extends BroadcastReceiver {
     static final String LOG_TAG = "Stumbler:" + UploadAlarmReceiver.class.getSimpleName();
-
+    static final String EXTRA_IS_REPEATING = "is_repeating";
     public static boolean sIsAlreadyScheduled;
 
     public UploadAlarmReceiver() {}
@@ -39,13 +39,18 @@ public class UploadAlarmReceiver extends BroadcastReceiver {
 
         @Override
         protected void onHandleIntent(Intent intent) {
+            boolean isRepeating = intent.getBooleanExtra(EXTRA_IS_REPEATING, true);
             if (DataStorageManager.getInstance() == null) {
                 DataStorageManager.createGlobalInstance(this, null);
             }
-            upload();
+            upload(isRepeating);
         }
 
-        void upload() {
+        void upload(boolean isRepeating) {
+            if (!isRepeating) {
+                sIsAlreadyScheduled = false;
+            }
+
             // Defensive approach:  if it is too old, delete all data
             long oldestMs = DataStorageManager.getInstance().getOldestBatchTimeMs();
             int maxWeeks = DataStorageManager.getInstance().getMaxWeeksStored();
@@ -54,7 +59,7 @@ public class UploadAlarmReceiver extends BroadcastReceiver {
                 long msPerWeek = 604800 * 1000;
                 if (currentTime - oldestMs > maxWeeks * msPerWeek) {
                     DataStorageManager.getInstance().deleteAll();
-                    UploadAlarmReceiver.cancelAlarm(this);
+                    UploadAlarmReceiver.cancelAlarm(this, isRepeating);
                     return;
                 }
             }
@@ -70,17 +75,19 @@ public class UploadAlarmReceiver extends BroadcastReceiver {
         }
     }
 
-    static PendingIntent createIntent(Context c) {
-        PendingIntent pi = PendingIntent.getBroadcast(c, 0, new Intent(c, UploadAlarmReceiver.class), 0);
+    static PendingIntent createIntent(Context c, boolean isRepeating) {
+        Intent intent = new Intent(c, UploadAlarmReceiver.class);
+        intent.putExtra(EXTRA_IS_REPEATING, isRepeating);
+        PendingIntent pi = PendingIntent.getBroadcast(c, 0, intent, 0);
         return pi;
     }
 
-    public static void cancelAlarm(Context c) {
+    public static void cancelAlarm(Context c, boolean isRepeating) {
         Log.d(LOG_TAG, "cancelAlarm");
         // this is to stop scheduleAlarm from constantly rescheduling, not to guard cancellation.
         sIsAlreadyScheduled = false;
         AlarmManager alarmManager = (AlarmManager)c.getSystemService(Context.ALARM_SERVICE);
-        PendingIntent pi = createIntent(c);
+        PendingIntent pi = createIntent(c, isRepeating);
         alarmManager.cancel(pi);
     }
 
@@ -94,7 +101,7 @@ public class UploadAlarmReceiver extends BroadcastReceiver {
 
         sIsAlreadyScheduled = true;
         AlarmManager alarmManager = (AlarmManager)c.getSystemService(Context.ALARM_SERVICE);
-        PendingIntent pi = createIntent(c);
+        PendingIntent pi = createIntent(c, isRepeating);
 
         long triggerAtMs = System.currentTimeMillis() + intervalMsec;
         if (isRepeating) {

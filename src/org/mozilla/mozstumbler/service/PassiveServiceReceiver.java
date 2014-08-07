@@ -42,7 +42,7 @@ public class PassiveServiceReceiver extends BroadcastReceiver {
             return;
         }
 
-        Log.d(LOG_TAG, "Stumbler: Sending passive start message");
+        Log.d(LOG_TAG, "Stumbler: Sending passive start message | isDebug:" + AppGlobals.isDebug);
 
         Intent startServiceIntent = new Intent(context, StumblerService.class);
         startServiceIntent.putExtra(StumblerService.ACTION_START_PASSIVE, true);

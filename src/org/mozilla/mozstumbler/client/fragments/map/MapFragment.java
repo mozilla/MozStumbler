@@ -4,7 +4,6 @@ import android.app.Fragment;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,26 +11,35 @@ import android.widget.Button;
 
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.overlay.GpsLocationProvider;
-import com.mapbox.mapboxsdk.overlay.Marker;
+import com.mapbox.mapboxsdk.overlay.Overlay;
+import com.mapbox.mapboxsdk.overlay.OverlayManager;
 import com.mapbox.mapboxsdk.overlay.UserLocationOverlay;
 import com.mapbox.mapboxsdk.views.MapView;
 
 import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.client.MainActivity;
 import org.mozilla.mozstumbler.client.developers.DeveloperOverlayFragment;
+import org.mozilla.mozstumbler.client.mapview.RainbowOverlay;
+import org.mozilla.mozstumbler.client.mapview.StarOverlay;
 
-import java.util.Random;
+import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
 /**
  * Created by JeremyChiang on 2014-08-05.
  */
-public class MapFragment extends Fragment implements DeveloperOverlayFragment.DeveloperActionListener,
+public class MapFragment extends Fragment implements StarOverlay.StarOverlaySelectedListener,
+        RainbowOverlay.RainbowOverlaySelectedListener,
+        DeveloperOverlayFragment.DeveloperActionListener,
         StumblerOffFragment.DismissStumblerOffListener {
 
     private MapView mapView;
     private UserLocationOverlay userLocationOverlay;
+
+    private OverlayManager overlayManager;
+    private ArrayList<Overlay> starOverlays;
+    private ArrayList<Overlay> rainbowOverlays;
 
     private TodayOverlayFragment todayOverlayFragment;
 
@@ -59,6 +67,11 @@ public class MapFragment extends Fragment implements DeveloperOverlayFragment.De
 
         mapView.setCenter(userLocationOverlay.getMyLocation());
         mapView.getOverlays().add(userLocationOverlay);
+
+        overlayManager = mapView.getOverlayManager();
+
+        starOverlays = new ArrayList<Overlay>();
+        rainbowOverlays = new ArrayList<Overlay>();
 
         generateRandomStars();
         generateRandomRainbows();
@@ -132,42 +145,44 @@ public class MapFragment extends Fragment implements DeveloperOverlayFragment.De
     }
 
     private void generateRandomStars() {
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 30; i++) {
             LatLng userLocationLatLng = userLocationOverlay.getMyLocation();
 
-            Random rand = new Random();
-            int randomLatCoefficient = rand.nextInt((10 - -10) + 1) + -10;
-            int randomLonCoefficient = rand.nextInt((10 - -10) + 1) + -10;
+            StarOverlay starOverlay = new StarOverlay(getActivity(), mapView, userLocationLatLng);
+            starOverlay.setStarOverlaySelectedListener(this);
 
-            LatLng randomLatLng =
-                    new LatLng(
-                            userLocationLatLng.getLatitude() + randomLatCoefficient * 0.0005,
-                            userLocationLatLng.getLongitude() + randomLonCoefficient * 0.0005);
-
-            Marker starMarker = new Marker(null, null, randomLatLng);
-            starMarker.setMarker(getResources().getDrawable(R.drawable.star_marker_map));
-
-            mapView.addMarker(starMarker);
+            starOverlays.add(starOverlay);
         }
+
+        overlayManager.addAll(starOverlays);
     }
 
     private void generateRandomRainbows() {
         for (int i = 0; i < 3; i++) {
             LatLng userLocationLatLng = userLocationOverlay.getMyLocation();
 
-            Random rand = new Random();
-            int randomLatCoefficient = rand.nextInt((10 - -10) + 1) + -10;
-            int randomLonCoefficient = rand.nextInt((10 - -10) + 1) + -10;
+            RainbowOverlay rainbowOverlay = new RainbowOverlay(getActivity(), mapView, userLocationLatLng);
+            rainbowOverlay.setRainbowOverlaySelectedListener(this);
 
-            LatLng randomLatLng =
-                    new LatLng(
-                            userLocationLatLng.getLatitude() + randomLatCoefficient * 0.0005,
-                            userLocationLatLng.getLongitude() + randomLonCoefficient * 0.0005);
+            rainbowOverlays.add(rainbowOverlay);
+        }
 
-            Marker rainbowMarker = new Marker(null, null, randomLatLng);
-            rainbowMarker.setMarker(getResources().getDrawable(R.drawable.rainbow_marker_map));
+        overlayManager.addAll(rainbowOverlays);
+    }
 
-            mapView.addMarker(rainbowMarker);
+    @Override
+    public void starOverlaySelected(StarOverlay selectedStarOverlay) {
+        if (starOverlays.contains(selectedStarOverlay)) {
+            overlayManager.remove(selectedStarOverlay);
+            mapView.invalidate();
+        }
+    }
+
+    @Override
+    public void rainbowOverlaySelected(RainbowOverlay selectedRainbowOverlay) {
+        if (rainbowOverlays.contains(selectedRainbowOverlay)) {
+            overlayManager.remove(selectedRainbowOverlay);
+            mapView.invalidate();
         }
     }
 

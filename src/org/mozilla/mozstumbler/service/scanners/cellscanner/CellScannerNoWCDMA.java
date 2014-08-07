@@ -31,15 +31,15 @@ import java.util.List;
 public class CellScannerNoWCDMA implements CellScanner.CellScannerImpl {
 
     protected static String LOG_TAG = "Stumbler:" + CellScannerNoWCDMA.class.getSimpleName();
-
-    protected  GetAllCellInfoScannerImpl mGetAllInfoCellScanner;
-
+    protected GetAllCellInfoScannerImpl mGetAllInfoCellScanner;
     protected TelephonyManager mTelephonyManager;
-
+    protected boolean mIsStarted;
     protected int mPhoneType;
     protected final Context mContext;
     protected volatile int mSignalStrength;
     protected volatile int mCdmaDbm;
+
+    private PhoneStateListener mPhoneStateListener;
 
     private static class GetAllCellInfoScannerDummy implements GetAllCellInfoScannerImpl {
         @Override
@@ -58,6 +58,11 @@ public class CellScannerNoWCDMA implements CellScanner.CellScannerImpl {
 
     @Override
     public void start() {
+        if (mIsStarted) {
+            return;
+        }
+        mIsStarted = true;
+
         if (mTelephonyManager == null) {
             if (Build.VERSION.SDK_INT >= 18 /*Build.VERSION_CODES.JELLY_BEAN_MR2 */) { // Fennec: no Build.VERSION_CODES
                 mGetAllInfoCellScanner = new GetAllCellInfoScannerMr2();
@@ -82,13 +87,26 @@ public class CellScannerNoWCDMA implements CellScanner.CellScannerImpl {
 
         mSignalStrength = CellInfo.UNKNOWN_SIGNAL;
         mCdmaDbm = CellInfo.UNKNOWN_SIGNAL;
-        mTelephonyManager.listen(mPhoneStateListener, PhoneStateListener.LISTEN_SIGNAL_STRENGTHS);
 
+        mPhoneStateListener = new PhoneStateListener() {
+            @Override
+            public void onSignalStrengthsChanged(SignalStrength ss) {
+                if (ss.isGsm()) {
+                    mSignalStrength = ss.getGsmSignalStrength();
+                } else {
+                    mCdmaDbm = ss.getCdmaDbm();
+                }
+            }
+        };
+        mTelephonyManager.listen(mPhoneStateListener, PhoneStateListener.LISTEN_SIGNAL_STRENGTHS);
     }
 
     @Override
     public void stop() {
-        mTelephonyManager.listen(mPhoneStateListener, PhoneStateListener.LISTEN_NONE);
+        mIsStarted = false;
+        if (mTelephonyManager != null) {
+            mTelephonyManager.listen(mPhoneStateListener, PhoneStateListener.LISTEN_NONE);
+        }
         mSignalStrength = CellInfo.UNKNOWN_SIGNAL;
         mCdmaDbm = CellInfo.UNKNOWN_SIGNAL;
     }
@@ -166,18 +184,6 @@ public class CellScannerNoWCDMA implements CellScanner.CellScannerImpl {
         }
         return records;
     }
-
-    private final PhoneStateListener mPhoneStateListener = new PhoneStateListener() {
-        @Override
-        public void onSignalStrengthsChanged(SignalStrength ss) {
-            if (ss.isGsm()) {
-                mSignalStrength = ss.getGsmSignalStrength();
-            } else {
-                mCdmaDbm = ss.getCdmaDbm();
-            }
-        }
-    };
-
 
     @TargetApi(18)
     protected boolean addCellToList(List<CellInfo> cells,

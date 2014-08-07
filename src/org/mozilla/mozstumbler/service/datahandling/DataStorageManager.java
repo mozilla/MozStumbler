@@ -400,7 +400,7 @@ public class DataStorageManager {
     }
 
     public synchronized void saveCurrentReportsSendBufferToDisk() throws IOException {
-        if (mCurrentReportsSendBuffer == null) {
+        if (mCurrentReportsSendBuffer == null || mCurrentReportsSendBuffer.reportCount < 1) {
             return;
         }
 
@@ -449,6 +449,9 @@ public class DataStorageManager {
 
     public synchronized void saveCurrentReportsToDisk() throws IOException {
         saveCurrentReportsSendBufferToDisk();
+        if (mCurrentReports.reports.size() < 1) {
+            return;
+        }
         byte[] bytes = Zipper.zipData(finalizeReports(mCurrentReports.reports).getBytes());
         saveToDisk(bytes, mCurrentReports.reports.size(), mCurrentReports.wifiCount, mCurrentReports.cellCount);
         clearCurrentReports();

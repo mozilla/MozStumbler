@@ -7,6 +7,7 @@ package org.mozilla.mozstumbler.service;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.location.Location;
+import android.os.AsyncTask;
 import android.os.Binder;
 import android.os.IBinder;
 import android.os.Looper;
@@ -138,9 +139,6 @@ public final class StumblerService extends PersistentIntentService
     // Previously this was done in onCreate(). Moved out of that so that in the passive standalone service
     // use (i.e. Fennec), init() can be called from this class's dedicated thread.
     private void init() {
-        if (DataStorageManager.getInstance() != null)
-            return;
-
         Prefs.createGlobalInstance(this);
         NetworkUtils.createGlobalInstance(this);
         DataStorageManager.createGlobalInstance(this, this);
@@ -148,8 +146,13 @@ public final class StumblerService extends PersistentIntentService
         if (!CellScanner.isCellScannerImplSet()) {
             CellScanner.setCellScannerImpl(new CellScannerNoWCDMA(this));
         }
-        mScanManager = new ScanManager(this);
-        mReporter = new Reporter(this, mStumblerBundleReceiver);
+        if (mScanManager == null) {
+            mScanManager = new ScanManager(this);
+        }
+        if (mReporter == null) {
+            mReporter = new Reporter(this, mStumblerBundleReceiver);
+        }
+        mReporter.startup();
     }
 
     @Override
@@ -168,23 +171,30 @@ public final class StumblerService extends PersistentIntentService
     public void onDestroy() {
         super.onDestroy();
 
-        if (sFirefoxStumblingEnabled == FirefoxStumbleState.OFF) {
-            Prefs.getInstance().setFirefoxScanEnabled(false);
-        }
+        // Used to move these disk I/O ops off the calling thread
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... params) {
+                if (AppGlobals.isDebug) Log.d(LOG_TAG, "onDestroy");
 
-        if (AppGlobals.isDebug) Log.d(LOG_TAG, "onDestroy");
+                if (sFirefoxStumblingEnabled == FirefoxStumbleState.OFF) {
+                    Prefs.getInstance().setFirefoxScanEnabled(false);
+                }
 
-        if (DataStorageManager.getInstance() != null) {
-            try {
-                DataStorageManager.getInstance().saveCurrentReportsToDisk();
-            } catch (IOException ex) {
-                AppGlobals.guiLogInfo(ex.toString());
-                Log.e(LOG_TAG, "Exception in onDestroy saving reports", ex);
+                if (DataStorageManager.getInstance() != null) {
+                    try {
+                        DataStorageManager.getInstance().saveCurrentReportsToDisk();
+                    } catch (IOException ex) {
+                        AppGlobals.guiLogInfo(ex.toString());
+                        Log.e(LOG_TAG, "Exception in onDestroy saving reports", ex);
+                    }
+                }
+                return null;
             }
-        }
+        }.execute();
+
         mReporter.shutdown();
-        mReporter = null;
-        mScanManager = null;
+        mScanManager.stopScanning();
     }
 
     @Override
@@ -202,6 +212,7 @@ public final class StumblerService extends PersistentIntentService
             if (sFirefoxStumblingEnabled == FirefoxStumbleState.UNKNOWN) {
                 if (!Prefs.getInstance().getFirefoxScanEnabled()) {
                     stopSelf();
+                    return;
                 }
             }
 

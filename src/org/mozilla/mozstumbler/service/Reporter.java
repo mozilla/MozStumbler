@@ -26,7 +26,7 @@ import org.mozilla.mozstumbler.service.scanners.WifiScanner;
 public final class Reporter extends BroadcastReceiver {
     private static final String LOG_TAG = "Stumbler:" + Reporter.class.getSimpleName();
     public  static final String ACTION_FLUSH_TO_BUNDLE = AppGlobals.ACTION_NAMESPACE + ".FLUSH";
-
+    private boolean mIsStarted;
     /**
      * The maximum time of observation
      */
@@ -51,15 +51,6 @@ public final class Reporter extends BroadcastReceiver {
     Reporter(Context context, StumblerBundleReceiver bundleReceiver) {
         mContext = context;
         mStumblerBundleReceiver = bundleReceiver;
-        resetData();
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(WifiScanner.ACTION_WIFIS_SCANNED);
-        intentFilter.addAction(CellScanner.ACTION_CELLS_SCANNED);
-        intentFilter.addAction(GPSScanner.ACTION_GPS_UPDATED);
-        intentFilter.addAction(ACTION_FLUSH_TO_BUNDLE);
-        LocalBroadcastManager.getInstance(mContext).registerReceiver(this,
-                intentFilter);
-
         TelephonyManager tm = (TelephonyManager) mContext.getSystemService(Context.TELEPHONY_SERVICE);
         mPhoneType = tm.getPhoneType();
     }
@@ -72,7 +63,25 @@ public final class Reporter extends BroadcastReceiver {
         reportCollectedLocation();
     }
 
+    void startup() {
+        if (mIsStarted) {
+            return;
+        }
+        mIsStarted = true;
+
+        resetData();
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(WifiScanner.ACTION_WIFIS_SCANNED);
+        intentFilter.addAction(CellScanner.ACTION_CELLS_SCANNED);
+        intentFilter.addAction(GPSScanner.ACTION_GPS_UPDATED);
+        intentFilter.addAction(ACTION_FLUSH_TO_BUNDLE);
+        LocalBroadcastManager.getInstance(mContext).registerReceiver(this,
+                intentFilter);
+    }
+
     void shutdown() {
+        mIsStarted = false;
+
         Log.d(LOG_TAG, "shutdown");
         flush();
         LocalBroadcastManager.getInstance(mContext).unregisterReceiver(this);

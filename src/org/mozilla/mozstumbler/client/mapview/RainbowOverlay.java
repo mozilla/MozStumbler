@@ -77,4 +77,8 @@ public class RainbowOverlay extends ItemizedOverlay {
     public void setRainbowOverlaySelectedListener(RainbowOverlaySelectedListener rainbowOverlaySelectedListener) {
         this.rainbowOverlaySelectedListener = rainbowOverlaySelectedListener;
     }
+
+    public LatLng getLatLng() {
+        return rainbowMarker.getPoint();
+    }
 }

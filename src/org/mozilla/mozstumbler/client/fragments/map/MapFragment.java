@@ -3,11 +3,14 @@ package org.mozilla.mozstumbler.client.fragments.map;
 import android.app.Fragment;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.PointF;
+import android.location.Location;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.overlay.GpsLocationProvider;
@@ -15,6 +18,7 @@ import com.mapbox.mapboxsdk.overlay.Overlay;
 import com.mapbox.mapboxsdk.overlay.OverlayManager;
 import com.mapbox.mapboxsdk.overlay.UserLocationOverlay;
 import com.mapbox.mapboxsdk.views.MapView;
+import com.mapbox.mapboxsdk.views.util.Projection;
 
 import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.client.MainActivity;
@@ -34,6 +38,9 @@ public class MapFragment extends Fragment implements StarOverlay.StarOverlaySele
         RainbowOverlay.RainbowOverlaySelectedListener,
         DeveloperOverlayFragment.DeveloperActionListener,
         StumblerOffFragment.DismissStumblerOffListener {
+
+    private final boolean mustBeNearbyToCollect = true;
+    private final double nearbyThresholdRadius = 0.0015;
 
     private User user;
 
@@ -168,7 +175,7 @@ public class MapFragment extends Fragment implements StarOverlay.StarOverlaySele
     }
 
     private void generateRandomStars() {
-        for (int i = 0; i < 30; i++) {
+        for (int i = 0; i < 50; i++) {
             LatLng userLocationLatLng = userLocationOverlay.getMyLocation();
 
             StarOverlay starOverlay = new StarOverlay(getActivity(), mapView, userLocationLatLng);
@@ -181,7 +188,7 @@ public class MapFragment extends Fragment implements StarOverlay.StarOverlaySele
     }
 
     private void generateRandomRainbows() {
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 30; i++) {
             LatLng userLocationLatLng = userLocationOverlay.getMyLocation();
 
             RainbowOverlay rainbowOverlay = new RainbowOverlay(getActivity(), mapView, userLocationLatLng);
@@ -196,20 +203,66 @@ public class MapFragment extends Fragment implements StarOverlay.StarOverlaySele
     @Override
     public void starOverlaySelected(StarOverlay selectedStarOverlay) {
         if (starOverlays.contains(selectedStarOverlay)) {
-            overlayManager.remove(selectedStarOverlay);
-            mapView.invalidate();
 
-            user.incrementStarScore();
+            boolean canIncrement = false;
+
+            if (mustBeNearbyToCollect) {
+                LatLng selectedOverlayLatLng = selectedStarOverlay.getLatLng();
+                LatLng userLocationLatLng = userLocationOverlay.getMyLocation();
+
+                double xDiff = Math.abs(selectedOverlayLatLng.getLatitude() - userLocationLatLng.getLatitude());
+                double yDiff = Math.abs(selectedOverlayLatLng.getLongitude() - userLocationLatLng.getLongitude());
+
+                if (xDiff <= nearbyThresholdRadius && yDiff <= nearbyThresholdRadius) {
+                    canIncrement = true;
+                } else {
+                    Toast.makeText(getActivity(), getString(R.string.too_far_away_to_collect), Toast.LENGTH_SHORT).show();
+                }
+
+            } else {
+                canIncrement = true;
+            }
+
+            if (canIncrement) {
+                overlayManager.remove(selectedStarOverlay);
+                mapView.invalidate();
+
+                user.incrementStarScore();
+                Toast.makeText(getActivity(), getString(R.string.star_collected), Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
     @Override
     public void rainbowOverlaySelected(RainbowOverlay selectedRainbowOverlay) {
         if (rainbowOverlays.contains(selectedRainbowOverlay)) {
-            overlayManager.remove(selectedRainbowOverlay);
-            mapView.invalidate();
 
-            user.incrementRainbowScore();
+            boolean canIncrement = false;
+
+            if (mustBeNearbyToCollect) {
+                LatLng selectedOverlayLatLng = selectedRainbowOverlay.getLatLng();
+                LatLng userLocationLatLng = userLocationOverlay.getMyLocation();
+
+                double xDiff = Math.abs(selectedOverlayLatLng.getLatitude() - userLocationLatLng.getLatitude());
+                double yDiff = Math.abs(selectedOverlayLatLng.getLongitude() - userLocationLatLng.getLongitude());
+
+                if (xDiff <= nearbyThresholdRadius && yDiff <= nearbyThresholdRadius) {
+                    canIncrement = true;
+                } else {
+                    Toast.makeText(getActivity(), getString(R.string.too_far_away_to_collect), Toast.LENGTH_SHORT).show();
+                }
+
+            } else {
+                canIncrement = true;
+            }
+
+            if (canIncrement) {
+                overlayManager.remove(selectedRainbowOverlay);
+                mapView.invalidate();
+
+                user.incrementRainbowScore();
+                Toast.makeText(getActivity(), getString(R.string.rainbow_collected), Toast.LENGTH_SHORT).show();
+            }
         }
     }
 

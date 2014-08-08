@@ -107,6 +107,9 @@
 
     <!-- Map -->
     <string name="today_overlay_title">Today</string>
+    <string name="too_far_away_to_collect">"You're too far away!"</string>
+    <string name="star_collected">Star collected! + 5 points</string>
+    <string name="rainbow_collected">Rainbow collected! + 50 points</string>
 
     <!-- Leaderboard -->
     <string name="points_accumulated_title">Points Accumulated</string>

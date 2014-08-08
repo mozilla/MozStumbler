@@ -3,6 +3,7 @@ package org.mozilla.mozstumbler.client.mapview;
 import android.content.Context;
 import android.graphics.Point;
 import android.graphics.PointF;
+import android.location.Location;
 import android.view.MotionEvent;
 
 import com.mapbox.mapboxsdk.geometry.LatLng;
@@ -76,5 +77,9 @@ public class StarOverlay extends ItemizedOverlay {
 
     public void setStarOverlaySelectedListener(StarOverlaySelectedListener starOverlaySelectedListener) {
         this.starOverlaySelectedListener = starOverlaySelectedListener;
+    }
+
+    public LatLng getLatLng() {
+        return starMarker.getPoint();
     }
 }

@@ -60,6 +60,21 @@
             android:background="@android:color/transparent"
             android:text="@string/leaderboard_title"/>
 
+        <View
+            android:layout_width="@dimen/tab_bar_divider_width"
+            android:layout_height="@dimen/tab_bar_divider_height"
+            android:background="@android:color/white"/>
+
+        <Button
+            android:id="@+id/settings_button"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:textColor="@android:color/white"
+            android:background="@android:color/transparent"
+            android:text="@string/settings_title"/>
+
     </LinearLayout>
 
 </RelativeLayout>

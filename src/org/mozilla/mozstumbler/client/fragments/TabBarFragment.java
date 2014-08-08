@@ -17,7 +17,8 @@ public class TabBarFragment extends Fragment {
 
     public static enum SelectedTab {
         MAP_TAB,
-        LEADERBOARD_TAB
+        LEADERBOARD_TAB,
+        SETTINGS_TAB
     }
 
     public interface OnTabSelectedListener {
@@ -34,6 +35,7 @@ public class TabBarFragment extends Fragment {
 
     private Button mapButton;
     private Button leaderboardButton;
+    private Button settingsButton;
 
     private TextView backArrow;
     private Button backButton;
@@ -52,6 +54,7 @@ public class TabBarFragment extends Fragment {
 
         mapButton = (Button)rootView.findViewById(R.id.map_button);
         leaderboardButton = (Button)rootView.findViewById(R.id.leaderboard_button);
+        settingsButton = (Button)rootView.findViewById(R.id.settings_button);
 
         backButton = (Button)rootView.findViewById(R.id.back_button);
         backArrow = (TextView)rootView.findViewById(R.id.back_arrow);
@@ -74,6 +77,13 @@ public class TabBarFragment extends Fragment {
             }
         });
 
+        settingsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                setSelectedTab(SelectedTab.SETTINGS_TAB);
+            }
+        });
+
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -91,10 +101,17 @@ public class TabBarFragment extends Fragment {
             case MAP_TAB:
                 mapButton.setAlpha(1.0f);
                 leaderboardButton.setAlpha(0.5f);
+                settingsButton.setAlpha(0.5f);
                 break;
             case LEADERBOARD_TAB:
                 mapButton.setAlpha(0.5f);
                 leaderboardButton.setAlpha(1.0f);
+                settingsButton.setAlpha(0.5f);
+                break;
+            case SETTINGS_TAB:
+                mapButton.setAlpha(0.5f);
+                leaderboardButton.setAlpha(0.5f);
+                settingsButton.setAlpha(1.0f);
                 break;
             default:
                 break;

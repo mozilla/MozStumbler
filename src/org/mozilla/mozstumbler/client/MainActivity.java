@@ -350,6 +350,12 @@ public final class MainActivity extends Activity implements TabBarFragment.OnTab
     }
 
     private void showLeaderboardFragment() {
+        if (currentContentFragment != mapFragment) {
+            getFragmentManager().beginTransaction()
+                    .remove(currentContentFragment)
+                    .commit();
+        }
+
         getFragmentManager().beginTransaction()
                 .add(R.id.content, leaderboardFragment)
                 .commit();
@@ -358,13 +364,17 @@ public final class MainActivity extends Activity implements TabBarFragment.OnTab
     }
 
     private void showSettingsFragment() {
+        if (currentContentFragment != mapFragment) {
+            getFragmentManager().beginTransaction()
+                    .remove(currentContentFragment)
+                    .commit();
+        }
+
         getFragmentManager().beginTransaction()
                 .add(R.id.content, settingsFragment)
                 .commit();
 
         currentContentFragment = settingsFragment;
-
-        tabBarFragment.toggleBackButton(true, getString(R.string.settings_title));
     }
 
     public void showStumblingDataFragment(int containerId) {
@@ -391,6 +401,9 @@ public final class MainActivity extends Activity implements TabBarFragment.OnTab
                 break;
             case LEADERBOARD_TAB:
                 showLeaderboardFragment();
+                break;
+            case SETTINGS_TAB:
+                showSettingsFragment();
                 break;
             default:
                 break;

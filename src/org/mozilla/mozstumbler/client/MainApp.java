@@ -32,7 +32,7 @@ import org.mozilla.mozstumbler.service.utils.NetworkUtils;
 
 import java.io.File;
 
-public class MainApp extends Application {
+public class MainApp extends Application implements MainActivity.MainActivityStateListener {
 
     private final String LOGTAG = MainApp.class.getName();
     private StumblerService mStumblerService;
@@ -126,6 +126,28 @@ public class MainApp extends Application {
             mReceiver.unregister();
         mReceiver = null;
         Log.d(LOGTAG, "onStop");
+    }
+
+    @Override
+    public void backgrounded() {
+        if (mStumblerService == null) {
+            return;
+        }
+
+        if (mStumblerService.isScanning()) {
+            stopScanning();
+        }
+    }
+
+    @Override
+    public void foregrounded() {
+        if (mStumblerService == null) {
+            return;
+        }
+
+        if (!mStumblerService.isScanning()) {
+            startScanning();
+        }
     }
 
     private void startScanning() {

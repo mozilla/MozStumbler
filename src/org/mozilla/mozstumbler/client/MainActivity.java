@@ -42,6 +42,13 @@ public final class MainActivity extends Activity implements TabBarFragment.OnTab
         LeaderboardFragment.OnSettingsSelectedListener, TabBarFragment.OnBackButtonPressedListener,
         StumblingDataFragment.DismissStumblingDataFragmentListener {
 
+    public interface MainActivityStateListener {
+        public void backgrounded();
+        public void foregrounded();
+    }
+
+    private MainActivityStateListener mainActivityStateListener;
+
     private static final String LOGTAG = MainActivity.class.getName();
 
     public static final String ACTION_BASE = AppGlobals.ACTION_NAMESPACE + ".MainActivity.";
@@ -73,11 +80,16 @@ public final class MainActivity extends Activity implements TabBarFragment.OnTab
     protected void onStart() {
         super.onStart();
         getApp().setMainActivity(this);
+        mainActivityStateListener = getApp();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+
+        if (mainActivityStateListener != null) {
+            mainActivityStateListener.foregrounded();
+        }
 
         mGeofenceHere = getApp().getPrefs().getGeofenceHere();
         if (mGeofenceHere) {
@@ -86,6 +98,15 @@ public final class MainActivity extends Activity implements TabBarFragment.OnTab
 
         setGeofenceText();
         updateUiOnMainThread();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        if (mainActivityStateListener != null) {
+            mainActivityStateListener.backgrounded();
+        }
     }
 
     @Override

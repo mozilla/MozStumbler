@@ -39,7 +39,7 @@ import java.io.IOException;
 import java.util.Properties;
 
 public final class MainActivity extends Activity implements TabBarFragment.OnTabSelectedListener,
-        LeaderboardFragment.OnSettingsSelectedListener, TabBarFragment.OnBackButtonPressedListener,
+        TabBarFragment.OnBackButtonPressedListener,
         StumblingDataFragment.DismissStumblingDataFragmentListener {
 
     public interface MainActivityStateListener {
@@ -130,7 +130,6 @@ public final class MainActivity extends Activity implements TabBarFragment.OnTab
 
             mapFragment = new MapFragment();
             leaderboardFragment = new LeaderboardFragment();
-            leaderboardFragment.setSettingsSelectedListener(this);
 
             settingsFragment = new SettingsFragment();
 
@@ -408,11 +407,6 @@ public final class MainActivity extends Activity implements TabBarFragment.OnTab
             default:
                 break;
         }
-    }
-
-    @Override
-    public void settingsSelected() {
-        showSettingsFragment();
     }
 
     @Override

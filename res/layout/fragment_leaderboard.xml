@@ -27,17 +27,6 @@
             android:scaleType="fitXY"
             android:src="@drawable/dropdown_arrow"/>
 
-        <ImageButton
-            android:id="@+id/leaderboard_settings_image_button"
-            android:layout_width="@dimen/leaderboard_settings_button_size"
-            android:layout_height="@dimen/leaderboard_settings_button_size"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="@dimen/activity_horizontal_margin"
-            android:src="@drawable/settings_gear"
-            android:scaleType="fitXY"
-            android:background="@android:color/transparent"/>
-
     </RelativeLayout>
 
     <ScrollView

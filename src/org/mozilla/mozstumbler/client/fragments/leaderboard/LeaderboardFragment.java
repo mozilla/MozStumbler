@@ -17,28 +17,19 @@ import org.mozilla.mozstumbler.R;
  */
 public class LeaderboardFragment extends Fragment {
 
-    public interface OnSettingsSelectedListener {
-        public void settingsSelected();
-    }
-
     private Spinner filterSpinner;
-    private ImageButton settingsButton;
 
     private YourStatsFragment yourStatsFragment;
     private YourRankFragment yourRankFragment;
     private TopTenFragment topTenFragment;
-
-    private OnSettingsSelectedListener settingsSelectedListener;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_leaderboard, container, false);
 
         setupFilterSpinner(rootView);
-        setupSettingsButton(rootView);
 
         addYourStatsFragment();
-
         addSectionTitleFragment(getString(R.string.leaderboard_title));
         addYourRankFragment();
         addTopTenFragment();
@@ -64,17 +55,6 @@ public class LeaderboardFragment extends Fragment {
         adapter.setDropDownViewResource(R.layout.stats_filter_dropdown_item);
 
         filterSpinner.setAdapter(adapter);
-    }
-
-    private void setupSettingsButton(View rootView) {
-        settingsButton = (ImageButton)rootView.findViewById(R.id.leaderboard_settings_image_button);
-
-        settingsButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                settingsSelectedListener.settingsSelected();
-            }
-        });
     }
 
     private void addYourStatsFragment() {
@@ -111,9 +91,5 @@ public class LeaderboardFragment extends Fragment {
         getFragmentManager().beginTransaction()
                 .add(R.id.leaderboard_scroll_view_content_container, topTenFragment)
                 .commit();
-    }
-
-    public void setSettingsSelectedListener(OnSettingsSelectedListener settingsSelectedListener) {
-        this.settingsSelectedListener = settingsSelectedListener;
     }
 }

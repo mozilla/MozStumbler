@@ -9,11 +9,19 @@ public class User extends Player {
         public void userScoreUpdated(User user);
     }
 
+    public interface CoinRewardedListener {
+        public void coinRewarded();
+    }
+
     private Score starScore;
     private Score rainbowScore;
     private Score coinScore;
 
+    private int rainbowCount;
+    private final int numOfRainbowsRequiredForCoin = 2;
+
     private UserScoreUpdatedListener userScoreUpdatedListener;
+    private CoinRewardedListener coinRewardedListener;
 
     public User(String userName) {
         super(userName, 0, 0);
@@ -37,13 +45,21 @@ public class User extends Player {
         if (userScoreUpdatedListener != null) {
             userScoreUpdatedListener.userScoreUpdated(this);
         }
+
+        rainbowCount++;
+
+        if (rainbowCount == numOfRainbowsRequiredForCoin) {
+            incrementCoinScore();
+            rainbowCount = 0;
+        }
     }
 
-    public void incrementCoinScore() {
+    private void incrementCoinScore() {
         coinScore.setScorePoints(coinScore.getScorePoints() + Score.POINT_PER_COIN);
 
         if (userScoreUpdatedListener != null) {
             userScoreUpdatedListener.userScoreUpdated(this);
+            coinRewardedListener.coinRewarded();
         }
     }
 
@@ -61,5 +77,9 @@ public class User extends Player {
 
     public void setUserScoreUpdatedListener(UserScoreUpdatedListener userScoreUpdatedListener) {
         this.userScoreUpdatedListener = userScoreUpdatedListener;
+    }
+
+    public void setCoinRewardedListener(CoinRewardedListener coinRewardedListener) {
+        this.coinRewardedListener = coinRewardedListener;
     }
 }

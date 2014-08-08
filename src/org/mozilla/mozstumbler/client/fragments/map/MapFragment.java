@@ -37,6 +37,7 @@ import java.util.TimerTask;
 public class MapFragment extends Fragment implements StarOverlay.StarOverlaySelectedListener,
         RainbowOverlay.RainbowOverlaySelectedListener,
         DeveloperOverlayFragment.DeveloperActionListener,
+        User.CoinRewardedListener,
         StumblerOffFragment.DismissStumblerOffListener {
 
     private final boolean mustBeNearbyToCollect = true;
@@ -64,6 +65,7 @@ public class MapFragment extends Fragment implements StarOverlay.StarOverlaySele
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         user = new User("Steamclock");
+        user.setCoinRewardedListener(this);
     }
 
     @Override
@@ -188,7 +190,7 @@ public class MapFragment extends Fragment implements StarOverlay.StarOverlaySele
     }
 
     private void generateRandomRainbows() {
-        for (int i = 0; i < 30; i++) {
+        for (int i = 0; i < 50; i++) {
             LatLng userLocationLatLng = userLocationOverlay.getMyLocation();
 
             RainbowOverlay rainbowOverlay = new RainbowOverlay(getActivity(), mapView, userLocationLatLng);
@@ -263,6 +265,14 @@ public class MapFragment extends Fragment implements StarOverlay.StarOverlaySele
                 user.incrementRainbowScore();
                 Toast.makeText(getActivity(), getString(R.string.rainbow_collected), Toast.LENGTH_SHORT).show();
             }
+        }
+    }
+
+    @Override
+    public void coinRewarded() {
+        if (allowShowingNotificationFragment) {
+            allowShowingNotificationFragment = false;
+            showCoinRewardFragment();
         }
     }
 

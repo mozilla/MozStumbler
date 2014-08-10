@@ -39,8 +39,6 @@ import org.mozilla.mozstumbler.client.MainActivity;
 import org.mozilla.mozstumbler.service.scanners.GPSScanner;
 import org.osmdroid.api.IGeoPoint;
 import org.osmdroid.tileprovider.BitmapPool;
-import org.osmdroid.tileprovider.MapTileProviderBasic;
-import org.osmdroid.tileprovider.tilesource.ITileSource;
 import org.osmdroid.tileprovider.tilesource.OnlineTileSourceBase;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.tileprovider.tilesource.XYTileSource;
@@ -49,7 +47,6 @@ import org.osmdroid.views.MapView;
 import org.osmdroid.views.Projection;
 import org.osmdroid.views.overlay.Overlay;
 import org.osmdroid.views.overlay.PathOverlay;
-import org.osmdroid.views.overlay.TilesOverlay;
 
 public final class MapActivity extends Activity {
     private static final String LOGTAG = MapActivity.class.getName();
@@ -73,7 +70,7 @@ public final class MapActivity extends Activity {
     private boolean mUserPanning = false;
     private ReporterBroadcastReceiver mReceiver;
     Timer mGetUrl = new Timer();
-    TilesOverlay mCoverageTilesOverlay = null;
+    Overlay mCoverageTilesOverlay = null;
 
     static GpsTrackLocationReceiver sGpsTrackLocationReceiver;
 
@@ -240,22 +237,9 @@ public final class MapActivity extends Activity {
                                 new String[] { BuildConfig.TILE_SERVER_URL });
     }
 
-    private static TilesOverlay CoverageTilesOverlay(Context context) {
-        final MapTileProviderBasic coverageTileProvider = new MapTileProviderBasic(context);
-        final ITileSource coverageTileSource = new XYTileSource("Mozilla Location Service Coverage Map",
-                null,
-                1, 13, 256,
-                ".png",
-                new String[] { sCoverageUrl });
-        coverageTileProvider.setTileSource(coverageTileSource);
-        final TilesOverlay coverageTileOverlay = new TilesOverlay(coverageTileProvider,context);
-        coverageTileOverlay.setLoadingBackgroundColor(Color.TRANSPARENT);
-        return coverageTileOverlay;
-    }
-
     private void setUserPositionAt(Location location) {
         if  (mCoverageTilesOverlay == null && sCoverageUrl != null) {
-            mCoverageTilesOverlay = CoverageTilesOverlay(this);
+            mCoverageTilesOverlay = new CoverageOverlay(this, sCoverageUrl);
             mMap.getOverlays().add(mCoverageTilesOverlay);
         }
 

@@ -43,6 +43,8 @@ public class TabBarFragment extends Fragment {
     private View leftTabDivider;
     private View rightTabDivider;
 
+    private boolean hasLoaded;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -96,7 +98,17 @@ public class TabBarFragment extends Fragment {
         return rootView;
     }
 
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        hasLoaded = true;
+    }
+
     public void setSelectedTab(SelectedTab selectedTab) {
+        if (this.selectedTab == selectedTab && hasLoaded) {
+            return;
+        }
+
         this.selectedTab = selectedTab;
 
         switch(this.selectedTab) {

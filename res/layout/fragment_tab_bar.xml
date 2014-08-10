@@ -45,7 +45,7 @@
             android:text="@string/map_title"/>
 
         <View
-            android:id="@+id/tab_divider"
+            android:id="@+id/tab_left_divider"
             android:layout_width="@dimen/tab_bar_divider_width"
             android:layout_height="@dimen/tab_bar_divider_height"
             android:background="@android:color/white"/>
@@ -61,6 +61,7 @@
             android:text="@string/leaderboard_title"/>
 
         <View
+            android:id="@+id/tab_right_divider"
             android:layout_width="@dimen/tab_bar_divider_width"
             android:layout_height="@dimen/tab_bar_divider_height"
             android:background="@android:color/white"/>

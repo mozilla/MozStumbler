@@ -40,7 +40,8 @@ public class TabBarFragment extends Fragment {
     private TextView backArrow;
     private Button backButton;
 
-    private View tabDivider;
+    private View leftTabDivider;
+    private View rightTabDivider;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -59,7 +60,8 @@ public class TabBarFragment extends Fragment {
         backButton = (Button)rootView.findViewById(R.id.back_button);
         backArrow = (TextView)rootView.findViewById(R.id.back_arrow);
 
-        tabDivider = rootView.findViewById(R.id.tab_divider);
+        leftTabDivider = rootView.findViewById(R.id.tab_left_divider);
+        rightTabDivider = rootView.findViewById(R.id.tab_right_divider);
 
         setSelectedTab(selectedTab);
 
@@ -138,7 +140,10 @@ public class TabBarFragment extends Fragment {
 
             mapButton.setVisibility(View.INVISIBLE);
             leaderboardButton.setVisibility(View.INVISIBLE);
-            tabDivider.setVisibility(View.INVISIBLE);
+            settingsButton.setVisibility(View.INVISIBLE);
+
+            leftTabDivider.setVisibility(View.INVISIBLE);
+            rightTabDivider.setVisibility(View.INVISIBLE);
 
         } else {
             backArrow.setVisibility(View.INVISIBLE);
@@ -147,7 +152,10 @@ public class TabBarFragment extends Fragment {
 
             mapButton.setVisibility(View.VISIBLE);
             leaderboardButton.setVisibility(View.VISIBLE);
-            tabDivider.setVisibility(View.VISIBLE);
+            settingsButton.setVisibility(View.VISIBLE);
+
+            leftTabDivider.setVisibility(View.VISIBLE);
+            rightTabDivider.setVisibility(View.VISIBLE);
         }
     }
 }

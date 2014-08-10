@@ -57,7 +57,6 @@ public class MapFragment extends Fragment implements StarOverlay.StarOverlaySele
     private Fragment currentNotificationFragment;
     private boolean allowShowingNotificationFragment;
 
-    private Button stumblingPowerButton;
     private Button showStumblingDataButton;
     private Button zoomToSelfButton;
 
@@ -79,14 +78,6 @@ public class MapFragment extends Fragment implements StarOverlay.StarOverlaySele
         setupTodayOverlayFragment();
 
         allowShowingNotificationFragment = true;
-
-        stumblingPowerButton = (Button)rootView.findViewById(R.id.stumbling_power_button);
-        stumblingPowerButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ((MainActivity)getActivity()).toggleStumblerServices();
-            }
-        });
 
         showStumblingDataButton = (Button)rootView.findViewById(R.id.show_stumbling_data_button);
         showStumblingDataButton.setOnClickListener(new View.OnClickListener() {

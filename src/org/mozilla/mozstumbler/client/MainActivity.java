@@ -22,6 +22,7 @@ import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 import org.mozilla.mozstumbler.BuildConfig;
+import org.mozilla.mozstumbler.client.fragments.AboutFragment;
 import org.mozilla.mozstumbler.client.fragments.SettingsFragment;
 import org.mozilla.mozstumbler.client.fragments.TabBarFragment;
 import org.mozilla.mozstumbler.client.fragments.leaderboard.LeaderboardFragment;
@@ -40,6 +41,7 @@ import java.util.Properties;
 
 public final class MainActivity extends Activity implements TabBarFragment.OnTabSelectedListener,
         TabBarFragment.OnBackButtonPressedListener,
+        SettingsFragment.AboutSelectedListener,
         StumblingDataFragment.DismissStumblingDataFragmentListener {
 
     public interface MainActivityStateListener {
@@ -64,12 +66,11 @@ public final class MainActivity extends Activity implements TabBarFragment.OnTab
     private boolean          mGeofenceHere = false;
 
     private TabBarFragment tabBarFragment;
-
     private MapFragment mapFragment;
     private LeaderboardFragment leaderboardFragment;
     private SettingsFragment settingsFragment;
+    private AboutFragment aboutFragment;
     private StumblingDataFragment stumblingDataFragment;
-
     private Fragment currentContentFragment;
 
     private MainApp getApp() {
@@ -132,6 +133,9 @@ public final class MainActivity extends Activity implements TabBarFragment.OnTab
             leaderboardFragment = new LeaderboardFragment();
 
             settingsFragment = new SettingsFragment();
+            settingsFragment.setAboutSelectedListener(this);
+
+            aboutFragment = new AboutFragment();
 
             stumblingDataFragment = new StumblingDataFragment();
             stumblingDataFragment.setDismissStumblingDataFragmentListener(this);
@@ -388,6 +392,10 @@ public final class MainActivity extends Activity implements TabBarFragment.OnTab
         currentContentFragment = stumblingDataFragment;
     }
 
+    public boolean isStumblerServiceOn() {
+        return getApp().getService().isScanning();
+    }
+
     public void toggleStumblerServices() {
         getApp().toggleScanning(this);
     }
@@ -421,6 +429,16 @@ public final class MainActivity extends Activity implements TabBarFragment.OnTab
 
             tabBarFragment.toggleBackButton(false, null);
         }
+        else if (currentContentFragment == aboutFragment) {
+
+            getFragmentManager().beginTransaction()
+                    .remove(aboutFragment)
+                    .commit();
+
+            currentContentFragment = settingsFragment;
+
+            tabBarFragment.toggleBackButton(false, null);
+        }
     }
 
     @Override
@@ -430,5 +448,16 @@ public final class MainActivity extends Activity implements TabBarFragment.OnTab
                 .commit();
 
         currentContentFragment = mapFragment;
+    }
+
+    @Override
+    public void aboutSelected() {
+       getFragmentManager().beginTransaction()
+               .add(R.id.content, aboutFragment)
+               .commit();
+
+        currentContentFragment = aboutFragment;
+
+        tabBarFragment.toggleBackButton(true, getString(R.string.about_title));
     }
 }

@@ -103,6 +103,7 @@
     <string name="map_title">Map</string>
     <string name="leaderboard_title">Leaderboard</string>
     <string name="settings_title">Settings</string>
+    <string name="about_title">About</string>
     <string name="back_arrow">&lt;</string>
 
     <!-- Map -->
@@ -122,6 +123,25 @@
     <string name="wifi_status_idle">Idle</string>
     <string name="wifi_status_active">Active</string>
     <string name="wifi_status_disabled">Disabled</string>
+
+    <!-- Settings -->
+    <string name="send_feedback_title">Send Feedback</string>
+    <string name="send_feedback_address">"contact@steamclock.com"</string>
+    <string name="send_feedback_subject">MozStumbler Feedback</string>
+    <string name="send_feedback_text">"Hello, I have some feedback for your app.\n\n"</string>
+
+    <!-- Shared Preferences -->
+    <string name="pref_nickname_key">nickname</string>
+    <string name="pref_stumbler_power_key">stumbler_power</string>
+    <string name="pref_wifi_upload_only_key">wifi_upload_only</string>
+    <string name="pref_send_feedback_key">send_feedback</string>
+    <string name="pref_about_stumbler_key">about_stumbler</string>
+
+    <string name="pref_nickname_title">Nickname</string>
+    <string name="pref_stumbler_power_title">"Stumbler On/Off"</string>
+    <string name="pref_wifi_upload_only_title">Upload only on WiFi</string>
+    <string name="pref_send_feedback_title">Send feedback</string>
+    <string name="pref_about_stumbler_title">About Stumbler</string>
 
     <!-- Developer Overlay -->
     <string name="developer_simulate_coin_reward_title">Coin Reward</string>

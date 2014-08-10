@@ -3,24 +3,28 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <EditTextPreference
-        android:key="nickname_key"
-        android:title="Nickname"/>
+        android:id="@+id/pref_nickname"
+        android:key="@string/pref_nickname_key"
+        android:title="@string/pref_nickname_title"/>
 
     <SwitchPreference
-        android:key="wifi_upload_key"
-        android:title="Upload only on WiFi"/>
+        android:id="@+id/pref_stumbler_power"
+        android:key="@string/pref_stumbler_power_key"
+        android:title="@string/pref_stumbler_power_title"/>
 
     <SwitchPreference
-        android:key="persistent_scanning_key"
-        android:title="Persistent scanning"/>
+        android:id="@+id/pref_wifi_upload_only"
+        android:key="@string/pref_wifi_upload_only_key"
+        android:title="@string/pref_wifi_upload_only_title"/>
 
     <Preference
-        android:title="Force sync data"/>
+        android:id="@+id/pref_send_feedback"
+        android:key="@string/pref_send_feedback_key"
+        android:title="@string/pref_send_feedback_title"/>
 
     <Preference
-        android:title="Send feedback"/>
-
-    <Preference
-        android:title="About Stumbler"/>
+        android:id="@+id/pref_about_stumbler"
+        android:key="@string/pref_about_stumbler_key"
+        android:title="@string/pref_about_stumbler_title"/>
 
 </PreferenceScreen>

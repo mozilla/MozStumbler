@@ -231,7 +231,7 @@ public final class MapActivity extends Activity {
     @SuppressWarnings("ConstantConditions")
     private static OnlineTileSourceBase getTileSource() {
         if (BuildConfig.TILE_SERVER_URL == null) {
-            return TileSourceFactory.DEFAULT_TILE_SOURCE;
+            return TileSourceFactory.MAPQUESTOSM;
         }
         return new XYTileSource("MozStumbler Tile Store",
                                 null,

@@ -107,6 +107,7 @@ public final class MainActivity extends Activity implements TabBarFragment.OnTab
         } else {
             if (actualDayOfMonth != savedDayOfMonth) {
                 mapFragment.resetScoreForToday();
+                getApp().getPrefs().saveTodayDate();
             }
         }
     }

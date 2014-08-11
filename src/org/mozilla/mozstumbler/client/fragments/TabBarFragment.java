@@ -38,7 +38,7 @@ public class TabBarFragment extends Fragment {
     private TextView settingsButton;
 
     private TextView backArrow;
-    private Button backButton;
+    private TextView backButton;
 
     private View leftTabDivider;
     private View rightTabDivider;
@@ -59,7 +59,7 @@ public class TabBarFragment extends Fragment {
         leaderboardButton = (TextView)rootView.findViewById(R.id.leaderboard_button);
         settingsButton = (TextView)rootView.findViewById(R.id.settings_button);
 
-        backButton = (Button)rootView.findViewById(R.id.back_button);
+        backButton = (TextView)rootView.findViewById(R.id.back_button);
         backArrow = (TextView)rootView.findViewById(R.id.back_arrow);
 
         leftTabDivider = rootView.findViewById(R.id.tab_left_divider);

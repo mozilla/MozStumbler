@@ -2,6 +2,8 @@ package org.mozilla.mozstumbler.client.models;
 
 import org.mozilla.mozstumbler.service.Prefs;
 
+import java.util.ArrayList;
+
 /**
  * Created by JeremyChiang on 2014-08-07.
  */
@@ -34,6 +36,10 @@ public class User extends Player {
 
         if (preferences.getUserTotalPoints() < 0) {
             resetScoreForToday();
+            preferences.incrementStarScoreOverall(0);
+            preferences.incrementRainbowScoreOverall(0);
+            preferences.incrementCoinScoreOverall(0);
+
         } else {
             int starScore = preferences.getStarScoreToday();
             int rainbowScore = preferences.getRainbowScoreToday();
@@ -58,7 +64,7 @@ public class User extends Player {
         }
 
         preferences.saveStarScoreToday(getStarScoreToday());
-        preferences.saveStarScoreOverall(preferences.getStarScoreOverall() + getStarScoreToday());
+        preferences.incrementStarScoreOverall(getStarScoreToday());
         saveTotalUserPoints();
     }
 
@@ -79,7 +85,7 @@ public class User extends Player {
         }
 
         preferences.saveRainbowScoreToday(getRainbowScoreToday());
-        preferences.saveRainbowScoreOverall(preferences.getRainbowScoreOverall() + getRainbowScoreToday());
+        preferences.incrementRainbowScoreOverall(getRainbowScoreToday());
         saveTotalUserPoints();
     }
 
@@ -93,7 +99,7 @@ public class User extends Player {
         }
 
         preferences.saveCoinScoreToday(getCoinScoreToday());
-        preferences.saveCoinScoreOverall(preferences.getCoinScoreOverall() + getCoinScoreToday());
+        preferences.incrementCoinScoreOverall(getCoinScoreToday());
         saveTotalUserPoints();
     }
 
@@ -120,6 +126,20 @@ public class User extends Player {
         preferences.saveRainbowScoreToday(0);
         preferences.saveCoinScoreToday(0);
         preferences.saveRainbowCountToday(0);
+    }
+
+    public ArrayList<Score> getStats() {
+        ArrayList<Score> stats = new ArrayList<Score>();
+
+        Score overallStar = new Score(Score.ScoreType.STAR, preferences.getStarScoreOverall());
+        Score overallRainbow = new Score(Score.ScoreType.RAINBOW, preferences.getRainbowScoreOverall());
+        Score overallCoin = new Score(Score.ScoreType.COIN, preferences.getCoinScoreOverall());
+
+        stats.add(overallStar);
+        stats.add(overallRainbow);
+        stats.add(overallCoin);
+
+        return stats;
     }
 
     public void setUserScoreUpdatedListener(UserScoreUpdatedListener userScoreUpdatedListener) {

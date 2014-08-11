@@ -271,19 +271,28 @@ public final class Prefs {
         }
     }
 
-    public void saveStarScoreOverall(int newStarScore) {
+    public void incrementStarScoreOverall(int newStarScore) {
+        int currentStarOverall = getStarScoreOverall();
+        currentStarOverall += newStarScore;
+
         SharedPreferences.Editor editor = getPrefs().edit();
         editor.putInt(STAR_SCORE_OVERALL, newStarScore);
         apply(editor);
     }
 
-    public void saveRainbowScoreOverall(int newRainbowScore) {
+    public void incrementRainbowScoreOverall(int newRainbowScore) {
+        int currentRainbowOverall = getRainbowScoreOverall();
+        currentRainbowOverall += newRainbowScore;
+
         SharedPreferences.Editor editor = getPrefs().edit();
         editor.putInt(RAINBOW_SCORE_OVERALL, newRainbowScore);
         apply(editor);
     }
 
-    public void saveCoinScoreOverall(int newCoinScore) {
+    public void incrementCoinScoreOverall(int newCoinScore) {
+        int currentCoinOveral = getCoinScoreOverall();
+        currentCoinOveral += newCoinScore;
+
         SharedPreferences.Editor editor = getPrefs().edit();
         editor.putInt(COIN_SCORE_OVERALL, newCoinScore);
         apply(editor);

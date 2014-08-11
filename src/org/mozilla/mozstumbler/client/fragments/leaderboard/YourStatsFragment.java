@@ -9,8 +9,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import org.mozilla.mozstumbler.R;
+import org.mozilla.mozstumbler.client.MainActivity;
 import org.mozilla.mozstumbler.client.adapters.StatsAdapter;
 import org.mozilla.mozstumbler.client.developers.SampleData;
+import org.mozilla.mozstumbler.client.models.User;
 import org.mozilla.mozstumbler.client.utilities.MozHelper;
 
 /**
@@ -21,13 +23,17 @@ public class YourStatsFragment extends Fragment {
     private StatsAdapter statsAdapter;
     private LinearLayout statsListView;
 
+    private User user;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_your_stats, container, false);
 
+        user = ((MainActivity)getActivity()).getUser();
+
         statsListView = (LinearLayout)rootView.findViewById(R.id.your_stats_linear_layout_list_container);
 
-        statsAdapter = new StatsAdapter(getActivity(), SampleData.sampleDataForYourStats());
+        statsAdapter = new StatsAdapter(getActivity(), user.getStats());
 
         for (int i = 0; i < statsAdapter.getCount(); i++) {
             statsListView.addView(statsAdapter.getView(i, null, null));

@@ -82,6 +82,7 @@ public class User extends Player {
         if (rainbowCountToday == numOfRainbowsRequiredForCoin) {
             incrementCoinScore();
             rainbowCountToday = 0;
+            preferences.saveRainbowCountToday(rainbowCountToday);
         }
 
         preferences.saveRainbowScoreToday(getRainbowScoreToday());

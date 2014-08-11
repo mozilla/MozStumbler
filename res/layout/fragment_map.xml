@@ -31,6 +31,8 @@
         android:layout_above="@id/today_overlay_fragment"
         android:layout_alignParentRight="true"
         android:layout_weight="1"
+        android:layout_marginRight="@dimen/zoom_to_self_margin"
+        android:layout_marginBottom="@dimen/zoom_to_self_margin"
         android:background="@drawable/geolocation"/>
 
 </RelativeLayout>

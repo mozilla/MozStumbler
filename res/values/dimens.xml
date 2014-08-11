@@ -16,6 +16,7 @@
     <dimen name="today_overlay_icon_size">40dp</dimen>
     <dimen name="today_overlay_icon_margin">20dp</dimen>
     <dimen name="today_overlay_score_left_margin">10dp</dimen>
+    <dimen name="zoom_to_self_margin">10dp</dimen>
 
     <!-- Leaderboard -->
     <dimen name="leaderboard_settings_button_size">30dp</dimen>

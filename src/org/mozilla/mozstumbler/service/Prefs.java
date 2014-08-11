@@ -249,25 +249,25 @@ public final class Prefs {
 
     public int getStarScoreOverall() {
         if (getPrefs().contains(STAR_SCORE_OVERALL)) {
-            return getPrefs().getInt(STAR_SCORE_OVERALL, -1);
+            return getPrefs().getInt(STAR_SCORE_OVERALL, 0);
         } else {
-            return -1;
+            return 0;
         }
     }
 
     public int getRainbowScoreOverall() {
         if (getPrefs().contains(RAINBOW_SCORE_OVERALL)) {
-            return getPrefs().getInt(RAINBOW_SCORE_OVERALL, -1);
+            return getPrefs().getInt(RAINBOW_SCORE_OVERALL, 0);
         } else {
-            return -1;
+            return 0;
         }
     }
 
     public int getCoinScoreOverall() {
         if (getPrefs().contains(COIN_SCORE_OVERALL)) {
-            return getPrefs().getInt(COIN_SCORE_OVERALL, -1);
+            return getPrefs().getInt(COIN_SCORE_OVERALL, 0);
         } else {
-            return -1;
+            return 0;
         }
     }
 

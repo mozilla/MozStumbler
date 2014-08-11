@@ -16,18 +16,18 @@
         <View
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_weight="1"/>
+            android:layout_weight="0.5" />
 
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="5"
+            android:background="@android:color/white"
             android:orientation="vertical"
             android:paddingBottom="@dimen/activity_vertical_margin"
             android:paddingLeft="@dimen/activity_horizontal_margin"
             android:paddingRight="@dimen/activity_horizontal_margin"
-            android:paddingTop="@dimen/activity_vertical_margin"
-            android:background="@android:color/white">
+            android:paddingTop="@dimen/activity_vertical_margin">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -35,19 +35,22 @@
                 android:layout_marginBottom="@dimen/activity_vertical_margin"
                 android:orientation="horizontal">
 
-                <TextView
+                <org.mozilla.mozstumbler.client.fonts.FiraSansBoldTextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="WiFi Status" />
+                    android:text="WiFi Status"
+                    android:textAppearance="@android:style/TextAppearance.Medium" />
 
-                <TextView
+                <org.mozilla.mozstumbler.client.fonts.FiraSansRegularTextView
                     android:id="@+id/wifi_status_text_view"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:gravity="end"
                     android:text="0"
-                    android:textAlignment="viewEnd" />
+                    android:textAlignment="viewEnd"
+                    android:textAppearance="@android:style/TextAppearance.Medium" />
 
             </LinearLayout>
 
@@ -57,19 +60,22 @@
                 android:layout_marginBottom="@dimen/activity_vertical_margin"
                 android:orientation="horizontal">
 
-                <TextView
+                <org.mozilla.mozstumbler.client.fonts.FiraSansBoldTextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Latitude" />
+                    android:text="Latitude"
+                    android:textAppearance="@android:style/TextAppearance.Medium" />
 
-                <TextView
+                <org.mozilla.mozstumbler.client.fonts.FiraSansRegularTextView
                     android:id="@+id/latitude_text_view"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:gravity="end"
                     android:text="0"
-                    android:textAlignment="viewEnd" />
+                    android:textAlignment="viewEnd"
+                    android:textAppearance="@android:style/TextAppearance.Medium" />
 
             </LinearLayout>
 
@@ -79,19 +85,22 @@
                 android:layout_marginBottom="@dimen/activity_vertical_margin"
                 android:orientation="horizontal">
 
-                <TextView
+                <org.mozilla.mozstumbler.client.fonts.FiraSansBoldTextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Longitude" />
+                    android:text="Longitude"
+                    android:textAppearance="@android:style/TextAppearance.Medium" />
 
-                <TextView
+                <org.mozilla.mozstumbler.client.fonts.FiraSansRegularTextView
                     android:id="@+id/longitude_text_view"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:gravity="end"
                     android:text="0"
-                    android:textAlignment="viewEnd" />
+                    android:textAlignment="viewEnd"
+                    android:textAppearance="@android:style/TextAppearance.Medium" />
 
             </LinearLayout>
 
@@ -101,19 +110,22 @@
                 android:layout_marginBottom="@dimen/activity_vertical_margin"
                 android:orientation="horizontal">
 
-                <TextView
+                <org.mozilla.mozstumbler.client.fonts.FiraSansBoldTextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Location Scanned" />
+                    android:text="Location Scanned"
+                    android:textAppearance="@android:style/TextAppearance.Medium" />
 
-                <TextView
+                <org.mozilla.mozstumbler.client.fonts.FiraSansRegularTextView
                     android:id="@+id/location_scanned_text_view"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:gravity="end"
                     android:text="0"
-                    android:textAlignment="viewEnd" />
+                    android:textAlignment="viewEnd"
+                    android:textAppearance="@android:style/TextAppearance.Medium" />
 
             </LinearLayout>
 
@@ -123,19 +135,22 @@
                 android:layout_marginBottom="@dimen/activity_vertical_margin"
                 android:orientation="horizontal">
 
-                <TextView
+                <org.mozilla.mozstumbler.client.fonts.FiraSansBoldTextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Access Points" />
+                    android:text="Access Points"
+                    android:textAppearance="@android:style/TextAppearance.Medium" />
 
-                <TextView
+                <org.mozilla.mozstumbler.client.fonts.FiraSansRegularTextView
                     android:id="@+id/access_points_scanned_text_view"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:gravity="end"
                     android:text="0"
-                    android:textAlignment="viewEnd" />
+                    android:textAlignment="viewEnd"
+                    android:textAppearance="@android:style/TextAppearance.Medium" />
 
             </LinearLayout>
 
@@ -145,19 +160,22 @@
                 android:layout_marginBottom="@dimen/activity_vertical_margin"
                 android:orientation="horizontal">
 
-                <TextView
+                <org.mozilla.mozstumbler.client.fonts.FiraSansBoldTextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Visible Access Points" />
+                    android:text="Visible Access Points"
+                    android:textAppearance="@android:style/TextAppearance.Medium" />
 
-                <TextView
+                <org.mozilla.mozstumbler.client.fonts.FiraSansRegularTextView
                     android:id="@+id/access_points_visible_text_view"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:gravity="end"
                     android:text="0"
-                    android:textAlignment="viewEnd" />
+                    android:textAlignment="viewEnd"
+                    android:textAppearance="@android:style/TextAppearance.Medium" />
 
             </LinearLayout>
 
@@ -167,19 +185,22 @@
                 android:layout_marginBottom="@dimen/activity_vertical_margin"
                 android:orientation="horizontal">
 
-                <TextView
+                <org.mozilla.mozstumbler.client.fonts.FiraSansBoldTextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Cell Towers" />
+                    android:text="Cell Towers"
+                    android:textAppearance="@android:style/TextAppearance.Medium" />
 
-                <TextView
+                <org.mozilla.mozstumbler.client.fonts.FiraSansRegularTextView
                     android:id="@+id/cell_towers_scanned_text_view"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:gravity="end"
                     android:text="0"
-                    android:textAlignment="viewEnd" />
+                    android:textAlignment="viewEnd"
+                    android:textAppearance="@android:style/TextAppearance.Medium" />
 
             </LinearLayout>
 
@@ -189,19 +210,22 @@
                 android:layout_marginBottom="@dimen/activity_vertical_margin"
                 android:orientation="horizontal">
 
-                <TextView
+                <org.mozilla.mozstumbler.client.fonts.FiraSansBoldTextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Visible Cell Towers" />
+                    android:text="Visible Cell Towers"
+                    android:textAppearance="@android:style/TextAppearance.Medium" />
 
-                <TextView
+                <org.mozilla.mozstumbler.client.fonts.FiraSansRegularTextView
                     android:id="@+id/cell_towers_visible_text_view"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:gravity="end"
                     android:text="0"
-                    android:textAlignment="viewEnd" />
+                    android:textAlignment="viewEnd"
+                    android:textAppearance="@android:style/TextAppearance.Medium" />
 
             </LinearLayout>
 
@@ -210,7 +234,7 @@
         <View
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_weight="1"/>
+            android:layout_weight="0.5" />
 
     </LinearLayout>
 

@@ -357,6 +357,7 @@ public final class MainActivity extends Activity implements TabBarFragment.OnTab
                     .commit();
 
             currentContentFragment = mapFragment;
+            mapFragment.updateScoreForToday();
         }
         else if (currentContentFragment != mapFragment) {
 
@@ -365,6 +366,7 @@ public final class MainActivity extends Activity implements TabBarFragment.OnTab
                     .commit();
 
             currentContentFragment = mapFragment;
+            mapFragment.updateScoreForToday();
         }
     }
 
@@ -394,18 +396,6 @@ public final class MainActivity extends Activity implements TabBarFragment.OnTab
                 .commit();
 
         currentContentFragment = settingsFragment;
-    }
-
-    public void showStumblingDataFragment(int containerId) {
-        if (currentContentFragment == technicalDataFragment) {
-            return;
-        }
-
-        getFragmentManager().beginTransaction()
-                .add(containerId, technicalDataFragment)
-                .commit();
-
-        currentContentFragment = technicalDataFragment;
     }
 
     public boolean isStumblerServiceOn() {

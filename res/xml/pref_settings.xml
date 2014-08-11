@@ -2,34 +2,46 @@
 
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <PreferenceCategory
+        android:title="General">
+
     <EditTextPreference
-        android:id="@+id/pref_nickname"
         android:key="@string/pref_nickname_key"
         android:title="@string/pref_nickname_title"/>
 
     <SwitchPreference
-        android:id="@+id/pref_stumbler_power"
         android:key="@string/pref_stumbler_power_key"
         android:title="@string/pref_stumbler_power_title"/>
 
     <SwitchPreference
-        android:id="@+id/pref_wifi_upload_only"
         android:key="@string/pref_wifi_upload_only_key"
         android:title="@string/pref_wifi_upload_only_title"/>
 
     <Preference
-        android:id="@+id/pref_technical_data"
-        android:key="@string/pref_technical_data_key"
-        android:title="@string/pref_technical_data_title"/>
-
-    <Preference
-        android:id="@+id/pref_send_feedback"
         android:key="@string/pref_send_feedback_key"
         android:title="@string/pref_send_feedback_title"/>
 
     <Preference
-        android:id="@+id/pref_about_stumbler"
         android:key="@string/pref_about_stumbler_key"
         android:title="@string/pref_about_stumbler_title"/>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="Developer">
+
+        <Preference
+            android:key="@string/pref_technical_data_key"
+            android:title="@string/pref_technical_data_title"/>
+
+        <Preference
+            android:key="@string/pref_reset_today_score_key"
+            android:title="@string/pref_reset_today_score_title"/>
+
+        <Preference
+            android:key="@string/pref_reset_overall_score_key"
+            android:title="@string/pref_reset_overall_score_title"/>
+
+    </PreferenceCategory>
 
 </PreferenceScreen>

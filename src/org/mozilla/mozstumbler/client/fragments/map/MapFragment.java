@@ -180,6 +180,12 @@ public class MapFragment extends Fragment implements StarOverlay.StarOverlaySele
         overlayManager.addAll(rainbowOverlays);
     }
 
+    public void updateScoreForToday() {
+        if (todayOverlayFragment != null) {
+            todayOverlayFragment.userScoreUpdated(user);
+        }
+    }
+
     public void resetScoreForToday() {
         user.resetScoreForToday();
         todayOverlayFragment.userScoreUpdated(user);

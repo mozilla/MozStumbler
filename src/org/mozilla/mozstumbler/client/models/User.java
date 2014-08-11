@@ -128,6 +128,11 @@ public class User extends Player {
         preferences.saveRainbowCountToday(0);
     }
 
+    public void resetOverallScores() {
+        playerPoints = 0;
+        preferences.clearOverallScores();
+    }
+
     public ArrayList<Score> getStats() {
         ArrayList<Score> stats = new ArrayList<Score>();
 

@@ -11,6 +11,7 @@ import android.view.View;
 
 import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.client.MainActivity;
+import org.mozilla.mozstumbler.client.models.User;
 import org.mozilla.mozstumbler.service.Prefs;
 
 /**
@@ -28,9 +29,12 @@ public class SettingsFragment extends PreferenceFragment {
     private EditTextPreference nicknamePreference;
     private SwitchPreference stumblerPowerPreference;
     private SwitchPreference wifiUploadOnlyPreference;
-    private Preference technicalDataPreference;
     private Preference sendFeedbackPreference;
     private Preference aboutStumblerPreference;
+
+    private Preference technicalDataPreference;
+    private Preference resetTodayScorePreference;
+    private Preference resetOverallScorePreference;
 
     private Prefs sPrefs;
 
@@ -46,9 +50,12 @@ public class SettingsFragment extends PreferenceFragment {
         setupNicknamePreference();
         setupStumblerPowerPreference();
         setupWifiUploadOnlyPreference();
-        setupTechnicalDataPreference();
         setupSendFeedbackPreference();
         setupAboutStumblerPreference();
+
+        setupTechnicalDataPreference();
+        setupResetTodayScorePreference();
+        setupResetOverallScorePreference();
     }
 
     private void setupNicknamePreference() {
@@ -97,21 +104,6 @@ public class SettingsFragment extends PreferenceFragment {
         });
     }
 
-    private void setupTechnicalDataPreference() {
-        technicalDataPreference = getPreferenceManager().findPreference(getString(R.string.pref_technical_data_key));
-        technicalDataPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                if (settingSelectedListener != null) {
-                    settingSelectedListener.technicalDataSelected();
-                    return true;
-                }
-
-                return false;
-            }
-        });
-    }
-
     private void setupSendFeedbackPreference() {
         sendFeedbackPreference = getPreferenceManager().findPreference(getString(R.string.pref_send_feedback_key));
         sendFeedbackPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
@@ -142,6 +134,47 @@ public class SettingsFragment extends PreferenceFragment {
                 }
 
                 return false;
+            }
+        });
+    }
+
+    private void setupTechnicalDataPreference() {
+        technicalDataPreference = getPreferenceManager().findPreference(getString(R.string.pref_technical_data_key));
+        technicalDataPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                if (settingSelectedListener != null) {
+                    settingSelectedListener.technicalDataSelected();
+                    return true;
+                }
+
+                return false;
+            }
+        });
+    }
+
+    private void setupResetTodayScorePreference() {
+        resetTodayScorePreference = getPreferenceManager().findPreference(getString(R.string.pref_reset_today_score_key));
+        resetTodayScorePreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                User user = ((MainActivity)getActivity()).getUser();
+                user.resetScoreForToday();
+
+                return true;
+            }
+        });
+    }
+
+    private void setupResetOverallScorePreference() {
+        resetOverallScorePreference = getPreferenceManager().findPreference(getString(R.string.pref_reset_overall_score_key));
+        resetOverallScorePreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                User user = ((MainActivity)getActivity()).getUser();
+                user.resetOverallScores();
+
+                return true;
             }
         });
     }

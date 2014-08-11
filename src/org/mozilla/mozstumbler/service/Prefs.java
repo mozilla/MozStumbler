@@ -298,6 +298,14 @@ public final class Prefs {
         apply(editor);
     }
 
+    public void clearOverallScores() {
+        SharedPreferences.Editor editor = getPrefs().edit();
+        editor.putInt(STAR_SCORE_OVERALL, 0);
+        editor.putInt(RAINBOW_SCORE_OVERALL, 0);
+        editor.putInt(COIN_SCORE_OVERALL, 0);
+        apply(editor);
+    }
+
     ///
     /// Privates
     ///

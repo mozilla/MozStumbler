@@ -126,6 +126,8 @@
     <string name="wifi_status_disabled">Disabled</string>
 
     <!-- Settings -->
+    <string name="general_settings_title">General</string>
+    <string name="developer_settings_title">Developer</string>
     <string name="send_feedback_title">Send Feedback</string>
     <string name="send_feedback_address">"contact@steamclock.com"</string>
     <string name="send_feedback_subject">MozStumbler Feedback</string>
@@ -135,16 +137,20 @@
     <string name="pref_nickname_key">nickname</string>
     <string name="pref_stumbler_power_key">stumbler_power</string>
     <string name="pref_wifi_upload_only_key">wifi_upload_only</string>
-    <string name="pref_technical_data_key">technical_data_key</string>
     <string name="pref_send_feedback_key">send_feedback</string>
     <string name="pref_about_stumbler_key">about_stumbler</string>
+    <string name="pref_technical_data_key">technical_data_key</string>
+    <string name="pref_reset_today_score_key">reset_today_score_key</string>
+    <string name="pref_reset_overall_score_key">reset_overall_score_key</string>
 
     <string name="pref_nickname_title">Nickname</string>
     <string name="pref_stumbler_power_title">"Stumbler On/Off"</string>
     <string name="pref_wifi_upload_only_title">Upload only on WiFi</string>
-    <string name="pref_technical_data_title">Technical data</string>
     <string name="pref_send_feedback_title">Send feedback</string>
     <string name="pref_about_stumbler_title">About Stumbler</string>
+    <string name="pref_technical_data_title">Technical data</string>
+    <string name="pref_reset_today_score_title">"Reset today's score"</string>
+    <string name="pref_reset_overall_score_title">Reset overall score</string>
 
     <!-- Developer Overlay -->
     <string name="developer_simulate_coin_reward_title">Coin Reward</string>

@@ -27,19 +27,14 @@ public final class Reporter extends BroadcastReceiver {
     private static final String LOG_TAG = "Stumbler:" + Reporter.class.getSimpleName();
     public  static final String ACTION_FLUSH_TO_BUNDLE = AppGlobals.ACTION_NAMESPACE + ".FLUSH";
     private boolean mIsStarted;
-    /**
-     * The maximum time of observation
-     */
+
+    /* The maximum time of observation */
     private static final int REPORTER_WINDOW_MSEC  = 24 * 60 * 60 * 1000; //ms
 
-    /**
-     * The maximum number of Wi-Fi access points in a single observation
-     */
+    /* The maximum number of Wi-Fi access points in a single observation */
     private static final int WIFI_COUNT_WATERMARK = 100;
 
-    /**
-     * The maximum number of cells in a single observation
-     */
+    /* The maximum number of cells in a single observation */
     private static final int CELLS_COUNT_WATERMARK = 50;
 
     private final Context mContext;

@@ -28,7 +28,7 @@ public class PreferencesScreen extends PreferenceActivity {
 
     private static Prefs sPrefs;
 
-    /** Precondition to using this class, call this method to set Prefs */
+    /* Precondition to using this class, call this method to set Prefs */
     public static void setPrefs(Prefs p) {
         sPrefs = p;
     }

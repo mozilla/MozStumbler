@@ -37,7 +37,7 @@ public final class MainActivity extends FragmentActivity {
     public static final String ACTION_BASE = AppGlobals.ACTION_NAMESPACE + ".MainActivity.";
     public static final String ACTION_UPDATE_UI = ACTION_BASE + "UPDATE_UI";
 
-    /** if service exists, start scanning, otherwise do nothing  */
+    /* if service exists, start scanning, otherwise do nothing  */
     public static final String ACTION_UNPAUSE_SCANNING = ACTION_BASE + "UNPAUSE_SCANNING";
 
     private static final String LEADERBOARD_URL = "https://location.services.mozilla.com/leaders";

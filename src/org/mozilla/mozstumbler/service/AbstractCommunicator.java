@@ -54,7 +54,7 @@ public abstract class AbstractCommunicator {
         public int errorCode = -1;
     }
 
-    /** Return non-zero for error, http error code if available */
+    /* Return non-zero for error, http error code if available */
     public abstract NetworkSendResult cleanSend(byte[] data);
 
     public String getNickname() {
@@ -116,7 +116,7 @@ public abstract class AbstractCommunicator {
     }
 
     public enum ZippedState { eNotZipped, eAlreadyZipped };
-    /** Return the number of bytes sent. */
+    /* Return the number of bytes sent. */
     public int send(byte[] data, ZippedState isAlreadyZipped) throws IOException {
         openConnectionAndSetHeaders();
         String logMsg;

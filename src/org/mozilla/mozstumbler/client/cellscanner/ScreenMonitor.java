@@ -13,7 +13,7 @@ import android.os.PowerManager;
 import android.telephony.CellLocation;
 import android.util.Log;
 
-/**
+/*
  * Determine whether the cell location is updated when the screen is off
  * https://code.google.com/p/android/issues/detail?id=10931
  */

@@ -9,7 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-/**
+/*
  * Registered as a receiver in manifest. Starts the StumblerService in passive listening mode.
  * Using GPS_* event changes during development, switch to using the existing permissions for a
  * service on Fennec.

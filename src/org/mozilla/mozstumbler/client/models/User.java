@@ -64,7 +64,7 @@ public class User extends Player {
         }
 
         preferences.saveStarScoreToday(getStarScoreToday());
-        preferences.incrementStarScoreOverall(getStarScoreToday());
+        preferences.incrementStarScoreOverall(Score.POINT_PER_STAR);
         saveTotalUserPoints();
     }
 
@@ -85,7 +85,7 @@ public class User extends Player {
         }
 
         preferences.saveRainbowScoreToday(getRainbowScoreToday());
-        preferences.incrementRainbowScoreOverall(getRainbowScoreToday());
+        preferences.incrementRainbowScoreOverall(Score.POINT_PER_RAINBOW);
         saveTotalUserPoints();
     }
 
@@ -99,7 +99,7 @@ public class User extends Player {
         }
 
         preferences.saveCoinScoreToday(getCoinScoreToday());
-        preferences.incrementCoinScoreOverall(getCoinScoreToday());
+        preferences.incrementCoinScoreOverall(Score.POINT_PER_COIN);
         saveTotalUserPoints();
     }
 

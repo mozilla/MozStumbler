@@ -163,6 +163,23 @@ public final class MainActivity extends Activity implements TabBarFragment.OnTab
         Log.d(LOGTAG, "onCreate");
     }
 
+    @Override
+    public void onBackPressed() {
+        if (currentContentFragment == aboutFragment || currentContentFragment == technicalDataFragment) {
+            getFragmentManager().beginTransaction()
+                    .remove(currentContentFragment)
+                    .commit();
+
+            currentContentFragment = settingsFragment;
+
+            tabBarFragment.toggleBackButton(false, null);
+
+            return;
+        }
+
+        super.onBackPressed();
+    }
+
     public User getUser() {
         return user;
     }

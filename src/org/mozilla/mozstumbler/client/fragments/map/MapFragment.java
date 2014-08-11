@@ -3,8 +3,6 @@ package org.mozilla.mozstumbler.client.fragments.map;
 import android.app.Fragment;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.PointF;
-import android.location.Location;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,7 +16,6 @@ import com.mapbox.mapboxsdk.overlay.Overlay;
 import com.mapbox.mapboxsdk.overlay.OverlayManager;
 import com.mapbox.mapboxsdk.overlay.UserLocationOverlay;
 import com.mapbox.mapboxsdk.views.MapView;
-import com.mapbox.mapboxsdk.views.util.Projection;
 
 import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.client.MainActivity;
@@ -57,14 +54,11 @@ public class MapFragment extends Fragment implements StarOverlay.StarOverlaySele
     private Fragment currentNotificationFragment;
     private boolean allowShowingNotificationFragment;
 
-    private Button showStumblingDataButton;
     private Button zoomToSelfButton;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        user = new User("Steamclock");
-        user.setCoinRewardedListener(this);
     }
 
     @Override
@@ -72,6 +66,7 @@ public class MapFragment extends Fragment implements StarOverlay.StarOverlaySele
         View rootView = inflater.inflate(R.layout.fragment_map, container, false);
 
         mapView = (MapView)rootView.findViewById(R.id.map_view);
+        user = ((MainActivity)getActivity()).getUser();
 
         setupUserLocationOverlay();
         setupStarsAndRainbows();
@@ -109,9 +104,9 @@ public class MapFragment extends Fragment implements StarOverlay.StarOverlaySele
 
     private void setupTodayOverlayFragment() {
         todayOverlayFragment = (TodayOverlayFragment)getFragmentManager().findFragmentById(R.id.today_overlay_fragment);
-        todayOverlayFragment.setStarScore(user.getStarScore());
-        todayOverlayFragment.setRainbowScore(user.getRainbowScore());
-        todayOverlayFragment.setCoinScore(user.getCoinScore());
+        todayOverlayFragment.setStarScore(user.getStarScoreToday());
+        todayOverlayFragment.setRainbowScore(user.getRainbowScoreToday());
+        todayOverlayFragment.setCoinScore(user.getCoinScoreToday());
         user.setUserScoreUpdatedListener(todayOverlayFragment);
     }
 
@@ -183,6 +178,11 @@ public class MapFragment extends Fragment implements StarOverlay.StarOverlaySele
         }
 
         overlayManager.addAll(rainbowOverlays);
+    }
+
+    public void resetScoreForToday() {
+        user.resetScoreForToday();
+        todayOverlayFragment.userScoreUpdated(user);
     }
 
     @Override

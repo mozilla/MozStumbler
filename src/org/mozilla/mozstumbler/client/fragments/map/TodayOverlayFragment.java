@@ -44,8 +44,8 @@ public class TodayOverlayFragment extends Fragment implements User.UserScoreUpda
 
     @Override
     public void userScoreUpdated(User user) {
-        setStarScore(user.getStarScore());
-        setRainbowScore(user.getRainbowScore());
-        setCoinScore(user.getCoinScore());
+        setStarScore(user.getStarScoreToday());
+        setRainbowScore(user.getRainbowScoreToday());
+        setCoinScore(user.getCoinScoreToday());
     }
 }

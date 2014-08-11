@@ -20,6 +20,7 @@ import org.mozilla.mozstumbler.client.fragments.TabBarFragment;
 import org.mozilla.mozstumbler.client.fragments.TechnicalDataFragment;
 import org.mozilla.mozstumbler.client.fragments.leaderboard.LeaderboardFragment;
 import org.mozilla.mozstumbler.client.fragments.map.MapFragment;
+import org.mozilla.mozstumbler.client.models.User;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.datahandling.DataStorageContract;
 import org.mozilla.mozstumbler.service.utils.DateTimeUtils;
@@ -27,6 +28,7 @@ import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.service.StumblerService;
 
 import java.io.IOException;
+import java.util.Calendar;
 import java.util.Properties;
 
 public final class MainActivity extends Activity implements TabBarFragment.OnTabSelectedListener,
@@ -62,6 +64,8 @@ public final class MainActivity extends Activity implements TabBarFragment.OnTab
     private AboutFragment aboutFragment;
     private Fragment currentContentFragment;
 
+    private User user;
+
     private MainApp getApp() {
         return (MainApp) this.getApplication();
     }
@@ -88,6 +92,22 @@ public final class MainActivity extends Activity implements TabBarFragment.OnTab
 
         setGeofenceText();
         updateUiOnMainThread();
+
+        checkIfNewDay();
+    }
+
+    private void checkIfNewDay() {
+        Calendar cal = Calendar.getInstance();
+        int actualDayOfMonth = cal.get(Calendar.DAY_OF_MONTH);
+        int savedDayOfMonth = getApp().getPrefs().getSavedDate();
+
+        if (savedDayOfMonth < 0) {
+            getApp().getPrefs().saveTodayDate();
+        } else {
+            if (actualDayOfMonth != savedDayOfMonth) {
+                mapFragment.resetScoreForToday();
+            }
+        }
     }
 
     @Override
@@ -127,6 +147,9 @@ public final class MainActivity extends Activity implements TabBarFragment.OnTab
             technicalDataFragment = new TechnicalDataFragment();
             aboutFragment = new AboutFragment();
 
+            user = new User("Steamclock");
+            user.setCoinRewardedListener(mapFragment);
+
             showTabBarFragment();
             showMapFragment();
         }
@@ -136,6 +159,10 @@ public final class MainActivity extends Activity implements TabBarFragment.OnTab
         }
 
         Log.d(LOGTAG, "onCreate");
+    }
+
+    public User getUser() {
+        return user;
     }
 
     void checkGps() {

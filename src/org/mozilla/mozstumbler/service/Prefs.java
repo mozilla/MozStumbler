@@ -13,6 +13,9 @@ import android.os.Build.VERSION;
 import android.text.TextUtils;
 import android.util.Log;
 
+import java.util.Calendar;
+import java.util.Date;
+
 public final class Prefs {
     private static final String     LOGTAG        = Prefs.class.getName();
     public  static final String     PREFS_FILE    = Prefs.class.getName();
@@ -26,6 +29,7 @@ public final class Prefs {
     public  static final String     WIFI_SCAN_ALWAYS = "wifi_scan_always";
     private static final String     FIREFOX_SCAN_ENABLED = "firefox_scan_on";
     private static final String     MOZ_API_KEY = "moz_api_key";
+    private static final String     IS_NEW_DAY = "is_new_day";
 
     private final SharedPreferences mSharedPrefs;
     static private Prefs sInstance;
@@ -144,6 +148,23 @@ public final class Prefs {
 
     public void setWifiScanAlways(boolean b) {
         setBoolPref(WIFI_SCAN_ALWAYS, b);
+    }
+
+    public int getSavedDate() {
+        if (getPrefs().contains(IS_NEW_DAY)) {
+            return getPrefs().getInt(IS_NEW_DAY, -1);
+        } else {
+            return -1;
+        }
+    }
+
+    public void saveTodayDate() {
+        Calendar cal = Calendar.getInstance();
+        int dayOfMonth = cal.get(Calendar.DAY_OF_MONTH);
+
+        SharedPreferences.Editor editor = getPrefs().edit();
+        editor.putInt(IS_NEW_DAY, dayOfMonth);
+        apply(editor);
     }
 
     ///

@@ -13,9 +13,9 @@ public class User extends Player {
         public void coinRewarded();
     }
 
-    private Score starScore;
-    private Score rainbowScore;
-    private Score coinScore;
+    private Score starScoreToday;
+    private Score rainbowScoreToday;
+    private Score coinScoreToday;
 
     private int rainbowCount;
     private final int numOfRainbowsRequiredForCoin = 2;
@@ -26,13 +26,11 @@ public class User extends Player {
     public User(String userName) {
         super(userName, 0, 0);
 
-        starScore = new Score(Score.ScoreType.STAR, 0);
-        rainbowScore = new Score(Score.ScoreType.RAINBOW, 0);
-        coinScore = new Score(Score.ScoreType.COIN, 0);
+        resetScoreForToday();
     }
 
     public void incrementStarScore() {
-        starScore.setScorePoints(starScore.getScorePoints() + Score.POINT_PER_STAR);
+        starScoreToday.setScorePoints(starScoreToday.getScorePoints() + Score.POINT_PER_STAR);
 
         if (userScoreUpdatedListener != null) {
             userScoreUpdatedListener.userScoreUpdated(this);
@@ -40,7 +38,7 @@ public class User extends Player {
     }
 
     public void incrementRainbowScore() {
-        rainbowScore.setScorePoints(rainbowScore.getScorePoints() + Score.POINT_PER_RAINBOW);
+        rainbowScoreToday.setScorePoints(rainbowScoreToday.getScorePoints() + Score.POINT_PER_RAINBOW);
 
         if (userScoreUpdatedListener != null) {
             userScoreUpdatedListener.userScoreUpdated(this);
@@ -55,7 +53,7 @@ public class User extends Player {
     }
 
     private void incrementCoinScore() {
-        coinScore.setScorePoints(coinScore.getScorePoints() + Score.POINT_PER_COIN);
+        coinScoreToday.setScorePoints(coinScoreToday.getScorePoints() + Score.POINT_PER_COIN);
 
         if (userScoreUpdatedListener != null) {
             userScoreUpdatedListener.userScoreUpdated(this);
@@ -63,16 +61,24 @@ public class User extends Player {
         }
     }
 
-    public int getStarScore() {
-        return starScore.getScorePoints();
+    public int getStarScoreToday() {
+        return starScoreToday.getScorePoints();
     }
 
-    public int getRainbowScore() {
-        return rainbowScore.getScorePoints();
+    public int getRainbowScoreToday() {
+        return rainbowScoreToday.getScorePoints();
     }
 
-    public int getCoinScore() {
-        return coinScore.getScorePoints();
+    public int getCoinScoreToday() {
+        return coinScoreToday.getScorePoints();
+    }
+
+    public void resetScoreForToday() {
+        starScoreToday = new Score(Score.ScoreType.STAR, 0);
+        rainbowScoreToday = new Score(Score.ScoreType.RAINBOW, 0);
+        coinScoreToday = new Score(Score.ScoreType.COIN, 0);
+
+        rainbowCount = 0;
     }
 
     public void setUserScoreUpdatedListener(UserScoreUpdatedListener userScoreUpdatedListener) {

@@ -276,7 +276,7 @@ public final class Prefs {
         currentStarOverall += newStarScore;
 
         SharedPreferences.Editor editor = getPrefs().edit();
-        editor.putInt(STAR_SCORE_OVERALL, newStarScore);
+        editor.putInt(STAR_SCORE_OVERALL, currentStarOverall);
         apply(editor);
     }
 
@@ -285,7 +285,7 @@ public final class Prefs {
         currentRainbowOverall += newRainbowScore;
 
         SharedPreferences.Editor editor = getPrefs().edit();
-        editor.putInt(RAINBOW_SCORE_OVERALL, newRainbowScore);
+        editor.putInt(RAINBOW_SCORE_OVERALL, currentRainbowOverall);
         apply(editor);
     }
 
@@ -294,7 +294,7 @@ public final class Prefs {
         currentCoinOveral += newCoinScore;
 
         SharedPreferences.Editor editor = getPrefs().edit();
-        editor.putInt(COIN_SCORE_OVERALL, newCoinScore);
+        editor.putInt(COIN_SCORE_OVERALL, currentCoinOveral);
         apply(editor);
     }
 

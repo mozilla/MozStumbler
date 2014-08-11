@@ -219,7 +219,7 @@ public class MapFragment extends Fragment implements StarOverlay.StarOverlaySele
                 mapView.invalidate();
 
                 user.incrementStarScore();
-                Toast.makeText(getActivity(), getString(R.string.star_collected), Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getActivity(), getString(R.string.star_collected), Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -252,7 +252,7 @@ public class MapFragment extends Fragment implements StarOverlay.StarOverlaySele
                 mapView.invalidate();
 
                 user.incrementRainbowScore();
-                Toast.makeText(getActivity(), getString(R.string.rainbow_collected), Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getActivity(), getString(R.string.rainbow_collected), Toast.LENGTH_SHORT).show();
             }
         }
     }

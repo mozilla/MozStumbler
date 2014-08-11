@@ -58,6 +58,7 @@ public class User extends Player {
         }
 
         preferences.saveStarScoreToday(getStarScoreToday());
+        preferences.saveStarScoreOverall(preferences.getStarScoreOverall() + getStarScoreToday());
         saveTotalUserPoints();
     }
 
@@ -78,6 +79,7 @@ public class User extends Player {
         }
 
         preferences.saveRainbowScoreToday(getRainbowScoreToday());
+        preferences.saveRainbowScoreOverall(preferences.getRainbowScoreOverall() + getRainbowScoreToday());
         saveTotalUserPoints();
     }
 
@@ -91,6 +93,7 @@ public class User extends Player {
         }
 
         preferences.saveCoinScoreToday(getCoinScoreToday());
+        preferences.saveCoinScoreOverall(preferences.getCoinScoreOverall() + getCoinScoreToday());
         saveTotalUserPoints();
     }
 
@@ -117,7 +120,6 @@ public class User extends Player {
         preferences.saveRainbowScoreToday(0);
         preferences.saveCoinScoreToday(0);
         preferences.saveRainbowCountToday(0);
-        preferences.saveUserTotalPoints(0);
     }
 
     public void setUserScoreUpdatedListener(UserScoreUpdatedListener userScoreUpdatedListener) {

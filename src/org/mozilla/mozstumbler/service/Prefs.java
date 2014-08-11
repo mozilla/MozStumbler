@@ -37,6 +37,10 @@ public final class Prefs {
     private static final String     RAINBOW_COUNT_TODAY = "rainbow_count_today";
     private static final String     USER_TOTAL_POINTS = "user_total_points";
 
+    private static final String     STAR_SCORE_OVERALL = "star_score_overall";
+    private static final String     RAINBOW_SCORE_OVERALL = "rainbow_score_overall";
+    private static final String     COIN_SCORE_OVERALL = "coin_score_overall";
+
     private final SharedPreferences mSharedPrefs;
     static private Prefs sInstance;
 
@@ -240,6 +244,48 @@ public final class Prefs {
     public void saveUserTotalPoints(int newTotalPoints) {
         SharedPreferences.Editor editor = getPrefs().edit();
         editor.putInt(USER_TOTAL_POINTS, newTotalPoints);
+        apply(editor);
+    }
+
+    public int getStarScoreOverall() {
+        if (getPrefs().contains(STAR_SCORE_OVERALL)) {
+            return getPrefs().getInt(STAR_SCORE_OVERALL, -1);
+        } else {
+            return -1;
+        }
+    }
+
+    public int getRainbowScoreOverall() {
+        if (getPrefs().contains(RAINBOW_SCORE_OVERALL)) {
+            return getPrefs().getInt(RAINBOW_SCORE_OVERALL, -1);
+        } else {
+            return -1;
+        }
+    }
+
+    public int getCoinScoreOverall() {
+        if (getPrefs().contains(COIN_SCORE_OVERALL)) {
+            return getPrefs().getInt(COIN_SCORE_OVERALL, -1);
+        } else {
+            return -1;
+        }
+    }
+
+    public void saveStarScoreOverall(int newStarScore) {
+        SharedPreferences.Editor editor = getPrefs().edit();
+        editor.putInt(STAR_SCORE_OVERALL, newStarScore);
+        apply(editor);
+    }
+
+    public void saveRainbowScoreOverall(int newRainbowScore) {
+        SharedPreferences.Editor editor = getPrefs().edit();
+        editor.putInt(RAINBOW_SCORE_OVERALL, newRainbowScore);
+        apply(editor);
+    }
+
+    public void saveCoinScoreOverall(int newCoinScore) {
+        SharedPreferences.Editor editor = getPrefs().edit();
+        editor.putInt(COIN_SCORE_OVERALL, newCoinScore);
         apply(editor);
     }
 

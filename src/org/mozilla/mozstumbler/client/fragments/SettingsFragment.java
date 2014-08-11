@@ -8,7 +8,6 @@ import android.preference.PreferenceFragment;
 import android.preference.SwitchPreference;
 import android.text.TextUtils;
 import android.view.View;
-import android.widget.Switch;
 
 import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.client.MainActivity;
@@ -19,15 +18,17 @@ import org.mozilla.mozstumbler.service.Prefs;
  */
 public class SettingsFragment extends PreferenceFragment {
 
-    public interface AboutSelectedListener {
+    public interface SettingSelectedListener {
+        public void technicalDataSelected();
         public void aboutSelected();
     }
 
-    private AboutSelectedListener aboutSelectedListener;
+    private SettingSelectedListener settingSelectedListener;
 
     private EditTextPreference nicknamePreference;
     private SwitchPreference stumblerPowerPreference;
     private SwitchPreference wifiUploadOnlyPreference;
+    private Preference technicalDataPreference;
     private Preference sendFeedbackPreference;
     private Preference aboutStumblerPreference;
 
@@ -45,6 +46,7 @@ public class SettingsFragment extends PreferenceFragment {
         setupNicknamePreference();
         setupStumblerPowerPreference();
         setupWifiUploadOnlyPreference();
+        setupTechnicalDataPreference();
         setupSendFeedbackPreference();
         setupAboutStumblerPreference();
     }
@@ -95,6 +97,21 @@ public class SettingsFragment extends PreferenceFragment {
         });
     }
 
+    private void setupTechnicalDataPreference() {
+        technicalDataPreference = getPreferenceManager().findPreference(getString(R.string.pref_technical_data_key));
+        technicalDataPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                if (settingSelectedListener != null) {
+                    settingSelectedListener.technicalDataSelected();
+                    return true;
+                }
+
+                return false;
+            }
+        });
+    }
+
     private void setupSendFeedbackPreference() {
         sendFeedbackPreference = getPreferenceManager().findPreference(getString(R.string.pref_send_feedback_key));
         sendFeedbackPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
@@ -119,8 +136,8 @@ public class SettingsFragment extends PreferenceFragment {
         aboutStumblerPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                if (aboutSelectedListener != null) {
-                    aboutSelectedListener.aboutSelected();
+                if (settingSelectedListener != null) {
+                    settingSelectedListener.aboutSelected();
                     return true;
                 }
 
@@ -135,7 +152,7 @@ public class SettingsFragment extends PreferenceFragment {
         view.setBackgroundColor(getResources().getColor(android.R.color.white));
     }
 
-    public void setAboutSelectedListener(AboutSelectedListener aboutSelectedListener) {
-        this.aboutSelectedListener = aboutSelectedListener;
+    public void setSettingSelectedListener(SettingSelectedListener settingSelectedListener) {
+        this.settingSelectedListener = settingSelectedListener;
     }
 }

@@ -1,4 +1,4 @@
-package org.mozilla.mozstumbler.client.fragments.monitor;
+package org.mozilla.mozstumbler.client.fragments;
 
 import android.app.Activity;
 import android.app.Fragment;
@@ -15,13 +15,7 @@ import org.mozilla.mozstumbler.service.scanners.WifiScanner;
 /**
  * Created by JeremyChiang on 2014-08-06.
  */
-public class StumblingDataFragment extends Fragment {
-
-    public interface DismissStumblingDataFragmentListener {
-        public void dismissStumblingDataFragment();
-    }
-
-    private DismissStumblingDataFragmentListener dismissStumblingDataFragmentListener;
+public class TechnicalDataFragment extends Fragment {
 
     private int wifiStatus;
     private double latitude;
@@ -48,6 +42,7 @@ public class StumblingDataFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_stumbling_data, container, false);
+        rootView.setBackgroundColor(getResources().getColor(android.R.color.white));
 
         wifiStatusTextView = (TextView)rootView.findViewById(R.id.wifi_status_text_view);
         latitudeTextView = (TextView)rootView.findViewById(R.id.latitude_text_view);
@@ -59,13 +54,6 @@ public class StumblingDataFragment extends Fragment {
 
         cellTowersScannedTextView = (TextView)rootView.findViewById(R.id.cell_towers_scanned_text_view);
         cellTowersVisibleTextView = (TextView)rootView.findViewById(R.id.cell_towers_visible_text_view);
-
-        rootView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dismissStumblingDataFragmentListener.dismissStumblingDataFragment();
-            }
-        });
 
         setWifiStatus(wifiStatus);
         setLatitude(latitude);
@@ -79,10 +67,6 @@ public class StumblingDataFragment extends Fragment {
         setCellTowersVisible(cellTowersVisible);
 
         return rootView;
-    }
-
-    public void setDismissStumblingDataFragmentListener(DismissStumblingDataFragmentListener dismissStumblingDataFragmentListener) {
-        this.dismissStumblingDataFragmentListener = dismissStumblingDataFragmentListener;
     }
 
     public void updateDataWithBundle(Bundle bundle) {

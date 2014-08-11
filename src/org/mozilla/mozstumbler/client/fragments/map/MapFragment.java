@@ -79,14 +79,6 @@ public class MapFragment extends Fragment implements StarOverlay.StarOverlaySele
 
         allowShowingNotificationFragment = true;
 
-        showStumblingDataButton = (Button)rootView.findViewById(R.id.show_stumbling_data_button);
-        showStumblingDataButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ((MainActivity)getActivity()).showStumblingDataFragment(R.id.map_window);
-            }
-        });
-
         setupZoomToSelfButton(rootView);
 
         return rootView;

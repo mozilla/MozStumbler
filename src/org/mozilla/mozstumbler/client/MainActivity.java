@@ -7,42 +7,31 @@ import android.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
-import android.graphics.Color;
-import android.location.Location;
 import android.location.LocationManager;
-import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.support.v4.app.FragmentActivity;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.CompoundButton;
-import android.widget.TextView;
+
 import org.mozilla.mozstumbler.BuildConfig;
 import org.mozilla.mozstumbler.client.fragments.AboutFragment;
 import org.mozilla.mozstumbler.client.fragments.SettingsFragment;
 import org.mozilla.mozstumbler.client.fragments.TabBarFragment;
+import org.mozilla.mozstumbler.client.fragments.TechnicalDataFragment;
 import org.mozilla.mozstumbler.client.fragments.leaderboard.LeaderboardFragment;
 import org.mozilla.mozstumbler.client.fragments.map.MapFragment;
-import org.mozilla.mozstumbler.client.fragments.monitor.StumblingDataFragment;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.datahandling.DataStorageContract;
 import org.mozilla.mozstumbler.service.utils.DateTimeUtils;
-import org.mozilla.mozstumbler.client.mapview.MapActivity;
 import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.service.StumblerService;
-import org.mozilla.mozstumbler.service.scanners.WifiScanner;
 
 import java.io.IOException;
 import java.util.Properties;
 
 public final class MainActivity extends Activity implements TabBarFragment.OnTabSelectedListener,
         TabBarFragment.OnBackButtonPressedListener,
-        SettingsFragment.AboutSelectedListener,
-        StumblingDataFragment.DismissStumblingDataFragmentListener {
+        SettingsFragment.SettingSelectedListener {
 
     public interface MainActivityStateListener {
         public void backgrounded();
@@ -69,8 +58,8 @@ public final class MainActivity extends Activity implements TabBarFragment.OnTab
     private MapFragment mapFragment;
     private LeaderboardFragment leaderboardFragment;
     private SettingsFragment settingsFragment;
+    private TechnicalDataFragment technicalDataFragment;
     private AboutFragment aboutFragment;
-    private StumblingDataFragment stumblingDataFragment;
     private Fragment currentContentFragment;
 
     private MainApp getApp() {
@@ -133,12 +122,10 @@ public final class MainActivity extends Activity implements TabBarFragment.OnTab
             leaderboardFragment = new LeaderboardFragment();
 
             settingsFragment = new SettingsFragment();
-            settingsFragment.setAboutSelectedListener(this);
+            settingsFragment.setSettingSelectedListener(this);
 
+            technicalDataFragment = new TechnicalDataFragment();
             aboutFragment = new AboutFragment();
-
-            stumblingDataFragment = new StumblingDataFragment();
-            stumblingDataFragment.setDismissStumblingDataFragmentListener(this);
 
             showTabBarFragment();
             showMapFragment();
@@ -203,7 +190,7 @@ public final class MainActivity extends Activity implements TabBarFragment.OnTab
 
         boolean isGeofenced = service.isGeofenced();
 
-        if (stumblingDataFragment != null) {
+        if (technicalDataFragment != null) {
             Bundle dataBundle = new Bundle();
 
             dataBundle.putInt(StumblerService.KEY_WIFI_STATUS, wifiStatus);
@@ -215,7 +202,7 @@ public final class MainActivity extends Activity implements TabBarFragment.OnTab
             dataBundle.putInt(StumblerService.KEY_CELL_TOWERS_SCANNED, cellTowersScanned);
             dataBundle.putInt(StumblerService.KEY_CELL_TOWERS_VISIBLE, cellTowersVisible);
 
-            stumblingDataFragment.updateDataWithBundle(dataBundle);
+            technicalDataFragment.updateDataWithBundle(dataBundle);
         }
 
 //        String lastLocationString = (mGpsFixes > 0 && locationsScanned > 0)?
@@ -381,15 +368,15 @@ public final class MainActivity extends Activity implements TabBarFragment.OnTab
     }
 
     public void showStumblingDataFragment(int containerId) {
-        if (currentContentFragment == stumblingDataFragment) {
+        if (currentContentFragment == technicalDataFragment) {
             return;
         }
 
         getFragmentManager().beginTransaction()
-                .add(containerId, stumblingDataFragment)
+                .add(containerId, technicalDataFragment)
                 .commit();
 
-        currentContentFragment = stumblingDataFragment;
+        currentContentFragment = technicalDataFragment;
     }
 
     public boolean isStumblerServiceOn() {
@@ -429,6 +416,15 @@ public final class MainActivity extends Activity implements TabBarFragment.OnTab
 
             tabBarFragment.toggleBackButton(false, null);
         }
+        else if (currentContentFragment == technicalDataFragment) {
+            getFragmentManager().beginTransaction()
+                    .remove(technicalDataFragment)
+                    .commit();
+
+            currentContentFragment = settingsFragment;
+
+            tabBarFragment.toggleBackButton(false, null);
+        }
         else if (currentContentFragment == aboutFragment) {
 
             getFragmentManager().beginTransaction()
@@ -442,12 +438,14 @@ public final class MainActivity extends Activity implements TabBarFragment.OnTab
     }
 
     @Override
-    public void dismissStumblingDataFragment() {
+    public void technicalDataSelected() {
         getFragmentManager().beginTransaction()
-                .remove(stumblingDataFragment)
+                .add(R.id.content, technicalDataFragment)
                 .commit();
 
-        currentContentFragment = mapFragment;
+        currentContentFragment = technicalDataFragment;
+
+        tabBarFragment.toggleBackButton(true, getString(R.string.technical_data_title));
     }
 
     @Override

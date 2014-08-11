@@ -103,6 +103,7 @@
     <string name="map_title">Map</string>
     <string name="leaderboard_title">Leaderboard</string>
     <string name="settings_title">Settings</string>
+    <string name="technical_data_title">Technical Data</string>
     <string name="about_title">About</string>
     <string name="back_arrow">&lt;</string>
 
@@ -134,12 +135,14 @@
     <string name="pref_nickname_key">nickname</string>
     <string name="pref_stumbler_power_key">stumbler_power</string>
     <string name="pref_wifi_upload_only_key">wifi_upload_only</string>
+    <string name="pref_technical_data_key">technical_data_key</string>
     <string name="pref_send_feedback_key">send_feedback</string>
     <string name="pref_about_stumbler_key">about_stumbler</string>
 
     <string name="pref_nickname_title">Nickname</string>
     <string name="pref_stumbler_power_title">"Stumbler On/Off"</string>
     <string name="pref_wifi_upload_only_title">Upload only on WiFi</string>
+    <string name="pref_technical_data_title">Technical data</string>
     <string name="pref_send_feedback_title">Send feedback</string>
     <string name="pref_about_stumbler_title">About Stumbler</string>
 

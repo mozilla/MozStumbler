@@ -33,9 +33,9 @@ public class TabBarFragment extends Fragment {
     private OnTabSelectedListener tabSelectedListener;
     private OnBackButtonPressedListener backButtonPressedListener;
 
-    private Button mapButton;
-    private Button leaderboardButton;
-    private Button settingsButton;
+    private TextView mapButton;
+    private TextView leaderboardButton;
+    private TextView settingsButton;
 
     private TextView backArrow;
     private Button backButton;
@@ -55,9 +55,9 @@ public class TabBarFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_tab_bar, container, false);
 
-        mapButton = (Button)rootView.findViewById(R.id.map_button);
-        leaderboardButton = (Button)rootView.findViewById(R.id.leaderboard_button);
-        settingsButton = (Button)rootView.findViewById(R.id.settings_button);
+        mapButton = (TextView)rootView.findViewById(R.id.map_button);
+        leaderboardButton = (TextView)rootView.findViewById(R.id.leaderboard_button);
+        settingsButton = (TextView)rootView.findViewById(R.id.settings_button);
 
         backButton = (Button)rootView.findViewById(R.id.back_button);
         backArrow = (TextView)rootView.findViewById(R.id.back_arrow);

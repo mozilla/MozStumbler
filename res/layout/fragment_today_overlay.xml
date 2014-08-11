@@ -24,7 +24,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1">
 
-            <TextView
+            <org.mozilla.mozstumbler.client.fonts.FiraSansBoldTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
@@ -45,7 +45,7 @@
                 android:layout_centerVertical="true"
                 android:src="@drawable/star_score_board" />
 
-            <TextView
+            <org.mozilla.mozstumbler.client.fonts.FiraSansRegularTextView
                 android:id="@+id/star_score_text_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -68,7 +68,7 @@
                 android:layout_centerVertical="true"
                 android:src="@drawable/rainbow_score_board" />
 
-            <TextView
+            <org.mozilla.mozstumbler.client.fonts.FiraSansRegularTextView
                 android:id="@+id/rainbow_score_text_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -91,7 +91,7 @@
                 android:layout_centerVertical="true"
                 android:src="@drawable/gold_coin_score_board" />
 
-            <TextView
+            <org.mozilla.mozstumbler.client.fonts.FiraSansRegularTextView
                 android:id="@+id/coin_score_text_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

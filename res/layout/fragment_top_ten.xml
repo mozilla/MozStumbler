@@ -15,7 +15,7 @@
         android:orientation="horizontal"
         android:background="@color/list_item_background_color">
 
-        <TextView
+        <org.mozilla.mozstumbler.client.fonts.FiraSansBoldTextView
             style="@style/LeaderboardListSectionHeaderFont"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -25,7 +25,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent">
 
-            <TextView
+            <org.mozilla.mozstumbler.client.fonts.FiraSansRegularTextView
                 android:id="@+id/active_users_text_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

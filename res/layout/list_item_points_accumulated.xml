@@ -13,7 +13,7 @@
         android:paddingLeft="@dimen/activity_horizontal_margin"
         android:paddingRight="@dimen/activity_horizontal_margin">
 
-        <TextView
+        <org.mozilla.mozstumbler.client.fonts.FiraSansRegularTextView
             style="@style/LeaderboardListItemFont"
             android:id="@+id/points_accumulated_title_text_view"
             android:layout_width="wrap_content"
@@ -25,7 +25,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
 
-            <TextView
+            <org.mozilla.mozstumbler.client.fonts.FiraSansRegularTextView
                 style="@style/LeaderboardListItemFont"
                 android:id="@+id/points_accumulated_points_text_view"
                 android:layout_width="wrap_content"

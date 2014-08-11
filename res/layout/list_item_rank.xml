@@ -14,13 +14,13 @@
         android:paddingRight="@dimen/activity_horizontal_margin"
         android:background="@color/list_item_background_color">
 
-        <TextView
+        <org.mozilla.mozstumbler.client.fonts.FiraSansRegularTextView
             style="@style/LeaderboardListItemFont"
             android:id="@+id/rank_position_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
-        <TextView
+        <org.mozilla.mozstumbler.client.fonts.FiraSansRegularTextView
             style="@style/LeaderboardListItemFont"
             android:id="@+id/rank_player_name_text_view"
             android:layout_width="wrap_content"
@@ -31,7 +31,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
 
-            <TextView
+            <org.mozilla.mozstumbler.client.fonts.FiraSansRegularTextView
                 style="@style/LeaderboardListItemFont"
                 android:id="@+id/rank_player_points_text_view"
                 android:layout_width="wrap_content"

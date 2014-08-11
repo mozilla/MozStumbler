@@ -12,82 +12,84 @@
         android:layout_alignParentLeft="true"
         android:layout_centerVertical="true"
         android:layout_marginLeft="@dimen/tab_bar_back_arrow_left_margin"
-        android:textColor="@android:color/white"
         android:text="@string/back_arrow"
-        android:visibility="invisible"/>
+        android:textColor="@android:color/white"
+        android:visibility="invisible" />
 
     <Button
         android:id="@+id/back_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/back_arrow"
         android:layout_centerVertical="true"
         android:layout_marginLeft="@dimen/tab_bar_back_button_left_margin"
-        android:textColor="@android:color/white"
+        android:layout_toRightOf="@+id/back_arrow"
         android:background="@android:color/transparent"
-        android:visibility="invisible"/>
+        android:textColor="@android:color/white"
+        android:visibility="invisible" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_centerVertical="true"
-        android:orientation="horizontal"
-        android:gravity="center">
+        android:gravity="center"
+        android:orientation="horizontal">
 
         <RelativeLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1.1">
 
-            <Button
+            <org.mozilla.mozstumbler.client.fonts.FiraSansBoldTextView
                 android:id="@+id/map_button"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_centerInParent="true"
-                android:gravity="center"
-                android:textColor="@android:color/white"
                 android:background="@android:color/transparent"
-                android:text="@string/map_title"/>
+                android:gravity="center"
+                android:text="@string/map_title"
+                android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
+                android:textColor="@android:color/white" />
 
         </RelativeLayout>
 
         <RelativeLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:orientation="horizontal"
-            android:layout_weight="0.25">
+            android:layout_weight="0.25"
+            android:orientation="horizontal">
 
             <View
                 android:id="@+id/tab_left_divider"
                 android:layout_width="@dimen/tab_bar_divider_width"
                 android:layout_height="@dimen/tab_bar_divider_height"
                 android:layout_centerInParent="true"
-                android:background="@android:color/white"/>
+                android:background="@android:color/white" />
 
         </RelativeLayout>
 
-        <Button
+        <org.mozilla.mozstumbler.client.fonts.FiraSansBoldTextView
             android:id="@+id/leaderboard_button"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1.5"
-            android:gravity="center"
-            android:textColor="@android:color/white"
             android:background="@android:color/transparent"
-            android:text="@string/leaderboard_title"/>
+            android:gravity="center"
+            android:text="@string/leaderboard_title"
+            android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
+            android:textColor="@android:color/white" />
 
         <RelativeLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:orientation="horizontal"
-            android:layout_weight="0.25">
+            android:layout_weight="0.25"
+            android:orientation="horizontal">
 
             <View
                 android:id="@+id/tab_right_divider"
                 android:layout_width="@dimen/tab_bar_divider_width"
                 android:layout_height="@dimen/tab_bar_divider_height"
                 android:layout_centerInParent="true"
-                android:background="@android:color/white"/>
+                android:background="@android:color/white" />
 
         </RelativeLayout>
 
@@ -96,15 +98,16 @@
             android:layout_height="match_parent"
             android:layout_weight="1.1">
 
-            <Button
+            <org.mozilla.mozstumbler.client.fonts.FiraSansBoldTextView
                 android:id="@+id/settings_button"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_centerInParent="true"
-                android:gravity="center"
-                android:textColor="@android:color/white"
                 android:background="@android:color/transparent"
-                android:text="@string/settings_title"/>
+                android:gravity="center"
+                android:text="@string/settings_title"
+                android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
+                android:textColor="@android:color/white" />
 
         </RelativeLayout>
 

@@ -1,4 +1,5 @@
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+<org.mozilla.mozstumbler.client.fonts.FiraSansBoldTextView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@android:id/text1"
     style="?android:attr/spinnerItemStyle"
     android:singleLine="true"

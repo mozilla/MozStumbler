@@ -19,7 +19,7 @@
             android:layout_width="@dimen/leaderboard_score_icon_size"
             android:layout_height="@dimen/leaderboard_score_icon_size"/>
 
-        <TextView
+        <org.mozilla.mozstumbler.client.fonts.FiraSansRegularTextView
             style="@style/LeaderboardListItemFont"
             android:id="@+id/score_title_text_view"
             android:layout_width="wrap_content"
@@ -30,7 +30,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
 
-            <TextView
+            <org.mozilla.mozstumbler.client.fonts.FiraSansRegularTextView
                 style="@style/LeaderboardListItemFont"
                 android:id="@+id/score_points_text_view"
                 android:layout_width="wrap_content"

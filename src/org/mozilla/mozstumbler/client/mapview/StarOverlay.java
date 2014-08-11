@@ -68,7 +68,7 @@ public class StarOverlay extends ItemizedOverlay {
         float xDiff = Math.abs(e.getX() - positionOnScreen.x);
         float yDiff = Math.abs(e.getY() - positionOnScreen.y);
 
-        if (xDiff <= 50 && yDiff <= 50) {
+        if (xDiff <= 75 && yDiff <= 75) {
             starOverlaySelectedListener.starOverlaySelected(this);
         }
 

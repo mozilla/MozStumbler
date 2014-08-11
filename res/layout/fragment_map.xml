@@ -14,22 +14,21 @@
         class="org.mozilla.mozstumbler.client.fragments.map.TodayOverlayFragment"
         android:layout_width="match_parent"
         android:layout_height="@dimen/today_score_fragment_height"
-        android:layout_alignParentTop="true" />
+        android:layout_alignParentBottom="true" />
 
     <LinearLayout
         android:id="@+id/map_window"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@id/developer_overlay_fragment"
-        android:layout_below="@id/today_overlay_fragment"
+        android:layout_above="@id/today_overlay_fragment"
         android:layout_marginTop="-10dp"
         android:orientation="vertical"></LinearLayout>
 
     <Button
         android:id="@+id/zoom_to_self_button"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:layout_alignParentBottom="true"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_above="@id/today_overlay_fragment"
         android:layout_alignParentRight="true"
         android:layout_weight="1"
         android:background="@drawable/geolocation"/>

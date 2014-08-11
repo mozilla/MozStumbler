@@ -22,6 +22,7 @@ import org.mozilla.mozstumbler.client.fragments.leaderboard.LeaderboardFragment;
 import org.mozilla.mozstumbler.client.fragments.map.MapFragment;
 import org.mozilla.mozstumbler.client.models.User;
 import org.mozilla.mozstumbler.service.AppGlobals;
+import org.mozilla.mozstumbler.service.Prefs;
 import org.mozilla.mozstumbler.service.datahandling.DataStorageContract;
 import org.mozilla.mozstumbler.service.utils.DateTimeUtils;
 import org.mozilla.mozstumbler.R;
@@ -147,7 +148,7 @@ public final class MainActivity extends Activity implements TabBarFragment.OnTab
             technicalDataFragment = new TechnicalDataFragment();
             aboutFragment = new AboutFragment();
 
-            user = new User("Steamclock");
+            user = new User("Steamclock", Prefs.getInstance());
             user.setCoinRewardedListener(mapFragment);
 
             showTabBarFragment();

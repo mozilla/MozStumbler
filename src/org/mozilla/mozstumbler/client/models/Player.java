@@ -4,9 +4,9 @@ package org.mozilla.mozstumbler.client.models;
  * Created by JeremyChiang on 2014-08-05.
  */
 public class Player {
-    private String playerName;
-    private int playerPoints;
-    private int playerRank;
+    protected String playerName;
+    protected int playerPoints;
+    protected int playerRank;
 
     public Player(String playerName, int playerPoints, int playerRank) {
         this.playerName = playerName;

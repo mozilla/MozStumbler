@@ -31,6 +31,12 @@ public final class Prefs {
     private static final String     MOZ_API_KEY = "moz_api_key";
     private static final String     IS_NEW_DAY = "is_new_day";
 
+    private static final String     STAR_SCORE_TODAY = "star_score_today";
+    private static final String     RAINBOW_SCORE_TODAY = "rainbow_score_today";
+    private static final String     COIN_SCORE_TODAY = "coin_score_today";
+    private static final String     RAINBOW_COUNT_TODAY = "rainbow_count_today";
+    private static final String     USER_TOTAL_POINTS = "user_total_points";
+
     private final SharedPreferences mSharedPrefs;
     static private Prefs sInstance;
 
@@ -164,6 +170,76 @@ public final class Prefs {
 
         SharedPreferences.Editor editor = getPrefs().edit();
         editor.putInt(IS_NEW_DAY, dayOfMonth);
+        apply(editor);
+    }
+
+    public int getStarScoreToday() {
+        if (getPrefs().contains(STAR_SCORE_TODAY)) {
+            return getPrefs().getInt(STAR_SCORE_TODAY, -1);
+        } else {
+            return -1;
+        }
+    }
+
+    public int getRainbowScoreToday() {
+        if (getPrefs().contains(RAINBOW_SCORE_TODAY)) {
+            return getPrefs().getInt(RAINBOW_SCORE_TODAY, -1);
+        } else {
+            return -1;
+        }
+    }
+
+    public int getCoinScoreToday() {
+        if (getPrefs().contains(COIN_SCORE_TODAY)) {
+            return getPrefs().getInt(COIN_SCORE_TODAY, -1);
+        } else {
+            return -1;
+        }
+    }
+
+    public int getRainbowCountToday() {
+        if (getPrefs().contains(RAINBOW_COUNT_TODAY)) {
+            return getPrefs().getInt(RAINBOW_COUNT_TODAY, -1);
+        } else {
+            return -1;
+        }
+    }
+
+    public int getUserTotalPoints() {
+        if (getPrefs().contains(USER_TOTAL_POINTS)) {
+            return getPrefs().getInt(USER_TOTAL_POINTS, -1);
+        } else {
+            return -1;
+        }
+    }
+
+    public void saveStarScoreToday(int newStarScore) {
+        SharedPreferences.Editor editor = getPrefs().edit();
+        editor.putInt(STAR_SCORE_TODAY, newStarScore);
+        apply(editor);
+    }
+
+    public void saveRainbowScoreToday(int newRainbowScore) {
+        SharedPreferences.Editor editor = getPrefs().edit();
+        editor.putInt(RAINBOW_SCORE_TODAY, newRainbowScore);
+        apply(editor);
+    }
+
+    public void saveCoinScoreToday(int newCoinScore) {
+        SharedPreferences.Editor editor = getPrefs().edit();
+        editor.putInt(COIN_SCORE_TODAY, newCoinScore);
+        apply(editor);
+    }
+
+    public void saveRainbowCountToday(int newRainbowCount) {
+        SharedPreferences.Editor editor = getPrefs().edit();
+        editor.putInt(RAINBOW_COUNT_TODAY, newRainbowCount);
+        apply(editor);
+    }
+
+    public void saveUserTotalPoints(int newTotalPoints) {
+        SharedPreferences.Editor editor = getPrefs().edit();
+        editor.putInt(USER_TOTAL_POINTS, newTotalPoints);
         apply(editor);
     }
 

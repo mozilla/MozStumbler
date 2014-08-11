@@ -84,7 +84,7 @@ public class MapFragment extends Fragment implements StarOverlay.StarOverlaySele
         userLocationOverlay.enableMyLocation();
         userLocationOverlay.setDrawAccuracyEnabled(true);
         userLocationOverlay.setTrackingMode(UserLocationOverlay.TrackingMode.FOLLOW);
-        userLocationOverlay.setRequiredZoom(16.5f);
+        userLocationOverlay.setRequiredZoom(17.0f);
 
         Bitmap stumblerMarkerBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.stumbler_marker_map);
         userLocationOverlay.setPersonBitmap(stumblerMarkerBitmap);

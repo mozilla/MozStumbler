@@ -22,12 +22,13 @@
 
         <RelativeLayout
             android:layout_width="wrap_content"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:layout_weight="1">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
+                android:layout_centerInParent="true"
                 android:textStyle="bold"
                 android:text="@string/today_overlay_title" />
 
@@ -36,7 +37,7 @@
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_margin="@dimen/today_overlay_icon_margin">
+            android:layout_weight="1">
 
             <ImageView
                 android:id="@+id/star_image_view"
@@ -51,14 +52,15 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="@dimen/today_overlay_score_left_margin"
-                android:layout_toRightOf="@id/star_image_view" />
+                android:layout_toRightOf="@id/star_image_view"
+                android:text="100"/>
 
         </RelativeLayout>
 
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_margin="@dimen/today_overlay_icon_margin">
+            android:layout_weight="1">
 
             <ImageView
                 android:id="@+id/rainbow_image_view"
@@ -73,14 +75,15 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="@dimen/today_overlay_score_left_margin"
-                android:layout_toRightOf="@id/rainbow_image_view" />
+                android:layout_toRightOf="@id/rainbow_image_view"
+                android:text="100"/>
 
         </RelativeLayout>
 
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_margin="@dimen/today_overlay_icon_margin">
+            android:layout_weight="1">
 
             <ImageView
                 android:id="@+id/coin_image_view"
@@ -95,7 +98,8 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="@dimen/today_overlay_score_left_margin"
-                android:layout_toRightOf="@id/coin_image_view" />
+                android:layout_toRightOf="@id/coin_image_view"
+                android:text="100"/>
 
         </RelativeLayout>
 

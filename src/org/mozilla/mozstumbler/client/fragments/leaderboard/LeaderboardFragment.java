@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.Spinner;
 
 import org.mozilla.mozstumbler.R;
@@ -18,6 +19,7 @@ import org.mozilla.mozstumbler.R;
 public class LeaderboardFragment extends Fragment {
 
     private Spinner filterSpinner;
+    private ImageView filterSpinnerArrow;
 
     private YourStatsFragment yourStatsFragment;
     private YourRankFragment yourRankFragment;
@@ -28,6 +30,7 @@ public class LeaderboardFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_leaderboard, container, false);
 
         setupFilterSpinner(rootView);
+        setupFilterSpinnerArrow(rootView);
 
         addYourStatsFragment();
         addSectionTitleFragment(getString(R.string.leaderboard_title));
@@ -55,6 +58,16 @@ public class LeaderboardFragment extends Fragment {
         adapter.setDropDownViewResource(R.layout.stats_filter_dropdown_item);
 
         filterSpinner.setAdapter(adapter);
+    }
+
+    private void setupFilterSpinnerArrow(View rootView) {
+        filterSpinnerArrow = (ImageView)rootView.findViewById(R.id.leaderboard_filter_spinner_arrow);
+        filterSpinnerArrow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                filterSpinner.performClick();
+            }
+        });
     }
 
     private void addYourStatsFragment() {

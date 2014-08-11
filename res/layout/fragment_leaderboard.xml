@@ -20,10 +20,13 @@
             android:background="@android:color/transparent"/>
 
         <ImageView
+            android:id="@+id/leaderboard_filter_spinner_arrow"
             android:layout_width="@dimen/leaderboard_filter_dropdown_arrow_size"
             android:layout_height="@dimen/leaderboard_filter_dropdown_arrow_size"
             android:layout_centerVertical="true"
             android:layout_toRightOf="@id/leaderboard_filter_spinner"
+            android:layout_marginLeft="5dp"
+            android:paddingBottom="2dp"
             android:scaleType="fitXY"
             android:src="@drawable/dropdown_arrow"/>
 

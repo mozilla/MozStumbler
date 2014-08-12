@@ -37,17 +37,14 @@ public final class Reporter extends BroadcastReceiver {
     /* The maximum number of cells in a single observation */
     private static final int CELLS_COUNT_WATERMARK = 50;
 
-    private final Context mContext;
-    private final int mPhoneType;
+    private Context mContext;
+    private int mPhoneType;
 
     private StumblerBundle mBundle;
     private StumblerBundleReceiver mStumblerBundleReceiver;
 
-    Reporter(Context context, StumblerBundleReceiver bundleReceiver) {
-        mContext = context;
+    Reporter(StumblerBundleReceiver bundleReceiver) {
         mStumblerBundleReceiver = bundleReceiver;
-        TelephonyManager tm = (TelephonyManager) mContext.getSystemService(Context.TELEPHONY_SERVICE);
-        mPhoneType = tm.getPhoneType();
     }
 
     private void resetData() {
@@ -58,10 +55,15 @@ public final class Reporter extends BroadcastReceiver {
         reportCollectedLocation();
     }
 
-    void startup() {
+    void startup(Context context) {
         if (mIsStarted) {
             return;
         }
+
+        mContext = context;
+        TelephonyManager tm = (TelephonyManager) mContext.getSystemService(Context.TELEPHONY_SERVICE);
+        mPhoneType = tm.getPhoneType();
+
         mIsStarted = true;
 
         resetData();
@@ -75,6 +77,10 @@ public final class Reporter extends BroadcastReceiver {
     }
 
     void shutdown() {
+        if (mContext == null) {
+            return;
+        }
+
         mIsStarted = false;
 
         Log.d(LOG_TAG, "shutdown");

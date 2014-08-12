@@ -4,7 +4,6 @@
 
 package org.mozilla.mozstumbler.service;
 
-import android.app.PendingIntent;
 import android.content.Intent;
 import android.location.Location;
 import android.os.AsyncTask;
@@ -12,7 +11,8 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.os.Looper;
 import android.util.Log;
-
+import java.io.IOException;
+import java.util.concurrent.atomic.AtomicBoolean;
 import org.mozilla.mozstumbler.service.blocklist.WifiBlockListInterface;
 import org.mozilla.mozstumbler.service.datahandling.DataStorageManager;
 import org.mozilla.mozstumbler.service.datahandling.StumblerBundleReceiver;
@@ -23,26 +23,18 @@ import org.mozilla.mozstumbler.service.sync.UploadAlarmReceiver;
 import org.mozilla.mozstumbler.service.utils.NetworkUtils;
 import org.mozilla.mozstumbler.service.utils.PersistentIntentService;
 
-import java.io.IOException;
-
 public final class StumblerService extends PersistentIntentService
         implements DataStorageManager.StorageIsEmptyTracker {
     private static final String LOG_TAG = "Stumbler" + StumblerService.class.getSimpleName();
     public static final String ACTION_BASE = AppGlobals.ACTION_NAMESPACE;
     public static final String ACTION_START_PASSIVE = ACTION_BASE + ".START_PASSIVE";
     public static final String ACTION_EXTRA_MOZ_API_KEY = ACTION_BASE + ".MOZKEY";
-
-    public enum FirefoxStumbleState {
-        UNKNOWN, ON, OFF
-    }
-    public static FirefoxStumbleState sFirefoxStumblingEnabled = FirefoxStumbleState.UNKNOWN;
-
-    private ScanManager mScanManager;
-    private Reporter               mReporter;
-    private StumblerBundleReceiver mStumblerBundleReceiver = new StumblerBundleReceiver();
-    private boolean                mIsBound;
-    private final IBinder          mBinder = new StumblerBinder();
-    private PendingIntent          mAlarmIntent;
+    public static final AtomicBoolean sFirefoxStumblingEnabled = new AtomicBoolean();
+    private final ScanManager mScanManager = new ScanManager();
+    private final StumblerBundleReceiver mStumblerBundleReceiver = new StumblerBundleReceiver();
+    private final Reporter mReporter = new Reporter(mStumblerBundleReceiver);
+    private boolean mIsBound;
+    private final IBinder mBinder = new StumblerBinder();
 
     public StumblerService() {
         super("StumblerService");
@@ -73,7 +65,7 @@ public final class StumblerService extends PersistentIntentService
             return;
         }
 
-        mScanManager.startScanning();
+        mScanManager.startScanning(this);
     }
 
     public void stopScanning() {
@@ -90,7 +82,9 @@ public final class StumblerService extends PersistentIntentService
         mScanManager.setWifiBlockList(list);
     }
 
-    public Prefs getPrefs() { return Prefs.getInstance(); }
+    public Prefs getPrefs() {
+        return Prefs.getInstance();
+    }
 
     public void checkPrefs() {
         mScanManager.checkPrefs();
@@ -146,25 +140,14 @@ public final class StumblerService extends PersistentIntentService
         if (!CellScanner.isCellScannerImplSet()) {
             CellScanner.setCellScannerImpl(new CellScannerNoWCDMA(this));
         }
-        if (mScanManager == null) {
-            mScanManager = new ScanManager(this);
-        }
-        if (mReporter == null) {
-            mReporter = new Reporter(this, mStumblerBundleReceiver);
-        }
-        mReporter.startup();
+
+        mReporter.startup(this);
     }
 
     @Override
     public void onCreate() {
         super.onCreate();
         setIntentRedelivery(true);
-
-        if (AppGlobals.appVersionCode < 1) {
-            //TODO look at how to set these
-            //SharedConstants.appVersionName =;
-            //SharedConstants.appVersionCode =;
-        }
     }
 
     @Override
@@ -177,7 +160,7 @@ public final class StumblerService extends PersistentIntentService
             protected Void doInBackground(Void... params) {
                 if (AppGlobals.isDebug) Log.d(LOG_TAG, "onDestroy");
 
-                if (sFirefoxStumblingEnabled == FirefoxStumbleState.OFF) {
+                if (sFirefoxStumblingEnabled.get() == false) {
                     Prefs.getInstance().setFirefoxScanEnabled(false);
                 }
 
@@ -199,21 +182,20 @@ public final class StumblerService extends PersistentIntentService
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        if (intent != null && intent.getBooleanExtra(ACTION_START_PASSIVE, false)) {
-            init();
+        if (intent == null) {
+            return;
+        }
 
+        init();
+
+        if (intent.getBooleanExtra(ACTION_START_PASSIVE, false) == false) {
+            stopSelf();
+        } else {
             if (!DataStorageManager.getInstance().isDirEmpty()) {
                 // non-empty on startup, schedule an upload
                 // This is the only upload trigger in Firefox mode
                 final int secondsToWait = 10;
                 UploadAlarmReceiver.scheduleAlarm(this, secondsToWait, false /* no repeat*/);
-            }
-
-            if (sFirefoxStumblingEnabled == FirefoxStumbleState.UNKNOWN) {
-                if (!Prefs.getInstance().getFirefoxScanEnabled()) {
-                    stopSelf();
-                    return;
-                }
             }
 
             Prefs.getInstance().setFirefoxScanEnabled(true);

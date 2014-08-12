@@ -31,13 +31,11 @@ public class PassiveServiceReceiver extends BroadcastReceiver {
 
         if (action.contains(".STUMBLER_PREF")) {
             AppGlobals.isDebug = intent.getBooleanExtra("is_debug", false);
-            StumblerService.sFirefoxStumblingEnabled = intent.getBooleanExtra("enabled", false) ?
-                    StumblerService.FirefoxStumbleState.ON :
-                    StumblerService.FirefoxStumbleState.OFF;
+            StumblerService.sFirefoxStumblingEnabled.set(intent.getBooleanExtra("enabled", false));
             mozApiKey = intent.getStringExtra("moz_mozilla_api_key");
         }
 
-        if (StumblerService.sFirefoxStumblingEnabled == StumblerService.FirefoxStumbleState.OFF) {
+        if (StumblerService.sFirefoxStumblingEnabled.get() == false) {
             context.stopService(new Intent(context, StumblerService.class));
             return;
         }

@@ -25,21 +25,17 @@ import java.util.TimerTask;
 public class ScanManager {
     private static final String LOG_TAG = "Stumbler:" + ScanManager.class.getSimpleName();
     private Timer mPassiveModeFlushTimer;
-    private final Context mContext;
-    private boolean       mIsScanning;
-    private GPSScanner    mGPSScanner;
-    private WifiScanner   mWifiScanner;
-    private CellScanner   mCellScanner;
+    private Context mContext;
+    private boolean mIsScanning;
+    private GPSScanner mGPSScanner;
+    private WifiScanner mWifiScanner;
+    private CellScanner mCellScanner;
     private ActiveOrPassiveStumbling mStumblingMode = ActiveOrPassiveStumbling.ACTIVE_STUMBLING;
 
-    public ScanManager(Context context) {
-        mContext = context;
-        mGPSScanner  = new GPSScanner(context, this);
-        mWifiScanner = new WifiScanner(context);
-        mCellScanner = new CellScanner(context);
+    public ScanManager() {
     }
 
-    public boolean isBatteryLow() {
+    private boolean isBatteryLow() {
         Intent intent = mContext.registerReceiver(null, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
         if (intent == null) {
             return false;
@@ -94,7 +90,14 @@ public class ScanManager {
         return ActiveOrPassiveStumbling.PASSIVE_STUMBLING == mStumblingMode;
     }
 
-    public void startScanning() {
+    public void startScanning(Context context) {
+        mContext = context;
+        if (mGPSScanner == null) {
+            mGPSScanner = new GPSScanner(context, this);
+            mWifiScanner = new WifiScanner(context);
+            mCellScanner = new CellScanner(context);
+        }
+
         if (mIsScanning) {
             return;
         }
@@ -124,7 +127,7 @@ public class ScanManager {
     }
 
     public void setWifiBlockList(WifiBlockListInterface list) {
-        mWifiScanner.setWifiBlockList(list);
+        WifiScanner.setWifiBlockList(list);
     }
 
     public boolean isScanning() {
@@ -132,46 +135,48 @@ public class ScanManager {
     }
 
     public int getAPCount() {
-        return mWifiScanner.getAPCount();
+        return (mWifiScanner == null)? 0 : mWifiScanner.getAPCount();
     }
 
     public int getVisibleAPCount() {
-        return mWifiScanner.getVisibleAPCount();
+        return (mWifiScanner == null)? 0 :mWifiScanner.getVisibleAPCount();
     }
 
     public int getWifiStatus() {
-        return mWifiScanner.getStatus();
+        return (mWifiScanner == null)? 0 : mWifiScanner.getStatus();
     }
 
     public int getCellInfoCount() {
-        return mCellScanner.getCellInfoCount();
+        return (mCellScanner == null)? 0 :mCellScanner.getCellInfoCount();
     }
 
     public int getCurrentCellInfoCount() {
-        return mCellScanner.getCurrentCellInfoCount();
+        return (mCellScanner == null)? 0 :mCellScanner.getCurrentCellInfoCount();
     }
 
     public int getLocationCount() {
-        return mGPSScanner.getLocationCount();
+        return  (mGPSScanner == null)? 0 : mGPSScanner.getLocationCount();
     }
 
     public double getLatitude() {
-        return mGPSScanner.getLatitude();
+        return (mGPSScanner == null)? 0.0 : mGPSScanner.getLatitude();
     }
 
     public double getLongitude() {
-        return mGPSScanner.getLongitude();
+        return  (mGPSScanner == null)? 0.0 : mGPSScanner.getLongitude();
     }
 
     public Location getLocation() {
-        return mGPSScanner.getLocation();
+        return (mGPSScanner == null)? new Location("null") : mGPSScanner.getLocation();
     }
 
     public void checkPrefs() {
-        mGPSScanner.checkPrefs();
+        if (mGPSScanner != null) {
+            mGPSScanner.checkPrefs();
+        }
     }
 
     public boolean isGeofenced() {
-        return mGPSScanner.isGeofenced();
+        return (mGPSScanner == null)? false : mGPSScanner.isGeofenced();
     }
 }

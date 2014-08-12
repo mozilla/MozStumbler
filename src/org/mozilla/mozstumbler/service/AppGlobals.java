@@ -30,7 +30,7 @@ public class AppGlobals {
     /* In passive mode, only scan this many times for each gps. */
     public static final int PASSIVE_MODE_MAX_SCANS_PER_GPS = 3;
 
-    /* These are set on startup. */
+    /* These are set on startup. The appVersionName and code are not used in the service-only case. */
     public static String appVersionName = "0.0.0";
     public static int appVersionCode = 0;
     public static String appName = "StumblerService";

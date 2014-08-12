@@ -113,7 +113,7 @@ public class WifiScanner extends BroadcastReceiver {
         }
     }
 
-    public void setWifiBlockList(WifiBlockListInterface blockList) {
+    public static void setWifiBlockList(WifiBlockListInterface blockList) {
         BSSIDBlockList.setFilterList(blockList.getBssidOuiList());
         SSIDBlockList.setFilterLists(blockList.getSsidPrefixList(), blockList.getSsidSuffixList());
     }

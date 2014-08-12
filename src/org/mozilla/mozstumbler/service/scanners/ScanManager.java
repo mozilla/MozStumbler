@@ -93,16 +93,18 @@ public class ScanManager {
     }
 
     public void startScanning(Context context) {
-        mContext = context;
+        if (mIsScanning) {
+            Log.d(LOG_TAG, "ScanManager.startScanning: already scanning. Fix unnecessary call.");
+            return;
+        }
+
+        mContext = context.getApplicationContext();
         if (mGPSScanner == null) {
             mGPSScanner = new GPSScanner(context, this);
             mWifiScanner = new WifiScanner(context);
             mCellScanner = new CellScanner(context);
         }
 
-        if (mIsScanning) {
-            return;
-        }
         if (AppGlobals.isDebug) {
             Log.d(LOG_TAG, "Scanning started...");
         }
@@ -116,9 +118,10 @@ public class ScanManager {
         mIsScanning = true;
     }
 
-    public void stopScanning() {
+    public boolean stopScanning() {
         if (!mIsScanning) {
-            return;
+            Log.d(LOG_TAG, "ScanManager.stopScanning: already stopped. Fix unnecessary call.");
+            return false;
         }
 
         if (AppGlobals.isDebug) {
@@ -130,6 +133,7 @@ public class ScanManager {
         mCellScanner.stop();
 
         mIsScanning = false;
+        return true;
     }
 
     public void setWifiBlockList(WifiBlockListInterface list) {

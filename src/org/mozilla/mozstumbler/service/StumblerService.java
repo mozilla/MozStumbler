@@ -61,16 +61,11 @@ public final class StumblerService extends PersistentIntentService
     }
 
     public void startScanning() {
-        if (mScanManager.isScanning()) {
-            return;
-        }
-
         mScanManager.startScanning(this);
     }
 
     public void stopScanning() {
-        if (mScanManager.isScanning()) {
-            mScanManager.stopScanning();
+        if (mScanManager.stopScanning()) {
             mReporter.flush();
             if (!mIsBound) {
                 stopSelf();
@@ -185,32 +180,34 @@ public final class StumblerService extends PersistentIntentService
 
     @Override
     protected void onHandleIntent(Intent intent) {
+        // Do init() in all cases, there is no cost, whereas it is easy to add code that depends on this.
+        init();
+
         if (intent == null) {
             return;
         }
 
-        init();
-
         if (intent.getBooleanExtra(ACTION_START_PASSIVE, false) == false) {
             stopSelf();
-        } else {
-            if (!DataStorageManager.getInstance().isDirEmpty()) {
-                // non-empty on startup, schedule an upload
-                // This is the only upload trigger in Firefox mode
-                final int secondsToWait = 10;
-                UploadAlarmReceiver.scheduleAlarm(this, secondsToWait, false /* no repeat*/);
-            }
-
-            Prefs.getInstance().setFirefoxScanEnabled(true);
-
-            String apiKey = intent.getStringExtra(ACTION_EXTRA_MOZ_API_KEY);
-            if (apiKey != null) {
-                Prefs.getInstance().setMozApiKey(apiKey);
-            }
-
-            mScanManager.setPassiveMode(true);
-            startScanning();
+            return;
         }
+
+        if (!DataStorageManager.getInstance().isDirEmpty()) {
+            // non-empty on startup, schedule an upload
+            // This is the only upload trigger in Firefox mode
+            final int secondsToWait = 10;
+            UploadAlarmReceiver.scheduleAlarm(this, secondsToWait, false /* no repeat*/);
+        }
+
+        Prefs.getInstance().setFirefoxScanEnabled(true);
+
+        String apiKey = intent.getStringExtra(ACTION_EXTRA_MOZ_API_KEY);
+        if (apiKey != null) {
+            Prefs.getInstance().setMozApiKey(apiKey);
+        }
+
+        mScanManager.setPassiveMode(true);
+        startScanning();
     }
 
     @Override

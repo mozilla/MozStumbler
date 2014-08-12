@@ -10,6 +10,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.os.IBinder;
 import android.os.StrictMode;
@@ -17,6 +19,9 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import org.mozilla.mozstumbler.BuildConfig;
 import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.client.cellscanner.DefaultCellScanner;
@@ -92,6 +97,20 @@ public class MainApp extends Application {
 
                 DataStorageManager.getInstance().setMaxStorageOnDisk(MAX_BYTES_DISK_STORAGE);
                 DataStorageManager.getInstance().setMaxWeeksStored(MAX_WEEKS_OLD_STORED);
+
+                // Upgrade the db, if needed
+                Map<String, Long> oldStats = getOldDbStats(MainApp.this);
+                if (oldStats != null) {
+                    long last_upload_time = oldStats.get("last_upload_time");
+                    long observations_sent = oldStats.get("observations_sent");
+                    long wifis_sent = oldStats.get("wifis_sent");
+                    long cells_sent = oldStats.get("cells_sent");
+                    try {
+                        DataStorageManager.getInstance().writeSyncStats(last_upload_time, 0, observations_sent, wifis_sent, cells_sent);
+                    } catch (IOException ex) {
+                        Log.e(LOG_TAG, "Exception in DataStorageManager upgrading db:", ex);
+                    }
+                }
 
                 MapActivity.createGpsTrackLocationReceiver(MainApp.this);
 
@@ -242,5 +261,41 @@ public class MainApp extends Application {
                         getString(R.string.stop_scanning), pendingIntent)
                 .build();
 
+    }
+
+    private Map<String, Long> getOldDbStats(Context context) {
+        final File dbFile = new File(context.getFilesDir().getParent() + "/databases/" + "stumbler.db");
+        if (!dbFile.exists()) {
+            return null;
+        }
+
+        SQLiteDatabase db = null;
+        Cursor cursor = null;
+
+        try {
+            db = SQLiteDatabase.openDatabase(dbFile.toString(), null, 0);
+            cursor = db.rawQuery("select * from stats", null);
+            if (cursor == null || !cursor.moveToFirst()) {
+                if (db != null) {
+                    db.close();
+                }
+                return null;
+            }
+
+            Map<String, Long> kv = new HashMap<String, Long>();
+            while (!cursor.isAfterLast()) {
+                String key = cursor.getString(cursor.getColumnIndex("key"));
+                Long value = cursor.getLong(cursor.getColumnIndex("value"));
+                kv.put(key, value);
+                cursor.moveToNext();
+            }
+            return kv;
+        } finally {
+            cursor.close();
+            if (db != null) {
+                db.close();
+            }
+            dbFile.delete();
+        }
     }
 }

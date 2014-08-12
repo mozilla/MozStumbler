@@ -141,7 +141,9 @@ public class WifiScanner extends BroadcastReceiver {
             return;
         }
 
-        if (AppGlobals.isDebug) Log.v(LOG_TAG, "Activate Periodic Scan");
+        if (AppGlobals.isDebug) {
+            Log.v(LOG_TAG, "Activate Periodic Scan");
+        }
 
         mWifiLock = getWifiManager().createWifiLock(WifiManager.WIFI_MODE_SCAN_ONLY, "MozStumbler");
         mWifiLock.acquire();
@@ -159,7 +161,9 @@ public class WifiScanner extends BroadcastReceiver {
                     stop(); // set mWifiScanTimer to null
                     return;
                 }
-                if (AppGlobals.isDebug) Log.v(LOG_TAG, "WiFi Scanning Timer fired");
+                if (AppGlobals.isDebug) {
+                    Log.v(LOG_TAG, "WiFi Scanning Timer fired");
+                }
                 getWifiManager().startScan();
             }
         }, 0, WIFI_MIN_UPDATE_TIME);
@@ -170,7 +174,9 @@ public class WifiScanner extends BroadcastReceiver {
             return;
         }
 
-        if (AppGlobals.isDebug) Log.v(LOG_TAG, "Deactivate periodic scan");
+        if (AppGlobals.isDebug) {
+            Log.v(LOG_TAG, "Deactivate periodic scan");
+        }
 
         mWifiLock.release();
         mWifiLock = null;

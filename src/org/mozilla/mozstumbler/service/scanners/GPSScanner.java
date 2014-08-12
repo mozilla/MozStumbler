@@ -102,7 +102,9 @@ public class GPSScanner implements LocationListener {
                             reportLocationLost();
                         }
 
-                        if (AppGlobals.isDebug) Log.v(LOG_TAG, "onGpsStatusChange - satellites: " + satellites + " fixes: " + fixes);
+                        if (AppGlobals.isDebug) {
+                            Log.v(LOG_TAG, "onGpsStatusChange - satellites: " + satellites + " fixes: " + fixes);
+                        }
                     } else if (event == GpsStatus.GPS_EVENT_STOPPED) {
                         reportLocationLost();
                     }
@@ -192,7 +194,9 @@ public class GPSScanner implements LocationListener {
             return;
         }
 
-        if (AppGlobals.isDebug) Log.d(LOG_TAG, "New location: " + location);
+        if (AppGlobals.isDebug) {
+            Log.d(LOG_TAG, "New location: " + location);
+        }
 
         mLocation = location;
 

@@ -56,7 +56,9 @@ public class ScanManager {
             return;
         }
 
-        if (AppGlobals.isDebug) Log.d(LOG_TAG, "New passive location");
+        if (AppGlobals.isDebug) {
+            Log.d(LOG_TAG, "New passive location");
+        }
 
         mWifiScanner.start(ActiveOrPassiveStumbling.PASSIVE_STUMBLING);
         mCellScanner.start(ActiveOrPassiveStumbling.PASSIVE_STUMBLING);
@@ -101,7 +103,9 @@ public class ScanManager {
         if (mIsScanning) {
             return;
         }
-        if (AppGlobals.isDebug) Log.d(LOG_TAG, "Scanning started...");
+        if (AppGlobals.isDebug) {
+            Log.d(LOG_TAG, "Scanning started...");
+        }
 
         mGPSScanner.start(mStumblingMode);
         if (mStumblingMode == ActiveOrPassiveStumbling.ACTIVE_STUMBLING) {
@@ -117,7 +121,9 @@ public class ScanManager {
             return;
         }
 
-        if (AppGlobals.isDebug) Log.d(LOG_TAG, "Scanning stopped");
+        if (AppGlobals.isDebug) {
+            Log.d(LOG_TAG, "Scanning stopped");
+        }
 
         mGPSScanner.stop();
         mWifiScanner.stop();

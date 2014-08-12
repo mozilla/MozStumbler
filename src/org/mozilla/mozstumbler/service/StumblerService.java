@@ -158,7 +158,9 @@ public final class StumblerService extends PersistentIntentService
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
-                if (AppGlobals.isDebug) Log.d(LOG_TAG, "onDestroy");
+                if (AppGlobals.isDebug) {
+ Log.d(LOG_TAG, "onDestroy");
+}
 
                 if (sFirefoxStumblingEnabled.get() == false) {
                     Prefs.getInstance().setFirefoxScanEnabled(false);
@@ -213,13 +215,17 @@ public final class StumblerService extends PersistentIntentService
     @Override
     public IBinder onBind(Intent intent) {
         mIsBound = true;
-        if (AppGlobals.isDebug)Log.d(LOG_TAG, "onBind");
+        if (AppGlobals.isDebug) {
+            Log.d(LOG_TAG, "onBind");
+        }
         return mBinder;
     }
 
     @Override
     public boolean onUnbind(Intent intent) {
-        if (AppGlobals.isDebug) Log.d(LOG_TAG, "onUnbind");
+        if (AppGlobals.isDebug) {
+            Log.d(LOG_TAG, "onUnbind");
+        }
         if (!mScanManager.isScanning()) {
             stopSelf();
         }
@@ -230,7 +236,9 @@ public final class StumblerService extends PersistentIntentService
     @Override
     public void onRebind(Intent intent) {
         mIsBound = true;
-        if (AppGlobals.isDebug)Log.d(LOG_TAG,"onRebind");
+        if (AppGlobals.isDebug) {
+            Log.d(LOG_TAG,"onRebind");
+        }
     }
 
     // Note that in passive mode, having data isn't an upload trigger, it is triggered by the start intent

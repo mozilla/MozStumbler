@@ -56,14 +56,16 @@ android {
         }
 
         release {
-            runProguard true
+            // Mapbox and ProGuard don't quite work together when building in release mode.
+            runProguard false
             proguardFile 'proguard.cfg'
             signingConfig signingConfigs.release
         }
     }
 
     lintOptions {
-        abortOnError true
+        // This is important, it will run lint checks but won't abort build.
+        abortOnError false
         disable 'MissingTranslation'
     }
 }

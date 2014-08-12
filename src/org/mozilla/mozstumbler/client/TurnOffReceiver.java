@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 import android.util.Log;
+
+import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.StumblerService;
 
 
@@ -13,7 +15,7 @@ import org.mozilla.mozstumbler.service.StumblerService;
  * stumbler, and [X] Stop Scanning will appear.
  */
 public final class TurnOffReceiver extends BroadcastReceiver {
-    private static final String LOG_TAG = "Stumbler:" + TurnOffReceiver.class.getSimpleName();
+    private static final String LOG_TAG = AppGlobals.LOG_PREFIX + TurnOffReceiver.class.getSimpleName();
 
     @Override
     public void onReceive(Context context, Intent intent) {

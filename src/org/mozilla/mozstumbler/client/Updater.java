@@ -27,10 +27,11 @@ import java.net.URLConnection;
 import java.util.List;
 
 import org.mozilla.mozstumbler.R;
+import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.StumblerService;
 
 final class Updater {
-    private static final String LOG_TAG = "Stumbler:" + Updater.class.getSimpleName();
+    private static final String LOG_TAG = AppGlobals.LOG_PREFIX + Updater.class.getSimpleName();
     private static final String VERSION_URL = "https://raw.github.com/mozilla/MozStumbler/master/VERSION";
     private static final String APK_URL_FORMAT = "https://github.com/mozilla/MozStumbler/releases/download/v%s/MozStumbler-v%s.apk";
 

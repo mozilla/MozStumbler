@@ -25,7 +25,7 @@ import org.mozilla.mozstumbler.service.utils.PersistentIntentService;
 
 public final class StumblerService extends PersistentIntentService
         implements DataStorageManager.StorageIsEmptyTracker {
-    private static final String LOG_TAG = "Stumbler" + StumblerService.class.getSimpleName();
+    private static final String LOG_TAG = AppGlobals.LOG_PREFIX + StumblerService.class.getSimpleName();
     public static final String ACTION_BASE = AppGlobals.ACTION_NAMESPACE;
     public static final String ACTION_START_PASSIVE = ACTION_BASE + ".START_PASSIVE";
     public static final String ACTION_EXTRA_MOZ_API_KEY = ACTION_BASE + ".MOZKEY";
@@ -132,6 +132,7 @@ public final class StumblerService extends PersistentIntentService
 
     // Previously this was done in onCreate(). Moved out of that so that in the passive standalone service
     // use (i.e. Fennec), init() can be called from this class's dedicated thread.
+    // Safe to call more than once, ensure added code complies with that intent.
     private void init() {
         Prefs.createGlobalInstance(this);
         NetworkUtils.createGlobalInstance(this);
@@ -225,9 +226,6 @@ public final class StumblerService extends PersistentIntentService
     public boolean onUnbind(Intent intent) {
         if (AppGlobals.isDebug) {
             Log.d(LOG_TAG, "onUnbind");
-        }
-        if (!mScanManager.isScanning()) {
-            stopSelf();
         }
         mIsBound = false;
         return true;

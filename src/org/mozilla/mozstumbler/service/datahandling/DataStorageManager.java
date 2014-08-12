@@ -7,7 +7,6 @@ package org.mozilla.mozstumbler.service.datahandling;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.provider.ContactsContract;
 import android.util.Log;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.utils.Zipper;
@@ -43,26 +42,28 @@ import java.util.TimerTask;
  * when the service is destroyed.
  */
 public class DataStorageManager {
-    private final String LOG_TAG = "Stumbler:" + DataStorageManager.class.getSimpleName();
-    private final int MAX_REPORTS_IN_MEMORY = 50;
-    private long mMaxBytesDiskStorage = 1024 * 1024; // 1 megabyte max by default
-    private int mMaxWeeksStored = 2;
-    private ReportBatchBuilder mCurrentReports = new ReportBatchBuilder();
+    private static final String LOG_TAG = AppGlobals.LOG_PREFIX + DataStorageManager.class.getSimpleName();
+    private static final int MAX_REPORTS_IN_MEMORY = 50;
+    private volatile long mMaxBytesDiskStorage = 1024 * 500; // 500 KiB max by default
+    private volatile int mMaxWeeksStored = 2;
+    private final ReportBatchBuilder mCurrentReports = new ReportBatchBuilder();
     private final File mReportsDir;
     private final File mStatsFile;
-    private ReportBatch mCurrentReportsSendBuffer;
-    private ReportBatchIterator mReportBatchIterator;
-    private StorageIsEmptyTracker mTracker;
-    private ReportFileList mFileList;
-    private Timer mFlushMemoryBuffersToDiskTimer;
+    private final StorageIsEmptyTracker mTracker;
+
     private static DataStorageManager sInstance;
 
-    final static String SEP_REPORT_COUNT = "-r";
-    final static String SEP_WIFI_COUNT = "-w";
-    final static String SEP_CELL_COUNT = "-c";
-    final static String SEP_TIME_MS = "-t";
-    final static String FILENAME_PREFIX = "reports";
-    final static String MEMORY_BUFFER_NAME = "in memory send buffer";
+    private ReportBatch mCurrentReportsSendBuffer;
+    private ReportBatchIterator mReportBatchIterator;
+    private ReportFileList mFileList;
+    private Timer mFlushMemoryBuffersToDiskTimer;
+
+    static final String SEP_REPORT_COUNT = "-r";
+    static final String SEP_WIFI_COUNT = "-w";
+    static final String SEP_CELL_COUNT = "-c";
+    static final String SEP_TIME_MS = "-t";
+    static final String FILENAME_PREFIX = "reports";
+    static final String MEMORY_BUFFER_NAME = "in memory send buffer";
 
     public static class QueuedCounts {
         public final int mReportCount;

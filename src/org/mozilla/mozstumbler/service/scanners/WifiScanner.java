@@ -40,7 +40,7 @@ public class WifiScanner extends BroadcastReceiver {
     public static final int STATUS_ACTIVE = 1;
     public static final int STATUS_WIFI_DISABLED = -1;
 
-    private static final String LOG_TAG = "Stumbler:" + WifiScanner.class.getSimpleName();
+    private static final String LOG_TAG = AppGlobals.LOG_PREFIX + WifiScanner.class.getSimpleName();
     private static final long WIFI_MIN_UPDATE_TIME = 5000; // milliseconds
 
     private boolean mStarted;
@@ -60,9 +60,13 @@ public class WifiScanner extends BroadcastReceiver {
         mContext = c;
     }
 
-    private boolean isWifiEnabled() { return (sIsTestMode) ||  getWifiManager().isWifiEnabled(); }
+    private boolean isWifiEnabled() {
+        return (sIsTestMode) ||  getWifiManager().isWifiEnabled();
+    }
 
-    private List<ScanResult> getScanResults() { return (sIsTestMode)? mTestModeFakeScanResults : getWifiManager().getScanResults(); }
+    private List<ScanResult> getScanResults() {
+        return (sIsTestMode)? mTestModeFakeScanResults : getWifiManager().getScanResults();
+    }
 
 
     public synchronized void start(final ActiveOrPassiveStumbling stumblingMode) {

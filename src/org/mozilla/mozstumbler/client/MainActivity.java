@@ -32,7 +32,7 @@ import java.io.IOException;
 import java.util.Properties;
 
 public final class MainActivity extends FragmentActivity {
-    private static final String LOG_TAG = "Stumbler:" + MainActivity.class.getSimpleName();
+    private static final String LOG_TAG = AppGlobals.LOG_PREFIX + MainActivity.class.getSimpleName();
 
     public static final String ACTION_BASE = AppGlobals.ACTION_NAMESPACE + ".MainActivity.";
     public static final String ACTION_UPDATE_UI = ACTION_BASE + "UPDATE_UI";

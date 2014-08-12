@@ -33,15 +33,15 @@ public class GPSScanner implements LocationListener {
     public static final String NEW_STATUS_ARG_SATS = "sats";
     public static final String NEW_LOCATION_ARG_LOCATION = "location";
 
-    private static final String   LOG_TAG                  = GPSScanner.class.getSimpleName();
-    private static final long     GEO_MIN_UPDATE_TIME     = 1000;
-    private static final float    GEO_MIN_UPDATE_DISTANCE = 10;
-    private static final long     PASSIVE_GEO_MIN_UPDATE_TIME     = 3000;
-    private static final float    PASSIVE_GEO_MIN_UPDATE_DISTANCE = 30;
-    private static final int      MIN_SAT_USED_IN_FIX     = 3;
+    private static final String LOG_TAG = AppGlobals.LOG_PREFIX + GPSScanner.class.getSimpleName();
+    private static final long GEO_MIN_UPDATE_TIME = 1000;
+    private static final float GEO_MIN_UPDATE_DISTANCE = 10;
+    private static final long PASSIVE_GEO_MIN_UPDATE_TIME = 3000;
+    private static final float PASSIVE_GEO_MIN_UPDATE_DISTANCE = 30;
+    private static final int MIN_SAT_USED_IN_FIX = 3;
 
-    private final Context         mContext;
-    private GpsStatus.Listener    mGPSListener;
+    private final Context mContext;
+    private GpsStatus.Listener mGPSListener;
 
     private int mLocationCount;
 

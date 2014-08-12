@@ -25,7 +25,7 @@ import java.util.Properties;
 
 public class UploadReportsDialog extends DialogFragment
         implements AsyncUploader.AsyncUploaderListener {
-    private static final String LOG_TAG = "Stumbler:" + UploadReportsDialog.class.getSimpleName();
+    private static final String LOG_TAG = AppGlobals.LOG_PREFIX + UploadReportsDialog.class.getSimpleName();
 
     private TextView mLastUpdateTimeView;
     private TextView mObservationsSentView;

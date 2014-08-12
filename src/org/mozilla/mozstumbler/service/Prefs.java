@@ -14,8 +14,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 public final class Prefs {
-    private static final String     LOG_TAG        = Prefs.class.getSimpleName();
-    public  static final String     PREFS_FILE    = Prefs.class.getSimpleName();
+    private static final String     LOG_TAG = Prefs.class.getSimpleName();
     private static final String     NICKNAME_PREF = "nickname";
     private static final String     VALUES_VERSION_PREF = "values_version";
     private static final String     WIFI_ONLY = "wifi_only";
@@ -23,9 +22,11 @@ public final class Prefs {
     private static final String     LON_PREF = "lon_pref";
     private static final String     GEOFENCE_HERE = "geofence_here";
     private static final String     GEOFENCE_SWITCH = "geofence_switch";
-    public  static final String     WIFI_SCAN_ALWAYS = "wifi_scan_always";
     private static final String     FIREFOX_SCAN_ENABLED = "firefox_scan_on";
     private static final String     MOZ_API_KEY = "moz_api_key";
+    private static final String     WIFI_SCAN_ALWAYS = "wifi_scan_always";
+    // Public for MozStumbler to use for manual upgrade of old prefs.
+    public  static final String     PREFS_FILE = Prefs.class.getSimpleName();
 
     private final SharedPreferences mSharedPrefs;
     static private Prefs sInstance;

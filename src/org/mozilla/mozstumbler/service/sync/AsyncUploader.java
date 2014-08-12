@@ -21,16 +21,16 @@ import org.mozilla.mozstumbler.service.utils.NetworkUtils;
 * preferences, do not call any code that isn't thread-safe. You will cause suffering.
 * An exception is made for AppGlobals.isDebug, a false reading is of no consequence. */
 public class AsyncUploader extends AsyncTask<Void, Void, SyncSummary> {
+    private static final String LOG_TAG = AppGlobals.LOG_PREFIX + AsyncUploader.class.getSimpleName();
+    private final UploadSettings mSettings;
+    private final Object mListenerLock = new Object();
+    private AsyncUploaderListener mListener;
+    private static boolean sIsUploading;
+
     public interface AsyncUploaderListener {
         public void onUploadComplete(SyncSummary result);
         public void onUploadProgress();
     }
-
-    private final UploadSettings mSettings;
-
-    private final Object mListenerLock = new Object();
-    private AsyncUploaderListener mListener;
-    private static boolean sIsUploading;
 
     public static class UploadSettings {
         public final boolean mShouldIgnoreWifiStatus;
@@ -98,8 +98,6 @@ public class AsyncUploader extends AsyncTask<Void, Void, SyncSummary> {
     protected void onCancelled(SyncSummary result) {
         sIsUploading = false;
     }
-
-    final String LOG_TAG = "Stumbler:" + AsyncUploader.class.getSimpleName();
 
     private void uploadReports(AbstractCommunicator.SyncSummary syncResult, Runnable progressListener) {
         long uploadedObservations = 0;

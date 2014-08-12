@@ -8,6 +8,7 @@ import android.telephony.CellLocation;
 import android.telephony.CellSignalStrengthWcdma;
 import android.telephony.TelephonyManager;
 
+import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.scanners.cellscanner.CellInfo;
 import org.mozilla.mozstumbler.service.scanners.cellscanner.CellScannerNoWCDMA;
 import java.util.List;
@@ -18,7 +19,7 @@ public class DefaultCellScanner extends CellScannerNoWCDMA {
 
     public DefaultCellScanner(Context context) {
         super(context);
-        LOG_TAG = "Stumbler:" + DefaultCellScanner.class.getSimpleName();
+        LOG_TAG = AppGlobals.LOG_PREFIX + DefaultCellScanner.class.getSimpleName();
         mScreenMonitor = new ScreenMonitor(mContext);
     }
 

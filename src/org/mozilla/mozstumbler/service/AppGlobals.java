@@ -9,6 +9,8 @@ import org.mozilla.mozstumbler.service.datahandling.DataStorageManager;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class AppGlobals {
+    public static final String LOG_PREFIX = "Stumbler:";
+
     /* All intent actions start with this string. Only locally broadcasted.  */
     public static final String ACTION_NAMESPACE = "org.mozilla.mozstumbler.intent.action";
 

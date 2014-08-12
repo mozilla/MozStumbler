@@ -10,9 +10,10 @@ import java.net.HttpURLConnection;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.mozilla.mozstumbler.service.AbstractCommunicator;
+import org.mozilla.mozstumbler.service.AppGlobals;
 
 public class Searcher extends AbstractCommunicator {
-    private static final String LOG_TAG = "Stumbler:" + Searcher.class.getSimpleName();
+    private static final String LOG_TAG = AppGlobals.LOG_PREFIX + Searcher.class.getSimpleName();
     private static final String SEARCH_URL = "https://location.services.mozilla.com/v1/search";
     private static final String RESPONSE_OK_TEXT = "ok";
     private static final String JSON_LATITUDE = "lat";

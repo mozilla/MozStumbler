@@ -37,9 +37,7 @@ import org.mozilla.mozstumbler.BuildConfig;
 import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.client.MainActivity;
 import org.mozilla.mozstumbler.service.scanners.GPSScanner;
-import org.osmdroid.events.MapListener;
-import org.osmdroid.events.ScrollEvent;
-import org.osmdroid.events.ZoomEvent;
+import org.osmdroid.api.IGeoPoint;
 import org.osmdroid.tileprovider.BitmapPool;
 import org.osmdroid.tileprovider.MapTileProviderBasic;
 import org.osmdroid.tileprovider.tilesource.ITileSource;
@@ -62,6 +60,7 @@ public final class MapActivity extends Activity {
     private static final int MENU_REFRESH           = 1;
     private static final String ZOOM_KEY = "zoom";
     private static final int DEFAULT_ZOOM = 2;
+    private static final int DEFAULT_ZOOM_AFTER_FIX = 13;
     private static final String LAT_KEY = "latitude";
     private static final String LON_KEY = "longitude";
     private static final String LOCATIONS_KEY = "locations";
@@ -69,6 +68,7 @@ public final class MapActivity extends Activity {
     private MapView mMap;
     private PathOverlay mPathOverlay;
     private AccuracyCircleOverlay mAccuracyOverlay;
+    private MapPreferences mMapPreferences;
     private boolean mFirstLocationFix;
     private boolean mUserPanning = false;
     private ReporterBroadcastReceiver mReceiver;
@@ -135,6 +135,8 @@ public final class MapActivity extends Activity {
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         setContentView(R.layout.activity_map);
 
+        mMapPreferences = new MapPreferences(this);
+
         mMap = (MapView) this.findViewById(R.id.map);
         mMap.setTileSource(getTileSource());
         mMap.setBuiltInZoomControls(true);
@@ -159,7 +161,15 @@ public final class MapActivity extends Activity {
             }
         } else {
             final StumblerService service = ((MainApp) getApplication()).getService();
-            final GeoPoint lastLoc = new GeoPoint(service.getLatitude(), service.getLongitude());
+            final double latitude = service.getLatitude();
+            final double longitude = service.getLongitude();
+            GeoPoint lastLoc;
+            if (isValidLocation(latitude, longitude)) {
+                lastLoc = new GeoPoint(latitude, longitude);
+            } else {
+                lastLoc = mMapPreferences.getLastMapCenter();
+                zoomLevel = DEFAULT_ZOOM_AFTER_FIX;
+            }
             mMap.getController().setCenter(lastLoc);
         }
         mMap.getController().setZoom(zoomLevel);
@@ -260,7 +270,7 @@ public final class MapActivity extends Activity {
     private void positionMapAt(Location location) {
         final GeoPoint point = new GeoPoint(location.getLatitude(), location.getLongitude());
         if (mFirstLocationFix) {
-            mMap.getController().setZoom(13);
+            mMap.getController().setZoom(DEFAULT_ZOOM_AFTER_FIX);
             mFirstLocationFix = false;
             mMap.getController().setCenter(point);
             mUserPanning = false;
@@ -365,8 +375,10 @@ public final class MapActivity extends Activity {
     protected void onSaveInstanceState(Bundle bundle) {
         super.onSaveInstanceState(bundle);
         bundle.putInt(ZOOM_KEY, mMap.getZoomLevel());
-        bundle.putDouble(LON_KEY, mMap.getMapCenter().getLongitude());
-        bundle.putDouble(LAT_KEY, mMap.getMapCenter().getLatitude());
+        IGeoPoint center = mMap.getMapCenter();
+        bundle.putDouble(LON_KEY, center.getLongitude());
+        bundle.putDouble(LAT_KEY, center.getLatitude());
+        mMapPreferences.setLastMapCenter(center);
     }
 
     @Override
@@ -408,7 +420,7 @@ public final class MapActivity extends Activity {
             // Don't map (0,0)
             final double latitude = result.getLatitude();
             final double longitude = result.getLongitude();
-            if (Math.abs(latitude) >= 0.01 && Math.abs(longitude) >= 0.01) {
+            if (isValidLocation(latitude, longitude)) {
                 final GeoPoint point = new GeoPoint(result.getLatitude(), result.getLongitude());
                 mPathOverlay.addPoint(point);
             }
@@ -418,7 +430,7 @@ public final class MapActivity extends Activity {
         @Override
         protected void onPostExecute(Location result) {
             setUserPositionAt(result);
-            if (!mUserPanning) {
+            if (!mUserPanning && isValidLocation(result.getLatitude(), result.getLongitude())) {
                 positionMapAt(result);
             }
             formatTextView(R.id.latitude_text, "%1$.4f", result.getLatitude());
@@ -433,6 +445,10 @@ public final class MapActivity extends Activity {
                 mUserPanning = true;
             }
         }));
+    }
+
+    private boolean isValidLocation(double latitude, double longitude) {
+        return Math.abs(latitude) > 0.0001 && Math.abs(longitude) > 0.0001;
     }
 
     private void formatTextView(int textViewId, int stringId, Object... args) {

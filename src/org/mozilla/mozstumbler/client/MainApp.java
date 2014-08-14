@@ -158,6 +158,7 @@ public class MainApp extends Application {
         AsyncUploader.UploadSettings settings =
             new AsyncUploader.UploadSettings(Prefs.getInstance().getWifiScanAlways(), Prefs.getInstance().getUseWifiOnly());
         AsyncUploader uploader = new AsyncUploader(settings, null /* don't need to listen for completion */);
+        uploader.setNickname(Prefs.getInstance().getNickname());
         uploader.execute();
     }
 

@@ -46,7 +46,7 @@ public class PreferencesScreen extends PreferenceActivity {
         mWifiPreference = (CheckBoxPreference) getPreferenceManager().findPreference("wifi_only");
         mGeofenceSwitch = (CheckBoxPreference) getPreferenceManager().findPreference("geofence_switch");
         mGeofenceHere = getPreferenceManager().findPreference("geofence_here");
-        mWifiScanAlwaysSwitch = (CheckBoxPreference)getPreferenceManager().findPreference("wifi_scan_always");
+        mWifiScanAlwaysSwitch = (CheckBoxPreference) getPreferenceManager().findPreference("wifi_scan_always");
 
         setNicknamePreferenceTitle(sPrefs.getNickname());
         mWifiPreference.setChecked(sPrefs.getUseWifiOnly());

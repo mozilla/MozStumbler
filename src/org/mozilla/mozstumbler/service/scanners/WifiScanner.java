@@ -61,7 +61,7 @@ public class WifiScanner extends BroadcastReceiver {
     }
 
     private boolean isWifiEnabled() {
-        return (sIsTestMode) ||  getWifiManager().isWifiEnabled();
+        return (sIsTestMode) || getWifiManager().isWifiEnabled();
     }
 
     private List<ScanResult> getScanResults() {

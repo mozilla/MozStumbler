@@ -108,7 +108,7 @@ public final class StumblerBundle implements Parcelable {
         return mCellData;
     }
 
-    public JSONObject  toMLSJSON() throws JSONException {
+    public JSONObject toMLSJSON() throws JSONException {
         JSONObject item = new JSONObject();
 
         item.put(DataStorageContract.ReportsColumns.TIME, mGpsPosition.getTime());

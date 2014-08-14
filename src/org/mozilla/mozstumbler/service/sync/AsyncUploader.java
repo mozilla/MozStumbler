@@ -10,6 +10,7 @@ import java.io.IOException;
 import org.mozilla.mozstumbler.service.AbstractCommunicator;
 import org.mozilla.mozstumbler.service.AbstractCommunicator.SyncSummary;
 import org.mozilla.mozstumbler.service.AppGlobals;
+import org.mozilla.mozstumbler.service.Prefs;
 import org.mozilla.mozstumbler.service.datahandling.DataStorageManager;
 import org.mozilla.mozstumbler.service.utils.NetworkUtils;
 
@@ -26,6 +27,7 @@ public class AsyncUploader extends AsyncTask<Void, Void, SyncSummary> {
     private final Object mListenerLock = new Object();
     private AsyncUploaderListener mListener;
     private static boolean sIsUploading;
+    private String mNickname;
 
     public interface AsyncUploaderListener {
         public void onUploadComplete(SyncSummary result);
@@ -44,6 +46,10 @@ public class AsyncUploader extends AsyncTask<Void, Void, SyncSummary> {
     public AsyncUploader(UploadSettings settings, AsyncUploaderListener listener) {
         mListener = listener;
         mSettings = settings;
+    }
+
+    public void setNickname(String name) {
+        mNickname = name;
     }
 
     public void clearListener() {
@@ -97,6 +103,42 @@ public class AsyncUploader extends AsyncTask<Void, Void, SyncSummary> {
     @Override
     protected void onCancelled(SyncSummary result) {
         sIsUploading = false;
+    }
+
+    private class Submitter extends AbstractCommunicator {
+        private static final String SUBMIT_URL = "https://location.services.mozilla.com/v1/submit";
+
+        public Submitter() {
+            super();
+        }
+
+        @Override
+        public String getUrlString() {
+            return SUBMIT_URL;
+        }
+
+        @Override
+        public String getNickname(){
+            return mNickname;
+        }
+
+        @Override
+        public NetworkSendResult cleanSend(byte[] data) {
+            NetworkSendResult result = new NetworkSendResult();
+            try {
+                result.bytesSent = this.send(data, ZippedState.eAlreadyZipped);
+                result.errorCode = 0;
+            } catch (IOException ex) {
+                String msg = "Error submitting: " + ex;
+                if (ex instanceof HttpErrorException) {
+                    result.errorCode = ((HttpErrorException) ex).responseCode;
+                    msg += " Code:" + result.errorCode;
+                }
+                Log.e(LOG_TAG, msg);
+                AppGlobals.guiLogError(msg);
+            }
+            return result;
+        }
     }
 
     private void uploadReports(AbstractCommunicator.SyncSummary syncResult, Runnable progressListener) {

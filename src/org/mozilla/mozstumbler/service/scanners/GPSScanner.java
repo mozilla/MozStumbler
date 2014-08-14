@@ -21,6 +21,7 @@ import org.mozilla.mozstumbler.service.AppGlobals.ActiveOrPassiveStumbling;
 import org.mozilla.mozstumbler.service.Prefs;
 
 import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class GPSScanner implements LocationListener {
     public static final String ACTION_BASE = AppGlobals.ACTION_NAMESPACE + ".GPSScanner.";
@@ -40,18 +41,15 @@ public class GPSScanner implements LocationListener {
     private static final float PASSIVE_GEO_MIN_UPDATE_DISTANCE = 30;
     private static final int MIN_SAT_USED_IN_FIX = 3;
 
+    private final LocationBlockList mBlockList = new LocationBlockList();
     private final Context mContext;
     private GpsStatus.Listener mGPSListener;
-
     private int mLocationCount;
-
     private Location mLocation = new Location("internal");
-
-    private LocationBlockList mBlockList = new LocationBlockList();
     private boolean mAutoGeofencing;
     private boolean mIsPassiveMode;
 
-    private ScanManager mScanManager;
+    private final ScanManager mScanManager;
 
     public GPSScanner(Context context, ScanManager scanManager) {
         mContext = context;
@@ -68,7 +66,7 @@ public class GPSScanner implements LocationListener {
     }
 
     private void startPassiveMode() {
-        LocationManager locationManager = (LocationManager)mContext.getSystemService(Context.LOCATION_SERVICE);
+        LocationManager locationManager = (LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
         locationManager.requestLocationUpdates(LocationManager.PASSIVE_PROVIDER,
                                                0,
                                                0, this);
@@ -84,32 +82,32 @@ public class GPSScanner implements LocationListener {
         reportLocationLost();
         mGPSListener = new GpsStatus.Listener() {
                 public void onGpsStatusChanged(int event) {
-                    if (event == GpsStatus.GPS_EVENT_SATELLITE_STATUS) {
-                        GpsStatus status = getLocationManager().getGpsStatus(null);
-                        Iterable<GpsSatellite> sats = status.getSatellites();
+                if (event == GpsStatus.GPS_EVENT_SATELLITE_STATUS) {
+                    GpsStatus status = getLocationManager().getGpsStatus(null);
+                    Iterable<GpsSatellite> sats = status.getSatellites();
 
-                        int satellites = 0;
-                        int fixes = 0;
+                    int satellites = 0;
+                    int fixes = 0;
 
-                        for (GpsSatellite sat : sats) {
-                            satellites++;
-                            if(sat.usedInFix()) {
-                                fixes++;
-                            }
+                    for (GpsSatellite sat : sats) {
+                        satellites++;
+                        if (sat.usedInFix()) {
+                            fixes++;
                         }
-                        reportNewGpsStatus(fixes,satellites);
-                        if (fixes < MIN_SAT_USED_IN_FIX) {
-                            reportLocationLost();
-                        }
-
-                        if (AppGlobals.isDebug) {
-                            Log.v(LOG_TAG, "onGpsStatusChange - satellites: " + satellites + " fixes: " + fixes);
-                        }
-                    } else if (event == GpsStatus.GPS_EVENT_STOPPED) {
+                    }
+                    reportNewGpsStatus(fixes, satellites);
+                    if (fixes < MIN_SAT_USED_IN_FIX) {
                         reportLocationLost();
                     }
+
+                    if (AppGlobals.isDebug) {
+                        Log.v(LOG_TAG, "onGpsStatusChange - satellites: " + satellites + " fixes: " + fixes);
+                    }
+                } else if (event == GpsStatus.GPS_EVENT_STOPPED) {
+                    reportLocationLost();
                 }
-            };
+            }
+        };
 
         lm.addGpsStatusListener(mGPSListener);
     }
@@ -142,7 +140,9 @@ public class GPSScanner implements LocationListener {
     }
 
     public void checkPrefs() {
-        if (mBlockList!=null) mBlockList.update_blocks();
+        if (mBlockList != null) {
+            mBlockList.updateBlocks();
+        }
 
         mAutoGeofencing = Prefs.getInstance().getGeofenceHere();
     }
@@ -175,13 +175,11 @@ public class GPSScanner implements LocationListener {
         // Check dist and time threshold here, not set on the listener.
         if (mIsPassiveMode &&
             (location.distanceTo(mLocation) < PASSIVE_GEO_MIN_UPDATE_DISTANCE ||
-             location.getTime() - mLocation.getTime() < PASSIVE_GEO_MIN_UPDATE_TIME))
-        {
-            //if (SharedConstants.isDebug) Log.d(LOG_TAG, "Distance/time below threshold:" + (location.getTime() - mLocation.getTime()));
+             location.getTime() - mLocation.getTime() < PASSIVE_GEO_MIN_UPDATE_TIME)) {
             return;
         }
 
-        java.util.Date date = new java.util.Date(location.getTime());
+        Date date = new Date(location.getTime());
         SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
         String time = formatter.format(date);
         logMsg += String.format("%s Coord: %.4f,%.4f, Acc: %.0f, Speed: %.0f, Alt: %.0f, Bearing: %.1f", time, location.getLatitude(),
@@ -223,8 +221,8 @@ public class GPSScanner implements LocationListener {
 
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {
-        if ((status != LocationProvider.AVAILABLE)
-                && (LocationManager.GPS_PROVIDER.equals(provider))) {
+        if ((status != LocationProvider.AVAILABLE) &&
+            (LocationManager.GPS_PROVIDER.equals(provider))) {
             reportLocationLost();
         }
     }

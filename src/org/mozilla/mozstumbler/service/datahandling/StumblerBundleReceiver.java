@@ -28,14 +28,14 @@ public final class StumblerBundleReceiver {
             Log.w(LOG_TAG, "Failed to convert bundle to JSON: " + e);
             return;
         }
-            if (AppGlobals.isDebug) {
-                Log.d(LOG_TAG, "Received bundle: " + mlsObj.toString());
-            }
 
-            AppGlobals.guiLogInfo(mlsObj.toString());
+        if (AppGlobals.isDebug) {
+            Log.d(LOG_TAG, "Received bundle: " + mlsObj.toString());
+        }
+
+        AppGlobals.guiLogInfo(mlsObj.toString());
 
         try {
-
             DataStorageManager.getInstance().insert(mlsObj.toString(), wifiCount, cellCount);
         } catch (IOException e) {
             Log.w(LOG_TAG, e.toString());

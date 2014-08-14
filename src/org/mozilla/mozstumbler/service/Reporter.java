@@ -25,11 +25,11 @@ import org.mozilla.mozstumbler.service.scanners.WifiScanner;
 
 public final class Reporter extends BroadcastReceiver {
     private static final String LOG_TAG = AppGlobals.LOG_PREFIX + Reporter.class.getSimpleName();
-    public  static final String ACTION_FLUSH_TO_BUNDLE = AppGlobals.ACTION_NAMESPACE + ".FLUSH";
+    public static final String ACTION_FLUSH_TO_BUNDLE = AppGlobals.ACTION_NAMESPACE + ".FLUSH";
     private boolean mIsStarted;
 
     /* The maximum time of observation */
-    private static final int REPORTER_WINDOW_MSEC  = 24 * 60 * 60 * 1000; //ms
+    private static final int REPORTER_WINDOW_MSEC = 24 * 60 * 60 * 1000; //ms
 
     /* The maximum number of Wi-Fi access points in a single observation */
     private static final int WIFI_COUNT_WATERMARK = 100;

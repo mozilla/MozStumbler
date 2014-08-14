@@ -139,9 +139,9 @@ public class DataStorageManager {
 
             mFilesOnDiskBytes = mReportCount = mWifiCount = mCellCount = 0;
             for (File f : mFiles) {
-                mReportCount += (int)getLongFromFilename(f.getName(), SEP_REPORT_COUNT);
-                mWifiCount += (int)getLongFromFilename(f.getName(), SEP_WIFI_COUNT);
-                mCellCount += (int)getLongFromFilename(f.getName(), SEP_CELL_COUNT);
+                mReportCount += (int) getLongFromFilename(f.getName(), SEP_REPORT_COUNT);
+                mWifiCount += (int) getLongFromFilename(f.getName(), SEP_WIFI_COUNT);
+                mCellCount += (int) getLongFromFilename(f.getName(), SEP_CELL_COUNT);
                 mFilesOnDiskBytes += f.length();
             }
         }
@@ -174,7 +174,7 @@ public class DataStorageManager {
             fileList = new ReportFileList(list);
         }
 
-        static final int BATCH_INDEX_FOR_MEM_BUFFER  = -1;
+        static final int BATCH_INDEX_FOR_MEM_BUFFER = -1;
         public int currentIndex = BATCH_INDEX_FOR_MEM_BUFFER;
         public final ReportFileList fileList;
     }
@@ -243,7 +243,7 @@ public class DataStorageManager {
     private static byte[] readFile(File file) throws IOException {
         final RandomAccessFile f = new RandomAccessFile(file, "r");
         try {
-            final byte[] data = new byte[(int)f.length()];
+            final byte[] data = new byte[(int) f.length()];
             f.readFully(data);
             return data;
         } finally {
@@ -321,9 +321,9 @@ public class DataStorageManager {
 
         final File f = mReportBatchIterator.fileList.mFiles[mReportBatchIterator.currentIndex];
         final String filename = f.getName();
-        final int reportCount = (int)getLongFromFilename(f.getName(), SEP_REPORT_COUNT);
-        final int wifiCount = (int)getLongFromFilename(f.getName(), SEP_WIFI_COUNT);
-        final int cellCount = (int)getLongFromFilename(f.getName(), SEP_CELL_COUNT);
+        final int reportCount = (int) getLongFromFilename(f.getName(), SEP_REPORT_COUNT);
+        final int wifiCount = (int) getLongFromFilename(f.getName(), SEP_WIFI_COUNT);
+        final int cellCount = (int) getLongFromFilename(f.getName(), SEP_CELL_COUNT);
         final byte[] data = readFile(f);
         return new ReportBatch(filename, data, reportCount, wifiCount, cellCount);
     }

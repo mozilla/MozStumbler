@@ -259,11 +259,11 @@ public class CellInfo implements Parcelable {
     /**
      * @param mcc Mobile Country Code, Integer.MAX_VALUE if unknown
      * @param mnc Mobile Network Code, Integer.MAX_VALUE if unknown
-     * @param ci  Cell Identity, Integer.MAX_VALUE if unknown
+     * @param ci Cell Identity, Integer.MAX_VALUE if unknown
      * @param pci Physical Cell Id, Integer.MAX_VALUE if unknown
      * @param tac Tracking Area Code, Integer.MAX_VALUE if unknown
      * @param asu Arbitrary strength unit
-     * @param ta  Timing advance
+     * @param ta Timing advance
      */
     void setLteCellInfo(int mcc, int mnc, int ci, int pci, int tac, int asu, int ta) {
         mCellRadio = CELL_RADIO_LTE;

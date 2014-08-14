@@ -90,6 +90,7 @@ public class UploadReportsDialog extends DialogFragment
                 AsyncUploader.UploadSettings settings =
                         new AsyncUploader.UploadSettings(Prefs.getInstance().getWifiScanAlways(), Prefs.getInstance().getUseWifiOnly());
                 mUploader = new AsyncUploader(settings, UploadReportsDialog.this);
+                mUploader.setNickname(Prefs.getInstance().getNickname());
                 mUploader.execute();
                 updateProgressbarStatus();
             }

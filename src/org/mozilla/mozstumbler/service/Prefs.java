@@ -13,20 +13,20 @@ import android.os.Build.VERSION;
 import android.text.TextUtils;
 import android.util.Log;
 
-public final class Prefs {
-    private static final String     LOG_TAG = Prefs.class.getSimpleName();
-    private static final String     NICKNAME_PREF = "nickname";
-    private static final String     VALUES_VERSION_PREF = "values_version";
-    private static final String     WIFI_ONLY = "wifi_only";
-    private static final String     LAT_PREF = "lat_pref";
-    private static final String     LON_PREF = "lon_pref";
-    private static final String     GEOFENCE_HERE = "geofence_here";
-    private static final String     GEOFENCE_SWITCH = "geofence_switch";
-    private static final String     FIREFOX_SCAN_ENABLED = "firefox_scan_on";
-    private static final String     MOZ_API_KEY = "moz_api_key";
-    private static final String     WIFI_SCAN_ALWAYS = "wifi_scan_always";
-    // Public for MozStumbler to use for manual upgrade of old prefs.
-    public  static final String     PREFS_FILE = Prefs.class.getSimpleName();
+public  final class Prefs {
+    private static final String LOG_TAG = Prefs.class.getSimpleName();
+    private static final String NICKNAME_PREF = "nickname";
+    private static final String VALUES_VERSION_PREF = "values_version";
+    private static final String WIFI_ONLY = "wifi_only";
+    private static final String LAT_PREF = "lat_pref";
+    private static final String LON_PREF = "lon_pref";
+    private static final String GEOFENCE_HERE = "geofence_here";
+    private static final String GEOFENCE_SWITCH = "geofence_switch";
+    private static final String FIREFOX_SCAN_ENABLED = "firefox_scan_on";
+    private static final String MOZ_API_KEY = "moz_api_key";
+    private static final String WIFI_SCAN_ALWAYS = "wifi_scan_always";
+    // public for MozStumbler to use for manual upgrade of old prefs.
+    public static final String PREFS_FILE = Prefs.class.getSimpleName();
 
     private final SharedPreferences mSharedPrefs;
     static private Prefs sInstance;
@@ -65,57 +65,57 @@ public final class Prefs {
     /// Setters
     ///
 
-    public void setUseWifiOnly(boolean state) {
+    public synchronized void setUseWifiOnly(boolean state) {
         setBoolPref(WIFI_ONLY, state);
     }
 
-    public void setGeofenceEnabled(boolean state) {
+    public synchronized void setGeofenceEnabled(boolean state) {
         setBoolPref(GEOFENCE_SWITCH, state);
     }
 
-    public void setGeofenceHere(boolean flag) {
+    public synchronized void setGeofenceHere(boolean flag) {
         setBoolPref(GEOFENCE_HERE, flag);
     }
 
-    public void setGeofenceLocation(Location location) {
+    public synchronized void setGeofenceLocation(Location location) {
         SharedPreferences.Editor editor = getPrefs().edit();
-        editor.putFloat(LAT_PREF, (float)location.getLatitude());
+        editor.putFloat(LAT_PREF, (float) location.getLatitude());
         editor.putFloat(LON_PREF, (float) location.getLongitude());
         apply(editor);
     }
 
-    public void setMozApiKey(String s) {
+    public synchronized void setMozApiKey(String s) {
         setStringPref(MOZ_API_KEY, s);
     }
 
     ///
     /// Getters
     ///
-    public boolean getFirefoxScanEnabled() {
+    public synchronized boolean getFirefoxScanEnabled() {
         return getBoolPrefWithDefault(FIREFOX_SCAN_ENABLED, false);
     }
 
-    public String getMozApiKey() {
+    public synchronized String getMozApiKey() {
         String s = getStringPref(MOZ_API_KEY);
         return (s == null)? "no-mozilla-api-key" : s;
     }
 
-    public boolean getGeofenceEnabled() {
+    public synchronized boolean getGeofenceEnabled() {
         return getBoolPrefWithDefault(GEOFENCE_SWITCH, false);
     }
 
-    public boolean getGeofenceHere() {
+    public synchronized boolean getGeofenceHere() {
         return getBoolPrefWithDefault(GEOFENCE_HERE, false);
     }
 
-    public Location getGeofenceLocation() {
+    public synchronized Location getGeofenceLocation() {
         Location loc = new Location(AppGlobals.LOCATION_ORIGIN_INTERNAL);
         loc.setLatitude(getPrefs().getFloat(LAT_PREF, 0));
         loc.setLongitude(getPrefs().getFloat(LON_PREF,0));
         return loc;
     }
 
-    public String getNickname() {
+    public synchronized String getNickname() {
         String nickname = getStringPref(NICKNAME_PREF);
         if (nickname != null) {
             nickname = nickname.trim();
@@ -123,11 +123,11 @@ public final class Prefs {
         return TextUtils.isEmpty(nickname) ? null : nickname;
     }
 
-    public void setFirefoxScanEnabled(boolean on) {
+    public synchronized void setFirefoxScanEnabled(boolean on) {
         setBoolPref(FIREFOX_SCAN_ENABLED, on);
     }
 
-    public void setNickname(String nick) {
+    public synchronized void setNickname(String nick) {
         if (nick != null) {
             nick = nick.trim();
             if (nick.length() > 0) {
@@ -136,15 +136,15 @@ public final class Prefs {
         }
     }
 
-    public boolean getUseWifiOnly() {
+    public synchronized boolean getUseWifiOnly() {
         return getBoolPrefWithDefault(WIFI_ONLY, true);
     }
 
-    public boolean getWifiScanAlways() {
+    public synchronized boolean getWifiScanAlways() {
         return getBoolPrefWithDefault(WIFI_SCAN_ALWAYS, false);
     }
 
-    public void setWifiScanAlways(boolean b) {
+    public synchronized void setWifiScanAlways(boolean b) {
         setBoolPref(WIFI_SCAN_ALWAYS, b);
     }
 

@@ -165,7 +165,7 @@ public class ScanManager {
     }
 
     public int getLocationCount() {
-        return  (mGPSScanner == null)? 0 : mGPSScanner.getLocationCount();
+        return (mGPSScanner == null)? 0 : mGPSScanner.getLocationCount();
     }
 
     public double getLatitude() {
@@ -173,7 +173,7 @@ public class ScanManager {
     }
 
     public double getLongitude() {
-        return  (mGPSScanner == null)? 0.0 : mGPSScanner.getLongitude();
+        return (mGPSScanner == null)? 0.0 : mGPSScanner.getLongitude();
     }
 
     public Location getLocation() {

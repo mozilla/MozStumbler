@@ -13,12 +13,12 @@ import org.mozilla.mozstumbler.service.Prefs;
 
 
 public final class LocationBlockList {
-    private static final String LOG_TAG         = AppGlobals.LOG_PREFIX + LocationBlockList.class.getSimpleName();
-    private static final double MAX_ALTITUDE    = 8848;      // Mount Everest's altitude in meters
-    private static final double MIN_ALTITUDE    = -418;      // Dead Sea's altitude in meters
-    private static final float  MAX_SPEED       = 340.29f;   // Mach 1 in meters/second
-    private static final float  MIN_ACCURACY    = 500;       // meter radius
-    private static final long   MIN_TIMESTAMP   = 946684801; // 2000-01-01 00:00:01
+    private static final String LOG_TAG = AppGlobals.LOG_PREFIX + LocationBlockList.class.getSimpleName();
+    private static final double MAX_ALTITUDE = 8848;      // Mount Everest's altitude in meters
+    private static final double MIN_ALTITUDE = -418;      // Dead Sea's altitude in meters
+    private static final float MAX_SPEED = 340.29f;   // Mach 1 in meters/second
+    private static final float MIN_ACCURACY = 500;       // meter radius
+    private static final long MIN_TIMESTAMP = 946684801; // 2000-01-01 00:00:01
     private static final double GEOFENCE_RADIUS = 0.01;      // .01 degrees is approximately 1km
 
     private Location mBlockedLocation;
@@ -26,10 +26,10 @@ public final class LocationBlockList {
     private boolean mIsGeofenced = false;
 
     public LocationBlockList() {
-        update_blocks();
+        updateBlocks();
     }
 
-    public void update_blocks()    {
+    public void updateBlocks()    {
         mBlockedLocation = Prefs.getInstance().getGeofenceLocation();
         mGeofencingEnabled = Prefs.getInstance().getGeofenceEnabled();
     }
@@ -88,15 +88,16 @@ public final class LocationBlockList {
         }
 
         if (mGeofencingEnabled &&
-                Math.abs(location.getLatitude() - mBlockedLocation.getLatitude()) < GEOFENCE_RADIUS &&
-                Math.abs(location.getLongitude() - mBlockedLocation.getLongitude()) < GEOFENCE_RADIUS) {
+            Math.abs(location.getLatitude() - mBlockedLocation.getLatitude()) < GEOFENCE_RADIUS &&
+            Math.abs(location.getLongitude() - mBlockedLocation.getLongitude()) < GEOFENCE_RADIUS) {
             block = true;
             mIsGeofenced = true;
-            Log.i(LOG_TAG, "Hit the geofence: " + mBlockedLocation.getLatitude() +" / " + mBlockedLocation.getLongitude());
         }
 
         return block;
     }
 
-    public boolean isGeofenced() { return mIsGeofenced; }
+    public boolean isGeofenced() {
+        return mIsGeofenced;
+    }
 }

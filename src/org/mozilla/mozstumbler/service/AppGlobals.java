@@ -11,7 +11,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 public class AppGlobals {
     public static final String LOG_PREFIX = "Stumbler:";
 
-    /* All intent actions start with this string. Only locally broadcasted.  */
+    /* All intent actions start with this string. Only locally broadcasted. */
     public static final String ACTION_NAMESPACE = "org.mozilla.mozstumbler.intent.action";
 
     /* Handle this for logging reporter info. */
@@ -24,7 +24,7 @@ public class AppGlobals {
      * This member definition in the broadcaster makes it clear what the extra Intent args are for that class. */
     public static final String ACTION_ARG_TIME = "time";
 
-    /* Location constructor requires a named origin, these are created in the app.  */
+    /* Location constructor requires a named origin, these are created in the app. */
     public static final String LOCATION_ORIGIN_INTERNAL = "internal";
 
     public enum ActiveOrPassiveStumbling { ACTIVE_STUMBLING, PASSIVE_STUMBLING }

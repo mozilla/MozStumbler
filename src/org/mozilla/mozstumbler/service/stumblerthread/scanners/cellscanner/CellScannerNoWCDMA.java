@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package org.mozilla.mozstumbler.service.scanners.cellscanner;
+package org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner;
 
 import android.annotation.TargetApi;
 import android.content.Context;

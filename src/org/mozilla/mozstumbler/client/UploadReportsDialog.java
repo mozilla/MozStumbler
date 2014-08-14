@@ -11,12 +11,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import org.mozilla.mozstumbler.service.AbstractCommunicator;
+import org.mozilla.mozstumbler.service.utils.AbstractCommunicator;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.Prefs;
-import org.mozilla.mozstumbler.service.datahandling.DataStorageContract;
-import org.mozilla.mozstumbler.service.datahandling.DataStorageManager;
-import org.mozilla.mozstumbler.service.sync.AsyncUploader;
+import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageContract;
+import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageManager;
+import org.mozilla.mozstumbler.service.uploadthread.AsyncUploader;
 import org.mozilla.mozstumbler.service.utils.DateTimeUtils;
 import org.mozilla.mozstumbler.R;
 

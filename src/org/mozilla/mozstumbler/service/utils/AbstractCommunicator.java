@@ -2,12 +2,13 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package org.mozilla.mozstumbler.service;
+package org.mozilla.mozstumbler.service.utils;
 
 import android.os.Build;
 import android.util.Log;
 
-import org.mozilla.mozstumbler.service.utils.Zipper;
+import org.mozilla.mozstumbler.service.AppGlobals;
+import org.mozilla.mozstumbler.service.Prefs;
 
 import java.io.BufferedOutputStream;
 import java.io.IOException;

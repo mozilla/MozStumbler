@@ -2,14 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package org.mozilla.mozstumbler.service.datahandling;
-
-import android.content.ContentProviderOperation;
-import android.content.ContentResolver;
-import android.content.ContentUris;
-import android.content.ContentValues;
-import android.net.Uri;
-import android.provider.BaseColumns;
+package org.mozilla.mozstumbler.service.stumblerthread.datahandling;
 
 public final class DataStorageContract {
 

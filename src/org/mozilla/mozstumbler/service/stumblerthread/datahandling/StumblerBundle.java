@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package org.mozilla.mozstumbler.service.datahandling;
+package org.mozilla.mozstumbler.service.stumblerthread.datahandling;
 
 import android.location.Location;
 import android.net.wifi.ScanResult;
@@ -16,7 +16,7 @@ import java.util.Map;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.mozilla.mozstumbler.service.scanners.cellscanner.CellInfo;
+import org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner.CellInfo;
 
 public final class StumblerBundle implements Parcelable {
     private final int mPhoneType;

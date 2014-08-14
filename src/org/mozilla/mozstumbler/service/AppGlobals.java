@@ -4,8 +4,6 @@
 
 package org.mozilla.mozstumbler.service;
 
-import org.mozilla.mozstumbler.service.blocklist.WifiBlockListInterface;
-import org.mozilla.mozstumbler.service.datahandling.DataStorageManager;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class AppGlobals {

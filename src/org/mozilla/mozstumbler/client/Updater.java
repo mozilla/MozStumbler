@@ -28,7 +28,7 @@ import java.util.List;
 
 import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.service.AppGlobals;
-import org.mozilla.mozstumbler.service.StumblerService;
+import org.mozilla.mozstumbler.service.stumblerthread.StumblerService;
 
 final class Updater {
     private static final String LOG_TAG = AppGlobals.LOG_PREFIX + Updater.class.getSimpleName();

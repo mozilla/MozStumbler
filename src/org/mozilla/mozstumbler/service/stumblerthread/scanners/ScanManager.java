@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package org.mozilla.mozstumbler.service.scanners;
+package org.mozilla.mozstumbler.service.stumblerthread.scanners;
 
 import android.content.Context;
 import android.content.Intent;
@@ -13,9 +13,9 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import org.mozilla.mozstumbler.service.AppGlobals;
-import org.mozilla.mozstumbler.service.Reporter;
-import org.mozilla.mozstumbler.service.blocklist.WifiBlockListInterface;
-import org.mozilla.mozstumbler.service.scanners.cellscanner.CellScanner;
+import org.mozilla.mozstumbler.service.stumblerthread.Reporter;
+import org.mozilla.mozstumbler.service.stumblerthread.blocklist.WifiBlockListInterface;
+import org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner.CellScanner;
 import org.mozilla.mozstumbler.service.AppGlobals.ActiveOrPassiveStumbling;
 
 import java.util.Date;

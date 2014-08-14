@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package org.mozilla.mozstumbler.service;
+package org.mozilla.mozstumbler.service.stumblerthread;
 
 import android.content.Intent;
 import android.location.Location;
@@ -13,16 +13,20 @@ import android.os.Looper;
 import android.util.Log;
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
-import org.mozilla.mozstumbler.service.blocklist.WifiBlockListInterface;
-import org.mozilla.mozstumbler.service.datahandling.DataStorageManager;
-import org.mozilla.mozstumbler.service.datahandling.StumblerBundleReceiver;
-import org.mozilla.mozstumbler.service.scanners.ScanManager;
-import org.mozilla.mozstumbler.service.scanners.cellscanner.CellScanner;
-import org.mozilla.mozstumbler.service.scanners.cellscanner.CellScannerNoWCDMA;
-import org.mozilla.mozstumbler.service.sync.UploadAlarmReceiver;
+
+import org.mozilla.mozstumbler.service.AppGlobals;
+import org.mozilla.mozstumbler.service.Prefs;
+import org.mozilla.mozstumbler.service.stumblerthread.blocklist.WifiBlockListInterface;
+import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageManager;
+import org.mozilla.mozstumbler.service.stumblerthread.datahandling.StumblerBundleReceiver;
+import org.mozilla.mozstumbler.service.stumblerthread.scanners.ScanManager;
+import org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner.CellScanner;
+import org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner.CellScannerNoWCDMA;
+import org.mozilla.mozstumbler.service.uploadthread.UploadAlarmReceiver;
 import org.mozilla.mozstumbler.service.utils.NetworkUtils;
 import org.mozilla.mozstumbler.service.utils.PersistentIntentService;
 
+// Created from PassiveServiceReceiver
 public final class StumblerService extends PersistentIntentService
         implements DataStorageManager.StorageIsEmptyTracker {
     private static final String LOG_TAG = AppGlobals.LOG_PREFIX + StumblerService.class.getSimpleName();
@@ -74,7 +78,7 @@ public final class StumblerService extends PersistentIntentService
     }
 
     // This is optional, not used in Fennec, and is for clients to specify a (potentially long) list
-    // of blocklisted SSIDs/BSSIds
+    // of blocklisted SSIDs/BSSIDs
     public void setWifiBlockList(WifiBlockListInterface list) {
         mScanManager.setWifiBlockList(list);
     }
@@ -142,23 +146,27 @@ public final class StumblerService extends PersistentIntentService
         mReporter.startup(this);
     }
 
+    // Called from the main thread.
     @Override
     public void onCreate() {
         super.onCreate();
         setIntentRedelivery(true);
     }
 
+    // Called from the main thread
     @Override
     public void onDestroy() {
         super.onDestroy();
 
-        // Used to move these disk I/O ops off the calling thread
+        // Used to move these disk I/O ops off the calling thread. The current operations here are synchronized,
+        // however instead of creating another thread (if onDestroy grew to have concurrency complications)
+        // we could be messaging the stumbler thread to perform a shutdown function.
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
                 if (AppGlobals.isDebug) {
- Log.d(LOG_TAG, "onDestroy");
-}
+                    Log.d(LOG_TAG, "onDestroy");
+                }
 
                 if (sFirefoxStumblingEnabled.get() == false) {
                     Prefs.getInstance().setFirefoxScanEnabled(false);
@@ -180,6 +188,7 @@ public final class StumblerService extends PersistentIntentService
         mScanManager.stopScanning();
     }
 
+    // This is the entry point for the stumbler thread.
     @Override
     protected void onHandleIntent(Intent intent) {
         // Do init() in all cases, there is no cost, whereas it is easy to add code that depends on this.

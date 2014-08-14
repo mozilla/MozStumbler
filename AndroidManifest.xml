@@ -89,14 +89,14 @@
         </receiver>
 
         <service
-            android:name=".service.StumblerService"
+            android:name=".service.stumblerthread.StumblerService"
             android:icon="@drawable/ic_launcher"
             android:label="@string/service_name">
         </service>
 
 
-        <receiver android:name=".service.sync.UploadAlarmReceiver" />
-        <service android:name=".service.sync.UploadAlarmReceiver$UploadAlarmService" />
+        <receiver android:name=".service.uploadthread.UploadAlarmReceiver" />
+        <service android:name=".service.uploadthread.UploadAlarmReceiver$UploadAlarmService" />
     </application>
 
 </manifest>

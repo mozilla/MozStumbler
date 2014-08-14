@@ -2,14 +2,17 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package org.mozilla.mozstumbler.service;
+package org.mozilla.mozstumbler.service.mainthread;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-/*
+import org.mozilla.mozstumbler.service.AppGlobals;
+import org.mozilla.mozstumbler.service.stumblerthread.StumblerService;
+
+/* Starts the stumblerthread.StumblerService.
  * Registered as a receiver in manifest. Starts the StumblerService in passive listening mode.
  * Using GPS_* event changes during development, switch to using the existing permissions for a
  * service on Fennec.

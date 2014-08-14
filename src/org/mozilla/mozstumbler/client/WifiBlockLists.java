@@ -1,6 +1,6 @@
 package org.mozilla.mozstumbler.client;
 
-import org.mozilla.mozstumbler.service.blocklist.WifiBlockListInterface;
+import org.mozilla.mozstumbler.service.stumblerthread.blocklist.WifiBlockListInterface;
 
 public class WifiBlockLists implements WifiBlockListInterface {
 

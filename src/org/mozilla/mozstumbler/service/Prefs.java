@@ -25,7 +25,7 @@ public  final class Prefs {
     private static final String FIREFOX_SCAN_ENABLED = "firefox_scan_on";
     private static final String MOZ_API_KEY = "moz_api_key";
     private static final String WIFI_SCAN_ALWAYS = "wifi_scan_always";
-    // public for MozStumbler to use for manual upgrade of old prefs.
+    // Public for MozStumbler to use for manual upgrade of old prefs.
     public static final String PREFS_FILE = Prefs.class.getSimpleName();
 
     private final SharedPreferences mSharedPrefs;

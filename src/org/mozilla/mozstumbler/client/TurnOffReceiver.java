@@ -7,7 +7,7 @@ import android.os.IBinder;
 import android.util.Log;
 
 import org.mozilla.mozstumbler.service.AppGlobals;
-import org.mozilla.mozstumbler.service.StumblerService;
+import org.mozilla.mozstumbler.service.stumblerthread.StumblerService;
 
 
 /* Test low power in adb with am broadcast -a android.intent.action.BATTERY_LOW

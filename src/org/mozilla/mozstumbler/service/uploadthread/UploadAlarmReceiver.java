@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package org.mozilla.mozstumbler.service.sync;
+package org.mozilla.mozstumbler.service.uploadthread;
 
 import android.app.AlarmManager;
 import android.app.IntentService;
@@ -14,12 +14,17 @@ import android.util.Log;
 
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.Prefs;
-import org.mozilla.mozstumbler.service.datahandling.DataStorageManager;
+import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageManager;
 import org.mozilla.mozstumbler.service.utils.NetworkUtils;
 
 // Only if data is queued and device awake: check network availability and upload.
-// MozStumbler use: this alarm is periodic and repeating
-// Fennec use: The alarm is single-shot in this case, and it is set on Fennec start, and pause.
+// MozStumbler use: this alarm is periodic and repeating.
+// Fennec use: The alarm is single-shot and it is set on Fennec start, and pause.
+//
+// Threading:
+// - scheduled from the stumbler thread
+// - triggered from the main thread
+// - actual work is done the upload thread (AsyncUploader)
 public class UploadAlarmReceiver extends BroadcastReceiver {
     private static final String LOG_TAG = AppGlobals.LOG_PREFIX + UploadAlarmReceiver.class.getSimpleName();
     private static final String EXTRA_IS_REPEATING = "is_repeating";

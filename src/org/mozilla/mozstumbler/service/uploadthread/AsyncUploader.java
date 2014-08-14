@@ -2,16 +2,15 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package org.mozilla.mozstumbler.service.sync;
+package org.mozilla.mozstumbler.service.uploadthread;
 
 import android.os.AsyncTask;
 import android.util.Log;
 import java.io.IOException;
-import org.mozilla.mozstumbler.service.AbstractCommunicator;
-import org.mozilla.mozstumbler.service.AbstractCommunicator.SyncSummary;
+import org.mozilla.mozstumbler.service.utils.AbstractCommunicator;
+import org.mozilla.mozstumbler.service.utils.AbstractCommunicator.SyncSummary;
 import org.mozilla.mozstumbler.service.AppGlobals;
-import org.mozilla.mozstumbler.service.Prefs;
-import org.mozilla.mozstumbler.service.datahandling.DataStorageManager;
+import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageManager;
 import org.mozilla.mozstumbler.service.utils.NetworkUtils;
 
 /* Only one at a time may be uploading. If executed while another upload is in progress
@@ -124,7 +123,7 @@ public class AsyncUploader extends AsyncTask<Void, Void, SyncSummary> {
 
         @Override
         public NetworkSendResult cleanSend(byte[] data) {
-            NetworkSendResult result = new NetworkSendResult();
+            final NetworkSendResult result = new NetworkSendResult();
             try {
                 result.bytesSent = this.send(data, ZippedState.eAlreadyZipped);
                 result.errorCode = 0;

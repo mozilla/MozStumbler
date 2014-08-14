@@ -8,17 +8,17 @@ import android.telephony.TelephonyManager;
 import android.test.ServiceTestCase;
 import android.util.Log;
 
-import org.mozilla.mozstumbler.service.AbstractCommunicator;
+import org.mozilla.mozstumbler.service.utils.AbstractCommunicator;
 import org.mozilla.mozstumbler.service.AppGlobals;
-import org.mozilla.mozstumbler.service.scanners.ScanManager;
-import org.mozilla.mozstumbler.service.StumblerService;
-import org.mozilla.mozstumbler.service.datahandling.DataStorageManager;
-import org.mozilla.mozstumbler.service.scanners.GPSScanner;
-import org.mozilla.mozstumbler.service.scanners.WifiScanner;
-import org.mozilla.mozstumbler.service.scanners.cellscanner.CellInfo;
-import org.mozilla.mozstumbler.service.scanners.cellscanner.CellScanner;
-import org.mozilla.mozstumbler.service.sync.AsyncUploader;
-import org.mozilla.mozstumbler.service.sync.AsyncUploader.UploadSettings;
+import org.mozilla.mozstumbler.service.stumblerthread.scanners.ScanManager;
+import org.mozilla.mozstumbler.service.stumblerthread.StumblerService;
+import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageManager;
+import org.mozilla.mozstumbler.service.stumblerthread.scanners.GPSScanner;
+import org.mozilla.mozstumbler.service.stumblerthread.scanners.WifiScanner;
+import org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner.CellInfo;
+import org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner.CellScanner;
+import org.mozilla.mozstumbler.service.uploadthread.AsyncUploader;
+import org.mozilla.mozstumbler.service.uploadthread.AsyncUploader.UploadSettings;
 import org.mozilla.mozstumbler.service.utils.Zipper;
 
 import java.io.IOException;

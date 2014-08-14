@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package org.mozilla.mozstumbler.service.scanners;
+package org.mozilla.mozstumbler.service.stumblerthread.scanners;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -24,11 +24,11 @@ import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.mozilla.mozstumbler.service.AppGlobals;
-import org.mozilla.mozstumbler.service.blocklist.BSSIDBlockList;
-import org.mozilla.mozstumbler.service.blocklist.SSIDBlockList;
+import org.mozilla.mozstumbler.service.stumblerthread.blocklist.BSSIDBlockList;
+import org.mozilla.mozstumbler.service.stumblerthread.blocklist.SSIDBlockList;
 import org.mozilla.mozstumbler.service.AppGlobals.ActiveOrPassiveStumbling;
 import org.mozilla.mozstumbler.service.Prefs;
-import org.mozilla.mozstumbler.service.blocklist.WifiBlockListInterface;
+import org.mozilla.mozstumbler.service.stumblerthread.blocklist.WifiBlockListInterface;
 
 public class WifiScanner extends BroadcastReceiver {
     public static final String ACTION_BASE = AppGlobals.ACTION_NAMESPACE + ".WifiScanner.";

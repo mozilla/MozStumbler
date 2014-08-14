@@ -28,12 +28,12 @@ import org.mozilla.mozstumbler.client.cellscanner.DefaultCellScanner;
 import org.mozilla.mozstumbler.client.mapview.MapActivity;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.Prefs;
-import org.mozilla.mozstumbler.service.StumblerService;
-import org.mozilla.mozstumbler.service.datahandling.DataStorageManager;
-import org.mozilla.mozstumbler.service.scanners.GPSScanner;
-import org.mozilla.mozstumbler.service.scanners.WifiScanner;
-import org.mozilla.mozstumbler.service.scanners.cellscanner.CellScanner;
-import org.mozilla.mozstumbler.service.sync.AsyncUploader;
+import org.mozilla.mozstumbler.service.stumblerthread.StumblerService;
+import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageManager;
+import org.mozilla.mozstumbler.service.stumblerthread.scanners.GPSScanner;
+import org.mozilla.mozstumbler.service.stumblerthread.scanners.WifiScanner;
+import org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner.CellScanner;
+import org.mozilla.mozstumbler.service.uploadthread.AsyncUploader;
 import org.mozilla.mozstumbler.service.utils.NetworkUtils;
 
 public class MainApp extends Application {

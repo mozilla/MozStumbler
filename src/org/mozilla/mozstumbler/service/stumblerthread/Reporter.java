@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package org.mozilla.mozstumbler.service;
+package org.mozilla.mozstumbler.service.stumblerthread;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -16,12 +16,13 @@ import android.util.Log;
 import java.util.List;
 import java.util.Map;
 
-import org.mozilla.mozstumbler.service.datahandling.StumblerBundle;
-import org.mozilla.mozstumbler.service.datahandling.StumblerBundleReceiver;
-import org.mozilla.mozstumbler.service.scanners.cellscanner.CellInfo;
-import org.mozilla.mozstumbler.service.scanners.cellscanner.CellScanner;
-import org.mozilla.mozstumbler.service.scanners.GPSScanner;
-import org.mozilla.mozstumbler.service.scanners.WifiScanner;
+import org.mozilla.mozstumbler.service.AppGlobals;
+import org.mozilla.mozstumbler.service.stumblerthread.datahandling.StumblerBundle;
+import org.mozilla.mozstumbler.service.stumblerthread.datahandling.StumblerBundleReceiver;
+import org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner.CellInfo;
+import org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner.CellScanner;
+import org.mozilla.mozstumbler.service.stumblerthread.scanners.GPSScanner;
+import org.mozilla.mozstumbler.service.stumblerthread.scanners.WifiScanner;
 
 public final class Reporter extends BroadcastReceiver {
     private static final String LOG_TAG = AppGlobals.LOG_PREFIX + Reporter.class.getSimpleName();

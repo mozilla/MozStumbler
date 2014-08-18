@@ -54,7 +54,7 @@ public final class BSSIDBlockList {
         }
 
         // Some devices may return BSSIDs with ':', '-' or '.' delimiters.
-        BSSID = BSSID.toLowerCase(Locale.US).replaceAll("[.-:]", "");
+        BSSID = BSSID.toLowerCase(Locale.US).replaceAll("[\\-\\.:]", "");
 
         return isCanonicalBSSID(BSSID) ? BSSID : "";
     }

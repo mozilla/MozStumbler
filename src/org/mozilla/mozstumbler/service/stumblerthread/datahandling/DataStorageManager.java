@@ -40,7 +40,7 @@ import java.util.TimerTask;
 public class DataStorageManager {
     private static final String LOG_TAG = AppGlobals.LOG_PREFIX + DataStorageManager.class.getSimpleName();
     private static final int MAX_REPORTS_IN_MEMORY = 50;
-    private volatile long mMaxBytesDiskStorage = 1024 * 500; // 500 KiB max by default
+    private volatile long mMaxBytesDiskStorage = 1024 * 250; // 250 KiB max by default
     private volatile int mMaxWeeksStored = 2;
     private final ReportBatchBuilder mCurrentReports = new ReportBatchBuilder();
     private final File mReportsDir;

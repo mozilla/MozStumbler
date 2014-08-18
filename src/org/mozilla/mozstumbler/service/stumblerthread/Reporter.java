@@ -61,7 +61,7 @@ public final class Reporter extends BroadcastReceiver {
             return;
         }
 
-        mContext = context;
+        mContext = context.getApplicationContext();
         TelephonyManager tm = (TelephonyManager) mContext.getSystemService(Context.TELEPHONY_SERVICE);
         mPhoneType = tm.getPhoneType();
 

@@ -55,7 +55,6 @@ public abstract class AbstractCommunicator {
         public int errorCode = -1;
     }
 
-    /* Return non-zero for error, http error code if available */
     public abstract NetworkSendResult cleanSend(byte[] data);
 
     public String getNickname() {
@@ -101,17 +100,14 @@ public abstract class AbstractCommunicator {
         return output;
     }
 
-    public boolean isCorrectResponse(int httpCode) {
-        return httpCode/100 == 2;
-    }
-
     private void sendData(byte[] data) throws IOException{
         mHttpURLConnection.setFixedLengthStreamingMode(data.length);
         OutputStream out = new BufferedOutputStream(mHttpURLConnection.getOutputStream());
         out.write(data);
         out.flush();
         int code = mHttpURLConnection.getResponseCode();
-        if (!isCorrectResponse(code)) {
+        final boolean isSuccessCode2XX = (code/100 == 2);
+        if (!isSuccessCode2XX) {
             throw new HttpErrorException(code);
         }
     }

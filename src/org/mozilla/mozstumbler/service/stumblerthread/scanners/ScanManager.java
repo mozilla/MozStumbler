@@ -94,7 +94,6 @@ public class ScanManager {
 
     public void startScanning(Context context) {
         if (mIsScanning) {
-            Log.d(LOG_TAG, "ScanManager.startScanning: already scanning. Fix unnecessary call.");
             return;
         }
 
@@ -120,7 +119,6 @@ public class ScanManager {
 
     public boolean stopScanning() {
         if (!mIsScanning) {
-            Log.d(LOG_TAG, "ScanManager.stopScanning: already stopped. Fix unnecessary call.");
             return false;
         }
 

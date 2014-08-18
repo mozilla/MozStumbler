@@ -127,7 +127,6 @@ public class MainApp extends Application {
         };
 
         Intent intent = new Intent(this, StumblerService.class);
-        startService(intent);
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
     }
 

@@ -26,13 +26,21 @@ import org.mozilla.mozstumbler.service.uploadthread.UploadAlarmReceiver;
 import org.mozilla.mozstumbler.service.utils.NetworkUtils;
 import org.mozilla.mozstumbler.service.utils.PersistentIntentService;
 
-// Created from PassiveServiceReceiver
+// Used as a bound service (with foreground priority) in MozStumbler, a.k.a. active scanning mode.
+// -- In accordance with Android service docs -and experimental findings- this puts the service as low
+//    as possible on the Android process kill list.
+// -- Binding functions are commented in this class as being unused in the stand-alone service mode.
+//
+// In stand-alone service mode (a.k.a passive scanning mode), this is created from PassiveServiceReceiver (by calling startService).
+// The StumblerService is a sticky unbound service in this usage.
+//
 public final class StumblerService extends PersistentIntentService
         implements DataStorageManager.StorageIsEmptyTracker {
     private static final String LOG_TAG = AppGlobals.LOG_PREFIX + StumblerService.class.getSimpleName();
     public static final String ACTION_BASE = AppGlobals.ACTION_NAMESPACE;
     public static final String ACTION_START_PASSIVE = ACTION_BASE + ".START_PASSIVE";
     public static final String ACTION_EXTRA_MOZ_API_KEY = ACTION_BASE + ".MOZKEY";
+    public static final String ACTION_NOT_FROM_HOST_APP = ACTION_BASE + ".NOT_FROM_HOST";
     public static final AtomicBoolean sFirefoxStumblingEnabled = new AtomicBoolean();
     private final ScanManager mScanManager = new ScanManager();
     private final StumblerBundleReceiver mStumblerBundleReceiver = new StumblerBundleReceiver();
@@ -41,13 +49,14 @@ public final class StumblerService extends PersistentIntentService
     private final IBinder mBinder = new StumblerBinder();
 
     public StumblerService() {
-        super("StumblerService");
+        this("StumblerService");
     }
 
     public StumblerService(String name) {
         super(name);
     }
 
+    // Service binding is not used in stand-alone passive mode.
     public final class StumblerBinder extends Binder {
         // Only to be used in the non-standalone, non-passive case (MozStumbler). In the passive standalone usage
         // of this class, everything, including initialization, is done on its dedicated thread
@@ -57,6 +66,35 @@ public final class StumblerService extends PersistentIntentService
             };
             init();
             return StumblerService.this;
+        }
+    }
+
+    // Service binding is not used in stand-alone passive mode.
+    @Override
+    public IBinder onBind(Intent intent) {
+        mIsBound = true;
+        if (AppGlobals.isDebug) {
+            Log.d(LOG_TAG, "onBind");
+        }
+        return mBinder;
+    }
+
+    // Service binding is not used in stand-alone passive mode.
+    @Override
+    public boolean onUnbind(Intent intent) {
+        if (AppGlobals.isDebug) {
+            Log.d(LOG_TAG, "onUnbind");
+        }
+        mIsBound = false;
+        return true;
+    }
+
+    // Service binding is not used in stand-alone passive mode.
+    @Override
+    public void onRebind(Intent intent) {
+        mIsBound = true;
+        if (AppGlobals.isDebug) {
+            Log.d(LOG_TAG,"onRebind");
         }
     }
 
@@ -158,6 +196,10 @@ public final class StumblerService extends PersistentIntentService
     public void onDestroy() {
         super.onDestroy();
 
+        if (!mScanManager.isScanning()) {
+            return;
+        }
+
         // Used to move these disk I/O ops off the calling thread. The current operations here are synchronized,
         // however instead of creating another thread (if onDestroy grew to have concurrency complications)
         // we could be messaging the stumbler thread to perform a shutdown function.
@@ -168,7 +210,7 @@ public final class StumblerService extends PersistentIntentService
                     Log.d(LOG_TAG, "onDestroy");
                 }
 
-                if (sFirefoxStumblingEnabled.get() == false) {
+                if (!sFirefoxStumblingEnabled.get()) {
                     Prefs.getInstance().setFirefoxScanEnabled(false);
                 }
 
@@ -198,7 +240,9 @@ public final class StumblerService extends PersistentIntentService
             return;
         }
 
-        if (intent.getBooleanExtra(ACTION_START_PASSIVE, false) == false) {
+        final boolean isScanEnabledInPrefs = Prefs.getInstance().getFirefoxScanEnabled();
+
+        if (!isScanEnabledInPrefs && intent.getBooleanExtra(ACTION_NOT_FROM_HOST_APP, false)) {
             stopSelf();
             return;
         }
@@ -206,44 +250,24 @@ public final class StumblerService extends PersistentIntentService
         if (!DataStorageManager.getInstance().isDirEmpty()) {
             // non-empty on startup, schedule an upload
             // This is the only upload trigger in Firefox mode
-            final int secondsToWait = 10;
+            // Firefox triggers this ~4 seconds after startup (after Gecko is loaded), add a small delay to avoid
+            // clustering with other operations that are triggered at this time.
+            final int secondsToWait = 2;
             UploadAlarmReceiver.scheduleAlarm(this, secondsToWait, false /* no repeat*/);
         }
 
-        Prefs.getInstance().setFirefoxScanEnabled(true);
+        if (!isScanEnabledInPrefs) {
+            Prefs.getInstance().setFirefoxScanEnabled(true);
+        }
 
         String apiKey = intent.getStringExtra(ACTION_EXTRA_MOZ_API_KEY);
         if (apiKey != null) {
             Prefs.getInstance().setMozApiKey(apiKey);
         }
 
-        mScanManager.setPassiveMode(true);
-        startScanning();
-    }
-
-    @Override
-    public IBinder onBind(Intent intent) {
-        mIsBound = true;
-        if (AppGlobals.isDebug) {
-            Log.d(LOG_TAG, "onBind");
-        }
-        return mBinder;
-    }
-
-    @Override
-    public boolean onUnbind(Intent intent) {
-        if (AppGlobals.isDebug) {
-            Log.d(LOG_TAG, "onUnbind");
-        }
-        mIsBound = false;
-        return true;
-    }
-
-    @Override
-    public void onRebind(Intent intent) {
-        mIsBound = true;
-        if (AppGlobals.isDebug) {
-            Log.d(LOG_TAG,"onRebind");
+        if (!mScanManager.isScanning()) {
+            mScanManager.setPassiveMode(true);
+            startScanning();
         }
     }
 

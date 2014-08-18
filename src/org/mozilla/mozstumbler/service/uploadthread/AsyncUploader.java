@@ -7,6 +7,8 @@ package org.mozilla.mozstumbler.service.uploadthread;
 import android.os.AsyncTask;
 import android.util.Log;
 import java.io.IOException;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import org.mozilla.mozstumbler.service.utils.AbstractCommunicator;
 import org.mozilla.mozstumbler.service.utils.AbstractCommunicator.SyncSummary;
 import org.mozilla.mozstumbler.service.AppGlobals;
@@ -25,7 +27,7 @@ public class AsyncUploader extends AsyncTask<Void, Void, SyncSummary> {
     private final UploadSettings mSettings;
     private final Object mListenerLock = new Object();
     private AsyncUploaderListener mListener;
-    private static boolean sIsUploading;
+    private static AtomicBoolean sIsUploading = new AtomicBoolean();
     private String mNickname;
 
     public interface AsyncUploaderListener {
@@ -57,17 +59,19 @@ public class AsyncUploader extends AsyncTask<Void, Void, SyncSummary> {
         }
     }
 
-    public static boolean getIsUploading() {
-        return sIsUploading;
+    public static boolean isUploading() {
+        return sIsUploading.get();
     }
 
     @Override
     protected SyncSummary doInBackground(Void... voids) {
-        if (sIsUploading) {
+        if (sIsUploading.get()) {
+            // This if-block is not synchronized, don't care, this is an erroneous usage.
+            Log.d(LOG_TAG, "Usage error: check isUploading first, only one at a time task usage is permitted.");
             return null;
         }
 
-        sIsUploading = true;
+        sIsUploading.set(true);
         SyncSummary result = new SyncSummary();
         Runnable progressListener = null;
 
@@ -91,7 +95,7 @@ public class AsyncUploader extends AsyncTask<Void, Void, SyncSummary> {
     }
     @Override
     protected void onPostExecute(SyncSummary result) {
-        sIsUploading = false;
+        sIsUploading.set(false);
 
         synchronized (mListenerLock) {
             if (mListener != null) {
@@ -101,7 +105,7 @@ public class AsyncUploader extends AsyncTask<Void, Void, SyncSummary> {
     }
     @Override
     protected void onCancelled(SyncSummary result) {
-        sIsUploading = false;
+        sIsUploading.set(false);
     }
 
     private class Submitter extends AbstractCommunicator {

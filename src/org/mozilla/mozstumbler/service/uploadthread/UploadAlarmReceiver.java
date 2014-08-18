@@ -69,10 +69,11 @@ public class UploadAlarmReceiver extends BroadcastReceiver {
                 }
             }
 
-            if (NetworkUtils.getInstance().isWifiAvailable()) {
+            if (NetworkUtils.getInstance().isWifiAvailable() &&
+                !AsyncUploader.isUploading()) {
                 Log.d(LOG_TAG, "Alarm upload(), call AsyncUploader");
                 AsyncUploader.UploadSettings settings =
-                        new AsyncUploader.UploadSettings(Prefs.getInstance().getWifiScanAlways(), Prefs.getInstance().getUseWifiOnly());
+                    new AsyncUploader.UploadSettings(Prefs.getInstance().getWifiScanAlways(), Prefs.getInstance().getUseWifiOnly());
                 AsyncUploader uploader = new AsyncUploader(settings, null);
                 uploader.setNickname(Prefs.getInstance().getNickname());
                 uploader.execute();

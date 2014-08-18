@@ -94,9 +94,22 @@
             android:label="@string/service_name">
         </service>
 
-
         <receiver android:name=".service.uploadthread.UploadAlarmReceiver" />
         <service android:name=".service.uploadthread.UploadAlarmReceiver$UploadAlarmService" />
+
+        <!-- For debugging the passive service -->
+        <!-- test with
+        adb shell am broadcast -a android.intent.action.BOOT_COMPLETED -c android.intent.category.HOME -n org.mozilla.mozstumbler/.service.mainthread.PassiveServiceReceiver
+        adb shell am broadcast -a android.intent.action.BOOT_COMPLETED -c android.intent.category.HOME -n org.mozilla.fennec/org.mozilla.mozstumbler.service.mainthread.PassiveServiceReceiver-->
+        <!--meta-data android:name="org.mozilla.mozstumbler.intent.action.MOZ_KEY" android:value="aValue" / -->
+        <!--receiver android:name=".service.mainthread.PassiveServiceReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.location.GPS_ENABLED_CHANGE" />
+                <action android:name="android.location.GPS_FIX_CHANGE" />
+            </intent-filter>
+        </receiver -->
+
     </application>
 
 </manifest>

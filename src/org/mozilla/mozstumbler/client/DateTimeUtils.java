@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package org.mozilla.mozstumbler.service.utils;
+package org.mozilla.mozstumbler.client;
 
 import android.annotation.SuppressLint;
 import java.text.DateFormat;
@@ -15,8 +15,6 @@ import java.util.TimeZone;
 public final class DateTimeUtils {
     private static final DateFormat sLocaleFormat = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);
     private static final DateFormat sISO8601Format = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
-
-    public static final long MILLISECONDS_PER_DAY = 86400000;
 
     static {
         sISO8601Format.setTimeZone(TimeZone.getTimeZone("UTC"));

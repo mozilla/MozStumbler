@@ -6,11 +6,8 @@ package org.mozilla.mozstumbler.service.stumblerthread.scanners;
 
 import android.location.Location;
 import android.util.Log;
-
 import org.mozilla.mozstumbler.service.AppGlobals;
-import org.mozilla.mozstumbler.service.utils.DateTimeUtils;
 import org.mozilla.mozstumbler.service.Prefs;
-
 
 public final class LocationBlockList {
     private static final String LOG_TAG = AppGlobals.LOG_PREFIX + LocationBlockList.class.getSimpleName();
@@ -20,6 +17,7 @@ public final class LocationBlockList {
     private static final float MIN_ACCURACY = 500;       // meter radius
     private static final long MIN_TIMESTAMP = 946684801; // 2000-01-01 00:00:01
     private static final double GEOFENCE_RADIUS = 0.01;      // .01 degrees is approximately 1km
+    private static final long MILLISECONDS_PER_DAY = 86400000;
 
     private Location mBlockedLocation;
     private boolean mGeofencingEnabled;
@@ -42,7 +40,7 @@ public final class LocationBlockList {
         final double longitude = location.getLongitude();
         final float speed = location.getSpeed();
         final long timestamp = location.getTime();
-        final long tomorrow = System.currentTimeMillis() + DateTimeUtils.MILLISECONDS_PER_DAY;
+        final long tomorrow = System.currentTimeMillis() + MILLISECONDS_PER_DAY;
 
         boolean block = false;
         mIsGeofenced = false;
@@ -84,7 +82,7 @@ public final class LocationBlockList {
 
         if (timestamp < MIN_TIMESTAMP || timestamp > tomorrow) {
             block = true;
-            Log.w(LOG_TAG, "Bogus timestamp: " + timestamp + " (" + DateTimeUtils.formatTime(timestamp) + ")");
+            Log.w(LOG_TAG, "Bogus timestamp: " + timestamp);
         }
 
         if (mGeofencingEnabled &&

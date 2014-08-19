@@ -219,7 +219,7 @@ public final class StumblerService extends PersistentIntentService
                         DataStorageManager.getInstance().saveCurrentReportsToDisk();
                     } catch (IOException ex) {
                         AppGlobals.guiLogInfo(ex.toString());
-                        Log.e(LOG_TAG, "Exception in onDestroy saving reports", ex);
+                        Log.e(LOG_TAG, "Exception in onDestroy saving reports" + ex.toString());
                     }
                 }
                 return null;

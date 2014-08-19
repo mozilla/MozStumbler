@@ -86,6 +86,7 @@ public class DataStorageManager {
             try {
                 bytes = Zipper.zipData(finalizeReports(mCurrentReports.reports).getBytes()).length;
             } catch (IOException ex) {
+                Log.e(LOG_TAG, "Zip error in getQueuedCounts()", ex);
             }
 
             if (mFileList.mReportCount > 0) {

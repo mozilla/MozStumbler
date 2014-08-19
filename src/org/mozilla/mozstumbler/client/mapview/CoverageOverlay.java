@@ -17,6 +17,9 @@ import org.osmdroid.util.TileLooper;
 import org.osmdroid.views.Projection;
 import org.osmdroid.views.overlay.TilesOverlay;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * This class provides the Mozilla Coverage overlay
  */
@@ -25,6 +28,7 @@ public class CoverageOverlay extends TilesOverlay {
     private final Rect mTileRect = new Rect();
     private final Point mTilePoint = new Point();
     private final Point mTilePointMercator = new Point();
+    private final Set<MapTile> mDrawnSet = new HashSet<MapTile>();
     private Projection mProjection;
 
     public CoverageOverlay(final Context aContext, final String coverageUrl) {
@@ -51,6 +55,7 @@ public class CoverageOverlay extends TilesOverlay {
             super.drawTiles(c, projection, zoomLevel, tileSizePx, viewPort);
         } else {
             mProjection = projection;
+            mDrawnSet.clear();
             mCoverageTileLooper.loop(c, zoomLevel, tileSizePx, viewPort);
         }
     }
@@ -72,16 +77,15 @@ public class CoverageOverlay extends TilesOverlay {
             final int zoomDifference = pTile.getZoomLevel() - zoomLevel;
             final int scaleDiff = 1 << zoomDifference;
 
-            // Only draw each large tile once
-            if (pX % scaleDiff != 0 || pY % scaleDiff != 0) {
-                return;
-            }
-
             pTileSizePx *= scaleDiff;
             pX /= scaleDiff;
             pY /= scaleDiff;
 
             final MapTile tile = new MapTile(zoomLevel, pTile.getX() >> zoomDifference, pTile.getY() >> zoomDifference);
+            if (mDrawnSet.contains(tile)) {
+                return;
+            }
+            mDrawnSet.add(tile);
 
             Drawable currentMapTile = mTileProvider.getMapTile(tile);
 

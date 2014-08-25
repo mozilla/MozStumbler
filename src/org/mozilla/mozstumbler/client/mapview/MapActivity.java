@@ -57,7 +57,7 @@ public final class MapActivity extends Activity {
     private static final int MENU_REFRESH           = 1;
     private static final String ZOOM_KEY = "zoom";
     private static final int DEFAULT_ZOOM = 2;
-    private static final int DEFAULT_ZOOM_AFTER_FIX = 13;
+    private static final int DEFAULT_ZOOM_AFTER_FIX = 16;
     private static final String LAT_KEY = "latitude";
     private static final String LON_KEY = "longitude";
     private static final String LOCATIONS_KEY = "locations";

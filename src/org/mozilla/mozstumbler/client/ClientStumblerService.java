@@ -10,6 +10,10 @@ import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.stumblerthread.StumblerService;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageManager;
 
+// Used as a bound service (with foreground priority) in MozStumbler, a.k.a. active scanning mode.
+// -- In accordance with Android service docs -and experimental findings- this puts the service as low
+//    as possible on the Android process kill list.
+// -- Binding functions are commented in this class as being unused in the stand-alone service mode.
 public class ClientStumblerService extends StumblerService {
     private static final String LOG_TAG = AppGlobals.LOG_PREFIX + StumblerService.class.getSimpleName();
     private final IBinder mBinder = new StumblerBinder();

@@ -183,7 +183,7 @@ public class DataStorageManager {
     }
 
     public interface StorageIsEmptyTracker {
-        public void storageIsEmpty(boolean isEmpty);
+        public void notifyStorageStateEmpty(boolean isEmpty);
     }
 
     private String getStorageDir(Context c) {
@@ -506,7 +506,7 @@ public class DataStorageManager {
 
     private void notifyStorageIsEmpty(boolean isEmpty) {
         if (mTracker != null) {
-            mTracker.storageIsEmpty(isEmpty);
+            mTracker.notifyStorageStateEmpty(isEmpty);
         }
     }
 }

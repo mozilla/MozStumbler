@@ -26,11 +26,6 @@ import org.mozilla.mozstumbler.service.uploadthread.UploadAlarmReceiver;
 import org.mozilla.mozstumbler.service.utils.NetworkUtils;
 import org.mozilla.mozstumbler.service.utils.PersistentIntentService;
 
-// Used as a bound service (with foreground priority) in MozStumbler, a.k.a. active scanning mode.
-// -- In accordance with Android service docs -and experimental findings- this puts the service as low
-//    as possible on the Android process kill list.
-// -- Binding functions are commented in this class as being unused in the stand-alone service mode.
-//
 // In stand-alone service mode (a.k.a passive scanning mode), this is created from PassiveServiceReceiver (by calling startService).
 // The StumblerService is a sticky unbound service in this usage.
 //
@@ -221,7 +216,7 @@ public class StumblerService extends PersistentIntentService
     }
 
     // Note that in passive mode, having data isn't an upload trigger, it is triggered by the start intent
-    public void storageIsEmpty(boolean isEmpty) {
+    public void notifyStorageStateEmpty(boolean isEmpty) {
         if (isEmpty) {
             UploadAlarmReceiver.cancelAlarm(this, !mScanManager.isPassiveMode());
         } else if (!mScanManager.isPassiveMode()) {

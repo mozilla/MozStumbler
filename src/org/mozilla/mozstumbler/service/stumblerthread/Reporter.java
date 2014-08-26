@@ -13,12 +13,17 @@ import android.net.wifi.ScanResult;
 import android.support.v4.content.LocalBroadcastManager;
 import android.telephony.TelephonyManager;
 import android.util.Log;
+
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.mozilla.mozstumbler.service.AppGlobals;
+import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageContract;
+import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageManager;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.StumblerBundle;
-import org.mozilla.mozstumbler.service.stumblerthread.datahandling.StumblerBundleReceiver;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner.CellInfo;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner.CellScanner;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.GPSScanner;
@@ -29,24 +34,18 @@ public final class Reporter extends BroadcastReceiver {
     public static final String ACTION_FLUSH_TO_BUNDLE = AppGlobals.ACTION_NAMESPACE + ".FLUSH";
     private boolean mIsStarted;
 
-    /* The maximum time of observation */
-    private static final int REPORTER_WINDOW_MSEC = 24 * 60 * 60 * 1000; //ms
-
-    /* The maximum number of Wi-Fi access points in a single observation */
-    private static final int WIFI_COUNT_WATERMARK = 100;
+    /* The maximum number of Wi-Fi access points in a single observation. */
+    private static final int MAX_WIFIS_PER_LOCATION = 200;
 
     /* The maximum number of cells in a single observation */
-    private static final int CELLS_COUNT_WATERMARK = 50;
+    private static final int MAX_CELLS_PER_LOCATION  = 50;
 
     private Context mContext;
     private int mPhoneType;
 
     private StumblerBundle mBundle;
-    private StumblerBundleReceiver mStumblerBundleReceiver;
 
-    Reporter(StumblerBundleReceiver bundleReceiver) {
-        mStumblerBundleReceiver = bundleReceiver;
-    }
+    Reporter() {}
 
     private void resetData() {
         mBundle = null;
@@ -124,17 +123,9 @@ public final class Reporter extends BroadcastReceiver {
             receivedGpsMessage(intent);
         }
 
-        Location currentPosition = mBundle != null ? mBundle.getGpsPosition() : null;
-
-        long time = intent.getLongExtra(AppGlobals.ACTION_ARG_TIME, System.currentTimeMillis());
-        if (currentPosition != null && Math.abs(time - currentPosition.getTime()) > REPORTER_WINDOW_MSEC) {
-            // no gps for a while, just bundle what we have
-            reportCollectedLocation();
-        }
-
         if (mBundle != null &&
-            (mBundle.getWifiData().size() > WIFI_COUNT_WATERMARK ||
-             mBundle.getCellData().size() > CELLS_COUNT_WATERMARK)) {
+            (mBundle.getWifiData().size() > MAX_WIFIS_PER_LOCATION ||
+             mBundle.getCellData().size() > MAX_CELLS_PER_LOCATION)) {
             // no gps for a while, have too much data, just bundle it
             reportCollectedLocation();
         }
@@ -169,13 +160,40 @@ public final class Reporter extends BroadcastReceiver {
     }
 
     private void reportCollectedLocation() {
-        if (mBundle == null || mStumblerBundleReceiver == null) {
+        if (mBundle == null) {
             return;
         }
 
-        mStumblerBundleReceiver.handleBundle(mBundle);
+        storeBundleAsJSON(mBundle);
 
         mBundle.wasSent();
+    }
+
+    private void storeBundleAsJSON(StumblerBundle bundle) {
+        JSONObject mlsObj;
+        int wifiCount = 0;
+        int cellCount = 0;
+        try {
+            mlsObj = bundle.toMLSJSON();
+            wifiCount = mlsObj.getInt(DataStorageContract.ReportsColumns.WIFI_COUNT);
+            cellCount = mlsObj.getInt(DataStorageContract.ReportsColumns.CELL_COUNT);
+
+        } catch (JSONException e) {
+            Log.w(LOG_TAG, "Failed to convert bundle to JSON: " + e);
+            return;
+        }
+
+        if (AppGlobals.isDebug) {
+            Log.d(LOG_TAG, "Received bundle: " + mlsObj.toString());
+        }
+
+        AppGlobals.guiLogInfo(mlsObj.toString());
+
+        try {
+            DataStorageManager.getInstance().insert(mlsObj.toString(), wifiCount, cellCount);
+        } catch (IOException e) {
+            Log.w(LOG_TAG, e.toString());
+        }
     }
 }
 

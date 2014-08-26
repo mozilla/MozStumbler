@@ -40,8 +40,10 @@ import java.util.TimerTask;
 public class DataStorageManager {
     private static final String LOG_TAG = AppGlobals.LOG_PREFIX + DataStorageManager.class.getSimpleName();
     private static final int MAX_REPORTS_IN_MEMORY = 50;
-    private volatile long mMaxBytesDiskStorage = 1024 * 250; // 250 KiB max by default
-    private volatile int mMaxWeeksStored = 2;
+    private static final long DEFAULT_MAX_BYTES_STORED_ON_DISK = 1024 * 250; // 250 KiB max by default
+    private static final int DEFAULT_MAX_WEEKS_DATA_ON_DISK = 2;
+    private final long mMaxBytesDiskStorage;
+    private final int mMaxWeeksStored;
     private final ReportBatchBuilder mCurrentReports = new ReportBatchBuilder();
     private final File mReportsDir;
     private final File mStatsFile;
@@ -192,32 +194,42 @@ public class DataStorageManager {
             if (dir != null) {
                 dir = new File(dir.getAbsolutePath() + "/mozstumbler");
             }
-
-            if (!dir.exists()) {
-                boolean ok = dir.mkdirs();
-                assert(ok);
-            }
         }
 
         if (dir == null) {
             dir = c.getFilesDir();
         }
 
+        if (!dir.exists()) {
+            boolean ok = dir.mkdirs();
+            if (!ok) {
+                Log.d(LOG_TAG, "getStorageDir: error in mkdirs()");
+            }
+        }
+
         return dir.getPath();
     }
+    public static synchronized void createGlobalInstance(Context context, StorageIsEmptyTracker tracker) {
+        DataStorageManager.createGlobalInstance(context, tracker,
+                DEFAULT_MAX_BYTES_STORED_ON_DISK, DEFAULT_MAX_WEEKS_DATA_ON_DISK);
+    }
 
-    public static void createGlobalInstance(Context context, StorageIsEmptyTracker tracker) {
+    public static synchronized void createGlobalInstance(Context context, StorageIsEmptyTracker tracker,
+                                                         long maxBytesStoredOnDisk, int maxWeeksDataStored) {
         if (sInstance != null) {
             return;
         }
-        sInstance = new DataStorageManager(context, tracker);
+        sInstance = new DataStorageManager(context, tracker, maxBytesStoredOnDisk, maxWeeksDataStored);
     }
 
-    public static DataStorageManager getInstance() {
+    public static synchronized DataStorageManager getInstance() {
         return sInstance;
     }
 
-    private DataStorageManager(Context c, StorageIsEmptyTracker tracker) {
+    private DataStorageManager(Context c, StorageIsEmptyTracker tracker,
+                               long maxBytesStoredOnDisk, int maxWeeksDataStored) {
+        mMaxBytesDiskStorage = maxBytesStoredOnDisk;
+        mMaxWeeksStored = maxWeeksDataStored;
         mTracker = tracker;
         final String baseDir = getStorageDir(c);
         mStatsFile = new File(baseDir, "upload_stats.ini");
@@ -229,15 +241,7 @@ public class DataStorageManager {
         mFileList.update(mReportsDir);
     }
 
-    public void setMaxStorageOnDisk(long maxBytes) {
-        mMaxBytesDiskStorage = maxBytes;
-    }
-
-    public void setMaxWeeksStored(int weeks) {
-        mMaxWeeksStored = weeks;
-    }
-
-    public int getMaxWeeksStored() {
+    public synchronized int getMaxWeeksStored() {
         return mMaxWeeksStored;
     }
 
@@ -373,9 +377,6 @@ public class DataStorageManager {
         }
 
         final FileOutputStream fos = new FileOutputStream(createFile(reportCount, wifiCount, cellCount));
-        if (fos == null) {
-            return;
-        }
         try {
             fos.write(bytes);
         } finally {
@@ -478,9 +479,6 @@ public class DataStorageManager {
 
     public void writeSyncStats(long time, long bytesSent, long totalObs, long totalCells, long totalWifis) throws IOException {
         final FileOutputStream out = new FileOutputStream(mStatsFile);
-        if (out == null) {
-            return;
-        }
         try {
             final Properties props = new Properties();
             props.setProperty(DataStorageContract.Stats.KEY_LAST_UPLOAD_TIME, String.valueOf(time));

@@ -35,11 +35,12 @@ public class GPSScanner implements LocationListener {
     public static final String NEW_LOCATION_ARG_LOCATION = "location";
 
     private static final String LOG_TAG = AppGlobals.LOG_PREFIX + GPSScanner.class.getSimpleName();
-    private static final long GEO_MIN_UPDATE_TIME = 1000;
-    private static final float GEO_MIN_UPDATE_DISTANCE = 10;
-    private static final long PASSIVE_GEO_MIN_UPDATE_TIME = 3000;
-    private static final float PASSIVE_GEO_MIN_UPDATE_DISTANCE = 30;
     private static final int MIN_SAT_USED_IN_FIX = 3;
+    private static final long ACTIVE_MODE_GPS_MIN_UPDATE_TIME_MS = 1000;
+    private static final float ACTIVE_MODE_GPS_MIN_UPDATE_DISTANCE_M = 10;
+    private static final long PASSIVE_GPS_NO_MOVEMENT_MIN_UPDATE_FREQ_MS = 3000;
+    private static final float PASSIVE_GPS_MOVEMENT_MIN_DELTA_M = 30;
+    private static final long PASSIVE_GPS_1_HZ_FREQ_GUARD_MS = 1000;
 
     private final LocationBlockList mBlockList = new LocationBlockList();
     private final Context mContext;
@@ -75,8 +76,8 @@ public class GPSScanner implements LocationListener {
     private void startActiveMode() {
         LocationManager lm = getLocationManager();
         lm.requestLocationUpdates(LocationManager.GPS_PROVIDER,
-                                  GEO_MIN_UPDATE_TIME,
-                                  GEO_MIN_UPDATE_DISTANCE,
+                                  ACTIVE_MODE_GPS_MIN_UPDATE_TIME_MS,
+                                  ACTIVE_MODE_GPS_MIN_UPDATE_DISTANCE_M,
                                   this);
 
         reportLocationLost();
@@ -173,10 +174,17 @@ public class GPSScanner implements LocationListener {
 
         // Seem to get greater likelihood of non-fused location with higher update freq.
         // Check dist and time threshold here, not set on the listener.
-        if (mIsPassiveMode &&
-            (location.distanceTo(mLocation) < PASSIVE_GEO_MIN_UPDATE_DISTANCE ||
-             location.getTime() - mLocation.getTime() < PASSIVE_GEO_MIN_UPDATE_TIME)) {
-            return;
+        if (mIsPassiveMode) {
+            final long timeDelta = location.getTime() - mLocation.getTime();
+
+            final boolean isMoving = timeDelta > PASSIVE_GPS_1_HZ_FREQ_GUARD_MS &&
+                    location.distanceTo(mLocation) > PASSIVE_GPS_MOVEMENT_MIN_DELTA_M;
+
+            // If not moving, then only accept GPS locations every few seconds. If moving,
+            // accept GPS locations up to 1 HZ max freq.
+            if (!isMoving && timeDelta < PASSIVE_GPS_NO_MOVEMENT_MIN_UPDATE_FREQ_MS) {
+                return;
+            }
         }
 
         Date date = new Date(location.getTime());

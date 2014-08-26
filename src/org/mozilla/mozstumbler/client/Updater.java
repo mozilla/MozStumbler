@@ -28,7 +28,6 @@ import java.util.List;
 
 import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.service.AppGlobals;
-import org.mozilla.mozstumbler.service.stumblerthread.StumblerService;
 
 final class Updater {
     private static final String LOG_TAG = AppGlobals.LOG_PREFIX + Updater.class.getSimpleName();
@@ -267,7 +266,7 @@ final class Updater {
 
         //First stop the service so it is not running more
         Intent service = new Intent();
-        service.setClass(context, StumblerService.class);
+        service.setClass(context, ClientStumblerService.class);
         context.stopService(service);
 
         Intent intent = new Intent(Intent.ACTION_VIEW);

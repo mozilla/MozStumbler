@@ -34,7 +34,7 @@ import org.mozilla.mozstumbler.service.utils.PersistentIntentService;
 // In stand-alone service mode (a.k.a passive scanning mode), this is created from PassiveServiceReceiver (by calling startService).
 // The StumblerService is a sticky unbound service in this usage.
 //
-public final class StumblerService extends PersistentIntentService
+public class StumblerService extends PersistentIntentService
         implements DataStorageManager.StorageIsEmptyTracker {
     private static final String LOG_TAG = AppGlobals.LOG_PREFIX + StumblerService.class.getSimpleName();
     public static final String ACTION_BASE = AppGlobals.ACTION_NAMESPACE;
@@ -42,11 +42,9 @@ public final class StumblerService extends PersistentIntentService
     public static final String ACTION_EXTRA_MOZ_API_KEY = ACTION_BASE + ".MOZKEY";
     public static final String ACTION_NOT_FROM_HOST_APP = ACTION_BASE + ".NOT_FROM_HOST";
     public static final AtomicBoolean sFirefoxStumblingEnabled = new AtomicBoolean();
-    private final ScanManager mScanManager = new ScanManager();
+    protected final ScanManager mScanManager = new ScanManager();
     private final StumblerBundleReceiver mStumblerBundleReceiver = new StumblerBundleReceiver();
-    private final Reporter mReporter = new Reporter(mStumblerBundleReceiver);
-    private boolean mIsBound;
-    private final IBinder mBinder = new StumblerBinder();
+    protected final Reporter mReporter = new Reporter(mStumblerBundleReceiver);
 
     public StumblerService() {
         this("StumblerService");
@@ -56,63 +54,12 @@ public final class StumblerService extends PersistentIntentService
         super(name);
     }
 
-    // Service binding is not used in stand-alone passive mode.
-    public final class StumblerBinder extends Binder {
-        // Only to be used in the non-standalone, non-passive case (MozStumbler). In the passive standalone usage
-        // of this class, everything, including initialization, is done on its dedicated thread
-        public StumblerService getServiceAndInitialize(Thread callingThread) {
-            if (Looper.getMainLooper().getThread() != callingThread) {
-                throw new RuntimeException("Only call from main thread");
-            };
-            init();
-            return StumblerService.this;
-        }
-    }
-
-    // Service binding is not used in stand-alone passive mode.
-    @Override
-    public IBinder onBind(Intent intent) {
-        mIsBound = true;
-        if (AppGlobals.isDebug) {
-            Log.d(LOG_TAG, "onBind");
-        }
-        return mBinder;
-    }
-
-    // Service binding is not used in stand-alone passive mode.
-    @Override
-    public boolean onUnbind(Intent intent) {
-        if (AppGlobals.isDebug) {
-            Log.d(LOG_TAG, "onUnbind");
-        }
-        mIsBound = false;
-        return true;
-    }
-
-    // Service binding is not used in stand-alone passive mode.
-    @Override
-    public void onRebind(Intent intent) {
-        mIsBound = true;
-        if (AppGlobals.isDebug) {
-            Log.d(LOG_TAG,"onRebind");
-        }
-    }
-
     public boolean isScanning() {
         return mScanManager.isScanning();
     }
 
     public void startScanning() {
         mScanManager.startScanning(this);
-    }
-
-    public void stopScanning() {
-        if (mScanManager.stopScanning()) {
-            mReporter.flush();
-            if (!mIsBound) {
-                stopSelf();
-            }
-        }
     }
 
     // This is optional, not used in Fennec, and is for clients to specify a (potentially long) list
@@ -172,7 +119,7 @@ public final class StumblerService extends PersistentIntentService
     // Previously this was done in onCreate(). Moved out of that so that in the passive standalone service
     // use (i.e. Fennec), init() can be called from this class's dedicated thread.
     // Safe to call more than once, ensure added code complies with that intent.
-    private void init() {
+    protected void init() {
         Prefs.createGlobalInstance(this);
         NetworkUtils.createGlobalInstance(this);
         DataStorageManager.createGlobalInstance(this, this);
@@ -236,6 +183,9 @@ public final class StumblerService extends PersistentIntentService
         // Do init() in all cases, there is no cost, whereas it is easy to add code that depends on this.
         init();
 
+        // Post-init(), set the mode to passive.
+        mScanManager.setPassiveMode(true);
+
         if (intent == null) {
             return;
         }
@@ -266,7 +216,6 @@ public final class StumblerService extends PersistentIntentService
         }
 
         if (!mScanManager.isScanning()) {
-            mScanManager.setPassiveMode(true);
             startScanning();
         }
     }

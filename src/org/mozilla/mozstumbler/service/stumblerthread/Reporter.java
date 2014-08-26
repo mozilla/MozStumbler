@@ -52,7 +52,7 @@ public final class Reporter extends BroadcastReceiver {
         mBundle = null;
     }
 
-    void flush() {
+    public void flush() {
         reportCollectedLocation();
     }
 

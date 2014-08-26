@@ -23,7 +23,6 @@ import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageCo
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageManager;
 import org.mozilla.mozstumbler.client.mapview.MapActivity;
 import org.mozilla.mozstumbler.R;
-import org.mozilla.mozstumbler.service.stumblerthread.StumblerService;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.WifiScanner;
 
 import java.io.IOException;
@@ -119,7 +118,7 @@ public final class MainActivity extends FragmentActivity {
     }
 
     private void updateUI() {
-        StumblerService service = getApp().getService();
+        ClientStumblerService service = getApp().getService();
         if (service == null) {
             return;
         }

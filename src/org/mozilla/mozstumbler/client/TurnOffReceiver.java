@@ -7,8 +7,6 @@ import android.os.IBinder;
 import android.util.Log;
 
 import org.mozilla.mozstumbler.service.AppGlobals;
-import org.mozilla.mozstumbler.service.stumblerthread.StumblerService;
-
 
 /* Test low power in adb with am broadcast -a android.intent.action.BATTERY_LOW
  * Test cancel button in notification list by swiping down on the entry for the
@@ -21,12 +19,12 @@ public final class TurnOffReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         Log.d(LOG_TAG, "onReceive!");
 
-        Intent serviceIntent = new Intent(context, StumblerService.class);
+        Intent serviceIntent = new Intent(context, ClientStumblerService.class);
         IBinder binder = peekService(context, serviceIntent);
         if (binder != null) {
             // service is running, tell it to stop
-            StumblerService.StumblerBinder serviceBinder = (StumblerService.StumblerBinder) binder;
-            StumblerService service = serviceBinder.getServiceAndInitialize(Thread.currentThread());
+            ClientStumblerService.StumblerBinder serviceBinder = (ClientStumblerService.StumblerBinder) binder;
+            ClientStumblerService service = serviceBinder.getService();
             service.stopScanning();
         }
 

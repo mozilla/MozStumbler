@@ -29,9 +29,9 @@ import java.util.Timer;
 import java.util.TimerTask;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.mozilla.mozstumbler.client.ClientStumblerService;
 import org.mozilla.mozstumbler.client.MainApp;
 import org.mozilla.mozstumbler.service.AppGlobals;
-import org.mozilla.mozstumbler.service.stumblerthread.StumblerService;
 import org.mozilla.mozstumbler.BuildConfig;
 import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.client.MainActivity;
@@ -111,7 +111,7 @@ public final class MapActivity extends Activity {
             String action = intent.getAction();
 
             if (action.equals(GPSScanner.ACTION_GPS_UPDATED)) {
-                final StumblerService service = ((MainApp) getApplication()).getService();
+                final ClientStumblerService service = ((MainApp) getApplication()).getService();
                 new GetLocationAndMapItTask().execute(service);
                 updateUI(service);
                 if (GPSScanner.SUBJECT_NEW_STATUS.equals(intent.getStringExtra(Intent.EXTRA_SUBJECT))) {
@@ -155,7 +155,7 @@ public final class MapActivity extends Activity {
                 mMap.getController().setCenter(new GeoPoint(latitude, longitude));
             }
         } else {
-            final StumblerService service = ((MainApp) getApplication()).getService();
+            final ClientStumblerService service = ((MainApp) getApplication()).getService();
             final GeoPoint lastLoc = new GeoPoint(service.getLatitude(), service.getLongitude());
             mMap.getController().setCenter(lastLoc);
         }
@@ -386,7 +386,7 @@ public final class MapActivity extends Activity {
         }
     }
 
-    private void updateUI(StumblerService service) {
+    private void updateUI(ClientStumblerService service) {
         formatTextView(R.id.cell_info_text, R.string.cells_info, service.getCurrentCellInfoCount(),
                 service.getCellInfoCount());
         formatTextView(R.id.wifi_info_text, R.string.wifi_info, service.getVisibleAPCount(),
@@ -394,12 +394,12 @@ public final class MapActivity extends Activity {
     }
 
 
-    private final class GetLocationAndMapItTask extends AsyncTask<StumblerService, Void, Location> {
+    private final class GetLocationAndMapItTask extends AsyncTask<ClientStumblerService, Void, Location> {
         @Override
-        public Location doInBackground(StumblerService... params) {
+        public Location doInBackground(ClientStumblerService... params) {
             Log.d(LOG_TAG, "requesting location...");
 
-            StumblerService service = params[0];
+            ClientStumblerService service = params[0];
             final Location result = service.getLocation();
 
             // Don't map (0,0)

@@ -28,7 +28,6 @@ import org.mozilla.mozstumbler.client.cellscanner.DefaultCellScanner;
 import org.mozilla.mozstumbler.client.mapview.MapActivity;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.Prefs;
-import org.mozilla.mozstumbler.service.stumblerthread.StumblerService;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageManager;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.GPSScanner;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.WifiScanner;
@@ -39,7 +38,7 @@ import org.mozilla.mozstumbler.service.utils.NetworkUtils;
 public class MainApp extends Application {
 
     private final String LOG_TAG = AppGlobals.LOG_PREFIX + MainApp.class.getSimpleName();
-    private StumblerService mStumblerService;
+    private ClientStumblerService mStumblerService;
     private ServiceConnection mConnection;
     private ServiceBroadcastReceiver mReceiver;
     private MainActivity mMainActivity;
@@ -52,7 +51,7 @@ public class MainApp extends Application {
         return Prefs.getInstance();
     }
 
-    public StumblerService getService() {
+    public ClientStumblerService getService() {
         return mStumblerService;
     }
 
@@ -90,14 +89,10 @@ public class MainApp extends Application {
 
         mConnection = new ServiceConnection() {
             public void onServiceConnected(ComponentName className, IBinder binder) {
-                StumblerService.StumblerBinder serviceBinder = (StumblerService.StumblerBinder) binder;
-                mStumblerService = serviceBinder.getServiceAndInitialize(Thread.currentThread());
-
+                ClientStumblerService.StumblerBinder serviceBinder = (ClientStumblerService.StumblerBinder) binder;
+                mStumblerService = serviceBinder.getServiceAndInitialize(Thread.currentThread(),
+                        MAX_BYTES_DISK_STORAGE, MAX_WEEKS_OLD_STORED);
                 mStumblerService.setWifiBlockList(new WifiBlockLists());
-
-                DataStorageManager.getInstance().setMaxStorageOnDisk(MAX_BYTES_DISK_STORAGE);
-                DataStorageManager.getInstance().setMaxWeeksStored(MAX_WEEKS_OLD_STORED);
-
                 // Upgrade the db, if needed
                 Map<String, Long> oldStats = getOldDbStats(MainApp.this);
                 if (oldStats != null) {
@@ -126,7 +121,7 @@ public class MainApp extends Application {
             }
         };
 
-        Intent intent = new Intent(this, StumblerService.class);
+        Intent intent = new Intent(this, ClientStumblerService.class);
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
     }
 

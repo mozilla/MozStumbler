@@ -19,7 +19,11 @@ import org.mozilla.mozstumbler.service.utils.NetworkUtils;
 
 // Only if data is queued and device awake: check network availability and upload.
 // MozStumbler use: this alarm is periodic and repeating.
-// Fennec use: The alarm is single-shot and it is set on Fennec start, and pause.
+// Fennec use: The alarm is single-shot and it is set to run -if there is data in the queue-
+// under these conditions:
+// 1) Fennec start/pause (actually gecko start which is ~4 sec after Fennec start).
+// 2) Changing the pref in Fennec to stumble or not.
+// 3) Boot intent (and SD card app available intent).
 //
 // Threading:
 // - scheduled from the stumbler thread

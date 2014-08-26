@@ -39,11 +39,25 @@ import java.util.TimerTask;
  */
 public class DataStorageManager {
     private static final String LOG_TAG = AppGlobals.LOG_PREFIX + DataStorageManager.class.getSimpleName();
+
+    // The max number of reports stored in the mCurrentReports. Each report is a GPS location plus wifi and cell scan.
+    // After this size is reached, data is persisted to disk, mCurrentReports is cleared.
     private static final int MAX_REPORTS_IN_MEMORY = 50;
+
+    // Used to cap the amount of data stored. When this limit is hit, no more data is saved to disk
+    // until the data is uploaded, or and data exceeds DEFAULT_MAX_WEEKS_DATA_ON_DISK.
     private static final long DEFAULT_MAX_BYTES_STORED_ON_DISK = 1024 * 250; // 250 KiB max by default
+
+    // Used as a safeguard to ensure stumbling data is not persisted. The intended use case of the stumbler lib is not
+    // for long-term storage, and so if ANY data on disk is this old, ALL data is wiped as a privacy mechanism.
     private static final int DEFAULT_MAX_WEEKS_DATA_ON_DISK = 2;
+
+    // Set to the default value specified above.
     private final long mMaxBytesDiskStorage;
+
+    // Set to the default value specified above.
     private final int mMaxWeeksStored;
+
     private final ReportBatchBuilder mCurrentReports = new ReportBatchBuilder();
     private final File mReportsDir;
     private final File mStatsFile;
@@ -209,6 +223,7 @@ public class DataStorageManager {
 
         return dir.getPath();
     }
+
     public static synchronized void createGlobalInstance(Context context, StorageIsEmptyTracker tracker) {
         DataStorageManager.createGlobalInstance(context, tracker,
                 DEFAULT_MAX_BYTES_STORED_ON_DISK, DEFAULT_MAX_WEEKS_DATA_ON_DISK);

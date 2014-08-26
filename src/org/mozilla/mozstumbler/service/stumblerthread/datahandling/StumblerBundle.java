@@ -137,6 +137,7 @@ public final class StumblerBundle implements Parcelable {
             JSONObject obj = c.toJSONObject();
             cellJSON.put(obj);
         }
+
         item.put(DataStorageContract.ReportsColumns.CELL, cellJSON);
         item.put(DataStorageContract.ReportsColumns.CELL_COUNT, cellJSON.length());
 

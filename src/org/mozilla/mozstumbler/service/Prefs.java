@@ -25,6 +25,7 @@ public  final class Prefs {
     private static final String FIREFOX_SCAN_ENABLED = "firefox_scan_on";
     private static final String MOZ_API_KEY = "moz_api_key";
     private static final String WIFI_SCAN_ALWAYS = "wifi_scan_always";
+    private static final String LAST_ATTEMPTED_UPLOAD_TIME = "last_attempted_upload_time";
     // Public for MozStumbler to use for manual upgrade of old prefs.
     public static final String PREFS_FILE = Prefs.class.getSimpleName();
 
@@ -115,6 +116,12 @@ public  final class Prefs {
         return loc;
     }
 
+    // This is the time an upload was last attempted, not necessarily successful.
+    // Used to ensure upload attempts aren't happening too frequently.
+    public synchronized long getLastAttemptedUploadTime() {
+        return getPrefs().getLong(LAST_ATTEMPTED_UPLOAD_TIME, 0);
+    }
+
     public synchronized String getNickname() {
         String nickname = getStringPref(NICKNAME_PREF);
         if (nickname != null) {
@@ -125,6 +132,12 @@ public  final class Prefs {
 
     public synchronized void setFirefoxScanEnabled(boolean on) {
         setBoolPref(FIREFOX_SCAN_ENABLED, on);
+    }
+
+    public synchronized void setLastAttemptedUploadTime(long time) {
+        SharedPreferences.Editor editor = getPrefs().edit();
+        editor.putLong(LAST_ATTEMPTED_UPLOAD_TIME, time);
+        apply(editor);
     }
 
     public synchronized void setNickname(String nick) {

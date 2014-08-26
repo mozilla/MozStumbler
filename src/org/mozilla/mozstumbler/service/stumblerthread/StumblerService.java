@@ -7,9 +7,6 @@ package org.mozilla.mozstumbler.service.stumblerthread;
 import android.content.Intent;
 import android.location.Location;
 import android.os.AsyncTask;
-import android.os.Binder;
-import android.os.IBinder;
-import android.os.Looper;
 import android.util.Log;
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -40,6 +37,16 @@ public class StumblerService extends PersistentIntentService
     protected final ScanManager mScanManager = new ScanManager();
     private final StumblerBundleReceiver mStumblerBundleReceiver = new StumblerBundleReceiver();
     protected final Reporter mReporter = new Reporter(mStumblerBundleReceiver);
+
+    // This is a delay before the single-shot upload is attempted. The number is arbitrary
+    // and used to avoid startup tasks bunching up.
+    private static final int DELAY_IN_SEC_BEFORE_STARTING_UPLOAD_IN_PASSIVE_MODE = 2;
+
+    // This is the frequency of the repeating upload alarm in active scanning mode.
+    private static final int FREQUENCY_IN_SEC_OF_UPLOAD_IN_ACTIVE_MODE = 5 * 60;
+
+    // Used to guard against attempting to upload too frequently in passive mode.
+    private static final long PASSIVE_UPLOAD_FREQ_GUARD_MSEC = 5 * 60 * 1000;
 
     public StumblerService() {
         this("StumblerService");
@@ -197,8 +204,18 @@ public class StumblerService extends PersistentIntentService
             // This is the only upload trigger in Firefox mode
             // Firefox triggers this ~4 seconds after startup (after Gecko is loaded), add a small delay to avoid
             // clustering with other operations that are triggered at this time.
-            final int secondsToWait = 2;
-            UploadAlarmReceiver.scheduleAlarm(this, secondsToWait, false /* no repeat*/);
+            final long lastAttemptedTime = Prefs.getInstance().getLastAttemptedUploadTime();
+            final long timeNow = System.currentTimeMillis();
+
+            if (timeNow - lastAttemptedTime < PASSIVE_UPLOAD_FREQ_GUARD_MSEC) {
+                // TODO Consider telemetry to track this.
+                if (AppGlobals.isDebug) {
+                    Log.d(LOG_TAG, "Upload attempt too frequent.");
+                }
+            } else {
+                Prefs.getInstance().setLastAttemptedUploadTime(timeNow);
+                UploadAlarmReceiver.scheduleAlarm(this, DELAY_IN_SEC_BEFORE_STARTING_UPLOAD_IN_PASSIVE_MODE, false /* no repeat*/);
+            }
         }
 
         if (!isScanEnabledInPrefs) {
@@ -220,8 +237,7 @@ public class StumblerService extends PersistentIntentService
         if (isEmpty) {
             UploadAlarmReceiver.cancelAlarm(this, !mScanManager.isPassiveMode());
         } else if (!mScanManager.isPassiveMode()) {
-            int secondsToWait = 5 * 60;
-            UploadAlarmReceiver.scheduleAlarm(this, secondsToWait, true /* repeating */);
+            UploadAlarmReceiver.scheduleAlarm(this, FREQUENCY_IN_SEC_OF_UPLOAD_IN_ACTIVE_MODE, true /* repeating */);
         }
     }
 }

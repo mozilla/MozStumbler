@@ -60,10 +60,13 @@ public class PassiveServiceReceiver extends BroadcastReceiver {
 
         Log.d(LOG_TAG, "Stumbler: Sending passive start message | isDebug:" + AppGlobals.isDebug);
 
+
         final Intent startServiceIntent = new Intent(context, StumblerService.class);
         startServiceIntent.putExtra(StumblerService.ACTION_START_PASSIVE, true);
         final String mozApiKey = intent.getStringExtra("moz_mozilla_api_key");
         startServiceIntent.putExtra(StumblerService.ACTION_EXTRA_MOZ_API_KEY, mozApiKey);
+        final String userAgent = intent.getStringExtra("user_agent");
+        startServiceIntent.putExtra(StumblerService.ACTION_EXTRA_USER_AGENT, userAgent);
         context.startService(startServiceIntent);
     }
 }

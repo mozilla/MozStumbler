@@ -9,6 +9,7 @@ import android.util.Log;
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.mozilla.mozstumbler.service.Prefs;
 import org.mozilla.mozstumbler.service.utils.AbstractCommunicator;
 import org.mozilla.mozstumbler.service.utils.AbstractCommunicator.SyncSummary;
 import org.mozilla.mozstumbler.service.AppGlobals;
@@ -112,7 +113,7 @@ public class AsyncUploader extends AsyncTask<Void, Void, SyncSummary> {
         private static final String SUBMIT_URL = "https://location.services.mozilla.com/v1/submit";
 
         public Submitter() {
-            super();
+            super(Prefs.getInstance().getUserAgent());
         }
 
         @Override

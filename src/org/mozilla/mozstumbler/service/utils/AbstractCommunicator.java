@@ -61,10 +61,8 @@ public abstract class AbstractCommunicator {
         return null;
     }
 
-    public AbstractCommunicator() {
-        String appName = AppGlobals.appName;
-        // "MozStumbler/X.Y.Z"
-        mUserAgent = appName + '/' + AppGlobals.appVersionName;
+    public AbstractCommunicator(String userAgent) {
+        mUserAgent = userAgent;
     }
 
     private void openConnectionAndSetHeaders() {

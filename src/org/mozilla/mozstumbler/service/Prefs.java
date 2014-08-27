@@ -16,6 +16,7 @@ import android.util.Log;
 public  final class Prefs {
     private static final String LOG_TAG = Prefs.class.getSimpleName();
     private static final String NICKNAME_PREF = "nickname";
+    private static final String USER_AGENT_PREF = "user-agent";
     private static final String VALUES_VERSION_PREF = "values_version";
     private static final String WIFI_ONLY = "wifi_only";
     private static final String LAT_PREF = "lat_pref";
@@ -65,6 +66,9 @@ public  final class Prefs {
     ///
     /// Setters
     ///
+    public synchronized void setUserAgent(String userAgent) {
+        setStringPref(USER_AGENT_PREF, userAgent);
+    }
 
     public synchronized void setUseWifiOnly(boolean state) {
         setBoolPref(WIFI_ONLY, state);
@@ -92,6 +96,11 @@ public  final class Prefs {
     ///
     /// Getters
     ///
+    public synchronized String getUserAgent() {
+        String s = getStringPref(USER_AGENT_PREF);
+        return (s == null)? AppGlobals.appName + "/" + AppGlobals.appVersionName : s;
+    }
+
     public synchronized boolean getFirefoxScanEnabled() {
         return getBoolPrefWithDefault(FIREFOX_SCAN_ENABLED, false);
     }

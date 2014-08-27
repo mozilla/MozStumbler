@@ -38,9 +38,8 @@ public class GPSScanner implements LocationListener {
     private static final int MIN_SAT_USED_IN_FIX = 3;
     private static final long ACTIVE_MODE_GPS_MIN_UPDATE_TIME_MS = 1000;
     private static final float ACTIVE_MODE_GPS_MIN_UPDATE_DISTANCE_M = 10;
-    private static final long PASSIVE_GPS_NO_MOVEMENT_MIN_UPDATE_FREQ_MS = 3000;
+    private static final long PASSIVE_GPS_MIN_UPDATE_FREQ_MS = 3000;
     private static final float PASSIVE_GPS_MOVEMENT_MIN_DELTA_M = 30;
-    private static final long PASSIVE_GPS_1_HZ_FREQ_GUARD_MS = 1000;
 
     private final LocationBlockList mBlockList = new LocationBlockList();
     private final Context mContext;
@@ -176,13 +175,9 @@ public class GPSScanner implements LocationListener {
         // Check dist and time threshold here, not set on the listener.
         if (mIsPassiveMode) {
             final long timeDelta = location.getTime() - mLocation.getTime();
+            final boolean hasMoved = location.distanceTo(mLocation) > PASSIVE_GPS_MOVEMENT_MIN_DELTA_M;
 
-            final boolean isMoving = timeDelta > PASSIVE_GPS_1_HZ_FREQ_GUARD_MS &&
-                    location.distanceTo(mLocation) > PASSIVE_GPS_MOVEMENT_MIN_DELTA_M;
-
-            // If not moving, then only accept GPS locations every few seconds. If moving,
-            // accept GPS locations up to 1 HZ max freq.
-            if (!isMoving && timeDelta < PASSIVE_GPS_NO_MOVEMENT_MIN_UPDATE_FREQ_MS) {
+            if (timeDelta < PASSIVE_GPS_MIN_UPDATE_FREQ_MS || !hasMoved) {
                 return;
             }
         }

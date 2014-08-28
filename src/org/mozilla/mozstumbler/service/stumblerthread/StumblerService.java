@@ -31,7 +31,7 @@ public class StumblerService extends PersistentIntentService
     public static final String ACTION_BASE = AppGlobals.ACTION_NAMESPACE;
     public static final String ACTION_START_PASSIVE = ACTION_BASE + ".START_PASSIVE";
     public static final String ACTION_EXTRA_MOZ_API_KEY = ACTION_BASE + ".MOZKEY";
-    public static final String ACTION_EXTRA_USER_AGENT = ACTION_BASE + ".USERAGENT";
+    public static final String ACTION_EXTRA_USER_AGENT = ACTION_BASE + ".USER_AGENT";
     public static final String ACTION_NOT_FROM_HOST_APP = ACTION_BASE + ".NOT_FROM_HOST";
     public static final AtomicBoolean sFirefoxStumblingEnabled = new AtomicBoolean();
     protected final ScanManager mScanManager = new ScanManager();

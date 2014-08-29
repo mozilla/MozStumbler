@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package org.mozilla.mozstumbler.service.scanners.cellscanner;
+package org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner;
 
 import android.content.Context;
 import android.content.Intent;
@@ -26,7 +26,7 @@ public class CellScanner {
     public static final String ACTION_CELLS_SCANNED_ARG_CELLS = "cells";
     public static final String ACTION_CELLS_SCANNED_ARG_TIME = AppGlobals.ACTION_ARG_TIME;
 
-    private static final String LOGTAG = CellScanner.class.getName();
+    private static final String LOG_TAG = AppGlobals.LOG_PREFIX + CellScanner.class.getSimpleName();
     private static final long CELL_MIN_UPDATE_TIME = 1000; // milliseconds
 
     private final Context mContext;
@@ -57,7 +57,7 @@ public class CellScanner {
         return sImpl != null;
     }
 
-    /** Fennec doesn't support the apis needed for full scanning, we have different implementations.*/
+    /* Fennec doesn't support the apis needed for full scanning, we have different implementations.*/
     public static synchronized void setCellScannerImpl(CellScannerImpl cellScanner) {
         sImpl = cellScanner;
     }
@@ -70,7 +70,7 @@ public class CellScanner {
         try {
             getImplementation().start();
         } catch (UnsupportedOperationException uoe) {
-            Log.e(LOGTAG, "Cell scanner probe failed", uoe);
+            Log.e(LOG_TAG, "Cell scanner probe failed", uoe);
             return;
         }
 
@@ -95,7 +95,7 @@ public class CellScanner {
                     stop();
                     return;
                 }
-                //if (SharedConstants.isDebug) Log.d(LOGTAG, "Cell Scanning Timer fired");
+                //if (SharedConstants.isDebug) Log.d(LOG_TAG, "Cell Scanning Timer fired");
                 final long curTime = System.currentTimeMillis();
 
                 ArrayList<CellInfo> cells = (sTestingModeCellInfoArray != null)? sTestingModeCellInfoArray :

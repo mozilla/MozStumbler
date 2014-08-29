@@ -8,24 +8,24 @@
         android:minSdkVersion="8"
         android:targetSdkVersion="19" />
 
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
-    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE"/>
-    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.WAKE_LOCK"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.READ_SYNC_SETTINGS"/>
-    <uses-permission android:name="android.permission.READ_SYNC_STATS"/>
-    <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS"/>
-    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_SYNC_SETTINGS" />
+    <uses-permission android:name="android.permission.READ_SYNC_STATS" />
+    <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS" />
+    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
 
-    <uses-feature android:name="android.hardware.location"/>
-    <uses-feature android:name="android.hardware.location.gps"/>
-    <uses-feature android:name="android.hardware.telephony"/>
-    <uses-feature android:name="android.hardware.wifi"/>
+    <uses-feature android:name="android.hardware.location" />
+    <uses-feature android:name="android.hardware.location.gps" />
+    <uses-feature android:name="android.hardware.telephony" />
+    <uses-feature android:name="android.hardware.wifi" />
 
     <application
         android:name=".client.MainApp"
@@ -37,7 +37,7 @@
         android:hardwareAccelerated="false" >
         <activity
             android:name=".client.MainActivity"
-            android:label="@string/app_name">
+            android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -69,7 +69,7 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".client.MainActivity" />
-              </activity>
+        </activity>
 
         <activity
             android:name=".client.LogActivity"
@@ -81,22 +81,43 @@
                 android:value=".client.MainActivity" />
         </activity>
 
-        <receiver android:name=".client.TurnOffReceiver">
+        <receiver android:name=".client.TurnOffReceiver" >
             <intent-filter>
-                <action android:name="android.intent.action.BATTERY_LOW"/>
-                <action android:name="org.mozilla.mozstumbler.turnMeOff"/>
+                <action android:name="android.intent.action.BATTERY_LOW" />
+                <action android:name="org.mozilla.mozstumbler.turnMeOff" />
             </intent-filter>
         </receiver>
 
         <service
-            android:name=".service.StumblerService"
+            android:name=".client.ClientStumblerService"
             android:icon="@drawable/ic_launcher"
-            android:label="@string/service_name">
+            android:label="@string/service_name" >
         </service>
 
+        <receiver android:name=".service.uploadthread.UploadAlarmReceiver" />
+        <service android:name=".service.uploadthread.UploadAlarmReceiver$UploadAlarmService" />
 
-        <receiver android:name=".service.sync.UploadAlarmReceiver" />
-        <service android:name=".service.sync.UploadAlarmReceiver$UploadAlarmService" />
+        <!-- For debugging the passive service -->
+        <!--
+        test with
+        adb shell am broadcast -a android.intent.action.BOOT_COMPLETED -c android.intent.category.HOME -n org.mozilla.mozstumbler/.service.mainthread.PassiveServiceReceiver
+        adb shell am broadcast -a android.intent.action.BOOT_COMPLETED -c android.intent.category.HOME -n org.mozilla.fennec/org.mozilla.mozstumbler.service.mainthread.PassiveServiceReceiver
+        -->
+        <!--service
+            android:name=".service.stumblerthread.StumblerService"
+            android:icon="@drawable/ic_launcher"
+            android:label="@string/service_name" >
+        </service-->
+        <!-- meta-data android:name="org.mozilla.mozstumbler.intent.action.MOZ_KEY" android:value="aValue" / -->
+        <!--
+        receiver android:name=".service.mainthread.PassiveServiceReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.location.GPS_ENABLED_CHANGE" />
+                <action android:name="android.location.GPS_FIX_CHANGE" />
+            </intent-filter>
+        </receiver
+        -->
     </application>
 
 </manifest>

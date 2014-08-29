@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package org.mozilla.mozstumbler.service.scanners;
+package org.mozilla.mozstumbler.service.stumblerthread.scanners;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -24,10 +24,11 @@ import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.mozilla.mozstumbler.service.AppGlobals;
-import org.mozilla.mozstumbler.service.blocklist.BSSIDBlockList;
-import org.mozilla.mozstumbler.service.blocklist.SSIDBlockList;
+import org.mozilla.mozstumbler.service.stumblerthread.blocklist.BSSIDBlockList;
+import org.mozilla.mozstumbler.service.stumblerthread.blocklist.SSIDBlockList;
 import org.mozilla.mozstumbler.service.AppGlobals.ActiveOrPassiveStumbling;
 import org.mozilla.mozstumbler.service.Prefs;
+import org.mozilla.mozstumbler.service.stumblerthread.blocklist.WifiBlockListInterface;
 
 public class WifiScanner extends BroadcastReceiver {
     public static final String ACTION_BASE = AppGlobals.ACTION_NAMESPACE + ".WifiScanner.";
@@ -39,7 +40,7 @@ public class WifiScanner extends BroadcastReceiver {
     public static final int STATUS_ACTIVE = 1;
     public static final int STATUS_WIFI_DISABLED = -1;
 
-    private static final String LOGTAG = WifiScanner.class.getName();
+    private static final String LOG_TAG = AppGlobals.LOG_PREFIX + WifiScanner.class.getSimpleName();
     private static final long WIFI_MIN_UPDATE_TIME = 5000; // milliseconds
 
     private boolean mStarted;
@@ -49,19 +50,23 @@ public class WifiScanner extends BroadcastReceiver {
     private final Set<String> mAPs = Collections.synchronizedSet(new HashSet<String>());
     private AtomicInteger mVisibleAPs = new AtomicInteger();
 
-    /** Testing */
+    /* Testing */
     public static boolean sIsTestMode;
     public List<ScanResult> mTestModeFakeScanResults = new ArrayList<ScanResult>();
     public Set<String> getAccessPoints(android.test.AndroidTestCase restrictedAccessor) { return mAPs; }
-    /** ------- */
+    /* ------- */
 
     public WifiScanner(Context c) {
         mContext = c;
     }
 
-    private boolean isWifiEnabled() { return (sIsTestMode) ||  getWifiManager().isWifiEnabled(); }
+    private boolean isWifiEnabled() {
+        return (sIsTestMode) || getWifiManager().isWifiEnabled();
+    }
 
-    private List<ScanResult> getScanResults() { return (sIsTestMode)? mTestModeFakeScanResults : getWifiManager().getScanResults(); }
+    private List<ScanResult> getScanResults() {
+        return (sIsTestMode)? mTestModeFakeScanResults : getWifiManager().getScanResults();
+    }
 
 
     public synchronized void start(final ActiveOrPassiveStumbling stumblingMode) {
@@ -93,7 +98,6 @@ public class WifiScanner extends BroadcastReceiver {
         String action = intent.getAction();
 
         if (WifiManager.WIFI_STATE_CHANGED_ACTION.equals(action)) {
-            Log.v(LOGTAG, "WIFI_STATE_CHANGED_ACTION new state: " + intent.getIntExtra(WifiManager.EXTRA_WIFI_STATE, -1));
             if (isWifiEnabled()) {
                 activatePeriodicScan(ActiveOrPassiveStumbling.ACTIVE_STUMBLING);
             } else {
@@ -106,12 +110,16 @@ public class WifiScanner extends BroadcastReceiver {
                 if (shouldLog(scanResult)) {
                     scanResults.add(scanResult);
                     mAPs.add(scanResult.BSSID);
-                    //Log.v(LOGTAG, "BSSID=" + scanResult.BSSID + ", SSID=\"" + scanResult.SSID + "\", Signal=" + scanResult.level);
                 }
             }
             mVisibleAPs.set(scanResults.size());
             reportScanResults(scanResults);
         }
+    }
+
+    public static void setWifiBlockList(WifiBlockListInterface blockList) {
+        BSSIDBlockList.setFilterList(blockList.getBssidOuiList());
+        SSIDBlockList.setFilterLists(blockList.getSsidPrefixList(), blockList.getSsidSuffixList());
     }
 
     public int getAPCount() {
@@ -137,7 +145,9 @@ public class WifiScanner extends BroadcastReceiver {
             return;
         }
 
-        Log.v(LOGTAG, "Activate Periodic Scan");
+        if (AppGlobals.isDebug) {
+            Log.v(LOG_TAG, "Activate Periodic Scan");
+        }
 
         mWifiLock = getWifiManager().createWifiLock(WifiManager.WIFI_MODE_SCAN_ONLY, "MozStumbler");
         mWifiLock.acquire();
@@ -155,7 +165,9 @@ public class WifiScanner extends BroadcastReceiver {
                     stop(); // set mWifiScanTimer to null
                     return;
                 }
-                if (AppGlobals.isDebug) Log.v(LOGTAG, "WiFi Scanning Timer fired");
+                if (AppGlobals.isDebug) {
+                    Log.v(LOG_TAG, "WiFi Scanning Timer fired");
+                }
                 getWifiManager().startScan();
             }
         }, 0, WIFI_MIN_UPDATE_TIME);
@@ -166,7 +178,9 @@ public class WifiScanner extends BroadcastReceiver {
             return;
         }
 
-        Log.v(LOGTAG, "Deactivate periodic scan");
+        if (AppGlobals.isDebug) {
+            Log.v(LOG_TAG, "Deactivate periodic scan");
+        }
 
         mWifiLock.release();
         mWifiLock = null;
@@ -179,11 +193,11 @@ public class WifiScanner extends BroadcastReceiver {
 
     public static boolean shouldLog(ScanResult scanResult) {
         if (BSSIDBlockList.contains(scanResult)) {
-            Log.w(LOGTAG, "Blocked BSSID: " + scanResult);
+            Log.w(LOG_TAG, "Blocked BSSID: " + scanResult);
             return false;
         }
         if (SSIDBlockList.contains(scanResult)) {
-            Log.w(LOGTAG, "Blocked SSID: " + scanResult);
+            Log.w(LOG_TAG, "Blocked SSID: " + scanResult);
             return false;
         }
         return true;
@@ -194,10 +208,9 @@ public class WifiScanner extends BroadcastReceiver {
     }
 
     private void reportScanResults(ArrayList<ScanResult> scanResults) {
-        if (scanResults.isEmpty())
+        if (scanResults.isEmpty()) {
             return;
-
-        if (AppGlobals.isDebug) Log.v(LOGTAG, scanResults.toString());
+        }
 
         Intent i = new Intent(ACTION_WIFIS_SCANNED);
         i.putParcelableArrayListExtra(ACTION_WIFIS_SCANNED_ARG_RESULTS, scanResults);

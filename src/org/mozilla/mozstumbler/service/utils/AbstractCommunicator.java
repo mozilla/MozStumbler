@@ -2,12 +2,13 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package org.mozilla.mozstumbler.service;
+package org.mozilla.mozstumbler.service.utils;
 
 import android.os.Build;
 import android.util.Log;
 
-import org.mozilla.mozstumbler.service.utils.Zipper;
+import org.mozilla.mozstumbler.service.AppGlobals;
+import org.mozilla.mozstumbler.service.Prefs;
 
 import java.io.BufferedOutputStream;
 import java.io.IOException;
@@ -19,7 +20,7 @@ import java.net.URL;
 
 public abstract class AbstractCommunicator {
 
-    private static final String LOGTAG = AbstractCommunicator.class.getName();
+    private static final String LOG_TAG = AppGlobals.LOG_PREFIX + AbstractCommunicator.class.getSimpleName();
     private static final String NICKNAME_HEADER = "X-Nickname";
     private static final String USER_AGENT_HEADER = "User-Agent";
     private HttpURLConnection mHttpURLConnection;
@@ -54,17 +55,14 @@ public abstract class AbstractCommunicator {
         public int errorCode = -1;
     }
 
-    /** Return non-zero for error, http error code if available */
     public abstract NetworkSendResult cleanSend(byte[] data);
 
     public String getNickname() {
         return null;
     }
 
-    public AbstractCommunicator() {
-        String appName = AppGlobals.appName;
-        // "MozStumbler/X.Y.Z"
-        mUserAgent = appName + '/' + AppGlobals.appVersionName;
+    public AbstractCommunicator(String userAgent) {
+        mUserAgent = userAgent;
     }
 
     private void openConnectionAndSetHeaders() {
@@ -78,7 +76,7 @@ public abstract class AbstractCommunicator {
         } catch (MalformedURLException e) {
             throw new IllegalArgumentException(e);
         } catch (IOException e) {
-            Log.e(LOGTAG, "Couldn't open a connection: " + e);
+            Log.e(LOG_TAG, "Couldn't open a connection: " + e);
         }
         mHttpURLConnection.setDoOutput(true);
         mHttpURLConnection.setRequestProperty(USER_AGENT_HEADER, mUserAgent);
@@ -100,23 +98,20 @@ public abstract class AbstractCommunicator {
         return output;
     }
 
-    public boolean isCorrectResponse(int httpCode) {
-        return httpCode/100 == 2;
-    }
-
     private void sendData(byte[] data) throws IOException{
         mHttpURLConnection.setFixedLengthStreamingMode(data.length);
         OutputStream out = new BufferedOutputStream(mHttpURLConnection.getOutputStream());
         out.write(data);
         out.flush();
         int code = mHttpURLConnection.getResponseCode();
-        if (!isCorrectResponse(code)) {
+        final boolean isSuccessCode2XX = (code/100 == 2);
+        if (!isSuccessCode2XX) {
             throw new HttpErrorException(code);
         }
     }
 
     public enum ZippedState { eNotZipped, eAlreadyZipped };
-    /** Return the number of bytes sent. */
+    /* Return the number of bytes sent. */
     public int send(byte[] data, ZippedState isAlreadyZipped) throws IOException {
         openConnectionAndSetHeaders();
         String logMsg;
@@ -126,7 +121,7 @@ public abstract class AbstractCommunicator {
             }
             mHttpURLConnection.setRequestProperty("Content-Encoding","gzip");
         } catch (IOException e) {
-            Log.e(LOGTAG, "Couldn't compress and send data, falling back to plain-text: ", e);
+            Log.e(LOG_TAG, "Couldn't compress and send data, falling back to plain-text: ", e);
             close();
         }
 
@@ -139,7 +134,7 @@ public abstract class AbstractCommunicator {
         logMsg = "Send data: " + String.format("%.2f", data.length / 1024.0) + " kB";
         logMsg += " Session Total:" + String.format("%.2f", sBytesSentTotal / 1024.0) + " kB";
         AppGlobals.guiLogInfo(logMsg, "#FFFFCC", true);
-        Log.d(LOGTAG, logMsg);
+        Log.d(LOG_TAG, logMsg);
         return data.length;
     }
 

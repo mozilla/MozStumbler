@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package org.mozilla.mozstumbler.service.scanners.cellscanner;
+package org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner;
 
 import android.os.Build;
 import android.os.Parcel;
@@ -16,9 +16,10 @@ import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.mozilla.mozstumbler.service.AppGlobals;
 
 public class CellInfo implements Parcelable {
-    private static final String LOGTAG = CellInfo.class.getName();
+    private static final String LOG_TAG = AppGlobals.LOG_PREFIX + CellInfo.class.getSimpleName();
 
     public static final String RADIO_GSM = "gsm";
     public static final String RADIO_CDMA = "cdma";
@@ -256,14 +257,13 @@ public class CellInfo implements Parcelable {
     }
 
     /**
-     *
      * @param mcc Mobile Country Code, Integer.MAX_VALUE if unknown
      * @param mnc Mobile Network Code, Integer.MAX_VALUE if unknown
-     * @param ci  Cell Identity, Integer.MAX_VALUE if unknown
+     * @param ci Cell Identity, Integer.MAX_VALUE if unknown
      * @param pci Physical Cell Id, Integer.MAX_VALUE if unknown
      * @param tac Tracking Area Code, Integer.MAX_VALUE if unknown
      * @param asu Arbitrary strength unit
-     * @param ta  Timing advance
+     * @param ta Timing advance
      */
     void setLteCellInfo(int mcc, int mnc, int ci, int pci, int tac, int asu, int ta) {
         mCellRadio = CELL_RADIO_LTE;
@@ -325,7 +325,7 @@ public class CellInfo implements Parcelable {
                 return CELL_RADIO_CDMA;
 
             default:
-                Log.e(LOGTAG, "", new IllegalArgumentException("Unexpected network type: " + networkType));
+                Log.e(LOG_TAG, "", new IllegalArgumentException("Unexpected network type: " + networkType));
                 return String.valueOf(networkType);
         }
     }
@@ -340,7 +340,7 @@ public class CellInfo implements Parcelable {
                 return RADIO_GSM;
 
             default:
-                Log.e(LOGTAG, "", new IllegalArgumentException("Unexpected phone type: " + phoneType));
+                Log.e(LOG_TAG, "", new IllegalArgumentException("Unexpected phone type: " + phoneType));
                 // fallthrough
 
             case TelephonyManager.PHONE_TYPE_NONE:
@@ -352,10 +352,12 @@ public class CellInfo implements Parcelable {
 
     @Override
     public boolean equals(Object o) {
-        if (o == this)
+        if (o == this) {
             return true;
-        if (!(o instanceof CellInfo))
+        }
+        if (!(o instanceof CellInfo)) {
             return false;
+        }
         CellInfo ci = (CellInfo) o;
         return mRadio.equals(ci.mRadio)
                && mCellRadio.equals(ci.mCellRadio)

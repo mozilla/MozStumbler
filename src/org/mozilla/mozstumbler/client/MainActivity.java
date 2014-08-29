@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
@@ -20,23 +19,22 @@ import android.widget.CompoundButton;
 import android.widget.TextView;
 import org.mozilla.mozstumbler.BuildConfig;
 import org.mozilla.mozstumbler.service.AppGlobals;
-import org.mozilla.mozstumbler.service.datahandling.DataStorageContract;
-import org.mozilla.mozstumbler.service.utils.DateTimeUtils;
+import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageContract;
+import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageManager;
 import org.mozilla.mozstumbler.client.mapview.MapActivity;
 import org.mozilla.mozstumbler.R;
-import org.mozilla.mozstumbler.service.StumblerService;
-import org.mozilla.mozstumbler.service.scanners.WifiScanner;
+import org.mozilla.mozstumbler.service.stumblerthread.scanners.WifiScanner;
 
 import java.io.IOException;
 import java.util.Properties;
 
 public final class MainActivity extends FragmentActivity {
-    private static final String LOGTAG = MainActivity.class.getName();
+    private static final String LOG_TAG = AppGlobals.LOG_PREFIX + MainActivity.class.getSimpleName();
 
     public static final String ACTION_BASE = AppGlobals.ACTION_NAMESPACE + ".MainActivity.";
     public static final String ACTION_UPDATE_UI = ACTION_BASE + "UPDATE_UI";
 
-    /** if service exists, start scanning, otherwise do nothing  */
+    /* if service exists, start scanning, otherwise do nothing  */
     public static final String ACTION_UNPAUSE_SCANNING = ACTION_BASE + "UNPAUSE_SCANNING";
 
     private static final String LEADERBOARD_URL = "https://location.services.mozilla.com/leaders";
@@ -83,7 +81,7 @@ public final class MainActivity extends FragmentActivity {
             Updater.checkForUpdates(this);
         }
 
-        Log.d(LOGTAG, "onCreate");
+        Log.d(LOG_TAG, "onCreate");
     }
 
     void checkGps() {
@@ -120,7 +118,7 @@ public final class MainActivity extends FragmentActivity {
     }
 
     private void updateUI() {
-        StumblerService service = getApp().getService();
+        ClientStumblerService service = getApp().getService();
         if (service == null) {
             return;
         }
@@ -269,11 +267,12 @@ public final class MainActivity extends FragmentActivity {
     }
 
     public void showUploadStats() {
-        if (AppGlobals.dataStorageManager == null)
+        if (DataStorageManager.getInstance() == null) {
             return;
+        }
 
         try {
-            Properties props = AppGlobals.dataStorageManager.readSyncStats();
+            Properties props = DataStorageManager.getInstance().readSyncStats();
             long lastUploadTime = Long.parseLong(props.getProperty(DataStorageContract.Stats.KEY_LAST_UPLOAD_TIME, "0"));
             String value = (lastUploadTime > 0)? DateTimeUtils.formatTimeForLocale(lastUploadTime) : "-";
             formatTextView(R.id.last_upload_time, R.string.last_upload_time, value);
@@ -282,7 +281,7 @@ public final class MainActivity extends FragmentActivity {
             formatTextView(R.id.reports_sent, R.string.reports_sent, Integer.parseInt(value));
         }
         catch (IOException ex) {
-            Log.e(LOGTAG, "Exception in showUploadStats()", ex);
+            Log.e(LOG_TAG, "Exception in showUploadStats()", ex);
         }
     }
 

@@ -6,7 +6,7 @@ import android.content.pm.PackageManager.NameNotFoundException;
 
 import org.mozilla.mozstumbler.BuildConfig;
 
-final public class PackageUtils {
+public final class PackageUtils {
     private PackageUtils() {
     }
 

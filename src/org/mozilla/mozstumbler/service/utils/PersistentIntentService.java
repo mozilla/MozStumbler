@@ -38,7 +38,7 @@ public abstract class PersistentIntentService extends Service {
 
         @Override
         public void handleMessage(Message msg) {
-            onHandleIntent((Intent)msg.obj);
+            onHandleIntent((Intent) msg.obj);
             // stopSelf(msg.arg1); <-- modified from original file
         }
     }

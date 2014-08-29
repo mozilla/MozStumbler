@@ -25,19 +25,18 @@ import android.widget.TextView;
 
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.mozilla.mozstumbler.client.ClientStumblerService;
 import org.mozilla.mozstumbler.client.MainApp;
 import org.mozilla.mozstumbler.service.AppGlobals;
-import org.mozilla.mozstumbler.service.StumblerService;
 import org.mozilla.mozstumbler.BuildConfig;
 import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.client.MainActivity;
-import org.mozilla.mozstumbler.service.scanners.GPSScanner;
 import org.osmdroid.api.IGeoPoint;
+import org.mozilla.mozstumbler.service.stumblerthread.scanners.GPSScanner;
 import org.osmdroid.tileprovider.BitmapPool;
 import org.osmdroid.tileprovider.tilesource.OnlineTileSourceBase;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
@@ -49,7 +48,7 @@ import org.osmdroid.views.overlay.Overlay;
 import org.osmdroid.views.overlay.PathOverlay;
 
 public final class MapActivity extends Activity {
-    private static final String LOGTAG = MapActivity.class.getName();
+    private static final String LOG_TAG = AppGlobals.LOG_PREFIX + MapActivity.class.getSimpleName();
 
     private static final String COVERAGE_REDIRECT_URL = "https://location.services.mozilla.com/map.json";
     private static String sCoverageUrl = null;
@@ -77,7 +76,7 @@ public final class MapActivity extends Activity {
     public static void createGpsTrackLocationReceiver(Context context) {
         sGpsTrackLocationReceiver = new GpsTrackLocationReceiver();
         LocalBroadcastManager.getInstance(context).registerReceiver(sGpsTrackLocationReceiver, new IntentFilter(GPSScanner.ACTION_GPS_UPDATED));
-        Log.d(LOGTAG, "Received location");
+        Log.d(LOG_TAG, "Received location");
     }
 
     // Create in MainApp, used to grab locations at all times, for drawing the GPS track on the map
@@ -90,8 +89,9 @@ public final class MapActivity extends Activity {
             String action = intent.getAction();
             String subject = intent.getStringExtra(Intent.EXTRA_SUBJECT);
             assert (action.equals(GPSScanner.ACTION_GPS_UPDATED));
-            if (!subject.equals(GPSScanner.SUBJECT_NEW_LOCATION))
+            if (!subject.equals(GPSScanner.SUBJECT_NEW_LOCATION)) {
                 return;
+            }
 
             Location newPosition = intent.getParcelableExtra(GPSScanner.NEW_LOCATION_ARG_LOCATION);
             if (newPosition != null) {
@@ -111,7 +111,7 @@ public final class MapActivity extends Activity {
             String action = intent.getAction();
 
             if (action.equals(GPSScanner.ACTION_GPS_UPDATED)) {
-                final StumblerService service = ((MainApp) getApplication()).getService();
+                final ClientStumblerService service = ((MainApp) getApplication()).getService();
                 new GetLocationAndMapItTask().execute(service);
                 updateUI(service);
                 if (GPSScanner.SUBJECT_NEW_STATUS.equals(intent.getStringExtra(Intent.EXTRA_SUBJECT))) {
@@ -157,7 +157,7 @@ public final class MapActivity extends Activity {
                 mMap.getController().setCenter(new GeoPoint(latitude, longitude));
             }
         } else {
-            final StumblerService service = ((MainApp) getApplication()).getService();
+            final ClientStumblerService service = ((MainApp) getApplication()).getService();
             final double latitude = service.getLatitude();
             final double longitude = service.getLongitude();
             GeoPoint lastLoc;
@@ -175,7 +175,7 @@ public final class MapActivity extends Activity {
             mPathOverlay.addPoint(p);
         }
 
-        Log.d(LOGTAG, "onCreate");
+        Log.d(LOG_TAG, "onCreate");
 
         // @TODO: we do a similar "read from URL" in Updater, AbstractCommunicator, make one function for this
         if (sCoverageUrl == null) {
@@ -186,7 +186,7 @@ public final class MapActivity extends Activity {
                     try {
                         scanner = new java.util.Scanner(new URL(COVERAGE_REDIRECT_URL).openStream(), "UTF-8");
                     } catch (Exception ex) {
-                        Log.d(LOGTAG, ex.toString());
+                        Log.d(LOG_TAG, ex.toString());
                         AppGlobals.guiLogInfo("Failed to get coverage url:" + ex.toString());
                         return;
                     }
@@ -352,7 +352,7 @@ public final class MapActivity extends Activity {
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(GPSScanner.ACTION_GPS_UPDATED);
         LocalBroadcastManager.getInstance(this).registerReceiver(mReceiver, intentFilter);
-        Log.d(LOGTAG, "onStart");
+        Log.d(LOG_TAG, "onStart");
     }
 
     @Override
@@ -369,7 +369,7 @@ public final class MapActivity extends Activity {
     protected void onDestroy() {
         super.onDestroy();
 
-        Log.d(LOGTAG, "onDestroy");
+        Log.d(LOG_TAG, "onDestroy");
         mMap.getTileProvider().clearTileCache();
         BitmapPool.getInstance().clearBitmapPool();
     }
@@ -378,14 +378,14 @@ public final class MapActivity extends Activity {
     protected void onStop() {
         super.onStop();
 
-        Log.d(LOGTAG, "onStop");
+        Log.d(LOG_TAG, "onStop");
         if (mReceiver != null) {
             LocalBroadcastManager.getInstance(this).unregisterReceiver(mReceiver);
             mReceiver = null;
         }
     }
 
-    private void updateUI(StumblerService service) {
+    private void updateUI(ClientStumblerService service) {
         formatTextView(R.id.cell_info_text, R.string.cells_info, service.getCurrentCellInfoCount(),
                 service.getCellInfoCount());
         formatTextView(R.id.wifi_info_text, R.string.wifi_info, service.getVisibleAPCount(),
@@ -393,12 +393,12 @@ public final class MapActivity extends Activity {
     }
 
 
-    private final class GetLocationAndMapItTask extends AsyncTask<StumblerService, Void, Location> {
+    private final class GetLocationAndMapItTask extends AsyncTask<ClientStumblerService, Void, Location> {
         @Override
-        public Location doInBackground(StumblerService... params) {
-            Log.d(LOGTAG, "requesting location...");
+        public Location doInBackground(ClientStumblerService... params) {
+            Log.d(LOG_TAG, "requesting location...");
 
-            StumblerService service = params[0];
+            ClientStumblerService service = params[0];
             final Location result = service.getLocation();
 
             // Don't map (0,0)

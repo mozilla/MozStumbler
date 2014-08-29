@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package org.mozilla.mozstumbler.service;
+package org.mozilla.mozstumbler.service.stumblerthread;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -13,68 +13,77 @@ import android.net.wifi.ScanResult;
 import android.support.v4.content.LocalBroadcastManager;
 import android.telephony.TelephonyManager;
 import android.util.Log;
+
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-import org.mozilla.mozstumbler.service.datahandling.StumblerBundle;
-import org.mozilla.mozstumbler.service.datahandling.StumblerBundleReceiver;
-import org.mozilla.mozstumbler.service.scanners.cellscanner.CellInfo;
-import org.mozilla.mozstumbler.service.scanners.cellscanner.CellScanner;
-import org.mozilla.mozstumbler.service.scanners.GPSScanner;
-import org.mozilla.mozstumbler.service.scanners.WifiScanner;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.mozilla.mozstumbler.service.AppGlobals;
+import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageContract;
+import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageManager;
+import org.mozilla.mozstumbler.service.stumblerthread.datahandling.StumblerBundle;
+import org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner.CellInfo;
+import org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner.CellScanner;
+import org.mozilla.mozstumbler.service.stumblerthread.scanners.GPSScanner;
+import org.mozilla.mozstumbler.service.stumblerthread.scanners.WifiScanner;
 
-final public class Reporter extends BroadcastReceiver {
-    private static final String LOGTAG = Reporter.class.getName();
-    public  static final String ACTION_BASE = AppGlobals.ACTION_NAMESPACE;
-    public  static final String ACTION_FLUSH_TO_DB = ACTION_BASE + ".FLUSH";
+public final class Reporter extends BroadcastReceiver {
+    private static final String LOG_TAG = AppGlobals.LOG_PREFIX + Reporter.class.getSimpleName();
+    public static final String ACTION_FLUSH_TO_BUNDLE = AppGlobals.ACTION_NAMESPACE + ".FLUSH";
+    private boolean mIsStarted;
 
-    /**
-     * The maximum time of observation
-     */
-    private static final int REPORTER_WINDOW  = 24 * 60 * 60 * 1000; //ms
+    /* The maximum number of Wi-Fi access points in a single observation. */
+    private static final int MAX_WIFIS_PER_LOCATION = 200;
 
-    /**
-     * The maximum number of Wi-Fi access points in a single observation
-     */
-    private static final int WIFI_COUNT_WATERMARK = 100;
+    /* The maximum number of cells in a single observation */
+    private static final int MAX_CELLS_PER_LOCATION  = 50;
 
-    /**
-     * The maximum number of cells in a single observation
-     */
-    private static final int CELLS_COUNT_WATERMARK = 50;
-
-    private final Context       mContext;
-    private final int             mPhoneType;
+    private Context mContext;
+    private int mPhoneType;
 
     private StumblerBundle mBundle;
-    private StumblerBundleReceiver mStumblerBundleReceiver;
 
-    Reporter(Context context, StumblerBundleReceiver bundleReceiver) {
-        mContext = context;
-        mStumblerBundleReceiver = bundleReceiver;
-        resetData();
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(WifiScanner.ACTION_WIFIS_SCANNED);
-        intentFilter.addAction(CellScanner.ACTION_CELLS_SCANNED);
-        intentFilter.addAction(GPSScanner.ACTION_GPS_UPDATED);
-        intentFilter.addAction(ACTION_FLUSH_TO_DB);
-        LocalBroadcastManager.getInstance(mContext).registerReceiver(this,
-                intentFilter);
-
-        TelephonyManager tm = (TelephonyManager) mContext.getSystemService(Context.TELEPHONY_SERVICE);
-        mPhoneType = tm.getPhoneType();
-    }
+    Reporter() {}
 
     private void resetData() {
         mBundle = null;
     }
 
-    void flush() {
+    public void flush() {
         reportCollectedLocation();
     }
 
+    void startup(Context context) {
+        if (mIsStarted) {
+            return;
+        }
+
+        mContext = context.getApplicationContext();
+        TelephonyManager tm = (TelephonyManager) mContext.getSystemService(Context.TELEPHONY_SERVICE);
+        mPhoneType = tm.getPhoneType();
+
+        mIsStarted = true;
+
+        resetData();
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(WifiScanner.ACTION_WIFIS_SCANNED);
+        intentFilter.addAction(CellScanner.ACTION_CELLS_SCANNED);
+        intentFilter.addAction(GPSScanner.ACTION_GPS_UPDATED);
+        intentFilter.addAction(ACTION_FLUSH_TO_BUNDLE);
+        LocalBroadcastManager.getInstance(mContext).registerReceiver(this,
+                intentFilter);
+    }
+
     void shutdown() {
-        Log.d(LOGTAG, "shutdown");
+        if (mContext == null) {
+            return;
+        }
+
+        mIsStarted = false;
+
+        Log.d(LOG_TAG, "shutdown");
         flush();
         LocalBroadcastManager.getInstance(mContext).unregisterReceiver(this);
     }
@@ -102,7 +111,7 @@ final public class Reporter extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         String action = intent.getAction();
 
-        if (action.equals(ACTION_FLUSH_TO_DB)) {
+        if (action.equals(ACTION_FLUSH_TO_BUNDLE)) {
             flush();
             return;
         } else if (action.equals(WifiScanner.ACTION_WIFIS_SCANNED)) {
@@ -114,17 +123,9 @@ final public class Reporter extends BroadcastReceiver {
             receivedGpsMessage(intent);
         }
 
-        Location currentPosition = mBundle != null ? mBundle.getGpsPosition() : null;
-
-        long time = intent.getLongExtra(AppGlobals.ACTION_ARG_TIME, System.currentTimeMillis());
-        if (currentPosition != null && Math.abs(time - currentPosition.getTime()) > REPORTER_WINDOW) {
-            // no gps for a while, just bundle what we have
-            reportCollectedLocation();
-        }
-
         if (mBundle != null &&
-            (mBundle.getWifiData().size() > WIFI_COUNT_WATERMARK ||
-             mBundle.getCellData().size() > CELLS_COUNT_WATERMARK)) {
+            (mBundle.getWifiData().size() > MAX_WIFIS_PER_LOCATION ||
+             mBundle.getCellData().size() > MAX_CELLS_PER_LOCATION)) {
             // no gps for a while, have too much data, just bundle it
             reportCollectedLocation();
         }
@@ -159,13 +160,40 @@ final public class Reporter extends BroadcastReceiver {
     }
 
     private void reportCollectedLocation() {
-        if (mBundle == null || mStumblerBundleReceiver == null) {
+        if (mBundle == null) {
             return;
         }
 
-        mStumblerBundleReceiver.handleBundle(mBundle);
+        storeBundleAsJSON(mBundle);
 
         mBundle.wasSent();
+    }
+
+    private void storeBundleAsJSON(StumblerBundle bundle) {
+        JSONObject mlsObj;
+        int wifiCount = 0;
+        int cellCount = 0;
+        try {
+            mlsObj = bundle.toMLSJSON();
+            wifiCount = mlsObj.getInt(DataStorageContract.ReportsColumns.WIFI_COUNT);
+            cellCount = mlsObj.getInt(DataStorageContract.ReportsColumns.CELL_COUNT);
+
+        } catch (JSONException e) {
+            Log.w(LOG_TAG, "Failed to convert bundle to JSON: " + e);
+            return;
+        }
+
+        if (AppGlobals.isDebug) {
+            Log.d(LOG_TAG, "Received bundle: " + mlsObj.toString());
+        }
+
+        AppGlobals.guiLogInfo(mlsObj.toString());
+
+        try {
+            DataStorageManager.getInstance().insert(mlsObj.toString(), wifiCount, cellCount);
+        } catch (IOException e) {
+            Log.w(LOG_TAG, e.toString());
+        }
     }
 }
 

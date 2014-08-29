@@ -92,8 +92,8 @@ public class ScanManager {
         return ActiveOrPassiveStumbling.PASSIVE_STUMBLING == mStumblingMode;
     }
 
-    public void startScanning(Context context) {
-        if (mIsScanning) {
+    public synchronized void startScanning(Context context) {
+        if (this.isScanning()) {
             return;
         }
 
@@ -117,8 +117,8 @@ public class ScanManager {
         mIsScanning = true;
     }
 
-    public boolean stopScanning() {
-        if (!mIsScanning) {
+    public synchronized boolean stopScanning() {
+        if (!this.isScanning()) {
             return false;
         }
 
@@ -138,7 +138,7 @@ public class ScanManager {
         WifiScanner.setWifiBlockList(list);
     }
 
-    public boolean isScanning() {
+    public synchronized boolean isScanning() {
         return mIsScanning;
     }
 

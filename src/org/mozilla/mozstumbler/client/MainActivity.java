@@ -1,9 +1,11 @@
 package org.mozilla.mozstumbler.client;
 
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
@@ -11,6 +13,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -19,6 +22,7 @@ import android.widget.CompoundButton;
 import android.widget.TextView;
 import org.mozilla.mozstumbler.BuildConfig;
 import org.mozilla.mozstumbler.service.AppGlobals;
+import org.mozilla.mozstumbler.service.stumblerthread.StumblerService;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageContract;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageManager;
 import org.mozilla.mozstumbler.client.mapview.MapActivity;
@@ -35,13 +39,36 @@ public final class MainActivity extends FragmentActivity {
     public static final String ACTION_UPDATE_UI = ACTION_BASE + "UPDATE_UI";
 
     /* if service exists, start scanning, otherwise do nothing  */
-    public static final String ACTION_UNPAUSE_SCANNING = ACTION_BASE + "UNPAUSE_SCANNING";
+    public static final String ACTION_UI_UNPAUSE_SCANNING = ACTION_BASE + "UNPAUSE_SCANNING";
+    public static final String ACTION_UI_TOGGLE_SCAN = ACTION_BASE + "TOGGLE_SCAN";
+
 
     private static final String LEADERBOARD_URL = "https://location.services.mozilla.com/leaders";
 
     int                      mGpsFixes;
     int                      mGpsSats;
     private boolean          mGeofenceHere = false;
+
+
+    private BroadcastReceiver notificationDrawerEventReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            StumblerService service = getApp().getService();
+            if (service == null) {
+                return;
+            }
+
+            CompoundButton scanningBtn = (CompoundButton) findViewById(R.id.toggle_scanning);
+
+            if (intent.getAction().equals(MainActivity.ACTION_UI_TOGGLE_SCAN) && service.isScanning()) {
+                // Grab the scanning button and just click it
+                onToggleScanningClicked(scanningBtn);
+            } else if (intent.getAction().equals(MainActivity.ACTION_UI_UNPAUSE_SCANNING) && !service.isScanning()) {
+                onToggleScanningClicked(scanningBtn);
+            }
+        }
+    };
+
 
     private MainApp getApp() {
         return (MainApp) this.getApplication();
@@ -80,6 +107,13 @@ public final class MainActivity extends FragmentActivity {
         if (BuildConfig.MOZILLA_API_KEY != null) {
             Updater.checkForUpdates(this);
         }
+
+        // Register a listener for a toggle event in the notification pulldown
+        LocalBroadcastManager bManager = LocalBroadcastManager.getInstance(this);
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(MainActivity.ACTION_UI_TOGGLE_SCAN);
+        intentFilter.addAction(MainActivity.ACTION_UI_UNPAUSE_SCANNING);
+        bManager.registerReceiver(notificationDrawerEventReceiver, intentFilter);
 
         Log.d(LOG_TAG, "onCreate");
     }
@@ -125,6 +159,7 @@ public final class MainActivity extends FragmentActivity {
 
         boolean scanning = service.isScanning();
 
+        // The start/stop button goes into an invalid state sometimes
         CompoundButton scanningBtn = (CompoundButton) findViewById(R.id.toggle_scanning);
         scanningBtn.setChecked(scanning);
 
@@ -178,6 +213,15 @@ public final class MainActivity extends FragmentActivity {
 
     public void onToggleScanningClicked(View v) {
         getApp().toggleScanning(this);
+
+
+        StumblerService service = getApp().getService();
+        if (service == null) {
+            return;
+        }
+
+        this.updateUiOnMainThread();
+
     }
 
     @Override

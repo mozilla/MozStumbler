@@ -44,7 +44,7 @@ public class MainApp extends Application {
     private MainActivity mMainActivity;
     private final long MAX_BYTES_DISK_STORAGE = 1000 * 1000 * 20; // 20MB for MozStumbler by default, is ok?
     private final int MAX_WEEKS_OLD_STORED = 4;
-    private static final String INTENT_TURN_OFF = "org.mozilla.mozstumbler.turnMeOff";
+    public static final String INTENT_TURN_OFF = "org.mozilla.mozstumbler.turnMeOff";
     private static final int    NOTIFICATION_ID = 1;
 
     public Prefs getPrefs() {
@@ -137,7 +137,7 @@ public class MainApp extends Application {
             mReceiver.unregister();
         }
         mReceiver = null;
-        Log.d(LOG_TAG, "onStop");
+        Log.d(LOG_TAG, "onTerminate");
     }
 
     private void startScanning() {
@@ -195,8 +195,8 @@ public class MainApp extends Application {
                 intentFilter.addAction(WifiScanner.ACTION_WIFIS_SCANNED);
                 intentFilter.addAction(CellScanner.ACTION_CELLS_SCANNED);
                 intentFilter.addAction(GPSScanner.ACTION_GPS_UPDATED);
-                intentFilter.addAction(MainActivity.ACTION_UNPAUSE_SCANNING);
                 intentFilter.addAction(MainActivity.ACTION_UPDATE_UI);
+                intentFilter.addAction(INTENT_TURN_OFF);
                 LocalBroadcastManager.getInstance(MainApp.this).registerReceiver(this, intentFilter);
             }
         }
@@ -223,9 +223,6 @@ public class MainApp extends Application {
 
             if (action.equals(GPSScanner.ACTION_GPS_UPDATED)) {
                 receivedGpsMessage(intent);
-            } else if (action.equals(MainActivity.ACTION_UNPAUSE_SCANNING) &&
-                    null != mStumblerService) {
-                startScanning();
             }
 
             if (mMainActivity != null) {

@@ -44,7 +44,7 @@ public final class MainActivity extends FragmentActivity {
 
     /* if service exists, start scanning, otherwise do nothing  */
     public static final String ACTION_UI_UNPAUSE_SCANNING = ACTION_BASE + "UNPAUSE_SCANNING";
-    public static final String ACTION_UI_TOGGLE_SCAN = ACTION_BASE + "TOGGLE_SCAN";
+    public static final String ACTION_UI_PAUSE_SCANNING = ACTION_BASE + "PAUSE_SCANNING";
 
 
     private static final String LEADERBOARD_URL = "https://location.services.mozilla.com/leaders";
@@ -64,7 +64,7 @@ public final class MainActivity extends FragmentActivity {
 
             CompoundButton scanningBtn = (CompoundButton) findViewById(R.id.toggle_scanning);
 
-            if (intent.getAction().equals(MainActivity.ACTION_UI_TOGGLE_SCAN) && service.isScanning()) {
+            if (intent.getAction().equals(MainActivity.ACTION_UI_PAUSE_SCANNING) && service.isScanning()) {
                 // Grab the scanning button and just click it
                 onToggleScanningClicked(scanningBtn);
             } else if (intent.getAction().equals(MainActivity.ACTION_UI_UNPAUSE_SCANNING) && !service.isScanning()) {
@@ -115,8 +115,8 @@ public final class MainActivity extends FragmentActivity {
         // Register a listener for a toggle event in the notification pulldown
         LocalBroadcastManager bManager = LocalBroadcastManager.getInstance(this);
         IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(MainActivity.ACTION_UI_TOGGLE_SCAN);
         intentFilter.addAction(MainActivity.ACTION_UI_UNPAUSE_SCANNING);
+        intentFilter.addAction(MainActivity.ACTION_UI_PAUSE_SCANNING);
         bManager.registerReceiver(notificationDrawerEventReceiver, intentFilter);
 
         Log.d(LOG_TAG, "onCreate");

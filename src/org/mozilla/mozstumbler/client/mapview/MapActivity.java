@@ -1,3 +1,7 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 package org.mozilla.mozstumbler.client.mapview;
 
 import android.annotation.TargetApi;
@@ -7,7 +11,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.location.Location;
@@ -345,7 +348,7 @@ public final class MapActivity extends Activity {
     protected void onStart() {
         super.onStart();
 
-        Intent i = new Intent(MainActivity.ACTION_UNPAUSE_SCANNING);
+        Intent i = new Intent(MainActivity.ACTION_UI_UNPAUSE_SCANNING);
         LocalBroadcastManager.getInstance(this).sendBroadcast(i);
 
         mReceiver = new ReporterBroadcastReceiver();

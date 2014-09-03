@@ -361,14 +361,17 @@ public final class MapActivity extends Activity {
         super.onSaveInstanceState(bundle);
         bundle.putInt(ZOOM_KEY, mMap.getZoomLevel());
         IGeoPoint center = mMap.getMapCenter();
+        ((MainApp) getApplication()).getPrefs().setLastMapCenter(center);
         bundle.putDouble(LON_KEY, center.getLongitude());
         bundle.putDouble(LAT_KEY, center.getLatitude());
-        ((MainApp) getApplication()).getPrefs().setLastMapCenter(center);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+
+        IGeoPoint center = mMap.getMapCenter();
+        ((MainApp) getApplication()).getPrefs().setLastMapCenter(center);
 
         Log.d(LOG_TAG, "onDestroy");
         mMap.getTileProvider().clearTileCache();

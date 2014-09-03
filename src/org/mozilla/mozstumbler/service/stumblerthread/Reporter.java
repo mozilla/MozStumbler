@@ -47,9 +47,6 @@ public final class Reporter extends BroadcastReceiver {
 
     Reporter() {}
 
-    private void resetData() {
-        mBundle = null;
-    }
 
     public void flush() {
         reportCollectedLocation();
@@ -66,7 +63,7 @@ public final class Reporter extends BroadcastReceiver {
 
         mIsStarted = true;
 
-        resetData();
+        mBundle = null;
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(WifiScanner.ACTION_WIFIS_SCANNED);
         intentFilter.addAction(CellScanner.ACTION_CELLS_SCANNED);

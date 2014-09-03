@@ -13,7 +13,7 @@ import android.os.Build.VERSION;
 import android.text.TextUtils;
 import android.util.Log;
 
-public  final class Prefs {
+public class Prefs {
     private static final String LOG_TAG = Prefs.class.getSimpleName();
     private static final String NICKNAME_PREF = "nickname";
     private static final String USER_AGENT_PREF = "user-agent";
@@ -27,13 +27,12 @@ public  final class Prefs {
     private static final String MOZ_API_KEY = "moz_api_key";
     private static final String WIFI_SCAN_ALWAYS = "wifi_scan_always";
     private static final String LAST_ATTEMPTED_UPLOAD_TIME = "last_attempted_upload_time";
-    // Public for MozStumbler to use for manual upgrade of old prefs.
-    public static final String PREFS_FILE = Prefs.class.getSimpleName();
+    protected static final String PREFS_FILE = Prefs.class.getSimpleName();
 
-    private final SharedPreferences mSharedPrefs;
-    static private Prefs sInstance;
+    protected final SharedPreferences mSharedPrefs;
+    static protected Prefs sInstance;
 
-    private Prefs(Context context) {
+    protected Prefs(Context context) {
         mSharedPrefs = context.getSharedPreferences(PREFS_FILE, Context.MODE_MULTI_PROCESS | Context.MODE_PRIVATE);
         if (getPrefs().getInt(VALUES_VERSION_PREF, -1) != AppGlobals.appVersionCode) {
             Log.i(LOG_TAG, "Version of the application has changed. Updating default values.");
@@ -174,28 +173,28 @@ public  final class Prefs {
     /// Privates
     ///
 
-    private String getStringPref(String key) {
+    protected String getStringPref(String key) {
         return getPrefs().getString(key, null);
     }
 
-    private boolean getBoolPrefWithDefault(String key, boolean def) {
+    protected boolean getBoolPrefWithDefault(String key, boolean def) {
         return getPrefs().getBoolean(key, def);
     }
 
-    private void setBoolPref(String key, Boolean state) {
+    protected void setBoolPref(String key, Boolean state) {
         SharedPreferences.Editor editor = getPrefs().edit();
         editor.putBoolean(key,state);
         apply(editor);
     }
 
-    private void setStringPref(String key, String value) {
+    protected void setStringPref(String key, String value) {
         SharedPreferences.Editor editor = getPrefs().edit();
         editor.putString(key, value);
         apply(editor);
     }
 
     @TargetApi(9)
-    private static void apply(SharedPreferences.Editor editor) {
+    protected static void apply(SharedPreferences.Editor editor) {
         if (VERSION.SDK_INT >= 9) {
             editor.apply();
         } else if (!editor.commit()) {
@@ -204,7 +203,7 @@ public  final class Prefs {
     }
 
     @SuppressLint("InlinedApi")
-    private SharedPreferences getPrefs() {
+    protected SharedPreferences getPrefs() {
         return mSharedPrefs;
     }
 }

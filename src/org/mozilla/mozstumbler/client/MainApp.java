@@ -31,7 +31,6 @@ import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.client.cellscanner.DefaultCellScanner;
 import org.mozilla.mozstumbler.client.mapview.MapActivity;
 import org.mozilla.mozstumbler.service.AppGlobals;
-import org.mozilla.mozstumbler.service.Prefs;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageManager;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.GPSScanner;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.WifiScanner;
@@ -51,8 +50,8 @@ public class MainApp extends Application {
     public static final String INTENT_TURN_OFF = "org.mozilla.mozstumbler.turnMeOff";
     private static final int    NOTIFICATION_ID = 1;
 
-    public Prefs getPrefs() {
-        return Prefs.getInstance();
+    public ClientPrefs getPrefs() {
+        return ClientPrefs.getInstance();
     }
 
     public ClientStumblerService getService() {
@@ -76,10 +75,10 @@ public class MainApp extends Application {
         File dir = this.getDir("shared_prefs", Context.MODE_PRIVATE);
         File oldPrefs = new File(dir, OLD_NAME);
         if (oldPrefs.exists()) {
-          oldPrefs.renameTo(new File(dir, Prefs.PREFS_FILE));
+          oldPrefs.renameTo(new File(dir, ClientPrefs.getPrefsFileNameForUpgrade()));
         }
 
-        Prefs.createGlobalInstance(this);
+        ClientPrefs.createGlobalInstance(this);
         NetworkUtils.createGlobalInstance(this);
         LogActivity.LogMessageReceiver.createGlobalInstance(this);
         CellScanner.setCellScannerImpl(new DefaultCellScanner(this));
@@ -154,9 +153,10 @@ public class MainApp extends Application {
         mStumblerService.stopScanning();
 
         AsyncUploader.UploadSettings settings =
-            new AsyncUploader.UploadSettings(Prefs.getInstance().getWifiScanAlways(), Prefs.getInstance().getUseWifiOnly());
+            new AsyncUploader.UploadSettings(ClientPrefs.getInstance().getWifiScanAlways(),
+                    ClientPrefs.getInstance().getUseWifiOnly());
         AsyncUploader uploader = new AsyncUploader(settings, null /* don't need to listen for completion */);
-        uploader.setNickname(Prefs.getInstance().getNickname());
+        uploader.setNickname(ClientPrefs.getInstance().getNickname());
         uploader.execute();
     }
 

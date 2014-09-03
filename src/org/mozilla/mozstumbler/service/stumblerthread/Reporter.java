@@ -48,10 +48,6 @@ public final class Reporter extends BroadcastReceiver {
     Reporter() {}
 
 
-    public void flush() {
-        reportCollectedLocation();
-    }
-
     void startup(Context context) {
         if (mIsStarted) {
             return;
@@ -98,7 +94,7 @@ public final class Reporter extends BroadcastReceiver {
     private void receivedGpsMessage(Intent intent) {
         String subject = intent.getStringExtra(Intent.EXTRA_SUBJECT);
         if (subject.equals(GPSScanner.SUBJECT_NEW_LOCATION)) {
-            reportCollectedLocation();
+            flush();
             Location newPosition = intent.getParcelableExtra(GPSScanner.NEW_LOCATION_ARG_LOCATION);
 
             if (newPosition != null) {
@@ -119,7 +115,7 @@ public final class Reporter extends BroadcastReceiver {
         } else if (action.equals(CellScanner.ACTION_CELLS_SCANNED)) {
             receivedCellMessage(intent);
         } else if (action.equals(GPSScanner.ACTION_GPS_UPDATED)) {
-            // Calls reportCollectedLocation, this is the ideal case
+            // Calls flush, this is the ideal case
             receivedGpsMessage(intent);
         }
 
@@ -127,7 +123,7 @@ public final class Reporter extends BroadcastReceiver {
             (mBundle.getWifiData().size() > MAX_WIFIS_PER_LOCATION ||
              mBundle.getCellData().size() > MAX_CELLS_PER_LOCATION)) {
             // no gps for a while, have too much data, just bundle it
-            reportCollectedLocation();
+            flush();
         }
     }
 
@@ -159,22 +155,17 @@ public final class Reporter extends BroadcastReceiver {
         }
     }
 
-    private void reportCollectedLocation() {
+    public synchronized void flush() {
+        JSONObject mlsObj;
+        int wifiCount = 0;
+        int cellCount = 0;
+
         if (mBundle == null) {
             return;
         }
 
-        storeBundleAsJSON(mBundle);
-
-        mBundle.wasSent();
-    }
-
-    private void storeBundleAsJSON(StumblerBundle bundle) {
-        JSONObject mlsObj;
-        int wifiCount = 0;
-        int cellCount = 0;
         try {
-            mlsObj = bundle.toMLSJSON();
+            mlsObj = mBundle.toMLSJSON();
             wifiCount = mlsObj.getInt(DataStorageContract.ReportsColumns.WIFI_COUNT);
             cellCount = mlsObj.getInt(DataStorageContract.ReportsColumns.CELL_COUNT);
 
@@ -194,6 +185,8 @@ public final class Reporter extends BroadcastReceiver {
         } catch (IOException e) {
             Log.w(LOG_TAG, e.toString());
         }
+
+        mBundle.wasSent();
     }
 }
 

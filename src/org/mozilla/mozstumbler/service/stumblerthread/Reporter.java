@@ -29,7 +29,7 @@ import org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner.CellS
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.GPSScanner;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.WifiScanner;
 
-public final class Reporter extends BroadcastReceiver {
+public final class Reporter extends BroadcastReceiver implements IReporter {
     private static final String LOG_TAG = AppGlobals.LOG_PREFIX + Reporter.class.getSimpleName();
     public static final String ACTION_FLUSH_TO_BUNDLE = AppGlobals.ACTION_NAMESPACE + ".FLUSH";
     private boolean mIsStarted;
@@ -47,8 +47,7 @@ public final class Reporter extends BroadcastReceiver {
 
     Reporter() {}
 
-
-    void startup(Context context) {
+    public synchronized void startup(Context context) {
         if (mIsStarted) {
             return;
         }
@@ -69,7 +68,7 @@ public final class Reporter extends BroadcastReceiver {
                 intentFilter);
     }
 
-    void shutdown() {
+    public synchronized void shutdown() {
         if (mContext == null) {
             return;
         }
@@ -105,7 +104,7 @@ public final class Reporter extends BroadcastReceiver {
     }
 
     @Override
-    public void onReceive(Context context, Intent intent) {
+    public synchronized void onReceive(Context context, Intent intent) {
         String action = intent.getAction();
 
         if (action.equals(ACTION_FLUSH_TO_BUNDLE)) {

@@ -98,6 +98,7 @@ public final class Reporter extends BroadcastReceiver {
             Location newPosition = intent.getParcelableExtra(GPSScanner.NEW_LOCATION_ARG_LOCATION);
 
             if (newPosition != null) {
+                flush();
                 mBundle = new StumblerBundle(newPosition, mPhoneType);
             }
         }

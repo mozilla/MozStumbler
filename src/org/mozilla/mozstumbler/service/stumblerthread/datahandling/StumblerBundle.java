@@ -55,19 +55,6 @@ public final class StumblerBundle implements Parcelable {
         out.writeInt(mPhoneType);
     }
 
-    public static final Parcelable.Creator<StumblerBundle> CREATOR
-        = new Parcelable.Creator<StumblerBundle>() {
-        @Override
-        public StumblerBundle createFromParcel(Parcel in) {
-            return new StumblerBundle(in);
-        }
-
-        @Override
-        public StumblerBundle[] newArray(int size) {
-            return new StumblerBundle[size];
-        }
-    };
-
     private StumblerBundle(Parcel in) {
         mWifiData = new HashMap<String, ScanResult>();
         mCellData = new HashMap<String, CellInfo>();

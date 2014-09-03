@@ -89,6 +89,6 @@
     <string name="action_view_log">Ver log</string>
     <string name="scroll_to_start">Ir al principio</string>
     <string name="scroll_to_end">Ir al final</string>
-    <string name="upload_observations_data_size">Size (KB):</string>
+    <string name="upload_observations_data_size">Tamaño (KB):</string>
 
 </resources>

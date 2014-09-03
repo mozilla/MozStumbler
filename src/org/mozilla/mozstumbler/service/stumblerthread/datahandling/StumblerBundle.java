@@ -18,6 +18,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner.CellInfo;
 
+/**
+ * A StumblerBundle contains stumbling data related to a single GPS lat/long fix.
+ */
 public final class StumblerBundle implements Parcelable {
     private final int mPhoneType;
     private final Location mGpsPosition;

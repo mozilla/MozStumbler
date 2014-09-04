@@ -81,14 +81,6 @@ public class StumblerService extends PersistentIntentService
         return mScanManager.getLocationCount();
     }
 
-    public double getLatitude() {
-        return mScanManager.getLatitude();
-    }
-
-    public double getLongitude() {
-        return mScanManager.getLongitude();
-    }
-
     public Location getLocation() {
         return mScanManager.getLocation();
     }

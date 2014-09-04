@@ -14,9 +14,9 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.location.Location;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.Menu;
@@ -102,20 +102,53 @@ public final class MapActivity extends Activity {
             }
         }
     }
-
     private class ReporterBroadcastReceiver extends BroadcastReceiver {
         public void reset()
         {
             mMap.getOverlays().remove(mAccuracyOverlay);
         }
 
+        public boolean isUpdateDotScheduled = false;
+
+        private Runnable updatePositionDotRunnable = new Runnable() {
+            @Override
+            public void run() {
+                isUpdateDotScheduled = false;
+                final ClientStumblerService service = ((MainApp) getApplication()).getService();
+                final Location result = service.getLocation();
+
+                // Don't map (0,0)
+                final double latitude = result.getLatitude();
+                final double longitude = result.getLongitude();
+                if (isValidLocation(latitude, longitude)) {
+                    final GeoPoint point = new GeoPoint(result.getLatitude(), result.getLongitude());
+                    mPathOverlay.addPoint(point);
+                    setUserPositionAt(result);
+                    if (!mUserPanning) {
+                        positionMapAt(result);
+                    }
+                }
+
+                formatTextView(R.id.latitude_text, "%1$.4f", result.getLatitude());
+                formatTextView(R.id.longitude_text, "%1$.4f", result.getLongitude());
+            }
+        };
+
+        Handler updatePositionDotHandler = new Handler();
+
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
 
             if (action.equals(GPSScanner.ACTION_GPS_UPDATED)) {
+
+                // Only update location dot at 1 Hz max.
+                if (!isUpdateDotScheduled) {
+                    isUpdateDotScheduled = true;
+                    updatePositionDotHandler.postDelayed(updatePositionDotRunnable, 1000);
+                }
+
                 final ClientStumblerService service = ((MainApp) getApplication()).getService();
-                new GetLocationAndMapItTask().execute(service);
                 updateUI(service);
                 if (GPSScanner.SUBJECT_NEW_STATUS.equals(intent.getStringExtra(Intent.EXTRA_SUBJECT))) {
                     final int fixes = intent.getIntExtra(GPSScanner.NEW_STATUS_ARG_FIXES, 0);
@@ -167,8 +200,9 @@ public final class MapActivity extends Activity {
             }
         } else {
             final ClientStumblerService service = ((MainApp) getApplication()).getService();
-            final double latitude = service.getLatitude();
-            final double longitude = service.getLongitude();
+            Location location = service.getLocation();
+            final double latitude = location.getLatitude();
+            final double longitude = location.getLongitude();
             GeoPoint lastLoc;
             if (isValidLocation(latitude, longitude)) {
                 lastLoc = new GeoPoint(latitude, longitude);
@@ -402,36 +436,6 @@ public final class MapActivity extends Activity {
                 service.getCellInfoCount());
         formatTextView(R.id.wifi_info_text, R.string.wifi_info, service.getVisibleAPCount(),
                 service.getAPCount());
-    }
-
-
-    private final class GetLocationAndMapItTask extends AsyncTask<ClientStumblerService, Void, Location> {
-        @Override
-        public Location doInBackground(ClientStumblerService... params) {
-            Log.d(LOG_TAG, "requesting location...");
-
-            ClientStumblerService service = params[0];
-            final Location result = service.getLocation();
-
-            // Don't map (0,0)
-            final double latitude = result.getLatitude();
-            final double longitude = result.getLongitude();
-            if (isValidLocation(latitude, longitude)) {
-                final GeoPoint point = new GeoPoint(result.getLatitude(), result.getLongitude());
-                mPathOverlay.addPoint(point);
-            }
-            return result;
-        }
-
-        @Override
-        protected void onPostExecute(Location result) {
-            setUserPositionAt(result);
-            if (!mUserPanning && isValidLocation(result.getLatitude(), result.getLongitude())) {
-                positionMapAt(result);
-            }
-            formatTextView(R.id.latitude_text, "%1$.4f", result.getLatitude());
-            formatTextView(R.id.longitude_text, "%1$.4f", result.getLongitude());
-        }
     }
 
     private void listenForPanning(MapView map) {

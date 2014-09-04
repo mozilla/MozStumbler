@@ -44,7 +44,7 @@ public class MainApp extends Application {
     private ClientStumblerService mStumblerService;
     private ServiceConnection mConnection;
     private ServiceBroadcastReceiver mReceiver;
-    private MainActivity mMainActivity;
+    private IMainActivity mMainActivity;
     private final long MAX_BYTES_DISK_STORAGE = 1000 * 1000 * 20; // 20MB for MozStumbler by default, is ok?
     private final int MAX_WEEKS_OLD_STORED = 4;
     public static final String INTENT_TURN_OFF = "org.mozilla.mozstumbler.turnMeOff";
@@ -58,7 +58,7 @@ public class MainApp extends Application {
         return mStumblerService;
     }
 
-    public void setMainActivity(MainActivity mainActivity) {
+    public void setMainActivity(IMainActivity mainActivity) {
         mMainActivity = mainActivity;
     }
 
@@ -215,8 +215,8 @@ public class MainApp extends Application {
         private void receivedGpsMessage(Intent intent) {
             String subject = intent.getStringExtra(Intent.EXTRA_SUBJECT);
             if (subject.equals(GPSScanner.SUBJECT_NEW_STATUS) && mMainActivity != null) {
-                mMainActivity.mGpsFixes = intent.getIntExtra(GPSScanner.NEW_STATUS_ARG_FIXES ,0);
-                mMainActivity.mGpsSats = intent.getIntExtra(GPSScanner.NEW_STATUS_ARG_SATS, 0);
+                mMainActivity.setGpsFixes(intent.getIntExtra(GPSScanner.NEW_STATUS_ARG_FIXES ,0));
+                mMainActivity.setGpsSats(intent.getIntExtra(GPSScanner.NEW_STATUS_ARG_SATS, 0));
             }
         }
 

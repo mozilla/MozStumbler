@@ -19,7 +19,6 @@ import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.PreferenceActivity;
 import android.text.TextUtils;
 import org.mozilla.mozstumbler.R;
-import org.mozilla.mozstumbler.service.Prefs;
 
 public class PreferencesScreen extends PreferenceActivity {
     private static final int REQUEST_CODE_WIFI_SCAN_ALWAYS = 1;
@@ -29,11 +28,12 @@ public class PreferencesScreen extends PreferenceActivity {
     private Preference mGeofenceHere;
     private CheckBoxPreference mWifiScanAlwaysSwitch;
     private CheckBoxPreference mWifiPreference;
+    private CheckBoxPreference mIsHardwareAccelerated;
 
-    private static Prefs sPrefs;
+    private static ClientPrefs sPrefs;
 
     /* Precondition to using this class, call this method to set Prefs */
-    public static void setPrefs(Prefs p) {
+    public static void setPrefs(ClientPrefs p) {
         sPrefs = p;
     }
 
@@ -51,6 +51,7 @@ public class PreferencesScreen extends PreferenceActivity {
         mGeofenceSwitch = (CheckBoxPreference) getPreferenceManager().findPreference("geofence_switch");
         mGeofenceHere = getPreferenceManager().findPreference("geofence_here");
         mWifiScanAlwaysSwitch = (CheckBoxPreference) getPreferenceManager().findPreference("wifi_scan_always");
+        mIsHardwareAccelerated = (CheckBoxPreference) getPreferenceManager().findPreference("hardware_acceleration");
 
         setNicknamePreferenceTitle(sPrefs.getNickname());
         mWifiPreference.setChecked(sPrefs.getUseWifiOnly());
@@ -112,6 +113,14 @@ public class PreferencesScreen extends PreferenceActivity {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
                 sPrefs.setUseWifiOnly(newValue.equals(true));
+                return true;
+            }
+        });
+
+        mIsHardwareAccelerated.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                sPrefs.setIsHardwareAccelerated(newValue.equals(true));
                 return true;
             }
         });

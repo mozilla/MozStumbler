@@ -29,4 +29,8 @@
         android:summary="@string/wifi_scan_always_summary"
         android:defaultValue="false" />
 
+    <CheckBoxPreference
+        android:key="hardware_acceleration"
+        android:title="@string/hardware_acceleration_title"
+        android:defaultValue="true" />
 </PreferenceScreen>

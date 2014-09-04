@@ -23,6 +23,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -67,7 +68,6 @@ public final class MapActivity extends Activity {
     private MapView mMap;
     private PathOverlay mPathOverlay;
     private AccuracyCircleOverlay mAccuracyOverlay;
-    private MapPreferences mMapPreferences;
     private boolean mFirstLocationFix;
     private boolean mUserPanning = false;
     private ReporterBroadcastReceiver mReceiver;
@@ -132,10 +132,16 @@ public final class MapActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (((MainApp) getApplication()).getPrefs().getIsHardwareAccelerated() &&
+            Build.VERSION.SDK_INT > 10) {
+                getWindow().setFlags(
+                        WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED,
+                        WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED);
+        }
+
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         setContentView(R.layout.activity_map);
-
-        mMapPreferences = new MapPreferences(this);
 
         mMap = (MapView) this.findViewById(R.id.map);
         mMap.setTileSource(getTileSource());
@@ -167,7 +173,7 @@ public final class MapActivity extends Activity {
             if (isValidLocation(latitude, longitude)) {
                 lastLoc = new GeoPoint(latitude, longitude);
             } else {
-                lastLoc = mMapPreferences.getLastMapCenter();
+                lastLoc = ((MainApp) getApplication()).getPrefs().getLastMapCenter();
                 zoomLevel = DEFAULT_ZOOM_AFTER_FIX;
             }
             mMap.getController().setCenter(lastLoc);
@@ -363,14 +369,17 @@ public final class MapActivity extends Activity {
         super.onSaveInstanceState(bundle);
         bundle.putInt(ZOOM_KEY, mMap.getZoomLevel());
         IGeoPoint center = mMap.getMapCenter();
+        ((MainApp) getApplication()).getPrefs().setLastMapCenter(center);
         bundle.putDouble(LON_KEY, center.getLongitude());
         bundle.putDouble(LAT_KEY, center.getLatitude());
-        mMapPreferences.setLastMapCenter(center);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+
+        IGeoPoint center = mMap.getMapCenter();
+        ((MainApp) getApplication()).getPrefs().setLastMapCenter(center);
 
         Log.d(LOG_TAG, "onDestroy");
         mMap.getTileProvider().clearTileCache();

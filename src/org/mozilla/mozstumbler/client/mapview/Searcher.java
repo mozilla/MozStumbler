@@ -13,7 +13,7 @@ import java.io.InputStreamReader;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.mozilla.mozstumbler.service.Prefs;
+import org.mozilla.mozstumbler.client.ClientPrefs;
 import org.mozilla.mozstumbler.service.utils.AbstractCommunicator;
 import org.mozilla.mozstumbler.service.AppGlobals;
 
@@ -27,7 +27,7 @@ public class Searcher extends AbstractCommunicator {
     private JSONObject mResponse;
 
     public Searcher() {
-        super(Prefs.getInstance().getUserAgent());
+        super(ClientPrefs.getInstance().getUserAgent());
     }
 
     @Override

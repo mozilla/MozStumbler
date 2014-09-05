@@ -56,21 +56,20 @@ public final class MainActivity extends FragmentActivity
 
 
     public synchronized void setGpsFixes(int fixes) {
-        this.mGpsFixes = fixes;
+        mGpsFixes = fixes;
     }
 
     public synchronized void setGpsSats(int sats) {
-        this.mGpsSats = sats;
+        mGpsSats = sats;
     }
 
     public synchronized int getGpsFixes() {
-        return this.mGpsFixes;
+        return mGpsFixes;
     }
 
     public synchronized int getGpsSats() {
-        return this.mGpsSats;
+        return mGpsSats;
     }
-
 
     private BroadcastReceiver notificationDrawerEventReceiver = new BroadcastReceiver() {
         @Override

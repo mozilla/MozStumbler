@@ -29,8 +29,8 @@ public class Prefs {
     private static final String LAST_ATTEMPTED_UPLOAD_TIME = "last_attempted_upload_time";
     protected static final String PREFS_FILE = Prefs.class.getSimpleName();
 
-    protected final SharedPreferences mSharedPrefs;
-    static protected Prefs sInstance;
+    private final SharedPreferences mSharedPrefs;
+    protected static Prefs sInstance;
 
     protected Prefs(Context context) {
         mSharedPrefs = context.getSharedPreferences(PREFS_FILE, Context.MODE_MULTI_PROCESS | Context.MODE_PRIVATE);
@@ -47,9 +47,8 @@ public class Prefs {
         }
     }
 
-    /* Prefs must be created on application startup or service startup.
-     * TODO: turn into regular singleton if Context dependency can be removed. */
-    public static void createGlobalInstance(Context c) {
+    /* Prefs must be created on application startup or service startup. */
+    public static synchronized void createGlobalInstance(Context c) {
         if (sInstance != null) {
             return;
         }
@@ -57,7 +56,7 @@ public class Prefs {
     }
 
     /* Only access after CreatePrefsInstance(Context) has been called at startup. */
-    public static Prefs getInstance() {
+    public static synchronized Prefs getInstance() {
         assert(sInstance != null);
         return sInstance;
     }

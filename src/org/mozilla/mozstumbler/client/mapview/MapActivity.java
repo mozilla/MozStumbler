@@ -103,38 +103,39 @@ public final class MapActivity extends Activity {
         }
     }
     private class ReporterBroadcastReceiver extends BroadcastReceiver {
+        private boolean isUpdateDotScheduled = false;
+        Handler updatePositionDotHandler = new Handler();
+
         public void reset()
         {
             mMap.getOverlays().remove(mAccuracyOverlay);
         }
 
-        public boolean isUpdateDotScheduled = false;
+        public synchronized void setUpdateDotScheduled(boolean val) {
+            isUpdateDotScheduled = val;
+        }
 
         private Runnable updatePositionDotRunnable = new Runnable() {
             @Override
             public void run() {
-                isUpdateDotScheduled = false;
-                final ClientStumblerService service = ((MainApp) getApplication()).getService();
-                final Location result = service.getLocation();
-
-                // Don't map (0,0)
-                final double latitude = result.getLatitude();
-                final double longitude = result.getLongitude();
-                if (isValidLocation(latitude, longitude)) {
-                    final GeoPoint point = new GeoPoint(result.getLatitude(), result.getLongitude());
-                    mPathOverlay.addPoint(point);
-                    setUserPositionAt(result);
-                    if (!mUserPanning) {
-                        positionMapAt(result);
-                    }
-                }
-
-                formatTextView(R.id.latitude_text, "%1$.4f", result.getLatitude());
-                formatTextView(R.id.longitude_text, "%1$.4f", result.getLongitude());
+                setUpdateDotScheduled(true);
             }
         };
 
-        Handler updatePositionDotHandler = new Handler();
+        public synchronized boolean testAndSetUpdateDot() {
+            // isUpdateDotScheled is only set to true
+            // by the updatePositionDotHandler
+            if (isUpdateDotScheduled) {
+                isUpdateDotScheduled = false;
+                updatePositionDotHandler.postDelayed(updatePositionDotRunnable, 1000);
+                return true;
+            }
+            return false;
+        }
+
+        public void startMapUpdates() {
+            updatePositionDotHandler.postDelayed(updatePositionDotRunnable, 1000);
+        }
 
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -143,9 +144,24 @@ public final class MapActivity extends Activity {
             if (action.equals(GPSScanner.ACTION_GPS_UPDATED)) {
 
                 // Only update location dot at 1 Hz max.
-                if (!isUpdateDotScheduled) {
-                    isUpdateDotScheduled = true;
-                    updatePositionDotHandler.postDelayed(updatePositionDotRunnable, 1000);
+                if (testAndSetUpdateDot()) {
+                    final ClientStumblerService service = ((MainApp) getApplication()).getService();
+                    final Location result = service.getLocation();
+
+                    // Don't map (0,0)
+                    final double latitude = result.getLatitude();
+                    final double longitude = result.getLongitude();
+                    if (isValidLocation(latitude, longitude)) {
+                        final GeoPoint point = new GeoPoint(result.getLatitude(), result.getLongitude());
+                        mPathOverlay.addPoint(point);
+                        setUserPositionAt(result);
+                        if (!mUserPanning) {
+                            positionMapAt(result);
+                        }
+                    }
+
+                    formatTextView(R.id.latitude_text, "%1$.4f", result.getLatitude());
+                    formatTextView(R.id.longitude_text, "%1$.4f", result.getLongitude());
                 }
 
                 final ClientStumblerService service = ((MainApp) getApplication()).getService();
@@ -392,6 +408,8 @@ public final class MapActivity extends Activity {
         LocalBroadcastManager.getInstance(this).sendBroadcast(i);
 
         mReceiver = new ReporterBroadcastReceiver();
+        mReceiver.startMapUpdates();
+
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(GPSScanner.ACTION_GPS_UPDATED);
         LocalBroadcastManager.getInstance(this).registerReceiver(mReceiver, intentFilter);

@@ -23,6 +23,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -32,7 +33,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.mozilla.mozstumbler.client.ClientPrefs;
 import org.mozilla.mozstumbler.client.ClientStumblerService;
 import org.mozilla.mozstumbler.client.MainApp;
 import org.mozilla.mozstumbler.service.AppGlobals;
@@ -132,6 +132,14 @@ public final class MapActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (((MainApp) getApplication()).getPrefs().getIsHardwareAccelerated() &&
+            Build.VERSION.SDK_INT > 10) {
+                getWindow().setFlags(
+                        WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED,
+                        WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED);
+        }
+
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         setContentView(R.layout.activity_map);
 

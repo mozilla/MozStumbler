@@ -10,6 +10,7 @@ public class ClientPrefs extends Prefs {
     private static final String LOG_TAG = ClientPrefs.class.getName();
     private static final String LAT_PREF = "lat";
     private static final String LON_PREF = "lon";
+    private static final String HARDWARE_ACCEL_PREF = "hardware_acceleration";
 
     protected ClientPrefs(Context context) {
         super(context);
@@ -34,14 +35,22 @@ public class ClientPrefs extends Prefs {
     }
 
     public synchronized void setLastMapCenter(IGeoPoint center) {
-        SharedPreferences.Editor editor = getPrefs().edit();
         editor.putFloat(LAT_PREF, (float) center.getLatitude());
         editor.putFloat(LON_PREF, (float) center.getLongitude());
         apply(editor);
     }
+
     public synchronized GeoPoint getLastMapCenter() {
         final float lat = getPrefs().getFloat(LAT_PREF, 0);
         final float lon = getPrefs().getFloat(LON_PREF, 0);
         return new GeoPoint(lat, lon);
+    }
+
+    public boolean getIsHardwareAccelerated() {
+        return getBoolPrefWithDefault(HARDWARE_ACCEL_PREF, true);
+    }
+
+    public void setIsHardwareAccelerated(boolean on) {
+        setBoolPref(HARDWARE_ACCEL_PREF, on);
     }
 }

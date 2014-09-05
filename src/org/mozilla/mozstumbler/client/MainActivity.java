@@ -178,8 +178,9 @@ public final class MainActivity extends FragmentActivity {
         boolean isGeofenced = false;
 
         locationsScanned = service.getLocationCount();
-        latitude = service.getLatitude();
-        longitude = service.getLongitude();
+        Location location = service.getLocation();
+        latitude = location.getLatitude();
+        longitude = location.getLongitude();
         wifiStatus = service.getWifiStatus();
         APs = service.getAPCount();
         visibleAPs = service.getVisibleAPCount();

@@ -35,6 +35,7 @@ public class ClientPrefs extends Prefs {
     }
 
     public synchronized void setLastMapCenter(IGeoPoint center) {
+        SharedPreferences.Editor editor = getPrefs().edit();
         editor.putFloat(LAT_PREF, (float) center.getLatitude());
         editor.putFloat(LON_PREF, (float) center.getLongitude());
         apply(editor);

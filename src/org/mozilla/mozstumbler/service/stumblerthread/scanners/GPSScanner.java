@@ -135,6 +135,7 @@ public class GPSScanner implements LocationListener {
         };
 
         lm.addGpsStatusListener(mGPSListener);
+        lm.addNmeaListener(mNMEAListener);
     }
 
     public void stop() {

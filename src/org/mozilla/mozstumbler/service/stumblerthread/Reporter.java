@@ -43,6 +43,9 @@ public final class Reporter extends BroadcastReceiver implements IReporter {
     private Context mContext;
     private int mPhoneType;
 
+    private long lastNmeaGGA;
+    private long lastNmeaGSV;
+
     private StumblerBundle mBundle;
 
     Reporter() {}
@@ -63,7 +66,9 @@ public final class Reporter extends BroadcastReceiver implements IReporter {
         intentFilter.addAction(WifiScanner.ACTION_WIFIS_SCANNED);
         intentFilter.addAction(CellScanner.ACTION_CELLS_SCANNED);
         intentFilter.addAction(GPSScanner.ACTION_GPS_UPDATED);
+        intentFilter.addAction(GPSScanner.ACTION_NMEA_RECEIVED);
         intentFilter.addAction(ACTION_FLUSH_TO_BUNDLE);
+
         LocalBroadcastManager.getInstance(mContext).registerReceiver(this,
                 intentFilter);
     }
@@ -92,16 +97,44 @@ public final class Reporter extends BroadcastReceiver implements IReporter {
 
     private void receivedGpsMessage(Intent intent) {
         String subject = intent.getStringExtra(Intent.EXTRA_SUBJECT);
-        if (subject.equals(GPSScanner.SUBJECT_NEW_LOCATION)) {
-            flush();
-            Location newPosition = intent.getParcelableExtra(GPSScanner.NEW_LOCATION_ARG_LOCATION);
 
+        if (subject.equals(GPSScanner.SUBJECT_NEW_LOCATION)) {
+            Location newPosition = intent.getParcelableExtra(GPSScanner.NEW_LOCATION_ARG_LOCATION);
             if (newPosition != null) {
                 flush();
-                mBundle = new StumblerBundle(newPosition, mPhoneType);
+                // Only create StumblerBundle instances if the NMEA
+                // data looks marginally ok
+                if (this.hasNMEAData()) {
+                    mBundle = new StumblerBundle(newPosition, mPhoneType);
+                }
             }
         }
     }
+
+    /**
+     * Returns True if we've received both GGA and GSV data within the
+     * last minute.
+     */
+    public synchronized boolean hasNMEAData() {
+        long gga_delta = System.currentTimeMillis() - this.lastNmeaGGA;
+        long gsv_delta = System.currentTimeMillis() - this.lastNmeaGSV;
+
+        if (this.lastNmeaGGA == 0 || this.lastNmeaGSV == 0) {
+            return false;
+        }
+        return gga_delta < 60000 && gsv_delta < 60000;
+    }
+
+    private synchronized void updatelastNmeaGGA()
+    {
+        this.lastNmeaGGA = System.currentTimeMillis();
+    }
+
+    private synchronized void updatelastNmeaGSV()
+    {
+        this.lastNmeaGSV = System.currentTimeMillis();
+    }
+
 
     @Override
     public synchronized void onReceive(Context context, Intent intent) {
@@ -115,15 +148,43 @@ public final class Reporter extends BroadcastReceiver implements IReporter {
         } else if (action.equals(CellScanner.ACTION_CELLS_SCANNED)) {
             receivedCellMessage(intent);
         } else if (action.equals(GPSScanner.ACTION_GPS_UPDATED)) {
-            // Calls flush, this is the ideal case
+            // This is the common case
             receivedGpsMessage(intent);
-        }
+        } else if (action.equals(GPSScanner.ACTION_NMEA_RECEIVED)) {
+            // We only care that we're getting a bunch of GGA and GSV
+            // commands.
+            String nmea_data = intent.getStringExtra(GPSScanner.NMEA_DATA);
+            if (nmea_data != null && nmea_data.length() > 7) {
+                String nmea_type = nmea_data.substring(3, 6);
 
-        if (mBundle != null &&
-            (mBundle.getWifiData().size() > MAX_WIFIS_PER_LOCATION ||
-             mBundle.getCellData().size() > MAX_CELLS_PER_LOCATION)) {
-            // no gps for a while, have too much data, just bundle it
-            flush();
+                if (nmea_type.equals("GGA")) {
+                    // essential fix data which provide 3D
+                    // location and accuracy data.
+                    this.updatelastNmeaGGA();
+                } else if (nmea_type.equals("GSV")) {
+                    //  Satellites in View shows data about the
+                    //  satellites that the unit might be able to
+                    //  find based on its viewing mask and almanac
+                    //  data. It also shows current ability to
+                    //  track this data. Note that one GSV
+                    //  sentence only can provide data for up to 4
+                    //  satellites and thus there may need to be 3
+                    //  sentences for the full information. It is
+                    //  reasonable for the GSV sentence to contain
+                    //  more satellites than GGA might indicate
+                    //  since GSV may include satellites that are
+                    //  not used as part of the solution. 
+                    this.updatelastNmeaGSV();
+                }
+            }
+
+            if (mBundle != null &&
+                    (mBundle.getWifiData().size() > MAX_WIFIS_PER_LOCATION ||
+                     mBundle.getCellData().size() > MAX_CELLS_PER_LOCATION)) 
+            {
+                // no gps for a while, have too much data, just bundle it
+                flush();
+            }
         }
     }
 
@@ -132,6 +193,9 @@ public final class Reporter extends BroadcastReceiver implements IReporter {
             return;
         }
 
+        // TODO: vng - this get/test/put loop should really just 
+        // push key/value pairs into the mBundle celldata map through
+        // something like an update call.
         Map<String, ScanResult> currentWifiData = mBundle.getWifiData();
         for (ScanResult result : results) {
             String key = result.BSSID;
@@ -146,6 +210,9 @@ public final class Reporter extends BroadcastReceiver implements IReporter {
             return;
         }
 
+        // TODO: vng - this get/test/put loop should really just 
+        // push key/value pairs into the mBundle celldata map through
+        // something like an update call.
         Map<String, CellInfo> currentCellData = mBundle.getCellData();
         for (CellInfo result : cells) {
             String key = result.getCellIdentity();
@@ -189,4 +256,3 @@ public final class Reporter extends BroadcastReceiver implements IReporter {
         mBundle.wasSent();
     }
 }
-

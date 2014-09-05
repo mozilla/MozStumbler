@@ -32,6 +32,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.mozilla.mozstumbler.client.ClientPrefs;
 import org.mozilla.mozstumbler.client.ClientStumblerService;
 import org.mozilla.mozstumbler.client.MainApp;
 import org.mozilla.mozstumbler.service.AppGlobals;
@@ -67,7 +68,6 @@ public final class MapActivity extends Activity {
     private MapView mMap;
     private PathOverlay mPathOverlay;
     private AccuracyCircleOverlay mAccuracyOverlay;
-    private MapPreferences mMapPreferences;
     private boolean mFirstLocationFix;
     private boolean mUserPanning = false;
     private ReporterBroadcastReceiver mReceiver;
@@ -135,8 +135,6 @@ public final class MapActivity extends Activity {
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         setContentView(R.layout.activity_map);
 
-        mMapPreferences = new MapPreferences(this);
-
         mMap = (MapView) this.findViewById(R.id.map);
         mMap.setTileSource(getTileSource());
         mMap.setBuiltInZoomControls(true);
@@ -167,7 +165,7 @@ public final class MapActivity extends Activity {
             if (isValidLocation(latitude, longitude)) {
                 lastLoc = new GeoPoint(latitude, longitude);
             } else {
-                lastLoc = mMapPreferences.getLastMapCenter();
+                lastLoc = ((MainApp) getApplication()).getPrefs().getLastMapCenter();
                 zoomLevel = DEFAULT_ZOOM_AFTER_FIX;
             }
             mMap.getController().setCenter(lastLoc);
@@ -365,7 +363,7 @@ public final class MapActivity extends Activity {
         IGeoPoint center = mMap.getMapCenter();
         bundle.putDouble(LON_KEY, center.getLongitude());
         bundle.putDouble(LAT_KEY, center.getLatitude());
-        mMapPreferences.setLastMapCenter(center);
+        ((MainApp) getApplication()).getPrefs().setLastMapCenter(center);
     }
 
     @Override

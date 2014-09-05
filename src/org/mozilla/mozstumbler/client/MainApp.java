@@ -44,7 +44,7 @@ public class MainApp extends Application {
     private ClientStumblerService mStumblerService;
     private ServiceConnection mConnection;
     private ServiceBroadcastReceiver mReceiver;
-    private MainActivity mMainActivity;
+    private IMainActivity mMainActivity;
     private final long MAX_BYTES_DISK_STORAGE = 1000 * 1000 * 20; // 20MB for MozStumbler by default, is ok?
     private final int MAX_WEEKS_OLD_STORED = 4;
     public static final String INTENT_TURN_OFF = "org.mozilla.mozstumbler.turnMeOff";
@@ -58,7 +58,7 @@ public class MainApp extends Application {
         return mStumblerService;
     }
 
-    public void setMainActivity(MainActivity mainActivity) {
+    public void setMainActivity(IMainActivity mainActivity) {
         mMainActivity = mainActivity;
     }
 
@@ -199,6 +199,7 @@ public class MainApp extends Application {
                 intentFilter.addAction(WifiScanner.ACTION_WIFIS_SCANNED);
                 intentFilter.addAction(CellScanner.ACTION_CELLS_SCANNED);
                 intentFilter.addAction(GPSScanner.ACTION_GPS_UPDATED);
+                intentFilter.addAction(GPSScanner.ACTION_NMEA_RECEIVED);
                 intentFilter.addAction(MainActivity.ACTION_UPDATE_UI);
                 intentFilter.addAction(INTENT_TURN_OFF);
                 LocalBroadcastManager.getInstance(MainApp.this).registerReceiver(this, intentFilter);
@@ -215,8 +216,19 @@ public class MainApp extends Application {
         private void receivedGpsMessage(Intent intent) {
             String subject = intent.getStringExtra(Intent.EXTRA_SUBJECT);
             if (subject.equals(GPSScanner.SUBJECT_NEW_STATUS) && mMainActivity != null) {
-                mMainActivity.mGpsFixes = intent.getIntExtra(GPSScanner.NEW_STATUS_ARG_FIXES ,0);
-                mMainActivity.mGpsSats = intent.getIntExtra(GPSScanner.NEW_STATUS_ARG_SATS, 0);
+                mMainActivity.setGpsFixes(intent.getIntExtra(GPSScanner.NEW_STATUS_ARG_FIXES ,0));
+                mMainActivity.setGpsSats(intent.getIntExtra(GPSScanner.NEW_STATUS_ARG_SATS, 0));
+            }
+        }
+
+        private void receivedNmeaMessage(Intent intent) {
+            String nmea_data = intent.getStringExtra(GPSScanner.NMEA_DATA);
+
+
+            if (nmea_data != null) {
+                // TODO: we should probably have some kind of visual
+                // indicator to note that GPS NMEA data is being
+                // actively received.
             }
         }
 
@@ -227,6 +239,10 @@ public class MainApp extends Application {
 
             if (action.equals(GPSScanner.ACTION_GPS_UPDATED)) {
                 receivedGpsMessage(intent);
+            }
+
+            if (action.equals(GPSScanner.ACTION_NMEA_RECEIVED)) {
+                receivedNmeaMessage(intent);
             }
 
             if (mMainActivity != null) {

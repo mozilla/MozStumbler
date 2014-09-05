@@ -18,6 +18,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner.CellInfo;
 
+/**
+ * A StumblerBundle contains stumbling data related to a single GPS lat/long fix.
+ */
 public final class StumblerBundle implements Parcelable {
     private final int mPhoneType;
     private final Location mGpsPosition;
@@ -54,19 +57,6 @@ public final class StumblerBundle implements Parcelable {
         out.writeParcelable(mGpsPosition, 0);
         out.writeInt(mPhoneType);
     }
-
-    public static final Parcelable.Creator<StumblerBundle> CREATOR
-        = new Parcelable.Creator<StumblerBundle>() {
-        @Override
-        public StumblerBundle createFromParcel(Parcel in) {
-            return new StumblerBundle(in);
-        }
-
-        @Override
-        public StumblerBundle[] newArray(int size) {
-            return new StumblerBundle[size];
-        }
-    };
 
     private StumblerBundle(Parcel in) {
         mWifiData = new HashMap<String, ScanResult>();

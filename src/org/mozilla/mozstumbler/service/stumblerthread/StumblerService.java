@@ -35,7 +35,7 @@ public class StumblerService extends PersistentIntentService
     public static final String ACTION_NOT_FROM_HOST_APP = ACTION_BASE + ".NOT_FROM_HOST";
     public static final AtomicBoolean sFirefoxStumblingEnabled = new AtomicBoolean();
     protected final ScanManager mScanManager = new ScanManager();
-    protected final Reporter mReporter = new Reporter();
+    protected final IReporter mReporter = new Reporter();
 
     // This is a delay before the single-shot upload is attempted. The number is arbitrary
     // and used to avoid startup tasks bunching up.

@@ -15,14 +15,14 @@ public class ClientPrefs extends Prefs {
         super(context);
     }
 
-    public static void createGlobalInstance(Context c) {
+    public static synchronized void createGlobalInstance(Context c) {
         if (sInstance != null) {
             return;
         }
         sInstance = new ClientPrefs(c);
     }
 
-    public static ClientPrefs getInstance() {
+    public static synchronized ClientPrefs getInstance() {
         assert(sInstance != null);
         assert(sInstance.getClass().isInstance(ClientPrefs.class));
         return (ClientPrefs)sInstance;
@@ -33,15 +33,15 @@ public class ClientPrefs extends Prefs {
         return PREFS_FILE;
     }
 
-    public void setLastMapCenter(IGeoPoint center) {
-        SharedPreferences.Editor editor = mSharedPrefs.edit();
+    public synchronized void setLastMapCenter(IGeoPoint center) {
+        SharedPreferences.Editor editor = getPrefs().edit();
         editor.putFloat(LAT_PREF, (float) center.getLatitude());
         editor.putFloat(LON_PREF, (float) center.getLongitude());
         apply(editor);
     }
-    public GeoPoint getLastMapCenter() {
-        final float lat = mSharedPrefs.getFloat(LAT_PREF, 0);
-        final float lon = mSharedPrefs.getFloat(LON_PREF, 0);
+    public synchronized GeoPoint getLastMapCenter() {
+        final float lat = getPrefs().getFloat(LAT_PREF, 0);
+        final float lon = getPrefs().getFloat(LON_PREF, 0);
         return new GeoPoint(lat, lon);
     }
 }

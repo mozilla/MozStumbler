@@ -33,17 +33,6 @@ public class CellInfo implements Parcelable {
     public static final int UNKNOWN_CID = -1;
     public static final int UNKNOWN_SIGNAL = -1000;
 
-    public static final Parcelable.Creator<CellInfo> CREATOR
-            = new Parcelable.Creator<CellInfo>() {
-        public CellInfo createFromParcel(Parcel in) {
-            return new CellInfo(in);
-        }
-
-        public CellInfo[] newArray(int size) {
-            return new CellInfo[size];
-        }
-    };
-
     private String mRadio;
     private String mCellRadio;
 

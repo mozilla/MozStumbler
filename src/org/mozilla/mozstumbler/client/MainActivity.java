@@ -36,13 +36,14 @@ import org.mozilla.mozstumbler.service.stumblerthread.scanners.WifiScanner;
 import java.io.IOException;
 import java.util.Properties;
 
-public final class MainActivity extends FragmentActivity {
+public final class MainActivity extends FragmentActivity
+                                implements IMainActivity {
+
     private static final String LOG_TAG = AppGlobals.LOG_PREFIX + MainActivity.class.getSimpleName();
 
     public static final String ACTION_BASE = AppGlobals.ACTION_NAMESPACE + ".MainActivity.";
     public static final String ACTION_UPDATE_UI = ACTION_BASE + "UPDATE_UI";
 
-    /* if service exists, start scanning, otherwise do nothing  */
     public static final String ACTION_UI_UNPAUSE_SCANNING = ACTION_BASE + "UNPAUSE_SCANNING";
     public static final String ACTION_UI_PAUSE_SCANNING = ACTION_BASE + "PAUSE_SCANNING";
 
@@ -53,6 +54,22 @@ public final class MainActivity extends FragmentActivity {
     int                      mGpsSats;
     private boolean          mGeofenceHere = false;
 
+
+    public synchronized void setGpsFixes(int fixes) {
+        mGpsFixes = fixes;
+    }
+
+    public synchronized void setGpsSats(int sats) {
+        mGpsSats = sats;
+    }
+
+    public synchronized int getGpsFixes() {
+        return mGpsFixes;
+    }
+
+    public synchronized int getGpsSats() {
+        return mGpsSats;
+    }
 
     private BroadcastReceiver notificationDrawerEventReceiver = new BroadcastReceiver() {
         @Override
@@ -146,7 +163,7 @@ public final class MainActivity extends FragmentActivity {
         }
     }
 
-    protected void updateUiOnMainThread() {
+    public void updateUiOnMainThread() {
         this.runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -178,8 +195,9 @@ public final class MainActivity extends FragmentActivity {
         boolean isGeofenced = false;
 
         locationsScanned = service.getLocationCount();
-        latitude = service.getLatitude();
-        longitude = service.getLongitude();
+        Location location = service.getLocation();
+        latitude = location.getLatitude();
+        longitude = location.getLongitude();
         wifiStatus = service.getWifiStatus();
         APs = service.getAPCount();
         visibleAPs = service.getVisibleAPCount();
@@ -187,10 +205,10 @@ public final class MainActivity extends FragmentActivity {
         currentCellInfo = service.getCurrentCellInfoCount();
         isGeofenced = service.isGeofenced();
 
-        String lastLocationString = (mGpsFixes > 0 && locationsScanned > 0)?
+        String lastLocationString = (this.getGpsFixes() > 0 && locationsScanned > 0)?
                                     formatLocation(latitude, longitude) : "-";
 
-        formatTextView(R.id.gps_satellites, R.string.gps_satellites, mGpsFixes, mGpsSats);
+        formatTextView(R.id.gps_satellites, R.string.gps_satellites, this.getGpsFixes(), this.getGpsSats());
         formatTextView(R.id.last_location, R.string.last_location, lastLocationString);
         formatTextView(R.id.wifi_access_points, R.string.wifi_access_points, APs);
         setVisibleAccessPoints(scanning, wifiStatus, visibleAPs);
@@ -199,7 +217,7 @@ public final class MainActivity extends FragmentActivity {
         formatTextView(R.id.locations_scanned, R.string.locations_scanned, locationsScanned);
         service.checkPrefs();
         if (mGeofenceHere) {
-            if (mGpsFixes > 0 && locationsScanned > 0) {
+            if (this.getGpsFixes() > 0 && locationsScanned > 0) {
                 Location coord = new Location(AppGlobals.LOCATION_ORIGIN_INTERNAL);
                 coord.setLatitude(latitude);
                 coord.setLongitude(longitude);

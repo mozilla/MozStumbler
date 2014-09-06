@@ -34,6 +34,10 @@ public class GPSScanner implements LocationListener {
     public static final String NEW_STATUS_ARG_SATS = "sats";
     public static final String NEW_LOCATION_ARG_LOCATION = "location";
 
+    public static final String ACTION_NMEA_RECEIVED = ACTION_BASE + "NMEA_RECEIVED";
+    public static final String NMEA_DATA = "nmea_data";
+    public static final String NMEA_TIMESTAMP = "nmea_ts";
+
     private static final String LOG_TAG = AppGlobals.LOG_PREFIX + GPSScanner.class.getSimpleName();
     private static final int MIN_SAT_USED_IN_FIX = 3;
     private static final long ACTIVE_MODE_GPS_MIN_UPDATE_TIME_MS = 1000;
@@ -44,6 +48,7 @@ public class GPSScanner implements LocationListener {
     private final LocationBlockList mBlockList = new LocationBlockList();
     private final Context mContext;
     private GpsStatus.Listener mGPSListener;
+    private GpsStatus.NmeaListener mNMEAListener;
     private int mLocationCount;
     private Location mLocation = new Location("internal");
     private boolean mAutoGeofencing;
@@ -80,6 +85,17 @@ public class GPSScanner implements LocationListener {
                                   this);
 
         reportLocationLost();
+
+        mNMEAListener = new GpsStatus.NmeaListener() {
+            public void onNmeaReceived(long timestamp, String nmea) {
+                // Send an intent with a copy of the NMEA data
+                Intent intent = new Intent(ACTION_NMEA_RECEIVED);
+                intent.putExtra(NMEA_TIMESTAMP, timestamp);
+                intent.putExtra(NMEA_DATA, nmea);
+                LocalBroadcastManager.getInstance(mContext).sendBroadcastSync(intent);
+            }
+        };
+
         mGPSListener = new GpsStatus.Listener() {
                 public void onGpsStatusChanged(int event) {
                 if (event == GpsStatus.GPS_EVENT_SATELLITE_STATUS) {
@@ -107,9 +123,19 @@ public class GPSScanner implements LocationListener {
                     reportLocationLost();
                 }
             }
+
+            private void reportNewGpsStatus(int fixes, int sats) {
+                Intent i = new Intent(ACTION_GPS_UPDATED);
+                i.putExtra(Intent.EXTRA_SUBJECT, SUBJECT_NEW_STATUS);
+                i.putExtra(NEW_STATUS_ARG_FIXES, fixes);
+                i.putExtra(NEW_STATUS_ARG_SATS, sats);
+                i.putExtra(ACTION_ARG_TIME, System.currentTimeMillis());
+                LocalBroadcastManager.getInstance(mContext).sendBroadcastSync(i);
+            }
         };
 
         lm.addGpsStatusListener(mGPSListener);
+        lm.addNmeaListener(mNMEAListener);
     }
 
     public void stop() {
@@ -249,12 +275,4 @@ public class GPSScanner implements LocationListener {
         LocalBroadcastManager.getInstance(mContext).sendBroadcastSync(i);
     }
 
-    private void reportNewGpsStatus(int fixes, int sats) {
-        Intent i = new Intent(ACTION_GPS_UPDATED);
-        i.putExtra(Intent.EXTRA_SUBJECT, SUBJECT_NEW_STATUS);
-        i.putExtra(NEW_STATUS_ARG_FIXES, fixes);
-        i.putExtra(NEW_STATUS_ARG_SATS, sats);
-        i.putExtra(ACTION_ARG_TIME, System.currentTimeMillis());
-        LocalBroadcastManager.getInstance(mContext).sendBroadcastSync(i);
-    }
 }

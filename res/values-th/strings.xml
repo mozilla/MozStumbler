@@ -64,7 +64,7 @@
     <string name="upload_observations_wifis_queued_title">Wi-Fi แอคเซสพอยต์:</string>
     <string name="upload_observations_cells_queued_title">เสาสัญญานมือถือ:</string>
     <string name="upload_observations_button">อัพโหลด</string>
-    <string name="upload_observations_dialog_title">อัพโหลดค่าที่เก็บไว้/string>
+    <string name="upload_observations_dialog_title">อัพโหลดค่าที่เก็บไว้</string>
 
     <string name="detected_activity">Detected Activity: %1$s</string>
     <string name="detected_activity_in_vehicle">Moving (in vehicle)</string>

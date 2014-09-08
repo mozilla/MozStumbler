@@ -2,6 +2,7 @@ package org.mozilla.mozstumbler.client.fragments.leaderboard;
 
 import android.app.Fragment;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -11,12 +12,18 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Spinner;
 
+import org.json.JSONObject;
 import org.mozilla.mozstumbler.R;
+import org.mozilla.mozstumbler.client.leaderboard.GalaxyManager;
+import org.mozilla.mozstumbler.client.leaderboard.GalaxyRestClient;
 
 /**
  * Created by JeremyChiang on 2014-08-05.
  */
-public class LeaderboardFragment extends Fragment {
+public class LeaderboardFragment extends Fragment implements GalaxyManager.GalaxyManagerListener {
+    private static final String TAG = LeaderboardFragment.class.getName();
+
+    private GalaxyManager galaxyManager;
 
     private Spinner filterSpinner;
     private ImageView filterSpinnerArrow;
@@ -29,6 +36,7 @@ public class LeaderboardFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_leaderboard, container, false);
 
+        setupGalaxyLeaderboard();
         setupFilterSpinner(rootView);
         setupFilterSpinnerArrow(rootView);
 
@@ -46,6 +54,36 @@ public class LeaderboardFragment extends Fragment {
         });
 
         return rootView;
+    }
+
+    private void setupGalaxyLeaderboard() {
+        galaxyManager = new GalaxyManager(this);
+        galaxyManager.getGame(GalaxyRestClient.GAME_SLUG);
+        galaxyManager.getLeaderboard(GalaxyRestClient.GAME_SLUG, GalaxyRestClient.LEADERBOARD_SLUG);
+    }
+
+    @Override
+    public void gameFound(JSONObject game) {
+        if (game == null) {
+            galaxyManager.createGame(
+                    getActivity().getApplicationContext(),
+                    GalaxyRestClient.GAME_SLUG,
+                    GalaxyRestClient.GAME_NAME,
+                    GalaxyRestClient.GAME_DESC,
+                    GalaxyRestClient.GAME_URL);
+        }
+    }
+
+    @Override
+    public void leaderboardFound(JSONObject leaderboard) {
+        if (leaderboard == null) {
+            galaxyManager.createLeaderboard(
+                    getActivity().getApplicationContext(),
+                    GalaxyRestClient.GAME_SLUG,
+                    GalaxyRestClient.LEADERBOARD_SLUG,
+                    GalaxyRestClient.LEADERBOARD_NAME
+            );
+        }
     }
 
     private void setupFilterSpinner(View rootView) {

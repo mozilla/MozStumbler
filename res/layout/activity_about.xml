@@ -52,7 +52,6 @@
             android:gravity="center"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:paddingTop="32dp"
-            android:onClick="onClick_ViewMore"
             android:clickable="true"
             android:text="@string/about_mapbox_title" />
 

@@ -55,57 +55,57 @@ public class StumblerService extends PersistentIntentService
         super(name);
     }
 
-    public boolean isScanning() {
+    public synchronized boolean isScanning() {
         return mScanManager.isScanning();
     }
 
-    public void startScanning() {
+    public synchronized void startScanning() {
         mScanManager.startScanning(this);
     }
 
     // This is optional, not used in Fennec, and is for clients to specify a (potentially long) list
     // of blocklisted SSIDs/BSSIDs
-    public void setWifiBlockList(WifiBlockListInterface list) {
+    public synchronized void setWifiBlockList(WifiBlockListInterface list) {
         mScanManager.setWifiBlockList(list);
     }
 
-    public Prefs getPrefs() {
+    public synchronized Prefs getPrefs() {
         return Prefs.getInstance();
     }
 
-    public void checkPrefs() {
+    public synchronized void checkPrefs() {
         mScanManager.checkPrefs();
     }
 
-    public int getLocationCount() {
+    public synchronized int getLocationCount() {
         return mScanManager.getLocationCount();
     }
 
-    public Location getLocation() {
+    public synchronized Location getLocation() {
         return mScanManager.getLocation();
     }
 
-    public int getWifiStatus() {
+    public synchronized int getWifiStatus() {
         return mScanManager.getWifiStatus();
     }
 
-    public int getAPCount() {
+    public synchronized int getAPCount() {
         return mScanManager.getAPCount();
     }
 
-    public int getVisibleAPCount() {
+    public synchronized int getVisibleAPCount() {
         return mScanManager.getVisibleAPCount();
     }
 
-    public int getCellInfoCount() {
+    public synchronized int getCellInfoCount() {
         return mScanManager.getCellInfoCount();
     }
 
-    public int getCurrentCellInfoCount() {
+    public synchronized int getCurrentCellInfoCount() {
         return mScanManager.getCurrentCellInfoCount();
     }
 
-    public boolean isGeofenced () {
+    public synchronized boolean isGeofenced () {
         return mScanManager.isGeofenced();
     }
 
@@ -136,7 +136,7 @@ public class StumblerService extends PersistentIntentService
     public void onDestroy() {
         super.onDestroy();
 
-        if (!mScanManager.isScanning()) {
+        if (!isScanning()) {
             return;
         }
 
@@ -223,13 +223,11 @@ public class StumblerService extends PersistentIntentService
             Prefs.getInstance().setUserAgent(userAgent);
         }
 
-        if (!mScanManager.isScanning()) {
-            startScanning();
-        }
+        startScanning();
     }
 
     // Note that in passive mode, having data isn't an upload trigger, it is triggered by the start intent
-    public void notifyStorageStateEmpty(boolean isEmpty) {
+    public synchronized void notifyStorageStateEmpty(boolean isEmpty) {
         if (isEmpty) {
             UploadAlarmReceiver.cancelAlarm(this, !mScanManager.isPassiveMode());
         } else if (!mScanManager.isPassiveMode()) {

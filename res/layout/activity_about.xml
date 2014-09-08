@@ -33,6 +33,15 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:textAppearance="?android:attr/textAppearanceMedium"
+            android:paddingTop="16dp"
+            android:autoLink="web"
+            android:text="https://location.services.mozilla.com" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textAppearance="?android:attr/textAppearanceMedium"
             android:paddingTop="32dp"
             android:autoLink="web"
             android:text="@string/about_openstreetmap" />
@@ -58,16 +67,7 @@
             android:text="@string/about_mapbox"
             android:singleLine="false" />
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:paddingTop="32dp"
-            android:onClick="onClick_ViewMore"
-            android:clickable="true"
-            android:textColor="#4abde8"
-            android:text="@string/about_more" />
+
 
         <TextView
             android:layout_width="match_parent"
@@ -75,7 +75,21 @@
             android:gravity="center"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:paddingTop="32dp"
-            android:text="@string/about_legal_aosp" />
+            android:text="@string/about_legal_aosp"
+            android:textSize="14dp"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:paddingTop="32dp"
+            android:text="@string/about_legal_icons8"
+            android:id="@+id/textView"
+            android:layout_gravity="center_horizontal"
+            android:textSize="14dp"
+            android:autoLink="web" />
 
     </LinearLayout>
 </ScrollView>

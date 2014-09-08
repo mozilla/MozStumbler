@@ -15,7 +15,6 @@ import android.widget.TextView;
 import org.mozilla.mozstumbler.R;
 
 public class AboutActivity extends Activity {
-    private static final String ABOUT_PAGE_URL = "https://location.services.mozilla.com/";
     private static final String ABOUT_MAPBOX_URL = "https://www.mapbox.com/about/maps/";
 
     @Override
@@ -25,18 +24,12 @@ public class AboutActivity extends Activity {
     }
 
     @Override
-    protected void onStart()
-    {
+    protected void onStart() {
         super.onStart();
         TextView textView = (TextView) findViewById(R.id.about_version);
         String str = getResources().getString(R.string.about_version);
         str = String.format(str, PackageUtils.getAppVersion(this));
         textView.setText(str);
-    }
-
-    public void onClick_ViewMore(View v) {
-        Intent openAboutPage = new Intent(Intent.ACTION_VIEW, Uri.parse(ABOUT_PAGE_URL));
-        startActivity(openAboutPage);
     }
 
     public void onClick_ViewMapboxAttribution(View v) {

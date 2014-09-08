@@ -34,6 +34,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.mozilla.mozstumbler.client.ClientPrefs;
 import org.mozilla.mozstumbler.client.ClientStumblerService;
 import org.mozilla.mozstumbler.client.MainApp;
 import org.mozilla.mozstumbler.service.AppGlobals;
@@ -170,7 +171,7 @@ public final class MapActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (((MainApp) getApplication()).getPrefs().getIsHardwareAccelerated() &&
+        if (ClientPrefs.getInstance().getIsHardwareAccelerated() &&
             Build.VERSION.SDK_INT > 10) {
                 getWindow().setFlags(
                         WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED,
@@ -194,29 +195,44 @@ public final class MapActivity extends Activity {
 
         mFirstLocationFix = true;
         int zoomLevel = DEFAULT_ZOOM; // Default to seeing the world, until we get a fix
+        GeoPoint lastLoc = null;
         if (savedInstanceState != null) {
             mFirstLocationFix = false;
             zoomLevel = savedInstanceState.getInt(ZOOM_KEY, DEFAULT_ZOOM);
             if (savedInstanceState.containsKey(LAT_KEY) && savedInstanceState.containsKey(LON_KEY)) {
                 final double latitude = savedInstanceState.getDouble(LAT_KEY);
                 final double longitude = savedInstanceState.getDouble(LON_KEY);
-                mMap.getController().setCenter(new GeoPoint(latitude, longitude));
+                lastLoc = new GeoPoint(latitude, longitude);
             }
         } else {
             final ClientStumblerService service = ((MainApp) getApplication()).getService();
             Location location = service.getLocation();
             final double latitude = location.getLatitude();
             final double longitude = location.getLongitude();
-            GeoPoint lastLoc;
             if (isValidLocation(latitude, longitude)) {
                 lastLoc = new GeoPoint(latitude, longitude);
             } else {
-                lastLoc = ((MainApp) getApplication()).getPrefs().getLastMapCenter();
+                lastLoc = ClientPrefs.getInstance().getLastMapCenter();
                 zoomLevel = DEFAULT_ZOOM_AFTER_FIX;
             }
-            mMap.getController().setCenter(lastLoc);
         }
-        mMap.getController().setZoom(zoomLevel);
+
+        final GeoPoint loc = lastLoc;
+        final int zoom = zoomLevel;
+        mMap.getController().setZoom(zoom);
+        mMap.getController().setCenter(loc);
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                // https://github.com/osmdroid/osmdroid/issues/22
+                // These need a fully constructed map, which on first load seems to take a while.
+                // Post with no delay does not work for me, adding an arbitrary
+                // delay of 300 ms should be plenty.
+                mMap.getController().setZoom(zoom);
+                mMap.getController().setCenter(loc);
+            }
+        }, 300);
 
         for (GeoPoint p : sGpsTrackLocationReceiver.mLocations) {
             mPathOverlay.addPoint(p);
@@ -402,26 +418,34 @@ public final class MapActivity extends Activity {
         Log.d(LOG_TAG, "onStart");
     }
 
+    private void saveStateToPrefs() {
+        IGeoPoint center = mMap.getMapCenter();
+        ClientPrefs.getInstance().setLastMapCenter(center);
+    }
+    
     @Override
     protected void onSaveInstanceState(Bundle bundle) {
         super.onSaveInstanceState(bundle);
         bundle.putInt(ZOOM_KEY, mMap.getZoomLevel());
         IGeoPoint center = mMap.getMapCenter();
-        ((MainApp) getApplication()).getPrefs().setLastMapCenter(center);
         bundle.putDouble(LON_KEY, center.getLongitude());
         bundle.putDouble(LAT_KEY, center.getLatitude());
+        saveStateToPrefs();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.d(LOG_TAG, "onPause");
+        saveStateToPrefs();
+        mMap.getTileProvider().clearTileCache();
+        BitmapPool.getInstance().clearBitmapPool();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
-        IGeoPoint center = mMap.getMapCenter();
-        ((MainApp) getApplication()).getPrefs().setLastMapCenter(center);
-
         Log.d(LOG_TAG, "onDestroy");
-        mMap.getTileProvider().clearTileCache();
-        BitmapPool.getInstance().clearBitmapPool();
     }
 
     @Override

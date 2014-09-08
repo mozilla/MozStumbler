@@ -83,12 +83,12 @@ public class ScanManager {
         }, when);
     }
 
-    public void setPassiveMode(boolean on) {
+    public synchronized void setPassiveMode(boolean on) {
         mStumblingMode = (on)? ActiveOrPassiveStumbling.PASSIVE_STUMBLING :
                ActiveOrPassiveStumbling.ACTIVE_STUMBLING;
     }
 
-    public boolean isPassiveMode() {
+    public synchronized boolean isPassiveMode() {
         return ActiveOrPassiveStumbling.PASSIVE_STUMBLING == mStumblingMode;
     }
 

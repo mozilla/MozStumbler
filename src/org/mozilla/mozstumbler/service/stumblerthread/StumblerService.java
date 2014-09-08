@@ -136,7 +136,7 @@ public class StumblerService extends PersistentIntentService
     public void onDestroy() {
         super.onDestroy();
 
-        if (!mScanManager.isScanning()) {
+        if (!isScanning()) {
             return;
         }
 
@@ -223,9 +223,7 @@ public class StumblerService extends PersistentIntentService
             Prefs.getInstance().setUserAgent(userAgent);
         }
 
-        if (!mScanManager.isScanning()) {
-            startScanning();
-        }
+        startScanning();
     }
 
     // Note that in passive mode, having data isn't an upload trigger, it is triggered by the start intent

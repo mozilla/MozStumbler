@@ -27,6 +27,8 @@ android {
         compile ('com.mapbox.mapboxsdk:mapbox-android-sdk:0.3.0@aar'){
             transitive=true
         }
+
+        compile "com.loopj.android:android-async-http:1.4.5"
     }
 
     sourceSets {

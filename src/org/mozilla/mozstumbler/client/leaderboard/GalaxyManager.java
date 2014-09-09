@@ -44,28 +44,40 @@ public class GalaxyManager {
                     public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                         // If the response is JSONObject instead of a JSONArray.
                         Log.d(TAG, "Game, " + gameSlug + ", retrieved with status code: " + statusCode);
-                        galaxyManagerListener.gameFound(response);
+
+                        if (galaxyManagerListener != null) {
+                            galaxyManagerListener.gameFound(response);
+                        }
                     }
 
                     @Override
                     public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
                         super.onFailure(statusCode, headers, responseString, throwable);
                         Log.d(TAG, "Error retrieving game, " + gameSlug + ", reason: " + responseString);
-                        galaxyManagerListener.gameFound(null);
+
+                        if (galaxyManagerListener != null) {
+                            galaxyManagerListener.gameFound(null);
+                        }
                     }
 
                     @Override
                     public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                         super.onFailure(statusCode, headers, throwable, errorResponse);
                         Log.d(TAG, "Error retrieving game, " + gameSlug + ", reason: " + errorResponse.toString());
-                        galaxyManagerListener.gameFound(null);
+
+                        if (galaxyManagerListener != null) {
+                            galaxyManagerListener.gameFound(null);
+                        }
                     }
 
                     @Override
                     public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
                         super.onFailure(statusCode, headers, throwable, errorResponse);
                         Log.d(TAG, "Error retrieving game, " + gameSlug + ", reason: " + errorResponse.toString());
-                        galaxyManagerListener.gameFound(null);
+
+                        if (galaxyManagerListener != null) {
+                            galaxyManagerListener.gameFound(null);
+                        }
                     }
                 });
     }
@@ -136,28 +148,40 @@ public class GalaxyManager {
                     public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                         // If the response is JSONObject instead of a JSONArray.
                         Log.d(TAG, "Leaderboard, " + leaderboardSlug + ", retrieved with status code: " + statusCode);
-                        galaxyManagerListener.leaderboardFound(response);
+
+                        if (galaxyManagerListener != null) {
+                            galaxyManagerListener.leaderboardFound(response);
+                        }
                     }
 
                     @Override
                     public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
                         super.onFailure(statusCode, headers, responseString, throwable);
                         Log.d(TAG, "Error retrieving leaderboard, " + leaderboardSlug + ", for game, " + gameSlug + ", reason: " + responseString);
-                        galaxyManagerListener.leaderboardFound(null);
+
+                        if (galaxyManagerListener != null) {
+                            galaxyManagerListener.leaderboardFound(null);
+                        }
                     }
 
                     @Override
                     public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                         super.onFailure(statusCode, headers, throwable, errorResponse);
                         Log.d(TAG, "Error retrieving leaderboard, " + leaderboardSlug + ", for game, " + gameSlug + ", reason: " + errorResponse.toString());
-                        galaxyManagerListener.leaderboardFound(null);
+
+                        if (galaxyManagerListener != null) {
+                            galaxyManagerListener.leaderboardFound(null);
+                        }
                     }
 
                     @Override
                     public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
                         super.onFailure(statusCode, headers, throwable, errorResponse);
                         Log.d(TAG, "Error retrieving leaderboard, " + leaderboardSlug + ", for game, " + gameSlug + ", reason: " + errorResponse.toString());
-                        galaxyManagerListener.leaderboardFound(null);
+
+                        if (galaxyManagerListener != null) {
+                            galaxyManagerListener.leaderboardFound(null);
+                        }
                     }
                 });
     }
@@ -227,28 +251,40 @@ public class GalaxyManager {
                     public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
                         super.onSuccess(statusCode, headers, response);
                         Log.d(TAG, "Scores for leaderboard, " + leaderboardSlug + ", retrieved with status code: " + statusCode);
-                        galaxyManagerListener.scoresFound(response);
+
+                        if (galaxyManagerListener != null) {
+                            galaxyManagerListener.scoresFound(response);
+                        }
                     }
 
                     @Override
                     public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
                         super.onFailure(statusCode, headers, responseString, throwable);
                         Log.d(TAG, "Error retrieving scores for leaderboard, " + leaderboardSlug + ", for game, " + gameSlug + ", reason: " + responseString);
-                        galaxyManagerListener.scoresFound(null);
+
+                        if (galaxyManagerListener != null) {
+                            galaxyManagerListener.scoresFound(null);
+                        }
                     }
 
                     @Override
                     public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                         super.onFailure(statusCode, headers, throwable, errorResponse);
                         Log.d(TAG, "Error retrieving scores for leaderboard, " + leaderboardSlug + ", for game, " + gameSlug + ", reason: " + errorResponse.toString());
-                        galaxyManagerListener.scoresFound(null);
+
+                        if (galaxyManagerListener != null) {
+                            galaxyManagerListener.scoresFound(null);
+                        }
                     }
 
                     @Override
                     public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
                         super.onFailure(statusCode, headers, throwable, errorResponse);
                         Log.d(TAG, "Error retrieving scores for leaderboard, " + leaderboardSlug + ", for game, " + gameSlug + ", reason: " + errorResponse.toString());
-                        galaxyManagerListener.scoresFound(null);
+
+                        if (galaxyManagerListener != null) {
+                            galaxyManagerListener.scoresFound(null);
+                        }
                     }
                 });
     }

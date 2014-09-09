@@ -20,8 +20,11 @@ import com.mapbox.mapboxsdk.views.MapView;
 import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.client.MainActivity;
 import org.mozilla.mozstumbler.client.developers.DeveloperOverlayFragment;
+import org.mozilla.mozstumbler.client.leaderboard.GalaxyManager;
+import org.mozilla.mozstumbler.client.leaderboard.GalaxyRestClient;
 import org.mozilla.mozstumbler.client.mapview.RainbowOverlay;
 import org.mozilla.mozstumbler.client.mapview.StarOverlay;
+import org.mozilla.mozstumbler.client.models.Score;
 import org.mozilla.mozstumbler.client.models.User;
 
 import java.util.ArrayList;
@@ -41,6 +44,7 @@ public class MapFragment extends Fragment implements StarOverlay.StarOverlaySele
     private final double nearbyThresholdRadius = 0.0015;
 
     private User user;
+    private GalaxyManager galaxyManager;
 
     private MapView mapView;
     private UserLocationOverlay userLocationOverlay;
@@ -67,6 +71,7 @@ public class MapFragment extends Fragment implements StarOverlay.StarOverlaySele
 
         mapView = (MapView)rootView.findViewById(R.id.map_view);
         user = ((MainActivity)getActivity()).getUser();
+        galaxyManager = new GalaxyManager(null);
 
         setupUserLocationOverlay();
         setupStarsAndRainbows();
@@ -155,7 +160,7 @@ public class MapFragment extends Fragment implements StarOverlay.StarOverlaySele
     }
 
     private void generateRandomStars() {
-        for (int i = 0; i < 50; i++) {
+        for (int i = 0; i < 30; i++) {
             LatLng userLocationLatLng = userLocationOverlay.getMyLocation();
 
             StarOverlay starOverlay = new StarOverlay(getActivity(), mapView, userLocationLatLng);
@@ -168,7 +173,7 @@ public class MapFragment extends Fragment implements StarOverlay.StarOverlaySele
     }
 
     private void generateRandomRainbows() {
-        for (int i = 0; i < 50; i++) {
+        for (int i = 0; i < 10; i++) {
             LatLng userLocationLatLng = userLocationOverlay.getMyLocation();
 
             RainbowOverlay rainbowOverlay = new RainbowOverlay(getActivity(), mapView, userLocationLatLng);
@@ -219,6 +224,12 @@ public class MapFragment extends Fragment implements StarOverlay.StarOverlaySele
                 mapView.invalidate();
 
                 user.incrementStarScore();
+                galaxyManager.setScore(
+                        getActivity().getApplicationContext(),
+                        GalaxyRestClient.GAME_SLUG,
+                        GalaxyRestClient.LEADERBOARD_SLUG,
+                        user.getPlayerName(),
+                        Score.POINT_PER_STAR);
                 //Toast.makeText(getActivity(), getString(R.string.star_collected), Toast.LENGTH_SHORT).show();
             }
         }
@@ -252,6 +263,12 @@ public class MapFragment extends Fragment implements StarOverlay.StarOverlaySele
                 mapView.invalidate();
 
                 user.incrementRainbowScore();
+                galaxyManager.setScore(
+                        getActivity().getApplicationContext(),
+                        GalaxyRestClient.GAME_SLUG,
+                        GalaxyRestClient.LEADERBOARD_SLUG,
+                        user.getPlayerName(),
+                        Score.POINT_PER_RAINBOW);
                 //Toast.makeText(getActivity(), getString(R.string.rainbow_collected), Toast.LENGTH_SHORT).show();
             }
         }
@@ -262,6 +279,13 @@ public class MapFragment extends Fragment implements StarOverlay.StarOverlaySele
         if (allowShowingNotificationFragment) {
             allowShowingNotificationFragment = false;
             showCoinRewardFragment();
+
+            galaxyManager.setScore(
+                    getActivity().getApplicationContext(),
+                    GalaxyRestClient.GAME_SLUG,
+                    GalaxyRestClient.LEADERBOARD_SLUG,
+                    user.getPlayerName(),
+                    Score.POINT_PER_COIN);
         }
     }
 

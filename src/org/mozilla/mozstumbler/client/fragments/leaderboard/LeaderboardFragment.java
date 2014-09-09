@@ -11,8 +11,10 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.mozilla.mozstumbler.R;
+import org.mozilla.mozstumbler.client.MainActivity;
 import org.mozilla.mozstumbler.client.leaderboard.GalaxyManager;
 import org.mozilla.mozstumbler.client.leaderboard.GalaxyRestClient;
 
@@ -89,7 +91,7 @@ public class LeaderboardFragment extends Fragment implements GalaxyManager.Galax
     @Override
     public void scoresFound(JSONArray scores) {
         topTenFragment.setSource(scores);
-
+        yourRankFragment.setSource(scores);
     }
 
     private void setupFilterSpinner(View rootView) {

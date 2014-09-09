@@ -6,6 +6,7 @@ package org.mozilla.mozstumbler.client.cellscanner;
 
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.os.Build;
 import android.telephony.CellIdentityWcdma;
 import android.telephony.CellInfoWcdma;
 import android.telephony.CellLocation;
@@ -58,7 +59,8 @@ public class DefaultCellScanner extends CellScannerNoWCDMA {
                                     android.telephony.CellInfo observedCell,
                                     TelephonyManager tm) {
         boolean added = false;
-        if (observedCell instanceof CellInfoWcdma) {
+        if (Build.VERSION.SDK_INT >= 18 &&
+            observedCell instanceof CellInfoWcdma) {
             CellIdentityWcdma ident = ((CellInfoWcdma) observedCell).getCellIdentity();
             if (ident.getMnc() != Integer.MAX_VALUE && ident.getMcc() != Integer.MAX_VALUE) {
                 CellInfo cell = new CellInfo(tm.getPhoneType());

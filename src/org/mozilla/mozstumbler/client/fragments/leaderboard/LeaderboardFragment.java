@@ -2,13 +2,11 @@ package org.mozilla.mozstumbler.client.fragments.leaderboard;
 
 import android.app.Fragment;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Spinner;
 
@@ -25,7 +23,6 @@ public class LeaderboardFragment extends Fragment implements GalaxyManager.Galax
     private static final String TAG = LeaderboardFragment.class.getName();
 
     private GalaxyManager galaxyManager;
-    private JSONArray scores;
 
     private Spinner filterSpinner;
     private ImageView filterSpinnerArrow;
@@ -91,11 +88,8 @@ public class LeaderboardFragment extends Fragment implements GalaxyManager.Galax
 
     @Override
     public void scoresFound(JSONArray scores) {
-        this.scores = scores;
+        topTenFragment.setSource(scores);
 
-        if (this.scores != null) {
-            Log.d(TAG, "Scores found = " + scores.toString());
-        }
     }
 
     private void setupFilterSpinner(View rootView) {

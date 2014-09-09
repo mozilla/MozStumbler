@@ -19,8 +19,10 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import java.net.URL;
@@ -80,6 +82,31 @@ public final class MapActivity extends Activity {
 
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         setContentView(R.layout.activity_map);
+
+        ImageButton centerMe = (ImageButton)this.findViewById(R.id.my_location_button);
+        centerMe.setVisibility(View.INVISIBLE);
+        centerMe.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mAccuracyOverlay == null || mAccuracyOverlay.getLocation() == null)
+                    return;
+                mMap.getController().animateTo((mAccuracyOverlay.getLocation()));
+            }
+        });
+
+        centerMe.setOnTouchListener(new View.OnTouchListener() {
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN ) {
+                    //@TODO fill this in
+                    //.setImageResource(R.drawable.modeitempressed);
+
+                }
+                else if (event.getAction() == MotionEvent.ACTION_UP ) {
+                    //.setImageResource(R.drawable.modeitemnormal);
+                }
+                return false;
+            }
+        });
 
         mMap = (MapView) this.findViewById(R.id.map);
         mMap.setTileSource(getTileSource());
@@ -203,6 +230,11 @@ public final class MapActivity extends Activity {
     }
 
     void setUserPositionAt(Location location) {
+        if (mAccuracyOverlay.getLocation() == null) {
+            ImageButton centerMe = (ImageButton)this.findViewById(R.id.my_location_button);
+            centerMe.setVisibility(View.VISIBLE);
+        }
+
         mAccuracyOverlay.setLocation(location);
 
         if (mFirstLocationFix) {

@@ -65,4 +65,8 @@ class AccuracyCircleOverlay extends Overlay {
         mAccuracy = location.getAccuracy();
         mPoint = new GeoPoint(location.getLatitude(), location.getLongitude());
     }
+
+    public GeoPoint getLocation() {
+        return mPoint;
+    }
 }

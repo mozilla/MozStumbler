@@ -23,7 +23,7 @@ public abstract class AbstractCommunicator {
     private static final String LOG_TAG = AppGlobals.LOG_PREFIX + AbstractCommunicator.class.getSimpleName();
     private static final String NICKNAME_HEADER = "X-Nickname";
     private static final String USER_AGENT_HEADER = "User-Agent";
-    private HttpURLConnection mHttpURLConnection;
+    protected HttpURLConnection mHttpURLConnection;
     private final String mUserAgent;
     private static int sBytesSentTotal = 0;
     private static String sMozApiKey;
@@ -65,7 +65,7 @@ public abstract class AbstractCommunicator {
         mUserAgent = userAgent;
     }
 
-    private void openConnectionAndSetHeaders() {
+    protected void openConnectionAndSetHeaders() {
         try {
             if (sMozApiKey == null) {
                 sMozApiKey = Prefs.getInstance().getMozApiKey();
@@ -93,12 +93,12 @@ public abstract class AbstractCommunicator {
         }
     }
 
-    private byte[] zipData(byte[] data) throws IOException {
+    protected byte[] zipData(byte[] data) throws IOException {
         byte[] output = Zipper.zipData(data);
         return output;
     }
 
-    private void sendData(byte[] data) throws IOException{
+    protected void sendData(byte[] data) throws IOException {
         mHttpURLConnection.setFixedLengthStreamingMode(data.length);
         OutputStream out = new BufferedOutputStream(mHttpURLConnection.getOutputStream());
         out.write(data);
@@ -122,7 +122,6 @@ public abstract class AbstractCommunicator {
             mHttpURLConnection.setRequestProperty("Content-Encoding","gzip");
         } catch (IOException e) {
             Log.e(LOG_TAG, "Couldn't compress and send data, falling back to plain-text: ", e);
-            close();
         }
 
         try {

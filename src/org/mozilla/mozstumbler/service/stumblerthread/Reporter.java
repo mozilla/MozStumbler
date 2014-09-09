@@ -47,8 +47,13 @@ public final class Reporter extends BroadcastReceiver implements IReporter {
     private long lastNmeaGSV;
 
     private StumblerBundle mBundle;
+    private JSONObject mPreviousBundleJSON;
 
     Reporter() {}
+
+    public synchronized JSONObject getPreviousBundleJSON() {
+        return mPreviousBundleJSON;
+    }
 
     public synchronized void startup(Context context) {
         if (mIsStarted) {
@@ -244,6 +249,8 @@ public final class Reporter extends BroadcastReceiver implements IReporter {
         if (AppGlobals.isDebug) {
             Log.d(LOG_TAG, "Received bundle: " + mlsObj.toString());
         }
+
+        mPreviousBundleJSON = mlsObj;
 
         AppGlobals.guiLogInfo(mlsObj.toString());
 

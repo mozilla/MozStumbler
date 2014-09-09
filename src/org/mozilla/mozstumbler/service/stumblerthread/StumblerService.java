@@ -11,6 +11,7 @@ import android.util.Log;
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.json.JSONObject;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.Prefs;
 import org.mozilla.mozstumbler.service.stumblerthread.blocklist.WifiBlockListInterface;
@@ -234,4 +235,9 @@ public class StumblerService extends PersistentIntentService
             UploadAlarmReceiver.scheduleAlarm(this, FREQUENCY_IN_SEC_OF_UPLOAD_IN_ACTIVE_MODE, true /* repeating */);
         }
     }
+
+    public JSONObject getLastReportedBundle() {
+        return mReporter.getPreviousBundleJSON();
+    }
+
 }

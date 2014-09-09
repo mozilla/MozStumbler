@@ -21,8 +21,6 @@ public class Prefs {
     private static final String WIFI_ONLY = "wifi_only";
     private static final String LAT_PREF = "lat_pref";
     private static final String LON_PREF = "lon_pref";
-    private static final String GEOFENCE_HERE = "geofence_here";
-    private static final String GEOFENCE_SWITCH = "geofence_switch";
     private static final String FIREFOX_SCAN_ENABLED = "firefox_scan_on";
     private static final String MOZ_API_KEY = "moz_api_key";
     private static final String WIFI_SCAN_ALWAYS = "wifi_scan_always";
@@ -72,21 +70,6 @@ public class Prefs {
         setBoolPref(WIFI_ONLY, state);
     }
 
-    public synchronized void setGeofenceEnabled(boolean state) {
-        setBoolPref(GEOFENCE_SWITCH, state);
-    }
-
-    public synchronized void setGeofenceHere(boolean flag) {
-        setBoolPref(GEOFENCE_HERE, flag);
-    }
-
-    public synchronized void setGeofenceLocation(Location location) {
-        SharedPreferences.Editor editor = getPrefs().edit();
-        editor.putFloat(LAT_PREF, (float) location.getLatitude());
-        editor.putFloat(LON_PREF, (float) location.getLongitude());
-        apply(editor);
-    }
-
     public synchronized void setMozApiKey(String s) {
         setStringPref(MOZ_API_KEY, s);
     }
@@ -106,21 +89,6 @@ public class Prefs {
     public synchronized String getMozApiKey() {
         String s = getStringPref(MOZ_API_KEY);
         return (s == null)? "no-mozilla-api-key" : s;
-    }
-
-    public synchronized boolean getGeofenceEnabled() {
-        return getBoolPrefWithDefault(GEOFENCE_SWITCH, false);
-    }
-
-    public synchronized boolean getGeofenceHere() {
-        return getBoolPrefWithDefault(GEOFENCE_HERE, false);
-    }
-
-    public synchronized Location getGeofenceLocation() {
-        Location loc = new Location(AppGlobals.LOCATION_ORIGIN_INTERNAL);
-        loc.setLatitude(getPrefs().getFloat(LAT_PREF, 0));
-        loc.setLongitude(getPrefs().getFloat(LON_PREF,0));
-        return loc;
     }
 
     // This is the time an upload was last attempted, not necessarily successful.

@@ -24,8 +24,6 @@ public class PreferencesScreen extends PreferenceActivity {
     private static final int REQUEST_CODE_WIFI_SCAN_ALWAYS = 1;
 
     private EditTextPreference mNicknamePreference;
-    private CheckBoxPreference mGeofenceSwitch;
-    private Preference mGeofenceHere;
     private CheckBoxPreference mWifiScanAlwaysSwitch;
     private CheckBoxPreference mWifiPreference;
     private CheckBoxPreference mIsHardwareAccelerated;
@@ -48,20 +46,11 @@ public class PreferencesScreen extends PreferenceActivity {
 
         mNicknamePreference = (EditTextPreference) getPreferenceManager().findPreference("nickname");
         mWifiPreference = (CheckBoxPreference) getPreferenceManager().findPreference("wifi_only");
-        mGeofenceSwitch = (CheckBoxPreference) getPreferenceManager().findPreference("geofence_switch");
-        mGeofenceHere = getPreferenceManager().findPreference("geofence_here");
         mWifiScanAlwaysSwitch = (CheckBoxPreference) getPreferenceManager().findPreference("wifi_scan_always");
         mIsHardwareAccelerated = (CheckBoxPreference) getPreferenceManager().findPreference("hardware_acceleration");
 
         setNicknamePreferenceTitle(sPrefs.getNickname());
         mWifiPreference.setChecked(sPrefs.getUseWifiOnly());
-        setGeofenceSwitchTitle();
-        boolean geofence_here = sPrefs.getGeofenceHere();
-        if(geofence_here) {
-            sPrefs.setGeofenceEnabled(true);
-        }
-        mGeofenceSwitch.setChecked(sPrefs.getGeofenceEnabled());
-        setGeofenceHereDesc(geofence_here);
 
         setPreferenceListener();
         initWifiScanAlways();
@@ -86,29 +75,6 @@ public class PreferencesScreen extends PreferenceActivity {
             }
         });
 
-        mGeofenceHere.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                sPrefs.setGeofenceHere(true);
-                setGeofenceHereDesc(true);
-                mGeofenceSwitch.setChecked(true);
-                sPrefs.setGeofenceEnabled(false);
-                return true;
-            }
-        });
-
-        mGeofenceSwitch.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
-            @Override
-            public boolean onPreferenceChange(Preference preference, Object newValue) {
-                if (sPrefs.getGeofenceHere() && newValue.equals(false)) {
-                    sPrefs.setGeofenceHere(false);
-                    setGeofenceHereDesc(false);
-                }
-                sPrefs.setGeofenceEnabled(newValue.equals(true));
-                return true;
-            }
-        });
-
         mWifiPreference.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
@@ -124,19 +90,6 @@ public class PreferencesScreen extends PreferenceActivity {
                 return true;
             }
         });
-    }
-    private void setGeofenceHereDesc(boolean state) {
-        if (state) {
-            mGeofenceHere.setSummary(R.string.geofencing_explain);
-        } else {
-            mGeofenceHere.setSummary(R.string.geofencing_desc);
-        }
-    }
-
-    private void setGeofenceSwitchTitle() {
-        String geo_on = getResources().getString(R.string.geofencing_on);
-        Location coord = sPrefs.getGeofenceLocation();
-        mGeofenceSwitch.setTitle(String.format(geo_on, coord.getLatitude(), coord.getLongitude()));
     }
 
     private void setNicknamePreferenceTitle(String nickname) {

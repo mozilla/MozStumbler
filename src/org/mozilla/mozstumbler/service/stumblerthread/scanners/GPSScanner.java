@@ -18,7 +18,6 @@ import android.util.Log;
 
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.AppGlobals.ActiveOrPassiveStumbling;
-import org.mozilla.mozstumbler.service.Prefs;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -45,13 +44,13 @@ public class GPSScanner implements LocationListener {
     private static final long PASSIVE_GPS_MIN_UPDATE_FREQ_MS = 3000;
     private static final float PASSIVE_GPS_MOVEMENT_MIN_DELTA_M = 30;
 
-    private final LocationBlockList mBlockList = new LocationBlockList();
+
+    private final StumblerFilter stumbleFilter = new StumblerFilter();
     private final Context mContext;
     private GpsStatus.Listener mGPSListener;
     private GpsStatus.NmeaListener mNMEAListener;
     private int mLocationCount;
     private Location mLocation = new Location("internal");
-    private boolean mAutoGeofencing;
     private boolean mIsPassiveMode;
 
     private final ScanManager mScanManager;
@@ -73,16 +72,16 @@ public class GPSScanner implements LocationListener {
     private void startPassiveMode() {
         LocationManager locationManager = (LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
         locationManager.requestLocationUpdates(LocationManager.PASSIVE_PROVIDER,
-                                               0,
-                                               0, this);
+                0,
+                0, this);
     }
 
     private void startActiveMode() {
         LocationManager lm = getLocationManager();
         lm.requestLocationUpdates(LocationManager.GPS_PROVIDER,
-                                  ACTIVE_MODE_GPS_MIN_UPDATE_TIME_MS,
-                                  ACTIVE_MODE_GPS_MIN_UPDATE_DISTANCE_M,
-                                  this);
+                ACTIVE_MODE_GPS_MIN_UPDATE_TIME_MS,
+                ACTIVE_MODE_GPS_MIN_UPDATE_DISTANCE_M,
+                this);
 
         reportLocationLost();
 
@@ -165,18 +164,6 @@ public class GPSScanner implements LocationListener {
         return mLocation;
     }
 
-    public void checkPrefs() {
-        if (mBlockList != null) {
-            mBlockList.updateBlocks();
-        }
-
-        mAutoGeofencing = Prefs.getInstance().getGeofenceHere();
-    }
-
-    public boolean isGeofenced() {
-        return (mBlockList != null) && mBlockList.isGeofenced();
-    }
-
     private void sendToLogActivity(String msg) {
         AppGlobals.guiLogInfo(msg, "#33ccff", false);
     }
@@ -215,7 +202,7 @@ public class GPSScanner implements LocationListener {
                 location.getLongitude(), location.getAccuracy(), location.getSpeed(), location.getAltitude(), location.getBearing());
         sendToLogActivity(logMsg);
 
-        if (mBlockList.contains(location)) {
+        if (stumbleFilter.blockLocation(location)) {
             Log.w(LOG_TAG, "Blocked location: " + location);
             reportLocationLost();
             return;
@@ -227,9 +214,7 @@ public class GPSScanner implements LocationListener {
 
         mLocation = location;
 
-        if (!mAutoGeofencing) {
-            reportNewLocationReceived(location);
-        }
+        reportNewLocationReceived(location);
         mLocationCount++;
 
         if (mIsPassiveMode) {

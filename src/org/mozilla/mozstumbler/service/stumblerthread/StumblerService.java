@@ -73,10 +73,6 @@ public class StumblerService extends PersistentIntentService
         return Prefs.getInstance();
     }
 
-    public synchronized void checkPrefs() {
-        mScanManager.checkPrefs();
-    }
-
     public synchronized int getLocationCount() {
         return mScanManager.getLocationCount();
     }
@@ -103,10 +99,6 @@ public class StumblerService extends PersistentIntentService
 
     public synchronized int getCurrentCellInfoCount() {
         return mScanManager.getCurrentCellInfoCount();
-    }
-
-    public synchronized boolean isGeofenced () {
-        return mScanManager.isGeofenced();
     }
 
     // Previously this was done in onCreate(). Moved out of that so that in the passive standalone service

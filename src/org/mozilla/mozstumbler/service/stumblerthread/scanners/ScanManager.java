@@ -178,13 +178,4 @@ public class ScanManager {
         return (mGPSScanner == null)? new Location("null") : mGPSScanner.getLocation();
     }
 
-    public void checkPrefs() {
-        if (mGPSScanner != null) {
-            mGPSScanner.checkPrefs();
-        }
-    }
-
-    public boolean isGeofenced() {
-        return (mGPSScanner == null)? false : mGPSScanner.isGeofenced();
-    }
 }

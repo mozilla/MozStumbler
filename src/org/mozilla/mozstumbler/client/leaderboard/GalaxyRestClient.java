@@ -26,6 +26,7 @@ public class GalaxyRestClient {
     public static final String LEADERBOARD_SLUG = "points-collected";
     public static final String LEADERBOARD_NAME = "Points Collected Leaderboard";
     public static final String LEADERBOARD_DIRECTORY = "leaderboards";
+    public static final String SCORES_DIRECTORY = "scores";
 
     public static final String KEY_GAME_SLUG = "slug";
     public static final String KEY_GAME_NAME = "name";
@@ -34,6 +35,9 @@ public class GalaxyRestClient {
 
     public static final String KEY_LEADERBOARD_SLUG = "slug";
     public static final String KEY_LEADERBOARD_NAME = "name";
+
+    public static final String KEY_SCORE_USER = "user";
+    public static final String KEY_SCORE_SCORE = "score";
 
     public static void get(String url, RequestParams params, AsyncHttpResponseHandler responseHandler) {
         client.get(getAbsoluteUrl(url), params, responseHandler);

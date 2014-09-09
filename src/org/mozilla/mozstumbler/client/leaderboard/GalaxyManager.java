@@ -26,6 +26,7 @@ public class GalaxyManager {
     public interface GalaxyManagerListener {
         public void gameFound(JSONObject game);
         public void leaderboardFound(JSONObject leaderboard);
+        public void scoresFound(JSONArray scores);
     }
 
     public GalaxyManager(GalaxyManagerListener galaxyManagerListener) {
@@ -196,19 +197,112 @@ public class GalaxyManager {
                     @Override
                     public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
                         super.onFailure(statusCode, headers, responseString, throwable);
-                        Log.d(TAG, "Error creating leaderboard, " + leaderboardSlug + ", for game," + gameSlug + ", reason: " + responseString);
+                        Log.d(TAG, "Error creating leaderboard, " + leaderboardSlug + ", for game, " + gameSlug + ", reason: " + responseString);
                     }
 
                     @Override
                     public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                         super.onFailure(statusCode, headers, throwable, errorResponse);
-                        Log.d(TAG, "Error creating leaderboard, " + leaderboardSlug + ", for game," + gameSlug + ", reason: " + errorResponse.toString());
+                        Log.d(TAG, "Error creating leaderboard, " + leaderboardSlug + ", for game, " + gameSlug + ", reason: " + errorResponse.toString());
                     }
 
                     @Override
                     public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
                         super.onFailure(statusCode, headers, throwable, errorResponse);
-                        Log.d(TAG, "Error creating leaderboard, " + leaderboardSlug + ", for game," + gameSlug + ", reason: " + errorResponse.toString());
+                        Log.d(TAG, "Error creating leaderboard, " + leaderboardSlug + ", for game, " + gameSlug + ", reason: " + errorResponse.toString());
+                    }
+                });
+    }
+
+    public void getScores(final String gameSlug, final String leaderboardSlug) {
+        RequestParams requestParams = null;
+
+        GalaxyRestClient.get(
+                GalaxyRestClient.GAME_DIRECTORY + "/" + gameSlug +
+                        "/" + GalaxyRestClient.LEADERBOARD_DIRECTORY + "/" + leaderboardSlug +
+                        "/" + GalaxyRestClient.SCORES_DIRECTORY,
+                requestParams,
+                new JsonHttpResponseHandler() {
+                    @Override
+                    public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
+                        super.onSuccess(statusCode, headers, response);
+                        Log.d(TAG, "Scores for leaderboard, " + leaderboardSlug + ", retrieved with status code: " + statusCode);
+                        galaxyManagerListener.scoresFound(response);
+                    }
+
+                    @Override
+                    public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                        super.onFailure(statusCode, headers, responseString, throwable);
+                        Log.d(TAG, "Error retrieving scores for leaderboard, " + leaderboardSlug + ", for game, " + gameSlug + ", reason: " + responseString);
+                        galaxyManagerListener.scoresFound(null);
+                    }
+
+                    @Override
+                    public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                        super.onFailure(statusCode, headers, throwable, errorResponse);
+                        Log.d(TAG, "Error retrieving scores for leaderboard, " + leaderboardSlug + ", for game, " + gameSlug + ", reason: " + errorResponse.toString());
+                        galaxyManagerListener.scoresFound(null);
+                    }
+
+                    @Override
+                    public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
+                        super.onFailure(statusCode, headers, throwable, errorResponse);
+                        Log.d(TAG, "Error retrieving scores for leaderboard, " + leaderboardSlug + ", for game, " + gameSlug + ", reason: " + errorResponse.toString());
+                        galaxyManagerListener.scoresFound(null);
+                    }
+                });
+    }
+
+    public void setScore(Context context, final String gameSlug, final String leaderboardSlug, final String userName, final int newScore) {
+        JSONObject score = new JSONObject();
+        Header[] headers = null;
+
+        try {
+            score.put(GalaxyRestClient.KEY_SCORE_USER, userName);
+            score.put(GalaxyRestClient.KEY_SCORE_SCORE, newScore);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        HttpEntity scoreEntity = null;
+
+        try {
+            scoreEntity = new StringEntity(score.toString());
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+        GalaxyRestClient.post(
+                context,
+                GalaxyRestClient.GAME_DIRECTORY + "/" + gameSlug +
+                        "/" + GalaxyRestClient.LEADERBOARD_DIRECTORY + "/" + leaderboardSlug +
+                        "/" + GalaxyRestClient.SCORES_DIRECTORY,
+                headers,
+                scoreEntity,
+                "application/json",
+                new JsonHttpResponseHandler() {
+                    @Override
+                    public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                        // If the response is JSONObject instead of a JSONArray.
+                        Log.d(TAG, "Score for leaderboard, " + leaderboardSlug + ", for game, " + gameSlug + ", created with status code: " + statusCode);
+                    }
+
+                    @Override
+                    public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                        super.onFailure(statusCode, headers, responseString, throwable);
+                        Log.d(TAG, "Error creating score for leaderboard, " + leaderboardSlug + ", for game, " + gameSlug + ", reason: " + responseString);
+                    }
+
+                    @Override
+                    public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                        super.onFailure(statusCode, headers, throwable, errorResponse);
+                        Log.d(TAG, "Error creating score for leaderboard, " + leaderboardSlug + ", for game, " + gameSlug + ", reason: " + errorResponse.toString());
+                    }
+
+                    @Override
+                    public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
+                        super.onFailure(statusCode, headers, throwable, errorResponse);
+                        Log.d(TAG, "Error creating score for leaderboard, " + leaderboardSlug + ", for game, " + gameSlug + ", reason: " + errorResponse.toString());
                     }
                 });
     }

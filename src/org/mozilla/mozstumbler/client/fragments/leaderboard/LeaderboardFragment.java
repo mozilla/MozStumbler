@@ -12,6 +12,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Spinner;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.client.leaderboard.GalaxyManager;
@@ -24,6 +25,7 @@ public class LeaderboardFragment extends Fragment implements GalaxyManager.Galax
     private static final String TAG = LeaderboardFragment.class.getName();
 
     private GalaxyManager galaxyManager;
+    private JSONArray scores;
 
     private Spinner filterSpinner;
     private ImageView filterSpinnerArrow;
@@ -60,6 +62,7 @@ public class LeaderboardFragment extends Fragment implements GalaxyManager.Galax
         galaxyManager = new GalaxyManager(this);
         galaxyManager.getGame(GalaxyRestClient.GAME_SLUG);
         galaxyManager.getLeaderboard(GalaxyRestClient.GAME_SLUG, GalaxyRestClient.LEADERBOARD_SLUG);
+        galaxyManager.getScores(GalaxyRestClient.GAME_SLUG, GalaxyRestClient.LEADERBOARD_SLUG);
     }
 
     @Override
@@ -83,6 +86,15 @@ public class LeaderboardFragment extends Fragment implements GalaxyManager.Galax
                     GalaxyRestClient.LEADERBOARD_SLUG,
                     GalaxyRestClient.LEADERBOARD_NAME
             );
+        }
+    }
+
+    @Override
+    public void scoresFound(JSONArray scores) {
+        this.scores = scores;
+
+        if (this.scores != null) {
+            Log.d(TAG, "Scores found = " + scores.toString());
         }
     }
 

@@ -17,7 +17,9 @@ import org.osmdroid.tileprovider.MapTileProviderBasic;
 import org.osmdroid.tileprovider.ReusableBitmapDrawable;
 import org.osmdroid.tileprovider.tilesource.ITileSource;
 import org.osmdroid.tileprovider.tilesource.XYTileSource;
+import org.osmdroid.tileprovider.util.SimpleInvalidationHandler;
 import org.osmdroid.util.TileLooper;
+import org.osmdroid.views.MapView;
 import org.osmdroid.views.Projection;
 import org.osmdroid.views.overlay.TilesOverlay;
 
@@ -35,7 +37,7 @@ public class CoverageOverlay extends TilesOverlay {
     private final Set<MapTile> mDrawnSet = new HashSet<MapTile>();
     private Projection mProjection;
 
-    public CoverageOverlay(final Context aContext, final String coverageUrl) {
+    public CoverageOverlay(final Context aContext, final String coverageUrl, MapView mapView) {
         super(new MapTileProviderBasic(aContext), new DefaultResourceProxyImpl(aContext));
         final ITileSource coverageTileSource = new XYTileSource("Mozilla Location Service Coverage Map",
                 null,
@@ -43,6 +45,7 @@ public class CoverageOverlay extends TilesOverlay {
                 ".png",
                 new String[] { coverageUrl });
         this.setLoadingBackgroundColor(Color.TRANSPARENT);
+        mTileProvider.setTileRequestCompleteHandler(new SimpleInvalidationHandler(mapView));
         mTileProvider.setTileSource(coverageTileSource);
     }
 

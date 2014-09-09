@@ -13,3 +13,6 @@ local.properties
 
 # ignore vim swap files
 *.sw?
+
+# JAR releases
+libs/*.jar

@@ -24,12 +24,12 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import java.io.File;
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.Map;
 import org.mozilla.mozstumbler.BuildConfig;
 import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.client.cellscanner.DefaultCellScanner;
-import org.mozilla.mozstumbler.client.mapview.MapActivity;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageManager;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.GPSScanner;
@@ -44,7 +44,7 @@ public class MainApp extends Application {
     private ClientStumblerService mStumblerService;
     private ServiceConnection mConnection;
     private ServiceBroadcastReceiver mReceiver;
-    private IMainActivity mMainActivity;
+    private WeakReference<IMainActivity> mMainActivity = new WeakReference<IMainActivity>(null);
     private final long MAX_BYTES_DISK_STORAGE = 1000 * 1000 * 20; // 20MB for MozStumbler by default, is ok?
     private final int MAX_WEEKS_OLD_STORED = 4;
     public static final String INTENT_TURN_OFF = "org.mozilla.mozstumbler.turnMeOff";
@@ -59,7 +59,7 @@ public class MainApp extends Application {
     }
 
     public void setMainActivity(IMainActivity mainActivity) {
-        mMainActivity = mainActivity;
+        mMainActivity = new WeakReference<IMainActivity>(mainActivity);
     }
 
     @Override
@@ -110,11 +110,9 @@ public class MainApp extends Application {
                     }
                 }
 
-                MapActivity.createGpsTrackLocationReceiver(MainApp.this);
-
                 Log.d(LOG_TAG, "Service connected");
-                if (mMainActivity != null) {
-                    mMainActivity.updateUiOnMainThread();
+                if (mMainActivity.get() != null) {
+                    mMainActivity.get().updateUiOnMainThread();
                 }
             }
 
@@ -215,9 +213,9 @@ public class MainApp extends Application {
 
         private void receivedGpsMessage(Intent intent) {
             String subject = intent.getStringExtra(Intent.EXTRA_SUBJECT);
-            if (subject.equals(GPSScanner.SUBJECT_NEW_STATUS) && mMainActivity != null) {
-                mMainActivity.setGpsFixes(intent.getIntExtra(GPSScanner.NEW_STATUS_ARG_FIXES ,0));
-                mMainActivity.setGpsSats(intent.getIntExtra(GPSScanner.NEW_STATUS_ARG_SATS, 0));
+            if (subject.equals(GPSScanner.SUBJECT_NEW_STATUS) && mMainActivity.get() != null) {
+                mMainActivity.get().setGpsFixes(intent.getIntExtra(GPSScanner.NEW_STATUS_ARG_FIXES, 0));
+                mMainActivity.get().setGpsSats(intent.getIntExtra(GPSScanner.NEW_STATUS_ARG_SATS, 0));
             }
         }
 
@@ -245,8 +243,8 @@ public class MainApp extends Application {
                 receivedNmeaMessage(intent);
             }
 
-            if (mMainActivity != null) {
-                mMainActivity.updateUiOnMainThread();
+            if (mMainActivity.get() != null) {
+                mMainActivity.get().updateUiOnMainThread();
             }
         }
     }

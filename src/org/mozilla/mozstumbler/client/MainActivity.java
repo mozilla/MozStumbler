@@ -149,7 +149,7 @@ public final class MainActivity extends Activity implements TabBarFragment.OnTab
             technicalDataFragment = new TechnicalDataFragment();
             aboutFragment = new AboutFragment();
 
-            user = new User("Steamclock", Prefs.getInstance());
+            user = new User(Prefs.getInstance());
             user.setCoinRewardedListener(mapFragment);
 
             showTabBarFragment();

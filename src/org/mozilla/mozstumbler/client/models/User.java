@@ -29,8 +29,8 @@ public class User extends Player {
     private UserScoreUpdatedListener userScoreUpdatedListener;
     private CoinRewardedListener coinRewardedListener;
 
-    public User(String userName, Prefs prefs) {
-        super(userName, 0, 0);
+    public User(Prefs prefs) {
+        super(prefs.getNickname(), 0, 0);
 
         preferences = prefs;
 
@@ -53,6 +53,10 @@ public class User extends Player {
             rainbowCountToday = rainbowCount;
             playerPoints = totalPoints;
         }
+    }
+
+    public void setPlayerName(String newPlayerName) {
+        playerName = newPlayerName;
     }
 
     public void incrementStarScore() {

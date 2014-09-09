@@ -66,6 +66,8 @@ public class SettingsFragment extends PreferenceFragment {
             public boolean onPreferenceChange(Preference preference, Object o) {
                 sPrefs.setNickname(o.toString());
                 setNicknamePreferenceTitle(o.toString());
+
+                ((MainActivity)getActivity()).getUser().setPlayerName(o.toString());
                 return true;
             }
         });

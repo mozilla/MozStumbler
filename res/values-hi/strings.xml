@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <string name="app_name">मोज़स्टम्बलर</string>
     <string name="action_about">मोज़स्टम्बलर के बारे में</string>
     <string name="action_preferences">व्यवस्था पर्याय</string>
@@ -23,33 +22,26 @@
     <string name="last_upload_time">अंतिम विवरण भेजने का समय: %1$s</string>
     <string name="reports_sent">भेजे गए विवरण: %1$d</string>
     <string name="service_scanning">Wi -Fi एवं Cellular जाल खोज रहा है</string>
-
     <string name="enter_nickname">उपनाम डालें (वैकल्पिक)</string>
     <string name="enter_nickname_title">उपनाम: </string>
     <string name="enter_nickname_longtext">आपका उपनाम अग्रणी उपयोगकर्ता फलक पर दिखाया जायेगा</string>
-
     <string name="power_saving_mode">ऊर्जा बचत रीति</string>
     <string name="power_saving_mode_longtext">सक्षम होनेपर सिर्फ गतिमान होनेपर स्टम्बलिंग चालू रहेगा</string>
-
     <string name="update_title">मोज़स्टम्बलर संस्करण अद्यतन करें?</string>
     <string name="update_message">स्थापित संस्करण: %1$s\nनवीनतम संस्करण: %2$s</string>
     <string name="update_now">अभी अद्यतन करें</string>
     <string name="update_later">बादमें अद्यतन करें</string>
-
     <string name="location_not_found">स्थान नहीं मिला</string>
     <string name="location_lookup_error">स्थान खोजनेमे गलती</string>
-
     <string name="gps_alert_msg">GPS बंद है। सेटिंग में जाकर शुरू करें?</string>
     <string name="yes">हाँ</string>
     <string name="no">नहीं</string>
-
     <string name="about_version">संस्करण %1$s</string>
     <string name="about_openstreetmap">नक्शा दर्शक टाइल्स © OpenStreetMap योगदानकर्ता\nhttp://www.openstreetmap.org</string>
     <string name="about_mapbox_title">मैपबॉक्स</string>
     <string name="about_mapbox">हमारे नक्शा प्रदाता के बारेमे अधिक जानें…</string>
     <string name="about_more">अधिक…</string>
     <string name="about_legal_aosp">इस अनुप्रयोगमें इस्तेमाल की गयी कुछ आकृतियाँ अँड्रॉइड मुक्त स्रोत परियोजना द्वारा बनाई गयी और विभाजित की गयी है तथा क्रिएटीव कॉमन्स २.५ विशेष प्रयोग शर्त अनुसार इस्तेमाल कि गयी है.</string>
-
     <string name="upload_observations_sent_title">भेजें</string>
     <string name="upload_observations_last_upload_time_title">अंतिम अवलोकन भेजने का समय:</string>
     <string name="upload_observations_observations_sent_title">अवलोकन:</string>
@@ -61,7 +53,6 @@
     <string name="upload_observations_cells_queued_title">भ्रमणध्वनि कोशिकाएं:</string>
     <string name="upload_observations_button">भेजें</string>
     <string name="upload_observations_dialog_title">अवलोकन भेजें</string>
-
     <string name="detected_activity">दिख रही गतिविधि: %1$s</string>
     <string name="detected_activity_in_vehicle">चल रहा (वाहन में)</string>
     <string name="detected_activity_on_bicycle">चल रहा (सायकल पर)</string>
@@ -69,25 +60,15 @@
     <string name="detected_activity_still">स्थिर</string>
     <string name="detected_activity_tilting">तिरछा</string>
     <string name="detected_activity_unknown">अज्ञात</string>
-
     <string name="upload_wifi_only_title">केवल Wi-Fi पर अवलोकन भेजें</string>
     <string name="upload_wifi_only_summary">यह पर्याय आपका भ्रमणध्वनि जाल पर डेटा उपयोग काम करेगा.</string>
-
-    <string name="geofencing_off">भौगोलिक घेरा: बंद</string>
-    <string name="geofencing_explain">सर्वेक्षणके दौरान प्राप्त अगले वैध स्थानपर भौगोलिक घेरा स्थापित किया जायेगा.</string>
-    <string name="geofencing_desc">मोज़स्टम्बलर इस अक्षांश/रेखांश के १ कि.मी. दायरे में सर्वेक्षण बंद कर देगा.</string>
-    <string name="geofencing_on">भौगोलिक घेरा @ %1$.3f, %2$.3f</string>
-    <string name="geofencing_enable">यहाँ भौगोलिक घेरा स्थापित करें</string>
-
     <string name="wifi_scan_always_title">Wi-Fi हमेशा खोजें</string>
     <string name="wifi_scan_always_summary">Wi-Fi बंद होनेपर भी प्रवेश बिंदु खोजें</string>
-
     <string name="refresh_map">स्थान अद्यतन करेंं</string>
     <string name="title_activity_log">पंजी</string>
     <string name="action_settings">सेटिंग</string>
     <string name="action_view_log">पंजी देखें </string>
     <string name="scroll_to_start">शुरुआत में जाएं</string>
     <string name="scroll_to_end">अंत में जाएं</string>
-
     <string name="upload_observations_data_size">Size (KB):</string>
 </resources>

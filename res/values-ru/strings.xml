@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <string name="app_name">MozStumbler</string>
     <string name="action_about">О программе</string>
     <string name="action_preferences">Настройки</string>
@@ -23,26 +22,20 @@
     <string name="last_upload_time">Время последней отправки: %1$s</string>
     <string name="reports_sent">Отправлено измерений: %1$d</string>
     <string name="service_scanning">Сканирование Wi-Fi и сотовых сетей</string>
-
     <string name="enter_nickname">Укажите свой псевдоним (не обязательно)</string>
     <string name="enter_nickname_title">Псевдоним: </string>
     <string name="enter_nickname_longtext">Ваш псевдоним появится в таблице лидеров.</string>
-
     <string name="power_saving_mode">Режим экономии энергии</string>
     <string name="power_saving_mode_longtext">Когда включён, точки сохраняются только во время движения.</string>
-
     <string name="update_title">Загрузить обновление MozStumbler?</string>
     <string name="update_message">Установленная версия: %1$s\nПоследняя версия: %2$s</string>
     <string name="update_now">Обновить сейчас</string>
     <string name="update_later">Обновить позже</string>
-
     <string name="location_not_found">Местоположение не найдено</string>
     <string name="location_lookup_error">Ошибка поиска местоположения</string>
-
     <string name="gps_alert_msg">GPS отключен. Вы хотите перейти к настройкам и включить его?</string>
     <string name="yes">Да</string>
     <string name="no">Нет</string>
-
     <string name="about_version">Версия %1$s</string>
 	<!--translations missing
 	<string name="about_openstreetmap">Map view tiles © OpenStreetMap contributors\nhttp://www.openstreetmap.org</string>
@@ -50,7 +43,6 @@
     <string name="about_mapbox">Информация о картографическом провайдере…</string>
     <string name="about_more">О проекте…</string>
     <string name="about_legal_aosp">Некоторые изображения в этом приложении созданы и опубликованы под лицензией AOSP (Android Open Source Project) и используются в соответствии с условиями, описанными в лицензии Creative Commons 2.5</string>
-
     <string name="upload_observations_sent_title">Уже оправлено</string>
     <string name="upload_observations_last_upload_time_title">Время отправки:</string>
     <string name="upload_observations_observations_sent_title">Измерений:</string>
@@ -62,7 +54,6 @@
     <string name="upload_observations_cells_queued_title">GSM соты:</string>
     <string name="upload_observations_button">Отправить</string>
     <string name="upload_observations_dialog_title">Отправить измерения</string>
-
     <string name="detected_activity">Действие: %1$s</string>
     <string name="detected_activity_in_vehicle">Движение (автомобиль)</string>
     <string name="detected_activity_on_bicycle">Движение (велосипед)</string>
@@ -70,28 +61,17 @@
     <string name="detected_activity_still">Остановка</string>
     <string name="detected_activity_tilting">Отклонение</string>
     <string name="detected_activity_unknown">Не определено</string>
-
     <string name="upload_wifi_only_title">Передача данных только через Wi-Fi</string>
     <string name="upload_wifi_only_summary">Эта опция позволяет экономить мобильный трафик.</string>
-
-    <string name="geofencing_off">Геозона: выключена</string>
-    <string name="geofencing_explain">Установка геозоны произойдет при ближайшем допустимом местоположении в процессе сканирования.</string>
-    <string name="geofencing_desc">MozStumbler приостановит сканирование в радиусе 1 км от текущего местоположения.</string>
-    <string name="geofencing_on">Геозона @ %1$.3f, %2$.3f</string>
-    <string name="geofencing_enable">Установить геозону в текущем местоположении</string>
     <string name="upload_observations_data_size">Size (KB):</string>
-
     <!--translations missing
 	<string name="wifi_scan_always_title">Always scan Wi-Fi</string>
     <string name="wifi_scan_always_summary">Scan APs even when Wi-Fi is turned off</string>
-
     <string name="refresh_map">Refresh location</string>
 	
 	<string name="title_activity_log">Log</string>
-
     <string name="action_settings">Settings</string>
     <string name="action_view_log">View Log</string>
     <string name="scroll_to_start">Scroll to Top</string>
     <string name="scroll_to_end">Scroll to End</string>-->
-
 </resources>

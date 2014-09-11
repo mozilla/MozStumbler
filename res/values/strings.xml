@@ -77,4 +77,5 @@
     <string name="scroll_to_end">Scroll to End</string>
     <string name="upload_observations_data_size">Size (KB):</string>
     <string name="hardware_acceleration_title">Enable hardware acceleration</string>
+    <string name="keep_screen_on_title">Keep screen on while in map</string>
 </resources>

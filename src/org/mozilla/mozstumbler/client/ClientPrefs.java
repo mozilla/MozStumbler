@@ -11,6 +11,7 @@ public class ClientPrefs extends Prefs {
     private static final String LAT_PREF = "lat";
     private static final String LON_PREF = "lon";
     private static final String HARDWARE_ACCEL_PREF = "hardware_acceleration";
+    static final String KEEP_SCREEN_ON_PREF = "keep_screen_on";
 
     protected ClientPrefs(Context context) {
         super(context);
@@ -53,5 +54,13 @@ public class ClientPrefs extends Prefs {
 
     public void setIsHardwareAccelerated(boolean on) {
         setBoolPref(HARDWARE_ACCEL_PREF, on);
+    }
+
+    public boolean getKeepScreenOn() {
+        return getBoolPrefWithDefault(KEEP_SCREEN_ON_PREF, true);
+    }
+
+    public void setKeepScreenOn(boolean on) {
+        setBoolPref(KEEP_SCREEN_ON_PREF, on);
     }
 }

@@ -19,4 +19,8 @@
         android:key="hardware_acceleration"
         android:title="@string/hardware_acceleration_title"
         android:defaultValue="true" />
+    <CheckBoxPreference
+        android:key="keep_screen_on"
+        android:title="@string/keep_screen_on_title"
+        android:defaultValue="true" />
 </PreferenceScreen>

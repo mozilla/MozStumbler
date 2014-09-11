@@ -81,6 +81,10 @@ public final class MapActivity extends Activity {
                         WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED);
         }
 
+        if (ClientPrefs.getInstance().getKeepScreenOn()) {
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        }
+
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         setContentView(R.layout.activity_map);
 

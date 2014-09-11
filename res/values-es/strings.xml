@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <string name="app_name">MozStumbler</string>
     <string name="action_about">Acerca de MozStumbler</string>
     <string name="action_preferences">Configuración</string>
@@ -23,33 +22,26 @@
     <string name="last_upload_time">Último envío de datos: %1$s</string>
     <string name="reports_sent">Reportes enviados: %1$d</string>
     <string name="service_scanning">Escaneando redes wifi y móviles</string>
-
     <string name="enter_nickname">Ingresa tu apodo (opcional)</string>
     <string name="enter_nickname_title">Apodo: </string>
     <string name="enter_nickname_longtext">Tu apodo aparecerá en la tabla de posiciones.</string>
-
     <string name="power_saving_mode">Modo ahorro de batería</string>
     <string name="power_saving_mode_longtext">Cuando está activado, el escaneo solo ocurrirá cuando estés en movimiento.</string>
-
     <string name="update_title">¿Descargar la actualización de MozStumbler?</string>
     <string name="update_message">Versión instalada: %1$s\nÚltima versión: %2$s</string>
     <string name="update_now">Actualizar ahora</string>
     <string name="update_later">Actualizar más tarde</string>
-
     <string name="location_not_found">Ubicación no encontrada</string>
     <string name="location_lookup_error">Error en la búsqueda de ubicación</string>
-
     <string name="gps_alert_msg">El GPS está apagado. ¿Quieres ir a la configuración y encenderlo?</string>
     <string name="yes">Si</string>
     <string name="no">No</string>
-
     <string name="about_version">Versión %1$s</string>
     <string name="about_openstreetmap">Mosaico para construir los mapas © colaboradores de OpenStreetMap \nhttp://www.openstreetmap.org</string>
     <string name="about_mapbox_title">MapBox</string>
     <string name="about_mapbox">Aprenda más acerca de nuestro proveedor de cartografía…</string>
     <string name="about_more">Más…</string>
     <string name="about_legal_aosp">Algunos iconos en esta aplicación son reproducidos de trabajo creado y compartido por el Proyecto de código abierto de Android y se usa de acuerdo a los términos descritos en la Licencia 2.5 de Creative Commons.</string>
-
     <string name="upload_observations_sent_title">Enviado</string>
     <string name="upload_observations_last_upload_time_title">Última fecha de envío:</string>
     <string name="upload_observations_observations_sent_title">Observaciones:</string>
@@ -61,7 +53,6 @@
     <string name="upload_observations_cells_queued_title">Celdas móviles:</string>
     <string name="upload_observations_button">Subir</string>
     <string name="upload_observations_dialog_title">Subir observaciones</string>
-
     <string name="detected_activity">Actividad detectada: %1$s</string>
     <string name="detected_activity_in_vehicle">Moviéndose (en vehículo)</string>
     <string name="detected_activity_on_bicycle">Moviéndose (en bicicleta)</string>
@@ -69,19 +60,10 @@
     <string name="detected_activity_still">Quieto</string>
     <string name="detected_activity_tilting">Inclinado</string>
     <string name="detected_activity_unknown">Desconocido</string>
-
     <string name="upload_wifi_only_title">Subir sólo por wifi</string>
     <string name="upload_wifi_only_summary">Está opción reducirá tu consumo de datos de tu operador móvil.</string>
-
-    <string name="geofencing_off">Geo-valla: apagado</string>
-    <string name="geofencing_explain">Geo-valla será definida la próxima ubicación valida obtenida durante el escaneo.</string>
-    <string name="geofencing_desc">MozStumbler pausará el escaneo dentro de 1 km de está lat/long posición.</string>
-    <string name="geofencing_on">Geo-valla @ %1$.3f, %2$.3f</string>
-    <string name="geofencing_enable">Geo-valla está ubicación</string>
-
     <string name="wifi_scan_always_title">Escanear wifis siempre</string>
     <string name="wifi_scan_always_summary">Escanear Puntos de acceso incluso si el wifi está apagado</string>
-
     <string name="refresh_map">Recargar ubicación</string>
 	
     <string name="title_activity_log">Log</string>
@@ -90,5 +72,4 @@
     <string name="scroll_to_start">Ir al principio</string>
     <string name="scroll_to_end">Ir al final</string>
     <string name="upload_observations_data_size">Tamaño (KB):</string>
-
 </resources>

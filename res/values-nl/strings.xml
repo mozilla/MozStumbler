@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <string name="app_name">MozStumbler</string>
     <string name="action_about">Over MozStumbler</string>
     <string name="action_preferences">Instellingen</string>
@@ -23,26 +22,20 @@
     <string name="last_upload_time">Laatste upload om: %1$s</string>
     <string name="reports_sent">Verzonden rapportages: %1$d</string>
     <string name="service_scanning">Bezig met scannen van wifi en mobiele netwerken</string>
-
     <string name="enter_nickname">Alias (niet verplicht)</string>
     <string name="enter_nickname_title">Alias: </string>
     <string name="enter_nickname_longtext">Alias wordt gepubliceerd op het scorebord.</string>
-
     <string name="power_saving_mode">Energiebesparingsmodus</string>
     <string name="power_saving_mode_longtext">Wanneer deze modus aanstaat zal de app alleen werken wanneer u beweegt.</string>
-
     <string name="update_title">Download MozStumbler-update?</string>
     <string name="update_message">Geïnstalleerde versie: %1$s\nMeeste recente versie: %2$s</string>
     <string name="update_now">Nu updaten</string>
     <string name="update_later">Later updaten</string>
-
     <string name="location_not_found">Locatie niet gevonden</string>
     <!--<string name="location_lookup_error">Location lookup error</string> translation missing-->
-
     <string name="gps_alert_msg">GPS staat uit. Aanzetten in de instellingen?</string>
     <string name="yes">Ja</string>
     <string name="no">Nee</string>
-
     <string name="about_version">Versie %1$s</string>
 	<!--translations missing
 	<string name="about_openstreetmap">Map view tiles © OpenStreetMap contributors\nhttp://www.openstreetmap.org</string>
@@ -50,7 +43,6 @@
     <string name="about_mapbox">Ontdek meer over mapbox…</string>
     <string name="about_more">Meer…</string>
     <string name="about_legal_aosp">Sommige iconografie in deze app is overgenomen uit het werk gemaakt en gedeeld door het Android Open Source Project en gebruikt volgens de voorwaarden zoals beschreven in de Creative Commons Attribution 2.5 License.</string>
-
     <!-- translations missing
     <string name="upload_observations_sent_title">Inviati</string>
     <string name="upload_observations_last_upload_time_title">Ultimo invio dati:</string>
@@ -63,7 +55,6 @@
     <string name="upload_observations_cells_queued_title">Celle:</string>
     <string name="upload_observations_button">Invia</string>
     <string name="upload_observations_dialog_title">Invia osservazioni</string>-->
-
     <string name="detected_activity">Gedetecteerde activiteit: %1$s</string>
     <string name="detected_activity_in_vehicle">In beweging (in een voertuig)</string>
     <string name="detected_activity_on_bicycle">In beweging (op een fiets)</string>
@@ -71,28 +62,17 @@
     <string name="detected_activity_still">Stilstaand</string>
     <string name="detected_activity_tilting">Kantelend</string>
     <string name="detected_activity_unknown">Onbekend</string>
-
     <string name="upload_wifi_only_title">Upload alleen over een wifiverbinding</string>
     <string name="upload_wifi_only_summary">Deze optie zal uw mobiel dataverbruik verminderen.</string>
-
-    <string name="geofencing_off">Geofencing: uit</string>
-    <string name="geofencing_explain">Geofencing-locatie zal worden vastgesteld op de volgende geldige locatie verkregen tijdens het scannen.</string>
-    <string name="geofencing_desc">MozStumbler zal het scannen binnen 1 km rondom deze positie pauzeren.</string>
-    <string name="geofencing_on">Geofencing @ %1$.3f, %2$.3f</string>
-    <string name="geofencing_enable">Geofence deze lokatie</string>
     <string name="upload_observations_data_size">Size (KB):</string>
-
     <!--translations missing
 	<string name="wifi_scan_always_title">Always scan Wi-Fi</string>
     <string name="wifi_scan_always_summary">Scan APs even when Wi-Fi is turned off</string>
-
     <string name="refresh_map">Refresh location</string>
 	
 	<string name="title_activity_log">Log</string>
-
     <string name="action_settings">Settings</string>
     <string name="action_view_log">View Log</string>
     <string name="scroll_to_start">Scroll to Top</string>
     <string name="scroll_to_end">Scroll to End</string>-->
-
 </resources>

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <string name="app_name">MozStumbler</string>
     <string name="action_about">Tietoja</string>
     <string name="action_preferences">Asetukset</string>
@@ -23,33 +22,26 @@
     <string name="last_upload_time">Viimeisin lähetysaika: %1$s</string>
     <string name="reports_sent">Raportteja lähetetty: %1$d</string>
     <string name="service_scanning">Skannataan Wi-Fi-tukiasemia ja verkkomastoja</string>
-
     <string name="enter_nickname">Valitse nimimerkki (ei pakollinen)</string>
     <string name="enter_nickname_title">Nimimerkki: </string>
     <string name="enter_nickname_longtext">Nimimerkkisi näytetään pistetilastossa.</string>
-
     <string name="power_saving_mode">Virransäästötila</string>
     <string name="power_saving_mode_longtext">Tässä tilassa tietoja kerätään vain kun liikut.</string>
-
     <string name="update_title">Lataa MozStumblerin päivitys?</string>
     <string name="update_message">Asennettu versio: %1$s\nUusin versio: %2$s</string>
     <string name="update_now">Päivitä nyt</string>
     <string name="update_later">Päivitä myöhemmin</string>
-
     <string name="location_not_found">Sijaintia ei löytynyt</string>
     <string name="location_lookup_error">Virhe sijainnin haussa</string>
-
     <string name="gps_alert_msg">GPS on pois päältä. Haluatko mennä asetuksiin laittamaan sen päälle?</string>
     <string name="yes">Kyllä</string>
     <string name="no">Ei</string>
-
     <string name="about_version">Versio %1$s</string>
     <string name="about_openstreetmap">Karttanäkymä © OpenStreetMapin osallistujat\nhttp://www.openstreetmap.org</string>
     <string name="about_mapbox_title">Kartta</string>
     <string name="about_mapbox">Lisätietoja karttapalvelusta…</string>
     <string name="about_more">Lisätietoja…</string>
     <string name="about_legal_aosp">Tämä sovellus sisältää ikoneita Android Open Source -projektista. Käytössä olevat ikonit on lisensoitu Creative Commons 2.5 Attribution -lisenssillä.</string>
-
     <string name="upload_observations_sent_title">Lähetetty</string>
     <string name="upload_observations_last_upload_time_title">Edellisen lähetyksen aika:</string>
     <string name="upload_observations_observations_sent_title">Tietoja:</string>
@@ -69,26 +61,16 @@
     <string name="detected_activity_still">Paikallaan</string>
     <string name="detected_activity_tilting">Kädessä</string>
     <string name="detected_activity_unknown">Tuntematon</string>
-
     <string name="upload_wifi_only_title">Lähetä vain Wi-Fi:n yli</string>
     <string name="upload_wifi_only_summary">Tämä asetus vähentää datan käyttöä matkapuhelinverkon yli</string>
-
-    <string name="geofencing_off">Sijainnin mukaan rajaus: pois</string>
-    <string name="geofencing_explain">Sijainti otetaan seuraavasta skannauksessa saadusta GPS-paikasta.</string>
-    <string name="geofencing_desc">MozStumbler ei skannaa yhden kilometrin säteellä tästä sijainnista.</string>
-    <string name="geofencing_on">Rajattu pois @ %1$.3f, %2$.3f</string>
-    <string name="geofencing_enable">Rajaa pois tämä sijainti</string>
     
     <string name="wifi_scan_always_title">Skannaa aina Wi-Fiä</string>
     <string name="wifi_scan_always_summary">Skannaa Wi-Fiä vaikka Wi-Fi olisi pois päältä</string>
-
     <string name="refresh_map">Päivitä sijainti</string>
     <string name="title_activity_log">Loki</string>
     <string name="action_settings">Asetukset</string>
     <string name="action_view_log">Näytä loki</string>
     <string name="scroll_to_start">Siirry alkuun</string>
     <string name="scroll_to_end">Siirry loppuun</string>
-
     <string name="upload_observations_data_size">Size (KB):</string>
-
 </resources>

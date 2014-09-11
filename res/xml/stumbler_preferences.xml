@@ -1,34 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     android:key="preferences">
-
     <EditTextPreference
         android:key="nickname"
         android:title="@string/enter_nickname"
         android:summary="@string/enter_nickname_longtext" />
-
     <CheckBoxPreference
         android:key="wifi_only"
         android:title="@string/upload_wifi_only_title"
         android:summary="@string/upload_wifi_only_summary"
         android:defaultValue="true" />
-
-    <CheckBoxPreference
-        android:key="geofence_switch"
-        android:title="@string/geofencing_off"
-        android:defaultValue="false" />
-
-    <Preference
-        android:key="geofence_here"
-        android:title="@string/geofencing_enable"
-        android:summary="@string/geofencing_desc" />
-
     <CheckBoxPreference
         android:key="wifi_scan_always"
         android:title="@string/wifi_scan_always_title"
         android:summary="@string/wifi_scan_always_summary"
         android:defaultValue="false" />
-
     <CheckBoxPreference
         android:key="hardware_acceleration"
         android:title="@string/hardware_acceleration_title"

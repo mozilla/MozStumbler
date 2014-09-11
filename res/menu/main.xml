@@ -28,5 +28,4 @@
         android:icon="@drawable/ic_action_about"
         android:showAsAction="ifRoom"
         android:title="@string/action_about"/>
-
 </menu>

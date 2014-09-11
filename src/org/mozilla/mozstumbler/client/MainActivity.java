@@ -52,7 +52,6 @@ public final class MainActivity extends FragmentActivity
 
     int                      mGpsFixes;
     int                      mGpsSats;
-    private boolean          mGeofenceHere = false;
 
 
     public synchronized void setGpsFixes(int fixes) {
@@ -104,12 +103,6 @@ public final class MainActivity extends FragmentActivity
     @Override
     protected void onResume() {
         super.onResume();
-
-        mGeofenceHere = getApp().getPrefs().getGeofenceHere();
-        if (mGeofenceHere) {
-            getApp().getPrefs().setGeofenceEnabled(false);
-        }
-        setGeofenceText();
 
         updateUiOnMainThread();
     }
@@ -192,7 +185,6 @@ public final class MainActivity extends FragmentActivity
         int visibleAPs = 0;
         int cellInfoScanned = 0;
         int currentCellInfo = 0;
-        boolean isGeofenced = false;
 
         locationsScanned = service.getLocationCount();
         Location location = service.getLocation();
@@ -203,7 +195,6 @@ public final class MainActivity extends FragmentActivity
         visibleAPs = service.getVisibleAPCount();
         cellInfoScanned = service.getCellInfoCount();
         currentCellInfo = service.getCurrentCellInfoCount();
-        isGeofenced = service.isGeofenced();
 
         String lastLocationString = (this.getGpsFixes() > 0 && locationsScanned > 0)?
                                     formatLocation(latitude, longitude) : "-";
@@ -215,21 +206,6 @@ public final class MainActivity extends FragmentActivity
         formatTextView(R.id.cells_visible, R.string.cells_visible, currentCellInfo);
         formatTextView(R.id.cells_scanned, R.string.cells_scanned, cellInfoScanned);
         formatTextView(R.id.locations_scanned, R.string.locations_scanned, locationsScanned);
-        service.checkPrefs();
-        if (mGeofenceHere) {
-            if (this.getGpsFixes() > 0 && locationsScanned > 0) {
-                Location coord = new Location(AppGlobals.LOCATION_ORIGIN_INTERNAL);
-                coord.setLatitude(latitude);
-                coord.setLongitude(longitude);
-                service.getPrefs().setGeofenceLocation(coord);
-                service.getPrefs().setGeofenceEnabled(true);
-                service.getPrefs().setGeofenceHere(false);
-                mGeofenceHere = false;
-                setGeofenceText();
-            }
-        }
-        TextView geofence_tv = (TextView) findViewById(R.id.geofence_status);
-        geofence_tv.setTextColor(isGeofenced ? Color.RED : Color.BLACK);
         showUploadStats();
    }
 
@@ -320,16 +296,6 @@ public final class MainActivity extends FragmentActivity
     private String formatLocation(double latitude, double longitude) {
         final String coordinateFormatString = getResources().getString(R.string.coordinate);
         return String.format(coordinateFormatString, latitude, longitude);
-    }
-
-    private void setGeofenceText() {
-        if (getApp().getPrefs().getGeofenceEnabled()) {
-            Location coord = getApp().getPrefs().getGeofenceLocation();
-            formatTextView(R.id.geofence_status, R.string.geofencing_on,
-                    coord.getLatitude(), coord.getLongitude());
-        } else {
-            formatTextView(R.id.geofence_status, R.string.geofencing_off);
-        }
     }
 
     public void showUploadStats() {

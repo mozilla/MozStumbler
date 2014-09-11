@@ -101,11 +101,17 @@ public class CellScanner {
                 ArrayList<CellInfo> cells = (sTestingModeCellInfoArray != null)? sTestingModeCellInfoArray :
                         new ArrayList<CellInfo>(getImplementation().getCellInfo());
 
-                mCurrentCellInfoCount = cells.size();
+                mCurrentCellInfoCount = 0;
                 if (cells.isEmpty()) {
                     return;
                 }
-                for (CellInfo cell: cells) mCells.add(cell.getCellIdentity());
+
+                final Set<String> currUniqueCells = new HashSet<String>();
+                for (CellInfo cell : cells) {
+                    currUniqueCells.add(cell.getCellIdentity());
+                    mCells.add(cell.getCellIdentity());
+                }
+                mCurrentCellInfoCount = currUniqueCells.size();
 
                 Intent intent = new Intent(ACTION_CELLS_SCANNED);
                 intent.putParcelableArrayListExtra(ACTION_CELLS_SCANNED_ARG_CELLS, cells);

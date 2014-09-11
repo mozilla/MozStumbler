@@ -7,6 +7,8 @@ package org.mozilla.mozstumbler.service.stumblerthread;
 import android.content.Context;
 import android.content.Intent;
 
+import org.json.JSONObject;
+
 /**
  * This is the public interface for the Reporter class.  
  * All methods here are properly synchronized as the reporter
@@ -30,7 +32,10 @@ public interface IReporter {
      */
 
     public void startup(Context context);
+
     public void shutdown();
+
     public void flush();
 
+    public JSONObject getPreviousBundleJSON();
 }

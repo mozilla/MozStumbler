@@ -116,6 +116,7 @@ public final class MainActivity extends FragmentActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
 
         if (BuildConfig.MOZILLA_API_KEY != null) {
@@ -157,7 +158,7 @@ public final class MainActivity extends FragmentActivity
     }
 
     public void updateUiOnMainThread() {
-        this.runOnUiThread(new Runnable() {
+        runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 updateUI();
@@ -212,13 +213,12 @@ public final class MainActivity extends FragmentActivity
     public void onToggleScanningClicked(View v) {
         getApp().toggleScanning(this);
 
-
         StumblerService service = getApp().getService();
         if (service == null) {
             return;
         }
 
-        this.updateUiOnMainThread();
+        updateUiOnMainThread();
 
     }
 
@@ -247,7 +247,7 @@ public final class MainActivity extends FragmentActivity
                 startActivity(openLeaderboard);
                 return true;
             case R.id.action_view_map:
-                Intent intent = new Intent(this, MapActivity.class);
+                Intent intent = new Intent(this.getApplicationContext(), MapActivity.class);
                 startActivity(intent);
                 return true;
             case R.id.action_view_log:

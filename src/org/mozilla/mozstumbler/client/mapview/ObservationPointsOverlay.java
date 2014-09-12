@@ -17,8 +17,6 @@ import java.lang.ref.WeakReference;
 import java.util.LinkedList;
 
 class ObservationPointsOverlay extends Overlay {
-   // private Paint mCircleFillPaint = new Paint();
-    //private Paint mCircleStrokePaint = new Paint();
     private final Paint mRedPaint = new Paint();
     private final Paint mGreenPaint = new Paint();
     private final Paint mBlackStrokePaint = new Paint();
@@ -65,14 +63,6 @@ class ObservationPointsOverlay extends Overlay {
     private void drawDot(Canvas c, Point p, float radiusInnerRing, Paint fillPaint, Paint strokePaint) {
         c.drawCircle(p.x, p.y, radiusInnerRing, fillPaint);
         c.drawCircle(p.x, p.y, radiusInnerRing, strokePaint);
-    }
-
-    private void drawX(Canvas c, Point mls, Point gps) {
-        int s = mConvertPx.pxToDp(6);
-        c.drawLine(mls.x - s , mls.y - s , mls.x + s, mls.y + s, mBlackLinePaint);
-        c.drawLine(mls.x + s, mls.y - s, mls.x - s, mls.y + s, mBlackLinePaint);
-        mBlackLinePaint.setStrokeWidth(mConvertPx.pxToDp(1));
-        c.drawLine(gps.x, gps.y, mls.x, mls.y, mBlackLinePaint);
     }
 
     protected void draw(Canvas c, MapView osmv, boolean shadow) {

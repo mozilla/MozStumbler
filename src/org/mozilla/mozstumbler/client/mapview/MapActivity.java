@@ -140,7 +140,7 @@ public final class MapActivity extends Activity {
         mMap.getController().setZoom(zoom);
         mMap.getController().setCenter(loc);
 
-        new Handler().postDelayed(new Runnable() {
+        mMap.post(new Runnable() {
             @Override
             public void run() {
                 // https://github.com/osmdroid/osmdroid/issues/22
@@ -151,7 +151,7 @@ public final class MapActivity extends Activity {
                 mMap.getController().setZoom(zoom);
                 mMap.getController().setCenter(loc);
             }
-        }, 300);
+        });
 
         Log.d(LOG_TAG, "onCreate");
 

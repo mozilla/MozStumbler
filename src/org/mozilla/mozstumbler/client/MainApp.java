@@ -141,12 +141,12 @@ public class MainApp extends Application {
         Log.d(LOG_TAG, "onTerminate");
     }
 
-    private void startScanning() {
+    public void startScanning() {
         mStumblerService.startForeground(NOTIFICATION_ID, buildNotification());
         mStumblerService.startScanning();
     }
 
-    private void stopScanning() {
+    public void stopScanning() {
         mStumblerService.stopForeground(true);
         mStumblerService.stopScanning();
 

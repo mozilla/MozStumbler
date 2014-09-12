@@ -5,6 +5,9 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:0.12.+'
+
+        // Gradle download task is from: https://github.com/michel-kraemer/gradle-download-task
+        classpath 'de.undercouch:gradle-download-task:1.0'
     }
 }
 
@@ -15,12 +18,25 @@ repositories {
     mavenCentral()
 }
 
+
+import de.undercouch.gradle.tasks.download.Download
+
+def libDir = new File("libs")
+libDir.mkdirs()
+
+task updateJars(type: Download) {
+    src([
+        'https://github.com/mozilla/osmdroid/releases/download/4.3pre0/osmdroid-android-4.3-SNAPSHOT.jar'
+    ])
+    dest libDir
+}
+
 android {
     compileSdkVersion 19
     buildToolsVersion '19.1.0'
 
     dependencies {
-        compile "org.osmdroid:osmdroid-android:4.2"
+        compile files('libs/osmdroid-android-4.3-SNAPSHOT.jar')
         compile 'org.slf4j:slf4j-android:1.7.7'
         compile "com.android.support:support-v4:19.1.+"
     }
@@ -62,6 +78,12 @@ android {
         abortOnError true
         disable 'MissingTranslation'
     }
+}
+
+// Declare dependency between building the android app and grabbing the
+// JAR files.  I hate you gradle and your crappy DSL.
+project.afterEvaluate{
+    prepareDebugDependencies.dependsOn("updateJars")
 }
 
 tasks.withType(JavaCompile) {

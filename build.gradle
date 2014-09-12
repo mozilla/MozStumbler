@@ -21,7 +21,8 @@ repositories {
 
 import de.undercouch.gradle.tasks.download.Download
 
-def libDir = "libs"
+def libDir = new File("libs")
+libDir.mkdirs()
 
 task updateJars(type: Download) {
     src([

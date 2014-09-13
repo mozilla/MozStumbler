@@ -9,6 +9,8 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
+import android.os.SystemClock;
+
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.Projection;
 import org.osmdroid.views.overlay.Overlay;
@@ -27,6 +29,9 @@ class ObservationPointsOverlay extends Overlay {
     private final WeakReference<MapView> mMapView;
 
     private LinkedList<ObservationPoint> mPoints = new LinkedList<ObservationPoint>();
+
+    private static final long DRAW_TIME_MILLIS = 150; // Abort drawing after 150 ms
+    private static final int TIME_CHECK_MULTIPLE = 10; // Check the time after drawing 10 points
 
     ObservationPointsOverlay(Context ctx, MapView mapView) {
         super(ctx);
@@ -66,6 +71,8 @@ class ObservationPointsOverlay extends Overlay {
     }
 
     protected void draw(Canvas c, MapView osmv, boolean shadow) {
+        final long endTime = SystemClock.uptimeMillis() + DRAW_TIME_MILLIS;
+
         mIsDirty = false;
 
         if (shadow || mPoints.size() < 1) {
@@ -75,9 +82,14 @@ class ObservationPointsOverlay extends Overlay {
         final Projection pj = osmv.getProjection();
         final float radiusInnerRing = mConvertPx.pxToDp(3);
 
+        int count = 0;
         for (ObservationPoint point : mPoints) {
             final Point gps = pj.toPixels(point.pointGPS, null);
             drawDot(c, gps, radiusInnerRing, mGreenPaint ,mBlackStrokePaint);
+
+            if ((++count % TIME_CHECK_MULTIPLE == 0) && (SystemClock.uptimeMillis() > endTime)) {
+                break;
+            }
         }
 
         // Draw as a 2nd layer over the observation points
@@ -87,6 +99,10 @@ class ObservationPointsOverlay extends Overlay {
                 final Point mls = pj.toPixels(point.pointMLS, null);
                 drawDot(c, mls, radiusInnerRing - 1, mRedPaint, mBlackStrokePaintThin);
                 c.drawLine(gps.x, gps.y, mls.x, mls.y, mBlackLinePaint);
+            }
+
+            if ((++count % TIME_CHECK_MULTIPLE == 0) && (SystemClock.uptimeMillis() > endTime)) {
+                break;
             }
         }
     }

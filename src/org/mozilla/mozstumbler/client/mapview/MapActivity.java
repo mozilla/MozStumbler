@@ -183,11 +183,11 @@ public final class MapActivity extends Activity {
             mMap.getOverlays().add(mCoverageTilesOverlay);
         }
 
-        mAccuracyOverlay = new AccuracyCircleOverlay(this.getApplicationContext(), sGPSColor);
-        mMap.getOverlays().add(mAccuracyOverlay);
-
         mObservationPointsOverlay = new ObservationPointsOverlay(this, mMap);
         mMap.getOverlays().add(mObservationPointsOverlay);
+
+        mAccuracyOverlay = new AccuracyCircleOverlay(this.getApplicationContext(), sGPSColor);
+        mMap.getOverlays().add(mAccuracyOverlay);
 
         ObservedLocationsReceiver r = ObservedLocationsReceiver.getInstance(this);
         for (ObservationPoint p : r.getPoints()) {

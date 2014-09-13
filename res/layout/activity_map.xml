@@ -93,4 +93,13 @@
         android:layout_toEndOf="@+id/space"
 
        />
+    <TextView
+        android:id="@+id/copyright_area"
+        android:textColor="@android:color/darker_gray"
+        android:gravity="right"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/space"
+        android:layout_alignParentRight="true"
+        android:padding="5dp" />
 </RelativeLayout>

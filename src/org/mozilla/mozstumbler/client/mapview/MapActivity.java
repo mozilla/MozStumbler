@@ -91,6 +91,7 @@ public final class MapActivity extends Activity {
                 if (mAccuracyOverlay == null || mAccuracyOverlay.getLocation() == null)
                     return;
                 mMap.getController().animateTo((mAccuracyOverlay.getLocation()));
+                mUserPanning = false;
             }
         });
 
@@ -242,6 +243,8 @@ public final class MapActivity extends Activity {
             mFirstLocationFix = false;
             mMap.getController().setCenter(new GeoPoint(location));
             mUserPanning = false;
+        } else if (!mUserPanning) {
+            mMap.getController().animateTo((mAccuracyOverlay.getLocation()));
         }
 
         formatTextView(R.id.latitude_text, "%1$.4f", location.getLatitude());

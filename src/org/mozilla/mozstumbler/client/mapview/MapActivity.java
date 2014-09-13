@@ -111,7 +111,9 @@ public final class MapActivity extends Activity {
         });
 
         mMap = (MapView) this.findViewById(R.id.map);
-        mMap.setTileSource(getTileSource());
+        final OnlineTileSourceBase tileSource = getTileSource();
+        showCopyright(tileSource);
+        mMap.setTileSource(tileSource);
         mMap.setBuiltInZoomControls(true);
         mMap.setMultiTouchControls(true);
 
@@ -259,6 +261,13 @@ public final class MapActivity extends Activity {
                                 1, 20, 256,
                                 ".png",
                                 new String[] { BuildConfig.TILE_SERVER_URL });
+    }
+
+    private void showCopyright(OnlineTileSourceBase tileSource) {
+        if (TileSourceFactory.MAPQUESTOSM.equals(tileSource)) {
+            TextView copyrightArea = (TextView) findViewById(R.id.copyright_area);
+            copyrightArea.setText("Tiles Courtesy of MapQuest\n© OpenStreetMap contributors");
+        }
     }
 
     void setUserPositionAt(Location location) {

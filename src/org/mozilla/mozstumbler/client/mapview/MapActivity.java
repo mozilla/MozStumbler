@@ -54,6 +54,7 @@ public final class MapActivity extends Activity {
     private static String sCoverageUrl = null;
     private static int sGPSColor;
     private static final int MENU_REFRESH = 1;
+    private static final int MENU_START_STOP = 2;
     private static final String ZOOM_KEY = "zoom";
     private static final int DEFAULT_ZOOM = 8;
     private static final int DEFAULT_ZOOM_AFTER_FIX = 16;
@@ -204,7 +205,34 @@ public final class MapActivity extends Activity {
         if (Build.VERSION.SDK_INT >= 11) {
             item.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
         }
+        MenuItem startStop = menu.add(Menu.NONE, MENU_START_STOP, Menu.NONE, R.string.start_scanning);
+        if (Build.VERSION.SDK_INT >= 11) {
+            startStop.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+        }
+        boolean isScanning = ((MainApp) getApplication()).getService().isScanning();
+        setStartStopMenuState(startStop, isScanning);
         return true;
+    }
+
+    private void setStartStopMenuState(MenuItem menuItem, boolean scanning) {
+        if (scanning) {
+            menuItem.setIcon(android.R.drawable.ic_media_pause);
+            menuItem.setTitle(R.string.stop_scanning);
+        } else {
+            menuItem.setIcon(android.R.drawable.ic_media_play);
+            menuItem.setTitle(R.string.start_scanning);
+        }
+    }
+
+    private void toggleScanning(MenuItem menuItem) {
+        MainApp app = ((MainApp) getApplication());
+        boolean isScanning = app.getService().isScanning();
+        if (isScanning) {
+            app.stopScanning();
+        } else {
+            app.startScanning();
+        }
+        setStartStopMenuState(menuItem, !isScanning);
     }
 
     @Override
@@ -212,6 +240,9 @@ public final class MapActivity extends Activity {
         switch (item.getItemId()) {
             case MENU_REFRESH:
                 mUserPanning = false;
+                return true;
+            case MENU_START_STOP:
+                toggleScanning(item);
                 return true;
             default:
                 return false;
@@ -301,9 +332,6 @@ public final class MapActivity extends Activity {
 
         mGPSListener = new GPSListener(this);
         ObservedLocationsReceiver.getInstance(this);
-
-        Intent i = new Intent(MainActivity.ACTION_UI_UNPAUSE_SCANNING);
-        LocalBroadcastManager.getInstance(this).sendBroadcast(i);
 
         Log.d(LOG_TAG, "onStart");
     }

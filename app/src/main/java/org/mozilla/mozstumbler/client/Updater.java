@@ -30,10 +30,11 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.List;
 
+import org.mozilla.mozstumbler.BuildConfig;
 import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.service.AppGlobals;
 
-final class Updater {
+public final class Updater {
     private static final String LOG_TAG = AppGlobals.LOG_PREFIX + Updater.class.getSimpleName();
     private static final String VERSION_URL = "https://raw.github.com/mozilla/MozStumbler/master/VERSION";
     private static final String APK_URL_FORMAT = "https://github.com/mozilla/MozStumbler/releases/download/v%s/MozStumbler-v%s.apk";
@@ -41,7 +42,11 @@ final class Updater {
     private Updater() {
     }
 
-    public static void checkForUpdates(final Activity activity) {
+    public static boolean checkForUpdates(final Activity activity) {
+        if (BuildConfig.MOZILLA_API_KEY == null) {
+            return false;
+        }
+
         new AsyncTask<Void, Void, String>() {
             @Override
             public String doInBackground(Void... params) {
@@ -76,16 +81,20 @@ final class Updater {
 
             @Override
             public void onPostExecute(String latestVersion) {
-                String installedVersion = PackageUtils.getAppVersion(activity);
+                String installedVersion = PackageUtils.getAppVersion((Context)activity);
 
                 Log.d(LOG_TAG, "Installed version: " + installedVersion);
                 Log.d(LOG_TAG, "Latest version: " + latestVersion);
 
+                // TODO: the check for isFinishing is the only reason we need to pass in an activity instead of just
+                // a raw Context object. We should be able to clean this up, or at least test this behavior.
                 if (isVersionGreaterThan(latestVersion, installedVersion) && !activity.isFinishing()) {
-                    showUpdateDialog(activity, installedVersion, latestVersion);
+                    showUpdateDialog((Context)activity, installedVersion, latestVersion);
                 }
             }
         }.execute();
+
+        return true;
     }
 
     private static boolean isVersionGreaterThan(String a, String b) {

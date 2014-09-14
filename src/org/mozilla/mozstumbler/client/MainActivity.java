@@ -32,6 +32,7 @@ import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageMa
 import org.mozilla.mozstumbler.client.mapview.MapActivity;
 import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.WifiScanner;
+import org.mozilla.mozstumbler.service.utils.NetworkUtils;
 
 import java.io.IOException;
 import java.util.Properties;
@@ -119,7 +120,8 @@ public final class MainActivity extends FragmentActivity
 
         setContentView(R.layout.activity_main);
 
-        if (BuildConfig.MOZILLA_API_KEY != null) {
+        if (BuildConfig.MOZILLA_API_KEY != null &&
+            (NetworkUtils.getInstance().isWifiAvailable() || !ClientPrefs.getInstance().getUseWifiOnly())) {
             Updater.checkForUpdates(this);
         }
 

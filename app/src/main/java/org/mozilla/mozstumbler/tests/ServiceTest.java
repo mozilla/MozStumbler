@@ -178,6 +178,7 @@ public class ServiceTest extends ServiceTestCase<StumblerService> implements Asy
         signal.countDown();
     }
 
+    /*
     public void testPassiveService() {
         WifiScanner.sIsTestMode = true;
         ScanManager scanManager = null;
@@ -238,4 +239,5 @@ public class ServiceTest extends ServiceTestCase<StumblerService> implements Asy
 
         Log.d(AppGlobals.appName, "•••••••••••••••••••• done passive scan test •••••••••••••••");
     }
+    */
 }

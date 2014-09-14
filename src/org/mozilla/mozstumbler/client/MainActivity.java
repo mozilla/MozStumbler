@@ -24,6 +24,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.TextView;
+
 import org.mozilla.mozstumbler.BuildConfig;
 import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.client.mapview.MapActivity;
@@ -48,12 +49,10 @@ public final class MainActivity extends FragmentActivity
     public static final String ACTION_UI_UNPAUSE_SCANNING = ACTION_BASE + "UNPAUSE_SCANNING";
     public static final String ACTION_UI_PAUSE_SCANNING = ACTION_BASE + "PAUSE_SCANNING";
 
-
     private static final String LEADERBOARD_URL = "https://location.services.mozilla.com/leaders";
 
     int                      mGpsFixes;
     int                      mGpsSats;
-
 
     public synchronized void setGpsFixes(int fixes) {
         mGpsFixes = fixes;
@@ -89,7 +88,6 @@ public final class MainActivity extends FragmentActivity
             }
         }
     };
-
 
     private MainApp getApp() {
         return (MainApp) this.getApplication();
@@ -318,6 +316,4 @@ public final class MainActivity extends FragmentActivity
             Log.e(LOG_TAG, "Exception in showUploadStats()", ex);
         }
     }
-
-
 }

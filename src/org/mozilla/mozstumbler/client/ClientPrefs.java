@@ -7,7 +7,7 @@ import org.osmdroid.api.IGeoPoint;
 import org.osmdroid.util.GeoPoint;
 
 public class ClientPrefs extends Prefs {
-    private static final String LOG_TAG = ClientPrefs.class.getName();
+    private static final String LOG_TAG = ClientPrefs.class.getSimpleName();
     private static final String LAT_PREF = "lat";
     private static final String LON_PREF = "lon";
     private static final String HARDWARE_ACCEL_PREF = "hardware_acceleration";

@@ -94,6 +94,9 @@
         <receiver android:name=".service.uploadthread.UploadAlarmReceiver" />
         <service android:name=".service.uploadthread.UploadAlarmReceiver$UploadAlarmService" />
 
+        <!-- Used only by the passive service broadcast receiver -->
+        <receiver android:name=".service.mainthread.DelayedStartAlarmReceiver" />
+
         <!-- For debugging the passive service -->
         <!--
         test with

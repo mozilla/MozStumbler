@@ -26,7 +26,9 @@ libDir.mkdirs()
 
 task updateJars(type: Download) {
     src([
-        'https://github.com/mozilla/osmdroid/releases/download/4.3pre0/osmdroid-android-4.3-SNAPSHOT.jar'
+        'https://github.com/mozilla/osmdroid/releases/download/4.3pre0/osmdroid-android-4.3-SNAPSHOT.jar',
+        'https://github.com/crankycoder/SimpleKML/raw/master/SimpleKML/libs/simple-xml-2.6.3.jar',
+        'https://github.com/crankycoder/SimpleKML/releases/download/v1.0/SimpleKML.jar'
     ])
     dest libDir
 }
@@ -37,6 +39,9 @@ android {
 
     dependencies {
         compile files('libs/osmdroid-android-4.3-SNAPSHOT.jar')
+        compile files('libs/simple-xml-2.6.3.jar')
+        compile files('libs/SimpleKML.jar')
+
         compile 'org.slf4j:slf4j-android:1.7.7'
         compile "com.android.support:support-v4:19.1.+"
     }

@@ -13,9 +13,13 @@
     <string name="wifi_access_points">Puntos de acceso wifi escaneados: %1$d</string>
     <string name="wifi_disabled">0 (wifi deshabilitado)</string>
     <string name="visible_wifi_access_points">Puntos de acceso wifi visibles: %1$s</string>
+    <string name="wifi_info">WiFi: %1$d visibles, %2$d escaneadas</string>
     <string name="cells_scanned">Celdas móviles escaneadas: %1$d</string>
     <string name="cells_visible">Celdas móviles visibles: %1$d</string>
+    <string name="cells_info">Celdas: %1$d visibles, %2$d escaneadas</string>
     <string name="gps_satellites">Satélites GPS usados/visibles: %1$d/%2$d</string>
+    <string name="num_used">%1d utilizados</string>
+    <string name="num_visible">%1d visibles</string>
     <string name="last_location">Última ubicación: %1$s</string>
     <string name="coordinate">%1$.4f, %2$.4f</string>
     <string name="locations_scanned">Ubicaciones escaneadas: %1$d</string>
@@ -42,6 +46,7 @@
     <string name="about_mapbox">Aprenda más acerca de nuestro proveedor de cartografía…</string>
     <string name="about_more">Más…</string>
     <string name="about_legal_aosp">Algunos iconos en esta aplicación son reproducidos de trabajo creado y compartido por el Proyecto de código abierto de Android y se usa de acuerdo a los términos descritos en la Licencia 2.5 de Creative Commons.</string>
+    <string name="about_legal_icons8">Iconos adicionales de http://icons8.com bajo licencia: https://creativecommons.org/licenses/by-nd/3.0</string>
     <string name="upload_observations_sent_title">Enviado</string>
     <string name="upload_observations_last_upload_time_title">Última fecha de envío:</string>
     <string name="upload_observations_observations_sent_title">Observaciones:</string>
@@ -65,11 +70,11 @@
     <string name="wifi_scan_always_title">Escanear wifis siempre</string>
     <string name="wifi_scan_always_summary">Escanear Puntos de acceso incluso si el wifi está apagado</string>
     <string name="refresh_map">Recargar ubicación</string>
-	
     <string name="title_activity_log">Log</string>
     <string name="action_settings">Preferencias</string>
     <string name="action_view_log">Ver log</string>
     <string name="scroll_to_start">Ir al principio</string>
     <string name="scroll_to_end">Ir al final</string>
     <string name="upload_observations_data_size">Tamaño (KB):</string>
+    <string name="hardware_acceleration_title">Activar la aceleración hardware</string>
 </resources>

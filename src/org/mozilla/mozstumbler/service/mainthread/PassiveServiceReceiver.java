@@ -4,6 +4,8 @@
 
 package org.mozilla.mozstumbler.service.mainthread;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -60,14 +62,24 @@ public class PassiveServiceReceiver extends BroadcastReceiver {
 
         Log.d(LOG_TAG, "Stumbler: Sending passive start message | isDebug:" + AppGlobals.isDebug);
 
-
-        final Intent startServiceIntent = new Intent(context, StumblerService.class);
+        final Intent startServiceIntent = new Intent(context, DelayedStartAlarmReceiver.class);
         startServiceIntent.putExtra(StumblerService.ACTION_START_PASSIVE, true);
         final String mozApiKey = intent.getStringExtra("moz_mozilla_api_key");
         startServiceIntent.putExtra(StumblerService.ACTION_EXTRA_MOZ_API_KEY, mozApiKey);
         final String userAgent = intent.getStringExtra("user_agent");
         startServiceIntent.putExtra(StumblerService.ACTION_EXTRA_USER_AGENT, userAgent);
         context.startService(startServiceIntent);
+
+        // Delay the starting of the service so as to avoid CPU load conflict/thread contention
+        // with any host application startup processes. https://bugzilla.mozilla.org/show_bug.cgi?id=1064677
+        // Being that other operations may do a similar delay, make this one sufficiently long to
+        // reduce likelihood of a clash.
+        PendingIntent pi = PendingIntent.getBroadcast(context, 0,
+                startServiceIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        final long twoSecondsFromNow = System.currentTimeMillis() + 2 * 1000;
+        AlarmManager alarmManager = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
+        alarmManager.set(AlarmManager.RTC_WAKEUP, twoSecondsFromNow, pi);
     }
+
 }
 

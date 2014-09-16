@@ -11,11 +11,6 @@
         android:summary="@string/upload_wifi_only_summary"
         android:defaultValue="true" />
     <CheckBoxPreference
-        android:key="wifi_scan_always"
-        android:title="@string/wifi_scan_always_title"
-        android:summary="@string/wifi_scan_always_summary"
-        android:defaultValue="false" />
-    <CheckBoxPreference
         android:key="hardware_acceleration"
         android:title="@string/hardware_acceleration_title"
         android:defaultValue="true" />

@@ -192,29 +192,6 @@ public final class Updater {
         return null;
     }
 
-    private URLConnection openConnectionWithProxy(URL url) throws IOException {
-        Proxy proxy = Proxy.NO_PROXY;
-
-        ProxySelector proxySelector = ProxySelector.getDefault();
-        if (proxySelector != null) {
-            URI uri;
-            try {
-                uri = url.toURI();
-            } catch (URISyntaxException e) {
-                IOException ioe = new IOException(url.toString());
-                ioe.initCause(e);
-                throw ioe;
-            }
-
-            List<Proxy> proxies = proxySelector.select(uri);
-            if (proxies != null && !proxies.isEmpty()) {
-                proxy = proxies.get(0);
-            }
-        }
-
-        return url.openConnection(proxy);
-    }
-
     private File createTempFile(Context context) {
         File dir = context.getExternalFilesDir(null);
         try {

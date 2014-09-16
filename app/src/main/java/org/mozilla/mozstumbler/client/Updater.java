@@ -55,7 +55,7 @@ public final class Updater {
 
             @Override
             public void onPostExecute(String latestVersion) {
-                String installedVersion = PackageUtils.getAppVersion((Context)activity);
+                String installedVersion = PackageUtils.getAppVersion(activity);
 
                 Log.d(LOG_TAG, "Installed version: " + installedVersion);
                 Log.d(LOG_TAG, "Latest version: " + latestVersion);
@@ -63,7 +63,7 @@ public final class Updater {
                 // TODO: the check for isFinishing is the only reason we need to pass in an activity instead of just
                 // a raw Context object. We should be able to clean this up, or at least test this behavior.
                 if (isVersionGreaterThan(latestVersion, installedVersion) && !activity.isFinishing()) {
-                    showUpdateDialog((Context)activity, installedVersion, latestVersion);
+                    showUpdateDialog(activity, installedVersion, latestVersion);
                 }
             }
         }.execute();

@@ -39,8 +39,8 @@ public final class Updater {
     private String VERSION_URL = "https://raw.github.com/mozilla/MozStumbler/master/VERSION";
     private String APK_URL_FORMAT = "https://github.com/mozilla/MozStumbler/releases/download/v%s/MozStumbler-v%s.apk";
 
+    public boolean checkForUpdates(final Activity activity) {
 
-    public static boolean checkForUpdates(final Activity activity) {
         if (BuildConfig.MOZILLA_API_KEY == null) {
             return false;
         }
@@ -95,7 +95,7 @@ public final class Updater {
         return true;
     }
 
-    private static boolean isVersionGreaterThan(String a, String b) {
+    private boolean isVersionGreaterThan(String a, String b) {
         if (a == null) {
             return false;
         }
@@ -130,7 +130,7 @@ public final class Updater {
         return as.length > bs.length;
     }
 
-    private static void showUpdateDialog(final Context context,
+    private void showUpdateDialog(final Context context,
                                          String installedVersion,
                                          final String latestVersion) {
         String msg = context.getString(R.string.update_message);
@@ -166,7 +166,7 @@ public final class Updater {
         builder.create().show();
     }
 
-    private static void downloadAndInstallUpdate(final Context context, final String version) {
+    private  void downloadAndInstallUpdate(final Context context, final String version) {
         new AsyncTask<Void, Void, File>() {
             @Override
             public File doInBackground(Void... params) {
@@ -189,7 +189,7 @@ public final class Updater {
         }.execute();
     }
 
-    private static URL getUpdateURL(String version) {
+    private URL getUpdateURL(String version) {
         String url = String.format(APK_URL_FORMAT, version, version);
         try {
             return new URL(url);
@@ -198,7 +198,7 @@ public final class Updater {
         }
     }
 
-    private static File downloadFile(Context context, URL url) {
+    private File downloadFile(Context context, URL url) {
         Log.d(LOG_TAG, "Downloading: " + url);
 
         File file = createTempFile(context);
@@ -238,7 +238,7 @@ public final class Updater {
         }
     }
 
-    private static URLConnection openConnectionWithProxy(URL url) throws IOException {
+    private URLConnection openConnectionWithProxy(URL url) throws IOException {
         Proxy proxy = Proxy.NO_PROXY;
 
         ProxySelector proxySelector = ProxySelector.getDefault();
@@ -261,7 +261,7 @@ public final class Updater {
         return url.openConnection(proxy);
     }
 
-    private static File createTempFile(Context context) {
+    private File createTempFile(Context context) {
         File dir = context.getExternalFilesDir(null);
         try {
             return File.createTempFile("update", ".apk", dir);
@@ -271,7 +271,7 @@ public final class Updater {
         }
     }
 
-    private static void installPackage(Context context, File apkFile) {
+    private void installPackage(Context context, File apkFile) {
         Uri apkURI = Uri.fromFile(apkFile);
         Log.d(LOG_TAG, "Installing: " + apkURI);
 

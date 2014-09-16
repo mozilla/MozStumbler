@@ -117,7 +117,8 @@ public final class MainActivity extends FragmentActivity
 
         setContentView(R.layout.activity_main);
 
-        Updater.checkForUpdates(this);
+        Updater upd = new Updater();
+        upd.checkForUpdates(this);
 
         // Register a listener for a toggle event in the notification pulldown
         LocalBroadcastManager bManager = LocalBroadcastManager.getInstance(this);

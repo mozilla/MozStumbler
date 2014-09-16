@@ -5,8 +5,11 @@ import android.util.Log;
 import org.apache.commons.io.IOUtils;
 import org.mozilla.mozstumbler.service.AppGlobals;
 
-import java.io.File;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.net.MalformedURLException;
 import java.net.URL;
 
 /**
@@ -27,8 +30,25 @@ public class HttpUtil implements IHttpUtil {
     }
 
     @Override
-    public File getUrlAsFile(String url)   {
-        return null;
+    public Reader getUrlAsReader(String urlString)   {
+       try
+       {
+           URL url = new URL(urlString);
+           return getUrlAsReader(url);
+       } catch (MalformedURLException urlEx) {
+            Log.e(LOG_TAG, "", urlEx);
+            return null;
+       }
+
     }
 
+    @Override
+    public Reader getUrlAsReader(URL url) {
+        try {
+            return new BufferedReader(new InputStreamReader(url.openStream()));
+        } catch (IOException ioEx) {
+            Log.e(LOG_TAG, "", ioEx);
+            return null;
+        }
+    }
 }

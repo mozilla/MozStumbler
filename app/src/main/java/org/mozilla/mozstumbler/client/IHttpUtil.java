@@ -1,6 +1,7 @@
 package org.mozilla.mozstumbler.client;
 
-import java.io.File;
+import java.io.Reader;
+import java.net.URL;
 
 /**
  * Created by victorng on 2014-09-15.
@@ -8,6 +9,8 @@ import java.io.File;
 public interface IHttpUtil {
 
     public String getUrlAsString(String url);
-    public File getUrlAsFile(String url) ;
+    public Reader getUrlAsReader(String url);
+    public Reader getUrlAsReader(URL url) ;
+
 
 }

@@ -13,8 +13,12 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
+
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Reader;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -174,24 +178,32 @@ public final class Updater {
         }
     }
 
-    private File downloadFile(File downloadDir, URL url) {
+    private File downloadFile(File dir, URL url) {
         Log.d(LOG_TAG, "Downloading: " + url);
 
         File file;
-        File dir = downloadDir;
         try {
             file = File.createTempFile("update", ".apk", dir);
         } catch (IOException e) {
             Log.e(LOG_TAG, "", e);
             file = null;
+            return file;
         }
 
-        if (file == null) {
-            return null;
-        }
+        Reader input = networkUtility.getUrlAsReader(url);
 
         try{
-            FileUtils.copyURLToFile(url, file);
+            FileWriter fw = new FileWriter(file);
+            BufferedWriter output = new BufferedWriter(fw);
+
+            char[] buffer = new char[8192];
+            int n;
+            while ((n = input.read( buffer )) != -1) {
+                output.write( buffer, 0, n );
+            }
+            output.flush();
+            output.close();
+            fw.close();
             return file;
         }catch (IOException ioEx) {
             Log.e(LOG_TAG, "", ioEx);

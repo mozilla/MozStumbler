@@ -39,8 +39,6 @@ public final class Updater {
     private String VERSION_URL = "https://raw.github.com/mozilla/MozStumbler/master/VERSION";
     private String APK_URL_FORMAT = "https://github.com/mozilla/MozStumbler/releases/download/v%s/MozStumbler-v%s.apk";
 
-    private Updater() {
-    }
 
     public static boolean checkForUpdates(final Activity activity) {
         if (BuildConfig.MOZILLA_API_KEY == null) {

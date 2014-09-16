@@ -4,7 +4,7 @@ jdk: oraclejdk7
 android:
     components:
         - android-19
-        - build-tools-19.1.0
+        - build-tools-20.0.0
         - extra-android-support
     licenses:
         - android-sdk-license-5be876d5

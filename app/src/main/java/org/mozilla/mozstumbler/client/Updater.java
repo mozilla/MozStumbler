@@ -35,9 +35,9 @@ import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.service.AppGlobals;
 
 public final class Updater {
-    private static final String LOG_TAG = AppGlobals.LOG_PREFIX + Updater.class.getSimpleName();
-    private static final String VERSION_URL = "https://raw.github.com/mozilla/MozStumbler/master/VERSION";
-    private static final String APK_URL_FORMAT = "https://github.com/mozilla/MozStumbler/releases/download/v%s/MozStumbler-v%s.apk";
+    private String LOG_TAG = AppGlobals.LOG_PREFIX + Updater.class.getSimpleName();
+    private String VERSION_URL = "https://raw.github.com/mozilla/MozStumbler/master/VERSION";
+    private String APK_URL_FORMAT = "https://github.com/mozilla/MozStumbler/releases/download/v%s/MozStumbler-v%s.apk";
 
     private Updater() {
     }

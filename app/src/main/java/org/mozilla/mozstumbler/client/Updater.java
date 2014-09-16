@@ -13,14 +13,8 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.Proxy;
 import java.net.ProxySelector;
@@ -29,7 +23,9 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.List;
+import org.apache.commons.io.FileUtils;
 
+import org.apache.commons.io.IOUtils;
 import org.mozilla.mozstumbler.BuildConfig;
 import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.service.AppGlobals;
@@ -50,30 +46,10 @@ public final class Updater {
             public String doInBackground(Void... params) {
                 try {
                     URL url = new URL(VERSION_URL);
-                    InputStream stream = null;
-                    try {
-                        URLConnection connection = openConnectionWithProxy(url);
-                        stream = connection.getInputStream();
-                        BufferedReader reader = null;
-                        try {
-                            reader = new BufferedReader(new InputStreamReader(stream));
-                            return reader.readLine();
-                        } finally {
-                            if (reader != null) {
-                                reader.close();
-                            }
-                        }
-                    } finally {
-                        if (stream != null) {
-                            stream.close();
-                        }
-                    }
-                } catch (FileNotFoundException fe) {
-                    Log.w(LOG_TAG, "VERSION not found: " + VERSION_URL);
+                    return IOUtils.toString(url, "utf8");
                 } catch (IOException e) {
                     Log.e(LOG_TAG, "", e);
                 }
-
                 return null;
             }
 
@@ -206,36 +182,14 @@ public final class Updater {
             return null;
         }
 
-        final int bufferLength = 8192;
-        final byte[] buffer = new byte[bufferLength];
-
-        try {
-            InputStream inputStream = null;
-            OutputStream outputStream = null;
-            try {
-                URLConnection connection = openConnectionWithProxy(url);
-                inputStream = connection.getInputStream();
-                outputStream = new FileOutputStream(file);
-                for (;;) {
-                    int readLength = inputStream.read(buffer, 0, bufferLength);
-                    if (readLength == -1) {
-                        return file;
-                    }
-                    outputStream.write(buffer, 0, readLength);
-                }
-            } finally {
-                if (outputStream != null) {
-                    outputStream.close();
-                }
-                if (inputStream != null) {
-                    inputStream.close();
-                }
-            }
-        } catch (IOException e) {
-            Log.e(LOG_TAG, "", e);
+        try{
+            FileUtils.copyURLToFile(url, file);
+            return file;
+        }catch (IOException ioEx) {
+            Log.e(LOG_TAG, "", ioEx);
             file.delete();
-            return null;
         }
+        return null;
     }
 
     private URLConnection openConnectionWithProxy(URL url) throws IOException {

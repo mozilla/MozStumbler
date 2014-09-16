@@ -62,8 +62,8 @@
     <string name="detected_activity_unknown">अज्ञात</string>
     <string name="upload_wifi_only_title">केवल Wi-Fi पर अवलोकन भेजें</string>
     <string name="upload_wifi_only_summary">यह पर्याय आपका भ्रमणध्वनि जाल पर डेटा उपयोग काम करेगा.</string>
-    <string name="wifi_scan_always_title">Wi-Fi हमेशा खोजें</string>
-    <string name="wifi_scan_always_summary">Wi-Fi बंद होनेपर भी प्रवेश बिंदु खोजें</string>
+
+
     <string name="refresh_map">स्थान अद्यतन करेंं</string>
     <string name="title_activity_log">पंजी</string>
     <string name="action_settings">सेटिंग</string>

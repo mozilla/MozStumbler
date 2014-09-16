@@ -66,8 +66,8 @@
     <string name="detected_activity_unknown">Unknown</string>
     <string name="upload_wifi_only_title">อัพโหลดเฉพาะเวลาต่อ WiFi</string>
     <string name="upload_wifi_only_summary">ค่านี้จะช่วยลดการใช้ข้อมูลผ่านเครือข่ายมือถือ</string>
-    <string name="wifi_scan_always_title">แสกนหา Wi-Fi ตลอดเวลา</string>
-    <string name="wifi_scan_always_summary">จะแสกนหาแอคเซสพอยต์แม้กระทั้งเมื่อ Wi-Fi ปิดอยู่</string>
+
+
     <string name="refresh_map">หาตำแหน่งใหม่</string>
     <string name="title_activity_log">บันทึก</string>
     <string name="action_settings">การตั้งค่า</string>

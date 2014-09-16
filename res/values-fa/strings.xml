@@ -63,8 +63,8 @@
     <string name="detected_activity_unknown">ناشناخته</string>
     <string name="upload_wifi_only_title">بارگذاری فقط هنگام وای‌فای</string>
     <string name="upload_wifi_only_summary">این گزینه مصرف‌داده‌ای شما را هنگام استفاده از شبکهٔ گوشی همراه کاهش خواهد داد.</string>
-    <string name="wifi_scan_always_title">همیشه وای‌فای را اسکن کن</string>
-    <string name="wifi_scan_always_summary">اسکن نقاط دسترسی وای‌فای حتی هنگامی که وای‌فای خاموش شده‌است</string>
+
+
     <string name="upload_observations_data_size">Size (KB):</string>
     <!--translations missing
 	<string name="refresh_map">Refresh location</string>

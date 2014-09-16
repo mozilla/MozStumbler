@@ -63,8 +63,8 @@
     <string name="detected_activity_unknown">Άγνωστο</string>
     <string name="upload_wifi_only_title">Μεταφόρτωση μόνο μέσω Wi-Fi</string>
     <string name="upload_wifi_only_summary">Η επιλογή αυτή θα μειώσει τη χρήση των δεδομένων σας μέσω του δικτύου κινητής τηλεφωνίας.</string>
-    <string name="wifi_scan_always_title">Μόνιμη σάρωση Wi-Fi</string>
-    <string name="wifi_scan_always_summary">Σάρωση APs ακόμα και όταν το Wi-Fi είναι απενεργοποιημένο</string>
+
+
     <string name="refresh_map">Ανανέωση θέσης</string>
     <string name="upload_observations_data_size">Size (KB):</string>
     <!--translations missing

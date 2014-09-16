@@ -22,17 +22,15 @@ import java.io.Reader;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import org.apache.commons.io.FileUtils;
-
 import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.service.AppGlobals;
+import org.mozilla.mozstumbler.service.utils.NetworkUtils;
 
 public final class Updater {
     private final IHttpUtil networkUtility;
     private String LOG_TAG = AppGlobals.LOG_PREFIX + Updater.class.getSimpleName();
     private String VERSION_URL = "https://raw.github.com/mozilla/MozStumbler/master/VERSION";
     private String APK_URL_FORMAT = "https://github.com/mozilla/MozStumbler/releases/download/v%s/MozStumbler-v%s.apk";
-
 
 
     public Updater(IHttpUtil httpUtil) {

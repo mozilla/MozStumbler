@@ -32,7 +32,6 @@ import org.mozilla.mozstumbler.service.stumblerthread.StumblerService;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageContract;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageManager;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.WifiScanner;
-import org.mozilla.mozstumbler.service.utils.NetworkUtils;
 
 import java.io.IOException;
 import java.util.Properties;

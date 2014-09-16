@@ -1,7 +1,7 @@
 MozStumbler
 [![Build Status](https://travis-ci.org/mozilla/MozStumbler.png)](https://travis-ci.org/mozilla/MozStumbler.png)
 
-# Building # 
+# Building #
 
 ```
 ./gradlew build

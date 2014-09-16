@@ -10,7 +10,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
@@ -33,7 +32,6 @@ import org.mozilla.mozstumbler.service.stumblerthread.StumblerService;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageContract;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageManager;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.WifiScanner;
-import org.mozilla.mozstumbler.service.utils.NetworkUtils;
 
 import java.io.IOException;
 import java.util.Properties;
@@ -118,10 +116,10 @@ public final class MainActivity extends FragmentActivity
 
         setContentView(R.layout.activity_main);
 
-        if (BuildConfig.MOZILLA_API_KEY != null &&
-            (NetworkUtils.getInstance().isWifiAvailable() || !ClientPrefs.getInstance().getUseWifiOnly())) {
-            Updater.checkForUpdates(this);
-        }
+        IHttpUtil httpUtil = new HttpUtil();
+
+        Updater upd = new Updater(httpUtil);
+        upd.checkForUpdates(this, BuildConfig.MOZILLA_API_KEY);
 
         // Register a listener for a toggle event in the notification pulldown
         LocalBroadcastManager bManager = LocalBroadcastManager.getInstance(this);

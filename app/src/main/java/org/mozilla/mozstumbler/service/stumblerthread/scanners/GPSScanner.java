@@ -170,7 +170,7 @@ public class GPSScanner implements LocationListener {
 
     @Override
     public void onLocationChanged(Location location) {
-        if (location == null) { // TODO: is this even possible??
+        if (location == null) {
             reportLocationLost();
             return;
         }

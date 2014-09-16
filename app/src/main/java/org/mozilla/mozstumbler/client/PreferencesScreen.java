@@ -26,6 +26,7 @@ public class PreferencesScreen extends PreferenceActivity {
     private CheckBoxPreference mWifiScanAlwaysSwitch;
     private CheckBoxPreference mWifiPreference;
     private CheckBoxPreference mIsHardwareAccelerated;
+    private CheckBoxPreference mKeepScreenOn;
 
     private static ClientPrefs sPrefs;
 
@@ -47,6 +48,7 @@ public class PreferencesScreen extends PreferenceActivity {
         mWifiPreference = (CheckBoxPreference) getPreferenceManager().findPreference("wifi_only");
         mWifiScanAlwaysSwitch = (CheckBoxPreference) getPreferenceManager().findPreference("wifi_scan_always");
         mIsHardwareAccelerated = (CheckBoxPreference) getPreferenceManager().findPreference("hardware_acceleration");
+        mKeepScreenOn = (CheckBoxPreference) getPreferenceManager().findPreference(ClientPrefs.KEEP_SCREEN_ON_PREF);
 
         setNicknamePreferenceTitle(sPrefs.getNickname());
         mWifiPreference.setChecked(sPrefs.getUseWifiOnly());
@@ -86,6 +88,14 @@ public class PreferencesScreen extends PreferenceActivity {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
                 sPrefs.setIsHardwareAccelerated(newValue.equals(true));
+                return true;
+            }
+        });
+
+        mKeepScreenOn.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                sPrefs.setKeepScreenOn(newValue.equals(true));
                 return true;
             }
         });

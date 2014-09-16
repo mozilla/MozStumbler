@@ -25,13 +25,14 @@ import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import org.mozilla.mozstumbler.BuildConfig;
+import org.mozilla.mozstumbler.R;
+import org.mozilla.mozstumbler.client.mapview.MapActivity;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.stumblerthread.StumblerService;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageContract;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageManager;
-import org.mozilla.mozstumbler.client.mapview.MapActivity;
-import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.WifiScanner;
+import org.mozilla.mozstumbler.service.utils.NetworkUtils;
 
 import java.io.IOException;
 import java.util.Properties;
@@ -47,12 +48,10 @@ public final class MainActivity extends FragmentActivity
     public static final String ACTION_UI_UNPAUSE_SCANNING = ACTION_BASE + "UNPAUSE_SCANNING";
     public static final String ACTION_UI_PAUSE_SCANNING = ACTION_BASE + "PAUSE_SCANNING";
 
-
     private static final String LEADERBOARD_URL = "https://location.services.mozilla.com/leaders";
 
     int                      mGpsFixes;
     int                      mGpsSats;
-
 
     public synchronized void setGpsFixes(int fixes) {
         mGpsFixes = fixes;
@@ -89,7 +88,6 @@ public final class MainActivity extends FragmentActivity
         }
     };
 
-
     private MainApp getApp() {
         return (MainApp) this.getApplication();
     }
@@ -119,7 +117,6 @@ public final class MainActivity extends FragmentActivity
 
         setContentView(R.layout.activity_main);
 
-        // TODO: the HttpUtil we inject should be dependant on a config variable
         IHttpUtil httpUtil = new HttpUtil();
 
         Updater upd = new Updater(httpUtil);
@@ -318,6 +315,4 @@ public final class MainActivity extends FragmentActivity
             Log.e(LOG_TAG, "Exception in showUploadStats()", ex);
         }
     }
-
-
 }

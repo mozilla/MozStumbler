@@ -42,7 +42,8 @@ public final class Updater {
 
     public boolean checkForUpdates(final Activity activity, String api_key) {
 
-        if (api_key == null || api_key.equals("")) {
+        if (!((api_key != null || api_key.equals(""))  &&
+            (NetworkUtils.getInstance().isWifiAvailable() || !ClientPrefs.getInstance().getUseWifiOnly()))) {
             return false;
         }
 

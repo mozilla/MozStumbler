@@ -16,41 +16,36 @@ import android.util.Log;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.net.Proxy;
-import java.net.ProxySelector;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
-import java.net.URLConnection;
-import java.util.List;
+
 import org.apache.commons.io.FileUtils;
 
-import org.apache.commons.io.IOUtils;
-import org.mozilla.mozstumbler.BuildConfig;
 import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.service.AppGlobals;
 
 public final class Updater {
+    private final IHttpUtil networkUtility;
     private String LOG_TAG = AppGlobals.LOG_PREFIX + Updater.class.getSimpleName();
     private String VERSION_URL = "https://raw.github.com/mozilla/MozStumbler/master/VERSION";
     private String APK_URL_FORMAT = "https://github.com/mozilla/MozStumbler/releases/download/v%s/MozStumbler-v%s.apk";
 
-    public boolean checkForUpdates(final Activity activity) {
 
-        if (BuildConfig.MOZILLA_API_KEY == null) {
+
+    public Updater(IHttpUtil httpUtil) {
+        networkUtility = httpUtil;
+    }
+
+
+    public boolean checkForUpdates(final Activity activity, String api_key) {
+
+        if (api_key == null) {
             return false;
         }
 
         new AsyncTask<Void, Void, String>() {
             @Override
             public String doInBackground(Void... params) {
-                try {
-                    URL url = new URL(VERSION_URL);
-                    return IOUtils.toString(url, "utf8");
-                } catch (IOException e) {
-                    Log.e(LOG_TAG, "", e);
-                }
-                return null;
+                return fetchRemoteVersion();
             }
 
             @Override
@@ -69,6 +64,10 @@ public final class Updater {
         }.execute();
 
         return true;
+    }
+
+    private String fetchRemoteVersion() {
+        return networkUtility.getUrlAsString(VERSION_URL);
     }
 
     private boolean isVersionGreaterThan(String a, String b) {
@@ -147,7 +146,8 @@ public final class Updater {
             @Override
             public File doInBackground(Void... params) {
                 URL apkURL = getUpdateURL(version);
-                File apk = downloadFile(context, apkURL);
+                File downloadDir = context.getExternalFilesDir(null);
+                File apk = downloadFile(downloadDir, apkURL);
                 if (apk == null || !apk.exists()) {
                     Log.e(LOG_TAG, "Update file not found!");
                     return null;
@@ -174,10 +174,18 @@ public final class Updater {
         }
     }
 
-    private File downloadFile(Context context, URL url) {
+    private File downloadFile(File downloadDir, URL url) {
         Log.d(LOG_TAG, "Downloading: " + url);
 
-        File file = createTempFile(context);
+        File file;
+        File dir = downloadDir;
+        try {
+            file = File.createTempFile("update", ".apk", dir);
+        } catch (IOException e) {
+            Log.e(LOG_TAG, "", e);
+            file = null;
+        }
+
         if (file == null) {
             return null;
         }
@@ -190,16 +198,6 @@ public final class Updater {
             file.delete();
         }
         return null;
-    }
-
-    private File createTempFile(Context context) {
-        File dir = context.getExternalFilesDir(null);
-        try {
-            return File.createTempFile("update", ".apk", dir);
-        } catch (IOException e) {
-            Log.e(LOG_TAG, "", e);
-            return null;
-        }
     }
 
     private void installPackage(Context context, File apkFile) {

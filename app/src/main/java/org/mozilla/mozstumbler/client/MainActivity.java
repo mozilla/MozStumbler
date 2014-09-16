@@ -23,6 +23,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.TextView;
+
+import org.mozilla.mozstumbler.BuildConfig;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.stumblerthread.StumblerService;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageContract;
@@ -117,8 +119,11 @@ public final class MainActivity extends FragmentActivity
 
         setContentView(R.layout.activity_main);
 
-        Updater upd = new Updater();
-        upd.checkForUpdates(this);
+        // TODO: the HttpUtil we inject should be dependant on a config variable
+        IHttpUtil httpUtil = new HttpUtil();
+
+        Updater upd = new Updater(httpUtil);
+        upd.checkForUpdates(this, BuildConfig.MOZILLA_API_KEY);
 
         // Register a listener for a toggle event in the notification pulldown
         LocalBroadcastManager bManager = LocalBroadcastManager.getInstance(this);

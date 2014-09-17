@@ -57,7 +57,6 @@
     <string name="wifi_scan_always_summary">Scanează punctele de acces chiar și atunci când sistemul Wi-Fi este oprit.</string>
     <string name="refresh_map">Reactualizează locația</string>
     <string name="title_activity_log">Jurnal</string>
-    <string name="action_settings">Setări</string>
     <string name="action_view_log">Arată jurnal</string>
     <string name="scroll_to_start">Derulare la început</string>
     <string name="scroll_to_end">Derulare la sfârșit</string>

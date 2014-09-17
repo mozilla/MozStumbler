@@ -57,7 +57,6 @@
     <string name="wifi_scan_always_summary">จะแสกนหาแอคเซสพอยต์แม้กระทั้งเมื่อ Wi-Fi ปิดอยู่</string>
     <string name="refresh_map">หาตำแหน่งใหม่</string>
     <string name="title_activity_log">บันทึก</string>
-    <string name="action_settings">การตั้งค่า</string>
     <string name="action_view_log">ดูค่าบันทึก</string>
     <string name="scroll_to_start">Scroll to Top</string>
     <string name="scroll_to_end">Scroll to End</string>

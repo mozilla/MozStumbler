@@ -58,7 +58,6 @@
     <string name="wifi_scan_always_summary">Escanear Puntos de acceso incluso si el Wi-Fi está apagado</string>
     <string name="refresh_map">Recargar ubicación</string>
     <string name="title_activity_log">Log</string>
-    <string name="action_settings">Preferencias</string>
     <string name="action_view_log">Ver log</string>
     <string name="scroll_to_start">Ir al principio</string>
     <string name="scroll_to_end">Ir al final</string>

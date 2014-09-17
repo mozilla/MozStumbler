@@ -54,7 +54,6 @@
     <string name="wifi_scan_always_summary">Wi-Fi बंद असताना सुद्धा प्रवेश बिंदू शोधा</string>
     <string name="refresh_map">स्थळ अद्यतन करा</string>
     <string name="title_activity_log">नोंदवही</string>
-    <string name="action_settings">सेटिंग</string>
     <string name="action_view_log">नोंदी बघा</string>
     <string name="scroll_to_start">सुरुवात बघा</string>
     <string name="scroll_to_end">शेवट बघा</string>

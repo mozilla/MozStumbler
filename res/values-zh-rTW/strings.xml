@@ -58,7 +58,6 @@
     <string name="refresh_map">重新整理位置</string>
 	
     <string name="title_activity_log">紀錄</string>
-    <string name="action_settings">選項</string>
     <string name="action_view_log">檢視紀錄</string>
     <string name="scroll_to_start">滾動到頂端</string>
     <string name="scroll_to_end">滾動到底端</string>

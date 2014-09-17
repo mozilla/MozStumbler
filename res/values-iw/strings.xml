@@ -53,7 +53,6 @@
 	<string name="wifi_scan_always_summary">לסרוק נקודות גישה אפילו כשה־Wi-Fi כבוי</string>
 	<string name="refresh_map">רענון המיקום</string>
 	<string name="title_activity_log">רישום</string>
-	<string name="action_settings">הגדרות</string>
 	<string name="action_view_log">צפייה ברישום</string>
 	<string name="scroll_to_start">גלילה להתחלה</string>
 	<string name="scroll_to_end">גלילה לסוף</string>

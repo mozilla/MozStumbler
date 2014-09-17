@@ -70,7 +70,7 @@
     <string name="detected_activity_tilting">Inclinamento</string>
     <string name="detected_activity_unknown">Sconosciuta</string>
     
-    <string name="upload_wifi_only_title">Invia solo in WiFi</string>
+    <string name="upload_wifi_only_title">Invia solo in Wi-Fi</string>
     <string name="upload_wifi_only_summary">Questa opzione ridurrà il traffico dati sulla rete cellulare.</string>
     
     <string name="upload_observations_data_size">Size (KB):</string>

@@ -13,7 +13,7 @@
     <string name="wifi_access_points">แอคเซสพอยต์ Wi-Fi ที่แสกนได้: %1$d</string>
     <string name="wifi_disabled">0 (Wi-Fi ปิดใช้งาน)</string>
     <string name="visible_wifi_access_points">จุดเชื่อมต่อ Wi-Fi ที่มองเห็น: %1$s</string>
-    <string name="wifi_info">WiFi: %1$d มองเห็น %2$d Scanned</string>
+    <string name="wifi_info">Wi-Fi: %1$d มองเห็น %2$d Scanned</string>
     <string name="cells_scanned">เสาสัญญานมือถือที่แสกน: %1$d</string>
     <string name="cells_visible">เสาสัญญานมือถือที่มองเห็น: %1$d</string>
     <string name="cells_info">เสาสัญญาน: %1$d มองเห็น %2$d แสกน</string>
@@ -64,7 +64,7 @@
     <string name="detected_activity_still">Still</string>
     <string name="detected_activity_tilting">Tilting</string>
     <string name="detected_activity_unknown">Unknown</string>
-    <string name="upload_wifi_only_title">อัพโหลดเฉพาะเวลาต่อ WiFi</string>
+    <string name="upload_wifi_only_title">อัพโหลดเฉพาะเวลาต่อ Wi-Fi</string>
     <string name="upload_wifi_only_summary">ค่านี้จะช่วยลดการใช้ข้อมูลผ่านเครือข่ายมือถือ</string>
     <string name="wifi_scan_always_title">แสกนหา Wi-Fi ตลอดเวลา</string>
     <string name="wifi_scan_always_summary">จะแสกนหาแอคเซสพอยต์แม้กระทั้งเมื่อ Wi-Fi ปิดอยู่</string>

@@ -13,7 +13,7 @@
     <string name="wifi_access_points">Wi-Fi Access Points Scanned: %1$d</string>
     <string name="wifi_disabled">0 (Wi-Fi disabled)</string>
     <string name="visible_wifi_access_points">Wi-Fi Access Points Visible: %1$s</string>
-    <string name="wifi_info">WiFi: %1$d Visible, %2$d Scanned</string>
+    <string name="wifi_info">Wi-Fi: %1$d Visible, %2$d Scanned</string>
     <string name="cells_scanned">Cells Scanned: %1$d</string>
     <string name="cells_visible">Cells Visible: %1$d</string>
     <string name="cells_info">Cells: %1$d Visible, %2$d Scanned</string>
@@ -65,7 +65,7 @@
     <string name="detected_activity_still">Still</string>
     <string name="detected_activity_tilting">Tilting</string>
     <string name="detected_activity_unknown">Unknown</string>
-    <string name="upload_wifi_only_title">Upload only on WiFi</string>
+    <string name="upload_wifi_only_title">Upload only on Wi-Fi</string>
     <string name="upload_wifi_only_summary">This option will reduce your data usage over the cellular network.</string>
     <string name="wifi_scan_always_title">Always scan Wi-Fi</string>
     <string name="wifi_scan_always_summary">Scan APs even when Wi-Fi is turned off</string>

@@ -32,8 +32,6 @@
     <string name="update_message">目前版本: %1$s\n最新版本: %2$s</string>
     <string name="update_now">立刻更新</string>
     <string name="update_later">以後再更新</string>
-    <string name="location_not_found">找不到位置</string>
-    <string name="location_lookup_error">定位錯誤</string>
     <string name="gps_alert_msg">GPS 已關閉。您是否想要前往「設定」開啟 GPS？</string>
     <string name="yes">好</string>
     <string name="no">不要</string>

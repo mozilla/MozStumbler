@@ -28,8 +28,6 @@
     <string name="update_message">نسخهٔ نصب‌شده: %1$s\nآخرین نسخه: %2$s</string>
     <string name="update_now">الآن به‌روز شود</string>
     <string name="update_later">بعداً به‌روز شود</string>
-    <string name="location_not_found">مکان پیدا نشد</string>
-    <string name="location_lookup_error">خطای به‌دست‌آوردن مکان</string>
     <string name="gps_alert_msg">چی‌پی‌اس خاموش است. می‌خواهید به تنظیمات بروید و روشنش کنید؟</string>
     <string name="yes">بله</string>
     <string name="no">خیر</string>

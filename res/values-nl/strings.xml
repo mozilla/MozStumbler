@@ -28,8 +28,6 @@
     <string name="update_message">Geïnstalleerde versie: %1$s\nMeeste recente versie: %2$s</string>
     <string name="update_now">Nu updaten</string>
     <string name="update_later">Later updaten</string>
-    <string name="location_not_found">Locatie niet gevonden</string>
-    <!--<string name="location_lookup_error">Location lookup error</string> translation missing-->
     <string name="gps_alert_msg">GPS staat uit. Aanzetten in de instellingen?</string>
     <string name="yes">Ja</string>
     <string name="no">Nee</string>

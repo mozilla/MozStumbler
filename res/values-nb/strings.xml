@@ -28,8 +28,6 @@
     <string name="update_message">Installert versjon: %1$s\nSiste versjon: %2$s</string>
     <string name="update_now">Oppdater nå</string>
     <string name="update_later">Oppdater senere</string>
-    <string name="location_not_found">Lokasjon ikke funnet</string>
-    <!--<string name="location_lookup_error">Location lookup error</string> translation missing-->
     <string name="gps_alert_msg">GPS er slått av. Vil du gå til telefonens innstillinger og slå det på?</string>
     <string name="yes">Ja</string>
     <string name="no">Nei</string>

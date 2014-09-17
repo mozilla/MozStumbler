@@ -28,8 +28,6 @@
 	<string name="update_message">הגרסה המותקנת: %1$s\nהגרסה העדכנית: %2$s</string>
 	<string name="update_now">לעדכן כעת</string>
 	<string name="update_later">לעדכן מאוחר יותר</string>
-	<string name="location_not_found">המיקום לא נמצא</string>
-	<string name="location_lookup_error">שגיאת איתור מיקום</string>
 	<string name="gps_alert_msg">האיכון כבוי. האם ברצונך לגשת להגדרות כדי להפעיל אותו?</string>
 	<string name="yes">כן</string>
 	<string name="no">לא</string>

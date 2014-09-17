@@ -31,8 +31,8 @@
     <string name="update_message">Nainstalovana verze: %1$s\nPoslední verze: %2$s</string>
     <string name="update_now">Aktualizovat nyní</string>
     <string name="update_later">Aktualizovat později</string>
-    <string name="location_not_found">Pozice nenalezena</string>
-    <!--<string name="location_lookup_error">Location lookup error</string> translation missing-->
+    <string name="">Pozice nenalezena</string>
+    -->
     <string name="gps_alert_msg">GPS je vypnuté. Chcete zobrazit nastavení a zapnout GPS?</string>
     <string name="yes">Ano</string>
     <string name="no">Ne</string>

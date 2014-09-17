@@ -28,8 +28,6 @@
     <string name="update_message">ইন্সটলকৃত সংস্করণ: %1$s\nসর্বশেষ সংস্করণ: %2$s</string>
     <string name="update_now">এক্ষুনি আপডেট করুন</string>
     <string name="update_later">পরে আপডেট করুন</string>
-    <string name="location_not_found">অবস্থান নির্ণয় করা হয়নি</string>
-	<string name="location_lookup_error">অবস্থান নির্নয়ে ত্রুটি</string>
     <string name="gps_alert_msg">জিপিএস বন্ধ আছে। আপনি কি সেটিংস থেকে তা চালু করতে চান?</string>
     <string name="yes">হ্যাঁ</string>
     <string name="no">না</string>

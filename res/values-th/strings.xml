@@ -32,8 +32,6 @@
     <string name="update_message">รุ่นที่ลง: %1$s\nรุ่นล่าสุด: %2$s</string>
     <string name="update_now">ปรับปรุงตอนนี้</string>
     <string name="update_later">ปรับปรุงภายหลัง</string>
-    <string name="location_not_found">ไม่เจอตำแหน่ง</string>
-    <string name="location_lookup_error">มีปัญหาในการค้นหาตำแหน่ง</string>
     <string name="gps_alert_msg">GPS ถูกปิดเอาไว้ คุณต้องการที่จะเข้าการตั้งค่าเพื่อเปิดหรือไม่?</string>
     <string name="yes">ใช่</string>
     <string name="no">ไม่ใช่</string>

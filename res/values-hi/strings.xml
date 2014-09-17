@@ -28,8 +28,6 @@
     <string name="update_message">स्थापित संस्करण: %1$s\nनवीनतम संस्करण: %2$s</string>
     <string name="update_now">अभी अद्यतन करें</string>
     <string name="update_later">बादमें अद्यतन करें</string>
-    <string name="location_not_found">स्थान नहीं मिला</string>
-    <string name="location_lookup_error">स्थान खोजनेमे गलती</string>
     <string name="gps_alert_msg">GPS बंद है। सेटिंग में जाकर शुरू करें?</string>
     <string name="yes">हाँ</string>
     <string name="no">नहीं</string>

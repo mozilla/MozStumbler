@@ -31,9 +31,6 @@
     <string name="update_now">Aggiorna ora</string>
     <string name="update_later">Aggiorna più tardi</string>
     
-    <string name="location_not_found">Posizione non trovata</string>
-    <!--<string name="location_lookup_error">Location lookup error</string> translation missing-->
-    
     <string name="gps_alert_msg">Il GPS è disattivato. Vuoi andare nelle impostazioni e attivarlo?</string>
     <string name="yes">Sì</string>
     <string name="no">No</string>

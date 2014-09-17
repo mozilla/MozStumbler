@@ -28,8 +28,6 @@
     <string name="update_message">Versió instal·lada: %1$s\nÚltima versió: %2$s</string>
     <string name="update_now">Actualitzar ara</string>
     <string name="update_later">Actualitzar després</string>
-    <string name="location_not_found">Posició no trobada</string>
-    <!--translation missing <string name="location_lookup_error">Location lookup error</string>-->
     <string name="gps_alert_msg">El GPS es troba desactivat. Vol anar a la configuració i activar-lo?</string>
     <string name="yes">Sí</string>
     <string name="no">No</string>

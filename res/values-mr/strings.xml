@@ -28,8 +28,6 @@
     <string name="update_message">प्रतिष्ठापित आवृत्ती: %1$s\nनवीनतम आवृत्ती: %2$s</string>
     <string name="update_now">आता अद्ययावत करा</string>
     <string name="update_later">नंतर अद्ययावत करा</string>
-    <string name="location_not_found">जागा सापडली नाही</string>
-    <string name="location_lookup_error">जागा शोधण्यात चूक</string>
     <string name="gps_alert_msg">GPS बंद आहे. सेटिंग मध्ये जाऊन सुरु करायचे का?</string>
     <string name="yes">हो</string>
     <string name="no">नाही</string>

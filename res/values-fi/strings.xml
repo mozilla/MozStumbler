@@ -28,8 +28,6 @@
     <string name="update_message">Asennettu versio: %1$s\nUusin versio: %2$s</string>
     <string name="update_now">Päivitä nyt</string>
     <string name="update_later">Päivitä myöhemmin</string>
-    <string name="location_not_found">Sijaintia ei löytynyt</string>
-    <string name="location_lookup_error">Virhe sijainnin haussa</string>
     <string name="gps_alert_msg">GPS on pois päältä. Haluatko mennä asetuksiin laittamaan sen päälle?</string>
     <string name="yes">Kyllä</string>
     <string name="no">Ei</string>

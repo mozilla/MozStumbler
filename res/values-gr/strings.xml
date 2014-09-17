@@ -28,8 +28,6 @@
     <string name="update_message">Εγκατεστημένη έκδοση: %1$s\n Τελευταία έκδοση: %2$s</string>
     <string name="update_now">Ενημέρωση τώρα</string>
     <string name="update_later">Ενημέρωση αργότερα</string>
-    <string name="location_not_found">Η τοποθεσία δεν βρέθηκε</string>
-    <string name="location_lookup_error">Σφάλμα εύρεσης τοποθεσίας</string>
     <string name="gps_alert_msg">Το GPS είναι απενεργοποιημένο. Θέλετε να πάτε στις ρυθμίσεις και να το ενεργοποιήσετε;</string>
     <string name="yes">Ναι</string>
     <string name="no">Όχι</string>

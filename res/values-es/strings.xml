@@ -32,8 +32,6 @@
     <string name="update_message">Versión instalada: %1$s\nÚltima versión: %2$s</string>
     <string name="update_now">Actualizar ahora</string>
     <string name="update_later">Actualizar más tarde</string>
-    <string name="location_not_found">Ubicación no encontrada</string>
-    <string name="location_lookup_error">Error en la búsqueda de ubicación</string>
     <string name="gps_alert_msg">El GPS está apagado. ¿Quieres ir a la configuración y encenderlo?</string>
     <string name="yes">Si</string>
     <string name="no">No</string>

@@ -32,8 +32,6 @@
     <string name="update_message">Versiune instalată: %1$s\nUltima versiune: %2$s</string>
     <string name="update_now">Actualizează acum</string>
     <string name="update_later">Actualizează mai târziu</string>
-    <string name="location_not_found">Locație negăsită</string>
-    <string name="location_lookup_error">Eroare obținere locație</string>
     <string name="gps_alert_msg">GPS-ul este oprit. Doriți să mergeți la setări și să-l porniți?</string>
     <string name="yes">Da</string>
     <string name="no">Nu</string>

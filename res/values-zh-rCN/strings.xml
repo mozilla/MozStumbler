@@ -9,7 +9,6 @@
     <string name="view_leaderboard">查看积分榜</string>
     <string name="view_map">测试 Mozilla 位置服务</string>
     <string name="service_name">Mozilla Stumbler</string>
-    <string name="activity_recognition_service">Mozilla Stumbler Activity Recognition Intent Service</string>
     <string name="wifi_access_points">累计扫描到 Wi-Fi 接入点: %1$d</string>
     <string name="wifi_disabled">0 (Wi-Fi 已关闭)</string>
     <string name="visible_wifi_access_points">当前可见的 Wi-Fi 接入点: %1$s</string>
@@ -25,14 +24,10 @@
     <string name="enter_nickname">输入昵称 (可选)</string>
     <string name="enter_nickname_title">昵称: </string>
     <string name="enter_nickname_longtext">你的昵称将被显示在积分榜中</string>
-    <string name="power_saving_mode">省电模式</string>
-    <string name="power_saving_mode_longtext">启用省电模式后，仅在检测到您的移动时才会进行扫描</string>
     <string name="update_title">下载 MozStumbler 更新？</string>
     <string name="update_message">当前版本: %1$s\n最新版本: %2$s</string>
     <string name="update_now">现在更新</string>
     <string name="update_later">稍后更新</string>
-    <string name="location_not_found">没有找到位置</string>
-    <string name="location_lookup_error">位置查询出错</string>
     <string name="gps_alert_msg">GPS 处于关闭状态。是否到设置中开启 GPS？</string>
     <string name="yes">是</string>
     <string name="no">否</string>
@@ -40,7 +35,6 @@
     <string name="about_openstreetmap">地图图层 © OpenStreetMap 贡献者\nhttp://www.openstreetmap.org</string>
     <string name="about_mapbox_title">MapBox</string>
     <string name="about_mapbox">了解我们的地图提供商…</string>
-    <string name="about_more">更多…</string>
     <string name="about_legal_aosp">本应用中的部分图标是 Android 开源项目创作并以知识共享 2.5 署名许可协议分享的作品</string>
     <string name="upload_observations_sent_title">已发送</string>
     <string name="upload_observations_last_upload_time_title">最近一次上传时间：</string>
@@ -53,14 +47,6 @@
     <string name="upload_observations_cells_queued_title">移动基站：</string>
     <string name="upload_observations_button">上传</string>
     <string name="upload_observations_dialog_title">上传报告</string>
-    <string name="detected_activity">检测到的移动: %1$s</string>
-    <string name="detected_activity_in_vehicle">移动中 (机动车)</string>
-    <string name="detected_activity_on_bicycle">移动中 (自行车)</string>
-    <string name="detected_activity_on_foot">移动中 (步行)</string>
-    <string name="detected_activity_still">静止</string>
-    <string name="detected_activity_tilting">倾斜</string>
-    <string name="detected_activity_unknown">未知</string>
-    
     <string name="upload_wifi_only_title">仅通过 Wi-Fi 网络上传</string>
     <string name="upload_wifi_only_summary">这一选项有助于减少您的移动数据流量</string>
     <string name="wifi_scan_always_title">总是扫描 Wi-Fi</string>
@@ -68,7 +54,6 @@
     <string name="refresh_map">刷新位置</string>
     <string name="upload_observations_data_size">大小 (KB):</string>
     <string name="title_activity_log">日志</string>
-    <string name="action_settings">设置</string>
     <string name="action_view_log">查看日志</string>
     <string name="scroll_to_start">向前滚动</string>
     <string name="scroll_to_end">向后滚动</string>

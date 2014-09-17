@@ -9,13 +9,12 @@
     <string name="view_leaderboard">Открыть таблицу лидеров</string>
     <string name="view_map">Показать карту</string>
     <string name="service_name">Mozilla Stumbler</string>
-    <string name="activity_recognition_service">Mozilla Stumbler Activity Recognition Intent Service</string>
     <string name="wifi_access_points">Отсканировано Wi-Fi точек: %1$d</string>
     <!--<string name="wifi_disabled">0 (Wi-Fi disabled)</string> translation missing-->
     <string name="visible_wifi_access_points">Доступно Wi-Fi точек: %1$s</string>
     <string name="cells_scanned">Отсканировано GSM сот: %1$d</string>
     <string name="cells_visible">Доступно GSM сот: %1$d</string>
-    <string name="gps_satellites">Доступно GPS спутников: %1$d</string><!--needs to be updated to: <string name="gps_satellites">GPS Satellites Used / Visible: %1$d/%2$d</string>-->
+    <string name="gps_satellites">Доступно GPS спутников: %1$d/%2$d</string>
     <string name="last_location">Координаты: %1$s</string>
     <string name="coordinate">%1$.4f, %2$.4f</string>
     <string name="locations_scanned">Отсканировано координат: %1$d</string>
@@ -25,14 +24,10 @@
     <string name="enter_nickname">Укажите свой псевдоним (не обязательно)</string>
     <string name="enter_nickname_title">Псевдоним: </string>
     <string name="enter_nickname_longtext">Ваш псевдоним появится в таблице лидеров.</string>
-    <string name="power_saving_mode">Режим экономии энергии</string>
-    <string name="power_saving_mode_longtext">Когда включён, точки сохраняются только во время движения.</string>
     <string name="update_title">Загрузить обновление MozStumbler?</string>
     <string name="update_message">Установленная версия: %1$s\nПоследняя версия: %2$s</string>
     <string name="update_now">Обновить сейчас</string>
     <string name="update_later">Обновить позже</string>
-    <string name="location_not_found">Местоположение не найдено</string>
-    <string name="location_lookup_error">Ошибка поиска местоположения</string>
     <string name="gps_alert_msg">GPS отключен. Вы хотите перейти к настройкам и включить его?</string>
     <string name="yes">Да</string>
     <string name="no">Нет</string>
@@ -41,7 +36,6 @@
 	<string name="about_openstreetmap">Map view tiles © OpenStreetMap contributors\nhttp://www.openstreetmap.org</string>
     <string name="about_mapbox_title">MapBox</string>-->
     <string name="about_mapbox">Информация о картографическом провайдере…</string>
-    <string name="about_more">О проекте…</string>
     <string name="about_legal_aosp">Некоторые изображения в этом приложении созданы и опубликованы под лицензией AOSP (Android Open Source Project) и используются в соответствии с условиями, описанными в лицензии Creative Commons 2.5</string>
     <string name="upload_observations_sent_title">Уже оправлено</string>
     <string name="upload_observations_last_upload_time_title">Время отправки:</string>
@@ -54,13 +48,6 @@
     <string name="upload_observations_cells_queued_title">GSM соты:</string>
     <string name="upload_observations_button">Отправить</string>
     <string name="upload_observations_dialog_title">Отправить измерения</string>
-    <string name="detected_activity">Действие: %1$s</string>
-    <string name="detected_activity_in_vehicle">Движение (автомобиль)</string>
-    <string name="detected_activity_on_bicycle">Движение (велосипед)</string>
-    <string name="detected_activity_on_foot">Движение (ходьба)</string>
-    <string name="detected_activity_still">Остановка</string>
-    <string name="detected_activity_tilting">Отклонение</string>
-    <string name="detected_activity_unknown">Не определено</string>
     <string name="upload_wifi_only_title">Передача данных только через Wi-Fi</string>
     <string name="upload_wifi_only_summary">Эта опция позволяет экономить мобильный трафик.</string>
     <string name="upload_observations_data_size">Size (KB):</string>
@@ -70,7 +57,6 @@
     <string name="refresh_map">Refresh location</string>
 	
 	<string name="title_activity_log">Log</string>
-    <string name="action_settings">Settings</string>
     <string name="action_view_log">View Log</string>
     <string name="scroll_to_start">Scroll to Top</string>
     <string name="scroll_to_end">Scroll to End</string>-->

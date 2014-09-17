@@ -70,7 +70,7 @@
             android:id="@+id/wifi_info_text"
             android:textColor="@android:color/white"
             android:layout_alignParentRight="true"
-            android:text="Wifi:"
+            android:text="Wi-Fi:"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
     </RelativeLayout>

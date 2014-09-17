@@ -50,8 +50,8 @@
     <string name="upload_observations_dialog_title">निरीक्षणे पाठवा</string>
     <string name="upload_wifi_only_title">फक्त Wi-Fi वर निरीक्षणे पाठवा</string>
     <string name="upload_wifi_only_summary">हा पर्याय आपला भ्रमणध्वनी जाळ्यावरील डेटा वापर कमी करेल.</string>
-    <string name="wifi_scan_always_title">Wi-Fi नेहमी शोधा</string>
-    <string name="wifi_scan_always_summary">Wi-Fi बंद असताना सुद्धा प्रवेश बिंदू शोधा</string>
+
+
     <string name="refresh_map">स्थळ अद्यतन करा</string>
     <string name="title_activity_log">नोंदवही</string>
     <string name="action_view_log">नोंदी बघा</string>

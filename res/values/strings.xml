@@ -54,8 +54,8 @@
     <string name="upload_observations_dialog_title">Upload observations</string>
     <string name="upload_wifi_only_title">Upload only on Wi-Fi</string>
     <string name="upload_wifi_only_summary">This option will reduce your data usage over the cellular network.</string>
-    <string name="wifi_scan_always_title">Always scan Wi-Fi</string>
-    <string name="wifi_scan_always_summary">Scan APs even when Wi-Fi is turned off</string>
+
+
     <string name="refresh_map">Refresh location</string>
     <string name="title_activity_log">Log</string>
     <string name="action_view_log">View Log</string>

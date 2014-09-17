@@ -53,8 +53,8 @@
     <string name="upload_wifi_only_summary">Deze optie zal uw mobiel dataverbruik verminderen.</string>
     <string name="upload_observations_data_size">Size (KB):</string>
     <!--translations missing
-	<string name="wifi_scan_always_title">Always scan Wi-Fi</string>
-    <string name="wifi_scan_always_summary">Scan APs even when Wi-Fi is turned off</string>
+
+
     <string name="refresh_map">Refresh location</string>
 	
 	<string name="title_activity_log">Log</string>

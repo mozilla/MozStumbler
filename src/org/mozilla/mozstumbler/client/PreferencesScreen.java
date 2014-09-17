@@ -24,7 +24,6 @@ public class PreferencesScreen extends PreferenceActivity {
     private static final int REQUEST_CODE_WIFI_SCAN_ALWAYS = 1;
 
     private EditTextPreference mNicknamePreference;
-    private CheckBoxPreference mWifiScanAlwaysSwitch;
     private CheckBoxPreference mWifiPreference;
     private CheckBoxPreference mIsHardwareAccelerated;
     private CheckBoxPreference mKeepScreenOn;
@@ -47,7 +46,6 @@ public class PreferencesScreen extends PreferenceActivity {
 
         mNicknamePreference = (EditTextPreference) getPreferenceManager().findPreference("nickname");
         mWifiPreference = (CheckBoxPreference) getPreferenceManager().findPreference("wifi_only");
-        mWifiScanAlwaysSwitch = (CheckBoxPreference) getPreferenceManager().findPreference("wifi_scan_always");
         mIsHardwareAccelerated = (CheckBoxPreference) getPreferenceManager().findPreference("hardware_acceleration");
         mKeepScreenOn = (CheckBoxPreference) getPreferenceManager().findPreference(ClientPrefs.KEEP_SCREEN_ON_PREF);
 
@@ -55,7 +53,6 @@ public class PreferencesScreen extends PreferenceActivity {
         mWifiPreference.setChecked(sPrefs.getUseWifiOnly());
 
         setPreferenceListener();
-        initWifiScanAlways();
     }
 
     @Override
@@ -63,7 +60,6 @@ public class PreferencesScreen extends PreferenceActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_CODE_WIFI_SCAN_ALWAYS) {
             boolean scanAlwaysAllowed = resultCode == Activity.RESULT_OK;
-            mWifiScanAlwaysSwitch.setChecked(scanAlwaysAllowed);
         }
     }
 
@@ -110,39 +106,4 @@ public class PreferencesScreen extends PreferenceActivity {
         }
     }
 
-    private void initWifiScanAlways() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR2) {
-            mWifiScanAlwaysSwitch.setEnabled(false);
-        } else {
-            initWifiScanAlwaysMr2();
-        }
-    }
-
-    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
-    private void initWifiScanAlwaysMr2() {
-        WifiManager wm = (WifiManager) getSystemService(Context.WIFI_SERVICE);
-        if (mWifiScanAlwaysSwitch.isChecked() && !wm.isScanAlwaysAvailable()) {
-            mWifiScanAlwaysSwitch.setChecked(false);
-        }
-        mWifiScanAlwaysSwitch.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
-            @Override
-            public boolean onPreferenceChange(Preference preference, Object checked) {
-                boolean result = false;
-                if ((Boolean) checked) {
-                    WifiManager wm = (WifiManager) getSystemService(Context.WIFI_SERVICE);
-                    if (wm.isScanAlwaysAvailable()) {
-                        result = true;
-                    } else {
-                        Intent i = new Intent(WifiManager.ACTION_REQUEST_SCAN_ALWAYS_AVAILABLE);
-                        startActivityForResult(i, REQUEST_CODE_WIFI_SCAN_ALWAYS);
-                        result = false;
-                    }
-                } else {
-                    result = true;
-                }
-                sPrefs.setWifiScanAlways(result);
-                return result;
-            }
-        });
-    }
 }

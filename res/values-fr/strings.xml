@@ -50,8 +50,8 @@
     <string name="upload_observations_dialog_title">Envoi des rapports</string>
     <string name="upload_wifi_only_title">Envoi des rapports par le Wi-Fi uniquement</string>
     <string name="upload_wifi_only_summary">Cette option réduira votre consommation de données de votre forfait.</string>
-    <string name="wifi_scan_always_title">Toujours détecter le Wi-Fi</string>
-    <string name="wifi_scan_always_summary">Détecter les points d\'accès même si le Wi-Fi est arrêté</string>
+
+
     <string name="refresh_map">Rafraichir la position</string>
     <string name="upload_observations_data_size">Size (KB):</string>
     <!--translations missing

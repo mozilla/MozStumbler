@@ -49,8 +49,8 @@
     <string name="upload_observations_dialog_title">Wysyłanie obserwacji</string>
     <string name="upload_wifi_only_title">Wysyłanie tylko przez Wi-Fi</string>
     <string name="upload_wifi_only_summary">Ta opcja zmniejszy zużycie danych w sieci komórkowej.</string>
-    <string name="wifi_scan_always_title">Ciągłe skanowanie sieci Wi-Fi</string>
-    <string name="wifi_scan_always_summary">Skanowanie punktów dostępowych nawet, jeśli Wi-Fi jest wyłączone</string>
+
+
     <string name="refresh_map">Odśwież położenie</string>
 	<string name="title_activity_log">Dziennik</string>
 	<string name="action_view_log">Wyświetl dziennik</string>

@@ -227,7 +227,7 @@ public class ServiceTest extends ServiceTestCase<StumblerService> implements Asy
     //    assertTrue(s.equals("[{\"asu\":19,\"radio\":\"gsm\",\"mnc\":1,\"cid\":1660199,\"mcc\":1,\"lac\":60330},{\"asu\":-1,\"mcc\":1,\"radio\":\"gsm\",\"mnc\":1}]"));
       //  assertTrue(s.equals("[{\"signal\":0,\"key\":\"01005e901000\",\"frequency\":0}]"));
 
-        UploadSettings settings = new UploadSettings(true, false);
+        UploadSettings settings = new UploadSettings(false);
         AsyncUploader upper = new AsyncUploader(settings, this);
         upper.execute();
         try {

@@ -75,14 +75,11 @@ public class WifiScanner extends BroadcastReceiver {
         }
         mStarted = true;
 
-        boolean scanAlways = Prefs.getInstance().getWifiScanAlways();
-
-        if (scanAlways || isWifiEnabled()) {
+        if (isWifiEnabled()) {
             activatePeriodicScan(stumblingMode);
         }
 
         IntentFilter i = new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
-        if (!scanAlways) i.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION);
         mContext.registerReceiver(this, i);
     }
 

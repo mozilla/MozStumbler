@@ -23,7 +23,6 @@ public class Prefs {
     private static final String LON_PREF = "lon_pref";
     private static final String FIREFOX_SCAN_ENABLED = "firefox_scan_on";
     private static final String MOZ_API_KEY = "moz_api_key";
-    private static final String WIFI_SCAN_ALWAYS = "wifi_scan_always";
     private static final String LAST_ATTEMPTED_UPLOAD_TIME = "last_attempted_upload_time";
     protected static final String PREFS_FILE = Prefs.class.getSimpleName();
 
@@ -126,14 +125,6 @@ public class Prefs {
 
     public synchronized boolean getUseWifiOnly() {
         return getBoolPrefWithDefault(WIFI_ONLY, true);
-    }
-
-    public synchronized boolean getWifiScanAlways() {
-        return getBoolPrefWithDefault(WIFI_SCAN_ALWAYS, false);
-    }
-
-    public synchronized void setWifiScanAlways(boolean b) {
-        setBoolPref(WIFI_SCAN_ALWAYS, b);
     }
 
     ///

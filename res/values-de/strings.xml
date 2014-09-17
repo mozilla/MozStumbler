@@ -50,8 +50,8 @@
     <string name="upload_wifi_only_title">Nur über Wi-Fi hochladen</string>
     <string name="upload_wifi_only_summary">Diese Option reduziert den Datenverbrauch im Mobilfunknetz.</string>
     
-    <string name="wifi_scan_always_title">Wi-Fi immer scannen</string>
-    <string name="wifi_scan_always_summary">Zugangspunkte auch bei abgeschaltetem Wi-Fi scannen</string>
+
+
     <string name="refresh_map">Standort aktualisieren</string>
 	
     <string name="title_activity_log">Protokoll</string>

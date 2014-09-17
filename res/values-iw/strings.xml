@@ -49,8 +49,8 @@
 	<string name="upload_observations_dialog_title">העלאת תצפיות</string>
 	<string name="upload_wifi_only_title">העלאה רק באמצעות Wi-Fi</string>
 	<string name="upload_wifi_only_summary">אפשרות זו תפחית את השימוש בנתונים של הרשת הסלולרית.</string>
-	<string name="wifi_scan_always_title">תמיד לסרוק Wi-Fi</string>
-	<string name="wifi_scan_always_summary">לסרוק נקודות גישה אפילו כשה־Wi-Fi כבוי</string>
+
+
 	<string name="refresh_map">רענון המיקום</string>
 	<string name="title_activity_log">רישום</string>
 	<string name="action_view_log">צפייה ברישום</string>

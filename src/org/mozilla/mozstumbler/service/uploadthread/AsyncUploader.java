@@ -37,10 +37,8 @@ public class AsyncUploader extends AsyncTask<Void, Void, SyncSummary> {
     }
 
     public static class UploadSettings {
-        public final boolean mShouldIgnoreWifiStatus;
         public final boolean mUseWifiOnly;
-        public UploadSettings(boolean shouldIgnoreWifiStatus, boolean useWifiOnly) {
-            mShouldIgnoreWifiStatus = shouldIgnoreWifiStatus;
+        public UploadSettings(boolean useWifiOnly) {
             mUseWifiOnly = useWifiOnly;
         }
     }
@@ -150,7 +148,7 @@ public class AsyncUploader extends AsyncTask<Void, Void, SyncSummary> {
         long uploadedCells = 0;
         long uploadedWifis = 0;
 
-        if (!mSettings.mShouldIgnoreWifiStatus && mSettings.mUseWifiOnly && !NetworkUtils.getInstance().isWifiAvailable()) {
+        if (mSettings.mUseWifiOnly && !NetworkUtils.getInstance().isWifiAvailable()) {
             if (AppGlobals.isDebug) {
                 Log.d(LOG_TAG, "not on WiFi, not sending");
             }

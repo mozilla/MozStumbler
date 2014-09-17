@@ -53,8 +53,8 @@
     <string name="upload_observations_dialog_title">上傳觀測結果</string>
     <string name="upload_wifi_only_title">僅在使用 Wi-Fi 時上傳資料</string>
     <string name="upload_wifi_only_summary">此選項將可減少您的行動網路使用量。</string>
-    <string name="wifi_scan_always_title">總是掃描 Wi-Fi</string>
-    <string name="wifi_scan_always_summary">在 Wi-Fi 關閉時持續掃描基地台</string>
+
+
     <string name="refresh_map">重新整理位置</string>
 	
     <string name="title_activity_log">紀錄</string>

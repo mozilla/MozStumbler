@@ -54,8 +54,6 @@
     <string name="upload_observations_dialog_title">Subir observaciones</string>
     <string name="upload_wifi_only_title">Subir sólo por Wi-Fi</string>
     <string name="upload_wifi_only_summary">Está opción reducirá tu consumo de datos de tu operador móvil.</string>
-    <string name="wifi_scan_always_title">Escanear wifis siempre</string>
-    <string name="wifi_scan_always_summary">Escanear Puntos de acceso incluso si el Wi-Fi está apagado</string>
     <string name="refresh_map">Recargar ubicación</string>
     <string name="title_activity_log">Log</string>
     <string name="action_view_log">Ver log</string>

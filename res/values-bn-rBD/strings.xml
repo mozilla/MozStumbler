@@ -50,8 +50,8 @@
     <string name="upload_observations_dialog_title">তথ্য আপলোড করুন</string>
 	<string name="upload_wifi_only_title">শুধুমাত্র ওয়াই-ফাই দ্বারা আপলোড</string>
     <string name="upload_wifi_only_summary">এই অপশনটি আপনার মোবাইল নেটওয়ার্কের ডাটা ব্যবহার কমাবে।</string>
-    <string name="wifi_scan_always_title">সবসময় ওয়াই-ফাই স্ক্যান করবে</string>
-    <string name="wifi_scan_always_summary">ওয়াই-ফাই বন্ধ থাকলেও এক্সেস পয়েন্টগুলো স্ক্যান করা হবে।</string>
+
+
     <string name="refresh_map">অবস্থান রিফ্রেশ কর</string>
     <string name="upload_observations_data_size">Size (KB):</string>
     <!--translations missing

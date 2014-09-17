@@ -151,8 +151,7 @@ public class MainApp extends Application {
         mStumblerService.stopScanning();
 
         AsyncUploader.UploadSettings settings =
-            new AsyncUploader.UploadSettings(ClientPrefs.getInstance().getWifiScanAlways(),
-                    ClientPrefs.getInstance().getUseWifiOnly());
+            new AsyncUploader.UploadSettings(ClientPrefs.getInstance().getUseWifiOnly());
         AsyncUploader uploader = new AsyncUploader(settings, null /* don't need to listen for completion */);
         uploader.setNickname(ClientPrefs.getInstance().getNickname());
         uploader.execute();

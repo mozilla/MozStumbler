@@ -91,8 +91,7 @@ public class UploadReportsDialog extends DialogFragment
             @Override
             public void onClick(View v) {
                 AsyncUploader.UploadSettings settings =
-                        new AsyncUploader.UploadSettings(ClientPrefs.getInstance().getWifiScanAlways(),
-                                ClientPrefs.getInstance().getUseWifiOnly());
+                        new AsyncUploader.UploadSettings(ClientPrefs.getInstance().getUseWifiOnly());
                 mUploader = new AsyncUploader(settings, UploadReportsDialog.this);
                 mUploader.setNickname(ClientPrefs.getInstance().getNickname());
                 mUploader.execute();

@@ -9,7 +9,6 @@
     <string name="view_leaderboard">Προβολή Πίνακα κατάταξης</string>
     <string name="view_map">Δοκιμή του Mozilla Location Service</string>
     <string name="service_name">Mozilla Stumbler</string>
-    <string name="activity_recognition_service">Πρόθεση Υπηρεσία του Mozilla Stumbler για Αναγνώριση Δραστηριότητας</string>
     <string name="wifi_access_points">Σαρωμένα Σημεία πρόσβασης Wi-Fi: %1$d</string>
     <string name="wifi_disabled">0 (Wi-Fi Απενεργοποιήθηκε)</string>
     <string name="visible_wifi_access_points">Ορατά Σημεία πρόσβασης Wi-Fi: %1$s</string>

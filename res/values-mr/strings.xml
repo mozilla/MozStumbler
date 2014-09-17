@@ -9,7 +9,6 @@
     <string name="view_leaderboard">अग्रेसर वापरकर्ता फलक बघा</string>
     <string name="view_map">मोझिला स्थळसेवा तपासा</string>
     <string name="service_name">मोझिला स्टंबलर</string>
-    <string name="activity_recognition_service">मोझिला स्टंबलर क्रियाशीलता ओळख हेतू सेवा</string>
     <string name="wifi_access_points">तपासलेले Wi-Fi प्रवेश बिंदू: %1$d</string>
     <string name="wifi_disabled">० (Wi-Fi बंद आहे)</string>
     <string name="visible_wifi_access_points">दिसणारे Wi-Fi प्रवेश बिंदू:: %1$s</string>

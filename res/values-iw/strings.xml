@@ -9,7 +9,6 @@
 	<string name="view_leaderboard">צפייה בלוח המובילים</string>
 	<string name="view_map">בדיקת שירות האיכון של Mozilla</string>
 	<string name="service_name">מאתר מוזילה</string>
-	<string name="activity_recognition_service">פעילות מאתר מוזילה לרישום מיקום</string>
 	<string name="wifi_access_points">נקודות גישה מסוג Wi-Fi שנסרקו: %1$d</string>
 	<string name="wifi_disabled">0 (ה־Wi-Fi כבוי)</string>
 	<string name="visible_wifi_access_points">נקודות Wi-Fi גלויות: %1$s</string>

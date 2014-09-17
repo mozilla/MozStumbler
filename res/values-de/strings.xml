@@ -9,7 +9,6 @@
     <string name="view_leaderboard">Bestenliste ansehen</string>
     <string name="view_map">Mozillas Ortungsdienst testen</string>
     <string name="service_name">Mozilla Stumbler</string>
-    <string name="activity_recognition_service">Mozilla Stumbler Intentions-Dienst zur Aktivitätserkennung</string>
     <string name="wifi_access_points">Wi-Fi Zugangspunkte gescannt: %1$d</string>
     <string name="wifi_disabled">0 (Wi-Fi deaktiviert)</string>
     <string name="visible_wifi_access_points">Wi-Fi Zugangspunkte sichtbar: %1$s</string>

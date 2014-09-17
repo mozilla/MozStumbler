@@ -9,7 +9,6 @@
     <string name="view_leaderboard">View Leaderboard</string>
     <string name="view_map">Test Mozilla Location Service</string>
     <string name="service_name">Mozilla Stumbler</string>
-    <string name="activity_recognition_service">Mozilla Stumbler Activity Recognition Intent Service</string>
     <string name="wifi_access_points">Wi-Fi Access Points Scanned: %1$d</string>
     <string name="wifi_disabled">0 (Wi-Fi disabled)</string>
     <string name="visible_wifi_access_points">Wi-Fi Access Points Visible: %1$s</string>

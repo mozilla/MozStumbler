@@ -9,7 +9,6 @@
     <string name="view_leaderboard">Arată clasament lideri</string>
     <string name="view_map">Testează Serviciul de localizare Mozilla</string>
     <string name="service_name">Mozilla Stumbler</string>
-    <string name="activity_recognition_service">Mozilla Stumbler Activity Recognition Intent Service</string>
     <string name="wifi_access_points">Puncte acces Wi-Fi scanate: %1$d</string>
     <string name="wifi_disabled">0 (Wi-Fi dezactivat)</string>
     <string name="visible_wifi_access_points">Puncte acces Wi-Fi vizibile: %1$s</string>

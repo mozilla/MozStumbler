@@ -9,7 +9,6 @@
     <string name="view_leaderboard">Vis resultatliste</string>
     <string name="view_map">Test Mozillas plasseringstjeneste</string>
     <string name="service_name">Mozilla Stumbler</string>
-    <string name="activity_recognition_service">Mozilla Stumbler Activity Recognition Intent Service</string>
     <string name="wifi_access_points">Innsamlede trådløspunkt: %1$d</string>
     <!--<string name="wifi_disabled">0 (Wi-Fi disabled)</string> translation missing-->
     <string name="visible_wifi_access_points">Synlige trådløspunkt: %1$s</string>

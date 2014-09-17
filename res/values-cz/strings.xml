@@ -9,7 +9,6 @@
     <string name="view_leaderboard">Zobraz žebříček</string>
     <string name="view_map">Vyzkoušet zjišťování pozice</string>
     <string name="service_name">Mozilla Stumbler</string>
-    <!--<string name="activity_recognition_service">Mozilla Stumbler Activity Recognition Intent Service</string> translations missing-->
     <string name="wifi_access_points">Vyhledány Wi-Fi přístupové body: %1$d</string>
     <!--<string name="wifi_disabled">0 (Wi-Fi disabled)</string> translation missing-->
     <string name="visible_wifi_access_points">Wi-Fi přístupové body v dosahu: %1$s</string>

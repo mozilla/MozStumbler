@@ -9,7 +9,6 @@
     <string name="view_leaderboard">Bekijk scorebord</string>
     <string name="view_map">Test Mozilla locatiedienst</string>
     <string name="service_name">Mozilla Stumbler</string>
-    <string name="activity_recognition_service">Mozilla Stumbler Activiteitsherkenningsservice</string>
     <string name="wifi_access_points">Gevonden wifinetwerken: %1$d</string>
     <!--<string name="wifi_disabled">0 (Wi-Fi disabled)</string> translation missing-->
     <string name="visible_wifi_access_points">Zichtbare wifinetwerken: %1$s</string>

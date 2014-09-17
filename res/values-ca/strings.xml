@@ -9,7 +9,6 @@
     <string name="view_leaderboard">Vore Classificació</string>
     <string name="view_map">Provar el Servei de Posició de Mozilla</string>
     <string name="service_name">Mozilla Stumbler</string>
-    <string name="activity_recognition_service">Servei de reconeiximent d\'activitat de Mozilla Stumbler</string>
     <string name="wifi_access_points">Punts d\'accés Wi-Fi escanejats: %1$d</string>
     <!--translation missing <string name="wifi_disabled">0 (Wi-Fi disabled)</string>-->
     <string name="visible_wifi_access_points">Punts d\'accés Wi-Fi visibles: %1$s</string>

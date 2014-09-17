@@ -9,7 +9,6 @@
     <string name="view_leaderboard">Открыть таблицу лидеров</string>
     <string name="view_map">Показать карту</string>
     <string name="service_name">Mozilla Stumbler</string>
-    <string name="activity_recognition_service">Mozilla Stumbler Activity Recognition Intent Service</string>
     <string name="wifi_access_points">Отсканировано Wi-Fi точек: %1$d</string>
     <!--<string name="wifi_disabled">0 (Wi-Fi disabled)</string> translation missing-->
     <string name="visible_wifi_access_points">Доступно Wi-Fi точек: %1$s</string>

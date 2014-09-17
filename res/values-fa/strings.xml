@@ -9,7 +9,6 @@
     <string name="view_leaderboard">مشاهدهٔ برد بالاترین‌ها</string>
     <string name="view_map">آزمایش خدمات مکانی موزیلا</string>
     <string name="service_name">Mozilla Stumbler</string>
-    <string name="activity_recognition_service">Intent Service فعالیت تشخیص Mozilla Stumbler</string>
     <string name="wifi_access_points">نقاط دسترسی وای‌فای اسکن‌شده: %1$d</string>
     <string name="wifi_disabled">۰ (وای‌فای غیرفعال‌شده)</string>
     <string name="visible_wifi_access_points">نقاط دسترسی نمایان وای‌فای: %1$s</string>

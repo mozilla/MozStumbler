@@ -9,7 +9,6 @@
     <string name="view_leaderboard">查看积分榜</string>
     <string name="view_map">测试 Mozilla 位置服务</string>
     <string name="service_name">Mozilla Stumbler</string>
-    <string name="activity_recognition_service">Mozilla Stumbler Activity Recognition Intent Service</string>
     <string name="wifi_access_points">累计扫描到 Wi-Fi 接入点: %1$d</string>
     <string name="wifi_disabled">0 (Wi-Fi 已关闭)</string>
     <string name="visible_wifi_access_points">当前可见的 Wi-Fi 接入点: %1$s</string>

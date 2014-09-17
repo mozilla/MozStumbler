@@ -9,7 +9,6 @@
     <string name="view_leaderboard">觀看排行榜</string>
     <string name="view_map">測試 Mozilla Location Service</string>
     <string name="service_name">Mozilla Stumbler</string>
-    <string name="activity_recognition_service">Mozilla Stumbler Activity Recognition Intent Service</string>
     <string name="wifi_access_points">已掃描 Wi-Fi 基地台數量: %1$d</string>
     <string name="wifi_disabled">0（已停用 Wi-Fi）</string>
     <string name="visible_wifi_access_points">可視 Wi-Fi 基地台數量: %1$s</string>

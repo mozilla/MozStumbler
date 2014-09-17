@@ -9,7 +9,6 @@
     <string name="view_leaderboard">লীডারবোর্ড দেখুন</string>
     <string name="view_map">মোজিলা লোকেশন সার্ভিস পরীক্ষা করুন</string>
     <string name="service_name">Mozilla Stumbler</string>
-    <string name="activity_recognition_service">Mozilla Stumbler Activity Recognition Intent Service</string>
     <string name="wifi_access_points">ওয়াই-ফাই এক্সেস পয়েন্ট স্ক্যান হয়েছে: %1$d</string>
     <string name="wifi_disabled">০ (ওয়াই-ফাই বন্ধ আছে)</string>
     <string name="visible_wifi_access_points">ওয়াই-ফাই এক্সেস পয়েন্ট বিদ্যমান আছে: %1$s</string>

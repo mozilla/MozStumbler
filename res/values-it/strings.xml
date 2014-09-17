@@ -9,7 +9,6 @@
     <string name="view_leaderboard">Guarda la classifica</string>
     <string name="view_map">Prova il servizio di localizzazione di Mozilla</string>
     <string name="service_name">Mozilla Stumbler</string>
-    <string name="activity_recognition_service">Servizio di riconoscimento dell\'attività di Mozilla Stumbler</string>
     <string name="wifi_access_points">Access point Wi-Fi analizzati: %1$d</string>
     <!--<string name="wifi_disabled">0 (Wi-Fi disabled)</string> translation missing-->
     <string name="visible_wifi_access_points">Access point Wi-Fi visibili: %1$s</string>

@@ -9,7 +9,6 @@
     <string name="view_leaderboard">Näytä pistetilasto</string>
     <string name="view_map">Kokeile Mozillan paikannuspalvelua</string>
     <string name="service_name">Mozilla Stumbler</string>
-    <string name="activity_recognition_service">Aktiivisuuden tunnistuspalvelu</string>
     <string name="wifi_access_points">Wi-Fi-tukiasemia skannattu: %1$d</string>
     <string name="wifi_disabled">0 (Wi-Fi pois päältä)</string>
     <string name="visible_wifi_access_points">Wi-Fi-tukiasemia näkyvillä: %1$s</string>
@@ -25,14 +24,10 @@
     <string name="enter_nickname">Valitse nimimerkki (ei pakollinen)</string>
     <string name="enter_nickname_title">Nimimerkki: </string>
     <string name="enter_nickname_longtext">Nimimerkkisi näytetään pistetilastossa.</string>
-    <string name="power_saving_mode">Virransäästötila</string>
-    <string name="power_saving_mode_longtext">Tässä tilassa tietoja kerätään vain kun liikut.</string>
     <string name="update_title">Lataa MozStumblerin päivitys?</string>
     <string name="update_message">Asennettu versio: %1$s\nUusin versio: %2$s</string>
     <string name="update_now">Päivitä nyt</string>
     <string name="update_later">Päivitä myöhemmin</string>
-    <string name="location_not_found">Sijaintia ei löytynyt</string>
-    <string name="location_lookup_error">Virhe sijainnin haussa</string>
     <string name="gps_alert_msg">GPS on pois päältä. Haluatko mennä asetuksiin laittamaan sen päälle?</string>
     <string name="yes">Kyllä</string>
     <string name="no">Ei</string>
@@ -40,7 +35,6 @@
     <string name="about_openstreetmap">Karttanäkymä © OpenStreetMapin osallistujat\nhttp://www.openstreetmap.org</string>
     <string name="about_mapbox_title">Kartta</string>
     <string name="about_mapbox">Lisätietoja karttapalvelusta…</string>
-    <string name="about_more">Lisätietoja…</string>
     <string name="about_legal_aosp">Tämä sovellus sisältää ikoneita Android Open Source -projektista. Käytössä olevat ikonit on lisensoitu Creative Commons 2.5 Attribution -lisenssillä.</string>
     <string name="upload_observations_sent_title">Lähetetty</string>
     <string name="upload_observations_last_upload_time_title">Edellisen lähetyksen aika:</string>
@@ -53,22 +47,10 @@
     <string name="upload_observations_cells_queued_title">Mastoja:</string>
     <string name="upload_observations_button">Lähetä</string>
     <string name="upload_observations_dialog_title">Lähetä tiedot</string>
-    
-    <string name="detected_activity">Tunnistettiin toiminto: %1$s</string>
-    <string name="detected_activity_in_vehicle">Liikkeellä (autossa)</string>
-    <string name="detected_activity_on_bicycle">Liikkeellä (pyörällä)</string>
-    <string name="detected_activity_on_foot">Liikkeellä (kävellen)</string>
-    <string name="detected_activity_still">Paikallaan</string>
-    <string name="detected_activity_tilting">Kädessä</string>
-    <string name="detected_activity_unknown">Tuntematon</string>
     <string name="upload_wifi_only_title">Lähetä vain Wi-Fi:n yli</string>
     <string name="upload_wifi_only_summary">Tämä asetus vähentää datan käyttöä matkapuhelinverkon yli</string>
-    
-
-
     <string name="refresh_map">Päivitä sijainti</string>
     <string name="title_activity_log">Loki</string>
-    <string name="action_settings">Asetukset</string>
     <string name="action_view_log">Näytä loki</string>
     <string name="scroll_to_start">Siirry alkuun</string>
     <string name="scroll_to_end">Siirry loppuun</string>

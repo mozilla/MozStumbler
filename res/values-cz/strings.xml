@@ -9,14 +9,13 @@
     <string name="view_leaderboard">Zobraz žebříček</string>
     <string name="view_map">Vyzkoušet zjišťování pozice</string>
     <string name="service_name">Mozilla Stumbler</string>
-    <!--<string name="activity_recognition_service">Mozilla Stumbler Activity Recognition Intent Service</string> translations missing-->
     <string name="wifi_access_points">Vyhledány Wi-Fi přístupové body: %1$d</string>
     <!--<string name="wifi_disabled">0 (Wi-Fi disabled)</string> translation missing-->
     <string name="visible_wifi_access_points">Wi-Fi přístupové body v dosahu: %1$s</string>
     <!--translations missing
     <string name="cells_scanned">Cells Scanned: %1$d</string>
     <string name="cells_visible">Cells Visible: %1$d</string>-->
-    <string name="gps_satellites">GPS satelity v dosahu: %1$d</string><!--needs to be updated to: <string name="gps_satellites">GPS Satellites Used / Visible: %1$d/%2$d</string>-->
+    <string name="gps_satellites">GPS satelity v dosahu: %1$d/%2$d</string>
     <string name="last_location">Poslední pozice: %1$s</string>
     <string name="coordinate">%1$.4f, %2$.4f</string>
     <string name="locations_scanned">Prohledáno míst: %1$d</string>
@@ -28,14 +27,12 @@
     <string name="enter_nickname_longtext">Vaše jméno se zobrazí v žebříčku.</string>
     
     <!--translations missing
-    <string name="power_saving_mode">Power saving mode</string>
-    <string name="power_saving_mode_longtext">When enabled, stumbling will only occur when you are moving.</string>-->
     <string name="update_title">Stáhnout novou verzi MozStumbleru?</string>
     <string name="update_message">Nainstalovana verze: %1$s\nPoslední verze: %2$s</string>
     <string name="update_now">Aktualizovat nyní</string>
     <string name="update_later">Aktualizovat později</string>
-    <string name="location_not_found">Pozice nenalezena</string>
-    <!--<string name="location_lookup_error">Location lookup error</string> translation missing-->
+    <string name="">Pozice nenalezena</string>
+    -->
     <string name="gps_alert_msg">GPS je vypnuté. Chcete zobrazit nastavení a zapnout GPS?</string>
     <string name="yes">Ano</string>
     <string name="no">Ne</string>
@@ -44,7 +41,6 @@
 	<string name="about_openstreetmap">Map view tiles © OpenStreetMap contributors\nhttp://www.openstreetmap.org</string>
     <string name="about_mapbox_title">MapBox</string>-->
     <string name="about_mapbox">Zjistit více informací o mapových datech…</string>
-    <string name="about_more">Více…</string>
     <string name="upload_observations_data_size">Size (KB):</string>
     <!--<string name="about_legal_aosp">Some iconography in this app is reproduced from work created and shared by the Android Open Source Project and used according to terms described in the Creative Commons 2.5 Attribution License.</string> translation missing-->
     <!--translations missing
@@ -59,21 +55,13 @@
     <string name="upload_observations_cells_queued_title">Cells:</string>
     <string name="upload_observations_button">Upload</string>
     <string name="upload_observations_dialog_title">Upload observations</string>
-    <string name="detected_activity">Detected Activity: %1$s</string>
-    <string name="detected_activity_in_vehicle">Moving (in vehicle)</string>
-    <string name="detected_activity_on_bicycle">Moving (on bicycle)</string>
-    <string name="detected_activity_on_foot">Moving (on foot)</string>
-    <string name="detected_activity_still">Still</string>
-    <string name="detected_activity_tilting">Tilting</string>
-    <string name="detected_activity_unknown">Unknown</string>
-    <string name="upload_wifi_only_title">Upload only on WiFi</string>
+    <string name="upload_wifi_only_title">Upload only on Wi-Fi</string>
     <string name="upload_wifi_only_summary">This option will reduce your data usage over the cellular network.</string>
 	
 
 
     <string name="refresh_map">Refresh location</string>
     <string name="title_activity_log">Log</string>
-    <string name="action_settings">Settings</string>
     <string name="action_view_log">View Log</string>
     <string name="scroll_to_start">Scroll to Top</string>
     <string name="scroll_to_end">Scroll to End</string>-->

@@ -9,7 +9,6 @@
     <string name="view_leaderboard">Wyświetl ranking</string>
     <string name="view_map">Przetestuj serwis lokalizacji Mozilli</string>
     <string name="service_name">Mozilla Stumbler</string>
-    <string name="activity_recognition_service">Usługa rozpoznawania ruchu Mozilla Stumbler</string>
     <string name="wifi_access_points">Przeskanowane punkty dostępowe Wi-Fi: %1$d</string>
     <string name="wifi_disabled">0 (Wi-Fi jest wyłączone)</string>
     <string name="visible_wifi_access_points">Widoczne punkty dostępowe Wi-Fi: %1$s</string>
@@ -25,14 +24,10 @@
     <string name="enter_nickname">Wpisz pseudonim (opcjonalnie)</string>
     <string name="enter_nickname_title">Pseudonim: </string>
     <string name="enter_nickname_longtext">Twój pseudonim pojawi się w rankingu.</string>
-    <string name="power_saving_mode">Tryb oszczędzania akumulatora</string>
-    <string name="power_saving_mode_longtext">Kiedy jest włączony, skanowanie będzie odbywało się tylko w czasie ruchu.</string>
     <string name="update_title">Pobrać aktualizację MozStumblera?</string>
     <string name="update_message">Zainstalowana wersja: %1$s\nNajnowsza wersja: %2$s</string>
     <string name="update_now">Zaktualizuj teraz</string>
     <string name="update_later">Zaktualizuj później</string>
-    <string name="location_not_found">Nie odnaleziono położenia</string>
-    <string name="location_lookup_error">Błąd podczas wyszukiwania położenia</string>
     <string name="gps_alert_msg">GPS jest wyłączony. Przejść do ustawień, aby go włączyć?</string>
     <string name="yes">Tak</string>
     <string name="no">Nie</string>
@@ -40,7 +35,6 @@
 	<string name="about_openstreetmap">Widok mapy © Współtwórcy projektu OpenStreetMap\nhttp://www.openstreetmap.org</string>
 	<string name="about_mapbox_title">Mapbox</string>
     <string name="about_mapbox">Więcej informacji o dostawcy map…</string>
-    <string name="about_more">Więcej…</string>
     <string name="about_legal_aosp">Niektóre ikony w tej aplikacji pochodzą z Android Open Source Project i są używane zgodnie z warunkami licencji Creative Commons 2.5 Attribution.</string>
     <string name="upload_observations_sent_title">Wysłane</string>
     <string name="upload_observations_last_upload_time_title">Ostatnio wysłano o:</string>
@@ -53,20 +47,12 @@
     <string name="upload_observations_cells_queued_title">Stacje sieci komórkowej:</string>
     <string name="upload_observations_button">Wyślij</string>
     <string name="upload_observations_dialog_title">Wysyłanie obserwacji</string>
-    <string name="detected_activity">Wykryta aktywność: %1$s</string>
-    <string name="detected_activity_in_vehicle">Ruch (w pojeździe)</string>
-    <string name="detected_activity_on_bicycle">Ruch (na rowerze)</string>
-    <string name="detected_activity_on_foot">Ruch (pieszo)</string>
-    <string name="detected_activity_still">Spoczynek</string>
-    <string name="detected_activity_tilting">Przechylenie</string>
-    <string name="detected_activity_unknown">Nieznana</string>
     <string name="upload_wifi_only_title">Wysyłanie tylko przez Wi-Fi</string>
     <string name="upload_wifi_only_summary">Ta opcja zmniejszy zużycie danych w sieci komórkowej.</string>
 
 
     <string name="refresh_map">Odśwież położenie</string>
 	<string name="title_activity_log">Dziennik</string>
-	<string name="action_settings">Ustawienia</string>
 	<string name="action_view_log">Wyświetl dziennik</string>
 	<string name="scroll_to_start">Przewiń do góry</string>
 	<string name="scroll_to_end">Przewiń na dół</string>

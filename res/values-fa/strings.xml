@@ -9,7 +9,6 @@
     <string name="view_leaderboard">مشاهدهٔ برد بالاترین‌ها</string>
     <string name="view_map">آزمایش خدمات مکانی موزیلا</string>
     <string name="service_name">Mozilla Stumbler</string>
-    <string name="activity_recognition_service">Intent Service فعالیت تشخیص Mozilla Stumbler</string>
     <string name="wifi_access_points">نقاط دسترسی وای‌فای اسکن‌شده: %1$d</string>
     <string name="wifi_disabled">۰ (وای‌فای غیرفعال‌شده)</string>
     <string name="visible_wifi_access_points">نقاط دسترسی نمایان وای‌فای: %1$s</string>
@@ -25,14 +24,10 @@
     <string name="enter_nickname">ورود نام اختصاری (اختیاری)</string>
     <string name="enter_nickname_title">نام اختصاری: </string>
     <string name="enter_nickname_longtext">نام اختصاری شما در برد بالاترین‌های ظاهر خواهد شد.</string>
-    <string name="power_saving_mode">حالت صرفه‌جویی انرژی</string>
-    <string name="power_saving_mode_longtext">هنگام فعال‌بودن، جمع‌کردن اطلاعات وقتی انجام می‌شود که شما در حال حرکت هستید.</string>
     <string name="update_title">دریافت MozStumbler به‌روزشده؟</string>
     <string name="update_message">نسخهٔ نصب‌شده: %1$s\nآخرین نسخه: %2$s</string>
     <string name="update_now">الآن به‌روز شود</string>
     <string name="update_later">بعداً به‌روز شود</string>
-    <string name="location_not_found">مکان پیدا نشد</string>
-    <string name="location_lookup_error">خطای به‌دست‌آوردن مکان</string>
     <string name="gps_alert_msg">چی‌پی‌اس خاموش است. می‌خواهید به تنظیمات بروید و روشنش کنید؟</string>
     <string name="yes">بله</string>
     <string name="no">خیر</string>
@@ -41,7 +36,6 @@
 	<string name="about_openstreetmap">Map view tiles © OpenStreetMap contributors\nhttp://www.openstreetmap.org</string>
     <string name="about_mapbox_title">MapBox</string>-->
     <string name="about_mapbox">دربارهٔ فراهم آورندهٔ نقشهٔ ما بیشتر بدانید…</string>
-    <string name="about_more">بیشتر…</string>
     <string name="about_legal_aosp">بیشتر آیکون‌ها استفاده‌شده در این برنامه از آثار ایجاد و به‌اشتراک‌گذاری‌شده توسط پروژهٔ متن‌باز اندروید گرفته یا بازتولیدشده‌است و بنا به شروط توضیح‌داده‌شده در مجوز Creative Commons 2.5 Attribution استفاده شده‌است.</string>
     <string name="upload_observations_sent_title">ارسال شد</string>
     <string name="upload_observations_last_upload_time_title">آخرین زمان بارگذاری:</string>
@@ -54,13 +48,6 @@
     <string name="upload_observations_cells_queued_title">شبکه‌های گوشی همراه:</string>
     <string name="upload_observations_button">بارگذاری</string>
     <string name="upload_observations_dialog_title">بارگذاری مشاهده‌ها</string>
-    <string name="detected_activity">فعالیت‌های تشخیص داده‌شده: %1$s</string>
-    <string name="detected_activity_in_vehicle">حرکت (در وسیلهٔ نقلیه)</string>
-    <string name="detected_activity_on_bicycle">حرکت (با دوچرخه)</string>
-    <string name="detected_activity_on_foot">حرکت (پیاده‌روی)</string>
-    <string name="detected_activity_still">هنوز</string>
-    <string name="detected_activity_tilting">سرازیری</string>
-    <string name="detected_activity_unknown">ناشناخته</string>
     <string name="upload_wifi_only_title">بارگذاری فقط هنگام وای‌فای</string>
     <string name="upload_wifi_only_summary">این گزینه مصرف‌داده‌ای شما را هنگام استفاده از شبکهٔ گوشی همراه کاهش خواهد داد.</string>
 
@@ -70,7 +57,6 @@
 	<string name="refresh_map">Refresh location</string>
 	
 	<string name="title_activity_log">Log</string>
-    <string name="action_settings">Settings</string>
     <string name="action_view_log">View Log</string>
     <string name="scroll_to_start">Scroll to Top</string>
     <string name="scroll_to_end">Scroll to End</string>-->

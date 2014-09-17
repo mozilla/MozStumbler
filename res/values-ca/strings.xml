@@ -9,10 +9,9 @@
     <string name="view_leaderboard">Vore Classificació</string>
     <string name="view_map">Provar el Servei de Posició de Mozilla</string>
     <string name="service_name">Mozilla Stumbler</string>
-    <string name="activity_recognition_service">Servei de reconeiximent d\'activitat de Mozilla Stumbler</string>
-    <string name="wifi_access_points">Punts d\'accés WiFi escanejats: %1$d</string>
+    <string name="wifi_access_points">Punts d\'accés Wi-Fi escanejats: %1$d</string>
     <!--translation missing <string name="wifi_disabled">0 (Wi-Fi disabled)</string>-->
-    <string name="visible_wifi_access_points">Punts d\'accés WiFi visibles: %1$s</string>
+    <string name="visible_wifi_access_points">Punts d\'accés Wi-Fi visibles: %1$s</string>
     <string name="cells_scanned">Cel·les escanejades: %1$d</string>
     <string name="cells_visible">Cel·les visibles: %1$d</string>
     <string name="gps_satellites">Satèl·lits GPS: %1$d/%2$d</string>
@@ -21,18 +20,14 @@
     <string name="locations_scanned">Posicions escanejades: %1$d</string>
     <string name="last_upload_time">Temps de l\'ùltima càrrega: %1$s</string>
     <string name="reports_sent">Informes enviats: %1$d</string>
-    <string name="service_scanning">Escaneat en cerca de xarxes WiFi i cel·lulars</string>
+    <string name="service_scanning">Escaneat en cerca de xarxes Wi-Fi i cel·lulars</string>
     <string name="enter_nickname">Introdueixi sobrenom (opcional)</string>
     <string name="enter_nickname_title">Sobrenom: </string>
     <string name="enter_nickname_longtext">El vostre sobrenom apareixerà en la taula de classificacions.</string>
-    <string name="power_saving_mode">Mode d\'estalvi d\'energia</string>
-    <string name="power_saving_mode_longtext">Quan activat, només s\'escanejarà quan es mou</string>
     <string name="update_title">Descarregar actual·lització del MozStumbler?</string>
     <string name="update_message">Versió instal·lada: %1$s\nÚltima versió: %2$s</string>
     <string name="update_now">Actualitzar ara</string>
     <string name="update_later">Actualitzar després</string>
-    <string name="location_not_found">Posició no trobada</string>
-    <!--translation missing <string name="location_lookup_error">Location lookup error</string>-->
     <string name="gps_alert_msg">El GPS es troba desactivat. Vol anar a la configuració i activar-lo?</string>
     <string name="yes">Sí</string>
     <string name="no">No</string>
@@ -41,7 +36,6 @@
 	<string name="about_openstreetmap">Map view tiles © OpenStreetMap contributors\nhttp://www.openstreetmap.org</string>
     <string name="about_mapbox_title">MapBox</string>-->
     <string name="about_mapbox">Apren més sobre el nostre proveïdor de dades de mapa…</string>
-    <string name="about_more">Més…</string>
     <!--translation missing <string name="about_legal_aosp">Some iconography in this app is reproduced from work created and shared by the Android Open Source Project and used according to terms described in the Creative Commons 2.5 Attribution License.</string>-->
     <!--translations missing <string name="upload_observations_sent_title">Sent</string>
     <string name="upload_observations_last_upload_time_title">Last Upload Time:</string>
@@ -54,23 +48,12 @@
     <string name="upload_observations_cells_queued_title">Cells:</string>
     <string name="upload_observations_button">Upload</string>
     <string name="upload_observations_dialog_title">Upload observations</string>-->
-    
-    <string name="detected_activity">Activitat detectada: %1$s</string>
-    <string name="detected_activity_in_vehicle">Moviment (vehicle)</string>
-    <string name="detected_activity_on_bicycle">Moviment (bicicleta)</string>
-    <string name="detected_activity_on_foot">Moviment (a peu)</string>
-    <string name="detected_activity_still">Quietud</string>
-    <string name="detected_activity_tilting">Inclinant-se</string>
-    <string name="detected_activity_unknown">Desconegut</string>
-    <string name="upload_observations_data_size">Size (KB):</string>
-    <!--translations missing <string name="upload_wifi_only_title">Upload only on WiFi</string>
+    <!--translations missing <string name="upload_wifi_only_title">Upload only on Wi-Fi</string>
     <string name="upload_wifi_only_summary">This option will reduce your data usage over the cellular network.</string>
 
 
     <string name="refresh_map">Refresh location</string>
-	
 	<string name="title_activity_log">Log</string>
-    <string name="action_settings">Settings</string>
     <string name="action_view_log">View Log</string>
     <string name="scroll_to_start">Scroll to Top</string>
     <string name="scroll_to_end">Scroll to End</string>-->

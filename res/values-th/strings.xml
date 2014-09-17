@@ -9,11 +9,10 @@
     <string name="view_leaderboard">ดูตารางคะแนน</string>
     <string name="view_map">ทดสอบบริการหาตำแหน่งของ Mozilla</string>
     <string name="service_name">Mozilla Stumbler</string>
-    <string name="activity_recognition_service">Mozilla Stumbler Activity Recognition Intent Service</string>
     <string name="wifi_access_points">แอคเซสพอยต์ Wi-Fi ที่แสกนได้: %1$d</string>
     <string name="wifi_disabled">0 (Wi-Fi ปิดใช้งาน)</string>
     <string name="visible_wifi_access_points">จุดเชื่อมต่อ Wi-Fi ที่มองเห็น: %1$s</string>
-    <string name="wifi_info">WiFi: %1$d มองเห็น %2$d Scanned</string>
+    <string name="wifi_info">Wi-Fi: %1$d มองเห็น %2$d Scanned</string>
     <string name="cells_scanned">เสาสัญญานมือถือที่แสกน: %1$d</string>
     <string name="cells_visible">เสาสัญญานมือถือที่มองเห็น: %1$d</string>
     <string name="cells_info">เสาสัญญาน: %1$d มองเห็น %2$d แสกน</string>
@@ -29,14 +28,10 @@
     <string name="enter_nickname">ใส่ชื่อเล่น (ไม่จำเป็น)</string>
     <string name="enter_nickname_title">ชื่อเล่น: </string>
     <string name="enter_nickname_longtext">ชื่อเล่นของคุณจะถูกแสดงในตารางคะแนน</string>
-    <string name="power_saving_mode">โหมดประหยัดพลังงาน</string>
-    <string name="power_saving_mode_longtext">เมื่อเปิด จะเก็บข้อมูลเฉพาะเวลาเคลื่อนไหวเท่านั้น</string>
     <string name="update_title">ดาวน์โหลดอัพเดท MozStumbler?</string>
     <string name="update_message">รุ่นที่ลง: %1$s\nรุ่นล่าสุด: %2$s</string>
     <string name="update_now">ปรับปรุงตอนนี้</string>
     <string name="update_later">ปรับปรุงภายหลัง</string>
-    <string name="location_not_found">ไม่เจอตำแหน่ง</string>
-    <string name="location_lookup_error">มีปัญหาในการค้นหาตำแหน่ง</string>
     <string name="gps_alert_msg">GPS ถูกปิดเอาไว้ คุณต้องการที่จะเข้าการตั้งค่าเพื่อเปิดหรือไม่?</string>
     <string name="yes">ใช่</string>
     <string name="no">ไม่ใช่</string>
@@ -44,7 +39,6 @@
     <string name="about_openstreetmap">Map view tiles © OpenStreetMap contributors\nhttp://www.openstreetmap.org</string>
     <string name="about_mapbox_title">MapBox</string>
     <string name="about_mapbox">เรียนรู้เกี่ยวกับผู้ให้บริการแผนที่…</string>
-    <string name="about_more">More…</string>
     <string name="about_legal_aosp">Some iconography in this app is reproduced from work created and shared by the Android Open Source Project and used according to terms described in the Creative Commons 2.5 Attribution License.</string>
     <string name="upload_observations_sent_title">ส่งแล้ว</string>
     <string name="upload_observations_last_upload_time_title">ส่งครั้งล่าสุด:</string>
@@ -57,20 +51,12 @@
     <string name="upload_observations_cells_queued_title">เสาสัญญานมือถือ:</string>
     <string name="upload_observations_button">อัพโหลด</string>
     <string name="upload_observations_dialog_title">อัพโหลดค่าที่เก็บไว้</string>
-    <string name="detected_activity">Detected Activity: %1$s</string>
-    <string name="detected_activity_in_vehicle">Moving (in vehicle)</string>
-    <string name="detected_activity_on_bicycle">Moving (on bicycle)</string>
-    <string name="detected_activity_on_foot">Moving (on foot)</string>
-    <string name="detected_activity_still">Still</string>
-    <string name="detected_activity_tilting">Tilting</string>
-    <string name="detected_activity_unknown">Unknown</string>
-    <string name="upload_wifi_only_title">อัพโหลดเฉพาะเวลาต่อ WiFi</string>
+    <string name="upload_wifi_only_title">อัพโหลดเฉพาะเวลาต่อ Wi-Fi</string>
     <string name="upload_wifi_only_summary">ค่านี้จะช่วยลดการใช้ข้อมูลผ่านเครือข่ายมือถือ</string>
 
 
     <string name="refresh_map">หาตำแหน่งใหม่</string>
     <string name="title_activity_log">บันทึก</string>
-    <string name="action_settings">การตั้งค่า</string>
     <string name="action_view_log">ดูค่าบันทึก</string>
     <string name="scroll_to_start">Scroll to Top</string>
     <string name="scroll_to_end">Scroll to End</string>

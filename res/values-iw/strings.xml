@@ -9,7 +9,6 @@
 	<string name="view_leaderboard">צפייה בלוח המובילים</string>
 	<string name="view_map">בדיקת שירות האיכון של Mozilla</string>
 	<string name="service_name">מאתר מוזילה</string>
-	<string name="activity_recognition_service">פעילות מאתר מוזילה לרישום מיקום</string>
 	<string name="wifi_access_points">נקודות גישה מסוג Wi-Fi שנסרקו: %1$d</string>
 	<string name="wifi_disabled">0 (ה־Wi-Fi כבוי)</string>
 	<string name="visible_wifi_access_points">נקודות Wi-Fi גלויות: %1$s</string>
@@ -25,14 +24,10 @@
 	<string name="enter_nickname">הזנת שם המשתמש (רשות)</string>
 	<string name="enter_nickname_title">כינוי: </string>
 	<string name="enter_nickname_longtext">הכינוי שלך יופיע בלוח המובילים.</string>
-	<string name="power_saving_mode">מצב חיסכון בסוללה</string>
-	<string name="power_saving_mode_longtext">כאשר מופעל, המאתר יסרוק רק כאשר אתה בתנועה.</string>
 	<string name="update_title">האם להוריד עדכון ל־MozStumbler?</string>
 	<string name="update_message">הגרסה המותקנת: %1$s\nהגרסה העדכנית: %2$s</string>
 	<string name="update_now">לעדכן כעת</string>
 	<string name="update_later">לעדכן מאוחר יותר</string>
-	<string name="location_not_found">המיקום לא נמצא</string>
-	<string name="location_lookup_error">שגיאת איתור מיקום</string>
 	<string name="gps_alert_msg">האיכון כבוי. האם ברצונך לגשת להגדרות כדי להפעיל אותו?</string>
 	<string name="yes">כן</string>
 	<string name="no">לא</string>
@@ -40,7 +35,6 @@
 	<string name="about_openstreetmap">משבצות הצגת המפה © תורמיOpenStreetMap\nhttp://www.openstreetmap.org</string>
 	<string name="about_mapbox_title">MapBox</string>
 	<string name="about_mapbox">מידע נוסף על ספק המיפוי שלנו…</string>
-	<string name="about_more">פרטים נוספים…</string>
 	<string name="about_legal_aosp">חלק מהסימנים ביישום זה נגזרו מיצירות שנוצרו עבור Android Open Source Project ונעשה בהם שימוש בכפוף לתנאים המתוארים ברישיון Creative Commons 2.5 ייחוס.</string>
 	<string name="upload_observations_sent_title">נשלח</string>
 	<string name="upload_observations_last_upload_time_title">תאריך העלאה אחרון:</string>
@@ -53,20 +47,12 @@
 	<string name="upload_observations_cells_queued_title">אנטנות:</string>
 	<string name="upload_observations_button">העלאה</string>
 	<string name="upload_observations_dialog_title">העלאת תצפיות</string>
-	<string name="detected_activity">זוהתה פעילות: %1$s</string>
-	<string name="detected_activity_in_vehicle">תנועה (ברכב)</string>
-	<string name="detected_activity_on_bicycle">תנועה (על אופניים)</string>
-	<string name="detected_activity_on_foot">תנועה (ברגל)</string>
-	<string name="detected_activity_still">עמידה</string>
-	<string name="detected_activity_tilting">טלטול</string>
-	<string name="detected_activity_unknown">לא ידוע</string>
 	<string name="upload_wifi_only_title">העלאה רק באמצעות Wi-Fi</string>
 	<string name="upload_wifi_only_summary">אפשרות זו תפחית את השימוש בנתונים של הרשת הסלולרית.</string>
 
 
 	<string name="refresh_map">רענון המיקום</string>
 	<string name="title_activity_log">רישום</string>
-	<string name="action_settings">הגדרות</string>
 	<string name="action_view_log">צפייה ברישום</string>
 	<string name="scroll_to_start">גלילה להתחלה</string>
 	<string name="scroll_to_end">גלילה לסוף</string>

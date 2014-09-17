@@ -48,13 +48,6 @@
     <string name="upload_observations_cells_queued_title">भ्रमणध्वनी जाळे:</string>
     <string name="upload_observations_button">पाठवा</string>
     <string name="upload_observations_dialog_title">निरीक्षणे पाठवा</string>
-    <string name="detected_activity">दिसलेली हालचाल: %1$s</string>
-    <string name="detected_activity_in_vehicle">फिरत आहे (वाहनामध्ये)</string>
-    <string name="detected_activity_on_bicycle">फिरत आहे (सायकलवर)</string>
-    <string name="detected_activity_on_foot">फिरत आहे (पायी)</string>
-    <string name="detected_activity_still">स्तब्ध</string>
-    <string name="detected_activity_tilting">तिरका</string>
-    <string name="detected_activity_unknown">अज्ञात</string>
     <string name="upload_wifi_only_title">फक्त Wi-Fi वर निरीक्षणे पाठवा</string>
     <string name="upload_wifi_only_summary">हा पर्याय आपला भ्रमणध्वनी जाळ्यावरील डेटा वापर कमी करेल.</string>
     <string name="wifi_scan_always_title">Wi-Fi नेहमी शोधा</string>

@@ -48,14 +48,6 @@
     <string name="upload_observations_cells_queued_title">সেল:</string>
     <string name="upload_observations_button">আপলোড</string>
     <string name="upload_observations_dialog_title">তথ্য আপলোড করুন</string>
-    <string name="detected_activity">কার্যকলাপ সনাক্ত হয়েছে: %1$s</string>
-    <string name="detected_activity_in_vehicle">চলমান (গাড়ীতে)</string>
-    <string name="detected_activity_on_bicycle">চলমান (বাই-সাইকেলে)</string>
-    <string name="detected_activity_on_foot">চলমান (পায়ে হেটে)</string>
-    <string name="detected_activity_still">থেমে আছেন</string>
-    <string name="detected_activity_tilting">Tilting</string>
-    <string name="detected_activity_unknown">অজানা</string>
-	
 	<string name="upload_wifi_only_title">শুধুমাত্র ওয়াই-ফাই দ্বারা আপলোড</string>
     <string name="upload_wifi_only_summary">এই অপশনটি আপনার মোবাইল নেটওয়ার্কের ডাটা ব্যবহার কমাবে।</string>
     <string name="wifi_scan_always_title">সবসময় ওয়াই-ফাই স্ক্যান করবে</string>

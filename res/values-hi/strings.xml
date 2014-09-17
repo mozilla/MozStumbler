@@ -47,13 +47,6 @@
     <string name="upload_observations_cells_queued_title">भ्रमणध्वनि कोशिकाएं:</string>
     <string name="upload_observations_button">भेजें</string>
     <string name="upload_observations_dialog_title">अवलोकन भेजें</string>
-    <string name="detected_activity">दिख रही गतिविधि: %1$s</string>
-    <string name="detected_activity_in_vehicle">चल रहा (वाहन में)</string>
-    <string name="detected_activity_on_bicycle">चल रहा (सायकल पर)</string>
-    <string name="detected_activity_on_foot">चल रहा (पैदल)</string>
-    <string name="detected_activity_still">स्थिर</string>
-    <string name="detected_activity_tilting">तिरछा</string>
-    <string name="detected_activity_unknown">अज्ञात</string>
     <string name="upload_wifi_only_title">केवल Wi-Fi पर अवलोकन भेजें</string>
     <string name="upload_wifi_only_summary">यह पर्याय आपका भ्रमणध्वनि जाल पर डेटा उपयोग काम करेगा.</string>
     <string name="wifi_scan_always_title">Wi-Fi हमेशा खोजें</string>

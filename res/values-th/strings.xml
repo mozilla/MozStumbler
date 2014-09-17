@@ -51,13 +51,6 @@
     <string name="upload_observations_cells_queued_title">เสาสัญญานมือถือ:</string>
     <string name="upload_observations_button">อัพโหลด</string>
     <string name="upload_observations_dialog_title">อัพโหลดค่าที่เก็บไว้</string>
-    <string name="detected_activity">Detected Activity: %1$s</string>
-    <string name="detected_activity_in_vehicle">Moving (in vehicle)</string>
-    <string name="detected_activity_on_bicycle">Moving (on bicycle)</string>
-    <string name="detected_activity_on_foot">Moving (on foot)</string>
-    <string name="detected_activity_still">Still</string>
-    <string name="detected_activity_tilting">Tilting</string>
-    <string name="detected_activity_unknown">Unknown</string>
     <string name="upload_wifi_only_title">อัพโหลดเฉพาะเวลาต่อ Wi-Fi</string>
     <string name="upload_wifi_only_summary">ค่านี้จะช่วยลดการใช้ข้อมูลผ่านเครือข่ายมือถือ</string>
     <string name="wifi_scan_always_title">แสกนหา Wi-Fi ตลอดเวลา</string>

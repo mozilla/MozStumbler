@@ -48,14 +48,6 @@
     <string name="upload_observations_cells_queued_title">Antennes cellulaires :</string>
     <string name="upload_observations_button">Envoyer</string>
     <string name="upload_observations_dialog_title">Envoi des rapports</string>
-    <string name="detected_activity">Activité détectée : %1$s</string>
-    <string name="detected_activity_in_vehicle">Déplacement (en véhicle)</string>
-    <string name="detected_activity_on_bicycle">Déplacement (à vélo)</string>
-    <string name="detected_activity_on_foot">Déplacement (à pied)</string>
-    <string name="detected_activity_still">Immobile</string>
-    <string name="detected_activity_tilting">Changeante</string>
-    <string name="detected_activity_unknown">Inconnue</string>
- 
     <string name="upload_wifi_only_title">Envoi des rapports par le Wi-Fi uniquement</string>
     <string name="upload_wifi_only_summary">Cette option réduira votre consommation de données de votre forfait.</string>
     <string name="wifi_scan_always_title">Toujours détecter le Wi-Fi</string>

@@ -47,14 +47,6 @@
     <string name="upload_observations_cells_queued_title">移动基站：</string>
     <string name="upload_observations_button">上传</string>
     <string name="upload_observations_dialog_title">上传报告</string>
-    <string name="detected_activity">检测到的移动: %1$s</string>
-    <string name="detected_activity_in_vehicle">移动中 (机动车)</string>
-    <string name="detected_activity_on_bicycle">移动中 (自行车)</string>
-    <string name="detected_activity_on_foot">移动中 (步行)</string>
-    <string name="detected_activity_still">静止</string>
-    <string name="detected_activity_tilting">倾斜</string>
-    <string name="detected_activity_unknown">未知</string>
-    
     <string name="upload_wifi_only_title">仅通过 Wi-Fi 网络上传</string>
     <string name="upload_wifi_only_summary">这一选项有助于减少您的移动数据流量</string>
     <string name="wifi_scan_always_title">总是扫描 Wi-Fi</string>

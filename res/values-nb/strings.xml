@@ -48,13 +48,6 @@
     <string name="upload_observations_cells_queued_title">Mobilnettverk:</string>
     <string name="upload_observations_button">Last opp</string>
     <string name="upload_observations_dialog_title">Last opp observasjoner</string>
-    <string name="detected_activity">Oppdaget aktivitet: %1$s</string>
-    <string name="detected_activity_in_vehicle">I bevegelse (i kjøretøy)</string>
-    <string name="detected_activity_on_bicycle">I bevegelse (på sykkel)</string>
-    <string name="detected_activity_on_foot">I bevegelse (til fots)</string>
-    <string name="detected_activity_still">Stillestående</string>
-    <string name="detected_activity_tilting">Vippende</string>
-    <string name="detected_activity_unknown">Ukjent</string>
     <string name="upload_wifi_only_title">Last bare opp via trådløsnett</string>
     <string name="upload_wifi_only_summary">Dette valget reduserer databruk via mobilnettverk.</string>
     <string name="upload_observations_data_size">Size (KB):</string>

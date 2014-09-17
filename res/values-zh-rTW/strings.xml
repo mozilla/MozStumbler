@@ -51,13 +51,6 @@
     <string name="upload_observations_cells_queued_title">行動網路基地台:</string>
     <string name="upload_observations_button">上傳</string>
     <string name="upload_observations_dialog_title">上傳觀測結果</string>
-    <string name="detected_activity">偵測移動狀態: %1$s</string>
-    <string name="detected_activity_in_vehicle">移動中（乘車）</string>
-    <string name="detected_activity_on_bicycle">移動中（腳踏車）</string>
-    <string name="detected_activity_on_foot">移動中（步行）</string>
-    <string name="detected_activity_still">靜止不動</string>
-    <string name="detected_activity_tilting">傾斜中</string>
-    <string name="detected_activity_unknown">未知</string>
     <string name="upload_wifi_only_title">僅在使用 Wi-Fi 時上傳資料</string>
     <string name="upload_wifi_only_summary">此選項將可減少您的行動網路使用量。</string>
     <string name="wifi_scan_always_title">總是掃描 Wi-Fi</string>

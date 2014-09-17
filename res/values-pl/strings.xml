@@ -47,13 +47,6 @@
     <string name="upload_observations_cells_queued_title">Stacje sieci komórkowej:</string>
     <string name="upload_observations_button">Wyślij</string>
     <string name="upload_observations_dialog_title">Wysyłanie obserwacji</string>
-    <string name="detected_activity">Wykryta aktywność: %1$s</string>
-    <string name="detected_activity_in_vehicle">Ruch (w pojeździe)</string>
-    <string name="detected_activity_on_bicycle">Ruch (na rowerze)</string>
-    <string name="detected_activity_on_foot">Ruch (pieszo)</string>
-    <string name="detected_activity_still">Spoczynek</string>
-    <string name="detected_activity_tilting">Przechylenie</string>
-    <string name="detected_activity_unknown">Nieznana</string>
     <string name="upload_wifi_only_title">Wysyłanie tylko przez Wi-Fi</string>
     <string name="upload_wifi_only_summary">Ta opcja zmniejszy zużycie danych w sieci komórkowej.</string>
     <string name="wifi_scan_always_title">Ciągłe skanowanie sieci Wi-Fi</string>

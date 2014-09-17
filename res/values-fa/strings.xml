@@ -48,13 +48,6 @@
     <string name="upload_observations_cells_queued_title">شبکه‌های گوشی همراه:</string>
     <string name="upload_observations_button">بارگذاری</string>
     <string name="upload_observations_dialog_title">بارگذاری مشاهده‌ها</string>
-    <string name="detected_activity">فعالیت‌های تشخیص داده‌شده: %1$s</string>
-    <string name="detected_activity_in_vehicle">حرکت (در وسیلهٔ نقلیه)</string>
-    <string name="detected_activity_on_bicycle">حرکت (با دوچرخه)</string>
-    <string name="detected_activity_on_foot">حرکت (پیاده‌روی)</string>
-    <string name="detected_activity_still">هنوز</string>
-    <string name="detected_activity_tilting">سرازیری</string>
-    <string name="detected_activity_unknown">ناشناخته</string>
     <string name="upload_wifi_only_title">بارگذاری فقط هنگام وای‌فای</string>
     <string name="upload_wifi_only_summary">این گزینه مصرف‌داده‌ای شما را هنگام استفاده از شبکهٔ گوشی همراه کاهش خواهد داد.</string>
     <string name="wifi_scan_always_title">همیشه وای‌فای را اسکن کن</string>

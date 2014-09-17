@@ -47,17 +47,8 @@
     <string name="upload_observations_cells_queued_title">Mastoja:</string>
     <string name="upload_observations_button">Lähetä</string>
     <string name="upload_observations_dialog_title">Lähetä tiedot</string>
-    
-    <string name="detected_activity">Tunnistettiin toiminto: %1$s</string>
-    <string name="detected_activity_in_vehicle">Liikkeellä (autossa)</string>
-    <string name="detected_activity_on_bicycle">Liikkeellä (pyörällä)</string>
-    <string name="detected_activity_on_foot">Liikkeellä (kävellen)</string>
-    <string name="detected_activity_still">Paikallaan</string>
-    <string name="detected_activity_tilting">Kädessä</string>
-    <string name="detected_activity_unknown">Tuntematon</string>
     <string name="upload_wifi_only_title">Lähetä vain Wi-Fi:n yli</string>
     <string name="upload_wifi_only_summary">Tämä asetus vähentää datan käyttöä matkapuhelinverkon yli</string>
-    
     <string name="wifi_scan_always_title">Skannaa aina Wi-Fiä</string>
     <string name="wifi_scan_always_summary">Skannaa Wi-Fiä vaikka Wi-Fi olisi pois päältä</string>
     <string name="refresh_map">Päivitä sijainti</string>

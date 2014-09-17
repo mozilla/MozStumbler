@@ -55,13 +55,6 @@
     <string name="upload_observations_cells_queued_title">Cells:</string>
     <string name="upload_observations_button">Upload</string>
     <string name="upload_observations_dialog_title">Upload observations</string>
-    <string name="detected_activity">Detected Activity: %1$s</string>
-    <string name="detected_activity_in_vehicle">Moving (in vehicle)</string>
-    <string name="detected_activity_on_bicycle">Moving (on bicycle)</string>
-    <string name="detected_activity_on_foot">Moving (on foot)</string>
-    <string name="detected_activity_still">Still</string>
-    <string name="detected_activity_tilting">Tilting</string>
-    <string name="detected_activity_unknown">Unknown</string>
     <string name="upload_wifi_only_title">Upload only on Wi-Fi</string>
     <string name="upload_wifi_only_summary">This option will reduce your data usage over the cellular network.</string>
 	

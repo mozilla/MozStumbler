@@ -48,13 +48,6 @@
     <string name="upload_observations_cells_queued_title">Κυψέλες τηλεφωνίας:</string>
     <string name="upload_observations_button">Αποστολή</string>
     <string name="upload_observations_dialog_title">Αποστολή παρατηρήσεων</string>
-    <string name="detected_activity">Εντοπίστηκε Δραστηριότητα: %1$s</string>
-    <string name="detected_activity_in_vehicle">Κινείται (σε όχημά)</string>
-    <string name="detected_activity_on_bicycle">Κινείται (σε ποδήλατο)</string>
-    <string name="detected_activity_on_foot">Κινείται (με τα πόδια)</string>
-    <string name="detected_activity_still">Ακίνητο</string>
-    <string name="detected_activity_tilting">Κλίση</string>
-    <string name="detected_activity_unknown">Άγνωστο</string>
     <string name="upload_wifi_only_title">Μεταφόρτωση μόνο μέσω Wi-Fi</string>
     <string name="upload_wifi_only_summary">Η επιλογή αυτή θα μειώσει τη χρήση των δεδομένων σας μέσω του δικτύου κινητής τηλεφωνίας.</string>
     <string name="wifi_scan_always_title">Μόνιμη σάρωση Wi-Fi</string>

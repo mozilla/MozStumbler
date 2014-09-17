@@ -47,14 +47,6 @@
     <string name="upload_observations_cells_queued_title">Funkzellen:</string>
     <string name="upload_observations_button">Hochladen</string>
     <string name="upload_observations_dialog_title">Beobachtungen hochladen</string>
-    <string name="detected_activity">Erkannte Aktivität: %1$s</string>
-    <string name="detected_activity_in_vehicle">In Bewegung (Fahrzeug)</string>
-    <string name="detected_activity_on_bicycle">In Bewegung (Fahrrad)</string>
-    <string name="detected_activity_on_foot">In Bewegung (zu Fuß)</string>
-    <string name="detected_activity_still">Stillstehend</string>
-    <string name="detected_activity_tilting">Gekippt</string>
-    <string name="detected_activity_unknown">Unbekannt</string>
-    
     <string name="upload_wifi_only_title">Nur über Wi-Fi hochladen</string>
     <string name="upload_wifi_only_summary">Diese Option reduziert den Datenverbrauch im Mobilfunknetz.</string>
     

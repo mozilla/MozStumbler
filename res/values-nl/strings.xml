@@ -49,13 +49,6 @@
     <string name="upload_observations_cells_queued_title">Celle:</string>
     <string name="upload_observations_button">Invia</string>
     <string name="upload_observations_dialog_title">Invia osservazioni</string>-->
-    <string name="detected_activity">Gedetecteerde activiteit: %1$s</string>
-    <string name="detected_activity_in_vehicle">In beweging (in een voertuig)</string>
-    <string name="detected_activity_on_bicycle">In beweging (op een fiets)</string>
-    <string name="detected_activity_on_foot">In beweging (te voet)</string>
-    <string name="detected_activity_still">Stilstaand</string>
-    <string name="detected_activity_tilting">Kantelend</string>
-    <string name="detected_activity_unknown">Onbekend</string>
     <string name="upload_wifi_only_title">Upload alleen over een wifiverbinding</string>
     <string name="upload_wifi_only_summary">Deze optie zal uw mobiel dataverbruik verminderen.</string>
     <string name="upload_observations_data_size">Size (KB):</string>

@@ -48,15 +48,6 @@
     <string name="upload_observations_cells_queued_title">Cells:</string>
     <string name="upload_observations_button">Upload</string>
     <string name="upload_observations_dialog_title">Upload observations</string>-->
-    
-    <string name="detected_activity">Activitat detectada: %1$s</string>
-    <string name="detected_activity_in_vehicle">Moviment (vehicle)</string>
-    <string name="detected_activity_on_bicycle">Moviment (bicicleta)</string>
-    <string name="detected_activity_on_foot">Moviment (a peu)</string>
-    <string name="detected_activity_still">Quietud</string>
-    <string name="detected_activity_tilting">Inclinant-se</string>
-    <string name="detected_activity_unknown">Desconegut</string>
-    <string name="upload_observations_data_size">Size (KB):</string>
     <!--translations missing <string name="upload_wifi_only_title">Upload only on Wi-Fi</string>
     <string name="upload_wifi_only_summary">This option will reduce your data usage over the cellular network.</string>
     <string name="wifi_scan_always_title">Always scan Wi-Fi</string>

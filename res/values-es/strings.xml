@@ -52,13 +52,6 @@
     <string name="upload_observations_cells_queued_title">Celdas móviles:</string>
     <string name="upload_observations_button">Subir</string>
     <string name="upload_observations_dialog_title">Subir observaciones</string>
-    <string name="detected_activity">Actividad detectada: %1$s</string>
-    <string name="detected_activity_in_vehicle">Moviéndose (en vehículo)</string>
-    <string name="detected_activity_on_bicycle">Moviéndose (en bicicleta)</string>
-    <string name="detected_activity_on_foot">Moviéndose (a pie)</string>
-    <string name="detected_activity_still">Quieto</string>
-    <string name="detected_activity_tilting">Inclinado</string>
-    <string name="detected_activity_unknown">Desconocido</string>
     <string name="upload_wifi_only_title">Subir sólo por Wi-Fi</string>
     <string name="upload_wifi_only_summary">Está opción reducirá tu consumo de datos de tu operador móvil.</string>
     <string name="wifi_scan_always_title">Escanear wifis siempre</string>

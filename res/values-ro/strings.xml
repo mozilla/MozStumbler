@@ -51,13 +51,6 @@
     <string name="upload_observations_cells_queued_title">Celule:</string>
     <string name="upload_observations_button">Încarcă</string>
     <string name="upload_observations_dialog_title">Încarcă observații</string>
-    <string name="detected_activity">Activitate detectată: %1$s</string>
-    <string name="detected_activity_in_vehicle">Deplasare (în autovehicul)</string>
-    <string name="detected_activity_on_bicycle">Deplasare (pe bicicletă)</string>
-    <string name="detected_activity_on_foot">Deplasare (pe jos)</string>
-    <string name="detected_activity_still">Staționare</string>
-    <string name="detected_activity_tilting">Înclinare</string>
-    <string name="detected_activity_unknown">Necunoscută</string>
     <string name="upload_wifi_only_title">Încarcă numai prin Wi-Fi</string>
     <string name="upload_wifi_only_summary">Această opțiune va reduce cantitatea de date utilizate prin rețeaua celulară.</string>
     <string name="wifi_scan_always_title">Scanează Wi-Fi întotdeauna</string>

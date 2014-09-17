@@ -48,13 +48,6 @@
     <string name="upload_observations_cells_queued_title">GSM соты:</string>
     <string name="upload_observations_button">Отправить</string>
     <string name="upload_observations_dialog_title">Отправить измерения</string>
-    <string name="detected_activity">Действие: %1$s</string>
-    <string name="detected_activity_in_vehicle">Движение (автомобиль)</string>
-    <string name="detected_activity_on_bicycle">Движение (велосипед)</string>
-    <string name="detected_activity_on_foot">Движение (ходьба)</string>
-    <string name="detected_activity_still">Остановка</string>
-    <string name="detected_activity_tilting">Отклонение</string>
-    <string name="detected_activity_unknown">Не определено</string>
     <string name="upload_wifi_only_title">Передача данных только через Wi-Fi</string>
     <string name="upload_wifi_only_summary">Эта опция позволяет экономить мобильный трафик.</string>
     <string name="upload_observations_data_size">Size (KB):</string>

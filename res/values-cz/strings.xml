@@ -15,7 +15,7 @@
     <!--translations missing
     <string name="cells_scanned">Cells Scanned: %1$d</string>
     <string name="cells_visible">Cells Visible: %1$d</string>-->
-    <string name="gps_satellites">GPS satelity v dosahu: %1$d</string><!--needs to be updated to: <string name="gps_satellites">GPS Satellites Used / Visible: %1$d/%2$d</string>-->
+    <string name="gps_satellites">GPS satelity v dosahu: %1$d/%2$d</string>
     <string name="last_location">Poslední pozice: %1$s</string>
     <string name="coordinate">%1$.4f, %2$.4f</string>
     <string name="locations_scanned">Prohledáno míst: %1$d</string>

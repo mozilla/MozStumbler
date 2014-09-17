@@ -14,7 +14,7 @@
     <string name="visible_wifi_access_points">Access point Wi-Fi visibili: %1$s</string>
     <string name="cells_scanned">Celle analizzate: %1$d</string>
     <string name="cells_visible">Celle visibili: %1$d</string>
-    <string name="gps_satellites">Satelliti GPS visibili: %1$d</string><!--needs to be updated to: <string name="gps_satellites">GPS Satellites Used / Visible: %1$d/%2$d</string>-->
+    <string name="gps_satellites">Satelliti GPS visibili: %1$d/%2$d</string>
     <string name="last_location">Ultima posizione: %1$s</string>
     <string name="coordinate">%1$.4f, %2$.4f</string>
     <string name="locations_scanned">Posizioni analizzate: %1$d</string>

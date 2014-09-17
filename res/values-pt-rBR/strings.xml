@@ -12,7 +12,7 @@
     <string name="wifi_access_points">Pontos de acesso Wi-Fi escaneados: %1$d</string>
     <!--<string name="wifi_disabled">0 (Wi-Fi disabled)</string> translation missing-->
     <string name="visible_wifi_access_points">Pontos de acesso Wi-Fi visíveis: %1$s</string>
-    <string name="gps_satellites">Satélites GPS visíveis: %1$d</string><!--needs to be updated to: <string name="gps_satellites">GPS Satellites Used / Visible: %1$d/%2$d</string>-->
+    <string name="gps_satellites">Satélites GPS visíveis: %1$d/%2$d</string>
     <!-- translations missing
     <string name="cells_scanned">Cells Scanned: %1$d</string>
     <string name="cells_visible">Cells Visible: %1$d</string>-->

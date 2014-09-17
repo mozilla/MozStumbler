@@ -28,8 +28,6 @@
     <string name="enter_nickname">Introduceți pseudonim (opțional)</string>
     <string name="enter_nickname_title">Pseudonim: </string>
     <string name="enter_nickname_longtext">Pseudonimul va fi afișat în clasamentul liderilor.</string>
-    <string name="power_saving_mode">Mod conservare energie</string>
-    <string name="power_saving_mode_longtext">Atunci când este activat, căutarea va avea loc numai cât timp vă deplasați.</string>
     <string name="update_title">Descarcă actualizare MozStumbler?</string>
     <string name="update_message">Versiune instalată: %1$s\nUltima versiune: %2$s</string>
     <string name="update_now">Actualizează acum</string>

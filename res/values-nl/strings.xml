@@ -24,8 +24,6 @@
     <string name="enter_nickname">Alias (niet verplicht)</string>
     <string name="enter_nickname_title">Alias: </string>
     <string name="enter_nickname_longtext">Alias wordt gepubliceerd op het scorebord.</string>
-    <string name="power_saving_mode">Energiebesparingsmodus</string>
-    <string name="power_saving_mode_longtext">Wanneer deze modus aanstaat zal de app alleen werken wanneer u beweegt.</string>
     <string name="update_title">Download MozStumbler-update?</string>
     <string name="update_message">Geïnstalleerde versie: %1$s\nMeeste recente versie: %2$s</string>
     <string name="update_now">Nu updaten</string>

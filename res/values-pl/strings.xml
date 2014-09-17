@@ -24,8 +24,6 @@
     <string name="enter_nickname">Wpisz pseudonim (opcjonalnie)</string>
     <string name="enter_nickname_title">Pseudonim: </string>
     <string name="enter_nickname_longtext">Twój pseudonim pojawi się w rankingu.</string>
-    <string name="power_saving_mode">Tryb oszczędzania akumulatora</string>
-    <string name="power_saving_mode_longtext">Kiedy jest włączony, skanowanie będzie odbywało się tylko w czasie ruchu.</string>
     <string name="update_title">Pobrać aktualizację MozStumblera?</string>
     <string name="update_message">Zainstalowana wersja: %1$s\nNajnowsza wersja: %2$s</string>
     <string name="update_now">Zaktualizuj teraz</string>

@@ -24,8 +24,6 @@
     <string name="enter_nickname">নাম প্রবেশ করুন (ঐচ্ছিক)</string>
     <string name="enter_nickname_title">নাম: </string>
     <string name="enter_nickname_longtext">আপনার নাম লীডারবোর্ডে দেখানো হবে</string>
-    <string name="power_saving_mode">পাওয়ার সেভিং মোড</string>
-    <string name="power_saving_mode_longtext">যখন চালু করা হবে, তখন শুধু আপনি অবস্থান পরিবর্তন করলেই স্টাম্বলিং করা হবে।</string>
     <string name="update_title">MozStumbler আপডেট ডাউনলোড করবেন?</string>
     <string name="update_message">ইন্সটলকৃত সংস্করণ: %1$s\nসর্বশেষ সংস্করণ: %2$s</string>
     <string name="update_now">এক্ষুনি আপডেট করুন</string>

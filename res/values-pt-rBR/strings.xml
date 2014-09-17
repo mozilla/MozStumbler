@@ -27,8 +27,6 @@
     <string name="enter_nickname_longtext">Seu nickname aparecerá no ranking.</string>
     
     <!--translations missing
-    <string name="power_saving_mode">Power saving mode</string>
-    <string name="power_saving_mode_longtext">When enabled, stumbling will only occur when you are moving.</string>-->
     <string name="update_title">Baixar atualizações do MozStumbler?</string>
     <string name="update_message">Versão Instalada: %1$s\nLatest version: %2$s</string>
     <string name="update_now">Atualizar Agora</string>

@@ -27,8 +27,6 @@
     <string name="enter_nickname_longtext">Vaše jméno se zobrazí v žebříčku.</string>
     
     <!--translations missing
-    <string name="power_saving_mode">Power saving mode</string>
-    <string name="power_saving_mode_longtext">When enabled, stumbling will only occur when you are moving.</string>-->
     <string name="update_title">Stáhnout novou verzi MozStumbleru?</string>
     <string name="update_message">Nainstalovana verze: %1$s\nPoslední verze: %2$s</string>
     <string name="update_now">Aktualizovat nyní</string>

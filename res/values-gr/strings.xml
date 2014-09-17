@@ -24,8 +24,6 @@
     <string name="enter_nickname">Εισάγετε Ψευδώνυμο (προαιρετικό)</string>
     <string name="enter_nickname_title">Ψευδώνυμο: </string>
     <string name="enter_nickname_longtext">Το ψευδώνυμό σας θα εμφανιστεί στο Πίνακα κατάταξης.</string>
-    <string name="power_saving_mode">Λειτουργία εξοικονόμησης ενέργειας.</string>
-    <string name="power_saving_mode_longtext">Όταν είναι ενεργοποιημένο, σάρωση θα συμβαίνει μόνο όταν βρίσκεστε σε κίνηση.</string>
     <string name="update_title">Θέλετε να ενημερώσετε το MozStumbler;</string>
     <string name="update_message">Εγκατεστημένη έκδοση: %1$s\n Τελευταία έκδοση: %2$s</string>
     <string name="update_now">Ενημέρωση τώρα</string>

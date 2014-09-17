@@ -24,8 +24,6 @@
     <string name="enter_nickname">Saisir un pseudo (optionnel)</string>
     <string name="enter_nickname_title">Pseudo : </string>
     <string name="enter_nickname_longtext">Votre pseudo apparaîtra dans le classement.</string>
-    <string name="power_saving_mode">Mode économie d\'énergie</string>
-    <string name="power_saving_mode_longtext">Si activé, l\'analyse ne sera effectée que lors de déplacements.</string>
     <string name="update_title">Télécharger la mise à jour de MozStumbler ?</string>
     <string name="update_message">Version installée : %1$s\nDernière version : %2$s</string>
     <string name="update_now">Mettre à jour maintenant</string>

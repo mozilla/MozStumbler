@@ -24,8 +24,6 @@
     <string name="enter_nickname">输入昵称 (可选)</string>
     <string name="enter_nickname_title">昵称: </string>
     <string name="enter_nickname_longtext">你的昵称将被显示在积分榜中</string>
-    <string name="power_saving_mode">省电模式</string>
-    <string name="power_saving_mode_longtext">启用省电模式后，仅在检测到您的移动时才会进行扫描</string>
     <string name="update_title">下载 MozStumbler 更新？</string>
     <string name="update_message">当前版本: %1$s\n最新版本: %2$s</string>
     <string name="update_now">现在更新</string>

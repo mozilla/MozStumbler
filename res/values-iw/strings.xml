@@ -24,8 +24,6 @@
 	<string name="enter_nickname">הזנת שם המשתמש (רשות)</string>
 	<string name="enter_nickname_title">כינוי: </string>
 	<string name="enter_nickname_longtext">הכינוי שלך יופיע בלוח המובילים.</string>
-	<string name="power_saving_mode">מצב חיסכון בסוללה</string>
-	<string name="power_saving_mode_longtext">כאשר מופעל, המאתר יסרוק רק כאשר אתה בתנועה.</string>
 	<string name="update_title">האם להוריד עדכון ל־MozStumbler?</string>
 	<string name="update_message">הגרסה המותקנת: %1$s\nהגרסה העדכנית: %2$s</string>
 	<string name="update_now">לעדכן כעת</string>

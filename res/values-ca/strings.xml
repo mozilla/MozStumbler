@@ -24,8 +24,6 @@
     <string name="enter_nickname">Introdueixi sobrenom (opcional)</string>
     <string name="enter_nickname_title">Sobrenom: </string>
     <string name="enter_nickname_longtext">El vostre sobrenom apareixerà en la taula de classificacions.</string>
-    <string name="power_saving_mode">Mode d\'estalvi d\'energia</string>
-    <string name="power_saving_mode_longtext">Quan activat, només s\'escanejarà quan es mou</string>
     <string name="update_title">Descarregar actual·lització del MozStumbler?</string>
     <string name="update_message">Versió instal·lada: %1$s\nÚltima versió: %2$s</string>
     <string name="update_now">Actualitzar ara</string>

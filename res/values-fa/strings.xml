@@ -24,8 +24,6 @@
     <string name="enter_nickname">ورود نام اختصاری (اختیاری)</string>
     <string name="enter_nickname_title">نام اختصاری: </string>
     <string name="enter_nickname_longtext">نام اختصاری شما در برد بالاترین‌های ظاهر خواهد شد.</string>
-    <string name="power_saving_mode">حالت صرفه‌جویی انرژی</string>
-    <string name="power_saving_mode_longtext">هنگام فعال‌بودن، جمع‌کردن اطلاعات وقتی انجام می‌شود که شما در حال حرکت هستید.</string>
     <string name="update_title">دریافت MozStumbler به‌روزشده؟</string>
     <string name="update_message">نسخهٔ نصب‌شده: %1$s\nآخرین نسخه: %2$s</string>
     <string name="update_now">الآن به‌روز شود</string>

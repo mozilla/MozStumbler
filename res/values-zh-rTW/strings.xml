@@ -28,8 +28,6 @@
     <string name="enter_nickname">輸入暱稱（非必填）</string>
     <string name="enter_nickname_title">暱稱: </string>
     <string name="enter_nickname_longtext">您的暱稱將顯示在排行榜中。</string>
-    <string name="power_saving_mode">省電模式</string>
-    <string name="power_saving_mode_longtext">啟動後，只會在您移動時收集資料</string>
     <string name="update_title">下載 MozStumbler 更新？</string>
     <string name="update_message">目前版本: %1$s\n最新版本: %2$s</string>
     <string name="update_now">立刻更新</string>

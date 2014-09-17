@@ -24,8 +24,6 @@
     <string name="enter_nickname">उपनाम डालें (वैकल्पिक)</string>
     <string name="enter_nickname_title">उपनाम: </string>
     <string name="enter_nickname_longtext">आपका उपनाम अग्रणी उपयोगकर्ता फलक पर दिखाया जायेगा</string>
-    <string name="power_saving_mode">ऊर्जा बचत रीति</string>
-    <string name="power_saving_mode_longtext">सक्षम होनेपर सिर्फ गतिमान होनेपर स्टम्बलिंग चालू रहेगा</string>
     <string name="update_title">मोज़स्टम्बलर संस्करण अद्यतन करें?</string>
     <string name="update_message">स्थापित संस्करण: %1$s\nनवीनतम संस्करण: %2$s</string>
     <string name="update_now">अभी अद्यतन करें</string>

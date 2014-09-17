@@ -28,8 +28,6 @@
     <string name="enter_nickname">Ingresa tu apodo (opcional)</string>
     <string name="enter_nickname_title">Apodo: </string>
     <string name="enter_nickname_longtext">Tu apodo aparecerá en la tabla de posiciones.</string>
-    <string name="power_saving_mode">Modo ahorro de batería</string>
-    <string name="power_saving_mode_longtext">Cuando está activado, el escaneo solo ocurrirá cuando estés en movimiento.</string>
     <string name="update_title">¿Descargar la actualización de MozStumbler?</string>
     <string name="update_message">Versión instalada: %1$s\nÚltima versión: %2$s</string>
     <string name="update_now">Actualizar ahora</string>

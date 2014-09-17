@@ -24,8 +24,6 @@
     <string name="enter_nickname">Skriv inn kallenavn (valgfri)</string>
     <string name="enter_nickname_title">Kallenavn: </string>
     <string name="enter_nickname_longtext">Kallenavnet vil vises på resultatlisten.</string>
-    <string name="power_saving_mode">Strømsparingsmodus</string>
-    <string name="power_saving_mode_longtext">Innsamling vil bare skje når enheten er i bevegelse.</string>
     <string name="update_title">Last ned oppdatering?</string>
     <string name="update_message">Installert versjon: %1$s\nSiste versjon: %2$s</string>
     <string name="update_now">Oppdater nå</string>

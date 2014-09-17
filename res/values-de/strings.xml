@@ -24,8 +24,6 @@
     <string name="enter_nickname">Namen eingeben (optional)</string>
     <string name="enter_nickname_title">Name: </string>
     <string name="enter_nickname_longtext">Dieser Name wird in der Bestenliste erscheinen.</string>
-    <string name="power_saving_mode">Energiesparmodus</string>
-    <string name="power_saving_mode_longtext">Scannt nur, wenn Bewegungen erkannt werden</string>
     <string name="update_title">MozStumbler Aktualisierung herunterladen?</string>
     <string name="update_message">Installierte Version: %1$s\nAktuellste Version: %2$s</string>
     <string name="update_now">Jetzt aktualisieren</string>

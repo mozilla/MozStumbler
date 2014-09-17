@@ -35,7 +35,6 @@
 	<string name="about_openstreetmap">Widok mapy © Współtwórcy projektu OpenStreetMap\nhttp://www.openstreetmap.org</string>
 	<string name="about_mapbox_title">Mapbox</string>
     <string name="about_mapbox">Więcej informacji o dostawcy map…</string>
-    <string name="about_more">Więcej…</string>
     <string name="about_legal_aosp">Niektóre ikony w tej aplikacji pochodzą z Android Open Source Project i są używane zgodnie z warunkami licencji Creative Commons 2.5 Attribution.</string>
     <string name="upload_observations_sent_title">Wysłane</string>
     <string name="upload_observations_last_upload_time_title">Ostatnio wysłano o:</string>

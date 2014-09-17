@@ -36,7 +36,6 @@
 	<string name="about_openstreetmap">Map view tiles © OpenStreetMap contributors\nhttp://www.openstreetmap.org</string>
     <string name="about_mapbox_title">MapBox</string>-->
     <string name="about_mapbox">Apren més sobre el nostre proveïdor de dades de mapa…</string>
-    <string name="about_more">Més…</string>
     <!--translation missing <string name="about_legal_aosp">Some iconography in this app is reproduced from work created and shared by the Android Open Source Project and used according to terms described in the Creative Commons 2.5 Attribution License.</string>-->
     <!--translations missing <string name="upload_observations_sent_title">Sent</string>
     <string name="upload_observations_last_upload_time_title">Last Upload Time:</string>

@@ -39,7 +39,6 @@
     <string name="about_openstreetmap">Mosaico para construir los mapas © colaboradores de OpenStreetMap \nhttp://www.openstreetmap.org</string>
     <string name="about_mapbox_title">MapBox</string>
     <string name="about_mapbox">Aprenda más acerca de nuestro proveedor de cartografía…</string>
-    <string name="about_more">Más…</string>
     <string name="about_legal_aosp">Algunos iconos en esta aplicación son reproducidos de trabajo creado y compartido por el Proyecto de código abierto de Android y se usa de acuerdo a los términos descritos en la Licencia 2.5 de Creative Commons.</string>
     <string name="about_legal_icons8">Iconos adicionales de http://icons8.com bajo licencia: https://creativecommons.org/licenses/by-nd/3.0</string>
     <string name="upload_observations_sent_title">Enviado</string>

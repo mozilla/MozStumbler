@@ -36,7 +36,6 @@
 	<string name="about_openstreetmap">Map view tiles © OpenStreetMap contributors\nhttp://www.openstreetmap.org</string>
     <string name="about_mapbox_title">MapBox</string>-->
     <string name="about_mapbox">دربارهٔ فراهم آورندهٔ نقشهٔ ما بیشتر بدانید…</string>
-    <string name="about_more">بیشتر…</string>
     <string name="about_legal_aosp">بیشتر آیکون‌ها استفاده‌شده در این برنامه از آثار ایجاد و به‌اشتراک‌گذاری‌شده توسط پروژهٔ متن‌باز اندروید گرفته یا بازتولیدشده‌است و بنا به شروط توضیح‌داده‌شده در مجوز Creative Commons 2.5 Attribution استفاده شده‌است.</string>
     <string name="upload_observations_sent_title">ارسال شد</string>
     <string name="upload_observations_last_upload_time_title">آخرین زمان بارگذاری:</string>

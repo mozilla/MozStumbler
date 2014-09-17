@@ -35,7 +35,6 @@
     <string name="about_openstreetmap">नक्शा दर्शक टाइल्स © OpenStreetMap योगदानकर्ता\nhttp://www.openstreetmap.org</string>
     <string name="about_mapbox_title">मैपबॉक्स</string>
     <string name="about_mapbox">हमारे नक्शा प्रदाता के बारेमे अधिक जानें…</string>
-    <string name="about_more">अधिक…</string>
     <string name="about_legal_aosp">इस अनुप्रयोगमें इस्तेमाल की गयी कुछ आकृतियाँ अँड्रॉइड मुक्त स्रोत परियोजना द्वारा बनाई गयी और विभाजित की गयी है तथा क्रिएटीव कॉमन्स २.५ विशेष प्रयोग शर्त अनुसार इस्तेमाल कि गयी है.</string>
     <string name="upload_observations_sent_title">भेजें</string>
     <string name="upload_observations_last_upload_time_title">अंतिम अवलोकन भेजने का समय:</string>

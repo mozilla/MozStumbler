@@ -39,7 +39,6 @@
     <string name="about_openstreetmap">圖資來源著作權 © OpenStreetMap 貢獻者\nhttp://www.openstreetmap.org</string>
     <string name="about_mapbox_title">MapBox</string>
     <string name="about_mapbox">了解我們的地圖資料提供者資訊…</string>
-    <string name="about_more">更多…</string>
     <string name="about_legal_aosp">此應用程式中的某些圖示係重製自 Android Open Source Project 之創作，並依照創用 CC 姓名標示 2.5 版授權條款使用。</string>
     <string name="upload_observations_sent_title">已傳送資訊</string>
     <string name="upload_observations_last_upload_time_title">前次資料上傳時間:</string>

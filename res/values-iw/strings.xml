@@ -35,7 +35,6 @@
 	<string name="about_openstreetmap">משבצות הצגת המפה © תורמיOpenStreetMap\nhttp://www.openstreetmap.org</string>
 	<string name="about_mapbox_title">MapBox</string>
 	<string name="about_mapbox">מידע נוסף על ספק המיפוי שלנו…</string>
-	<string name="about_more">פרטים נוספים…</string>
 	<string name="about_legal_aosp">חלק מהסימנים ביישום זה נגזרו מיצירות שנוצרו עבור Android Open Source Project ונעשה בהם שימוש בכפוף לתנאים המתוארים ברישיון Creative Commons 2.5 ייחוס.</string>
 	<string name="upload_observations_sent_title">נשלח</string>
 	<string name="upload_observations_last_upload_time_title">תאריך העלאה אחרון:</string>

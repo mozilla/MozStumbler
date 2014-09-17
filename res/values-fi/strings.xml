@@ -35,7 +35,6 @@
     <string name="about_openstreetmap">Karttanäkymä © OpenStreetMapin osallistujat\nhttp://www.openstreetmap.org</string>
     <string name="about_mapbox_title">Kartta</string>
     <string name="about_mapbox">Lisätietoja karttapalvelusta…</string>
-    <string name="about_more">Lisätietoja…</string>
     <string name="about_legal_aosp">Tämä sovellus sisältää ikoneita Android Open Source -projektista. Käytössä olevat ikonit on lisensoitu Creative Commons 2.5 Attribution -lisenssillä.</string>
     <string name="upload_observations_sent_title">Lähetetty</string>
     <string name="upload_observations_last_upload_time_title">Edellisen lähetyksen aika:</string>

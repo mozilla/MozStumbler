@@ -36,7 +36,6 @@
 	<string name="about_openstreetmap">Map view tiles © OpenStreetMap contributors\nhttp://www.openstreetmap.org</string>
     <string name="about_mapbox_title">MapBox</string>-->
     <string name="about_mapbox">Информация о картографическом провайдере…</string>
-    <string name="about_more">О проекте…</string>
     <string name="about_legal_aosp">Некоторые изображения в этом приложении созданы и опубликованы под лицензией AOSP (Android Open Source Project) и используются в соответствии с условиями, описанными в лицензии Creative Commons 2.5</string>
     <string name="upload_observations_sent_title">Уже оправлено</string>
     <string name="upload_observations_last_upload_time_title">Время отправки:</string>

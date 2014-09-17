@@ -39,7 +39,6 @@
     <string name="about_openstreetmap">Grafica hărții © contribuitorii OpenStreetMap\nhttp://www.openstreetmap.org</string>
     <string name="about_mapbox_title">MapBox</string>
     <string name="about_mapbox">Aflați mai multe despre furnizorul nostru de cartografiere…</string>
-    <string name="about_more">Mai multe…</string>
     <string name="about_legal_aosp">Unele imagini din această aplicație sunt reproduse din cele create și oferite de către Android Open Source Project și sunt utilizate în acord cu condițiile descrise în Creative Commons 2.5 Attribution License.</string>
     <string name="upload_observations_sent_title">Trimise</string>
     <string name="upload_observations_last_upload_time_title">Ora ultimei încărcări:</string>

@@ -1,121 +1,17 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:0.12.+'
+	repositories {
+		mavenCentral()
+	}
 
-        // Gradle download task is from: https://github.com/michel-kraemer/gradle-download-task
-        classpath 'de.undercouch:gradle-download-task:1.0'
-    }
+	dependencies {
+		classpath 'com.android.tools.build:gradle:0.12.2'
+	}
 }
 
-apply plugin: 'android'
-apply plugin: 'eclipse'
-
-repositories {
-    mavenCentral()
-}
-
-
-import de.undercouch.gradle.tasks.download.Download
-
-def libDir = new File("libs")
-libDir.mkdirs()
-
-task updateJars(type: Download) {
-    src([
-        'https://github.com/mozilla/osmdroid/releases/download/4.3pre0/osmdroid-android-4.3-SNAPSHOT.jar',
-        'https://github.com/crankycoder/SimpleKML/releases/download/v1.0/SimpleKML.jar'
-    ])
-    dest libDir
-}
-
-android {
-    compileSdkVersion 19
-    buildToolsVersion '19.1.0'
-
-    dependencies {
-        compile files('libs/osmdroid-android-4.3-SNAPSHOT.jar')
-        compile files('libs/SimpleKML.jar')
-        compile 'org.slf4j:slf4j-android:1.7.7'
-        compile "com.android.support:support-v4:19.1.+"
-
-        compile 'com.android.support:appcompat-v7:18.0.0'
-        compile('org.simpleframework:simple-xml:2.7.1') {
-            exclude group: 'stax', module: 'stax-api'
-            exclude group: 'xpp3', module: 'xpp3'
-        }
-    }
-
-    sourceSets {
-        main {
-            manifest.srcFile 'AndroidManifest.xml'
-            java.srcDirs = ['src']
-            aidl.srcDirs = ['src']
-            renderscript.srcDirs = ['src']
-            resources.srcDirs = ['src']
-            res.srcDirs = ['res']
-            assets.srcDirs = ['assets']
-        }
-    }
-
-    defaultConfig {
-        buildConfigField "String", "MOZILLA_API_KEY", getMozillaApiKey()
-        buildConfigField "String", "TILE_SERVER_URL", getTileServerUrl()
-    }
-
-    signingConfigs {
-        release
-    }
-
-    buildTypes {
-        debug {
-            jniDebugBuild true
-        }
-
-        release {
-            runProguard true
-            proguardFile 'proguard.cfg'
-            signingConfig signingConfigs.release
-        }
-    }
-
-    lintOptions {
-        disable 'MissingTranslation'
-        abortOnError false
-    }
-}
-
-// Declare dependency between building the android app and grabbing the
-// JAR files.  I hate you gradle and your crappy DSL.
-project.afterEvaluate{
-    prepareDebugDependencies.dependsOn("updateJars")
-}
-
-tasks.withType(JavaCompile) {
-    options.compilerArgs = ['-Xlint:all', '-Werror', '-Xlint:-deprecation']
-}
-
-if (hasProperty('StoreFile')) {
-    android.signingConfigs.release.storeFile = file(StoreFile)
-    android.signingConfigs.release.storePassword = StorePassword
-    android.signingConfigs.release.keyAlias = KeyAlias
-    android.signingConfigs.release.keyPassword = KeyPassword
-} else {
-    android.buildTypes.release.signingConfig = null
-}
-
-String getMozillaApiKey() {
-    return project.hasProperty('MozAPIKey') ? '"' +  project['MozAPIKey'] + '"' : "null";
-}
-
-String getTileServerUrl() {
-    if (project.hasProperty('TileServerURL')) {
-        return '"' + project['TileServerURL'] + '"';
-    } else if (project.hasProperty('MapAPIKey')) {
-        return "\"http://api.tiles.mapbox.com/v3/${project['MapAPIKey']}/\"";
-    }
-    return "null";
+allprojects {
+	repositories {
+		mavenCentral()
+	}
 }

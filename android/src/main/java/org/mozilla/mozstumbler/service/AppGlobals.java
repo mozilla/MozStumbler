@@ -35,6 +35,7 @@ public class AppGlobals {
     public static int appVersionCode = 0;
     public static String appName = "StumblerService";
     public static boolean isDebug;
+    public static boolean isRobolectric;
 
     /* The log activity will clear this periodically, and display the messages.
      * Always null when the stumbler service is used stand-alone. */

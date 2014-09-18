@@ -67,6 +67,7 @@ public class MainApp extends Application {
         super.onCreate();
 
         AppGlobals.isDebug = BuildConfig.DEBUG;
+        AppGlobals.isRobolectric = BuildConfig.ROBOLECTRIC;
         AppGlobals.appVersionName = BuildConfig.VERSION_NAME;
         AppGlobals.appVersionCode = BuildConfig.VERSION_CODE;
         AppGlobals.appName = this.getResources().getString(R.string.app_name);
@@ -83,15 +84,18 @@ public class MainApp extends Application {
         LogActivity.LogMessageReceiver.createGlobalInstance(this);
         CellScanner.setCellScannerImpl(new DefaultCellScanner(this));
 
-        if (AppGlobals.isDebug) {
-            enableStrictMode();
-        }
+        enableStrictMode();
 
         mReceiver = new ServiceBroadcastReceiver();
         mReceiver.register();
 
         mConnection = new ServiceConnection() {
             public void onServiceConnected(ComponentName className, IBinder binder) {
+                // binder can be null, android is terrible.
+                if (binder == null) {
+                    return;
+                }
+
                 ClientStumblerService.StumblerBinder serviceBinder = (ClientStumblerService.StumblerBinder) binder;
                 mStumblerService = serviceBinder.getServiceAndInitialize(Thread.currentThread(),
                         MAX_BYTES_DISK_STORAGE, MAX_WEEKS_OLD_STORED);
@@ -170,7 +174,15 @@ public class MainApp extends Application {
 
     @TargetApi(9)
     private void enableStrictMode() {
+        if (!AppGlobals.isDebug) {
+            return;
+        }
+
         if (Build.VERSION.SDK_INT < 9) {
+            return;
+        }
+
+        if (AppGlobals.isRobolectric) {
             return;
         }
 

@@ -1,0 +1,206 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
+    }
+
+    dependencies {
+        // robolectric won't play nice with  the gradle build tools
+        // for 0.11 or 0.12
+        classpath 'com.android.tools.build:gradle:0.10.+'
+
+        classpath 'org.robolectric.gradle:gradle-android-test-plugin:0.10.+'
+
+        // Gradle download task is from: https://github.com/michel-kraemer/gradle-download-task
+        classpath 'de.undercouch:gradle-download-task:1.0'
+    }
+}
+
+apply plugin: 'android'
+apply plugin: 'android-test'
+apply plugin: 'jacoco'
+
+repositories {
+    mavenCentral()
+    maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
+}
+
+import de.undercouch.gradle.tasks.download.Download
+
+def libDir = new File("android/libs")
+libDir.mkdirs()
+
+task updateJars(type: Download) {
+    src([
+        'https://github.com/mozilla/osmdroid/releases/download/4.3pre0/osmdroid-android-4.3-SNAPSHOT.jar',
+        'https://github.com/crankycoder/SimpleKML/releases/download/v1.0/SimpleKML.jar'
+    ])
+    dest libDir
+}
+
+android {
+    compileSdkVersion 19
+    buildToolsVersion "19.1.0"
+
+    defaultConfig {
+        minSdkVersion 10
+        targetSdkVersion 18
+
+        // versionCode and versioName need to be automated
+        // by gradle
+        versionCode 1
+        versionName "1.0"
+
+        buildConfigField "boolean", "ROBOLECTRIC", "false"
+        buildConfigField "String", "MOZILLA_API_KEY", getMozillaApiKey()
+        buildConfigField "String", "TILE_SERVER_URL", getTileServerUrl()
+
+    }
+
+    signingConfigs {
+        release
+    }
+
+    buildTypes {
+        debug {
+            jniDebugBuild true
+        }
+
+        release {
+            runProguard true
+            proguardFile 'proguard.cfg'
+            signingConfig signingConfigs.release
+        }
+
+        unittest.initWith(buildTypes.debug)
+        unittest {
+            buildConfigField "boolean", "ROBOLECTRIC", "true"
+        }
+    }
+
+    sourceSets {
+        androidTest.setRoot('src/test')
+    }
+
+    lintOptions {
+        disable 'MissingTranslation'
+        abortOnError false
+    }
+
+}
+
+// Declare dependency between building the android app and grabbing the
+// JAR files.  I hate you gradle and your crappy DSL.
+project.afterEvaluate{
+    prepareDebugDependencies.dependsOn("updateJars")
+    prepareReleaseDependencies.dependsOn("updateJars")
+}
+
+
+dependencies {
+    androidTestCompile 'junit:junit:4.10'
+    androidTestCompile 'org.robolectric:robolectric:2.3'
+
+    testCompile 'junit:junit:4.10'
+    testCompile 'org.robolectric:robolectric:2.3'
+
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+
+    // pickup osmdroid and simplekml
+    compile fileTree(dir: 'android/libs', include: ['*.jar'])
+
+    compile 'org.slf4j:slf4j-android:1.7.7'
+    compile "com.android.support:support-v4:19.1.+"
+    compile 'com.android.support:appcompat-v7:19.1.0'
+    compile('org.simpleframework:simple-xml:2.7.1') {
+        exclude group: 'stax', module: 'stax-api'
+        exclude group: 'xpp3', module: 'xpp3'
+    }
+
+    compile project(':android-library')
+}
+
+FileTree getJacocoClassDirs(List projects) {
+    def classDirs = fileTree(
+            dir: "${buildDir}/classes/debug",
+            excludes: ['**/R*.class', '**/BuildConfig.class']
+    )
+
+    projects.each {
+        def projectBuildDir = project(it).buildDir
+        classDirs += fileTree(
+                dir: "${projectBuildDir}/classes/release",
+                excludes: ['**/R*.class', '**/BuildConfig.class']
+        )
+    }
+
+    return classDirs
+}
+
+FileCollection getJacocoSrcFiles(List projects) {
+    Set srcFiles = android.sourceSets.main.java.srcDirs
+
+    projects.each {
+        def projectDir = project(it).projectDir
+        srcFiles.add("${projectDir}/src/main/java")
+    }
+
+    return files(srcFiles)
+}
+
+FileCollection getJacocoExecFiles(List projects) {
+    Set execFiles = new HashSet();
+    execFiles.add("${buildDir}/jacoco/testDebug.exec")
+
+    projects.each {
+        def projectBuildDir = project(it).buildDir
+        execFiles.add("${projectBuildDir}/jacoco/testDebug.exec")
+    }
+
+    return files(execFiles)
+}
+
+task jacocoTestReport(type: JacocoReport, dependsOn: test) {
+    description 'Generate code coverage.'
+    group 'Verification'
+
+    reports {
+        xml.enabled false
+        csv.enabled false
+        html.destination "${buildDir}/reports/coverage"
+    }
+
+    // TODO: Automatically get project dependencies recursively
+    // Gradle project dependencies go here
+    def dependencies = [':android-library']
+
+    classDirectories = getJacocoClassDirs(dependencies)
+    sourceDirectories = getJacocoSrcFiles(dependencies)
+    executionData = getJacocoExecFiles(dependencies)
+}
+
+tasks.withType(JavaCompile) {
+    options.compilerArgs = ['-Xlint:all', '-Werror', '-Xlint:-deprecation']
+}
+
+if (hasProperty('StoreFile')) {
+    android.signingConfigs.release.storeFile = file(StoreFile)
+    android.signingConfigs.release.storePassword = StorePassword
+    android.signingConfigs.release.keyAlias = KeyAlias
+    android.signingConfigs.release.keyPassword = KeyPassword
+} else {
+    android.buildTypes.release.signingConfig = null
+}
+
+String getMozillaApiKey() {
+    return project.hasProperty('MozAPIKey') ? '"' +  project['MozAPIKey'] + '"' : "null";
+}
+
+String getTileServerUrl() {
+    if (project.hasProperty('TileServerURL')) {
+        return '"' + project['TileServerURL'] + '"';
+    } else if (project.hasProperty('MapAPIKey')) {
+        return "\"http://api.tiles.mapbox.com/v3/${project['MapAPIKey']}/\"";
+    }
+    return "null";
+}

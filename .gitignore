@@ -7,7 +7,6 @@ assets
 bin
 gen
 build
-gradle.properties
 *.keystore
 local.properties
 

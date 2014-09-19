@@ -118,11 +118,6 @@ public final class MainActivity extends FragmentActivity
 
         setContentView(R.layout.activity_main);
 
-        if (BuildConfig.MOZILLA_API_KEY != null &&
-            (NetworkUtils.getInstance().isWifiAvailable() || !ClientPrefs.getInstance().getUseWifiOnly())) {
-            Updater.checkForUpdates(this);
-        }
-
         // Register a listener for a toggle event in the notification pulldown
         LocalBroadcastManager bManager = LocalBroadcastManager.getInstance(this);
         IntentFilter intentFilter = new IntentFilter();

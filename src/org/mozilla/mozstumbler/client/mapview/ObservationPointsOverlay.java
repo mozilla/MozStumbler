@@ -53,6 +53,9 @@ class ObservationPointsOverlay extends Overlay {
     }
 
     void add(ObservationPoint point) {
+        if (mPoints.size() > 0 && mPoints.getFirst() == point) {
+            return;
+        }
         mPoints.addFirst(point);
     }
 

@@ -16,15 +16,18 @@ public final class NetworkUtils {
     ConnectivityManager mConnectivityManager;
     static NetworkUtils sInstance;
 
+    private NetworkUtils() {};
+
     /* Created at startup by app, or service, using a context. */
-    static public void createGlobalInstance(Context context) {
-        sInstance = new NetworkUtils();
+    static synchronized public void createGlobalInstance(Context context) {
+        getInstance();
         sInstance.mConnectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
     }
 
-    /* If accessed before singleton instantiation will abort. */
-    public static NetworkUtils getInstance() {
-        assert(sInstance != null);
+    public static synchronized NetworkUtils getInstance() {
+        if (sInstance == null) {
+            sInstance = new NetworkUtils();
+        }
         return sInstance;
     }
 

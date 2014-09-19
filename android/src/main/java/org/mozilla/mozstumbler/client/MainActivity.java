@@ -10,7 +10,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
@@ -27,6 +26,8 @@ import android.widget.TextView;
 
 import org.mozilla.mozstumbler.BuildConfig;
 import org.mozilla.mozstumbler.R;
+import org.mozilla.mozstumbler.client.http.HttpUtil;
+import org.mozilla.mozstumbler.client.http.IHttpUtil;
 import org.mozilla.mozstumbler.client.mapview.MapActivity;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.stumblerthread.StumblerService;
@@ -117,6 +118,10 @@ public final class MainActivity extends FragmentActivity
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
+
+        IHttpUtil httpUtil = new HttpUtil();
+        Updater upd = new Updater(httpUtil);
+        upd.checkForUpdates(this, BuildConfig.MOZILLA_API_KEY);
 
         // Register a listener for a toggle event in the notification pulldown
         LocalBroadcastManager bManager = LocalBroadcastManager.getInstance(this);

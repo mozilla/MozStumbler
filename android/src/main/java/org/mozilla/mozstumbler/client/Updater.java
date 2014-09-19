@@ -13,65 +13,62 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.MalformedURLException;
-import java.net.Proxy;
-import java.net.ProxySelector;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.List;
 
 import org.mozilla.mozstumbler.R;
+import org.mozilla.mozstumbler.client.http.IHttpUtil;
 import org.mozilla.mozstumbler.service.AppGlobals;
+import org.mozilla.mozstumbler.service.utils.NetworkUtils;
 
-final class Updater {
+import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+
+public class Updater {
     private static final String LOG_TAG = AppGlobals.LOG_PREFIX + Updater.class.getSimpleName();
     private static final String VERSION_URL = "https://raw.github.com/mozilla/MozStumbler/master/VERSION";
     private static final String APK_URL_FORMAT = "https://github.com/mozilla/MozStumbler/releases/download/v%s/MozStumbler-v%s.apk";
+    private final IHttpUtil httpClient;
 
-    private Updater() {
+    public Updater(IHttpUtil simpleHttp) {
+        httpClient = simpleHttp;
     }
 
-    public static void checkForUpdates(final Activity activity) {
+    public boolean wifiExclusiveAndUnavailable() {
+        return !NetworkUtils.getInstance().isWifiAvailable() && ClientPrefs.getInstance().getUseWifiOnly();
+    }
+
+
+    public boolean checkForUpdates(final Activity activity, String api_key) {
+
+        // No API Key means skip the update
+        if (api_key == null || api_key.equals("")) {
+            return false;
+        }
+
+        // No wifi available and require the use of wifi only means skip
+        if (wifiExclusiveAndUnavailable()) {
+            return false;
+        }
+
         new AsyncTask<Void, Void, String>() {
             @Override
             public String doInBackground(Void... params) {
+
+                URL url = null;
                 try {
-                    URL url = new URL(VERSION_URL);
-                    InputStream stream = null;
-                    try {
-                        URLConnection connection = openConnectionWithProxy(url);
-                        stream = connection.getInputStream();
-                        BufferedReader reader = null;
-                        try {
-                            reader = new BufferedReader(new InputStreamReader(stream));
-                            return reader.readLine();
-                        } finally {
-                            if (reader != null) {
-                                reader.close();
-                            }
-                        }
-                    } finally {
-                        if (stream != null) {
-                            stream.close();
-                        }
-                    }
-                } catch (FileNotFoundException fe) {
-                    Log.w(LOG_TAG, "VERSION not found: " + VERSION_URL);
-                } catch (IOException e) {
+                    url = new URL(VERSION_URL);
+                } catch (MalformedURLException e) {
                     Log.e(LOG_TAG, "", e);
+                    return null;
+                }
+                try {
+                    return  httpClient.getUrlAsString(url);
+                } catch (IOException ioEx) {
+                    Log.e(LOG_TAG, "", ioEx);
+                    return null;
                 }
 
-                return null;
             }
 
             @Override
@@ -86,9 +83,12 @@ final class Updater {
                 }
             }
         }.execute();
+
+        return true;
     }
 
-    private static boolean isVersionGreaterThan(String a, String b) {
+
+    private boolean isVersionGreaterThan(String a, String b) {
         if (a == null) {
             return false;
         }
@@ -123,7 +123,7 @@ final class Updater {
         return as.length > bs.length;
     }
 
-    private static void showUpdateDialog(final Context context,
+    private void showUpdateDialog(final Context context,
                                          String installedVersion,
                                          final String latestVersion) {
         String msg = context.getString(R.string.update_message);
@@ -159,7 +159,7 @@ final class Updater {
         builder.create().show();
     }
 
-    private static void downloadAndInstallUpdate(final Context context, final String version) {
+    private void downloadAndInstallUpdate(final Context context, final String version) {
         new AsyncTask<Void, Void, File>() {
             @Override
             public File doInBackground(Void... params) {
@@ -182,7 +182,7 @@ final class Updater {
         }.execute();
     }
 
-    private static URL getUpdateURL(String version) {
+    private URL getUpdateURL(String version) {
         String url = String.format(APK_URL_FORMAT, version, version);
         try {
             return new URL(url);
@@ -191,39 +191,20 @@ final class Updater {
         }
     }
 
-    private static File downloadFile(Context context, URL url) {
+    private File downloadFile(Context context, URL url) {
         Log.d(LOG_TAG, "Downloading: " + url);
 
-        File file = createTempFile(context);
-        if (file == null) {
+        File file;
+        File dir = context.getExternalFilesDir(null);
+        try {
+            file  = File.createTempFile("update", ".apk", dir);
+        } catch (IOException e1) {
+            Log.e(LOG_TAG, "", e1);
             return null;
         }
 
-        final int bufferLength = 8192;
-        final byte[] buffer = new byte[bufferLength];
-
         try {
-            InputStream inputStream = null;
-            OutputStream outputStream = null;
-            try {
-                URLConnection connection = openConnectionWithProxy(url);
-                inputStream = connection.getInputStream();
-                outputStream = new FileOutputStream(file);
-                for (;;) {
-                    int readLength = inputStream.read(buffer, 0, bufferLength);
-                    if (readLength == -1) {
-                        return file;
-                    }
-                    outputStream.write(buffer, 0, readLength);
-                }
-            } finally {
-                if (outputStream != null) {
-                    outputStream.close();
-                }
-                if (inputStream != null) {
-                    inputStream.close();
-                }
-            }
+            return httpClient.getUrlAsFile(url, file);
         } catch (IOException e) {
             Log.e(LOG_TAG, "", e);
             file.delete();
@@ -231,40 +212,8 @@ final class Updater {
         }
     }
 
-    private static URLConnection openConnectionWithProxy(URL url) throws IOException {
-        Proxy proxy = Proxy.NO_PROXY;
 
-        ProxySelector proxySelector = ProxySelector.getDefault();
-        if (proxySelector != null) {
-            URI uri;
-            try {
-                uri = url.toURI();
-            } catch (URISyntaxException e) {
-                IOException ioe = new IOException(url.toString());
-                ioe.initCause(e);
-                throw ioe;
-            }
-
-            List<Proxy> proxies = proxySelector.select(uri);
-            if (proxies != null && !proxies.isEmpty()) {
-                proxy = proxies.get(0);
-            }
-        }
-
-        return url.openConnection(proxy);
-    }
-
-    private static File createTempFile(Context context) {
-        File dir = context.getExternalFilesDir(null);
-        try {
-            return File.createTempFile("update", ".apk", dir);
-        } catch (IOException e) {
-            Log.e(LOG_TAG, "", e);
-            return null;
-        }
-    }
-
-    private static void installPackage(Context context, File apkFile) {
+    private void installPackage(Context context, File apkFile) {
         Uri apkURI = Uri.fromFile(apkFile);
         Log.d(LOG_TAG, "Installing: " + apkURI);
 

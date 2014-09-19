@@ -93,6 +93,7 @@ android {
 // JAR files.  I hate you gradle and your crappy DSL.
 project.afterEvaluate{
     prepareDebugDependencies.dependsOn("updateJars")
+    prepareReleaseDependencies.dependsOn("updateJars")
 }
 
 

@@ -21,7 +21,6 @@ import android.text.TextUtils;
 import org.mozilla.mozstumbler.R;
 
 public class PreferencesScreen extends PreferenceActivity {
-    private static final int REQUEST_CODE_WIFI_SCAN_ALWAYS = 1;
 
     private EditTextPreference mNicknamePreference;
     private CheckBoxPreference mWifiPreference;
@@ -53,14 +52,6 @@ public class PreferencesScreen extends PreferenceActivity {
         mWifiPreference.setChecked(sPrefs.getUseWifiOnly());
 
         setPreferenceListener();
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_CODE_WIFI_SCAN_ALWAYS) {
-            boolean scanAlwaysAllowed = resultCode == Activity.RESULT_OK;
-        }
     }
 
     private void setPreferenceListener() {

@@ -2,4 +2,10 @@
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="font_size_for_metrics">13sp</dimen>
+    <dimen name="font_size_for_metrics_top_title">15sp</dimen>
+    <dimen name="font_size_for_metrics_titles">14sp</dimen>
+    <dimen name="padding_above_for_metrics_titles">12dp</dimen>
+    <dimen name="padding_below_for_metrics_titles">5dp</dimen>
+    <dimen name="metrics_col1_width">130dp</dimen>
 </resources>

@@ -43,7 +43,7 @@ public class UploadReportsDialog extends DialogFragment
     private TextView mQueuedDataView;
 
     private View mUploadButton;
-    private View mProgressbarView;
+   // private View mProgressbarView;
     private boolean hasQueuedObservations;
     private AsyncUploader mUploader;
     private final Timer mUpdateTimer = new Timer();
@@ -82,7 +82,7 @@ public class UploadReportsDialog extends DialogFragment
         mQueuedObservationsView = (TextView) rootView.findViewById(R.id.observations_queued_value);
         mQueuedCellsView = (TextView) rootView.findViewById(R.id.cells_queued_value);
         mQueuedWifisView = (TextView) rootView.findViewById(R.id.wifis_queued_value);
-        mProgressbarView = rootView.findViewById(R.id.progress);
+       // mProgressbarView = rootView.findViewById(R.id.progress);
         mUploadButton = rootView.findViewById(R.id.upload_observations_button);
         mTotalDataSentView = (TextView) rootView.findViewById(R.id.data_kb_sent_value);
         mQueuedDataView = (TextView) rootView.findViewById(R.id.data_kb_queued_value);
@@ -159,7 +159,7 @@ public class UploadReportsDialog extends DialogFragment
         mQueuedObservationsView = null;
         mQueuedCellsView = null;
         mQueuedWifisView = null;
-        mProgressbarView = null;
+        //mProgressbarView = null;
     }
 
     void updateSyncedStats() {
@@ -193,14 +193,14 @@ public class UploadReportsDialog extends DialogFragment
     }
 
     void updateProgressbarStatus() {
-        if (mProgressbarView == null) {
-            return;
-        }
-        boolean syncActive = AsyncUploader.isUploading();
-        mProgressbarView.setVisibility(syncActive ? View.VISIBLE : View.INVISIBLE);
-
-        boolean uploadButtonActive = hasQueuedObservations && !syncActive;
-        mUploadButton.setEnabled(uploadButtonActive);
+//        if (mProgressbarView == null) {
+//            return;
+//        }
+//        boolean syncActive = AsyncUploader.isUploading();
+//        mProgressbarView.setVisibility(syncActive ? View.VISIBLE : View.INVISIBLE);
+//
+//        boolean uploadButtonActive = hasQueuedObservations && !syncActive;
+//        mUploadButton.setEnabled(uploadButtonActive);
     }
 
     void updateQueuedStats() {

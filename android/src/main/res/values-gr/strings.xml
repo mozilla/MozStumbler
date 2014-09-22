@@ -38,10 +38,10 @@
     <string name="about_mapbox">Μάθετε περισσότερα σχετικά με τον παροχέα χαρτογράφησής μας…</string>
     <string name="about_legal_aosp">Κάποια εικονογραφία σε αυτό το πρόγραμμα αναπαράγεται από το έργο που δημιουργείται και διαμοιράζεται από το Android Open Source Project και χρησιμοποιείτε σύμφωνα με τους όρους που περιγράφονται στην άδεια Creative Commons Attribution 2.5 .</string>
     <string name="upload_observations_sent_title">Αποστολή</string>
-    <string name="upload_observations_last_upload_time_title">Τελευταία αποστολή:</string>
-    <string name="upload_observations_observations_sent_title">Παρατηρήσεις:</string>
-    <string name="upload_observations_wifis_sent_title">Σημεία πρόσβασης Wi-Fi:</string>
-    <string name="upload_observations_cells_sent_title">Κυψέλες τηλεφωνίας:</string>
+    <string name="metrics_observations_last_upload_time_title">Τελευταία αποστολή:</string>
+    <string name="metrics_observations_title">Παρατηρήσεις:</string>
+    <string name="metrics_observations_wifis_title">Σημεία πρόσβασης Wi-Fi:</string>
+    <string name="metrics_observations_cell_towers_title">Κυψέλες τηλεφωνίας:</string>
     <string name="upload_observations_in_queue_title">Στην ουρά</string>
     <string name="upload_observations_observations_queued_title">Παρατηρήσεις:</string>
     <string name="upload_observations_wifis_queued_title">Σημεία πρόσβασης Wi-Fi:</string>

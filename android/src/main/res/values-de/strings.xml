@@ -37,10 +37,10 @@
     <string name="about_mapbox">Mehr über unseren Kartenanbieter erfahren…</string>
     <string name="about_legal_aosp">Einige Symbole in dieser Anwendung wurden Werken entnommen, welche vom Android Open Source Project erstellt und verteilt werden. Sie werden in Übereinstimmung mit der Creative Commons - Attribution 2.5 Lizenz verwendet.</string>
     <string name="upload_observations_sent_title">Gesendet</string>
-    <string name="upload_observations_last_upload_time_title">Letzter Upload:</string>
-    <string name="upload_observations_observations_sent_title">Beobachtungen:</string>
-    <string name="upload_observations_wifis_sent_title">Wi-Fi Zugangspunkte:</string>
-    <string name="upload_observations_cells_sent_title">Funkzellen:</string>
+    <string name="metrics_observations_last_upload_time_title">Letzter Upload:</string>
+    <string name="metrics_observations_title">Beobachtungen:</string>
+    <string name="metrics_observations_wifis_title">Wi-Fi Zugangspunkte:</string>
+    <string name="metrics_observations_cell_towers_title">Funkzellen:</string>
     <string name="upload_observations_in_queue_title">Warteschlange</string>
     <string name="upload_observations_observations_queued_title">Beobachtungen:</string>
     <string name="upload_observations_wifis_queued_title">Wi-Fi Zugangspunkte:</string>

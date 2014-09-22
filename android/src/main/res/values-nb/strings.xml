@@ -38,10 +38,10 @@
     <string name="about_mapbox">Lær mer om vår kartleverandør…</string>
     <string name="about_legal_aosp">Noen av ikonene i denne appen er gjenbruk av arbeid laget og delt av Androids åpen kildekode-prosjekt og blir brukt i henhold til Creative Commons 2.5-navngivelseslisensen.</string>
     <string name="upload_observations_sent_title">Sendt</string>
-    <string name="upload_observations_last_upload_time_title">Siste opplastingstidspunkt:</string>
-    <string name="upload_observations_observations_sent_title">Observasjoner:</string>
-    <string name="upload_observations_wifis_sent_title">Trådløspunkt:</string>
-    <string name="upload_observations_cells_sent_title">Mobilnettverk:</string>
+    <string name="metrics_observations_last_upload_time_title">Siste opplastingstidspunkt:</string>
+    <string name="metrics_observations_title">Observasjoner:</string>
+    <string name="metrics_observations_wifis_title">Trådløspunkt:</string>
+    <string name="metrics_observations_cell_towers_title">Mobilnettverk:</string>
     <string name="upload_observations_in_queue_title">I kø</string>
     <string name="upload_observations_observations_queued_title">Observasjoner:</string>
     <string name="upload_observations_wifis_queued_title">Trådløspunkt:</string>

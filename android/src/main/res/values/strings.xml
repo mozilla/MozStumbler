@@ -41,20 +41,19 @@
     <string name="about_mapbox">Learn more about our mapping provider…</string>
     <string name="about_legal_aosp">Some iconography in this app is reproduced from work created and shared by the Android Open Source Project and used according to terms described in the Creative Commons 2.5 Attribution License.</string>
     <string name="about_legal_icons8">Additional icons from http://icons8.com under license: https://creativecommons.org/licenses/by-nd/3.0</string>
-    <string name="upload_observations_sent_title">Sent</string>
-    <string name="upload_observations_last_upload_time_title">Last Upload Time:</string>
-    <string name="upload_observations_observations_sent_title">Observations:</string>
-    <string name="upload_observations_wifis_sent_title">Wi-Fi Access Points:</string>
-    <string name="upload_observations_cells_sent_title">Cells:</string>
-    <string name="upload_observations_in_queue_title">In queue</string>
-    <string name="upload_observations_observations_queued_title">Observations:</string>
-    <string name="upload_observations_wifis_queued_title">Wi-Fi Access Points:</string>
-    <string name="upload_observations_cells_queued_title">Cells:</string>
+    <string name="upload_observations_sent_title">Sent (all time)</string>
+    <string name="metrics_observations_last_upload_time_title">Last upload:</string>
+    <string name="metrics_observations_title">Observations:</string>
+    <string name="metrics_observations_wifis_title">Wi-Fi access points:</string>
+    <string name="metrics_observations_cell_towers_title">Cell Towers:</string>
+    <string name="upload_observations_in_queue_title">Not sent (in queue)</string>
     <string name="upload_observations_button">Upload</string>
     <string name="upload_observations_dialog_title">Upload observations</string>
     <string name="upload_wifi_only_title">Upload only on Wi-Fi</string>
     <string name="upload_wifi_only_summary">This option will reduce your data usage over the cellular network.</string>
 
+    <string name="metrics_activity_title">Metrics</string>
+    <string name="metrics_this_session">This session</string>
 
     <string name="refresh_map">Refresh location</string>
     <string name="title_activity_log">Log</string>
@@ -64,4 +63,6 @@
     <string name="upload_observations_data_size">Size (KB):</string>
     <string name="hardware_acceleration_title">Enable hardware acceleration</string>
     <string name="keep_screen_on_title">Keep screen on while in map</string>
+    <string name="drawer_open">Show drawer</string>
+    <string name="drawer_close">Close drawer</string>
 </resources>

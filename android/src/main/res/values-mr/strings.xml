@@ -38,10 +38,10 @@
     <string name="about_legal_aosp">या अनुप्रयोगामधे वापरण्यात आलेल्या काही प्रतिमा अँड्रॉइड मुक्त स्रोत प्रकल्पाने तयार करून विभागून दिलेल्या आहेत व त्या क्रिएटीव कॉमन्स २.५ विशेष परवाना अटींनुसार वापरल्या आहेत.</string>
     
     <string name="upload_observations_sent_title">पाठवलेली निरीक्षणे</string>
-    <string name="upload_observations_last_upload_time_title">शेवटची निरीक्षणे पाठवण्याची वेळ:</string>
-    <string name="upload_observations_observations_sent_title">निरीक्षणे:</string>
-    <string name="upload_observations_wifis_sent_title">Wi-Fi प्रवेश बिंदू:</string>
-    <string name="upload_observations_cells_sent_title">भ्रमणध्वनी जाळे :</string>
+    <string name="metrics_observations_last_upload_time_title">शेवटची निरीक्षणे पाठवण्याची वेळ:</string>
+    <string name="metrics_observations_title">निरीक्षणे:</string>
+    <string name="metrics_observations_wifis_title">Wi-Fi प्रवेश बिंदू:</string>
+    <string name="metrics_observations_cell_towers_title">भ्रमणध्वनी जाळे :</string>
     <string name="upload_observations_in_queue_title">पाठवण्याच्या प्रतीक्षेत असलेली निरीक्षणे</string>
     <string name="upload_observations_observations_queued_title">निरीक्षणे:</string>
     <string name="upload_observations_wifis_queued_title">Wi-Fi प्रवेश बिंदू:</string>

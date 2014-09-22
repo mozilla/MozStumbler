@@ -38,10 +38,10 @@
     <string name="about_mapbox">ম্যাপিং প্রোভাইডার সম্পর্কে আরও জানুন</string>
 	<string name="about_legal_aosp">এই এপ্লিকেশনের কিছু কিছু আইকন বা গ্রাফিক্স সংক্রান্ত কাজ Android Open Source Project থেকে নেয়া হয়েছে এবং তা Creative Commons 2.5 Attribution License এর আওতায় ব্যবহৃত হয়েছে।</string>
 	<string name="upload_observations_sent_title">আপলোডকৃত</string>
-    <string name="upload_observations_last_upload_time_title">সর্বশেষ আপলোডের সময়:</string>
-    <string name="upload_observations_observations_sent_title">তথ্য:</string>
-    <string name="upload_observations_wifis_sent_title">ওয়াই-ফাই এক্সেস পয়েন্ট:</string>
-    <string name="upload_observations_cells_sent_title">সেল:</string>
+    <string name="metrics_observations_last_upload_time_title">সর্বশেষ আপলোডের সময়:</string>
+    <string name="metrics_observations_title">তথ্য:</string>
+    <string name="metrics_observations_wifis_title">ওয়াই-ফাই এক্সেস পয়েন্ট:</string>
+    <string name="metrics_observations_cell_towers_title">সেল:</string>
     <string name="upload_observations_in_queue_title">আপলোডের জন্যে অপেক্ষমান</string>
     <string name="upload_observations_observations_queued_title">অথ্য:</string>
     <string name="upload_observations_wifis_queued_title">ওয়াই-ফাই এক্সেস পয়েন্ট:</string>

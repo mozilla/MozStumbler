@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-	<string name="app_name">Bootstrap library</string>
-	<string name="hello_world">Hello world from library!</string>
-	<string name="action_settings">Settings</string>
-</resources>

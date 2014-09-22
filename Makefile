@@ -1,6 +1,9 @@
 all:
 	./gradlew assembleRelease
 
+clean:
+	./gradlew clean
+
 install_debug:
 	./gradlew installDebug
 

@@ -22,6 +22,7 @@ public abstract class AbstractCommunicator {
 
     private static final String LOG_TAG = AppGlobals.LOG_PREFIX + AbstractCommunicator.class.getSimpleName();
     private static final String NICKNAME_HEADER = "X-Nickname";
+    private static final String EMAIL_HEADER = "X-Email";
     private static final String USER_AGENT_HEADER = "User-Agent";
     protected HttpURLConnection mHttpURLConnection;
     private final String mUserAgent;
@@ -57,9 +58,8 @@ public abstract class AbstractCommunicator {
 
     public abstract NetworkSendResult cleanSend(byte[] data);
 
-    public String getNickname() {
-        return null;
-    }
+    public abstract String getNickname();
+    public abstract String getEmail();
 
     public AbstractCommunicator(String userAgent) {
         mUserAgent = userAgent;
@@ -90,6 +90,10 @@ public abstract class AbstractCommunicator {
         String nickname = getNickname();
         if (nickname != null) {
             mHttpURLConnection.setRequestProperty(NICKNAME_HEADER, nickname);
+        }
+        String email = getEmail();
+        if (email != null) {
+            mHttpURLConnection.setRequestProperty(EMAIL_HEADER, email);
         }
     }
 

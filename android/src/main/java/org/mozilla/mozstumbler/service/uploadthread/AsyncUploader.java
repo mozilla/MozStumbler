@@ -30,6 +30,8 @@ public class AsyncUploader extends AsyncTask<Void, Void, SyncSummary> {
     private AsyncUploaderListener mListener;
     private static AtomicBoolean sIsUploading = new AtomicBoolean();
     private String mNickname;
+    private String mEmail;
+
 
     public interface AsyncUploaderListener {
         public void onUploadComplete(SyncSummary result);
@@ -50,6 +52,10 @@ public class AsyncUploader extends AsyncTask<Void, Void, SyncSummary> {
 
     public void setNickname(String name) {
         mNickname = name;
+    }
+
+    public void setEmail(String email) {
+        mEmail = email;
     }
 
     public void clearListener() {
@@ -122,6 +128,11 @@ public class AsyncUploader extends AsyncTask<Void, Void, SyncSummary> {
         @Override
         public String getNickname(){
             return mNickname;
+        }
+
+        @Override
+        public String getEmail() {
+            return mEmail;
         }
 
         @Override

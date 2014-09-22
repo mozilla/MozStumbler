@@ -175,6 +175,16 @@ public class MLSLocationGetter extends AsyncTask<String, Void, JSONObject>  {
             return result;
         }
 
+        @Override
+        public String getNickname() {
+            return null;
+        }
+
+        @Override
+        public String getEmail() {
+            return null;
+        }
+
         public JSONObject getResponse() {
             try {
                 JSONObject jsonObject = initResponse();

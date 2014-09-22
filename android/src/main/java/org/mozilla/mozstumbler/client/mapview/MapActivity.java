@@ -9,11 +9,9 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.Menu;
@@ -30,15 +28,15 @@ import java.util.Timer;
 import java.util.TimerTask;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.mozilla.mozstumbler.client.ClientPrefs;
-import org.mozilla.mozstumbler.client.ClientStumblerService;
-import org.mozilla.mozstumbler.client.MainApp;
-import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.BuildConfig;
 import org.mozilla.mozstumbler.R;
+import org.mozilla.mozstumbler.client.ClientPrefs;
+import org.mozilla.mozstumbler.client.ClientStumblerService;
 import org.mozilla.mozstumbler.client.MainActivity;
-import org.osmdroid.api.IGeoPoint;
+import org.mozilla.mozstumbler.client.MainApp;
+import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.GPSScanner;
+import org.osmdroid.api.IGeoPoint;
 import org.osmdroid.tileprovider.BitmapPool;
 import org.osmdroid.tileprovider.tilesource.OnlineTileSourceBase;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
@@ -197,10 +195,9 @@ public final class MapActivity extends Activity {
         mObservationPointsOverlay = new ObservationPointsOverlay(this, mMap);
         mMap.getOverlays().add(mObservationPointsOverlay);
 
-        ObservedLocationsReceiver r = ObservedLocationsReceiver.getInstance(this);
-        for (ObservationPoint p : r.getPoints()) {
-            newObservationPoint(p);
-        }
+        ObservedLocationsReceiver observer = ObservedLocationsReceiver.getInstance(this.getApplicationContext());
+        observer.setMapActivity(this);
+        observer.putAllPointsOnMap();
     }
 
     @TargetApi(11)
@@ -342,11 +339,13 @@ public final class MapActivity extends Activity {
     @Override
     protected void onStart() {
         super.onStart();
+        Log.d(LOG_TAG, "onStart");
 
         mGPSListener = new GPSListener(this);
-        ObservedLocationsReceiver.getInstance(this);
 
-        Log.d(LOG_TAG, "onStart");
+        ObservedLocationsReceiver observer = ObservedLocationsReceiver.getInstance(this.getApplicationContext());
+        observer.setMapActivity(this);
+        observer.putMissedPointsOnMap();
     }
 
     private void saveStateToPrefs() {
@@ -361,7 +360,8 @@ public final class MapActivity extends Activity {
         Log.d(LOG_TAG, "onStop");
 
         mGPSListener.removeListener();
-        ObservedLocationsReceiver.getInstance(this).removeMapActivity();
+        ObservedLocationsReceiver observer = ObservedLocationsReceiver.getInstance(this.getApplicationContext());
+        observer.removeMapActivity();
     }
 
     @Override
@@ -405,14 +405,6 @@ public final class MapActivity extends Activity {
                 mUserPanning = true;
             }
         }));
-    }
-
-    boolean isValidLocation(double latitude, double longitude) {
-        return Math.abs(latitude) > 0.0001 && Math.abs(longitude) > 0.0001;
-    }
-
-    boolean isValidLocation(Location location) {
-        return isValidLocation(location.getLatitude(), location.getLongitude());
     }
 
     private void formatTextView(int textViewId, int stringId, Object... args) {

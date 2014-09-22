@@ -12,26 +12,28 @@ import android.location.Location;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 import org.mozilla.mozstumbler.client.ClientStumblerService;
 import org.mozilla.mozstumbler.client.MainApp;
+import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.GPSScanner;
+import org.mozilla.mozstumbler.service.utils.CoordinateUtils;
 import org.osmdroid.util.GeoPoint;
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-class ObservedLocationsReceiver extends BroadcastReceiver {
-    ArrayList<GeoPoint> mLocations = new ArrayList<GeoPoint>();
+public class ObservedLocationsReceiver extends BroadcastReceiver {
+    private static final String LOG_TAG = ObservedLocationsReceiver.class.getSimpleName();
     private WeakReference<MapActivity> mMapActivity = new WeakReference<MapActivity>(null);
     private LinkedList<ObservationPoint> mCollectionPoints = new LinkedList<ObservationPoint>();
     private LinkedList<ObservationPoint> mQueuedForMLS = new LinkedList<ObservationPoint>();
+    private final LinkedList<ObservationPoint> mPointsMissedByMapActivity = new LinkedList<ObservationPoint>();
     private final int MAX_QUEUED_MLS_POINTS_TO_FETCH = 10;
     private final long FREQ_FETCH_MLS_MS = 5 * 1000;
 
-    LinkedList<ObservationPoint> getPoints() {
-        return mCollectionPoints;
-    }
+    // Upper bound on the size of the linked lists of points, for memory and performance safety.
+    private final int MAX_SIZE_OF_POINT_LISTS = 5000;
 
     private ObservedLocationsReceiver() {
         mHandler.postDelayed(mFetchMLSRunnable, FREQ_FETCH_MLS_MS);
@@ -39,22 +41,17 @@ class ObservedLocationsReceiver extends BroadcastReceiver {
 
     private static ObservedLocationsReceiver sInstance;
 
-    void removeMapActivity() {
-        setMapActivity(null);
-    }
-
-    static ObservedLocationsReceiver getInstance(MapActivity mapActivity) {
+    public static ObservedLocationsReceiver getInstance(Context context) {
         if (sInstance == null) {
             sInstance = new ObservedLocationsReceiver();
             IntentFilter intentFilter = new IntentFilter();
             intentFilter.addAction(GPSScanner.ACTION_GPS_UPDATED);
-            LocalBroadcastManager.getInstance(mapActivity.getApplicationContext()).registerReceiver(sInstance, intentFilter);
+            LocalBroadcastManager.getInstance(context).registerReceiver(sInstance, intentFilter);
         }
-        sInstance.setMapActivity(mapActivity);
         return sInstance;
     }
 
-    Runnable mFetchMLSRunnable = new Runnable() {
+    private final Runnable mFetchMLSRunnable = new Runnable() {
         @Override
         public void run() {
             mHandler.postDelayed(mFetchMLSRunnable, FREQ_FETCH_MLS_MS);
@@ -80,65 +77,98 @@ class ObservedLocationsReceiver extends BroadcastReceiver {
         }
     };
 
-    Handler mHandler = new Handler(Looper.getMainLooper());
+    private final Handler mHandler = new Handler(Looper.getMainLooper());
 
-    private synchronized void setMapActivity(MapActivity m) {
+    // Must be called by map activity when it is showing to get points displayed
+    synchronized void setMapActivity(MapActivity m) {
         mMapActivity = new WeakReference<MapActivity>(m);
+    }
+
+    // Must call when map activity stopped, to clear the reference to the map activity object
+    public void removeMapActivity() {
+        setMapActivity(null);
     }
 
     private synchronized MapActivity getMapActivity() {
         return mMapActivity.get();
     }
 
+    private synchronized void addPointsToMapActivity(LinkedList<ObservationPoint> points) {
+        MapActivity map = getMapActivity();
+        if (map == null) {
+            return;
+        }
+
+        final Iterator<ObservationPoint> iterator = points.iterator();
+        while (iterator.hasNext()) {
+            map.newObservationPoint(iterator.next());
+        }
+
+        // in all cases, clear this list
+        mPointsMissedByMapActivity.clear();
+    }
+
+    public void putAllPointsOnMap() {
+        addPointsToMapActivity(mCollectionPoints);
+    }
+
+    public void putMissedPointsOnMap() {
+        addPointsToMapActivity(mPointsMissedByMapActivity);
+    }
 
     @Override
     public synchronized void onReceive(Context context, Intent i) {
+        if (mCollectionPoints.size() > MAX_SIZE_OF_POINT_LISTS) {
+            return;
+        }
+
+        if (mCollectionPoints.size() == MAX_SIZE_OF_POINT_LISTS - 1) {
+            AppGlobals.guiLogInfo("Map will stop drawing observation points to preserve memory.");
+        }
+
         final Intent intent = i;
         final String action = intent.getAction();
         final String subject = intent.getStringExtra(Intent.EXTRA_SUBJECT);
-        if (!action.equals(GPSScanner.ACTION_GPS_UPDATED)) {
-            assert (action.equals(GPSScanner.ACTION_GPS_UPDATED));
+        if (!action.equals(GPSScanner.ACTION_GPS_UPDATED) || !subject.equals(GPSScanner.SUBJECT_NEW_LOCATION)) {
             return;
         }
 
-        if (subject.equals(GPSScanner.SUBJECT_NEW_LOCATION)) {
-            Location newPosition = intent.getParcelableExtra(GPSScanner.NEW_LOCATION_ARG_LOCATION);
-            if (newPosition != null) {
-                mLocations.add(new GeoPoint(newPosition));
-            }
+        final Location newPosition = intent.getParcelableExtra(GPSScanner.NEW_LOCATION_ARG_LOCATION);
+        if (newPosition == null || !CoordinateUtils.isValidLocation(newPosition)) {
+            return;
         }
+
+        final Context appContext = context.getApplicationContext();
+        final ClientStumblerService service = ((MainApp) appContext).getService();
+        if (mCollectionPoints.size() > 0 && service != null) {
+            final ObservationPoint last = mCollectionPoints.getLast();
+            last.setMLSQuery(service.getLastReportedBundle());
+            mQueuedForMLS.addFirst(last);
+        }
+
+        mCollectionPoints.add(new ObservationPoint(new GeoPoint(newPosition)));
 
         if (getMapActivity() == null) {
+            mPointsMissedByMapActivity.add(mCollectionPoints.getLast());
             return;
         }
+
         getMapActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                synchronized (this) {
-                    if (getMapActivity() == null) {
-                        return;
-                    }
-
-                    getMapActivity().updateGPSInfo(intent);
-
-                    final ClientStumblerService service = ((MainApp) getMapActivity().getApplication()).getService();
-                    final Location location = service.getLocation();
-
-                    if (!subject.equals(GPSScanner.SUBJECT_NEW_LOCATION) ||
-                            !getMapActivity().isValidLocation(location)) {
-                        return;
-                    }
-
-                    if (mCollectionPoints.size() > 0) {
-                        final ObservationPoint last = mCollectionPoints.getLast();
-                        last.setMLSQuery(service.getLastReportedBundle());
-                        mQueuedForMLS.addFirst(last);
-                    }
-
-                    mCollectionPoints.add(new ObservationPoint(new GeoPoint(location)));
-                    getMapActivity().newObservationPoint(mCollectionPoints.getLast());
-                }
+                addObservationPointToMap();
             }
         });
+    }
+
+    private synchronized void addObservationPointToMap() {
+        if (getMapActivity() == null) {
+            if (mPointsMissedByMapActivity.getLast() != mCollectionPoints.getLast()) {
+                mPointsMissedByMapActivity.add(mCollectionPoints.getLast());
+            }
+            return;
+        }
+
+        getMapActivity().newObservationPoint(mCollectionPoints.getLast());
     }
 }

@@ -30,6 +30,7 @@ import java.util.Map;
 import org.mozilla.mozstumbler.BuildConfig;
 import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.client.cellscanner.DefaultCellScanner;
+import org.mozilla.mozstumbler.client.mapview.ObservedLocationsReceiver;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageManager;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.GPSScanner;
@@ -146,6 +147,9 @@ public class MainApp extends Application {
     }
 
     public void startScanning() {
+        // This will create, and register the receiver
+        ObservedLocationsReceiver.getInstance(this.getApplicationContext());
+        
         mStumblerService.startForeground(NOTIFICATION_ID, buildNotification());
         mStumblerService.startScanning();
     }

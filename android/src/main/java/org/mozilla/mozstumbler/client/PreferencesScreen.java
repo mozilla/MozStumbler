@@ -23,6 +23,8 @@ import org.mozilla.mozstumbler.R;
 public class PreferencesScreen extends PreferenceActivity {
 
     private EditTextPreference mNicknamePreference;
+    private EditTextPreference mEmailPreference;
+
     private CheckBoxPreference mWifiPreference;
     private CheckBoxPreference mIsHardwareAccelerated;
     private CheckBoxPreference mKeepScreenOn;
@@ -44,11 +46,14 @@ public class PreferencesScreen extends PreferenceActivity {
         addPreferencesFromResource(R.xml.stumbler_preferences);
 
         mNicknamePreference = (EditTextPreference) getPreferenceManager().findPreference("nickname");
+        mEmailPreference = (EditTextPreference) getPreferenceManager().findPreference("email");
+
         mWifiPreference = (CheckBoxPreference) getPreferenceManager().findPreference("wifi_only");
         mIsHardwareAccelerated = (CheckBoxPreference) getPreferenceManager().findPreference("hardware_acceleration");
         mKeepScreenOn = (CheckBoxPreference) getPreferenceManager().findPreference(ClientPrefs.KEEP_SCREEN_ON_PREF);
 
         setNicknamePreferenceTitle(sPrefs.getNickname());
+        setEmailPreferenceTitle(sPrefs.getEmail());
         mWifiPreference.setChecked(sPrefs.getUseWifiOnly());
 
         setPreferenceListener();
@@ -60,6 +65,15 @@ public class PreferencesScreen extends PreferenceActivity {
             public boolean onPreferenceChange(Preference preference, Object newValue) {
                 sPrefs.setNickname(newValue.toString());
                 setNicknamePreferenceTitle(newValue.toString());
+                return true;
+            }
+        });
+
+        mEmailPreference.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                sPrefs.setEmail(newValue.toString());
+                setEmailPreferenceTitle(newValue.toString());
                 return true;
             }
         });
@@ -94,6 +108,14 @@ public class PreferencesScreen extends PreferenceActivity {
             mNicknamePreference.setTitle(getString(R.string.enter_nickname_title) + " " + nickname);
         } else {
             mNicknamePreference.setTitle(R.string.enter_nickname);
+        }
+    }
+
+    private void setEmailPreferenceTitle(String email) {
+        if (!TextUtils.isEmpty(email)) {
+            mEmailPreference.setTitle(getString(R.string.enter_email_title) + " " + email);
+        } else {
+            mEmailPreference.setTitle(R.string.enter_email);
         }
     }
 

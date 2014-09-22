@@ -93,7 +93,11 @@ public class UploadReportsDialog extends DialogFragment
                 AsyncUploader.UploadSettings settings =
                         new AsyncUploader.UploadSettings(ClientPrefs.getInstance().getUseWifiOnly());
                 mUploader = new AsyncUploader(settings, UploadReportsDialog.this);
+
+                // TODO: refactor the execute() method to accept nickname and email as
+                // optional arguments
                 mUploader.setNickname(ClientPrefs.getInstance().getNickname());
+                mUploader.setEmail(ClientPrefs.getInstance().getEmail());
                 mUploader.execute();
                 updateProgressbarStatus();
             }

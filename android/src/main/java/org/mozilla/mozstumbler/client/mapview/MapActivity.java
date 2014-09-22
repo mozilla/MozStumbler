@@ -268,9 +268,12 @@ public final class MapActivity extends Activity {
     }
 
     private void showCopyright(OnlineTileSourceBase tileSource) {
+        TextView copyrightArea = (TextView) findViewById(R.id.copyright_area);
         if (TileSourceFactory.MAPQUESTOSM.equals(tileSource)) {
-            TextView copyrightArea = (TextView) findViewById(R.id.copyright_area);
             copyrightArea.setText("Tiles Courtesy of MapQuest\n© OpenStreetMap contributors");
+        }
+        else {
+            copyrightArea.setText("© MapBox © OpenStreetMap contributors");
         }
     }
 

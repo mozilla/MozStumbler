@@ -110,14 +110,20 @@ dependencies {
     compile fileTree(dir: 'android/libs', include: ['*.jar'])
 
     compile 'org.slf4j:slf4j-android:1.7.7'
+
+    // https://developer.android.com/tools/support-library/features.html
+    // In general, we recommend including the v4 support and v7 appcompat
+    // libraries, because they support a wide range of Android versions and
+    // provide APIs for recommended user interface patterns.
+
     compile "com.android.support:support-v4:19.1.+"
     compile 'com.android.support:appcompat-v7:19.1.0'
+
     compile('org.simpleframework:simple-xml:2.7.1') {
         exclude group: 'stax', module: 'stax-api'
         exclude group: 'xpp3', module: 'xpp3'
     }
 
-    compile project(':android-library')
 }
 
 FileTree getJacocoClassDirs(List projects) {
@@ -170,9 +176,7 @@ task jacocoTestReport(type: JacocoReport, dependsOn: test) {
         html.destination "${buildDir}/reports/coverage"
     }
 
-    // TODO: Automatically get project dependencies recursively
-    // Gradle project dependencies go here
-    def dependencies = [':android-library']
+    def dependencies = []
 
     classDirectories = getJacocoClassDirs(dependencies)
     sourceDirectories = getJacocoSrcFiles(dependencies)

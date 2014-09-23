@@ -291,8 +291,6 @@ public final class MapActivity extends Activity {
             mMap.getController().animateTo((mAccuracyOverlay.getLocation()));
         }
 
-        formatTextView(R.id.latitude_text, "%1$.4f", location.getLatitude());
-        formatTextView(R.id.longitude_text, "%1$.4f", location.getLongitude());
     }
 
     void updateGPSInfo(Intent intent) {
@@ -305,9 +303,9 @@ public final class MapActivity extends Activity {
         updateUI(service);
         if (GPSScanner.SUBJECT_NEW_STATUS.equals(intent.getStringExtra(Intent.EXTRA_SUBJECT))) {
             final int fixes = intent.getIntExtra(GPSScanner.NEW_STATUS_ARG_FIXES, 0);
-            final int sats = intent.getIntExtra(GPSScanner.NEW_STATUS_ARG_SATS, 0);
+            //final int sats = intent.getIntExtra(GPSScanner.NEW_STATUS_ARG_SATS, 0);
             formatTextView(R.id.satellites_used, R.string.num_used, fixes);
-            formatTextView(R.id.satellites_visible, R.string.num_visible, sats);
+            //formatTextView(R.id.satellites_visible, R.string.num_visible, sats);
             int icon = fixes > 0 ? R.drawable.ic_gps_receiving : R.drawable.ic_gps;
             ((ImageView) findViewById(R.id.fix_indicator)).setImageResource(icon);
         }

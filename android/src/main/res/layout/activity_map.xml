@@ -12,48 +12,96 @@
     <RelativeLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:background="#50000000"
+        android:background="#66ffffff"
         android:id="@+id/relativeLayout2">
         <ImageView
             android:id="@+id/fix_indicator"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_gps"
+            android:src="@drawable/gps_not_receiving"
             />
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
             android:layout_toRightOf="@id/fix_indicator"
+            android:paddingRight="8dp"
             >
             <TextView
-                android:id="@+id/satellites_used"
-                android:textColor="@android:color/white"
+                android:id="@+id/text_satellites_used"
+                android:textColor="@android:color/black"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="match_parent"
+                android:text="0"
+                android:gravity="center"
+                android:textSize="28sp"
+                android:paddingRight="20dp"
+                />
+            <View
+                android:layout_height="match_parent"
+                android:layout_width="wrap_content"
+                android:layout_weight="1"
+                />
+            <ImageView
+                android:id="@+id/cells_indicator"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_cell"
+                />
             <TextView
-                android:id="@+id/satellites_visible"
-                android:textColor="@android:color/white"
+                android:id="@+id/text_cells_visible"
+                android:textColor="@android:color/black"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="match_parent"
+                android:text="0"
+                android:gravity="center"
+                android:textSize="28sp"
+                android:paddingRight="20dp"
+                />
+            <View
+                android:layout_height="match_parent"
+                android:layout_width="wrap_content"
+                android:layout_weight="1"
+                />
+            <ImageView
+                android:id="@+id/wifi_indicator"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_wifi"
+                />
+            <TextView
+                android:id="@+id/text_wifis_visible"
+                android:textColor="@android:color/black"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="0"
+                android:gravity="center"
+                android:textSize="28sp"
+                android:paddingLeft="6dp"
+                android:paddingRight="20dp"
+                />
+            <View
+                android:layout_height="match_parent"
+                android:layout_width="wrap_content"
+                android:layout_weight="1"
+                />
+            <ImageView
+                android:id="@+id/observations_indicator"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_binoculars"
+                />
+            <TextView
+                android:id="@+id/text_observation_count"
+                android:textColor="@android:color/black"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="0"
+                android:gravity="center"
+                android:textSize="28sp"
+                android:paddingLeft="6dp"
+                />
         </LinearLayout>
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:orientation="vertical">
-            <TextView
-                android:id="@+id/latitude_text"
-                android:textColor="@android:color/white"
-                android:text="0.0000"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-            <TextView
-                android:id="@+id/longitude_text"
-                android:textColor="@android:color/white"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-        </LinearLayout>
+
     </RelativeLayout>
     <RelativeLayout
         android:layout_width="fill_parent"

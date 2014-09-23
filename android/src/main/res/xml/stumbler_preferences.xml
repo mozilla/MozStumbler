@@ -18,6 +18,8 @@
         android:key="keep_screen_on"
         android:title="@string/keep_screen_on_title"
         android:defaultValue="true" />
+    <Preference android:title="@string/action_view_log"
+        android:key="log_button"/>
     <Preference android:title="@string/action_about"
         android:key="about_button"/>
 </PreferenceScreen>

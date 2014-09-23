@@ -50,8 +50,16 @@ public class PreferencesScreen extends PreferenceActivity {
         button.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference arg) {
-                Intent intent = new Intent(PreferencesScreen.this, AboutActivity.class);
-                startActivity(intent);
+                startActivity(new Intent(PreferencesScreen.this, AboutActivity.class));
+                return true;
+            }
+        });
+
+        button = findPreference("log_button");
+        button.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference arg) {
+                startActivity(new Intent(PreferencesScreen.this, LogActivity.class));
                 return true;
             }
         });

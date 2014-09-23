@@ -1,8 +1,11 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 package org.mozilla.mozstumbler.client.navdrawer;
 
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
@@ -10,8 +13,8 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-
 import org.mozilla.mozstumbler.R;
+import org.mozilla.mozstumbler.client.LeaderboardActivity;
 import org.mozilla.mozstumbler.client.MainApp;
 import org.mozilla.mozstumbler.client.PreferencesScreen;
 import org.mozilla.mozstumbler.client.UploadReportsDialog;
@@ -38,14 +41,10 @@ public class MainDrawerActivity extends ActionBarActivity {
                 R.string.drawer_close  /* "close drawer" description */
         ) {
 
-            /** Called when a drawer has settled in a completely closed state. */
             public void onDrawerClosed(View view) {
-
             }
 
-            /** Called when a drawer has settled in a completely open state. */
             public void onDrawerOpened(View drawerView) {
-
             }
         };
 
@@ -58,7 +57,6 @@ public class MainDrawerActivity extends ActionBarActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
@@ -75,6 +73,7 @@ public class MainDrawerActivity extends ActionBarActivity {
         super.onConfigurationChanged(newConfig);
         mDrawerToggle.onConfigurationChanged(newConfig);
     }
+    
     private MainApp getApp() {
         return (MainApp) this.getApplication();
     }
@@ -92,7 +91,7 @@ public class MainDrawerActivity extends ActionBarActivity {
                 startActivity(new Intent(getApplication(), PreferencesScreen.class));
                 return true;
             case R.id.action_view_leaderboard:
-
+                startActivity(new Intent(getApplication(), LeaderboardActivity.class));
                 return true;
             case R.id.action_upload_observations:
                 UploadReportsDialog newFragment = new UploadReportsDialog();
@@ -102,5 +101,4 @@ public class MainDrawerActivity extends ActionBarActivity {
                 return super.onOptionsItemSelected(item);
         }
     }
-
 }

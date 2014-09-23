@@ -65,4 +65,8 @@
     <string name="keep_screen_on_title">Keep screen on while in map</string>
     <string name="drawer_open">Show drawer</string>
     <string name="drawer_close">Close drawer</string>
+
+    <string name="title_activity_leaderboard">Leaderboard</string>
+
 </resources>
+

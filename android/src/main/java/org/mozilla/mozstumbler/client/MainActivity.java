@@ -50,7 +50,6 @@ public final class MainActivity extends FragmentActivity
     public static final String ACTION_UI_UNPAUSE_SCANNING = ACTION_BASE + "UNPAUSE_SCANNING";
     public static final String ACTION_UI_PAUSE_SCANNING = ACTION_BASE + "PAUSE_SCANNING";
 
-    private static final String LEADERBOARD_URL = "https://location.services.mozilla.com/leaders";
 
     int                      mGpsFixes;
     int                      mGpsSats;
@@ -233,11 +232,7 @@ public final class MainActivity extends FragmentActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_view_leaderboard:
-                Uri.Builder builder = Uri.parse(LEADERBOARD_URL).buildUpon();
-                builder.fragment(getApp().getPrefs().getNickname());
-                Uri leaderboardUri = builder.build();
-                Intent openLeaderboard = new Intent(Intent.ACTION_VIEW, leaderboardUri);
-                startActivity(openLeaderboard);
+
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

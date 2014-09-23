@@ -68,6 +68,17 @@
                 android:value=".client.navdrawer.MainDrawerActivity" />
         </activity>
 
+        <activity
+            android:name=".client.LeaderboardActivity"
+            android:label="@string/title_activity_leaderboard"
+            android:configChanges="orientation|screenSize|keyboard"
+            android:parentActivityName=".client.navdrawer.MainDrawerActivity" >
+            <!-- Parent activity meta-data to support 4.0 and lower -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".client.navdrawer.MainDrawerActivity" />
+        </activity>
+
         <receiver android:name=".client.TurnOffReceiver" >
             <intent-filter>
                 <action android:name="android.intent.action.BATTERY_LOW" />

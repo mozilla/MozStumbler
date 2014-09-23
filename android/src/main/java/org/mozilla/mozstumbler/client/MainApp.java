@@ -31,6 +31,7 @@ import org.mozilla.mozstumbler.BuildConfig;
 import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.client.cellscanner.DefaultCellScanner;
 import org.mozilla.mozstumbler.client.mapview.ObservedLocationsReceiver;
+import org.mozilla.mozstumbler.client.subactivities.LogActivity;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageManager;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.GPSScanner;

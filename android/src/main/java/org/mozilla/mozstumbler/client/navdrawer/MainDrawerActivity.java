@@ -14,10 +14,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import org.mozilla.mozstumbler.R;
-import org.mozilla.mozstumbler.client.LeaderboardActivity;
+import org.mozilla.mozstumbler.client.subactivities.LeaderboardActivity;
 import org.mozilla.mozstumbler.client.MainApp;
-import org.mozilla.mozstumbler.client.PreferencesScreen;
-import org.mozilla.mozstumbler.client.UploadReportsDialog;
+import org.mozilla.mozstumbler.client.subactivities.PreferencesScreen;
+import org.mozilla.mozstumbler.client.subactivities.UploadReportsDialog;
 
 public class MainDrawerActivity extends ActionBarActivity {
     private DrawerLayout mDrawerLayout;
@@ -73,7 +73,7 @@ public class MainDrawerActivity extends ActionBarActivity {
         super.onConfigurationChanged(newConfig);
         mDrawerToggle.onConfigurationChanged(newConfig);
     }
-    
+
     private MainApp getApp() {
         return (MainApp) this.getApplication();
     }

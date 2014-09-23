@@ -37,7 +37,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".client.PreferencesScreen"
+            android:name=".client.subactivities.PreferencesScreen"
             android:label="@string/action_preferences"
             android:parentActivityName=".client.navdrawer.MainDrawerActivity" >
             <!-- Parent activity meta-data to support 4.0 and lower -->
@@ -49,7 +49,7 @@
             android:name=".client.mapview.MapActivity">
         </activity>
         <activity
-            android:name=".client.AboutActivity"
+            android:name=".client.subactivities.AboutActivity"
             android:label="@string/action_about"
             android:parentActivityName=".client.navdrawer.MainDrawerActivity" >
             <!-- Parent activity meta-data to support 4.0 and lower -->
@@ -59,7 +59,7 @@
         </activity>
 
         <activity
-            android:name=".client.LogActivity"
+            android:name=".client.subactivities.LogActivity"
             android:label="@string/title_activity_log"
             android:parentActivityName=".client.navdrawer.MainDrawerActivity" >
             <!-- Parent activity meta-data to support 4.0 and lower -->
@@ -69,7 +69,7 @@
         </activity>
 
         <activity
-            android:name=".client.LeaderboardActivity"
+            android:name=".client.subactivities.LeaderboardActivity"
             android:label="@string/title_activity_leaderboard"
             android:configChanges="orientation|screenSize|keyboard"
             android:parentActivityName=".client.navdrawer.MainDrawerActivity" >

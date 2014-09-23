@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package org.mozilla.mozstumbler.client;
+package org.mozilla.mozstumbler.client.subactivities;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import org.mozilla.mozstumbler.R;
+import org.mozilla.mozstumbler.client.PackageUtils;
 
 public class AboutActivity extends Activity {
     private static final String ABOUT_MAPBOX_URL = "https://www.mapbox.com/about/maps/";

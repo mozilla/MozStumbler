@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package org.mozilla.mozstumbler.client;
+package org.mozilla.mozstumbler.client.subactivities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,6 +13,7 @@ import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.PreferenceActivity;
 import android.text.TextUtils;
 import org.mozilla.mozstumbler.R;
+import org.mozilla.mozstumbler.client.ClientPrefs;
 
 public class PreferencesScreen extends PreferenceActivity {
     private EditTextPreference mNicknamePreference;

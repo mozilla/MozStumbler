@@ -11,7 +11,7 @@ public class ClientPrefs extends Prefs {
     private static final String LAT_PREF = "lat";
     private static final String LON_PREF = "lon";
     private static final String HARDWARE_ACCEL_PREF = "hardware_acceleration";
-    static final String KEEP_SCREEN_ON_PREF = "keep_screen_on";
+    public static final String KEEP_SCREEN_ON_PREF = "keep_screen_on";
 
     protected ClientPrefs(Context context) {
         super(context);

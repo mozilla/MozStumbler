@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package org.mozilla.mozstumbler.client;
+package org.mozilla.mozstumbler.client.subactivities;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -15,6 +15,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import org.mozilla.mozstumbler.client.ClientPrefs;
+import org.mozilla.mozstumbler.client.DateTimeUtils;
 import org.mozilla.mozstumbler.service.utils.AbstractCommunicator;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageContract;

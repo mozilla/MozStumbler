@@ -6,6 +6,7 @@ package org.mozilla.mozstumbler.client.navdrawer;
 
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
@@ -22,6 +23,7 @@ import org.mozilla.mozstumbler.client.subactivities.UploadReportsDialog;
 public class MainDrawerActivity extends ActionBarActivity {
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
+    private MetricsView mMetricsView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +34,7 @@ public class MainDrawerActivity extends ActionBarActivity {
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         View drawer = findViewById(R.id.left_drawer);
+        mMetricsView = new MetricsView(drawer);
 
         mDrawerToggle = new ActionBarDrawerToggle (
                 this,                  /* host Activity */
@@ -45,6 +48,7 @@ public class MainDrawerActivity extends ActionBarActivity {
             }
 
             public void onDrawerOpened(View drawerView) {
+                mMetricsView.populate();
             }
         };
 
@@ -55,10 +59,28 @@ public class MainDrawerActivity extends ActionBarActivity {
         getSupportActionBar().setHomeButtonEnabled(true);
     }
 
+    private static final int MENU_START_STOP = 1;
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
+        MenuItem startStop = menu.add(Menu.NONE, MENU_START_STOP, Menu.NONE, R.string.start_scanning);
+        if (Build.VERSION.SDK_INT >= 11) {
+            startStop.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+        }
+        boolean isScanning = ((MainApp) getApplication()).getService().isScanning();
+        setStartStopMenuState(startStop, isScanning);
         return true;
+    }
+
+    private void setStartStopMenuState(MenuItem menuItem, boolean scanning) {
+        if (scanning) {
+            menuItem.setIcon(android.R.drawable.ic_media_pause);
+            menuItem.setTitle(R.string.stop_scanning);
+        } else {
+            menuItem.setIcon(android.R.drawable.ic_media_play);
+            menuItem.setTitle(R.string.start_scanning);
+        }
     }
 
     @Override

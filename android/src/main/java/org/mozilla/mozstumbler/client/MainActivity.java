@@ -232,13 +232,6 @@ public final class MainActivity extends FragmentActivity
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_about:
-                startActivity(new Intent(getApplication(), AboutActivity.class));
-                return true;
-            case R.id.action_preferences:
-                PreferencesScreen.setPrefs(getApp().getPrefs());
-                startActivity(new Intent(getApplication(), PreferencesScreen.class));
-                return true;
             case R.id.action_view_leaderboard:
                 Uri.Builder builder = Uri.parse(LEADERBOARD_URL).buildUpon();
                 builder.fragment(getApp().getPrefs().getNickname());
@@ -246,20 +239,8 @@ public final class MainActivity extends FragmentActivity
                 Intent openLeaderboard = new Intent(Intent.ACTION_VIEW, leaderboardUri);
                 startActivity(openLeaderboard);
                 return true;
-            case R.id.action_view_map:
-                Intent intent = new Intent(this.getApplicationContext(), MapActivity.class);
-                startActivity(intent);
-                return true;
-            case R.id.action_view_log:
-                startActivity(new Intent(getApplication(), LogActivity.class));
-                return true;
-            case R.id.action_upload_observations:
-                UploadReportsDialog newFragment = new UploadReportsDialog();
-                newFragment.show(getSupportFragmentManager(), "UploadReportsDialog");
-                return true;
             default:
                 return super.onOptionsItemSelected(item);
-
         }
     }
 

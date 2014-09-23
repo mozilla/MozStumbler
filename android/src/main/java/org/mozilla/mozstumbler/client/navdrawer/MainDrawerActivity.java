@@ -1,6 +1,8 @@
 package org.mozilla.mozstumbler.client.navdrawer;
 
+import android.content.Intent;
 import android.content.res.Configuration;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
@@ -10,6 +12,9 @@ import android.view.MenuItem;
 import android.view.View;
 
 import org.mozilla.mozstumbler.R;
+import org.mozilla.mozstumbler.client.MainApp;
+import org.mozilla.mozstumbler.client.PreferencesScreen;
+import org.mozilla.mozstumbler.client.UploadReportsDialog;
 
 public class MainDrawerActivity extends ActionBarActivity {
     private DrawerLayout mDrawerLayout;
@@ -70,6 +75,9 @@ public class MainDrawerActivity extends ActionBarActivity {
         super.onConfigurationChanged(newConfig);
         mDrawerToggle.onConfigurationChanged(newConfig);
     }
+    private MainApp getApp() {
+        return (MainApp) this.getApplication();
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -78,7 +86,21 @@ public class MainDrawerActivity extends ActionBarActivity {
         if (mDrawerToggle.onOptionsItemSelected(item)) {
             return true;
         }
-        // Handle your other action bar items...
-        return super.onOptionsItemSelected(item);
+        switch (item.getItemId()) {
+            case R.id.action_preferences:
+                PreferencesScreen.setPrefs(getApp().getPrefs());
+                startActivity(new Intent(getApplication(), PreferencesScreen.class));
+                return true;
+            case R.id.action_view_leaderboard:
+
+                return true;
+            case R.id.action_upload_observations:
+                UploadReportsDialog newFragment = new UploadReportsDialog();
+                newFragment.show(getSupportFragmentManager(), "UploadReportsDialog");
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
+
 }

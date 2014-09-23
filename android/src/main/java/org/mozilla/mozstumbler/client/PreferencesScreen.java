@@ -4,13 +4,7 @@
 
 package org.mozilla.mozstumbler.client;
 
-import android.annotation.TargetApi;
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.location.Location;
-import android.net.wifi.WifiManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
@@ -21,12 +15,10 @@ import android.text.TextUtils;
 import org.mozilla.mozstumbler.R;
 
 public class PreferencesScreen extends PreferenceActivity {
-
     private EditTextPreference mNicknamePreference;
     private CheckBoxPreference mWifiPreference;
     private CheckBoxPreference mIsHardwareAccelerated;
     private CheckBoxPreference mKeepScreenOn;
-
     private static ClientPrefs sPrefs;
 
     /* Precondition to using this class, call this method to set Prefs */
@@ -52,6 +44,16 @@ public class PreferencesScreen extends PreferenceActivity {
         mWifiPreference.setChecked(sPrefs.getUseWifiOnly());
 
         setPreferenceListener();
+
+        Preference button = findPreference("about_button");
+        button.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference arg) {
+                Intent intent = new Intent(PreferencesScreen.this, AboutActivity.class);
+                startActivity(intent);
+                return true;
+            }
+        });
     }
 
     private void setPreferenceListener() {

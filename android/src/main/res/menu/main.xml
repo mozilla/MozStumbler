@@ -1,13 +1,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
-    <item
-        android:id="@+id/action_view_map"
-        android:icon="@drawable/ic_action_location_searching"
-        android:showAsAction="always"
-        android:title="@string/view_map"/>
-    <item
-        android:id="@+id/action_view_log"
-        android:icon="@drawable/ic_action_location_searching"
-        android:title="@string/action_view_log"/>
+
+
     <item
         android:id="@+id/action_upload_observations"
         android:icon="@drawable/ic_action_upload"
@@ -23,9 +16,5 @@
         android:icon="@drawable/ic_action_settings"
         android:showAsAction="never"
         android:title="@string/action_preferences"/>
-    <item
-        android:id="@+id/action_about"
-        android:icon="@drawable/ic_action_about"
-        android:showAsAction="ifRoom"
-        android:title="@string/action_about"/>
+
 </menu>

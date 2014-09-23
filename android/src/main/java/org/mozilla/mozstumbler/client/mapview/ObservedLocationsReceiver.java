@@ -153,7 +153,7 @@ public class ObservedLocationsReceiver extends BroadcastReceiver {
             return;
         }
 
-        getMapActivity().runOnUiThread(new Runnable() {
+        getMapActivity().getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 addObservationPointToMap();

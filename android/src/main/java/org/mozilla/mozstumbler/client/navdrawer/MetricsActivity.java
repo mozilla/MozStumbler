@@ -1,26 +1,22 @@
 package org.mozilla.mozstumbler.client.navdrawer;
 
 
-import android.content.Context;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
 import org.mozilla.mozstumbler.R;
-import org.mozilla.mozstumbler.client.ClientPrefs;
 import org.mozilla.mozstumbler.client.DateTimeUtils;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageContract;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageManager;
-import org.mozilla.mozstumbler.service.uploadthread.AsyncUploader;
 
 import java.io.IOException;
 import java.util.Properties;
 
-public class MetricsView {
-    private static final String LOG_TAG = AppGlobals.LOG_PREFIX + MetricsView.class.getSimpleName();
+public class MetricsActivity {
+    private static final String LOG_TAG = AppGlobals.LOG_PREFIX + MetricsActivity.class.getSimpleName();
 
     private TextView 
             mLastUpdateTimeView,
@@ -41,7 +37,7 @@ public class MetricsView {
 
     View mView;
     
-    public MetricsView(View view) {
+    public MetricsActivity(View view) {
         mView = view;
 
         mLastUpdateTimeView = (TextView) mView.findViewById(R.id.last_upload_time_value);

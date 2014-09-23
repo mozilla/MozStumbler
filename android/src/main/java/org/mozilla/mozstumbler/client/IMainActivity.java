@@ -14,8 +14,5 @@ package org.mozilla.mozstumbler.client;
 
 public interface IMainActivity {
     public void updateUiOnMainThread();
-
-    public void setGpsFixes(int fixes);
-    public void setGpsSats(int sats);
 }
 

@@ -8,4 +8,6 @@
     <dimen name="padding_above_for_metrics_titles">12dp</dimen>
     <dimen name="padding_below_for_metrics_titles">5dp</dimen>
     <dimen name="metrics_col1_width">130dp</dimen>
+    <dimen name="font_size_for_map_view_report_icon">24sp</dimen>
+
 </resources>

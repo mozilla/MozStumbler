@@ -9,32 +9,53 @@ import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
+
 import org.mozilla.mozstumbler.R;
+import org.mozilla.mozstumbler.client.ClientPrefs;
+import org.mozilla.mozstumbler.client.ClientStumblerService;
+import org.mozilla.mozstumbler.client.IMainActivity;
+import org.mozilla.mozstumbler.client.mapview.MapActivity;
 import org.mozilla.mozstumbler.client.subactivities.LeaderboardActivity;
 import org.mozilla.mozstumbler.client.MainApp;
 import org.mozilla.mozstumbler.client.subactivities.PreferencesScreen;
 import org.mozilla.mozstumbler.client.subactivities.UploadReportsDialog;
 
-public class MainDrawerActivity extends ActionBarActivity {
+public class MainDrawerActivity extends ActionBarActivity implements IMainActivity {
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
-    private MetricsView mMetricsView;
+    private MetricsActivity mMetricsView;
+    private MapActivity mMapActivity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_drawer);
 
+        if (ClientPrefs.getInstance().getIsHardwareAccelerated() &&
+                Build.VERSION.SDK_INT > 10) {
+            getWindow().setFlags(
+                    WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED,
+                    WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED);
+        }
+
+        if (ClientPrefs.getInstance().getKeepScreenOn()) {
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        }
+
         getSupportActionBar().setTitle(getString(R.string.app_name));
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         View drawer = findViewById(R.id.left_drawer);
-        mMetricsView = new MetricsView(drawer);
 
         mDrawerToggle = new ActionBarDrawerToggle (
                 this,                  /* host Activity */
@@ -48,7 +69,7 @@ public class MainDrawerActivity extends ActionBarActivity {
             }
 
             public void onDrawerOpened(View drawerView) {
-                mMetricsView.populate();
+               // mMetricsView.populate();
             }
         };
 
@@ -57,6 +78,12 @@ public class MainDrawerActivity extends ActionBarActivity {
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
+
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        mMapActivity = new MapActivity();
+        fragmentTransaction.add(R.id.content_frame, mMapActivity);
+        fragmentTransaction.commit();
     }
 
     private static final int MENU_START_STOP = 1;
@@ -108,6 +135,9 @@ public class MainDrawerActivity extends ActionBarActivity {
             return true;
         }
         switch (item.getItemId()) {
+            case MENU_START_STOP:
+                mMapActivity.toggleScanning(item);
+                return true;
             case R.id.action_preferences:
                 PreferencesScreen.setPrefs(getApp().getPrefs());
                 startActivity(new Intent(getApplication(), PreferencesScreen.class));
@@ -123,4 +153,14 @@ public class MainDrawerActivity extends ActionBarActivity {
                 return super.onOptionsItemSelected(item);
         }
     }
+    public void updateUiOnMainThread() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+
+            }
+        });
+    }
+
+
 }

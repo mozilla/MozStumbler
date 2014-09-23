@@ -14,10 +14,12 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageButton;
@@ -45,7 +47,7 @@ import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Overlay;
 
-public final class MapActivity extends Activity {
+public final class MapActivity extends android.support.v4.app.Fragment {
     private static final String LOG_TAG = AppGlobals.LOG_PREFIX + MapActivity.class.getSimpleName();
 
     private static final String COVERAGE_REDIRECT_URL = "https://location.services.mozilla.com/map.json";
@@ -68,25 +70,16 @@ public final class MapActivity extends Activity {
     ObservationPointsOverlay mObservationPointsOverlay;
     private GPSListener mGPSListener;
 
+    private View mRootView;
+    
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        super.onCreateView(inflater, container, savedInstanceState);
 
-        if (ClientPrefs.getInstance().getIsHardwareAccelerated() &&
-            Build.VERSION.SDK_INT > 10) {
-                getWindow().setFlags(
-                        WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED,
-                        WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED);
-        }
+        mRootView = inflater.inflate(R.layout.activity_map, container, false);
 
-        if (ClientPrefs.getInstance().getKeepScreenOn()) {
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        }
-
-        requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-        setContentView(R.layout.activity_map);
-
-        ImageButton centerMe = (ImageButton)this.findViewById(R.id.my_location_button);
+        ImageButton centerMe = (ImageButton) mRootView.findViewById(R.id.my_location_button);
         centerMe.setVisibility(View.INVISIBLE);
         centerMe.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -112,7 +105,7 @@ public final class MapActivity extends Activity {
             }
         });
 
-        mMap = (MapView) this.findViewById(R.id.map);
+        mMap = (MapView) mRootView.findViewById(R.id.map);
         final OnlineTileSourceBase tileSource = getTileSource();
         showCopyright(tileSource);
         mMap.setTileSource(tileSource);
@@ -185,36 +178,25 @@ public final class MapActivity extends Activity {
                 }
             }, 0);
         } else {
-            mCoverageTilesOverlay = new CoverageOverlay(this.getApplicationContext(), sCoverageUrl, mMap);
+            mCoverageTilesOverlay = new CoverageOverlay(mRootView.getContext(), sCoverageUrl, mMap);
             mMap.getOverlays().add(mCoverageTilesOverlay);
         }
 
-        mAccuracyOverlay = new AccuracyCircleOverlay(this.getApplicationContext(), sGPSColor);
+        mAccuracyOverlay = new AccuracyCircleOverlay(mRootView.getContext(), sGPSColor);
         mMap.getOverlays().add(mAccuracyOverlay);
 
-        mObservationPointsOverlay = new ObservationPointsOverlay(this, mMap);
+        mObservationPointsOverlay = new ObservationPointsOverlay(mRootView.getContext(), mMap);
         mMap.getOverlays().add(mObservationPointsOverlay);
 
-        ObservedLocationsReceiver observer = ObservedLocationsReceiver.getInstance(this.getApplicationContext());
+        ObservedLocationsReceiver observer = ObservedLocationsReceiver.getInstance(mRootView.getContext());
         observer.setMapActivity(this);
         observer.putAllPointsOnMap();
+
+        return mRootView;
     }
 
-    @TargetApi(11)
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuItem item = menu.add(Menu.NONE,MENU_REFRESH,Menu.NONE,R.string.refresh_map)
-                .setIcon(R.drawable.ic_action_refresh);
-        if (Build.VERSION.SDK_INT >= 11) {
-            item.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-        }
-        MenuItem startStop = menu.add(Menu.NONE, MENU_START_STOP, Menu.NONE, R.string.start_scanning);
-        if (Build.VERSION.SDK_INT >= 11) {
-            startStop.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-        }
-        boolean isScanning = ((MainApp) getApplication()).getService().isScanning();
-        setStartStopMenuState(startStop, isScanning);
-        return true;
+    MainApp getApplication() {
+        return (MainApp) getActivity().getApplication();
     }
 
     private void setStartStopMenuState(MenuItem menuItem, boolean scanning) {
@@ -227,8 +209,8 @@ public final class MapActivity extends Activity {
         }
     }
 
-    private void toggleScanning(MenuItem menuItem) {
-        MainApp app = ((MainApp) getApplication());
+    public void toggleScanning(MenuItem menuItem) {
+        MainApp app = getApplication();
         boolean isScanning = app.getService().isScanning();
         if (isScanning) {
             app.stopScanning();
@@ -265,7 +247,7 @@ public final class MapActivity extends Activity {
     }
 
     private void showCopyright(OnlineTileSourceBase tileSource) {
-        TextView copyrightArea = (TextView) findViewById(R.id.copyright_area);
+        TextView copyrightArea = (TextView) mRootView.findViewById(R.id.copyright_area);
         if (TileSourceFactory.MAPQUESTOSM.equals(tileSource)) {
             copyrightArea.setText("Tiles Courtesy of MapQuest\n© OpenStreetMap contributors");
         }
@@ -276,7 +258,7 @@ public final class MapActivity extends Activity {
 
     void setUserPositionAt(Location location) {
         if (mAccuracyOverlay.getLocation() == null) {
-            ImageButton centerMe = (ImageButton)this.findViewById(R.id.my_location_button);
+            ImageButton centerMe = (ImageButton) mRootView.findViewById(R.id.my_location_button);
             centerMe.setVisibility(View.VISIBLE);
         }
 
@@ -293,22 +275,19 @@ public final class MapActivity extends Activity {
 
     }
 
-    void updateGPSInfo(Intent intent) {
+    void updateGPSInfo(int satellites, int fixes) {
+        // @TODO Move this code to an appropriate place
         if  (mCoverageTilesOverlay == null && sCoverageUrl != null) {
-            mCoverageTilesOverlay = new CoverageOverlay(this.getApplicationContext(), sCoverageUrl, mMap);
+            mCoverageTilesOverlay = new CoverageOverlay(getActivity().getApplicationContext(), sCoverageUrl, mMap);
             mMap.getOverlays().add(mMap.getOverlays().indexOf(mAccuracyOverlay), mCoverageTilesOverlay);
         }
 
-        final ClientStumblerService service = ((MainApp) getApplication()).getService();
+        formatTextView(R.id.text_satellites_used, "%d", fixes);
+        int icon = fixes > 0 ? R.drawable.ic_gps_receiving : R.drawable.ic_gps_no_signal_black;
+        ((ImageView) mRootView.findViewById(R.id.fix_indicator)).setImageResource(icon);
+
+        final ClientStumblerService service = getApplication().getService();
         updateUI(service);
-        if (GPSScanner.SUBJECT_NEW_STATUS.equals(intent.getStringExtra(Intent.EXTRA_SUBJECT))) {
-            final int fixes = intent.getIntExtra(GPSScanner.NEW_STATUS_ARG_FIXES, 0);
-            //final int sats = intent.getIntExtra(GPSScanner.NEW_STATUS_ARG_SATS, 0);
-            formatTextView(R.id.satellites_used, R.string.num_used, fixes);
-            //formatTextView(R.id.satellites_visible, R.string.num_visible, sats);
-            int icon = fixes > 0 ? R.drawable.ic_gps_receiving : R.drawable.ic_gps;
-            ((ImageView) findViewById(R.id.fix_indicator)).setImageResource(icon);
-        }
     }
 
     // An overlay for the sole purpose of reporting a user swiping on the map
@@ -338,13 +317,13 @@ public final class MapActivity extends Activity {
     }
 
     @Override
-    protected void onStart() {
+    public void onStart() {
         super.onStart();
         Log.d(LOG_TAG, "onStart");
 
         mGPSListener = new GPSListener(this);
 
-        ObservedLocationsReceiver observer = ObservedLocationsReceiver.getInstance(this.getApplicationContext());
+        ObservedLocationsReceiver observer = ObservedLocationsReceiver.getInstance(getActivity().getApplicationContext());
         observer.setMapActivity(this);
         observer.putMissedPointsOnMap();
     }
@@ -355,18 +334,18 @@ public final class MapActivity extends Activity {
     }
     
     @Override
-    protected void onStop() {
+    public void onStop() {
         super.onStop();
 
         Log.d(LOG_TAG, "onStop");
 
         mGPSListener.removeListener();
-        ObservedLocationsReceiver observer = ObservedLocationsReceiver.getInstance(this.getApplicationContext());
+        ObservedLocationsReceiver observer = ObservedLocationsReceiver.getInstance(getActivity().getApplicationContext());
         observer.removeMapActivity();
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle bundle) {
+    public void onSaveInstanceState(Bundle bundle) {
         super.onSaveInstanceState(bundle);
         bundle.putInt(ZOOM_KEY, mMap.getZoomLevel());
         IGeoPoint center = mMap.getMapCenter();
@@ -376,14 +355,14 @@ public final class MapActivity extends Activity {
     }
 
     @Override
-    protected void onPause() {
+    public void onPause() {
         super.onPause();
         Log.d(LOG_TAG, "onPause");
         saveStateToPrefs();
     }
 
     @Override
-    protected void onDestroy() {
+    public void onDestroy() {
         super.onDestroy();
         Log.d(LOG_TAG, "onDestroy");
 
@@ -393,14 +372,14 @@ public final class MapActivity extends Activity {
 
 
     private void updateUI(ClientStumblerService service) {
-        formatTextView(R.id.cell_info_text, R.string.cells_info, service.getCurrentCellInfoCount(),
-                service.getCellInfoCount());
-        formatTextView(R.id.wifi_info_text, R.string.wifi_info, service.getVisibleAPCount(),
-                service.getAPCount());
+//        formatTextView(R.id.cell_info_text, R.string.cells_info, service.getCurrentCellInfoCount(),
+//                service.getCellInfoCount());
+//        formatTextView(R.id.wifi_info_text, R.string.wifi_info, service.getVisibleAPCount(),
+//                service.getAPCount());
     }
 
     private void listenForPanning(MapView map) {
-        map.getOverlays().add(new SwipeListeningOverlay(this.getApplicationContext(), new SwipeListeningOverlay.OnSwipeListener() {
+        map.getOverlays().add(new SwipeListeningOverlay(getActivity().getApplicationContext(), new SwipeListeningOverlay.OnSwipeListener() {
             @Override
             public void onSwipe() {
                 mUserPanning = true;
@@ -414,7 +393,7 @@ public final class MapActivity extends Activity {
     }
 
     private void formatTextView(int textViewId, String str, Object... args) {
-        TextView textView = (TextView) findViewById(textViewId);
+        TextView textView = (TextView) mRootView.findViewById(textViewId);
         str = String.format(str, args);
         textView.setText(str);
     }

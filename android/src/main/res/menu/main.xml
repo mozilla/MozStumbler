@@ -1,19 +1,17 @@
-<menu xmlns:android="http://schemas.android.com/apk/res/android" >
-
-
-    <item
-        android:id="@+id/action_upload_observations"
-        android:icon="@drawable/ic_action_upload"
-        android:showAsAction="ifRoom"
-        android:title="@string/action_upload_observations"/>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    >
     <item
         android:id="@+id/action_view_leaderboard"
         android:icon="@drawable/ic_action_podium"
-        android:showAsAction="ifRoom"
-        android:title="@string/view_leaderboard"/>
+        android:showAsAction="never"
+        android:title="@string/view_leaderboard"
+        android:menuCategory="system"
+        />
     <item
         android:id="@+id/action_preferences"
+        android:icon="@drawable/ic_action_settings"
         android:showAsAction="never"
-        android:title="@string/action_preferences"/>
-
+        android:title="@string/action_preferences"
+        android:menuCategory="system"
+        />
 </menu>

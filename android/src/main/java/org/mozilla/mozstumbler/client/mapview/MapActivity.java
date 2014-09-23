@@ -4,24 +4,17 @@
 
 package org.mozilla.mozstumbler.client.mapview;
 
-import android.annotation.TargetApi;
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Canvas;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -34,10 +27,8 @@ import org.mozilla.mozstumbler.BuildConfig;
 import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.client.ClientPrefs;
 import org.mozilla.mozstumbler.client.ClientStumblerService;
-import org.mozilla.mozstumbler.client.MainActivity;
 import org.mozilla.mozstumbler.client.MainApp;
 import org.mozilla.mozstumbler.service.AppGlobals;
-import org.mozilla.mozstumbler.service.stumblerthread.scanners.GPSScanner;
 import org.osmdroid.api.IGeoPoint;
 import org.osmdroid.tileprovider.BitmapPool;
 import org.osmdroid.tileprovider.tilesource.OnlineTileSourceBase;
@@ -53,8 +44,6 @@ public final class MapActivity extends android.support.v4.app.Fragment {
     private static final String COVERAGE_REDIRECT_URL = "https://location.services.mozilla.com/map.json";
     private static String sCoverageUrl = null;
     private static int sGPSColor;
-    private static final int MENU_REFRESH = 1;
-    private static final int MENU_START_STOP = 2;
     private static final String ZOOM_KEY = "zoom";
     private static final int DEFAULT_ZOOM = 8;
     private static final int DEFAULT_ZOOM_AFTER_FIX = 16;
@@ -78,6 +67,11 @@ public final class MapActivity extends android.support.v4.app.Fragment {
         super.onCreateView(inflater, container, savedInstanceState);
 
         mRootView = inflater.inflate(R.layout.activity_map, container, false);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            View v = mRootView.findViewById(R.id.status_toolbar_layout);
+            v.setAlpha(0.5f);
+        }
 
         ImageButton centerMe = (ImageButton) mRootView.findViewById(R.id.my_location_button);
         centerMe.setVisibility(View.INVISIBLE);
@@ -200,12 +194,19 @@ public final class MapActivity extends android.support.v4.app.Fragment {
     }
 
     private void setStartStopMenuState(MenuItem menuItem, boolean scanning) {
+        View statusIcons = mRootView.findViewById(R.id.status_toolbar_layout);
+        float alpha = 1.0f;
         if (scanning) {
             menuItem.setIcon(android.R.drawable.ic_media_pause);
             menuItem.setTitle(R.string.stop_scanning);
         } else {
+            alpha = 0.5f;
             menuItem.setIcon(android.R.drawable.ic_media_play);
             menuItem.setTitle(R.string.start_scanning);
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB){
+            statusIcons.setAlpha(alpha);
         }
     }
 
@@ -218,20 +219,6 @@ public final class MapActivity extends android.support.v4.app.Fragment {
             app.startScanning();
         }
         setStartStopMenuState(menuItem, !isScanning);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case MENU_REFRESH:
-                mUserPanning = false;
-                return true;
-            case MENU_START_STOP:
-                toggleScanning(item);
-                return true;
-            default:
-                return false;
-        }
     }
 
     @SuppressWarnings("ConstantConditions")

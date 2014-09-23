@@ -9,15 +9,14 @@ import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
 import android.view.WindowManager;
 
 import org.mozilla.mozstumbler.R;
@@ -93,8 +92,14 @@ public class MainDrawerActivity extends ActionBarActivity implements IMainActivi
         getMenuInflater().inflate(R.menu.main, menu);
         MenuItem startStop = menu.add(Menu.NONE, MENU_START_STOP, Menu.NONE, R.string.start_scanning);
         if (Build.VERSION.SDK_INT >= 11) {
-            startStop.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+            startStop.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
         }
+        else {
+            MenuItemCompat.setShowAsAction(startStop, MenuItemCompat.SHOW_AS_ACTION_ALWAYS);
+            MenuItem item = menu.findItem(R.id.action_preferences);
+            MenuItemCompat.setShowAsAction(item, MenuItemCompat.SHOW_AS_ACTION_ALWAYS);
+        }
+
         boolean isScanning = ((MainApp) getApplication()).getService().isScanning();
         setStartStopMenuState(startStop, isScanning);
         return true;
@@ -144,10 +149,6 @@ public class MainDrawerActivity extends ActionBarActivity implements IMainActivi
                 return true;
             case R.id.action_view_leaderboard:
                 startActivity(new Intent(getApplication(), LeaderboardActivity.class));
-                return true;
-            case R.id.action_upload_observations:
-                UploadReportsDialog newFragment = new UploadReportsDialog();
-                newFragment.show(getSupportFragmentManager(), "UploadReportsDialog");
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

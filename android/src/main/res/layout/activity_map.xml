@@ -14,7 +14,8 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:background="#66ffffff"
-        android:id="@+id/relativeLayout2">
+        android:id="@+id/status_toolbar_layout"
+        >
         <ImageView
             android:id="@+id/fix_indicator"
             android:layout_width="wrap_content"

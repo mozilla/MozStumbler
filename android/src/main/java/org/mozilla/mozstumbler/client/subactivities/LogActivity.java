@@ -9,10 +9,13 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.content.LocalBroadcastManager;
 import android.os.Bundle;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.ActionBarActivity;
 import android.text.Html;
 import android.util.AttributeSet;
 import android.view.Menu;
@@ -29,7 +32,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-public class LogActivity extends Activity {
+public class LogActivity extends ActionBarActivity {
     static LinkedList<String> buffer = new LinkedList<String>();
     static final int MAX_SIZE = 1000;
     private static LogMessageReceiver sInstance;
@@ -188,8 +191,13 @@ public class LogActivity extends Activity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.log_menu, menu);
+        if (Build.VERSION.SDK_INT < 11) {
+            MenuItem m = menu.findItem(R.id.scroll_to_end);
+            MenuItemCompat.setShowAsAction(m, MenuItemCompat.SHOW_AS_ACTION_ALWAYS);
+            m = menu.findItem(R.id.scroll_to_start);
+            MenuItemCompat.setShowAsAction(m, MenuItemCompat.SHOW_AS_ACTION_ALWAYS);
+        }
         return true;
     }
 

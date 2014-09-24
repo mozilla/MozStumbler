@@ -12,15 +12,14 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
-
-import org.mozilla.mozstumbler.service.AppGlobals;
-
 import java.lang.ref.WeakReference;
 
 class GPSListener implements LocationListener {
-   private WeakReference<MapActivity> mMapActivity;
-   private LocationManager mLocationManager;
-   private GpsStatus.Listener mStatusListener;
+    private WeakReference<MapActivity> mMapActivity;
+    private LocationManager mLocationManager;
+    private final GpsStatus.Listener mStatusListener;
+
+    private static GpsStatus sGpsStatus;
 
     GPSListener(MapActivity mapActivity) {
         mMapActivity = new WeakReference<MapActivity>(mapActivity);
@@ -30,8 +29,12 @@ class GPSListener implements LocationListener {
         mStatusListener = new GpsStatus.Listener() {
             public void onGpsStatusChanged(int event) {
                 if (event == GpsStatus.GPS_EVENT_SATELLITE_STATUS && mLocationManager != null) {
-                    GpsStatus status = mLocationManager.getGpsStatus(null);
-                    Iterable<GpsSatellite> sats = status.getSatellites();
+                    if (sGpsStatus != null) {
+                        mLocationManager.getGpsStatus(sGpsStatus);
+                    } else {
+                        sGpsStatus = mLocationManager.getGpsStatus(null);
+                    }
+                    Iterable<GpsSatellite> sats = sGpsStatus.getSatellites();
                     int satellites = 0;
                     int fixes = 0;
                     for (GpsSatellite sat : sats) {

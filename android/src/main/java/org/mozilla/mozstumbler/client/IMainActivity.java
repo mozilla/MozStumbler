@@ -14,5 +14,7 @@ package org.mozilla.mozstumbler.client;
 
 public interface IMainActivity {
     public void updateUiOnMainThread();
+
+    public void displayObservationCount(int count);
 }
 

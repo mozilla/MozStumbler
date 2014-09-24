@@ -4,8 +4,11 @@
 
 package org.mozilla.mozstumbler.client.mapview;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.Rect;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
@@ -54,24 +57,19 @@ public final class MapActivity extends android.support.v4.app.Fragment {
     private AccuracyCircleOverlay mAccuracyOverlay;
     private boolean mFirstLocationFix;
     private boolean mUserPanning = false;
-    Timer mGetUrl = new Timer();
-    Overlay mCoverageTilesOverlay = null;
-    ObservationPointsOverlay mObservationPointsOverlay;
+    private final Timer mGetUrl = new Timer();
+    private Overlay mCoverageTilesOverlay = null;
+    private ObservationPointsOverlay mObservationPointsOverlay;
     private GPSListener mGPSListener;
 
     private View mRootView;
-    
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
 
         mRootView = inflater.inflate(R.layout.activity_map, container, false);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            View v = mRootView.findViewById(R.id.status_toolbar_layout);
-            v.setAlpha(0.5f);
-        }
 
         ImageButton centerMe = (ImageButton) mRootView.findViewById(R.id.my_location_button);
         centerMe.setVisibility(View.INVISIBLE);
@@ -182,9 +180,13 @@ public final class MapActivity extends android.support.v4.app.Fragment {
         mObservationPointsOverlay = new ObservationPointsOverlay(mRootView.getContext(), mMap);
         mMap.getOverlays().add(mObservationPointsOverlay);
 
-        ObservedLocationsReceiver observer = ObservedLocationsReceiver.getInstance(mRootView.getContext());
+        ObservedLocationsReceiver observer = ObservedLocationsReceiver.getInstance();
         observer.setMapActivity(this);
         observer.putAllPointsOnMap();
+
+        initTextView(R.id.text_cells_visible);
+        initTextView(R.id.text_wifis_visible);
+        initTextView(R.id.text_observation_count);
 
         return mRootView;
     }
@@ -194,20 +196,30 @@ public final class MapActivity extends android.support.v4.app.Fragment {
     }
 
     private void setStartStopMenuState(MenuItem menuItem, boolean scanning) {
-        View statusIcons = mRootView.findViewById(R.id.status_toolbar_layout);
-        float alpha = 1.0f;
         if (scanning) {
             menuItem.setIcon(android.R.drawable.ic_media_pause);
             menuItem.setTitle(R.string.stop_scanning);
         } else {
-            alpha = 0.5f;
             menuItem.setIcon(android.R.drawable.ic_media_play);
             menuItem.setTitle(R.string.start_scanning);
         }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB){
-            statusIcons.setAlpha(alpha);
+        dimToolbar();
+    }
+
+    @SuppressLint("NewApi")
+    public void dimToolbar() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
+            return;
         }
+        View v = mRootView.findViewById(R.id.status_toolbar_layout);
+
+        final ClientStumblerService service = getApplication().getService();
+        float alpha = 0.5f;
+        if (service != null && service.isScanning()) {
+            alpha = 1.0f;
+        }
+        v.setAlpha(alpha);
     }
 
     public void toggleScanning(MenuItem menuItem) {
@@ -283,7 +295,7 @@ public final class MapActivity extends android.support.v4.app.Fragment {
             public void onSwipe();
         }
 
-        OnSwipeListener mOnSwipe;
+        final OnSwipeListener mOnSwipe;
         SwipeListeningOverlay(Context ctx, OnSwipeListener onSwipe) {
             super(ctx);
             mOnSwipe = onSwipe;
@@ -310,9 +322,11 @@ public final class MapActivity extends android.support.v4.app.Fragment {
 
         mGPSListener = new GPSListener(this);
 
-        ObservedLocationsReceiver observer = ObservedLocationsReceiver.getInstance(getActivity().getApplicationContext());
+        ObservedLocationsReceiver observer = ObservedLocationsReceiver.getInstance();
         observer.setMapActivity(this);
         observer.putMissedPointsOnMap();
+
+        dimToolbar();
     }
 
     private void saveStateToPrefs() {
@@ -327,7 +341,7 @@ public final class MapActivity extends android.support.v4.app.Fragment {
         Log.d(LOG_TAG, "onStop");
 
         mGPSListener.removeListener();
-        ObservedLocationsReceiver observer = ObservedLocationsReceiver.getInstance(getActivity().getApplicationContext());
+        ObservedLocationsReceiver observer = ObservedLocationsReceiver.getInstance();
         observer.removeMapActivity();
     }
 
@@ -374,15 +388,28 @@ public final class MapActivity extends android.support.v4.app.Fragment {
         }));
     }
 
-    private void formatTextView(int textViewId, int stringId, Object... args) {
+    public void formatTextView(int textViewId, int stringId, Object... args) {
         String str = getResources().getString(stringId);
         formatTextView(textViewId, str, args);
     }
 
-    private void formatTextView(int textViewId, String str, Object... args) {
+    public void formatTextView(int textViewId, String str, Object... args) {
         TextView textView = (TextView) mRootView.findViewById(textViewId);
         str = String.format(str, args);
         textView.setText(str);
+    }
+
+    private void initTextView(int textViewId) {
+        TextView textView = (TextView) mRootView.findViewById(textViewId);
+        Rect bounds = new Rect();
+        Paint textPaint = textView.getPaint();
+        textPaint.getTextBounds("00000", 0, "00000".length(), bounds);
+        int width = bounds.width();
+        textView.setWidth(width);
+        android.widget.LinearLayout.LayoutParams params =
+                new android.widget.LinearLayout.LayoutParams(width, android.widget.LinearLayout.LayoutParams.MATCH_PARENT);
+        textView.setLayoutParams(params);
+        textView.setText("0");
     }
 
     public void newMLSPoint(ObservationPoint point) {

@@ -18,7 +18,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
-
 import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.client.ClientPrefs;
 import org.mozilla.mozstumbler.client.ClientStumblerService;
@@ -27,7 +26,6 @@ import org.mozilla.mozstumbler.client.mapview.MapActivity;
 import org.mozilla.mozstumbler.client.subactivities.LeaderboardActivity;
 import org.mozilla.mozstumbler.client.MainApp;
 import org.mozilla.mozstumbler.client.subactivities.PreferencesScreen;
-import org.mozilla.mozstumbler.client.subactivities.UploadReportsDialog;
 
 public class MainDrawerActivity extends ActionBarActivity implements IMainActivity {
     private DrawerLayout mDrawerLayout;
@@ -83,6 +81,8 @@ public class MainDrawerActivity extends ActionBarActivity implements IMainActivi
         mMapActivity = new MapActivity();
         fragmentTransaction.add(R.id.content_frame, mMapActivity);
         fragmentTransaction.commit();
+
+        getApp().setMainActivity(this);
     }
 
     private static final int MENU_START_STOP = 1;
@@ -158,10 +158,25 @@ public class MainDrawerActivity extends ActionBarActivity implements IMainActivi
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-
+                updateNumberDisplay();
             }
         });
     }
 
+    private void updateNumberDisplay() {
+        ClientStumblerService service = getApp().getService();
+        if (service == null) {
+            return;
+        }
+
+        mMapActivity.formatTextView(R.id.text_cells_visible, "%d", service.getCurrentCellInfoCount());
+        mMapActivity.formatTextView(R.id.text_wifis_visible, "%d", service.getVisibleAPCount());
+//        showUploadStats();
+    }
+
+    @Override
+    public void displayObservationCount(int count) {
+        mMapActivity.formatTextView(R.id.text_observation_count, "%d", count);
+    }
 
 }

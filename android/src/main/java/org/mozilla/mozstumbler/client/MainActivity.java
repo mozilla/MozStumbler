@@ -28,19 +28,16 @@ import org.mozilla.mozstumbler.BuildConfig;
 import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.client.http.HttpUtil;
 import org.mozilla.mozstumbler.client.http.IHttpUtil;
-import org.mozilla.mozstumbler.client.mapview.MapActivity;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.stumblerthread.StumblerService;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageContract;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageManager;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.WifiScanner;
-import org.mozilla.mozstumbler.service.utils.NetworkUtils;
 
 import java.io.IOException;
 import java.util.Properties;
 
-public final class MainActivity extends FragmentActivity
-                                implements IMainActivity {
+public final class MainActivity extends FragmentActivity {
 
     private static final String LOG_TAG = AppGlobals.LOG_PREFIX + MainActivity.class.getSimpleName();
 
@@ -70,7 +67,7 @@ public final class MainActivity extends FragmentActivity
         return mGpsSats;
     }
 
-    private BroadcastReceiver notificationDrawerEventReceiver = new BroadcastReceiver() {
+    private final BroadcastReceiver notificationDrawerEventReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             StumblerService service = getApp().getService();
@@ -96,14 +93,11 @@ public final class MainActivity extends FragmentActivity
     @Override
     protected void onStart() {
         super.onStart();
-        getApp().setMainActivity(this);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-
-        updateUiOnMainThread();
     }
 
     @Override
@@ -154,15 +148,6 @@ public final class MainActivity extends FragmentActivity
                 })
                 .show();
         }
-    }
-
-    public void updateUiOnMainThread() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                updateUI();
-            }
-        });
     }
 
     private void updateUI() {
@@ -217,27 +202,9 @@ public final class MainActivity extends FragmentActivity
             return;
         }
 
-        updateUiOnMainThread();
+      //  updateUiOnMainThread();
 
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_view_leaderboard:
-
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
+     }
 
     private void setVisibleAccessPoints(boolean scanning, int wifiStatus, int apsCount) {
         String status;

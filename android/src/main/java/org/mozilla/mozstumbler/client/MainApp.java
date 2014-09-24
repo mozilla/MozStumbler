@@ -34,14 +34,12 @@ import org.mozilla.mozstumbler.client.mapview.ObservedLocationsReceiver;
 import org.mozilla.mozstumbler.client.subactivities.LogActivity;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageManager;
-import org.mozilla.mozstumbler.service.stumblerthread.scanners.GPSScanner;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.WifiScanner;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner.CellScanner;
 import org.mozilla.mozstumbler.service.uploadthread.AsyncUploader;
 import org.mozilla.mozstumbler.service.utils.NetworkUtils;
 
-public class MainApp extends Application {
-
+public class MainApp extends Application implements ObservedLocationsReceiver.ICountObserver {
     private final String LOG_TAG = AppGlobals.LOG_PREFIX + MainApp.class.getSimpleName();
     private ClientStumblerService mStumblerService;
     private ServiceConnection mConnection;
@@ -49,8 +47,8 @@ public class MainApp extends Application {
     private WeakReference<IMainActivity> mMainActivity = new WeakReference<IMainActivity>(null);
     private final long MAX_BYTES_DISK_STORAGE = 1000 * 1000 * 20; // 20MB for MozStumbler by default, is ok?
     private final int MAX_WEEKS_OLD_STORED = 4;
-    public static final String INTENT_TURN_OFF = "org.mozilla.mozstumbler.turnMeOff";
-    private static final int    NOTIFICATION_ID = 1;
+    private static final String INTENT_TURN_OFF = "org.mozilla.mozstumbler.turnMeOff";
+    private static final int NOTIFICATION_ID = 1;
 
     public ClientPrefs getPrefs() {
         return ClientPrefs.getInstance();
@@ -85,6 +83,8 @@ public class MainApp extends Application {
         NetworkUtils.createGlobalInstance(this);
         LogActivity.LogMessageReceiver.createGlobalInstance(this);
         CellScanner.setCellScannerImpl(new DefaultCellScanner(this));
+        // This will create, and register the receiver
+        ObservedLocationsReceiver.createGlobalInstance(this.getApplicationContext(), this);
 
         enableStrictMode();
 
@@ -148,9 +148,6 @@ public class MainApp extends Application {
     }
 
     public void startScanning() {
-        // This will create, and register the receiver
-        ObservedLocationsReceiver.getInstance(this.getApplicationContext());
-        
         mStumblerService.startForeground(NOTIFICATION_ID, buildNotification());
         mStumblerService.startScanning();
     }
@@ -270,9 +267,7 @@ public class MainApp extends Application {
             db = SQLiteDatabase.openDatabase(dbFile.toString(), null, 0);
             cursor = db.rawQuery("select * from stats", null);
             if (cursor == null || !cursor.moveToFirst()) {
-                if (db != null) {
-                    db.close();
-                }
+                db.close();
                 return null;
             }
 
@@ -285,11 +280,21 @@ public class MainApp extends Application {
             }
             return kv;
         } finally {
-            cursor.close();
+            if (cursor != null) {
+                cursor.close();
+            }
             if (db != null) {
                 db.close();
             }
             dbFile.delete();
+        }
+    }
+
+    private int observationCount = 0;
+    public void observedLocationCountIncrement() {
+        observationCount++;
+        if (mMainActivity.get() != null) {
+            mMainActivity.get().displayObservationCount(observationCount);
         }
     }
 }

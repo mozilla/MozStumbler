@@ -13,9 +13,9 @@ import android.os.Handler;
 import android.os.Looper;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import org.json.JSONObject;
 import org.mozilla.mozstumbler.client.ClientStumblerService;
 import org.mozilla.mozstumbler.client.MainApp;
-import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.GPSScanner;
 import org.mozilla.mozstumbler.service.utils.CoordinateUtils;
 import org.osmdroid.util.GeoPoint;
@@ -24,13 +24,20 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 public class ObservedLocationsReceiver extends BroadcastReceiver {
+
+    public interface ICountObserver {
+        public void observedLocationCountIncrement();
+    }
+
     private static final String LOG_TAG = ObservedLocationsReceiver.class.getSimpleName();
     private WeakReference<MapActivity> mMapActivity = new WeakReference<MapActivity>(null);
-    private LinkedList<ObservationPoint> mCollectionPoints = new LinkedList<ObservationPoint>();
-    private LinkedList<ObservationPoint> mQueuedForMLS = new LinkedList<ObservationPoint>();
+    private final LinkedList<ObservationPoint> mCollectionPoints = new LinkedList<ObservationPoint>();
+    private final LinkedList<ObservationPoint> mQueuedForMLS = new LinkedList<ObservationPoint>();
     private final LinkedList<ObservationPoint> mPointsMissedByMapActivity = new LinkedList<ObservationPoint>();
     private final int MAX_QUEUED_MLS_POINTS_TO_FETCH = 10;
     private final long FREQ_FETCH_MLS_MS = 5 * 1000;
+    private JSONObject mPreviousBundleForDuplicateCheck;
+    private WeakReference<ICountObserver> mCountObserver = new WeakReference<ICountObserver>(null);
 
     // Upper bound on the size of the linked lists of points, for memory and performance safety.
     private final int MAX_SIZE_OF_POINT_LISTS = 5000;
@@ -41,13 +48,15 @@ public class ObservedLocationsReceiver extends BroadcastReceiver {
 
     private static ObservedLocationsReceiver sInstance;
 
-    public static ObservedLocationsReceiver getInstance(Context context) {
-        if (sInstance == null) {
-            sInstance = new ObservedLocationsReceiver();
-            IntentFilter intentFilter = new IntentFilter();
-            intentFilter.addAction(GPSScanner.ACTION_GPS_UPDATED);
-            LocalBroadcastManager.getInstance(context).registerReceiver(sInstance, intentFilter);
-        }
+    public static void createGlobalInstance(Context context, ICountObserver countObserver) {
+        sInstance = new ObservedLocationsReceiver();
+        sInstance.mCountObserver = new WeakReference<ICountObserver>(countObserver);
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(GPSScanner.ACTION_GPS_UPDATED);
+        LocalBroadcastManager.getInstance(context).registerReceiver(sInstance, intentFilter);
+    }
+
+    public static ObservedLocationsReceiver getInstance() {
         return sInstance;
     }
 
@@ -117,16 +126,7 @@ public class ObservedLocationsReceiver extends BroadcastReceiver {
     }
 
     @Override
-    public synchronized void onReceive(Context context, Intent i) {
-        if (mCollectionPoints.size() > MAX_SIZE_OF_POINT_LISTS) {
-            return;
-        }
-
-        if (mCollectionPoints.size() == MAX_SIZE_OF_POINT_LISTS - 1) {
-            AppGlobals.guiLogInfo("Map will stop drawing observation points to preserve memory.");
-        }
-
-        final Intent intent = i;
+    public synchronized void onReceive(Context context, Intent intent) {
         final String action = intent.getAction();
         final String subject = intent.getStringExtra(Intent.EXTRA_SUBJECT);
         if (!action.equals(GPSScanner.ACTION_GPS_UPDATED) || !subject.equals(GPSScanner.SUBJECT_NEW_LOCATION)) {
@@ -141,9 +141,26 @@ public class ObservedLocationsReceiver extends BroadcastReceiver {
         final Context appContext = context.getApplicationContext();
         final ClientStumblerService service = ((MainApp) appContext).getService();
         if (mCollectionPoints.size() > 0 && service != null) {
-            final ObservationPoint last = mCollectionPoints.getLast();
-            last.setMLSQuery(service.getLastReportedBundle());
-            mQueuedForMLS.addFirst(last);
+            final ObservationPoint lastObservation = mCollectionPoints.getLast();
+            JSONObject currentBundle = service.getLastReportedBundle();
+            if (mPreviousBundleForDuplicateCheck == currentBundle) {
+                return;
+            }
+            lastObservation.setMLSQuery(currentBundle);
+            mPreviousBundleForDuplicateCheck = currentBundle;
+
+            if (mQueuedForMLS.size() < MAX_SIZE_OF_POINT_LISTS) {
+                mQueuedForMLS.addFirst(lastObservation);
+            }
+        }
+
+        // Notify main app of observation
+        if (mCountObserver.get() != null) {
+            mCountObserver.get().observedLocationCountIncrement();
+        }
+
+        if (mCollectionPoints.size() > MAX_SIZE_OF_POINT_LISTS) {
+            return;
         }
 
         mCollectionPoints.add(new ObservationPoint(new GeoPoint(newPosition)));

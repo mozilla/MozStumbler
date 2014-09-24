@@ -17,7 +17,7 @@ import android.util.Log;
 import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.client.http.IHttpUtil;
 import org.mozilla.mozstumbler.service.AppGlobals;
-import org.mozilla.mozstumbler.service.utils.NetworkUtils;
+import org.mozilla.mozstumbler.service.utils.NetworkInfo;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,7 +35,7 @@ public class Updater {
     }
 
     public boolean wifiExclusiveAndUnavailable() {
-        return !NetworkUtils.getInstance().isWifiAvailable() && ClientPrefs.getInstance().getUseWifiOnly();
+        return !NetworkInfo.getInstance().isWifiAvailable() && ClientPrefs.getInstance().getUseWifiOnly();
     }
 
 

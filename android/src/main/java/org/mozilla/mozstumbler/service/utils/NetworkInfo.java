@@ -6,27 +6,26 @@ package org.mozilla.mozstumbler.service.utils;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.util.Log;
 import org.mozilla.mozstumbler.service.AppGlobals;
 
-public final class NetworkUtils {
-    private static final String LOG_TAG = AppGlobals.LOG_PREFIX + NetworkUtils.class.getSimpleName();
+public final class NetworkInfo {
+    private static final String LOG_TAG = AppGlobals.LOG_PREFIX + NetworkInfo.class.getSimpleName();
 
     ConnectivityManager mConnectivityManager;
-    static NetworkUtils sInstance;
+    static NetworkInfo sInstance;
 
-    private NetworkUtils() {};
+    private NetworkInfo() {};
 
     /* Created at startup by app, or service, using a context. */
-    static synchronized public void createGlobalInstance(Context context) {
+    public static synchronized void createGlobalInstance(Context context) {
         getInstance();
         sInstance.mConnectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
     }
 
-    public static synchronized NetworkUtils getInstance() {
+    public static synchronized NetworkInfo getInstance() {
         if (sInstance == null) {
-            sInstance = new NetworkUtils();
+            sInstance = new NetworkInfo();
         }
         return sInstance;
     }
@@ -37,7 +36,7 @@ public final class NetworkUtils {
             return false;
         }
 
-        NetworkInfo aNet = mConnectivityManager.getActiveNetworkInfo();
+        android.net.NetworkInfo aNet = mConnectivityManager.getActiveNetworkInfo();
         return (aNet != null && aNet.getType() == ConnectivityManager.TYPE_WIFI);
     }
 

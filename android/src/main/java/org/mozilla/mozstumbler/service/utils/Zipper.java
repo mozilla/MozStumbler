@@ -13,16 +13,21 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 public class Zipper {
+    public enum ZippedState {
+        eNotZipped,
+        eAlreadyZipped
+    }
+
     public static byte[] zipData(byte[] data) throws IOException {
         final ByteArrayOutputStream os = new ByteArrayOutputStream();
-        GZIPOutputStream gstream = new GZIPOutputStream(os);
+        GZIPOutputStream gz_outputstream = new GZIPOutputStream(os);
         byte[] output;
         try {
-            gstream.write(data);
-            gstream.finish();
+            gz_outputstream.write(data);
+            gz_outputstream.finish();
             output = os.toByteArray();
         } finally {
-            gstream.close();
+            gz_outputstream.close();
             os.close();
         }
         return output;
@@ -45,4 +50,5 @@ public class Zipper {
         }
         return result.toString();
     }
+
 }

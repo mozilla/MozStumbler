@@ -19,6 +19,7 @@ import org.json.JSONObject;
 import org.mozilla.mozstumbler.client.ClientPrefs;
 import org.mozilla.mozstumbler.service.utils.AbstractCommunicator;
 import org.mozilla.mozstumbler.service.AppGlobals;
+import org.mozilla.mozstumbler.service.utils.Zipper;
 
 public class MLSLocationGetter extends AsyncTask<String, Void, JSONObject>  {
     private static final String LOG_TAG = AppGlobals.LOG_PREFIX + MLSLocationGetter.class.getSimpleName();
@@ -57,7 +58,7 @@ public class MLSLocationGetter extends AsyncTask<String, Void, JSONObject>  {
         byte[] bytes = mQueryMLS.toString().getBytes();
 
         try {
-            int bytesSent = mCommunicator.send(bytes, AbstractCommunicator.ZippedState.eNotZipped);
+            int bytesSent = mCommunicator.send(bytes, Zipper.ZippedState.eNotZipped);
         }
         catch (IOException ex) {
             mCommunicator.close();
@@ -148,10 +149,10 @@ public class MLSLocationGetter extends AsyncTask<String, Void, JSONObject>  {
             return new JSONObject(total.toString());
         }
 
-        public int send(byte[] data, ZippedState isAlreadyZipped) throws IOException {
+        public int send(byte[] data, Zipper.ZippedState isAlreadyZipped) throws IOException {
             openConnectionAndSetHeaders();
             try {
-                if (isAlreadyZipped != ZippedState.eAlreadyZipped) {
+                if (isAlreadyZipped != Zipper.ZippedState.eAlreadyZipped) {
                     data = zipData(data);
                 }
                 mHttpURLConnection.setRequestProperty("Content-Encoding","gzip");
@@ -167,7 +168,7 @@ public class MLSLocationGetter extends AsyncTask<String, Void, JSONObject>  {
         public NetworkSendResult cleanSend(byte[] data) {
             NetworkSendResult result = new NetworkSendResult();
             try {
-                result.bytesSent = send(data, ZippedState.eNotZipped);
+                result.bytesSent = send(data, Zipper.ZippedState.eNotZipped);
                 result.errorCode = 0;
             } catch (IOException e) {
                 // do nothing

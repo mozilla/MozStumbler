@@ -14,7 +14,8 @@ import org.mozilla.mozstumbler.service.utils.AbstractCommunicator;
 import org.mozilla.mozstumbler.service.utils.AbstractCommunicator.SyncSummary;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageManager;
-import org.mozilla.mozstumbler.service.utils.NetworkUtils;
+import org.mozilla.mozstumbler.service.utils.NetworkInfo;
+import org.mozilla.mozstumbler.service.utils.Zipper;
 
 /* Only one at a time may be uploading. If executed while another upload is in progress
 * it will return immediately, and SyncResult is null.
@@ -139,7 +140,7 @@ public class AsyncUploader extends AsyncTask<Void, Void, SyncSummary> {
         public NetworkSendResult cleanSend(byte[] data) {
             final NetworkSendResult result = new NetworkSendResult();
             try {
-                result.bytesSent = this.send(data, ZippedState.eAlreadyZipped);
+                result.bytesSent = this.send(data, Zipper.ZippedState.eAlreadyZipped);
                 result.errorCode = 0;
             } catch (IOException ex) {
                 String msg = "Error submitting: " + ex;
@@ -159,7 +160,7 @@ public class AsyncUploader extends AsyncTask<Void, Void, SyncSummary> {
         long uploadedCells = 0;
         long uploadedWifis = 0;
 
-        if (mSettings.mUseWifiOnly && !NetworkUtils.getInstance().isWifiAvailable()) {
+        if (mSettings.mUseWifiOnly && !NetworkInfo.getInstance().isWifiAvailable()) {
             if (AppGlobals.isDebug) {
                 Log.d(LOG_TAG, "not on WiFi, not sending");
             }

@@ -119,13 +119,12 @@ public abstract class AbstractCommunicator {
         }
     }
 
-    public enum ZippedState { eNotZipped, eAlreadyZipped };
     /* Return the number of bytes sent. */
-    public int send(byte[] data, ZippedState isAlreadyZipped) throws IOException {
+    public int send(byte[] data, Zipper.ZippedState isAlreadyZipped) throws IOException {
         openConnectionAndSetHeaders();
         String logMsg;
         try {
-            if (isAlreadyZipped != ZippedState.eAlreadyZipped) {
+            if (isAlreadyZipped != Zipper.ZippedState.eAlreadyZipped) {
                 data = zipData(data);
             }
             mHttpURLConnection.setRequestProperty("Content-Encoding","gzip");

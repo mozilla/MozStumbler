@@ -58,5 +58,5 @@
     <string name="action_view_log">Protokoll anzeigen</string>
     <string name="scroll_to_start">Nach Oben scrollen</string>
     <string name="scroll_to_end">Ans Ende scrollen</string>
-    <string name="upload_observations_data_size">Size (KB):</string>
+    <string name="upload_observations_data_size">Size:</string>
 </resources>

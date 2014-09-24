@@ -52,7 +52,7 @@
     <string name="upload_wifi_only_summary">این گزینه مصرف‌داده‌ای شما را هنگام استفاده از شبکهٔ گوشی همراه کاهش خواهد داد.</string>
 
 
-    <string name="upload_observations_data_size">Size (KB):</string>
+    <string name="upload_observations_data_size">Size:</string>
     <!--translations missing
 	<string name="refresh_map">Refresh location</string>
 	

@@ -25,8 +25,6 @@ import org.mozilla.mozstumbler.client.ClientPrefs;
 import org.mozilla.mozstumbler.client.ClientStumblerService;
 import org.mozilla.mozstumbler.client.IMainActivity;
 import org.mozilla.mozstumbler.client.Updater;
-import org.mozilla.mozstumbler.client.http.HttpUtil;
-import org.mozilla.mozstumbler.client.http.IHttpUtil;
 import org.mozilla.mozstumbler.client.mapview.MapActivity;
 import org.mozilla.mozstumbler.client.subactivities.LeaderboardActivity;
 import org.mozilla.mozstumbler.client.MainApp;
@@ -35,7 +33,7 @@ import org.mozilla.mozstumbler.client.subactivities.PreferencesScreen;
 public class MainDrawerActivity extends ActionBarActivity implements IMainActivity {
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
-    private MetricsActivity mMetricsView;
+    private MetricsView mMetricsView;
     private MapActivity mMapActivity;
 
     @Override
@@ -57,7 +55,7 @@ public class MainDrawerActivity extends ActionBarActivity implements IMainActivi
         getSupportActionBar().setTitle(getString(R.string.app_name));
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        View drawer = findViewById(R.id.left_drawer);
+        mMetricsView = new MetricsView(findViewById(R.id.left_drawer));
 
         mDrawerToggle = new ActionBarDrawerToggle (
                 this,                  /* host Activity */
@@ -180,7 +178,8 @@ public class MainDrawerActivity extends ActionBarActivity implements IMainActivi
 
         mMapActivity.formatTextView(R.id.text_cells_visible, "%d", service.getCurrentCellInfoCount());
         mMapActivity.formatTextView(R.id.text_wifis_visible, "%d", service.getVisibleAPCount());
-//        showUploadStats();
+
+        mMetricsView.update();
     }
 
     @Override

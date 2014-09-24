@@ -29,6 +29,8 @@ import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
+
 import org.mozilla.mozstumbler.BuildConfig;
 import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.client.cellscanner.DefaultCellScanner;
@@ -38,6 +40,7 @@ import org.mozilla.mozstumbler.client.mapview.ObservedLocationsReceiver;
 import org.mozilla.mozstumbler.client.subactivities.LogActivity;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.stumblerthread.StumblerService;
+import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageContract;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageManager;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.WifiScanner;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner.CellScanner;
@@ -142,7 +145,6 @@ public class MainApp extends Application implements ObservedLocationsReceiver.IC
         intentFilter.addAction(MainActivity.ACTION_UI_UNPAUSE_SCANNING);
         intentFilter.addAction(MainActivity.ACTION_UI_PAUSE_SCANNING);
         bManager.registerReceiver(notificationDrawerEventReceiver, intentFilter);
-
     }
 
     private final BroadcastReceiver notificationDrawerEventReceiver = new BroadcastReceiver() {
@@ -199,7 +201,7 @@ public class MainApp extends Application implements ObservedLocationsReceiver.IC
             stopScanning();
         } else {
             startScanning();
-            caller.checkGps();
+           // caller.checkGps();
         }
     }
 

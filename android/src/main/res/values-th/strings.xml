@@ -60,6 +60,6 @@
     <string name="action_view_log">ดูค่าบันทึก</string>
     <string name="scroll_to_start">Scroll to Top</string>
     <string name="scroll_to_end">Scroll to End</string>
-    <string name="upload_observations_data_size">ขนาด (KB):</string>
+    <string name="upload_observations_data_size">ขนาด:</string>
     <string name="hardware_acceleration_title">เปิด hardware acceleration</string>
 </resources>

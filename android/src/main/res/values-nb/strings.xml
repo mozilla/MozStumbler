@@ -50,7 +50,7 @@
     <string name="upload_observations_dialog_title">Last opp observasjoner</string>
     <string name="upload_wifi_only_title">Last bare opp via trådløsnett</string>
     <string name="upload_wifi_only_summary">Dette valget reduserer databruk via mobilnettverk.</string>
-    <string name="upload_observations_data_size">Size (KB):</string>
+    <string name="upload_observations_data_size">Size:</string>
     <!--translations missing
 
 

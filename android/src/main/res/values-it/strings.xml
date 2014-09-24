@@ -56,7 +56,7 @@
     <string name="upload_wifi_only_title">Invia solo in Wi-Fi</string>
     <string name="upload_wifi_only_summary">Questa opzione ridurrà il traffico dati sulla rete cellulare.</string>
     
-    <string name="upload_observations_data_size">Size (KB):</string>
+    <string name="upload_observations_data_size">Size:</string>
     <!--translations missing
 
 

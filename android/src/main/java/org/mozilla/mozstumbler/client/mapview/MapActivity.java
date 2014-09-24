@@ -284,9 +284,6 @@ public final class MapActivity extends android.support.v4.app.Fragment {
         formatTextView(R.id.text_satellites_used, "%d", fixes);
         int icon = fixes > 0 ? R.drawable.ic_gps_receiving : R.drawable.ic_gps_no_signal_black;
         ((ImageView) mRootView.findViewById(R.id.fix_indicator)).setImageResource(icon);
-
-        final ClientStumblerService service = getApplication().getService();
-        updateUI(service);
     }
 
     // An overlay for the sole purpose of reporting a user swiping on the map
@@ -369,14 +366,6 @@ public final class MapActivity extends android.support.v4.app.Fragment {
 
         mMap.getTileProvider().clearTileCache();
         BitmapPool.getInstance().clearBitmapPool();
-    }
-
-
-    private void updateUI(ClientStumblerService service) {
-//        formatTextView(R.id.cell_info_text, R.string.cells_info, service.getCurrentCellInfoCount(),
-//                service.getCellInfoCount());
-//        formatTextView(R.id.wifi_info_text, R.string.wifi_info, service.getVisibleAPCount(),
-//                service.getAPCount());
     }
 
     private void listenForPanning(MapView map) {

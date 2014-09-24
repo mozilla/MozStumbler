@@ -52,7 +52,7 @@
 
 
     <string name="refresh_map">刷新位置</string>
-    <string name="upload_observations_data_size">大小 (KB):</string>
+    <string name="upload_observations_data_size">大小:</string>
     <string name="title_activity_log">日志</string>
     <string name="action_view_log">查看日志</string>
     <string name="scroll_to_start">向前滚动</string>

@@ -56,5 +56,5 @@
 	<string name="action_view_log">Wyświetl dziennik</string>
 	<string name="scroll_to_start">Przewiń do góry</string>
 	<string name="scroll_to_end">Przewiń na dół</string>
-  <string name="upload_observations_data_size">Size (KB):</string>
+  <string name="upload_observations_data_size">Size:</string>
 </resources>

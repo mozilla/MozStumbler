@@ -56,5 +56,5 @@
     <string name="action_view_log">पंजी देखें </string>
     <string name="scroll_to_start">शुरुआत में जाएं</string>
     <string name="scroll_to_end">अंत में जाएं</string>
-    <string name="upload_observations_data_size">Size (KB):</string>
+    <string name="upload_observations_data_size">Size:</string>
 </resources>

@@ -50,7 +50,7 @@
     <string name="upload_observations_dialog_title">Отправить измерения</string>
     <string name="upload_wifi_only_title">Передача данных только через Wi-Fi</string>
     <string name="upload_wifi_only_summary">Эта опция позволяет экономить мобильный трафик.</string>
-    <string name="upload_observations_data_size">Size (KB):</string>
+    <string name="upload_observations_data_size">Size:</string>
     <!--translations missing
 
 

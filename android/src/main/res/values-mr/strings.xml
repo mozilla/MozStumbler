@@ -57,5 +57,5 @@
     <string name="action_view_log">नोंदी बघा</string>
     <string name="scroll_to_start">सुरुवात बघा</string>
     <string name="scroll_to_end">शेवट बघा</string>
-    <string name="upload_observations_data_size">Size (KB):</string>
+    <string name="upload_observations_data_size">Size:</string>
 </resources>

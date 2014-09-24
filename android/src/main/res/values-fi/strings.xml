@@ -54,5 +54,5 @@
     <string name="action_view_log">Näytä loki</string>
     <string name="scroll_to_start">Siirry alkuun</string>
     <string name="scroll_to_end">Siirry loppuun</string>
-    <string name="upload_observations_data_size">Size (KB):</string>
+    <string name="upload_observations_data_size">Size:</string>
 </resources>

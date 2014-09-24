@@ -60,7 +60,7 @@
     <string name="action_view_log">View Log</string>
     <string name="scroll_to_start">Scroll to Top</string>
     <string name="scroll_to_end">Scroll to End</string>
-    <string name="upload_observations_data_size">Size (KB):</string>
+    <string name="upload_observations_data_size">Size:</string>
     <string name="hardware_acceleration_title">Enable hardware acceleration</string>
     <string name="keep_screen_on_title">Keep screen on while in map</string>
     <string name="drawer_open">Show drawer</string>

@@ -60,5 +60,5 @@
     <string name="action_view_log">Arată jurnal</string>
     <string name="scroll_to_start">Derulare la început</string>
     <string name="scroll_to_end">Derulare la sfârșit</string>
-    <string name="upload_observations_data_size">Mărime (KB):</string>
+    <string name="upload_observations_data_size">Mărime:</string>
 </resources>

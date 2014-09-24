@@ -51,7 +51,7 @@
     <string name="upload_observations_dialog_title">Invia osservazioni</string>-->
     <string name="upload_wifi_only_title">Upload alleen over een wifiverbinding</string>
     <string name="upload_wifi_only_summary">Deze optie zal uw mobiel dataverbruik verminderen.</string>
-    <string name="upload_observations_data_size">Size (KB):</string>
+    <string name="upload_observations_data_size">Size:</string>
     <!--translations missing
 
 

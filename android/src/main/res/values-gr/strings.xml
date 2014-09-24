@@ -53,7 +53,7 @@
 
 
     <string name="refresh_map">Ανανέωση θέσης</string>
-    <string name="upload_observations_data_size">Size (KB):</string>
+    <string name="upload_observations_data_size">Size:</string>
     <!--translations missing
     <string name="title_activity_log">Log</string>
     <string name="action_view_log">View Log</string>

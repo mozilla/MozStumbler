@@ -17,6 +17,8 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 public abstract class AbstractCommunicator {
 
@@ -93,7 +95,10 @@ public abstract class AbstractCommunicator {
         }
         String email = getEmail();
         if (email != null) {
-            mHttpURLConnection.setRequestProperty(EMAIL_HEADER, email);
+            // convert email address to a hex digest before we
+            // send it over the wire
+            String email_digest = ShaUtil.sha1_hex_digest(email);
+            mHttpURLConnection.setRequestProperty(EMAIL_HEADER, email_digest);
         }
     }
 
@@ -156,4 +161,5 @@ public abstract class AbstractCommunicator {
         mHttpURLConnection.disconnect();
         mHttpURLConnection = null;
     }
+
 }

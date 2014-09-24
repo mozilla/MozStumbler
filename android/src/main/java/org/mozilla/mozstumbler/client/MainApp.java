@@ -22,6 +22,8 @@ import android.os.StrictMode;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import android.widget.CompoundButton;
+
 import java.io.File;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
@@ -30,9 +32,12 @@ import java.util.Map;
 import org.mozilla.mozstumbler.BuildConfig;
 import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.client.cellscanner.DefaultCellScanner;
+import org.mozilla.mozstumbler.client.http.HttpUtil;
+import org.mozilla.mozstumbler.client.http.IHttpUtil;
 import org.mozilla.mozstumbler.client.mapview.ObservedLocationsReceiver;
 import org.mozilla.mozstumbler.client.subactivities.LogActivity;
 import org.mozilla.mozstumbler.service.AppGlobals;
+import org.mozilla.mozstumbler.service.stumblerthread.StumblerService;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageManager;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.WifiScanner;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner.CellScanner;
@@ -130,7 +135,31 @@ public class MainApp extends Application implements ObservedLocationsReceiver.IC
 
         Intent intent = new Intent(this, ClientStumblerService.class);
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+
+        // Register a listener for a toggle event in the notification pulldown
+        LocalBroadcastManager bManager = LocalBroadcastManager.getInstance(this);
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(MainActivity.ACTION_UI_UNPAUSE_SCANNING);
+        intentFilter.addAction(MainActivity.ACTION_UI_PAUSE_SCANNING);
+        bManager.registerReceiver(notificationDrawerEventReceiver, intentFilter);
+
     }
+
+    private final BroadcastReceiver notificationDrawerEventReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            StumblerService service = getService();
+            if (service == null) {
+                return;
+            }
+
+            if (intent.getAction().equals(MainActivity.ACTION_UI_PAUSE_SCANNING) && service.isScanning()) {
+                stopScanning();
+            } else if (intent.getAction().equals(MainActivity.ACTION_UI_UNPAUSE_SCANNING) && !service.isScanning()) {
+                startScanning();
+            }
+        }
+    };
 
     @Override
     public void onTerminate() {

@@ -67,24 +67,6 @@ public final class MainActivity extends FragmentActivity {
         return mGpsSats;
     }
 
-    private final BroadcastReceiver notificationDrawerEventReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            StumblerService service = getApp().getService();
-            if (service == null) {
-                return;
-            }
-
-            CompoundButton scanningBtn = (CompoundButton) findViewById(R.id.toggle_scanning);
-
-            if (intent.getAction().equals(MainActivity.ACTION_UI_PAUSE_SCANNING) && service.isScanning()) {
-                // Grab the scanning button and just click it
-                onToggleScanningClicked(scanningBtn);
-            } else if (intent.getAction().equals(MainActivity.ACTION_UI_UNPAUSE_SCANNING) && !service.isScanning()) {
-                onToggleScanningClicked(scanningBtn);
-            }
-        }
-    };
 
     private MainApp getApp() {
         return (MainApp) this.getApplication();
@@ -112,16 +94,6 @@ public final class MainActivity extends FragmentActivity {
 
         setContentView(R.layout.activity_main);
 
-        IHttpUtil httpUtil = new HttpUtil();
-        Updater upd = new Updater(httpUtil);
-        upd.checkForUpdates(this, BuildConfig.MOZILLA_API_KEY);
-
-        // Register a listener for a toggle event in the notification pulldown
-        LocalBroadcastManager bManager = LocalBroadcastManager.getInstance(this);
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(MainActivity.ACTION_UI_UNPAUSE_SCANNING);
-        intentFilter.addAction(MainActivity.ACTION_UI_PAUSE_SCANNING);
-        bManager.registerReceiver(notificationDrawerEventReceiver, intentFilter);
 
         Log.d(LOG_TAG, "onCreate");
     }

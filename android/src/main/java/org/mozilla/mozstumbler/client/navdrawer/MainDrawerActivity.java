@@ -18,10 +18,15 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+
+import org.mozilla.mozstumbler.BuildConfig;
 import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.client.ClientPrefs;
 import org.mozilla.mozstumbler.client.ClientStumblerService;
 import org.mozilla.mozstumbler.client.IMainActivity;
+import org.mozilla.mozstumbler.client.Updater;
+import org.mozilla.mozstumbler.client.http.HttpUtil;
+import org.mozilla.mozstumbler.client.http.IHttpUtil;
 import org.mozilla.mozstumbler.client.mapview.MapActivity;
 import org.mozilla.mozstumbler.client.subactivities.LeaderboardActivity;
 import org.mozilla.mozstumbler.client.MainApp;
@@ -83,6 +88,10 @@ public class MainDrawerActivity extends ActionBarActivity implements IMainActivi
         fragmentTransaction.commit();
 
         getApp().setMainActivity(this);
+
+        Updater upd = new Updater();
+        upd.checkForUpdates(this, BuildConfig.MOZILLA_API_KEY);
+
     }
 
     private static final int MENU_START_STOP = 1;

@@ -21,8 +21,8 @@ public class ObservationPoint implements MLSLocationGetter.MLSLocationGetterCall
 
     MLSLocationGetter mMLSLocationGetter;
 
-    public void setMLSQuery(JSONObject queryCellAndWifi) {
-        mMLSQuery = queryCellAndWifi;
+    public void setMLSQuery(JSONObject ichnaeaQueryObj) {
+        mMLSQuery = ichnaeaQueryObj;
     }
 
     public void fetchMLS() {

@@ -21,6 +21,11 @@ import org.mozilla.mozstumbler.service.utils.AbstractCommunicator;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.utils.Zipper;
 
+/*
+
+This class provides MLS locations by calling HTTP methods against the MLS.
+
+ */
 public class MLSLocationGetter extends AsyncTask<String, Void, JSONObject>  {
     private static final String LOG_TAG = AppGlobals.LOG_PREFIX + MLSLocationGetter.class.getSimpleName();
     private static final String SEARCH_URL = "https://location.services.mozilla.com/v1/search";
@@ -38,10 +43,10 @@ public class MLSLocationGetter extends AsyncTask<String, Void, JSONObject>  {
         void setMLSResponseLocation(Location loc);
     }
 
-    public MLSLocationGetter(MLSLocationGetterCallback callback, JSONObject queryForMLS) {
+    public MLSLocationGetter(MLSLocationGetterCallback callback, JSONObject mlsQueryObj) {
         mCallback = callback;
         try {
-            mQueryMLS = new JSONObject(queryForMLS.toString());
+            mQueryMLS = new JSONObject(mlsQueryObj.toString());
         } catch (JSONException ex) {}
 
         mCommunicator = new IchnaeaCommunicator();
@@ -86,11 +91,11 @@ public class MLSLocationGetter extends AsyncTask<String, Void, JSONObject>  {
             return;
         }
 
-        Location coord = new Location(AppGlobals.LOCATION_ORIGIN_INTERNAL);
-        coord.setLatitude(getLat(result));
-        coord.setLongitude(getLon(result));
-        coord.setAccuracy(getAccuracy(result));
-        mCallback.setMLSResponseLocation(coord);
+        Location location = new Location(AppGlobals.LOCATION_ORIGIN_INTERNAL);
+        location.setLatitude(getLat(result));
+        location.setLongitude(getLon(result));
+        location.setAccuracy(getAccuracy(result));
+        mCallback.setMLSResponseLocation(location);
     }
 
 

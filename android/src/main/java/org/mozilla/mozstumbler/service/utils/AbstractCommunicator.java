@@ -20,6 +20,7 @@ import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+// TODO: this isn't abstract, it's a delegate
 public abstract class AbstractCommunicator {
 
     private static final String LOG_TAG = AppGlobals.LOG_PREFIX + AbstractCommunicator.class.getSimpleName();

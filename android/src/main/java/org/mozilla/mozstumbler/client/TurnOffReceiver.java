@@ -22,6 +22,6 @@ public final class TurnOffReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        LocalBroadcastManager.getInstance(context).sendBroadcast(new Intent(MainActivity.ACTION_UI_PAUSE_SCANNING));
+        LocalBroadcastManager.getInstance(context).sendBroadcast(new Intent(MainApp.ACTION_UI_PAUSE_SCANNING));
     }
 }

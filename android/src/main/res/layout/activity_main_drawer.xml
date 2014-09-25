@@ -21,7 +21,7 @@
         android:divider="@android:color/transparent"
         android:dividerHeight="0dp"
         android:background="#111" >
-    <include layout="@layout/dialog_upload_observations" />
+    <include layout="@layout/fragment_metrics_drawer" />
     </FrameLayout>
 
 </android.support.v4.widget.DrawerLayout>

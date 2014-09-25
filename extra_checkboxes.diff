@@ -1,0 +1,73 @@
+diff --git a/android/src/main/res/layout/dialog_upload_observations.xml b/android/src/main/res/layout/dialog_upload_observations.xml
+index 4ed2522..bb5b46a 100644
+--- a/android/src/main/res/layout/dialog_upload_observations.xml
++++ b/android/src/main/res/layout/dialog_upload_observations.xml
+@@ -23,7 +23,6 @@
+             android:textSize="@dimen/font_size_for_metrics_top_title"
+             android:textStyle="bold"
+             android:textColor="#ff33b5e5"
+-            android:paddingBottom="@dimen/padding_below_for_metrics_titles"
+             android:paddingTop="@dimen/padding_above_for_metrics_titles"
+             />
+         <TextView
+@@ -331,5 +330,47 @@
+             android:src="@drawable/ic_action_upload"
+             android:layout_alignBottom="@+id/wifis_queued_title"
+             android:layout_marginBottom="-5dp" />
++
++        <TextView
++            android:id="@+id/textView"
++            android:layout_width="wrap_content"
++            android:layout_height="wrap_content"
++            android:text="Map Layers"
++            android:textSize="@dimen/font_size_for_metrics_top_title"
++            android:textStyle="bold"
++            android:textColor="#ff33b5e5"
++            android:paddingBottom="@dimen/padding_below_for_metrics_titles"
++            android:paddingTop="@dimen/padding_above_for_metrics_titles"
++            android:layout_below="@+id/wifis_queued_title"
++            android:layout_alignParentLeft="true"
++            android:layout_alignParentStart="true" />
++
++        <CheckBox
++            android:layout_width="wrap_content"
++            android:layout_height="34dp"
++            android:text="  Show MLS dots"
++            android:id="@+id/checkBox"
++            android:layout_below="@+id/textView"
++            android:layout_alignParentLeft="true"
++            android:layout_alignParentStart="true"
++            android:layout_alignRight="@+id/upload_observations_button"
++            android:layout_alignEnd="@+id/upload_observations_button"
++            android:checked="false"
++            android:textSize="14sp" />
++
++        <CheckBox
++            android:layout_width="wrap_content"
++            android:layout_height="34dp"
++            android:text="  Indicate Cell/Wi-Fi/Both"
++            android:id="@+id/checkBox2"
++            android:checked="false"
++            android:textSize="14sp"
++            android:layout_toEndOf="@+id/wifis_queued_value"
++            android:layout_below="@+id/checkBox"
++            android:layout_alignRight="@+id/checkBox"
++            android:layout_alignEnd="@+id/checkBox"
++            android:layout_alignParentLeft="true"
++            android:layout_alignParentStart="true"
++            android:layout_marginTop="6dp" />
+     </RelativeLayout>
+ </ScrollView>
+diff --git a/android/src/main/res/values/strings.xml b/android/src/main/res/values/strings.xml
+index b6854fe..b0159c9 100644
+--- a/android/src/main/res/values/strings.xml
++++ b/android/src/main/res/values/strings.xml
+@@ -45,7 +45,7 @@
+     <string name="metrics_observations_last_upload_time_title">Last upload:</string>
+     <string name="metrics_observations_title">Observations:</string>
+     <string name="metrics_observations_wifis_title">Wi-Fi access points:</string>
+-    <string name="metrics_observations_cell_towers_title">Cell Towers:</string>
++    <string name="metrics_observations_cell_towers_title">Cell towers:</string>
+     <string name="upload_observations_in_queue_title">Not sent (in queue)</string>
+     <string name="upload_observations_button">Upload</string>
+     <string name="upload_observations_dialog_title">Upload observations</string>

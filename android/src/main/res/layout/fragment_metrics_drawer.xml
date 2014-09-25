@@ -23,7 +23,6 @@
             android:textSize="@dimen/font_size_for_metrics_top_title"
             android:textStyle="bold"
             android:textColor="#ff33b5e5"
-            android:paddingBottom="@dimen/padding_below_for_metrics_titles"
             android:paddingTop="@dimen/padding_above_for_metrics_titles"
             />
         <TextView

@@ -32,6 +32,7 @@ import java.util.Map;
 import org.mozilla.mozstumbler.BuildConfig;
 import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.client.cellscanner.DefaultCellScanner;
+import org.mozilla.mozstumbler.client.navdrawer.MainDrawerActivity;
 import org.mozilla.mozstumbler.client.subactivities.LogActivity;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.stumblerthread.StumblerService;
@@ -51,6 +52,9 @@ public class MainApp extends Application implements ObservedLocationsReceiver.IC
     private final int MAX_WEEKS_OLD_STORED = 4;
     private static final String INTENT_TURN_OFF = "org.mozilla.mozstumbler.turnMeOff";
     private static final int NOTIFICATION_ID = 1;
+    public static final String ACTION_BASE = AppGlobals.ACTION_NAMESPACE + ".MainApp.";
+    public static final String ACTION_UI_UNPAUSE_SCANNING = ACTION_BASE + "UNPAUSE_SCANNING";
+    public static final String ACTION_UI_PAUSE_SCANNING = ACTION_BASE + "PAUSE_SCANNING";
 
     public ClientPrefs getPrefs() {
         return ClientPrefs.getInstance();
@@ -136,8 +140,8 @@ public class MainApp extends Application implements ObservedLocationsReceiver.IC
         // Register a listener for a toggle event in the notification pulldown
         LocalBroadcastManager bManager = LocalBroadcastManager.getInstance(this);
         IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(MainActivity.ACTION_UI_UNPAUSE_SCANNING);
-        intentFilter.addAction(MainActivity.ACTION_UI_PAUSE_SCANNING);
+        intentFilter.addAction(ACTION_UI_UNPAUSE_SCANNING);
+        intentFilter.addAction(ACTION_UI_PAUSE_SCANNING);
         bManager.registerReceiver(notificationDrawerEventReceiver, intentFilter);
     }
 
@@ -149,9 +153,9 @@ public class MainApp extends Application implements ObservedLocationsReceiver.IC
                 return;
             }
 
-            if (intent.getAction().equals(MainActivity.ACTION_UI_PAUSE_SCANNING) && service.isScanning()) {
+            if (intent.getAction().equals(ACTION_UI_PAUSE_SCANNING) && service.isScanning()) {
                 stopScanning();
-            } else if (intent.getAction().equals(MainActivity.ACTION_UI_UNPAUSE_SCANNING) && !service.isScanning()) {
+            } else if (intent.getAction().equals(ACTION_UI_UNPAUSE_SCANNING) && !service.isScanning()) {
                 startScanning();
             }
         }
@@ -186,17 +190,6 @@ public class MainApp extends Application implements ObservedLocationsReceiver.IC
         AsyncUploader uploader = new AsyncUploader(settings, null /* don't need to listen for completion */);
         uploader.setNickname(ClientPrefs.getInstance().getNickname());
         uploader.execute();
-    }
-
-    public void toggleScanning(MainActivity caller) {
-        boolean scanning = mStumblerService.isScanning();
-
-        if (scanning) {
-            stopScanning();
-        } else {
-            startScanning();
-           // caller.checkGps();
-        }
     }
 
     @TargetApi(9)
@@ -234,7 +227,6 @@ public class MainApp extends Application implements ObservedLocationsReceiver.IC
                 IntentFilter intentFilter = new IntentFilter();
                 intentFilter.addAction(WifiScanner.ACTION_WIFIS_SCANNED);
                 intentFilter.addAction(CellScanner.ACTION_CELLS_SCANNED);
-                intentFilter.addAction(MainActivity.ACTION_UPDATE_UI);
                 intentFilter.addAction(INTENT_TURN_OFF);
                 LocalBroadcastManager.getInstance(MainApp.this).registerReceiver(this, intentFilter);
             }
@@ -260,7 +252,7 @@ public class MainApp extends Application implements ObservedLocationsReceiver.IC
         Intent turnOffIntent = new Intent(INTENT_TURN_OFF);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, turnOffIntent, 0);
 
-        Intent notificationIntent = new Intent(context, MainActivity.class);
+        Intent notificationIntent = new Intent(context, MainApp.class);
         notificationIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_FROM_BACKGROUND);
         PendingIntent contentIntent = PendingIntent.getActivity(context, NOTIFICATION_ID,
                 notificationIntent,

@@ -32,7 +32,7 @@
                 android:textColor="@android:color/black"
                 android:layout_width="28dp"
                 android:layout_height="match_parent"
-                android:text="00"
+                android:text="0"
                 android:gravity="center_vertical"
                 android:textSize="@dimen/font_size_for_map_view_report_icon"
                 />

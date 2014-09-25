@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package org.mozilla.mozstumbler.client.mapview;
+package org.mozilla.mozstumbler.client;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -12,10 +12,10 @@ import android.location.Location;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
+
 import org.json.JSONObject;
-import org.mozilla.mozstumbler.client.ClientStumblerService;
-import org.mozilla.mozstumbler.client.MainApp;
+import org.mozilla.mozstumbler.client.mapview.MapActivity;
+import org.mozilla.mozstumbler.client.mapview.ObservationPoint;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.GPSScanner;
 import org.mozilla.mozstumbler.service.utils.CoordinateUtils;
 import org.osmdroid.util.GeoPoint;
@@ -89,7 +89,7 @@ public class ObservedLocationsReceiver extends BroadcastReceiver {
     private final Handler mHandler = new Handler(Looper.getMainLooper());
 
     // Must be called by map activity when it is showing to get points displayed
-    synchronized void setMapActivity(MapActivity m) {
+    public synchronized void setMapActivity(MapActivity m) {
         mMapActivity = new WeakReference<MapActivity>(m);
     }
 

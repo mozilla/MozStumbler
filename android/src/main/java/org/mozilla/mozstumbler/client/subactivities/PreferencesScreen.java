@@ -5,13 +5,17 @@
 package org.mozilla.mozstumbler.client.subactivities;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.PreferenceActivity;
+import android.preference.PreferenceGroup;
 import android.text.TextUtils;
+
+import org.mozilla.mozstumbler.BuildConfig;
 import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.client.ClientPrefs;
 
@@ -60,6 +64,18 @@ public class PreferencesScreen extends PreferenceActivity {
             @Override
             public boolean onPreferenceClick(Preference arg) {
                 startActivity(new Intent(PreferencesScreen.this, LogActivity.class));
+                return true;
+            }
+        });
+
+        button = findPreference("leaderboard_button");
+        if (Build.VERSION.SDK_INT > 10) {
+            ((PreferenceGroup) findPreference("api_10_support")).removePreference(button);
+        }
+        button.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference arg) {
+                startActivity(new Intent(PreferencesScreen.this, LeaderboardActivity.class));
                 return true;
             }
         });

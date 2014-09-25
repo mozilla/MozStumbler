@@ -192,12 +192,10 @@ public class LogActivity extends ActionBarActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.log_menu, menu);
-        if (Build.VERSION.SDK_INT < 11) {
-            MenuItem m = menu.findItem(R.id.scroll_to_end);
-            MenuItemCompat.setShowAsAction(m, MenuItemCompat.SHOW_AS_ACTION_ALWAYS);
-            m = menu.findItem(R.id.scroll_to_start);
-            MenuItemCompat.setShowAsAction(m, MenuItemCompat.SHOW_AS_ACTION_ALWAYS);
-        }
+        MenuItem m = menu.findItem(R.id.scroll_to_end);
+        MenuItemCompat.setShowAsAction(m, MenuItemCompat.SHOW_AS_ACTION_ALWAYS);
+        m = menu.findItem(R.id.scroll_to_start);
+        MenuItemCompat.setShowAsAction(m, MenuItemCompat.SHOW_AS_ACTION_ALWAYS);
         return true;
     }
 

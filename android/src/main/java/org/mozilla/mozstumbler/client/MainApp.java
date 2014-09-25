@@ -22,25 +22,19 @@ import android.os.StrictMode;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
-import android.widget.CompoundButton;
 
 import java.io.File;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 
 import org.mozilla.mozstumbler.BuildConfig;
 import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.client.cellscanner.DefaultCellScanner;
-import org.mozilla.mozstumbler.client.http.HttpUtil;
-import org.mozilla.mozstumbler.client.http.IHttpUtil;
-import org.mozilla.mozstumbler.client.mapview.ObservedLocationsReceiver;
 import org.mozilla.mozstumbler.client.subactivities.LogActivity;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.stumblerthread.StumblerService;
-import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageContract;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageManager;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.WifiScanner;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner.CellScanner;

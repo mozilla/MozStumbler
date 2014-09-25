@@ -185,6 +185,7 @@ public class MainDrawerActivity extends ActionBarActivity implements IMainActivi
     @Override
     public void displayObservationCount(int count) {
         mMapActivity.formatTextView(R.id.text_observation_count, "%d", count);
+        mMetricsView.setObservationCount(count);
     }
 
 }

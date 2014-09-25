@@ -17,10 +17,9 @@ import org.mozilla.mozstumbler.R;
 
 public class LeaderboardActivity extends ActionBarActivity {
     private static final String LEADERBOARD_URL = "https://location.services.mozilla.com/leaders";
-
     private WebView mWebView;
-
     private boolean mHasError;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,11 +28,12 @@ public class LeaderboardActivity extends ActionBarActivity {
         mWebView = (WebView) findViewById(R.id.webview);
         mWebView.setVisibility(View.INVISIBLE);
         mWebView.getSettings().setJavaScriptEnabled(true);
-
+        setSupportProgressBarVisibility(true);
         final Activity activity = this;
         mWebView.setWebChromeClient(new WebChromeClient() {
             public void onProgressChanged(WebView view, int progress) {
-                activity.setProgress(progress * 100);
+                //activity.setProgress(progress * 100);
+                setSupportProgress(progress * 100);
                 if (progress > 45 && !mHasError) {
                     mWebView.setVisibility(View.VISIBLE);
                 }
@@ -41,7 +41,7 @@ public class LeaderboardActivity extends ActionBarActivity {
                     injectJS();
                 }
                 if (progress > 90) {
-                    setProgressBarVisibility(false);
+                    setSupportProgressBarVisibility(false);
                 }
             }
         });
@@ -54,7 +54,11 @@ public class LeaderboardActivity extends ActionBarActivity {
 
             @Override
             public void onPageFinished(WebView webview, String url) {
-                injectJS();
+                if (!mHasError) {
+                    mWebView.setVisibility(View.VISIBLE);
+                    injectJS();
+                }
+                setSupportProgressBarVisibility(false);
             }
         });
 

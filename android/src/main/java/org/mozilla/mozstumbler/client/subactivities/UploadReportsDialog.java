@@ -86,8 +86,6 @@ public class UploadReportsDialog extends DialogFragment
         mQueuedWifisView = (TextView) rootView.findViewById(R.id.wifis_queued_value);
        // mProgressbarView = rootView.findViewById(R.id.progress);
         mUploadButton = rootView.findViewById(R.id.upload_observations_button);
-        mTotalDataSentView = (TextView) rootView.findViewById(R.id.data_kb_sent_value);
-        mQueuedDataView = (TextView) rootView.findViewById(R.id.data_kb_queued_value);
 
         mUploadButton.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -11,11 +11,11 @@ import android.widget.TextView;
 
 import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.client.ClientStumblerService;
-import org.mozilla.mozstumbler.client.DateTimeUtils;
 import org.mozilla.mozstumbler.client.MainApp;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageContract;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageManager;
+import org.mozilla.mozstumbler.service.uploadthread.AsyncUploader;
 
 import java.io.IOException;
 import java.util.Date;
@@ -25,41 +25,37 @@ import com.ocpsoft.pretty.time.PrettyTime;
 public class MetricsView {
     private static final String LOG_TAG = AppGlobals.LOG_PREFIX + MetricsView.class.getSimpleName();
 
-    private TextView 
+    private final TextView
             mLastUpdateTimeView,
             mAllTimeObservationsSentView,
-            mAllTimeDataSentView,
             mAllTimeCellsSentView,
             mAllTimeWifisSentView,
             mQueuedObservationsView,
             mQueuedCellsView,
             mQueuedWifisView,
-            mQueuedDataView,
             mThisSessionObservationsView,
             mThisSessionCellsView,
-            mThisSessionWifisView,
-            mThisSessionDataView;
+            mThisSessionWifisView;
 
     private ImageButton mUploadButton;
+    private final View mView;
+    private long mTotalBytesUploadedThisSession;
+    private long mTotalBytesUploadedThisSession_lastDisplayed;
+    private final String mObservationAndSize = "%1$d  (%2$s)";
 
-    View mView;
-    
     public MetricsView(View view) {
         mView = view;
 
         mLastUpdateTimeView = (TextView) mView.findViewById(R.id.last_upload_time_value);
-        mAllTimeDataSentView = (TextView) mView.findViewById(R.id.data_kb_sent_value);
         mAllTimeObservationsSentView = (TextView) mView.findViewById(R.id.observations_sent_value);
         mAllTimeCellsSentView = (TextView) mView.findViewById(R.id.cells_sent_value);
         mAllTimeWifisSentView = (TextView) mView.findViewById(R.id.wifis_sent_value);
         mQueuedObservationsView = (TextView) mView.findViewById(R.id.observations_queued_value);
         mQueuedCellsView = (TextView) mView.findViewById(R.id.cells_queued_value);
         mQueuedWifisView = (TextView) mView.findViewById(R.id.wifis_queued_value);
-        mQueuedDataView = (TextView) mView.findViewById(R.id.data_kb_queued_value);
         mThisSessionObservationsView = (TextView) mView.findViewById(R.id.this_session_observations_value);
         mThisSessionCellsView = (TextView) mView.findViewById(R.id.this_session_cells_value);
         mThisSessionWifisView = (TextView) mView.findViewById(R.id.this_session_wifis_value);
-        mThisSessionDataView= (TextView) mView.findViewById(R.id.this_session_kb_value);
 
         mUploadButton = (ImageButton) mView.findViewById(R.id.upload_observations_button);
 //        mUploadButton.setOnClickListener(new View.OnClickListener() {
@@ -82,10 +78,8 @@ public class MetricsView {
     }
 
     private void updateThisSessionStats() {
-        mThisSessionDataView.setText("");
         mThisSessionCellsView.setText("");
         mThisSessionWifisView.setText("");
-        mThisSessionObservationsView.setText("");
 
         MainApp app = (MainApp)mView.getContext().getApplicationContext();
         ClientStumblerService service = app.getService();
@@ -103,22 +97,24 @@ public class MetricsView {
     }
 
     private void updateSentStats() {
-        mLastUpdateTimeView.setText("");
-        mAllTimeObservationsSentView.setText("");
-        mAllTimeCellsSentView.setText("");
-        mAllTimeWifisSentView.setText("");
+        if (mTotalBytesUploadedThisSession_lastDisplayed > 0 &&
+            mTotalBytesUploadedThisSession_lastDisplayed == mTotalBytesUploadedThisSession) {
+            // no need to update
+            return;
+        }
+        mTotalBytesUploadedThisSession_lastDisplayed = mTotalBytesUploadedThisSession;
 
         try {
-            String value;
             Properties props = DataStorageManager.getInstance().readSyncStats();
-            value = props.getProperty(DataStorageContract.Stats.KEY_OBSERVATIONS_SENT, "0");
-            mAllTimeObservationsSentView.setText(value);
+            String value;
             value = props.getProperty(DataStorageContract.Stats.KEY_CELLS_SENT, "0");
             mAllTimeCellsSentView.setText(String.valueOf(value));
             value = props.getProperty(DataStorageContract.Stats.KEY_WIFIS_SENT, "0");
             mAllTimeWifisSentView.setText(String.valueOf(value));
-            value = props.getProperty(DataStorageContract.Stats.KEY_BYTES_SENT, "0");
-            mAllTimeDataSentView.setText(formatKb(Long.parseLong(value)));
+            value = props.getProperty(DataStorageContract.Stats.KEY_OBSERVATIONS_SENT, "0");
+            String bytes = props.getProperty(DataStorageContract.Stats.KEY_BYTES_SENT, "0");
+            value = String.format(mObservationAndSize, Integer.parseInt(value), formatKb(Long.parseLong(bytes)));
+            mAllTimeObservationsSentView.setText(value);
 
             value = "never";
             final long lastUploadTime = Long.parseLong(props.getProperty(DataStorageContract.Stats.KEY_LAST_UPLOAD_TIME, "0"));
@@ -135,11 +131,19 @@ public class MetricsView {
 
     private void updateQueuedStats() {
         DataStorageManager.QueuedCounts q = DataStorageManager.getInstance().getQueuedCounts();
-        mQueuedObservationsView.setText(String.valueOf(q.mReportCount));
         mQueuedCellsView.setText(String.valueOf(q.mCellCount));
         mQueuedWifisView.setText(String.valueOf(q.mWifiCount));
-        mQueuedDataView.setText(formatKb(q.mBytes));
-       // hasQueuedObservations = q.mReportCount != 0;
+
+        String val = String.format(mObservationAndSize, q.mReportCount, formatKb(q.mBytes));
+        mQueuedObservationsView.setText(val);
+
+        // hasQueuedObservations = q.mReportCount != 0;
        // updateProgressbarStatus();
+    }
+
+    public void setObservationCount(int count) {
+        mTotalBytesUploadedThisSession = AsyncUploader.sTotalBytesUploadedThisSession.get();
+        String val = String.format(mObservationAndSize, count, formatKb(mTotalBytesUploadedThisSession));
+        mThisSessionObservationsView.setText(val);
     }
 }

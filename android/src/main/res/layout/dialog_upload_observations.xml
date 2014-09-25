@@ -37,49 +37,31 @@
             android:textStyle="bold"
             android:paddingBottom="@dimen/padding_below_for_metrics_titles"
             android:paddingTop="@dimen/padding_above_for_metrics_titles"
-            />
-        <TextView
-            android:layout_width="@dimen/metrics_col1_width"
-            android:layout_height="wrap_content"
-            android:text="@string/upload_observations_data_size"
-            android:id="@+id/this_session_queued_kb_title"
-            android:layout_below="@+id/this_session_header"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:textSize="@dimen/font_size_for_metrics"
-            android:paddingBottom="@dimen/padding_below_for_metrics_titles"
-            />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/this_session_kb_value"
-            android:paddingBottom="@dimen/padding_below_for_metrics_titles"
-            android:minWidth="64dp"
-            android:layout_alignTop="@+id/this_session_queued_kb_title"
-            android:layout_toRightOf="@+id/this_session_queued_kb_title"
-            android:layout_toEndOf="@+id/this_session_queued_kb_title" />
+            android:layout_toLeftOf="@+id/upload_observations_button"
+            android:layout_toStartOf="@+id/upload_observations_button" />
         <TextView
             android:id="@+id/this_session_observations_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/metrics_observations_title"
-            android:layout_below="@+id/this_session_queued_kb_title"
+            android:layout_below="@+id/this_session_header"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:textSize="@dimen/font_size_for_metrics"
             android:paddingBottom="@dimen/padding_below_for_metrics_titles"
-            />
+            android:layout_alignRight="@+id/this_session_cells_title"
+            android:layout_alignEnd="@+id/this_session_cells_title" />
         <TextView
             android:id="@+id/this_session_observations_value"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignBaseline="@id/this_session_observations_title"
-            android:layout_alignLeft="@id/this_session_kb_value"
-            android:layout_alignStart="@id/this_session_kb_value"
             tools:text="50"
             android:textSize="@dimen/font_size_for_metrics"
             android:paddingBottom="@dimen/padding_below_for_metrics_titles"
-            />
+            android:layout_toRightOf="@+id/this_session_observations_title"
+            android:layout_alignRight="@+id/last_upload_time_value"
+            android:layout_alignEnd="@+id/last_upload_time_value" />
         <TextView
             android:id="@+id/this_session_cells_title"
             android:layout_width="wrap_content"
@@ -87,23 +69,23 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:layout_below="@id/this_session_observations_title"
-            android:layout_alignRight="@id/this_session_queued_kb_title"
-            android:layout_alignEnd="@id/this_session_queued_kb_title"
             android:text="@string/metrics_observations_cell_towers_title"
             android:textSize="@dimen/font_size_for_metrics"
             android:paddingBottom="@dimen/padding_below_for_metrics_titles"
-            />
+            android:layout_alignRight="@+id/this_session_wifis_title"
+            android:layout_alignEnd="@+id/this_session_wifis_title" />
         <TextView
             android:id="@+id/this_session_cells_value"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignBaseline="@id/this_session_cells_title"
-            android:layout_alignLeft="@id/this_session_kb_value"
-            android:layout_alignStart="@id/this_session_kb_value"
             tools:text="10"
             android:textSize="@dimen/font_size_for_metrics"
             android:paddingBottom="@dimen/padding_below_for_metrics_titles"
-            />
+            android:layout_toRightOf="@+id/this_session_observations_title"
+            android:layout_toEndOf="@+id/this_session_observations_title"
+            android:layout_alignRight="@+id/this_session_observations_value"
+            android:layout_alignEnd="@+id/this_session_observations_value" />
         <TextView
             android:id="@+id/this_session_wifis_title"
             android:layout_width="wrap_content"
@@ -111,21 +93,21 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:layout_below="@id/this_session_cells_title"
-            android:layout_alignRight="@id/this_session_queued_kb_title"
-            android:layout_alignEnd="@id/this_session_queued_kb_title"
             android:text="@string/metrics_observations_wifis_title"
             android:textSize="@dimen/font_size_for_metrics"
-            />
+            android:layout_alignRight="@+id/queued_header"
+            android:layout_alignEnd="@+id/queued_header" />
         <TextView
             android:id="@+id/this_session_wifis_value"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignBaseline="@id/this_session_wifis_title"
-            android:layout_alignLeft="@id/this_session_kb_value"
-            android:layout_alignStart="@id/this_session_kb_value"
             tools:text="50"
             android:textSize="@dimen/font_size_for_metrics"
-            />
+            android:layout_toLeftOf="@+id/upload_observations_button"
+            android:layout_toStartOf="@+id/upload_observations_button"
+            android:layout_toRightOf="@+id/this_session_wifis_title"
+            android:layout_toEndOf="@+id/this_session_wifis_title" />
 
         <TextView
             android:id="@+id/sent_header"
@@ -146,10 +128,9 @@
             android:textSize="@dimen/font_size_for_metrics"
             android:layout_alignParentStart="true"
             android:layout_alignParentLeft="true"
-            android:layout_alignRight="@id/this_session_queued_kb_title"
-            android:layout_alignEnd="@id/this_session_queued_kb_title"
             android:paddingBottom="@dimen/padding_below_for_metrics_titles"
-           />
+            android:layout_alignRight="@+id/this_session_wifis_title"
+            android:layout_alignEnd="@+id/this_session_wifis_title" />
         <TextView
             android:id="@+id/last_upload_time_value"
             android:layout_width="wrap_content"
@@ -160,43 +141,21 @@
             android:textSize="@dimen/font_size_for_metrics"
             android:layout_toRightOf="@+id/last_upload_time_title"
             android:paddingBottom="@dimen/padding_below_for_metrics_titles"
-            />
-        <TextView
-            android:id="@+id/total_kb_sent_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/last_upload_time_title"
-            android:layout_alignRight="@id/last_upload_time_title"
-            android:layout_alignEnd="@id/last_upload_time_title"
-            android:text="@string/upload_observations_data_size"
-            android:textSize="@dimen/font_size_for_metrics"
-            android:paddingBottom="@dimen/padding_below_for_metrics_titles"
-             />
-        <TextView
-            android:id="@+id/data_kb_sent_value"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/total_kb_sent_title"
-            android:layout_alignBaseline="@id/total_kb_sent_title"
-            android:layout_alignLeft="@id/last_upload_time_value"
-            android:layout_alignStart="@id/last_upload_time_value"
-            tools:text="-"
-            android:textSize="@dimen/font_size_for_metrics"
-            android:paddingBottom="@dimen/padding_below_for_metrics_titles"
-            />
+            android:layout_alignRight="@+id/view"
+            android:layout_alignEnd="@+id/view" />
+
         <TextView
             android:id="@+id/observations_sent_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-            android:layout_below="@id/total_kb_sent_title"
             android:layout_alignRight="@id/last_upload_time_title"
             android:layout_alignEnd="@id/last_upload_time_title"
             android:text="@string/metrics_observations_title"
             android:textSize="@dimen/font_size_for_metrics"
             android:paddingBottom="@dimen/padding_below_for_metrics_titles"
-             />
+            android:layout_below="@id/last_upload_time_title" />
         <TextView
             android:id="@+id/observations_sent_value"
             android:layout_width="wrap_content"
@@ -209,7 +168,8 @@
             tools:text="100"
             android:textSize="@dimen/font_size_for_metrics"
             android:paddingBottom="@dimen/padding_below_for_metrics_titles"
-            />
+            android:layout_alignRight="@+id/last_upload_time_value"
+            android:layout_alignEnd="@+id/last_upload_time_value" />
         <TextView
             android:id="@+id/cells_sent_title"
             android:layout_width="wrap_content"
@@ -285,38 +245,17 @@
             android:paddingBottom="@dimen/padding_below_for_metrics_titles"
             android:paddingTop="@dimen/padding_above_for_metrics_titles"
             />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/upload_observations_data_size"
-            android:id="@+id/data_queued_title"
-            android:layout_below="@+id/queued_header"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:textSize="@dimen/font_size_for_metrics"
-            android:paddingBottom="@dimen/padding_below_for_metrics_titles"
-            />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/data_kb_queued_value"
-            android:text="        "
-            android:layout_above="@+id/observations_queued_title"
-            android:layout_alignLeft="@+id/observations_queued_value"
-            android:layout_alignStart="@+id/observations_queued_value"
-            android:paddingBottom="@dimen/padding_below_for_metrics_titles"
-            />
+
         <TextView
             android:id="@+id/observations_queued_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/metrics_observations_title"
-            android:layout_below="@+id/data_queued_title"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:textSize="@dimen/font_size_for_metrics"
             android:paddingBottom="@dimen/padding_below_for_metrics_titles"
-            />
+            android:layout_below="@+id/queued_header" />
         <TextView
             android:id="@+id/observations_queued_value"
             android:layout_width="wrap_content"
@@ -329,7 +268,9 @@
             tools:text="50"
             android:textSize="@dimen/font_size_for_metrics"
             android:paddingBottom="@dimen/padding_below_for_metrics_titles"
-            />
+            android:layout_toStartOf="@+id/upload_observations_button"
+            android:layout_alignRight="@+id/view"
+            android:layout_alignEnd="@+id/view" />
         <TextView
             android:id="@+id/cells_queued_title"
             android:layout_width="wrap_content"
@@ -382,13 +323,13 @@
              />
         <ImageButton
             android:id="@+id/upload_observations_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:enabled="false"
-            android:layout_below="@+id/view"
-            android:layout_marginTop="20dp"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
-            android:src="@drawable/ic_action_upload" />
+            android:src="@drawable/ic_action_upload"
+            android:layout_alignBottom="@+id/wifis_queued_title"
+            android:layout_marginBottom="-5dp" />
     </RelativeLayout>
 </ScrollView>

@@ -31,6 +31,7 @@ import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.client.ClientPrefs;
 import org.mozilla.mozstumbler.client.ClientStumblerService;
 import org.mozilla.mozstumbler.client.MainApp;
+import org.mozilla.mozstumbler.client.ObservedLocationsReceiver;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.osmdroid.api.IGeoPoint;
 import org.osmdroid.tileprovider.BitmapPool;

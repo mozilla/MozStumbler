@@ -63,7 +63,7 @@
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:onClick="onClick_ViewMapboxAttribution"
             android:clickable="true"
-            android:textColor="#4abde8"
+            android:autoLink="web"
             android:text="@string/about_mapbox"
             android:singleLine="false"
             android:textSize="13sp"

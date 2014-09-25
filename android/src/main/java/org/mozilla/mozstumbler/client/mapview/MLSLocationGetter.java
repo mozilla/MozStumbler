@@ -49,6 +49,10 @@ public class MLSLocationGetter extends AsyncTask<String, Void, JSONObject> {
         }
 
         IResponse resp = mls.search(mQueryMLSBytes, null);
+        if (resp == null) {
+            Log.e(LOG_TAG, "Error processing search request", new RuntimeException("Error processing search"));
+            return null;
+        }
         int bytesSent = resp.bytesSent();
 
         JSONObject response = null;

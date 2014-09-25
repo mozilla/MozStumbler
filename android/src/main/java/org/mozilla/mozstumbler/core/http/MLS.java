@@ -22,6 +22,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.Map;
 
 public class MLS implements ILocationService {
@@ -83,14 +84,24 @@ public class MLS implements ILocationService {
      */
 
     public IResponse post(String urlString, byte[] data, Map<String, String> headers) {
+
         URL url = null;
         HttpURLConnection httpURLConnection = null;
 
         try {
             url = new URL(urlString);
         } catch (MalformedURLException e) {
-            throw new IllegalArgumentException(e);
+            throw new IllegalArgumentException("Invalid URL", e);
         }
+
+        if (data == null) {
+            throw new IllegalArgumentException("Data must be not null");
+        }
+
+        if (headers == null) {
+            headers = new HashMap<String, String>();
+        }
+
 
         try {
             httpURLConnection = (HttpURLConnection) url.openConnection();

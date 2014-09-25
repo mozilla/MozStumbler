@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -22,6 +23,7 @@ import org.mozilla.mozstumbler.service.uploadthread.AsyncUploader;
 import org.mozilla.mozstumbler.service.utils.AbstractCommunicator;
 
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.util.Date;
 import java.util.Properties;
 import java.util.Timer;
@@ -30,6 +32,11 @@ import java.util.TimerTask;
 import com.ocpsoft.pretty.time.PrettyTime;
 
 public class MetricsView implements AsyncUploader.AsyncUploaderListener {
+
+    public interface IMapLayerToggleListener {
+        public void setShowMLS(boolean isOn);
+    }
+
     private static final String LOG_TAG = AppGlobals.LOG_PREFIX + MetricsView.class.getSimpleName();
 
     private final TextView
@@ -44,6 +51,11 @@ public class MetricsView implements AsyncUploader.AsyncUploaderListener {
             mThisSessionCellsView,
             mThisSessionWifisView;
 
+    private final CheckBox mOnMapShowMLS;
+    private final CheckBox mOnMapShowObservationType;
+
+    private final WeakReference<IMapLayerToggleListener> mMapLayerToggleListener;
+
     private ImageButton mUploadButton;
     private final View mView;
     private long mTotalBytesUploadedThisSession_lastDisplayed;
@@ -53,8 +65,32 @@ public class MetricsView implements AsyncUploader.AsyncUploaderListener {
     private AsyncUploader mUploader;
     private Timer mUpdateTimer;
 
-    public MetricsView(View view) {
+    public MetricsView(View view, final IMapLayerToggleListener listener) {
         mView = view;
+        mMapLayerToggleListener = new WeakReference<IMapLayerToggleListener>(listener);
+
+        mOnMapShowMLS = (CheckBox) mView.findViewById(R.id.checkBox_show_mls);
+        mOnMapShowObservationType = (CheckBox) mView.findViewById(R.id.checkBox_show_observation_type);
+
+        mOnMapShowMLS.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mMapLayerToggleListener.get() != null) {
+                    mMapLayerToggleListener.get().setShowMLS(mOnMapShowMLS.isChecked());
+                }
+            }
+        });
+
+        mOnMapShowObservationType.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(mOnMapShowObservationType.isChecked()){
+
+                } else{
+
+                }
+            }
+        });
 
         mLastUpdateTimeView = (TextView) mView.findViewById(R.id.last_upload_time_value);
         mAllTimeObservationsSentView = (TextView) mView.findViewById(R.id.observations_sent_value);
@@ -203,7 +239,6 @@ public class MetricsView implements AsyncUploader.AsyncUploaderListener {
         DataStorageManager.QueuedCounts q = DataStorageManager.getInstance().getQueuedCounts();
         mQueuedCellsView.setText(String.valueOf(q.mCellCount));
         mQueuedWifisView.setText(String.valueOf(q.mWifiCount));
-Log.d(LOG_TAG, "q.mWifiCount " + q.mWifiCount);
 
         String val = String.format(mObservationAndSize, q.mReportCount, formatKb(q.mBytes));
         mQueuedObservationsView.setText(val);

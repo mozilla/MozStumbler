@@ -33,6 +33,8 @@ class ObservationPointsOverlay extends Overlay {
     private static final long DRAW_TIME_MILLIS = 150; // Abort drawing after 150 ms
     private static final int TIME_CHECK_MULTIPLE = 10; // Check the time after drawing 10 points
 
+    public boolean mOnMapShowMLS;
+
     ObservationPointsOverlay(Context ctx, MapView mapView) {
         super(ctx);
         mMapView = new WeakReference<MapView>(mapView);
@@ -93,6 +95,10 @@ class ObservationPointsOverlay extends Overlay {
             if ((++count % TIME_CHECK_MULTIPLE == 0) && (SystemClock.uptimeMillis() > endTime)) {
                 break;
             }
+        }
+
+        if (!mOnMapShowMLS) {
+            return;
         }
 
         // Draw as a 2nd layer over the observation points

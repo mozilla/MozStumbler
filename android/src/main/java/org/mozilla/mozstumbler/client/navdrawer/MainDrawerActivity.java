@@ -55,8 +55,6 @@ public class MainDrawerActivity extends ActionBarActivity implements IMainActivi
         getSupportActionBar().setTitle(getString(R.string.app_name));
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        mMetricsView = new MetricsView(findViewById(R.id.left_drawer));
-
         mDrawerToggle = new ActionBarDrawerToggle (
                 this,                  /* host Activity */
                 mDrawerLayout,         /* DrawerLayout object */
@@ -90,6 +88,7 @@ public class MainDrawerActivity extends ActionBarActivity implements IMainActivi
         Updater upd = new Updater();
         upd.checkForUpdates(this, BuildConfig.MOZILLA_API_KEY);
 
+        mMetricsView = new MetricsView(findViewById(R.id.left_drawer), mMapActivity);
     }
 
     private static final int MENU_START_STOP = 1;

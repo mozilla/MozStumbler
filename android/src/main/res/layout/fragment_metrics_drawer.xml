@@ -267,7 +267,6 @@
             tools:text="50"
             android:textSize="@dimen/font_size_for_metrics"
             android:paddingBottom="@dimen/padding_below_for_metrics_titles"
-            android:layout_toStartOf="@+id/upload_observations_button"
             android:layout_alignRight="@+id/view"
             android:layout_alignEnd="@+id/view" />
         <TextView
@@ -329,6 +328,49 @@
             android:layout_alignParentRight="true"
             android:src="@drawable/ic_action_upload"
             android:layout_alignBottom="@+id/wifis_queued_title"
-            android:layout_marginBottom="-5dp" />
+            android:layout_marginBottom="-5dp"
+            />
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Map Layers"
+            android:textSize="@dimen/font_size_for_metrics_top_title"
+            android:textStyle="bold"
+            android:textColor="#ff33b5e5"
+            android:paddingBottom="@dimen/padding_below_for_metrics_titles"
+            android:paddingTop="@dimen/padding_above_for_metrics_titles"
+            android:layout_below="@+id/wifis_queued_title"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
+
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="34dp"
+            android:text="  Show MLS locations"
+            android:id="@+id/checkBox_show_mls"
+            android:layout_below="@+id/textView"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignRight="@+id/upload_observations_button"
+            android:layout_alignEnd="@+id/upload_observations_button"
+            android:checked="false"
+            android:textSize="14sp" />
+
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="34dp"
+            android:text="  Indicate Cell/Wi-Fi/Both"
+            android:id="@+id/checkBox_show_observation_type"
+            android:checked="false"
+            android:textSize="14sp"
+            android:layout_below="@+id/checkBox_show_mls"
+            android:layout_alignRight="@+id/checkBox_show_mls"
+            android:layout_alignEnd="@+id/checkBox_show_mls"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="6dp" />
+
     </RelativeLayout>
 </ScrollView>

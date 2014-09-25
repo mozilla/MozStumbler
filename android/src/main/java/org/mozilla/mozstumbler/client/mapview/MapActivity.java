@@ -32,6 +32,7 @@ import org.mozilla.mozstumbler.client.ClientPrefs;
 import org.mozilla.mozstumbler.client.ClientStumblerService;
 import org.mozilla.mozstumbler.client.MainApp;
 import org.mozilla.mozstumbler.client.ObservedLocationsReceiver;
+import org.mozilla.mozstumbler.client.navdrawer.MetricsView;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.osmdroid.api.IGeoPoint;
 import org.osmdroid.tileprovider.BitmapPool;
@@ -42,7 +43,8 @@ import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Overlay;
 
-public final class MapActivity extends android.support.v4.app.Fragment {
+public final class MapActivity extends android.support.v4.app.Fragment
+    implements MetricsView.IMapLayerToggleListener {
     private static final String LOG_TAG = AppGlobals.LOG_PREFIX + MapActivity.class.getSimpleName();
 
     private static final String COVERAGE_REDIRECT_URL = "https://location.services.mozilla.com/map.json";
@@ -409,5 +411,11 @@ public final class MapActivity extends android.support.v4.app.Fragment {
     public void newObservationPoint(ObservationPoint point) {
         mObservationPointsOverlay.add(point);
         mObservationPointsOverlay.update();
+    }
+
+    @Override
+    public void setShowMLS(boolean isOn) {
+        mObservationPointsOverlay.mOnMapShowMLS = isOn;
+        mMap.invalidate();
     }
 }

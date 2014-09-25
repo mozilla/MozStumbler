@@ -114,7 +114,7 @@ public class AsyncUploader extends AsyncTask<Void, Void, SyncSummary> {
         sIsUploading.set(false);
     }
 
-    private class Submitter extends AbstractCommunicator {
+    public class Submitter extends AbstractCommunicator {
         private static final String SUBMIT_URL = "https://location.services.mozilla.com/v1/submit";
 
         public Submitter() {

@@ -17,6 +17,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.mozilla.mozstumbler.client.ClientPrefs;
+import org.mozilla.mozstumbler.core.adapters.LocationAdapter;
 import org.mozilla.mozstumbler.service.utils.AbstractCommunicator;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.utils.Zipper;
@@ -28,11 +29,7 @@ This class provides MLS locations by calling HTTP methods against the MLS.
  */
 public class MLSLocationGetter extends AsyncTask<String, Void, JSONObject>  {
     private static final String LOG_TAG = AppGlobals.LOG_PREFIX + MLSLocationGetter.class.getSimpleName();
-    private static final String SEARCH_URL = "https://location.services.mozilla.com/v1/search";
     private static final String RESPONSE_OK_TEXT = "ok";
-    private static final String JSON_LATITUDE = "lat";
-    private static final String JSON_LONGITUDE = "lon";
-    private static final String JSON_ACCURACY = "accuracy";
     private final IchnaeaCommunicator mCommunicator;
     private final MLSLocationGetterCallback mCallback;
     private JSONObject mQueryMLS;
@@ -90,52 +87,20 @@ public class MLSLocationGetter extends AsyncTask<String, Void, JSONObject>  {
         if (result == null) {
             return;
         }
-
-        Location location = new Location(AppGlobals.LOCATION_ORIGIN_INTERNAL);
-        location.setLatitude(getLat(result));
-        location.setLongitude(getLon(result));
-        location.setAccuracy(getAccuracy(result));
+        Location location = LocationAdapter.fromJSON(result);
         mCallback.setMLSResponseLocation(location);
     }
 
-
-    public float getLat(JSONObject jsonObject) {
-        try {
-            return Float.parseFloat(jsonObject.getString(JSON_LATITUDE));
-        } catch (JSONException e) {
-            Log.e(LOG_TAG, "Latitude JSON response problem: ", e);
-        }
-
-        return 0f;
-    }
-
-    public float getLon(JSONObject jsonObject) {
-        try {
-            return Float.parseFloat(jsonObject.getString(JSON_LONGITUDE));
-        } catch (JSONException e) {
-            Log.e(LOG_TAG, "Longitude JSON response problem: ", e) ;
-        }
-
-        return 0f;
-    }
-
-    public float getAccuracy(JSONObject jsonObject) {
-
-        try {
-            return Float.parseFloat(jsonObject.getString(JSON_ACCURACY));
-        } catch (JSONException e) {
-            Log.e(LOG_TAG, "Accuracy JSON response problem: ", e);
-        }
-
-        return 0f;
-    }
-
     private class IchnaeaCommunicator extends AbstractCommunicator {
+
+        private static final String SEARCH_URL = "https://location.services.mozilla.com/v1/search";
 
         public IchnaeaCommunicator() {
             super(ClientPrefs.getInstance().getUserAgent());
         }
 
+        // TODO: This is just weird
+        // getUrlString() is invoked by AbstractCommunicator::openConnectionAndSetHeaders()
         @Override
         public String getUrlString() {
             return SEARCH_URL;
@@ -154,6 +119,9 @@ public class MLSLocationGetter extends AsyncTask<String, Void, JSONObject>  {
             return new JSONObject(total.toString());
         }
 
+        // TODO: isAlreadyZipped is completely bonkers. Delete it.
+        // we know what the state of the data is, it's uncompressed.
+        // Compression just happens on the wire, not in our runtime.
         public int send(byte[] data, Zipper.ZippedState isAlreadyZipped) throws IOException {
             openConnectionAndSetHeaders();
             try {

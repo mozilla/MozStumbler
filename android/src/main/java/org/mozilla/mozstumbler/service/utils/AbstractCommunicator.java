@@ -32,6 +32,9 @@ public abstract class AbstractCommunicator {
     private static int sBytesSentTotal = 0;
     private static String sMozApiKey;
 
+
+    // TODO get rid of this
+    // just pass the URL directly into AbstractCommunicator::openConnectionAndSetHeaders
     public abstract String getUrlString();
 
     public static class HttpErrorException extends IOException {
@@ -87,6 +90,7 @@ public abstract class AbstractCommunicator {
 
         // Workaround for a bug in Android mHttpURLConnection. When the library
         // reuses a stale connection, the connection may fail with an EOFException
+        // http://stackoverflow.com/questions/15411213/android-httpsurlconnection-eofexception/17791819#17791819
         if (Build.VERSION.SDK_INT > 13 && Build.VERSION.SDK_INT < 19) {
             mHttpURLConnection.setRequestProperty("Connection", "Close");
         }

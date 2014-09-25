@@ -60,6 +60,7 @@ public class UploadReportsDialog extends DialogFragment
     @Override
     public void onUploadComplete(AbstractCommunicator.SyncSummary result) {
         updateUiThread();
+        Log.i(LOG_TAG, "Upload Completed");
     }
 
     @Override

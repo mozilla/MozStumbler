@@ -9,6 +9,9 @@ import android.util.Log;
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.mozilla.mozstumbler.core.http.ILocationService;
+import org.mozilla.mozstumbler.core.http.IResponse;
+import org.mozilla.mozstumbler.core.http.MLS;
 import org.mozilla.mozstumbler.service.Prefs;
 import org.mozilla.mozstumbler.service.utils.AbstractCommunicator;
 import org.mozilla.mozstumbler.service.utils.AbstractCommunicator.SyncSummary;
@@ -78,7 +81,7 @@ public class AsyncUploader extends AsyncTask<Void, Void, SyncSummary> {
         }
 
         sIsUploading.set(true);
-        SyncSummary result = new SyncSummary();
+        SyncSummary syncSummary = new SyncSummary();
         Runnable progressListener = null;
 
         // no need to lock here, lock is checked again later
@@ -95,9 +98,9 @@ public class AsyncUploader extends AsyncTask<Void, Void, SyncSummary> {
             };
         }
 
-        uploadReports(result, progressListener);
+        uploadReports(syncSummary, progressListener);
 
-        return result;
+        return syncSummary;
     }
     @Override
     protected void onPostExecute(SyncSummary result) {
@@ -114,47 +117,6 @@ public class AsyncUploader extends AsyncTask<Void, Void, SyncSummary> {
         sIsUploading.set(false);
     }
 
-    public class Submitter extends AbstractCommunicator {
-        private static final String SUBMIT_URL = "https://location.services.mozilla.com/v1/submit";
-
-        public Submitter() {
-            super(Prefs.getInstance().getUserAgent());
-        }
-
-        @Override
-        public String getUrlString() {
-            return SUBMIT_URL;
-        }
-
-        @Override
-        public String getNickname(){
-            return mNickname;
-        }
-
-        @Override
-        public String getEmail() {
-            return mEmail;
-        }
-
-        @Override
-        public NetworkSendResult cleanSend(byte[] data) {
-            final NetworkSendResult result = new NetworkSendResult();
-            try {
-                result.bytesSent = this.send(data, Zipper.ZippedState.eAlreadyZipped);
-                result.errorCode = 0;
-            } catch (IOException ex) {
-                String msg = "Error submitting: " + ex;
-                if (ex instanceof HttpErrorException) {
-                    result.errorCode = ((HttpErrorException) ex).responseCode;
-                    msg += " Code:" + result.errorCode;
-                }
-                Log.e(LOG_TAG, msg);
-                AppGlobals.guiLogError(msg);
-            }
-            return result;
-        }
-    }
-
     private void uploadReports(AbstractCommunicator.SyncSummary syncResult, Runnable progressListener) {
         long uploadedObservations = 0;
         long uploadedCells = 0;
@@ -168,18 +130,18 @@ public class AsyncUploader extends AsyncTask<Void, Void, SyncSummary> {
             return;
         }
 
-        Submitter submitter = new Submitter();
-        DataStorageManager dm = DataStorageManager.getInstance();
+         ILocationService mls = new MLS();
+         DataStorageManager dm = DataStorageManager.getInstance();
 
         String error = null;
 
         try {
             DataStorageManager.ReportBatch batch = dm.getFirstBatch();
             while (batch != null) {
-                AbstractCommunicator.NetworkSendResult result = submitter.cleanSend(batch.data);
+               IResponse result = mls.submit(batch.data, null, true);
 
-                if (result.errorCode == 0) {
-                    syncResult.totalBytesSent += result.bytesSent;
+                if (result.isSuccessCode2XX()) {
+                    syncResult.totalBytesSent += result.bytesSent();
 
                     dm.delete(batch.filename);
 
@@ -187,7 +149,7 @@ public class AsyncUploader extends AsyncTask<Void, Void, SyncSummary> {
                     uploadedWifis += batch.wifiCount;
                     uploadedCells += batch.cellCount;
                 } else {
-                    if (result.errorCode / 100 == 4) {
+                    if (result.isErrorCode4xx()) {
                         // delete on 4xx, no point in resending
                         dm.delete(batch.filename);
                     } else {
@@ -217,7 +179,6 @@ public class AsyncUploader extends AsyncTask<Void, Void, SyncSummary> {
                 Log.d(LOG_TAG, error);
                 AppGlobals.guiLogError(error + " (uploadReports)");
             }
-            submitter.close();
         }
     }
 }

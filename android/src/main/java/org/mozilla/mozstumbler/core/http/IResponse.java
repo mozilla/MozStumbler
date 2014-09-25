@@ -13,4 +13,8 @@ public interface IResponse {
     public String body();
 
     public int bytesSent();
+
+    public boolean isSuccessCode2XX();
+    public boolean isErrorCode4xx();
+
 }

@@ -48,7 +48,7 @@ public class MLSLocationGetter extends AsyncTask<String, Void, Location> {
             return null;
         }
 
-        IResponse resp = mls.search(mQueryMLSBytes, null);
+        IResponse resp = mls.search(mQueryMLSBytes, null, false);
         if (resp == null) {
             Log.e(LOG_TAG, "Error processing search request", new RuntimeException("Error processing search"));
             return null;

@@ -66,12 +66,12 @@ public class MLS implements ILocationService {
 
     }
 
-    public IResponse submit(byte[] data, Map<String, String> headers) {
-        return post(SUBMIT_URL + "?key=" + mozApiKey, data, headers);
+    public IResponse submit(byte[] data, Map<String, String> headers, boolean precompressed) {
+        return post(SUBMIT_URL + "?key=" + mozApiKey, data, headers, precompressed);
     }
 
-    public IResponse search(byte[] data, Map<String, String> headers) {
-        return post(SEARCH_URL + "?key=" + mozApiKey, data, headers);
+    public IResponse search(byte[] data, Map<String, String> headers, boolean precompressed) {
+        return post(SEARCH_URL + "?key=" + mozApiKey, data, headers, precompressed);
     }
 
     /*
@@ -83,7 +83,7 @@ public class MLS implements ILocationService {
      On IOException, this will return null.
      */
 
-    public IResponse post(String urlString, byte[] data, Map<String, String> headers) {
+    public IResponse post(String urlString, byte[] data, Map<String, String> headers, boolean precompressed) {
 
         URL url = null;
         HttpURLConnection httpURLConnection = null;
@@ -127,12 +127,19 @@ public class MLS implements ILocationService {
             httpURLConnection.setRequestProperty(entry.getKey(), entry.getValue());
         }
 
-        byte[] wire_data = Zipper.zipData(data);
-        if (data == null) {
-            Log.w(LOG_TAG, "Couldn't compress data, falling back to raw data.");
-            wire_data = data;
+        byte[] wire_data = data;
+        if (!precompressed) {
+            wire_data = Zipper.zipData(data);
+            if (wire_data != null) {
+                httpURLConnection.setRequestProperty("Content-Encoding", "gzip");
+            } else {
+                Log.w(LOG_TAG, "Couldn't compress data, falling back to raw data.");
+                wire_data = data;
+            }
+        } else {
+            httpURLConnection.setRequestProperty("Content-Encoding", "gzip");
         }
-        httpURLConnection.setRequestProperty("Content-Encoding", "gzip");
+
         httpURLConnection.setFixedLengthStreamingMode(wire_data.length);
         try {
             OutputStream out = new BufferedOutputStream(httpURLConnection.getOutputStream());

@@ -12,6 +12,10 @@ public class HTTPResponse implements IResponse {
         bytesSent = txByteLength;
     }
 
+    public boolean isErrorCode4xx(){
+        return statusCode / 100 == 4;
+    }
+
     public boolean isSuccessCode2XX() {
         return statusCode / 100 == 2;
     }

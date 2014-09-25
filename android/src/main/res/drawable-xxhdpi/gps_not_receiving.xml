@@ -3,7 +3,7 @@
     <animation-list xmlns:android="http://schemas.android.com/apk/res/android"
         android:oneshot="false"
     >
-        <item android:drawable="@drawable/ic_gps_no_signal_black" android:duration="1500" />
-        <item android:drawable="@drawable/ic_gps_no_signal_red" android:duration="500" />
+        <item android:drawable="@drawable/ic_gps_no_signal" android:duration="1000" />
+        <item android:drawable="@drawable/ic_gps_receiving" android:duration="500" />
     </animation-list>
 

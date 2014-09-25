@@ -78,14 +78,14 @@
             android:text="@string/about_legal_aosp"
             android:textSize="13dp"
             />
+       
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:paddingTop="32dp"
-            android:text="@string/about_legal_icons8"
-            android:id="@+id/textView"
+            android:text="@string/about_legal_flaticons"
             android:layout_gravity="center_horizontal"
             android:textSize="13dp"
             android:autoLink="web" />

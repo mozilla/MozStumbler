@@ -20,7 +20,7 @@
             android:id="@+id/fix_indicator"
             android:layout_width="35dp"
             android:layout_height="35dp"
-            android:src="@drawable/gps_not_receiving"
+            android:src="@drawable/ic_gps_no_signal_flaticondotcom"
             />
         <LinearLayout
             android:layout_width="match_parent"
@@ -43,9 +43,9 @@
                 />
             <ImageView
                 android:id="@+id/cells_indicator"
-                android:layout_width="35dp"
-                android:layout_height="35dp"
-                android:src="@drawable/ic_cell"
+                android:layout_width="33dp"
+                android:layout_height="33dp"
+                android:src="@drawable/ic_cell_flaticondotcom"
                 android:layout_marginLeft="-10dp"
                 />
             <TextView
@@ -64,9 +64,9 @@
                 />
             <ImageView
                 android:id="@+id/wifi_indicator"
-                android:layout_width="35dp"
+                android:layout_width="40dp"
                 android:layout_height="35dp"
-                android:src="@drawable/ic_wifi"
+                android:src="@drawable/ic_wifi_flaticondotcom"
                 android:layout_marginRight="6dp"
                 />
             <TextView
@@ -85,11 +85,11 @@
                 />
             <ImageView
                 android:id="@+id/observations_indicator"
-                android:layout_width="35dp"
-                android:layout_height="35dp"
-                android:src="@drawable/ic_binoculars"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@drawable/ic_binoculars_flaticondotcom"
                 android:layout_marginRight="6dp"
-                />
+                android:layout_gravity="center" />
             <TextView
                 android:id="@+id/text_observation_count"
                 android:textColor="@android:color/black"

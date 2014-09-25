@@ -1,6 +1,6 @@
 package org.mozilla.mozstumbler.core.http;
 
-public class HTTPResponse implements ILocationService.IResponse {
+public class HTTPResponse implements IResponse {
 
     private final int statusCode;
     private final String body;

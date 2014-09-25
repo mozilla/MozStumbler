@@ -7,6 +7,7 @@ package org.mozilla.mozstumbler.core.http;
 import android.os.Build;
 import android.util.Log;
 
+import org.mozilla.mozstumbler.client.ClientPrefs;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.Prefs;
 import org.mozilla.mozstumbler.service.utils.Zipper;
@@ -37,12 +38,31 @@ public class MLS implements ILocationService {
     private String userAgent;
     private String mozApiKey;
 
+    public MLS() {
+        initUserAgent(null);
+        initApiKey(null);
+    }
+
     public MLS(String ua, String apiKey) {
-        userAgent = ua;
-        mozApiKey = apiKey;
+        initUserAgent(ua);
+        initApiKey(apiKey);
+    }
+
+    private void initUserAgent(String ua) {
+        if (ua == null) {
+            userAgent = ClientPrefs.getInstance().getUserAgent();
+        } else {
+            userAgent = ua;
+        }
+    }
+
+    private void initApiKey(String apiKey) {
         if (mozApiKey == null) {
             mozApiKey = Prefs.getInstance().getMozApiKey();
+        } else {
+            mozApiKey = apiKey;
         }
+
     }
 
     public IResponse submit(byte[] data, Map<String, String> headers) {
@@ -103,8 +123,7 @@ public class MLS implements ILocationService {
         }
         httpURLConnection.setRequestProperty("Content-Encoding", "gzip");
         httpURLConnection.setFixedLengthStreamingMode(wire_data.length);
-        try
-        {
+        try {
             OutputStream out = new BufferedOutputStream(httpURLConnection.getOutputStream());
             out.write(wire_data);
             out.flush();
@@ -123,7 +142,8 @@ public class MLS implements ILocationService {
     }
 
     private String getContentBody(HttpURLConnection httpURLConnection) throws IOException {
-        String contentBody;InputStream in = new BufferedInputStream(httpURLConnection.getInputStream());
+        String contentBody;
+        InputStream in = new BufferedInputStream(httpURLConnection.getInputStream());
         BufferedReader r = new BufferedReader(new InputStreamReader(in));
         String line;
         StringBuilder total = new StringBuilder(in.available());

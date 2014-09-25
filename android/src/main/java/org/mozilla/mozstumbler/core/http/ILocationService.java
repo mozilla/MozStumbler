@@ -8,13 +8,6 @@ package org.mozilla.mozstumbler.core.http;
 import java.util.Map;
 
 public interface ILocationService {
-
-    public interface IResponse {
-        public int httpResponse();
-        public String body();
-        public int bytesSent();
-    }
-
     // Submit data to MLS
     // Errors will return
     public IResponse submit(byte[] data, Map<String, String> headers);

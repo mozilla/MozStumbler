@@ -22,11 +22,22 @@ public class LocationAdapter {
     private static final String JSON_LONGITUDE = "lon";
     private static final String JSON_ACCURACY = "accuracy";
 
-    public static Location fromJSON(JSONObject result) {
+    public static Location fromJSONText(String text) {
+        try {
+            return fromJSON(new JSONObject(text));
+        } catch (JSONException e) {
+            Log.e(LOG_TAG, "Error deserializing JSON", e);
+        }
+        return null;
+    }
+
+
+
+    public static Location fromJSON(JSONObject jsonObj) {
         Location location = new Location(AppGlobals.LOCATION_ORIGIN_INTERNAL);
-        location.setLatitude(getLat(result));
-        location.setLongitude(getLon(result));
-        location.setAccuracy(getAccuracy(result));
+        location.setLatitude(getLat(jsonObj));
+        location.setLongitude(getLon(jsonObj));
+        location.setAccuracy(getAccuracy(jsonObj));
         return location;
     }
 

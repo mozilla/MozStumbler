@@ -21,7 +21,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 /*
 This class provides MLS locations by calling HTTP methods against the MLS.
  */
-public class MLSLocationGetter extends AsyncTask<String, Void, JSONObject> {
+public class MLSLocationGetter extends AsyncTask<String, Void, Location> {
     private static final String LOG_TAG = AppGlobals.LOG_PREFIX + MLSLocationGetter.class.getSimpleName();
     private static final String RESPONSE_OK_TEXT = "ok";
     private ILocationService mls;
@@ -41,7 +41,7 @@ public class MLSLocationGetter extends AsyncTask<String, Void, JSONObject> {
     }
 
     @Override
-    public JSONObject doInBackground(String... params) {
+    public Location doInBackground(String... params) {
 
         int requests = sRequestCounter.incrementAndGet();
         if (requests > MAX_REQUESTS) {
@@ -75,16 +75,15 @@ public class MLSLocationGetter extends AsyncTask<String, Void, JSONObject> {
             return null;
         }
 
-        return response;
+        return LocationAdapter.fromJSON(response);
     }
 
     @Override
-    protected void onPostExecute(JSONObject result) {
+    protected void onPostExecute(Location location) {
         sRequestCounter.decrementAndGet();
-        if (result == null) {
+        if (location == null) {
             return;
         }
-        Location location = LocationAdapter.fromJSON(result);
         mCallback.setMLSResponseLocation(location);
     }
 }

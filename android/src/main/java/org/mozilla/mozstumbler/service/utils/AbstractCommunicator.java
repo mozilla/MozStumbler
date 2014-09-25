@@ -17,8 +17,6 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 
 // TODO: this isn't abstract, it's a delegate
 public abstract class AbstractCommunicator {

@@ -4,6 +4,10 @@
 
 package org.mozilla.mozstumbler.service.utils;
 
+import android.util.Log;
+
+import org.mozilla.mozstumbler.service.AppGlobals;
+
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -13,22 +17,46 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 public class Zipper {
+
+    private static final String LOG_TAG = AppGlobals.LOG_PREFIX + Zipper.class.getSimpleName();
+
     public enum ZippedState {
         eNotZipped,
         eAlreadyZipped
     }
 
-    public static byte[] zipData(byte[] data) throws IOException {
-        final ByteArrayOutputStream os = new ByteArrayOutputStream();
-        GZIPOutputStream gz_outputstream = new GZIPOutputStream(os);
-        byte[] output;
+    /*
+    Compress data using gzip, return null if compression fails.
+     */
+    public static byte[] zipData(byte[] data) {
+        byte[] output = null;
+        GZIPOutputStream gz_outputstream = null;
+        ByteArrayOutputStream os = null;
         try {
+            os = new ByteArrayOutputStream();
+            gz_outputstream = new GZIPOutputStream(os);
             gz_outputstream.write(data);
             gz_outputstream.finish();
             output = os.toByteArray();
+        } catch (IOException e) {
+            return null;
         } finally {
-            gz_outputstream.close();
-            os.close();
+            try {
+                if (gz_outputstream != null){
+                    gz_outputstream.close();
+                }
+            } catch (IOException e) {
+                Log.e(LOG_TAG, "", e);
+                // there's nothing you could do to fix this
+            }
+            try {
+                if (os != null) {
+                    os.close();
+                }
+            } catch (IOException e) {
+                Log.e(LOG_TAG, "", e);
+                // there's nothing you could do to fix this
+            }
         }
         return output;
     }

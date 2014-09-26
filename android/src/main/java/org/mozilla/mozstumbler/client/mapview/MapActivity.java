@@ -284,7 +284,7 @@ public final class MapActivity extends android.support.v4.app.Fragment
         }
 
         formatTextView(R.id.text_satellites_used, "%d", fixes);
-        int icon = fixes > 0 ? R.drawable.ic_gps_receiving : R.drawable.ic_gps_no_signal_black;
+        int icon = fixes > 0 ? R.drawable.ic_gps_receiving_flaticondotcom : R.drawable.ic_gps_no_signal_flaticondotcom;
         ((ImageView) mRootView.findViewById(R.id.fix_indicator)).setImageResource(icon);
     }
 

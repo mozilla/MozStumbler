@@ -117,9 +117,7 @@ public class Prefs {
     public synchronized void setNickname(String nick) {
         if (nick != null) {
             nick = nick.trim();
-            if (nick.length() > 0) {
-                setStringPref(NICKNAME_PREF, nick);
-            }
+            setStringPref(NICKNAME_PREF, nick);
         }
     }
 

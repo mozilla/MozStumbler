@@ -42,10 +42,10 @@
     <string name="about_legal_aosp">Algunos iconos en esta aplicación son reproducidos de trabajo creado y compartido por el Proyecto de código abierto de Android y se usa de acuerdo a los términos descritos en la Licencia 2.5 de Creative Commons.</string>
     <string name="about_legal_icons8">Iconos adicionales de http://icons8.com bajo licencia: https://creativecommons.org/licenses/by-nd/3.0</string>
     <string name="upload_observations_sent_title">Enviado</string>
-    <string name="upload_observations_last_upload_time_title">Última fecha de envío:</string>
-    <string name="upload_observations_observations_sent_title">Observaciones:</string>
-    <string name="upload_observations_wifis_sent_title">Puntos de acceso Wi-Fi:</string>
-    <string name="upload_observations_cells_sent_title">Celdas móviles:</string>
+    <string name="metrics_observations_last_upload_time_title">Última fecha de envío:</string>
+    <string name="metrics_observations_title">Observaciones:</string>
+    <string name="metrics_observations_wifis_title">Puntos de acceso Wi-Fi:</string>
+    <string name="metrics_observations_cell_towers_title">Celdas móviles:</string>
     <string name="upload_observations_in_queue_title">En cola</string>
     <string name="upload_observations_observations_queued_title">Observaciones:</string>
     <string name="upload_observations_wifis_queued_title">Puntos de acceso Wi-Fi:</string>
@@ -59,6 +59,5 @@
     <string name="action_view_log">Ver log</string>
     <string name="scroll_to_start">Ir al principio</string>
     <string name="scroll_to_end">Ir al final</string>
-    <string name="upload_observations_data_size">Tamaño (KB):</string>
-    <string name="hardware_acceleration_title">Activar la aceleración hardware</string>
+    <string name="upload_observations_data_size">Tamaño:</string>
 </resources>

@@ -10,8 +10,10 @@ public class ClientPrefs extends Prefs {
     private static final String LOG_TAG = ClientPrefs.class.getSimpleName();
     private static final String LAT_PREF = "lat";
     private static final String LON_PREF = "lon";
-    private static final String HARDWARE_ACCEL_PREF = "hardware_acceleration";
-    static final String KEEP_SCREEN_ON_PREF = "keep_screen_on";
+    public static final String KEEP_SCREEN_ON_PREF = "keep_screen_on";
+
+    private static final String ON_MAP_SHOW_MLS_PREF = "show_mls";
+    private static final String ON_MAP_SHOW_OBSERVATION_TYPE = "show_observation_type";
 
     protected ClientPrefs(Context context) {
         super(context);
@@ -48,14 +50,6 @@ public class ClientPrefs extends Prefs {
         return new GeoPoint(lat, lon);
     }
 
-    public boolean getIsHardwareAccelerated() {
-        return getBoolPrefWithDefault(HARDWARE_ACCEL_PREF, true);
-    }
-
-    public void setIsHardwareAccelerated(boolean on) {
-        setBoolPref(HARDWARE_ACCEL_PREF, on);
-    }
-
     public boolean getKeepScreenOn() {
         return getBoolPrefWithDefault(KEEP_SCREEN_ON_PREF, true);
     }
@@ -63,4 +57,21 @@ public class ClientPrefs extends Prefs {
     public void setKeepScreenOn(boolean on) {
         setBoolPref(KEEP_SCREEN_ON_PREF, on);
     }
+
+    public boolean getOnMapShowMLS() {
+        return getBoolPrefWithDefault(ON_MAP_SHOW_MLS_PREF, false);
+    }
+
+    public void setOnMapShowMLS(boolean on) {
+        setBoolPref(ON_MAP_SHOW_MLS_PREF, on);
+    }
+
+    public boolean getOnMapShowObservationType() {
+        return getBoolPrefWithDefault(ON_MAP_SHOW_OBSERVATION_TYPE, false);
+    }
+
+    public void setOnMapShowObservationType(boolean on) {
+        setBoolPref(ON_MAP_SHOW_OBSERVATION_TYPE, on);
+    }
+
 }

@@ -38,10 +38,10 @@
     <string name="about_mapbox">Информация о картографическом провайдере…</string>
     <string name="about_legal_aosp">Некоторые изображения в этом приложении созданы и опубликованы под лицензией AOSP (Android Open Source Project) и используются в соответствии с условиями, описанными в лицензии Creative Commons 2.5</string>
     <string name="upload_observations_sent_title">Уже оправлено</string>
-    <string name="upload_observations_last_upload_time_title">Время отправки:</string>
-    <string name="upload_observations_observations_sent_title">Измерений:</string>
-    <string name="upload_observations_wifis_sent_title">Wi-Fi точки:</string>
-    <string name="upload_observations_cells_sent_title">GSM соты:</string>
+    <string name="metrics_observations_last_upload_time_title">Время отправки:</string>
+    <string name="metrics_observations_title">Измерений:</string>
+    <string name="metrics_observations_wifis_title">Wi-Fi точки:</string>
+    <string name="metrics_observations_cell_towers_title">GSM соты:</string>
     <string name="upload_observations_in_queue_title">В очереди</string>
     <string name="upload_observations_observations_queued_title">Измерений:</string>
     <string name="upload_observations_wifis_queued_title">Wi-Fi точки:</string>
@@ -50,7 +50,7 @@
     <string name="upload_observations_dialog_title">Отправить измерения</string>
     <string name="upload_wifi_only_title">Передача данных только через Wi-Fi</string>
     <string name="upload_wifi_only_summary">Эта опция позволяет экономить мобильный трафик.</string>
-    <string name="upload_observations_data_size">Size (KB):</string>
+    <string name="upload_observations_data_size">Size:</string>
     <!--translations missing
 
 

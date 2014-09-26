@@ -5,21 +5,60 @@
 package org.mozilla.mozstumbler.client.mapview;
 
 import android.content.Context;
+import android.location.GpsSatellite;
+import android.location.GpsStatus;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-
+import android.util.Log;
 import java.lang.ref.WeakReference;
 
 class GPSListener implements LocationListener {
-   private WeakReference<MapActivity> mMapActivity;
-   private LocationManager mLocationManager;
+    private WeakReference<MapActivity> mMapActivity;
+    private LocationManager mLocationManager;
+    private final GpsStatus.Listener mStatusListener;
+
+    private static GpsStatus sGpsStatus;
 
     GPSListener(MapActivity mapActivity) {
         mMapActivity = new WeakReference<MapActivity>(mapActivity);
-        mLocationManager = (LocationManager) mapActivity.getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
+        mLocationManager = (LocationManager) mapActivity.getActivity().getApplicationContext().
+                getSystemService(Context.LOCATION_SERVICE);
         mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 1, this);
+        mStatusListener = new GpsStatus.Listener() {
+            public void onGpsStatusChanged(int event) {
+                if (event == GpsStatus.GPS_EVENT_SATELLITE_STATUS && mLocationManager != null) {
+                    if (sGpsStatus != null) {
+                        mLocationManager.getGpsStatus(sGpsStatus);
+                    } else {
+                        sGpsStatus = mLocationManager.getGpsStatus(null);
+                    }
+                    Iterable<GpsSatellite> sats = sGpsStatus.getSatellites();
+                    int satellites = 0;
+                    int fixes = 0;
+                    for (GpsSatellite sat : sats) {
+                        satellites++;
+                        if (sat.usedInFix()) {
+                            fixes++;
+                        }
+                    }
+                    if (mMapActivity.get() != null) {
+                        mMapActivity.get().updateGPSInfo(satellites, fixes);
+                    }
+                }
+            }
+        };
+
+        mLocationManager.addGpsStatusListener(mStatusListener);
+        Location lastGpsLoc = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        Location lastNetworkLoc = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+
+        if (lastGpsLoc != null) {
+            onLocationChanged(lastGpsLoc);
+        } else if (lastNetworkLoc != null) {
+            onLocationChanged(lastNetworkLoc);
+        }
     }
 
     void removeListener() {
@@ -36,7 +75,8 @@ class GPSListener implements LocationListener {
     }
 
     @Override
-    public void onStatusChanged(String s, int i, Bundle bundle) {}
+    public void onStatusChanged(String s, int i, Bundle bundle) {
+    }
 
     @Override
     public void onProviderEnabled(String s) {}

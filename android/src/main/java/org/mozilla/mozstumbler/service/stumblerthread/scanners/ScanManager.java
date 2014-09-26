@@ -166,14 +166,6 @@ public class ScanManager {
         return (mGPSScanner == null)? 0 : mGPSScanner.getLocationCount();
     }
 
-    public double getLatitude() {
-        return (mGPSScanner == null)? 0.0 : mGPSScanner.getLatitude();
-    }
-
-    public double getLongitude() {
-        return (mGPSScanner == null)? 0.0 : mGPSScanner.getLongitude();
-    }
-
     public Location getLocation() {
         return (mGPSScanner == null)? new Location("null") : mGPSScanner.getLocation();
     }

@@ -4,22 +4,20 @@
 
 package org.mozilla.mozstumbler.client.mapview;
 
-import android.annotation.TargetApi;
-import android.app.Activity;
+import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.Rect;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
-import android.view.Menu;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
+import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -32,10 +30,10 @@ import org.mozilla.mozstumbler.BuildConfig;
 import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.client.ClientPrefs;
 import org.mozilla.mozstumbler.client.ClientStumblerService;
-import org.mozilla.mozstumbler.client.MainActivity;
 import org.mozilla.mozstumbler.client.MainApp;
+import org.mozilla.mozstumbler.client.ObservedLocationsReceiver;
+import org.mozilla.mozstumbler.client.navdrawer.MetricsView;
 import org.mozilla.mozstumbler.service.AppGlobals;
-import org.mozilla.mozstumbler.service.stumblerthread.scanners.GPSScanner;
 import org.osmdroid.api.IGeoPoint;
 import org.osmdroid.tileprovider.BitmapPool;
 import org.osmdroid.tileprovider.tilesource.OnlineTileSourceBase;
@@ -45,14 +43,13 @@ import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Overlay;
 
-public final class MapActivity extends Activity {
+public final class MapActivity extends android.support.v4.app.Fragment
+    implements MetricsView.IMapLayerToggleListener {
     private static final String LOG_TAG = AppGlobals.LOG_PREFIX + MapActivity.class.getSimpleName();
 
     private static final String COVERAGE_REDIRECT_URL = "https://location.services.mozilla.com/map.json";
     private static String sCoverageUrl = null;
     private static int sGPSColor;
-    private static final int MENU_REFRESH = 1;
-    private static final int MENU_START_STOP = 2;
     private static final String ZOOM_KEY = "zoom";
     private static final int DEFAULT_ZOOM = 8;
     private static final int DEFAULT_ZOOM_AFTER_FIX = 16;
@@ -63,30 +60,21 @@ public final class MapActivity extends Activity {
     private AccuracyCircleOverlay mAccuracyOverlay;
     private boolean mFirstLocationFix;
     private boolean mUserPanning = false;
-    Timer mGetUrl = new Timer();
-    Overlay mCoverageTilesOverlay = null;
-    ObservationPointsOverlay mObservationPointsOverlay;
+    private final Timer mGetUrl = new Timer();
+    private Overlay mCoverageTilesOverlay = null;
+    private ObservationPointsOverlay mObservationPointsOverlay;
     private GPSListener mGPSListener;
 
+    private View mRootView;
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        super.onCreateView(inflater, container, savedInstanceState);
 
-        if (ClientPrefs.getInstance().getIsHardwareAccelerated() &&
-            Build.VERSION.SDK_INT > 10) {
-                getWindow().setFlags(
-                        WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED,
-                        WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED);
-        }
+        mRootView = inflater.inflate(R.layout.activity_map, container, false);
 
-        if (ClientPrefs.getInstance().getKeepScreenOn()) {
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        }
-
-        requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-        setContentView(R.layout.activity_map);
-
-        ImageButton centerMe = (ImageButton)this.findViewById(R.id.my_location_button);
+        ImageButton centerMe = (ImageButton) mRootView.findViewById(R.id.my_location_button);
         centerMe.setVisibility(View.INVISIBLE);
         centerMe.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -112,7 +100,7 @@ public final class MapActivity extends Activity {
             }
         });
 
-        mMap = (MapView) this.findViewById(R.id.map);
+        mMap = (MapView) mRootView.findViewById(R.id.map);
         final OnlineTileSourceBase tileSource = getTileSource();
         showCopyright(tileSource);
         mMap.setTileSource(tileSource);
@@ -185,36 +173,28 @@ public final class MapActivity extends Activity {
                 }
             }, 0);
         } else {
-            mCoverageTilesOverlay = new CoverageOverlay(this.getApplicationContext(), sCoverageUrl, mMap);
+            mCoverageTilesOverlay = new CoverageOverlay(mRootView.getContext(), sCoverageUrl, mMap);
             mMap.getOverlays().add(mCoverageTilesOverlay);
         }
 
-        mAccuracyOverlay = new AccuracyCircleOverlay(this.getApplicationContext(), sGPSColor);
+        mAccuracyOverlay = new AccuracyCircleOverlay(mRootView.getContext(), sGPSColor);
         mMap.getOverlays().add(mAccuracyOverlay);
 
-        mObservationPointsOverlay = new ObservationPointsOverlay(this, mMap);
+        mObservationPointsOverlay = new ObservationPointsOverlay(mRootView.getContext(), mMap);
         mMap.getOverlays().add(mObservationPointsOverlay);
 
-        ObservedLocationsReceiver observer = ObservedLocationsReceiver.getInstance(this.getApplicationContext());
+        ObservedLocationsReceiver observer = ObservedLocationsReceiver.getInstance();
         observer.setMapActivity(this);
-        observer.putAllPointsOnMap();
+
+        initTextView(R.id.text_cells_visible);
+        initTextView(R.id.text_wifis_visible);
+        initTextView(R.id.text_observation_count);
+
+        return mRootView;
     }
 
-    @TargetApi(11)
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuItem item = menu.add(Menu.NONE,MENU_REFRESH,Menu.NONE,R.string.refresh_map)
-                .setIcon(R.drawable.ic_action_refresh);
-        if (Build.VERSION.SDK_INT >= 11) {
-            item.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-        }
-        MenuItem startStop = menu.add(Menu.NONE, MENU_START_STOP, Menu.NONE, R.string.start_scanning);
-        if (Build.VERSION.SDK_INT >= 11) {
-            startStop.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-        }
-        boolean isScanning = ((MainApp) getApplication()).getService().isScanning();
-        setStartStopMenuState(startStop, isScanning);
-        return true;
+    MainApp getApplication() {
+        return (MainApp) getActivity().getApplication();
     }
 
     private void setStartStopMenuState(MenuItem menuItem, boolean scanning) {
@@ -225,10 +205,27 @@ public final class MapActivity extends Activity {
             menuItem.setIcon(android.R.drawable.ic_media_play);
             menuItem.setTitle(R.string.start_scanning);
         }
+
+        dimToolbar();
     }
 
-    private void toggleScanning(MenuItem menuItem) {
-        MainApp app = ((MainApp) getApplication());
+    @SuppressLint("NewApi")
+    public void dimToolbar() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
+            return;
+        }
+        View v = mRootView.findViewById(R.id.status_toolbar_layout);
+
+        final ClientStumblerService service = getApplication().getService();
+        float alpha = 0.5f;
+        if (service != null && service.isScanning()) {
+            alpha = 1.0f;
+        }
+        v.setAlpha(alpha);
+    }
+
+    public void toggleScanning(MenuItem menuItem) {
+        MainApp app = getApplication();
         boolean isScanning = app.getService().isScanning();
         if (isScanning) {
             app.stopScanning();
@@ -236,20 +233,6 @@ public final class MapActivity extends Activity {
             app.startScanning();
         }
         setStartStopMenuState(menuItem, !isScanning);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case MENU_REFRESH:
-                mUserPanning = false;
-                return true;
-            case MENU_START_STOP:
-                toggleScanning(item);
-                return true;
-            default:
-                return false;
-        }
     }
 
     @SuppressWarnings("ConstantConditions")
@@ -265,7 +248,7 @@ public final class MapActivity extends Activity {
     }
 
     private void showCopyright(OnlineTileSourceBase tileSource) {
-        TextView copyrightArea = (TextView) findViewById(R.id.copyright_area);
+        TextView copyrightArea = (TextView) mRootView.findViewById(R.id.copyright_area);
         if (TileSourceFactory.MAPQUESTOSM.equals(tileSource)) {
             copyrightArea.setText("Tiles Courtesy of MapQuest\n© OpenStreetMap contributors");
         }
@@ -276,7 +259,7 @@ public final class MapActivity extends Activity {
 
     void setUserPositionAt(Location location) {
         if (mAccuracyOverlay.getLocation() == null) {
-            ImageButton centerMe = (ImageButton)this.findViewById(R.id.my_location_button);
+            ImageButton centerMe = (ImageButton) mRootView.findViewById(R.id.my_location_button);
             centerMe.setVisibility(View.VISIBLE);
         }
 
@@ -291,26 +274,18 @@ public final class MapActivity extends Activity {
             mMap.getController().animateTo((mAccuracyOverlay.getLocation()));
         }
 
-        formatTextView(R.id.latitude_text, "%1$.4f", location.getLatitude());
-        formatTextView(R.id.longitude_text, "%1$.4f", location.getLongitude());
     }
 
-    void updateGPSInfo(Intent intent) {
+    void updateGPSInfo(int satellites, int fixes) {
+        // @TODO Move this code to an appropriate place
         if  (mCoverageTilesOverlay == null && sCoverageUrl != null) {
-            mCoverageTilesOverlay = new CoverageOverlay(this.getApplicationContext(), sCoverageUrl, mMap);
+            mCoverageTilesOverlay = new CoverageOverlay(getActivity().getApplicationContext(), sCoverageUrl, mMap);
             mMap.getOverlays().add(mMap.getOverlays().indexOf(mAccuracyOverlay), mCoverageTilesOverlay);
         }
 
-        final ClientStumblerService service = ((MainApp) getApplication()).getService();
-        updateUI(service);
-        if (GPSScanner.SUBJECT_NEW_STATUS.equals(intent.getStringExtra(Intent.EXTRA_SUBJECT))) {
-            final int fixes = intent.getIntExtra(GPSScanner.NEW_STATUS_ARG_FIXES, 0);
-            final int sats = intent.getIntExtra(GPSScanner.NEW_STATUS_ARG_SATS, 0);
-            formatTextView(R.id.satellites_used, R.string.num_used, fixes);
-            formatTextView(R.id.satellites_visible, R.string.num_visible, sats);
-            int icon = fixes > 0 ? R.drawable.ic_gps_receiving : R.drawable.ic_gps;
-            ((ImageView) findViewById(R.id.fix_indicator)).setImageResource(icon);
-        }
+        formatTextView(R.id.text_satellites_used, "%d", fixes);
+        int icon = fixes > 0 ? R.drawable.ic_gps_receiving_flaticondotcom : R.drawable.ic_gps_no_signal_flaticondotcom;
+        ((ImageView) mRootView.findViewById(R.id.fix_indicator)).setImageResource(icon);
     }
 
     // An overlay for the sole purpose of reporting a user swiping on the map
@@ -319,7 +294,7 @@ public final class MapActivity extends Activity {
             public void onSwipe();
         }
 
-        OnSwipeListener mOnSwipe;
+        final OnSwipeListener mOnSwipe;
         SwipeListeningOverlay(Context ctx, OnSwipeListener onSwipe) {
             super(ctx);
             mOnSwipe = onSwipe;
@@ -340,15 +315,16 @@ public final class MapActivity extends Activity {
     }
 
     @Override
-    protected void onStart() {
+    public void onStart() {
         super.onStart();
         Log.d(LOG_TAG, "onStart");
 
         mGPSListener = new GPSListener(this);
 
-        ObservedLocationsReceiver observer = ObservedLocationsReceiver.getInstance(this.getApplicationContext());
+        ObservedLocationsReceiver observer = ObservedLocationsReceiver.getInstance();
         observer.setMapActivity(this);
-        observer.putMissedPointsOnMap();
+
+        dimToolbar();
     }
 
     private void saveStateToPrefs() {
@@ -357,18 +333,18 @@ public final class MapActivity extends Activity {
     }
     
     @Override
-    protected void onStop() {
+    public void onStop() {
         super.onStop();
 
         Log.d(LOG_TAG, "onStop");
 
         mGPSListener.removeListener();
-        ObservedLocationsReceiver observer = ObservedLocationsReceiver.getInstance(this.getApplicationContext());
+        ObservedLocationsReceiver observer = ObservedLocationsReceiver.getInstance();
         observer.removeMapActivity();
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle bundle) {
+    public void onSaveInstanceState(Bundle bundle) {
         super.onSaveInstanceState(bundle);
         bundle.putInt(ZOOM_KEY, mMap.getZoomLevel());
         IGeoPoint center = mMap.getMapCenter();
@@ -378,14 +354,14 @@ public final class MapActivity extends Activity {
     }
 
     @Override
-    protected void onPause() {
+    public void onPause() {
         super.onPause();
         Log.d(LOG_TAG, "onPause");
         saveStateToPrefs();
     }
 
     @Override
-    protected void onDestroy() {
+    public void onDestroy() {
         super.onDestroy();
         Log.d(LOG_TAG, "onDestroy");
 
@@ -393,16 +369,8 @@ public final class MapActivity extends Activity {
         BitmapPool.getInstance().clearBitmapPool();
     }
 
-
-    private void updateUI(ClientStumblerService service) {
-        formatTextView(R.id.cell_info_text, R.string.cells_info, service.getCurrentCellInfoCount(),
-                service.getCellInfoCount());
-        formatTextView(R.id.wifi_info_text, R.string.wifi_info, service.getVisibleAPCount(),
-                service.getAPCount());
-    }
-
     private void listenForPanning(MapView map) {
-        map.getOverlays().add(new SwipeListeningOverlay(this.getApplicationContext(), new SwipeListeningOverlay.OnSwipeListener() {
+        map.getOverlays().add(new SwipeListeningOverlay(getActivity().getApplicationContext(), new SwipeListeningOverlay.OnSwipeListener() {
             @Override
             public void onSwipe() {
                 mUserPanning = true;
@@ -410,15 +378,28 @@ public final class MapActivity extends Activity {
         }));
     }
 
-    private void formatTextView(int textViewId, int stringId, Object... args) {
+    public void formatTextView(int textViewId, int stringId, Object... args) {
         String str = getResources().getString(stringId);
         formatTextView(textViewId, str, args);
     }
 
-    private void formatTextView(int textViewId, String str, Object... args) {
-        TextView textView = (TextView) findViewById(textViewId);
+    public void formatTextView(int textViewId, String str, Object... args) {
+        TextView textView = (TextView) mRootView.findViewById(textViewId);
         str = String.format(str, args);
         textView.setText(str);
+    }
+
+    private void initTextView(int textViewId) {
+        TextView textView = (TextView) mRootView.findViewById(textViewId);
+        Rect bounds = new Rect();
+        Paint textPaint = textView.getPaint();
+        textPaint.getTextBounds("00000", 0, "00000".length(), bounds);
+        int width = bounds.width();
+        textView.setWidth(width);
+        android.widget.LinearLayout.LayoutParams params =
+                new android.widget.LinearLayout.LayoutParams(width, android.widget.LinearLayout.LayoutParams.MATCH_PARENT);
+        textView.setLayoutParams(params);
+        textView.setText("0");
     }
 
     public void newMLSPoint(ObservationPoint point) {
@@ -426,7 +407,18 @@ public final class MapActivity extends Activity {
     }
 
     public void newObservationPoint(ObservationPoint point) {
-        mObservationPointsOverlay.add(point);
         mObservationPointsOverlay.update();
+    }
+
+    @Override
+    public void setShowMLS(boolean isOn) {
+        mObservationPointsOverlay.mOnMapShowMLS = isOn;
+        mMap.invalidate();
+    }
+
+    @Override
+    public void setShowObservationType(boolean isOn) {
+        mObservationPointsOverlay.mDrawObservationsWithShape = isOn;
+        mMap.invalidate();
     }
 }

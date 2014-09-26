@@ -43,10 +43,10 @@
     <string name="about_legal_aosp">Alcune icone in questa applicazione sono riprodotte da opere create e condivise dall\'Android Open Source Project e sono usate secondo i termini descritti dalla licenza Creative Commons 2.5 Attribution.</string>
     
     <string name="upload_observations_sent_title">Inviati</string>
-    <string name="upload_observations_last_upload_time_title">Ultimo invio dati:</string>
-    <string name="upload_observations_observations_sent_title">Osservazioni:</string>
-    <string name="upload_observations_wifis_sent_title">Access point Wi-Fi:</string>
-    <string name="upload_observations_cells_sent_title">Celle:</string>
+    <string name="metrics_observations_last_upload_time_title">Ultimo invio dati:</string>
+    <string name="metrics_observations_title">Osservazioni:</string>
+    <string name="metrics_observations_wifis_title">Access point Wi-Fi:</string>
+    <string name="metrics_observations_cell_towers_title">Celle:</string>
     <string name="upload_observations_in_queue_title">In coda</string>
     <string name="upload_observations_observations_queued_title">Osservazioni:</string>
     <string name="upload_observations_wifis_queued_title">Access point Wi-Fi:</string>
@@ -56,7 +56,7 @@
     <string name="upload_wifi_only_title">Invia solo in Wi-Fi</string>
     <string name="upload_wifi_only_summary">Questa opzione ridurrà il traffico dati sulla rete cellulare.</string>
     
-    <string name="upload_observations_data_size">Size (KB):</string>
+    <string name="upload_observations_data_size">Size:</string>
     <!--translations missing
 
 

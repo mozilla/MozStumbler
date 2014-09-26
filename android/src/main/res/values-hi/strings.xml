@@ -37,10 +37,10 @@
     <string name="about_mapbox">हमारे नक्शा प्रदाता के बारेमे अधिक जानें…</string>
     <string name="about_legal_aosp">इस अनुप्रयोगमें इस्तेमाल की गयी कुछ आकृतियाँ अँड्रॉइड मुक्त स्रोत परियोजना द्वारा बनाई गयी और विभाजित की गयी है तथा क्रिएटीव कॉमन्स २.५ विशेष प्रयोग शर्त अनुसार इस्तेमाल कि गयी है.</string>
     <string name="upload_observations_sent_title">भेजें</string>
-    <string name="upload_observations_last_upload_time_title">अंतिम अवलोकन भेजने का समय:</string>
-    <string name="upload_observations_observations_sent_title">अवलोकन:</string>
-    <string name="upload_observations_wifis_sent_title">Wi-Fi प्रवेश बिंदु:</string>
-    <string name="upload_observations_cells_sent_title">भ्रमणध्वनि कोशिकाएं:</string>
+    <string name="metrics_observations_last_upload_time_title">अंतिम अवलोकन भेजने का समय:</string>
+    <string name="metrics_observations_title">अवलोकन:</string>
+    <string name="metrics_observations_wifis_title">Wi-Fi प्रवेश बिंदु:</string>
+    <string name="metrics_observations_cell_towers_title">भ्रमणध्वनि कोशिकाएं:</string>
     <string name="upload_observations_in_queue_title">भेजने की प्रतीक्षा कर रहे अवलोकन</string>
     <string name="upload_observations_observations_queued_title">अवलोकन:</string>
     <string name="upload_observations_wifis_queued_title">Wi-Fi प्रवेश बिंदु:</string>
@@ -56,5 +56,5 @@
     <string name="action_view_log">पंजी देखें </string>
     <string name="scroll_to_start">शुरुआत में जाएं</string>
     <string name="scroll_to_end">अंत में जाएं</string>
-    <string name="upload_observations_data_size">Size (KB):</string>
+    <string name="upload_observations_data_size">Size:</string>
 </resources>

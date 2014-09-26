@@ -15,6 +15,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import org.mozilla.mozstumbler.R;
+import org.mozilla.mozstumbler.client.http.HttpUtil;
 import org.mozilla.mozstumbler.client.http.IHttpUtil;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.utils.NetworkUtils;
@@ -30,8 +31,8 @@ public class Updater {
     private static final String APK_URL_FORMAT = "https://github.com/mozilla/MozStumbler/releases/download/v%s/MozStumbler-v%s.apk";
     private final IHttpUtil httpClient;
 
-    public Updater(IHttpUtil simpleHttp) {
-        httpClient = simpleHttp;
+    public Updater(IHttpUtil httpUtil) {
+        httpClient = httpUtil;
     }
 
     public boolean wifiExclusiveAndUnavailable() {

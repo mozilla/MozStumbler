@@ -8,6 +8,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.mozilla.mozstumbler.service.Prefs;
 import org.mozilla.mozstumbler.service.utils.AbstractCommunicator;
@@ -30,6 +31,8 @@ public class AsyncUploader extends AsyncTask<Void, Void, SyncSummary> {
     private AsyncUploaderListener mListener;
     private static AtomicBoolean sIsUploading = new AtomicBoolean();
     private String mNickname;
+
+    public static final AtomicLong sTotalBytesUploadedThisSession = new AtomicLong();
 
     public interface AsyncUploaderListener {
         public void onUploadComplete(SyncSummary result);
@@ -71,7 +74,6 @@ public class AsyncUploader extends AsyncTask<Void, Void, SyncSummary> {
         }
 
         sIsUploading.set(true);
-        SyncSummary result = new SyncSummary();
         Runnable progressListener = null;
 
         // no need to lock here, lock is checked again later
@@ -88,8 +90,8 @@ public class AsyncUploader extends AsyncTask<Void, Void, SyncSummary> {
             };
         }
 
+        SyncSummary result = new SyncSummary();
         uploadReports(result, progressListener);
-
         return result;
     }
     @Override
@@ -194,6 +196,8 @@ public class AsyncUploader extends AsyncTask<Void, Void, SyncSummary> {
         catch (IOException ex) {
             error = ex.toString();
         }
+
+        sTotalBytesUploadedThisSession.addAndGet(syncResult.totalBytesSent);
 
         try {
             dm.incrementSyncStats(syncResult.totalBytesSent, uploadedObservations, uploadedCells, uploadedWifis);

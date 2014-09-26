@@ -2,15 +2,13 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package org.mozilla.mozstumbler.core.http;
+package org.mozilla.mozstumbler.service.core.http;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.StringBufferInputStream;
-import java.io.StringReader;
 import java.io.Writer;
 import java.net.URL;
 

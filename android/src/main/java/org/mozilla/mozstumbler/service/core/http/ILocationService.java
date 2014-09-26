@@ -3,7 +3,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 
-package org.mozilla.mozstumbler.core.http;
+package org.mozilla.mozstumbler.service.core.http;
 
 import java.util.Map;
 

@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package org.mozilla.mozstumbler.core.http;
+package org.mozilla.mozstumbler.service.core.http;
 
 import android.os.Build;
 
@@ -45,9 +45,9 @@ public class MLS implements ILocationService {
         initApiKey(null);
     }
 
-    public MLS(String ua, String apiKey) {
-        initUserAgent(ua);
-        initApiKey(apiKey);
+        public MLS(String ua, String apiKey) {
+            initUserAgent(ua);
+            initApiKey(apiKey);
     }
 
     private void initUserAgent(String ua) {

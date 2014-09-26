@@ -4,7 +4,7 @@
 
 
 
-package org.mozilla.mozstumbler.core.http;
+package org.mozilla.mozstumbler.service.core.http;
 
 
 public interface IResponse {

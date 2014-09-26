@@ -1,4 +1,4 @@
-package org.mozilla.mozstumbler.core.http;
+package org.mozilla.mozstumbler.service.core.http;
 
 import org.mozilla.mozstumbler.logging.Log;
 import org.mozilla.mozstumbler.service.AppGlobals;

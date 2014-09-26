@@ -10,16 +10,13 @@ import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
-import org.mozilla.mozstumbler.core.http.ILocationService;
-import org.mozilla.mozstumbler.core.http.IResponse;
-import org.mozilla.mozstumbler.core.http.MLS;
+import org.mozilla.mozstumbler.service.core.http.ILocationService;
+import org.mozilla.mozstumbler.service.core.http.IResponse;
+import org.mozilla.mozstumbler.service.core.http.MLS;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageManager;
 import org.mozilla.mozstumbler.service.utils.NetworkInfo;
 import org.mozilla.mozstumbler.service.utils.SyncSummary;
-
-import java.io.IOException;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /* Only one at a time may be uploading. If executed while another upload is in progress
 * it will return immediately, and SyncResult is null.

@@ -4,8 +4,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import org.mozilla.mozstumbler.core.http.IHttpUtil;
-import org.mozilla.mozstumbler.core.http.MockHttpUtil;
+import org.mozilla.mozstumbler.service.core.http.IHttpUtil;
+import org.mozilla.mozstumbler.service.core.http.MockHttpUtil;
 import org.mozilla.mozstumbler.client.navdrawer.MainDrawerActivity;
 
 import org.robolectric.Robolectric;

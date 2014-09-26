@@ -29,8 +29,8 @@ import org.mozilla.mozstumbler.client.Updater;
 import org.mozilla.mozstumbler.client.mapview.MapActivity;
 import org.mozilla.mozstumbler.client.subactivities.LeaderboardActivity;
 import org.mozilla.mozstumbler.client.subactivities.PreferencesScreen;
-import org.mozilla.mozstumbler.core.http.HttpUtil;
-import org.mozilla.mozstumbler.core.http.IHttpUtil;
+import org.mozilla.mozstumbler.service.core.http.HttpUtil;
+import org.mozilla.mozstumbler.service.core.http.IHttpUtil;
 
 public class MainDrawerActivity extends ActionBarActivity implements IMainActivity {
     private DrawerLayout mDrawerLayout;

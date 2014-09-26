@@ -348,7 +348,7 @@
         <CheckBox
             android:layout_width="wrap_content"
             android:layout_height="34dp"
-            android:text="  Show MLS locations"
+            android:text="@string/drawer_map_option_show_mls_locations"
             android:id="@+id/checkBox_show_mls"
             android:layout_below="@+id/textView"
             android:layout_alignParentLeft="true"
@@ -361,7 +361,7 @@
         <CheckBox
             android:layout_width="wrap_content"
             android:layout_height="34dp"
-            android:text="  Indicate Cell/Wi-Fi/Both"
+            android:text="@string/drawer_map_option_show_observation_type"
             android:id="@+id/checkBox_show_observation_type"
             android:checked="false"
             android:textSize="14sp"

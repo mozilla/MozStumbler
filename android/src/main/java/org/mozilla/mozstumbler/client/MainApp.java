@@ -37,7 +37,7 @@ import org.mozilla.mozstumbler.service.stumblerthread.scanners.GPSScanner;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.WifiScanner;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner.CellScanner;
 import org.mozilla.mozstumbler.service.uploadthread.AsyncUploader;
-import org.mozilla.mozstumbler.service.utils.NetworkUtils;
+import org.mozilla.mozstumbler.service.utils.NetworkInfo;
 
 public class MainApp extends Application {
 
@@ -81,7 +81,7 @@ public class MainApp extends Application {
         }
 
         ClientPrefs.createGlobalInstance(this);
-        NetworkUtils.createGlobalInstance(this);
+        NetworkInfo.createGlobalInstance(this);
         LogActivity.LogMessageReceiver.createGlobalInstance(this);
         CellScanner.setCellScannerImpl(new DefaultCellScanner(this));
 

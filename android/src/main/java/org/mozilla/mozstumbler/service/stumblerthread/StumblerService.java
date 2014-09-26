@@ -20,7 +20,7 @@ import org.mozilla.mozstumbler.service.stumblerthread.scanners.ScanManager;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner.CellScanner;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner.CellScannerNoWCDMA;
 import org.mozilla.mozstumbler.service.uploadthread.UploadAlarmReceiver;
-import org.mozilla.mozstumbler.service.utils.NetworkUtils;
+import org.mozilla.mozstumbler.service.utils.NetworkInfo;
 import org.mozilla.mozstumbler.service.utils.PersistentIntentService;
 
 // In stand-alone service mode (a.k.a passive scanning mode), this is created from PassiveServiceReceiver (by calling startService).
@@ -107,7 +107,7 @@ public class StumblerService extends PersistentIntentService
     // Safe to call more than once, ensure added code complies with that intent.
     protected void init() {
         Prefs.createGlobalInstance(this);
-        NetworkUtils.createGlobalInstance(this);
+        NetworkInfo.createGlobalInstance(this);
         DataStorageManager.createGlobalInstance(this, this);
 
         if (!CellScanner.isCellScannerImplSet()) {

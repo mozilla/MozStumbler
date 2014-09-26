@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package org.mozilla.mozstumbler.client.http;
+package org.mozilla.mozstumbler.core.http;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -19,9 +19,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.List;
 
-/**
- * Created by victorng on 2014-09-19.
- */
+
 public class HttpUtil implements IHttpUtil {
 
     public HttpUtil(){};

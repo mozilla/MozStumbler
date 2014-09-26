@@ -7,7 +7,7 @@ clean:
 install_debug:
 	./gradlew installDebug
 
-debug_apk:
+debug:
 	./gradlew assembleDebug
 
 test:

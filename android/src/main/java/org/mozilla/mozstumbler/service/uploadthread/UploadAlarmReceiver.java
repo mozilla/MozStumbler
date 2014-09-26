@@ -15,7 +15,7 @@ import android.util.Log;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.Prefs;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageManager;
-import org.mozilla.mozstumbler.service.utils.NetworkUtils;
+import org.mozilla.mozstumbler.service.utils.NetworkInfo;
 
 // Only if data is queued and device awake: check network availability and upload.
 // MozStumbler use: this alarm is periodic and repeating.
@@ -73,7 +73,7 @@ public class UploadAlarmReceiver extends BroadcastReceiver {
                 }
             }
 
-            if (NetworkUtils.getInstance().isWifiAvailable() &&
+            if (NetworkInfo.getInstance().isWifiAvailable() &&
                 !AsyncUploader.isUploading()) {
                 Log.d(LOG_TAG, "Alarm upload(), call AsyncUploader");
                 AsyncUploader.UploadSettings settings =

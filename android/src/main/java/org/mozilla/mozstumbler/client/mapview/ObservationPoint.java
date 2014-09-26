@@ -7,7 +7,7 @@ package org.mozilla.mozstumbler.client.mapview;
 import android.location.Location;
 import org.json.JSONObject;
 import org.mozilla.mozstumbler.client.ClientPrefs;
-import org.mozilla.mozstumbler.service.utils.NetworkUtils;
+import org.mozilla.mozstumbler.service.utils.NetworkInfo;
 import org.osmdroid.util.GeoPoint;
 
 public class ObservationPoint implements MLSLocationGetter.MLSLocationGetterCallback {
@@ -21,8 +21,8 @@ public class ObservationPoint implements MLSLocationGetter.MLSLocationGetterCall
 
     MLSLocationGetter mMLSLocationGetter;
 
-    public void setMLSQuery(JSONObject queryCellAndWifi) {
-        mMLSQuery = queryCellAndWifi;
+    public void setMLSQuery(JSONObject ichnaeaQueryObj) {
+        mMLSQuery = ichnaeaQueryObj;
     }
 
     public void fetchMLS() {
@@ -30,7 +30,7 @@ public class ObservationPoint implements MLSLocationGetter.MLSLocationGetterCall
             return;
         }
         ClientPrefs prefs = ClientPrefs.getInstance();
-        if (prefs.getUseWifiOnly() && !NetworkUtils.getInstance().isWifiAvailable()) {
+        if (prefs.getUseWifiOnly() && !NetworkInfo.getInstance().isWifiAvailable()) {
             return;
         }
         mMLSLocationGetter = new MLSLocationGetter(this, mMLSQuery);

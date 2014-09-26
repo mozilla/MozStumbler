@@ -64,4 +64,7 @@
     <string name="upload_observations_data_size">Size (KB):</string>
     <string name="hardware_acceleration_title">Enable hardware acceleration</string>
     <string name="keep_screen_on_title">Keep screen on while in map</string>
+    <string name="enter_email">Enter e-mail address (optional)</string>
+    <string name="enter_email_title">Email: </string>
+    <string name="enter_email_longtext">Your email address is never displayed to people and is only used for your own reports</string>
 </resources>

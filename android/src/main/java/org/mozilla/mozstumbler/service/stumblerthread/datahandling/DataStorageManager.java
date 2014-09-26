@@ -96,17 +96,19 @@ public class DataStorageManager {
         int reportCount = mFileList.mReportCount + mCurrentReports.reports.size();
         int wifiCount = mFileList.mWifiCount + mCurrentReports.wifiCount;
         int cellCount = mFileList.mCellCount + mCurrentReports.cellCount;
-        long bytes = 0;
+        long byteLength = 0;
 
         if (mCurrentReports.reports.size() > 0) {
-            try {
-                bytes = Zipper.zipData(finalizeReports(mCurrentReports.reports).getBytes()).length;
-            } catch (IOException ex) {
-                Log.e(LOG_TAG, "Zip error in getQueuedCounts()", ex);
+            byte[] bytes;
+            bytes = Zipper.zipData(finalizeReports(mCurrentReports.reports).getBytes());
+            if (bytes == null) {
+                Log.e(LOG_TAG, "Error compressing current reports queued", new RuntimeException("GZip Failure"));
+                // TODO: we need to display an error that compression failed
+            } else {
+              byteLength += bytes.length;
             }
-
             if (mFileList.mReportCount > 0) {
-                bytes += mFileList.mFilesOnDiskBytes;
+                byteLength += mFileList.mFilesOnDiskBytes;
             }
         }
 
@@ -114,9 +116,9 @@ public class DataStorageManager {
             reportCount += mCurrentReportsSendBuffer.reportCount;
             wifiCount += mCurrentReportsSendBuffer.wifiCount;
             cellCount += mCurrentReportsSendBuffer.cellCount;
-            bytes += mCurrentReportsSendBuffer.data.length;
+            byteLength += mCurrentReportsSendBuffer.data.length;
         }
-        return new QueuedCounts(reportCount, wifiCount, cellCount, bytes);
+        return new QueuedCounts(reportCount, wifiCount, cellCount, byteLength);
     }
 
     private static class ReportFileList {

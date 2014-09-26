@@ -12,17 +12,17 @@ import android.telephony.TelephonyManager;
 import android.test.ServiceTestCase;
 import android.util.Log;
 
-import org.mozilla.mozstumbler.service.utils.AbstractCommunicator;
 import org.mozilla.mozstumbler.service.AppGlobals;
-import org.mozilla.mozstumbler.service.stumblerthread.scanners.ScanManager;
 import org.mozilla.mozstumbler.service.stumblerthread.StumblerService;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageManager;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.GPSScanner;
+import org.mozilla.mozstumbler.service.stumblerthread.scanners.ScanManager;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.WifiScanner;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner.CellInfo;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner.CellScanner;
 import org.mozilla.mozstumbler.service.uploadthread.AsyncUploader;
 import org.mozilla.mozstumbler.service.uploadthread.AsyncUploader.UploadSettings;
+import org.mozilla.mozstumbler.service.utils.SyncSummary;
 import org.mozilla.mozstumbler.service.utils.Zipper;
 
 import java.io.IOException;
@@ -174,7 +174,7 @@ public class ServiceTest extends ServiceTestCase<StumblerService> implements Asy
 
     // for pausing to wait for asynctask
     final CountDownLatch signal = new CountDownLatch(1);
-    public void onUploadComplete(AbstractCommunicator.SyncSummary result) {
+    public void onUploadComplete(SyncSummary result) {
         signal.countDown();
     }
 

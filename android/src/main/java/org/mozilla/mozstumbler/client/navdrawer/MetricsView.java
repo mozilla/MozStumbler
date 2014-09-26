@@ -9,6 +9,7 @@ import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -17,6 +18,7 @@ import org.mozilla.mozstumbler.client.ClientPrefs;
 import org.mozilla.mozstumbler.client.ClientStumblerService;
 import org.mozilla.mozstumbler.client.MainApp;
 import org.mozilla.mozstumbler.service.AppGlobals;
+import org.mozilla.mozstumbler.service.Prefs;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageContract;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageManager;
 import org.mozilla.mozstumbler.service.uploadthread.AsyncUploader;
@@ -35,6 +37,7 @@ public class MetricsView implements AsyncUploader.AsyncUploaderListener {
 
     public interface IMapLayerToggleListener {
         public void setShowMLS(boolean isOn);
+        public void setShowObservationType(boolean isOn);
     }
 
     private static final String LOG_TAG = AppGlobals.LOG_PREFIX + MetricsView.class.getSimpleName();
@@ -54,7 +57,7 @@ public class MetricsView implements AsyncUploader.AsyncUploaderListener {
     private final CheckBox mOnMapShowMLS;
     private final CheckBox mOnMapShowObservationType;
 
-    private final WeakReference<IMapLayerToggleListener> mMapLayerToggleListener;
+    private WeakReference<IMapLayerToggleListener> mMapLayerToggleListener;
 
     private ImageButton mUploadButton;
     private final View mView;
@@ -65,29 +68,28 @@ public class MetricsView implements AsyncUploader.AsyncUploaderListener {
     private AsyncUploader mUploader;
     private Timer mUpdateTimer;
 
-    public MetricsView(View view, final IMapLayerToggleListener listener) {
+    public MetricsView(View view) {
         mView = view;
-        mMapLayerToggleListener = new WeakReference<IMapLayerToggleListener>(listener);
 
         mOnMapShowMLS = (CheckBox) mView.findViewById(R.id.checkBox_show_mls);
         mOnMapShowObservationType = (CheckBox) mView.findViewById(R.id.checkBox_show_observation_type);
 
-        mOnMapShowMLS.setOnClickListener(new View.OnClickListener() {
+        mOnMapShowMLS.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onClick(View v) {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                ClientPrefs.getInstance().setOnMapShowMLS(mOnMapShowMLS.isChecked());
                 if (mMapLayerToggleListener.get() != null) {
                     mMapLayerToggleListener.get().setShowMLS(mOnMapShowMLS.isChecked());
                 }
             }
         });
 
-        mOnMapShowObservationType.setOnClickListener(new View.OnClickListener() {
+        mOnMapShowObservationType.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onClick(View v) {
-                if(mOnMapShowObservationType.isChecked()){
-
-                } else{
-
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                ClientPrefs.getInstance().setOnMapShowObservationType(mOnMapShowObservationType.isChecked());
+                if (mMapLayerToggleListener.get() != null) {
+                    mMapLayerToggleListener.get().setShowObservationType(mOnMapShowObservationType.isChecked());
                 }
             }
         });
@@ -119,6 +121,13 @@ public class MetricsView implements AsyncUploader.AsyncUploaderListener {
             }
         });
     }
+
+    public void setMapLayerToggleListener(IMapLayerToggleListener listener) {
+        mMapLayerToggleListener = new WeakReference<IMapLayerToggleListener>(listener);
+        mOnMapShowMLS.setChecked(ClientPrefs.getInstance().getOnMapShowMLS());
+        mOnMapShowObservationType.setChecked(ClientPrefs.getInstance().getOnMapShowObservationType());
+    }
+
 
     private void setIconToSyncing(boolean isSyncing) {
         if (isSyncing) {

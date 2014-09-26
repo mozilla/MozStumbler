@@ -33,7 +33,7 @@ public class ObservedLocationsReceiver extends BroadcastReceiver {
     private WeakReference<MapActivity> mMapActivity = new WeakReference<MapActivity>(null);
     private final LinkedList<ObservationPoint> mCollectionPoints = new LinkedList<ObservationPoint>();
     private final LinkedList<ObservationPoint> mQueuedForMLS = new LinkedList<ObservationPoint>();
-    private final LinkedList<ObservationPoint> mPointsMissedByMapActivity = new LinkedList<ObservationPoint>();
+
     private final int MAX_QUEUED_MLS_POINTS_TO_FETCH = 10;
     private final long FREQ_FETCH_MLS_MS = 5 * 1000;
     private JSONObject mPreviousBundleForDuplicateCheck;
@@ -58,6 +58,10 @@ public class ObservedLocationsReceiver extends BroadcastReceiver {
 
     public static ObservedLocationsReceiver getInstance() {
         return sInstance;
+    }
+
+    public LinkedList<ObservationPoint> getObservationPoints() {
+        return mCollectionPoints;
     }
 
     private final Runnable mFetchMLSRunnable = new Runnable() {
@@ -102,29 +106,6 @@ public class ObservedLocationsReceiver extends BroadcastReceiver {
         return mMapActivity.get();
     }
 
-    private synchronized void addPointsToMapActivity(LinkedList<ObservationPoint> points) {
-        MapActivity map = getMapActivity();
-        if (map == null) {
-            return;
-        }
-
-        final Iterator<ObservationPoint> iterator = points.iterator();
-        while (iterator.hasNext()) {
-            map.newObservationPoint(iterator.next());
-        }
-
-        // in all cases, clear this list
-        mPointsMissedByMapActivity.clear();
-    }
-
-    public void putAllPointsOnMap() {
-        addPointsToMapActivity(mCollectionPoints);
-    }
-
-    public void putMissedPointsOnMap() {
-        addPointsToMapActivity(mPointsMissedByMapActivity);
-    }
-
     @Override
     public synchronized void onReceive(Context context, Intent intent) {
         final String action = intent.getAction();
@@ -166,7 +147,6 @@ public class ObservedLocationsReceiver extends BroadcastReceiver {
         mCollectionPoints.add(new ObservationPoint(new GeoPoint(newPosition)));
 
         if (getMapActivity() == null) {
-            mPointsMissedByMapActivity.add(mCollectionPoints.getLast());
             return;
         }
 
@@ -180,9 +160,6 @@ public class ObservedLocationsReceiver extends BroadcastReceiver {
 
     private synchronized void addObservationPointToMap() {
         if (getMapActivity() == null) {
-            if (mPointsMissedByMapActivity.getLast() != mCollectionPoints.getLast()) {
-                mPointsMissedByMapActivity.add(mCollectionPoints.getLast());
-            }
             return;
         }
 

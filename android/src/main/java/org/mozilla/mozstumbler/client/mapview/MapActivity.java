@@ -185,7 +185,6 @@ public final class MapActivity extends android.support.v4.app.Fragment
 
         ObservedLocationsReceiver observer = ObservedLocationsReceiver.getInstance();
         observer.setMapActivity(this);
-        observer.putAllPointsOnMap();
 
         initTextView(R.id.text_cells_visible);
         initTextView(R.id.text_wifis_visible);
@@ -324,7 +323,6 @@ public final class MapActivity extends android.support.v4.app.Fragment
 
         ObservedLocationsReceiver observer = ObservedLocationsReceiver.getInstance();
         observer.setMapActivity(this);
-        observer.putMissedPointsOnMap();
 
         dimToolbar();
     }
@@ -409,13 +407,18 @@ public final class MapActivity extends android.support.v4.app.Fragment
     }
 
     public void newObservationPoint(ObservationPoint point) {
-        mObservationPointsOverlay.add(point);
         mObservationPointsOverlay.update();
     }
 
     @Override
     public void setShowMLS(boolean isOn) {
         mObservationPointsOverlay.mOnMapShowMLS = isOn;
+        mMap.invalidate();
+    }
+
+    @Override
+    public void setShowObservationType(boolean isOn) {
+        mObservationPointsOverlay.mDrawObservationsWithShape = isOn;
         mMap.invalidate();
     }
 }

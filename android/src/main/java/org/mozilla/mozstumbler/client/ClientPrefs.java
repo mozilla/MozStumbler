@@ -13,6 +13,9 @@ public class ClientPrefs extends Prefs {
     private static final String HARDWARE_ACCEL_PREF = "hardware_acceleration";
     public static final String KEEP_SCREEN_ON_PREF = "keep_screen_on";
 
+    private static final String ON_MAP_SHOW_MLS_PREF = "show_mls";
+    private static final String ON_MAP_SHOW_OBSERVATION_TYPE = "show_observation_type";
+
     protected ClientPrefs(Context context) {
         super(context);
     }
@@ -63,4 +66,21 @@ public class ClientPrefs extends Prefs {
     public void setKeepScreenOn(boolean on) {
         setBoolPref(KEEP_SCREEN_ON_PREF, on);
     }
+
+    public boolean getOnMapShowMLS() {
+        return getBoolPrefWithDefault(ON_MAP_SHOW_MLS_PREF, false);
+    }
+
+    public void setOnMapShowMLS(boolean on) {
+        setBoolPref(ON_MAP_SHOW_MLS_PREF, on);
+    }
+
+    public boolean getOnMapShowObservationType() {
+        return getBoolPrefWithDefault(ON_MAP_SHOW_OBSERVATION_TYPE, false);
+    }
+
+    public void setOnMapShowObservationType(boolean on) {
+        setBoolPref(ON_MAP_SHOW_OBSERVATION_TYPE, on);
+    }
+
 }

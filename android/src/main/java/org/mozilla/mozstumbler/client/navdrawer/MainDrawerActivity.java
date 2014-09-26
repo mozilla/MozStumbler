@@ -88,7 +88,7 @@ public class MainDrawerActivity extends ActionBarActivity implements IMainActivi
         Updater upd = new Updater();
         upd.checkForUpdates(this, BuildConfig.MOZILLA_API_KEY);
 
-        mMetricsView = new MetricsView(findViewById(R.id.left_drawer), mMapActivity);
+        mMetricsView = new MetricsView(findViewById(R.id.left_drawer));
     }
 
     private static final int MENU_START_STOP = 1;
@@ -126,6 +126,12 @@ public class MainDrawerActivity extends ActionBarActivity implements IMainActivi
         super.onPostCreate(savedInstanceState);
         // Sync the toggle state after onRestoreInstanceState has occurred.
         mDrawerToggle.syncState();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        mMetricsView.setMapLayerToggleListener(mMapActivity);
     }
 
     @Override

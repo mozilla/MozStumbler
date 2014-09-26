@@ -10,7 +10,7 @@ import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.mozilla.mozstumbler.core.adapters.LocationAdapter;
+import org.mozilla.mozstumbler.service.utils.LocationAdapter;
 import org.mozilla.mozstumbler.core.http.ILocationService;
 import org.mozilla.mozstumbler.core.http.IResponse;
 import org.mozilla.mozstumbler.core.http.MLS;

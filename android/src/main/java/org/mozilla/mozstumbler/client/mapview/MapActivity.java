@@ -24,6 +24,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import java.net.URL;
+import java.util.Scanner;
 import java.util.Timer;
 import java.util.TimerTask;
 import org.json.JSONException;
@@ -34,6 +35,8 @@ import org.mozilla.mozstumbler.client.ClientPrefs;
 import org.mozilla.mozstumbler.client.ClientStumblerService;
 import org.mozilla.mozstumbler.client.MainActivity;
 import org.mozilla.mozstumbler.client.MainApp;
+import org.mozilla.mozstumbler.core.http.HttpUtil;
+import org.mozilla.mozstumbler.core.http.IHttpUtil;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.GPSScanner;
 import org.osmdroid.api.IGeoPoint;
@@ -166,9 +169,12 @@ public final class MapActivity extends Activity {
             mGetUrl.schedule(new TimerTask() {
                 @Override
                 public void run() {
+
+                    IHttpUtil httpUtil = new HttpUtil();
+
                     java.util.Scanner scanner;
                     try {
-                        scanner = new java.util.Scanner(new URL(COVERAGE_REDIRECT_URL).openStream(), "UTF-8");
+                        scanner = new java.util.Scanner(httpUtil.getUrlAsStream(COVERAGE_REDIRECT_URL), "UTF-8");
                     } catch (Exception ex) {
                         Log.d(LOG_TAG, ex.toString());
                         AppGlobals.guiLogInfo("Failed to get coverage url:" + ex.toString());

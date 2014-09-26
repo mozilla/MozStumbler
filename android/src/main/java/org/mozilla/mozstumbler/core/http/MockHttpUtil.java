@@ -4,9 +4,13 @@
 
 package org.mozilla.mozstumbler.core.http;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringBufferInputStream;
+import java.io.StringReader;
 import java.io.Writer;
 import java.net.URL;
 
@@ -15,6 +19,16 @@ public class MockHttpUtil implements IHttpUtil {
     @Override
     public String getUrlAsString(URL url) throws IOException {
         return "abc";
+    }
+
+    @Override
+    public String getUrlAsString(String url) throws IOException {
+        return "abc";
+    }
+
+    @Override
+    public InputStream getUrlAsStream(String url) throws IOException {
+        return new ByteArrayInputStream(new String("abc").getBytes());
     }
 
     @Override

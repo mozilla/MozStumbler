@@ -5,7 +5,8 @@
 package org.mozilla.mozstumbler.core.http;
 
 import android.os.Build;
-import android.util.Log;
+
+import org.mozilla.mozstumbler.logging.Log;
 
 import org.mozilla.mozstumbler.client.ClientPrefs;
 import org.mozilla.mozstumbler.service.AppGlobals;

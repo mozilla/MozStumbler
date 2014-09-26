@@ -68,6 +68,17 @@ public class HttpUtil implements IHttpUtil {
         }
     }
 
+    @Override
+    public String getUrlAsString(String url) throws IOException {
+        return getUrlAsString(new URL(url));
+    }
+
+    @Override
+    public InputStream getUrlAsStream(String url) throws IOException {
+        return new URL(url).openStream();
+    }
+
+
     public File getUrlAsFile(URL url, File file) throws IOException {
         final int bufferLength = 8192;
         final byte[] buffer = new byte[bufferLength];

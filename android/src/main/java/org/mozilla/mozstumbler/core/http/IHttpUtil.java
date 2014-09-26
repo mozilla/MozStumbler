@@ -6,9 +6,15 @@ package org.mozilla.mozstumbler.core.http;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 
 public interface IHttpUtil {
-    public String getUrlAsString(URL url) throws IOException ;
+    public String getUrlAsString(URL url) throws IOException;
+
+    public String getUrlAsString(String url) throws IOException;
+
+    public InputStream getUrlAsStream(String url) throws IOException;
+
     public File getUrlAsFile(URL url, File file) throws IOException;
 }

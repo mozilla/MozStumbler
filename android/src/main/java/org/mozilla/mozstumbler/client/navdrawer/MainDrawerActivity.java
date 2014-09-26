@@ -62,12 +62,11 @@ public class MainDrawerActivity extends ActionBarActivity implements IMainActivi
                 R.string.drawer_close  /* "close drawer" description */
         ) {
 
-            public void onDrawerClosed(View view) {
-            }
+            @Override
+            public void onDrawerClosed(View view) {}
 
-            public void onDrawerOpened(View drawerView) {
-               // mMetricsView.populate();
-            }
+            @Override
+            public void onDrawerOpened(View drawerView) {}
         };
 
         // Set the drawer toggle as the DrawerListener

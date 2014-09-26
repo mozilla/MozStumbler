@@ -6,19 +6,17 @@ package org.mozilla.mozstumbler.service.uploadthread;
 
 import android.os.AsyncTask;
 import android.util.Log;
-import java.io.IOException;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.mozilla.mozstumbler.core.http.ILocationService;
 import org.mozilla.mozstumbler.core.http.IResponse;
 import org.mozilla.mozstumbler.core.http.MLS;
-import org.mozilla.mozstumbler.service.Prefs;
-import org.mozilla.mozstumbler.service.utils.AbstractCommunicator;
-import org.mozilla.mozstumbler.service.utils.AbstractCommunicator.SyncSummary;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageManager;
 import org.mozilla.mozstumbler.service.utils.NetworkInfo;
-import org.mozilla.mozstumbler.service.utils.Zipper;
+import org.mozilla.mozstumbler.service.utils.SyncSummary;
+
+import java.io.IOException;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /* Only one at a time may be uploading. If executed while another upload is in progress
 * it will return immediately, and SyncResult is null.
@@ -117,7 +115,7 @@ public class AsyncUploader extends AsyncTask<Void, Void, SyncSummary> {
         sIsUploading.set(false);
     }
 
-    private void uploadReports(AbstractCommunicator.SyncSummary syncResult, Runnable progressListener) {
+    private void uploadReports(SyncSummary syncResult, Runnable progressListener) {
         long uploadedObservations = 0;
         long uploadedCells = 0;
         long uploadedWifis = 0;

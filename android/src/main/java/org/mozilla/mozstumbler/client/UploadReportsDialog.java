@@ -15,12 +15,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import org.mozilla.mozstumbler.service.utils.AbstractCommunicator;
+import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageContract;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageManager;
 import org.mozilla.mozstumbler.service.uploadthread.AsyncUploader;
-import org.mozilla.mozstumbler.R;
+import org.mozilla.mozstumbler.service.utils.SyncSummary;
 
 import java.io.IOException;
 import java.util.Properties;
@@ -58,7 +58,7 @@ public class UploadReportsDialog extends DialogFragment
     }
 
     @Override
-    public void onUploadComplete(AbstractCommunicator.SyncSummary result) {
+    public void onUploadComplete(SyncSummary result) {
         updateUiThread();
         Log.i(LOG_TAG, "Upload Completed");
     }

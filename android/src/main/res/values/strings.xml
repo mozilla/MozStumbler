@@ -68,6 +68,7 @@
     <string name="drawer_close">Close drawer</string>
 
     <string name="title_activity_leaderboard">Leaderboard</string>
+    <string name="drawer_map_layers_title">Map layers (for nerds)</string>
 
 </resources>
 

@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
+import org.mozilla.mozstumbler.service.core.http.HttpUtil;
+import org.mozilla.mozstumbler.service.core.http.IHttpUtil;
 import org.mozilla.mozstumbler.service.core.http.ILocationService;
 import org.mozilla.mozstumbler.service.core.http.IResponse;
 import org.mozilla.mozstumbler.service.core.http.MLS;
@@ -130,8 +132,10 @@ public class AsyncUploader extends AsyncTask<Void, Void, SyncSummary> {
             return;
         }
 
-         ILocationService mls = new MLS();
-         DataStorageManager dm = DataStorageManager.getInstance();
+
+        IHttpUtil httpUtil = new HttpUtil();
+        ILocationService mls = new MLS(httpUtil);
+        DataStorageManager dm = DataStorageManager.getInstance();
 
         String error = null;
 

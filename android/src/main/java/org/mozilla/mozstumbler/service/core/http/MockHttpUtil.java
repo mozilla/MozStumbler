@@ -4,14 +4,27 @@
 
 package org.mozilla.mozstumbler.service.core.http;
 
+import android.os.Build;
+
+import org.mozilla.mozstumbler.service.core.logging.Log;
+import org.mozilla.mozstumbler.service.utils.Zipper;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.Writer;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
-
+import java.util.HashMap;
+import java.util.Map;
 
 public class MockHttpUtil implements IHttpUtil {
     @Override
@@ -35,4 +48,10 @@ public class MockHttpUtil implements IHttpUtil {
         writer.write(getUrlAsString(url));
         return file;
     }
+
+    @Override
+    public IResponse post(String urlString, byte[] data, Map<String, String> headers, boolean precompressed, MLS mls) {
+        return null;
+    }
+
 }

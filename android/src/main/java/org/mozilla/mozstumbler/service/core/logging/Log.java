@@ -1,10 +1,13 @@
-package org.mozilla.mozstumbler.logging;
+package org.mozilla.mozstumbler.service.core.logging;
 
 import java.io.IOException;
-import android.os.Build;
 
 import org.mozilla.mozstumbler.BuildConfig;
 
+/*
+ This is a proxy around the android logger so that we can see what the heck
+ is happening when we run under test.
+ */
 public class Log {
     public static void e(String logTag, String s) {
         if (BuildConfig.BUILD_TYPE.equals("unittest")) {

@@ -10,6 +10,8 @@ import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.mozilla.mozstumbler.service.core.http.HttpUtil;
+import org.mozilla.mozstumbler.service.core.http.IHttpUtil;
 import org.mozilla.mozstumbler.service.utils.LocationAdapter;
 import org.mozilla.mozstumbler.service.core.http.ILocationService;
 import org.mozilla.mozstumbler.service.core.http.IResponse;
@@ -37,7 +39,9 @@ public class MLSLocationGetter extends AsyncTask<String, Void, Location> {
     public MLSLocationGetter(MLSLocationGetterCallback callback, JSONObject mlsQueryObj) {
         mCallback = callback;
         mQueryMLSBytes  = mlsQueryObj.toString().getBytes();
-        mls = new MLS();
+
+        IHttpUtil httpUtil = new HttpUtil();
+        mls = new MLS(httpUtil);
     }
 
     @Override

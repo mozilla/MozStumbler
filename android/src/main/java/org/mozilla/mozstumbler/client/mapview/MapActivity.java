@@ -92,11 +92,8 @@ public final class MapActivity extends android.support.v4.app.Fragment
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN ) {
                     //@TODO fill this in
-                    //.setImageResource(R.drawable.modeitempressed);
-
                 }
                 else if (event.getAction() == MotionEvent.ACTION_UP ) {
-                    //.setImageResource(R.drawable.modeitemnormal);
                 }
                 return false;
             }

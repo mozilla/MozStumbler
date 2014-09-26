@@ -1,6 +1,6 @@
 package org.mozilla.mozstumbler.service.core.http;
 
-import org.mozilla.mozstumbler.logging.Log;
+import org.mozilla.mozstumbler.service.core.logging.Log;
 import org.mozilla.mozstumbler.service.AppGlobals;
 
 public class HTTPResponse implements IResponse {

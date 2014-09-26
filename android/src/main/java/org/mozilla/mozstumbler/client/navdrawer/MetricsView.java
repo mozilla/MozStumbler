@@ -106,6 +106,7 @@ public class MetricsView implements AsyncUploader.AsyncUploaderListener {
         mThisSessionWifisView = (TextView) mView.findViewById(R.id.this_session_wifis_value);
 
         mUploadButton = (ImageButton) mView.findViewById(R.id.upload_observations_button);
+        mUploadButton.setEnabled(false);
         mUploadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -117,7 +118,7 @@ public class MetricsView implements AsyncUploader.AsyncUploaderListener {
                 mUploader = new AsyncUploader(settings, MetricsView.this);
                 mUploader.setNickname(ClientPrefs.getInstance().getNickname());
                 mUploader.execute();
-                setIconToSyncing(true);
+                setUploadButtonToSyncing(true);
             }
         });
     }
@@ -129,12 +130,24 @@ public class MetricsView implements AsyncUploader.AsyncUploaderListener {
     }
 
 
-    private void setIconToSyncing(boolean isSyncing) {
+    private boolean buttonIsSyncIcon;
+    private void updateUploadButtonEnabled() {
+        if (buttonIsSyncIcon) {
+            mUploadButton.setEnabled(false);
+        } else {
+            mUploadButton.setEnabled(mHasQueuedObservations);
+        }
+    }
+
+    private void setUploadButtonToSyncing(boolean isSyncing) {
         if (isSyncing) {
             mUploadButton.setImageResource(R.drawable.ic_action_refresh);
         } else {
             mUploadButton.setImageResource(R.drawable.ic_action_upload);
         }
+
+        buttonIsSyncIcon = isSyncing;
+        updateUploadButtonEnabled();
     }
 
     @Override
@@ -164,7 +177,7 @@ public class MetricsView implements AsyncUploader.AsyncUploaderListener {
 
         // If already uploading check the stats in a few seconds
         if (AsyncUploader.isUploading()) {
-            setIconToSyncing(true);
+            setUploadButtonToSyncing(true);
             if (mUpdateTimer == null) {
                 mUpdateTimer = new Timer();
                 mUpdateTimer.scheduleAtFixedRate(new TimerTask() {
@@ -179,7 +192,7 @@ public class MetricsView implements AsyncUploader.AsyncUploaderListener {
                 mUpdateTimer.purge();
                 mUpdateTimer = null;
             }
-            setIconToSyncing(false);
+            setUploadButtonToSyncing(false);
         }
     }
 
@@ -253,6 +266,7 @@ public class MetricsView implements AsyncUploader.AsyncUploaderListener {
         mQueuedObservationsView.setText(val);
 
         mHasQueuedObservations = q.mReportCount > 0;
+        updateUploadButtonEnabled();
     }
 
     public void setObservationCount(int count) {

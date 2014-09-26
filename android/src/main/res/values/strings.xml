@@ -47,7 +47,7 @@
     <string name="metrics_observations_title">Observations:</string>
     <string name="metrics_observations_wifis_title">Wi-Fi access points:</string>
     <string name="metrics_observations_cell_towers_title">Cell towers:</string>
-    <string name="upload_observations_in_queue_title">Not sent (in queue)</string>
+    <string name="upload_observations_in_queue_title">Ready to send</string>
     <string name="upload_observations_button">Upload</string>
     <string name="upload_observations_dialog_title">Upload observations</string>
     <string name="upload_wifi_only_title">Upload only on Wi-Fi</string>

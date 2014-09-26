@@ -41,8 +41,7 @@ public class MainDrawerActivity extends ActionBarActivity implements IMainActivi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_drawer);
 
-        if (ClientPrefs.getInstance().getIsHardwareAccelerated() &&
-                Build.VERSION.SDK_INT > 10) {
+        if (Build.VERSION.SDK_INT > 10) {
             getWindow().setFlags(
                     WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED,
                     WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED);

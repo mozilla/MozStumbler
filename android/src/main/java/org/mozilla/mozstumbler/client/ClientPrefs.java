@@ -10,7 +10,6 @@ public class ClientPrefs extends Prefs {
     private static final String LOG_TAG = ClientPrefs.class.getSimpleName();
     private static final String LAT_PREF = "lat";
     private static final String LON_PREF = "lon";
-    private static final String HARDWARE_ACCEL_PREF = "hardware_acceleration";
     public static final String KEEP_SCREEN_ON_PREF = "keep_screen_on";
 
     private static final String ON_MAP_SHOW_MLS_PREF = "show_mls";
@@ -49,14 +48,6 @@ public class ClientPrefs extends Prefs {
         final float lat = getPrefs().getFloat(LAT_PREF, 0);
         final float lon = getPrefs().getFloat(LON_PREF, 0);
         return new GeoPoint(lat, lon);
-    }
-
-    public boolean getIsHardwareAccelerated() {
-        return getBoolPrefWithDefault(HARDWARE_ACCEL_PREF, true);
-    }
-
-    public void setIsHardwareAccelerated(boolean on) {
-        setBoolPref(HARDWARE_ACCEL_PREF, on);
     }
 
     public boolean getKeepScreenOn() {

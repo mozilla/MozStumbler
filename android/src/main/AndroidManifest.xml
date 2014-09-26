@@ -50,21 +50,21 @@
         <activity
             android:name=".client.subactivities.AboutActivity"
             android:label="@string/action_about"
-            android:parentActivityName=".client.navdrawer.MainDrawerActivity" >
+            android:parentActivityName=".client.subactivities.PreferencesScreen" >
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".client.navdrawer.MainDrawerActivity" />
+                android:value=".client.subactivities.PreferencesScreen" />
         </activity>
 
         <activity
             android:name=".client.subactivities.LogActivity"
             android:label="@string/title_activity_log"
-            android:parentActivityName=".client.navdrawer.MainDrawerActivity" >
+            android:parentActivityName=".client.subactivities.PreferencesScreen" >
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".client.navdrawer.MainDrawerActivity" />
+                android:value=".client.subactivities.PreferencesScreen" />
         </activity>
 
         <activity

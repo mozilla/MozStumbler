@@ -22,7 +22,6 @@ import org.mozilla.mozstumbler.client.ClientPrefs;
 public class PreferencesScreen extends PreferenceActivity {
     private EditTextPreference mNicknamePreference;
     private CheckBoxPreference mWifiPreference;
-    private CheckBoxPreference mIsHardwareAccelerated;
     private CheckBoxPreference mKeepScreenOn;
     private static ClientPrefs sPrefs;
 
@@ -94,14 +93,6 @@ public class PreferencesScreen extends PreferenceActivity {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
                 sPrefs.setUseWifiOnly(newValue.equals(true));
-                return true;
-            }
-        });
-
-        mIsHardwareAccelerated.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
-            @Override
-            public boolean onPreferenceChange(Preference preference, Object newValue) {
-                sPrefs.setIsHardwareAccelerated(newValue.equals(true));
                 return true;
             }
         });

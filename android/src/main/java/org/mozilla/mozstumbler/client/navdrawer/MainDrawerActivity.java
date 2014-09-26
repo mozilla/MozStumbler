@@ -25,6 +25,8 @@ import org.mozilla.mozstumbler.client.ClientPrefs;
 import org.mozilla.mozstumbler.client.ClientStumblerService;
 import org.mozilla.mozstumbler.client.IMainActivity;
 import org.mozilla.mozstumbler.client.Updater;
+import org.mozilla.mozstumbler.client.http.HttpUtil;
+import org.mozilla.mozstumbler.client.http.IHttpUtil;
 import org.mozilla.mozstumbler.client.mapview.MapActivity;
 import org.mozilla.mozstumbler.client.subactivities.LeaderboardActivity;
 import org.mozilla.mozstumbler.client.MainApp;
@@ -84,7 +86,8 @@ public class MainDrawerActivity extends ActionBarActivity implements IMainActivi
 
         getApp().setMainActivity(this);
 
-        Updater upd = new Updater();
+        IHttpUtil httpUtil = new HttpUtil();
+        Updater upd = new Updater(httpUtil);
         upd.checkForUpdates(this, BuildConfig.MOZILLA_API_KEY);
 
         mMetricsView = new MetricsView(findViewById(R.id.left_drawer));

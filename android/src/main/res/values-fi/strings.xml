@@ -37,10 +37,10 @@
     <string name="about_mapbox">Lisätietoja karttapalvelusta…</string>
     <string name="about_legal_aosp">Tämä sovellus sisältää ikoneita Android Open Source -projektista. Käytössä olevat ikonit on lisensoitu Creative Commons 2.5 Attribution -lisenssillä.</string>
     <string name="upload_observations_sent_title">Lähetetty</string>
-    <string name="upload_observations_last_upload_time_title">Edellisen lähetyksen aika:</string>
-    <string name="upload_observations_observations_sent_title">Tietoja:</string>
-    <string name="upload_observations_wifis_sent_title">Wi-Fi:</string>
-    <string name="upload_observations_cells_sent_title">Mastoja:</string>
+    <string name="metrics_observations_last_upload_time_title">Edellisen lähetyksen aika:</string>
+    <string name="metrics_observations_title">Tietoja:</string>
+    <string name="metrics_observations_wifis_title">Wi-Fi:</string>
+    <string name="metrics_observations_cell_towers_title">Mastoja:</string>
     <string name="upload_observations_in_queue_title">Jonossa</string>
     <string name="upload_observations_observations_queued_title">Tietoja:</string>
     <string name="upload_observations_wifis_queued_title">Wi-Fi:</string>
@@ -54,5 +54,5 @@
     <string name="action_view_log">Näytä loki</string>
     <string name="scroll_to_start">Siirry alkuun</string>
     <string name="scroll_to_end">Siirry loppuun</string>
-    <string name="upload_observations_data_size">Size (KB):</string>
+    <string name="upload_observations_data_size">Size:</string>
 </resources>

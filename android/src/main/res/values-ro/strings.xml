@@ -41,10 +41,10 @@
     <string name="about_mapbox">Aflați mai multe despre furnizorul nostru de cartografiere…</string>
     <string name="about_legal_aosp">Unele imagini din această aplicație sunt reproduse din cele create și oferite de către Android Open Source Project și sunt utilizate în acord cu condițiile descrise în Creative Commons 2.5 Attribution License.</string>
     <string name="upload_observations_sent_title">Trimise</string>
-    <string name="upload_observations_last_upload_time_title">Ora ultimei încărcări:</string>
-    <string name="upload_observations_observations_sent_title">Obvervații:</string>
-    <string name="upload_observations_wifis_sent_title">Puncte acces Wi-Fi:</string>
-    <string name="upload_observations_cells_sent_title">Celule:</string>
+    <string name="metrics_observations_last_upload_time_title">Ora ultimei încărcări:</string>
+    <string name="metrics_observations_title">Obvervații:</string>
+    <string name="metrics_observations_wifis_title">Puncte acces Wi-Fi:</string>
+    <string name="metrics_observations_cell_towers_title">Celule:</string>
     <string name="upload_observations_in_queue_title">În coadă</string>
     <string name="upload_observations_observations_queued_title">Obvervații:</string>
     <string name="upload_observations_wifis_queued_title">Puncte acces Wi-Fi:</string>
@@ -60,5 +60,5 @@
     <string name="action_view_log">Arată jurnal</string>
     <string name="scroll_to_start">Derulare la început</string>
     <string name="scroll_to_end">Derulare la sfârșit</string>
-    <string name="upload_observations_data_size">Mărime (KB):</string>
+    <string name="upload_observations_data_size">Mărime:</string>
 </resources>

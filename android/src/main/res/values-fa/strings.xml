@@ -38,10 +38,10 @@
     <string name="about_mapbox">دربارهٔ فراهم آورندهٔ نقشهٔ ما بیشتر بدانید…</string>
     <string name="about_legal_aosp">بیشتر آیکون‌ها استفاده‌شده در این برنامه از آثار ایجاد و به‌اشتراک‌گذاری‌شده توسط پروژهٔ متن‌باز اندروید گرفته یا بازتولیدشده‌است و بنا به شروط توضیح‌داده‌شده در مجوز Creative Commons 2.5 Attribution استفاده شده‌است.</string>
     <string name="upload_observations_sent_title">ارسال شد</string>
-    <string name="upload_observations_last_upload_time_title">آخرین زمان بارگذاری:</string>
-    <string name="upload_observations_observations_sent_title">مشاهده‌ها:</string>
-    <string name="upload_observations_wifis_sent_title">نقاط دسترسی وای‌فای:</string>
-    <string name="upload_observations_cells_sent_title">شبکه‌های گوشی همراه:</string>
+    <string name="metrics_observations_last_upload_time_title">آخرین زمان بارگذاری:</string>
+    <string name="metrics_observations_title">مشاهده‌ها:</string>
+    <string name="metrics_observations_wifis_title">نقاط دسترسی وای‌فای:</string>
+    <string name="metrics_observations_cell_towers_title">شبکه‌های گوشی همراه:</string>
     <string name="upload_observations_in_queue_title">در صف</string>
     <string name="upload_observations_observations_queued_title">مشاهده‌ها:</string>
     <string name="upload_observations_wifis_queued_title">نقاط دسترسی وای‌فای:</string>
@@ -52,7 +52,7 @@
     <string name="upload_wifi_only_summary">این گزینه مصرف‌داده‌ای شما را هنگام استفاده از شبکهٔ گوشی همراه کاهش خواهد داد.</string>
 
 
-    <string name="upload_observations_data_size">Size (KB):</string>
+    <string name="upload_observations_data_size">Size:</string>
     <!--translations missing
 	<string name="refresh_map">Refresh location</string>
 	

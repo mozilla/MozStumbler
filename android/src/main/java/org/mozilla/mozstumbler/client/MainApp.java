@@ -22,25 +22,27 @@ import android.os.StrictMode;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+
 import java.io.File;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.Map;
+
 import org.mozilla.mozstumbler.BuildConfig;
 import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.client.cellscanner.DefaultCellScanner;
-import org.mozilla.mozstumbler.client.mapview.ObservedLocationsReceiver;
+import org.mozilla.mozstumbler.client.navdrawer.MainDrawerActivity;
+import org.mozilla.mozstumbler.client.subactivities.LogActivity;
 import org.mozilla.mozstumbler.service.AppGlobals;
+import org.mozilla.mozstumbler.service.stumblerthread.StumblerService;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageManager;
-import org.mozilla.mozstumbler.service.stumblerthread.scanners.GPSScanner;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.WifiScanner;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner.CellScanner;
 import org.mozilla.mozstumbler.service.uploadthread.AsyncUploader;
 import org.mozilla.mozstumbler.service.utils.NetworkInfo;
 
-public class MainApp extends Application {
-
+public class MainApp extends Application implements ObservedLocationsReceiver.ICountObserver {
     private final String LOG_TAG = AppGlobals.LOG_PREFIX + MainApp.class.getSimpleName();
     private ClientStumblerService mStumblerService;
     private ServiceConnection mConnection;
@@ -48,8 +50,11 @@ public class MainApp extends Application {
     private WeakReference<IMainActivity> mMainActivity = new WeakReference<IMainActivity>(null);
     private final long MAX_BYTES_DISK_STORAGE = 1000 * 1000 * 20; // 20MB for MozStumbler by default, is ok?
     private final int MAX_WEEKS_OLD_STORED = 4;
-    public static final String INTENT_TURN_OFF = "org.mozilla.mozstumbler.turnMeOff";
-    private static final int    NOTIFICATION_ID = 1;
+    private static final String INTENT_TURN_OFF = "org.mozilla.mozstumbler.turnMeOff";
+    private static final int NOTIFICATION_ID = 1;
+    public static final String ACTION_BASE = AppGlobals.ACTION_NAMESPACE + ".MainApp.";
+    public static final String ACTION_UI_UNPAUSE_SCANNING = ACTION_BASE + "UNPAUSE_SCANNING";
+    public static final String ACTION_UI_PAUSE_SCANNING = ACTION_BASE + "PAUSE_SCANNING";
 
     public ClientPrefs getPrefs() {
         return ClientPrefs.getInstance();
@@ -84,6 +89,8 @@ public class MainApp extends Application {
         NetworkInfo.createGlobalInstance(this);
         LogActivity.LogMessageReceiver.createGlobalInstance(this);
         CellScanner.setCellScannerImpl(new DefaultCellScanner(this));
+        // This will create, and register the receiver
+        ObservedLocationsReceiver.createGlobalInstance(this.getApplicationContext(), this);
 
         enableStrictMode();
 
@@ -129,7 +136,30 @@ public class MainApp extends Application {
 
         Intent intent = new Intent(this, ClientStumblerService.class);
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+
+        // Register a listener for a toggle event in the notification pulldown
+        LocalBroadcastManager bManager = LocalBroadcastManager.getInstance(this);
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(ACTION_UI_UNPAUSE_SCANNING);
+        intentFilter.addAction(ACTION_UI_PAUSE_SCANNING);
+        bManager.registerReceiver(notificationDrawerEventReceiver, intentFilter);
     }
+
+    private final BroadcastReceiver notificationDrawerEventReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            StumblerService service = getService();
+            if (service == null) {
+                return;
+            }
+
+            if (intent.getAction().equals(ACTION_UI_PAUSE_SCANNING) && service.isScanning()) {
+                stopScanning();
+            } else if (intent.getAction().equals(ACTION_UI_UNPAUSE_SCANNING) && !service.isScanning()) {
+                startScanning();
+            }
+        }
+    };
 
     @Override
     public void onTerminate() {
@@ -147,9 +177,6 @@ public class MainApp extends Application {
     }
 
     public void startScanning() {
-        // This will create, and register the receiver
-        ObservedLocationsReceiver.getInstance(this.getApplicationContext());
-        
         mStumblerService.startForeground(NOTIFICATION_ID, buildNotification());
         mStumblerService.startScanning();
     }
@@ -163,17 +190,6 @@ public class MainApp extends Application {
         AsyncUploader uploader = new AsyncUploader(settings, null /* don't need to listen for completion */);
         uploader.setNickname(ClientPrefs.getInstance().getNickname());
         uploader.execute();
-    }
-
-    public void toggleScanning(MainActivity caller) {
-        boolean scanning = mStumblerService.isScanning();
-
-        if (scanning) {
-            stopScanning();
-        } else {
-            startScanning();
-            caller.checkGps();
-        }
     }
 
     @TargetApi(9)
@@ -211,9 +227,6 @@ public class MainApp extends Application {
                 IntentFilter intentFilter = new IntentFilter();
                 intentFilter.addAction(WifiScanner.ACTION_WIFIS_SCANNED);
                 intentFilter.addAction(CellScanner.ACTION_CELLS_SCANNED);
-                intentFilter.addAction(GPSScanner.ACTION_GPS_UPDATED);
-                intentFilter.addAction(GPSScanner.ACTION_NMEA_RECEIVED);
-                intentFilter.addAction(MainActivity.ACTION_UPDATE_UI);
                 intentFilter.addAction(INTENT_TURN_OFF);
                 LocalBroadcastManager.getInstance(MainApp.this).registerReceiver(this, intentFilter);
             }
@@ -226,38 +239,8 @@ public class MainApp extends Application {
             }
         }
 
-        private void receivedGpsMessage(Intent intent) {
-            String subject = intent.getStringExtra(Intent.EXTRA_SUBJECT);
-            if (subject.equals(GPSScanner.SUBJECT_NEW_STATUS) && mMainActivity.get() != null) {
-                mMainActivity.get().setGpsFixes(intent.getIntExtra(GPSScanner.NEW_STATUS_ARG_FIXES, 0));
-                mMainActivity.get().setGpsSats(intent.getIntExtra(GPSScanner.NEW_STATUS_ARG_SATS, 0));
-            }
-        }
-
-        private void receivedNmeaMessage(Intent intent) {
-            String nmea_data = intent.getStringExtra(GPSScanner.NMEA_DATA);
-
-
-            if (nmea_data != null) {
-                // TODO: we should probably have some kind of visual
-                // indicator to note that GPS NMEA data is being
-                // actively received.
-            }
-        }
-
         @Override
         public void onReceive(Context context, Intent intent) {
-
-            String action = intent.getAction();
-
-            if (action.equals(GPSScanner.ACTION_GPS_UPDATED)) {
-                receivedGpsMessage(intent);
-            }
-
-            if (action.equals(GPSScanner.ACTION_NMEA_RECEIVED)) {
-                receivedNmeaMessage(intent);
-            }
-
             if (mMainActivity.get() != null) {
                 mMainActivity.get().updateUiOnMainThread();
             }
@@ -269,7 +252,7 @@ public class MainApp extends Application {
         Intent turnOffIntent = new Intent(INTENT_TURN_OFF);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, turnOffIntent, 0);
 
-        Intent notificationIntent = new Intent(context, MainActivity.class);
+        Intent notificationIntent = new Intent(context, MainApp.class);
         notificationIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_FROM_BACKGROUND);
         PendingIntent contentIntent = PendingIntent.getActivity(context, NOTIFICATION_ID,
                 notificationIntent,
@@ -301,9 +284,7 @@ public class MainApp extends Application {
             db = SQLiteDatabase.openDatabase(dbFile.toString(), null, 0);
             cursor = db.rawQuery("select * from stats", null);
             if (cursor == null || !cursor.moveToFirst()) {
-                if (db != null) {
-                    db.close();
-                }
+                db.close();
                 return null;
             }
 
@@ -316,11 +297,21 @@ public class MainApp extends Application {
             }
             return kv;
         } finally {
-            cursor.close();
+            if (cursor != null) {
+                cursor.close();
+            }
             if (db != null) {
                 db.close();
             }
             dbFile.delete();
+        }
+    }
+
+    private int observationCount = 0;
+    public void observedLocationCountIncrement() {
+        observationCount++;
+        if (mMainActivity.get() != null) {
+            mMainActivity.get().displayObservationCount(observationCount);
         }
     }
 }

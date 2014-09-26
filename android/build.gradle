@@ -111,6 +111,8 @@ dependencies {
 
     compile 'org.slf4j:slf4j-android:1.7.7'
 
+    compile 'com.ocpsoft:ocpsoft-pretty-time:1.0.7'
+
     // https://developer.android.com/tools/support-library/features.html
     // In general, we recommend including the v4 support and v7 appcompat
     // libraries, because they support a wide range of Android versions and

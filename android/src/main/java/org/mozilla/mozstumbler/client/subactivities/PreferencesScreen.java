@@ -2,14 +2,9 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package org.mozilla.mozstumbler.client;
+package org.mozilla.mozstumbler.client.subactivities;
 
-import android.annotation.TargetApi;
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.location.Location;
-import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
@@ -17,18 +12,19 @@ import android.preference.EditTextPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.PreferenceActivity;
+import android.preference.PreferenceGroup;
 import android.text.TextUtils;
+
+import org.mozilla.mozstumbler.BuildConfig;
 import org.mozilla.mozstumbler.R;
+import org.mozilla.mozstumbler.client.ClientPrefs;
 
 public class PreferencesScreen extends PreferenceActivity {
-
     private EditTextPreference mNicknamePreference;
     private EditTextPreference mEmailPreference;
 
     private CheckBoxPreference mWifiPreference;
-    private CheckBoxPreference mIsHardwareAccelerated;
     private CheckBoxPreference mKeepScreenOn;
-
     private static ClientPrefs sPrefs;
 
     /* Precondition to using this class, call this method to set Prefs */
@@ -49,7 +45,6 @@ public class PreferencesScreen extends PreferenceActivity {
         mEmailPreference = (EditTextPreference) getPreferenceManager().findPreference("email");
 
         mWifiPreference = (CheckBoxPreference) getPreferenceManager().findPreference("wifi_only");
-        mIsHardwareAccelerated = (CheckBoxPreference) getPreferenceManager().findPreference("hardware_acceleration");
         mKeepScreenOn = (CheckBoxPreference) getPreferenceManager().findPreference(ClientPrefs.KEEP_SCREEN_ON_PREF);
 
         setNicknamePreferenceTitle(sPrefs.getNickname());
@@ -57,6 +52,36 @@ public class PreferencesScreen extends PreferenceActivity {
         mWifiPreference.setChecked(sPrefs.getUseWifiOnly());
 
         setPreferenceListener();
+
+        Preference button = findPreference("about_button");
+        button.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference arg) {
+                startActivity(new Intent(PreferencesScreen.this, AboutActivity.class));
+                return true;
+            }
+        });
+
+        button = findPreference("log_button");
+        button.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference arg) {
+                startActivity(new Intent(PreferencesScreen.this, LogActivity.class));
+                return true;
+            }
+        });
+
+        button = findPreference("leaderboard_button");
+        if (Build.VERSION.SDK_INT > 10) {
+            ((PreferenceGroup) findPreference("api_10_support")).removePreference(button);
+        }
+        button.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference arg) {
+                startActivity(new Intent(PreferencesScreen.this, LeaderboardActivity.class));
+                return true;
+            }
+        });
     }
 
     private void setPreferenceListener() {
@@ -82,14 +107,6 @@ public class PreferencesScreen extends PreferenceActivity {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
                 sPrefs.setUseWifiOnly(newValue.equals(true));
-                return true;
-            }
-        });
-
-        mIsHardwareAccelerated.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
-            @Override
-            public boolean onPreferenceChange(Preference preference, Object newValue) {
-                sPrefs.setIsHardwareAccelerated(newValue.equals(true));
                 return true;
             }
         });

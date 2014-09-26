@@ -3,8 +3,11 @@ package org.mozilla.mozstumbler.client;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
 import org.mozilla.mozstumbler.core.http.IHttpUtil;
 import org.mozilla.mozstumbler.core.http.MockHttpUtil;
+import org.mozilla.mozstumbler.client.navdrawer.MainDrawerActivity;
+
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
@@ -15,13 +18,13 @@ import static org.junit.Assert.assertTrue;
 
 @Config(emulateSdk = 18)
 @RunWith(RobolectricTestRunner.class)
-public class MainActivityTest {
+public class MainDrawerActivityTest {
 
-    private MainActivity activity;
+    private MainDrawerActivity activity;
 
     @Before
     public void setUp() throws Exception {
-        activity = Robolectric.buildActivity(MainActivity.class).create().start().resume().get();
+        activity = Robolectric.newInstanceOf(MainDrawerActivity.class);
     }
 
     @Test
@@ -38,6 +41,7 @@ public class MainActivityTest {
                 super(simpleHttp);
             }
 
+            @Override
             public boolean wifiExclusiveAndUnavailable() {
                 return false;
             }

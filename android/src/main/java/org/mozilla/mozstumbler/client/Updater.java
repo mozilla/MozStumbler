@@ -30,8 +30,8 @@ public class Updater {
     private static final String APK_URL_FORMAT = "https://github.com/mozilla/MozStumbler/releases/download/v%s/MozStumbler-v%s.apk";
     private final IHttpUtil httpClient;
 
-    public Updater(IHttpUtil simpleHttp) {
-        httpClient = simpleHttp;
+    public Updater(IHttpUtil httpUtil) {
+        httpClient = httpUtil;
     }
 
     public boolean wifiExclusiveAndUnavailable() {

@@ -15,11 +15,18 @@
         android:summary="@string/upload_wifi_only_summary"
         android:defaultValue="true" />
     <CheckBoxPreference
-        android:key="hardware_acceleration"
-        android:title="@string/hardware_acceleration_title"
-        android:defaultValue="true" />
-    <CheckBoxPreference
         android:key="keep_screen_on"
         android:title="@string/keep_screen_on_title"
         android:defaultValue="true" />
+
+    <PreferenceCategory
+        android:key="api_10_support">
+    <Preference android:title="@string/view_leaderboard"
+        android:key="leaderboard_button"/>
+    </PreferenceCategory>
+
+    <Preference android:title="@string/action_view_log"
+        android:key="log_button"/>
+    <Preference android:title="@string/action_about"
+        android:key="about_button"/>
 </PreferenceScreen>

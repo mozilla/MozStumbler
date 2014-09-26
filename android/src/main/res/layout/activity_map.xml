@@ -8,92 +8,112 @@
                  android:id="@+id/map"
                  android:layout_width="match_parent"
                  android:layout_height="match_parent"
-     />
+     >
+    </org.osmdroid.views.MapView>
     <RelativeLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:background="#50000000"
-        android:id="@+id/relativeLayout2">
+        android:background="#66ffffff"
+        android:id="@+id/status_toolbar_layout"
+        >
         <ImageView
             android:id="@+id/fix_indicator"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_gps"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:src="@drawable/ic_gps_no_signal_flaticondotcom"
             />
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
             android:layout_toRightOf="@id/fix_indicator"
             >
             <TextView
-                android:id="@+id/satellites_used"
-                android:textColor="@android:color/white"
+                android:id="@+id/text_satellites_used"
+                android:textColor="@android:color/black"
+                android:layout_width="28dp"
+                android:layout_height="match_parent"
+                android:text="0"
+                android:gravity="center_vertical"
+                android:textSize="@dimen/font_size_for_map_view_report_icon"
+                />
+            <View
+                android:layout_height="match_parent"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_weight="1"
+                />
+            <ImageView
+                android:id="@+id/cells_indicator"
+                android:layout_width="33dp"
+                android:layout_height="33dp"
+                android:src="@drawable/ic_cell_flaticondotcom"
+                android:layout_marginLeft="-10dp"
+                />
             <TextView
-                android:id="@+id/satellites_visible"
-                android:textColor="@android:color/white"
+                android:id="@+id/text_cells_visible"
+                android:textColor="@android:color/black"
+                android:layout_width="40dp"
+                android:layout_height="match_parent"
+                android:text="3456"
+                android:gravity="center_vertical"
+                android:textSize="@dimen/font_size_for_map_view_report_icon"
+                />
+            <View
+                android:layout_height="match_parent"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:orientation="vertical">
+                android:layout_weight="1"
+                />
+            <ImageView
+                android:id="@+id/wifi_indicator"
+                android:layout_width="40dp"
+                android:layout_height="35dp"
+                android:src="@drawable/ic_wifi_flaticondotcom"
+                android:layout_marginRight="6dp"
+                />
             <TextView
-                android:id="@+id/latitude_text"
-                android:textColor="@android:color/white"
-                android:text="0.0000"
+                android:id="@+id/text_wifis_visible"
+                android:textColor="@android:color/black"
+                android:layout_width="40dp"
+                android:layout_height="match_parent"
+                android:text="3456"
+                android:gravity="center_vertical"
+                android:textSize="@dimen/font_size_for_map_view_report_icon"
+                />
+            <View
+                android:layout_height="match_parent"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_weight="1"
+                />
+            <ImageView
+                android:id="@+id/observations_indicator"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@drawable/ic_binoculars_flaticondotcom"
+                android:layout_marginRight="6dp"
+                android:layout_gravity="center" />
             <TextView
-                android:id="@+id/longitude_text"
-                android:textColor="@android:color/white"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-        </LinearLayout>
-    </RelativeLayout>
-    <RelativeLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:background="@android:color/black"
-        android:id="@+id/relativeLayout">
-        <TextView
-            android:id="@+id/cell_info_text"
-            android:textColor="@android:color/white"
-            android:text="Cells:"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-        <TextView
-            android:id="@+id/wifi_info_text"
-            android:textColor="@android:color/white"
-            android:layout_alignParentRight="true"
-            android:text="Wi-Fi:"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-    </RelativeLayout>
+                android:id="@+id/text_observation_count"
+                android:textColor="@android:color/black"
+                android:layout_width="40dp"
+                android:layout_height="match_parent"
+                android:text="3456"
+                android:gravity="center_vertical"
+                android:textSize="@dimen/font_size_for_map_view_report_icon"
+                />
 
-    <View
-        android:layout_width="5px"
-        android:layout_height="5px"
-        android:layout_above="@+id/relativeLayout"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:id="@+id/space" />
+        </LinearLayout>
+
+    </RelativeLayout>
 
     <ImageButton
         android:id="@+id/my_location_button"
         android:background="@drawable/ic_mylocation_android_assets"
         android:layout_width="54dp"
         android:layout_height="54dp"
-        android:layout_above="@+id/space"
-        android:layout_toRightOf="@+id/space"
-        android:layout_toEndOf="@+id/space"
 
-       />
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"/>
+
     <TextView
         android:id="@+id/copyright_area"
         android:textColor="@android:color/black"
@@ -102,8 +122,9 @@
         android:layout_height="wrap_content"
         android:padding="5dp"
         android:text="Copyright Placeholder"
-        android:textSize="9dp"
-        android:layout_alignBottom="@+id/my_location_button"
+        android:textSize="9sp"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        />
 </RelativeLayout>

@@ -7,6 +7,7 @@ package org.mozilla.mozstumbler.service.uploadthread;
 import android.os.AsyncTask;
 import android.util.Log;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -33,8 +34,8 @@ public class AsyncUploader extends AsyncTask<Void, Void, SyncSummary> {
     private final Object mListenerLock = new Object();
     private AsyncUploaderListener mListener;
     private static AtomicBoolean sIsUploading = new AtomicBoolean();
-    private String mNickname;
-    private String mEmail;
+    private String mNickname = "";
+    private String mEmail = "";
 
 
     public static final AtomicLong sTotalBytesUploadedThisSession = new AtomicLong();
@@ -141,8 +142,12 @@ public class AsyncUploader extends AsyncTask<Void, Void, SyncSummary> {
 
         try {
             DataStorageManager.ReportBatch batch = dm.getFirstBatch();
+            HashMap<String, String> headers = new HashMap<String, String>();
+            headers.put(MLS.EMAIL_HEADER, mEmail);
+            headers.put(MLS.NICKNAME_HEADER, mNickname);
+
             while (batch != null) {
-               IResponse result = mls.submit(batch.data, null, true);
+               IResponse result = mls.submit(batch.data, headers, true);
 
                 if (result.isSuccessCode2XX()) {
                     syncResult.totalBytesSent += result.bytesSent();

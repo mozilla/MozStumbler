@@ -16,8 +16,8 @@ public class MLS implements ILocationService {
 
     private static final String LOG_TAG = AppGlobals.LOG_PREFIX + MLS.class.getSimpleName();
 
-    private static final String NICKNAME_HEADER = "X-Nickname";
-    private static final String EMAIL_HEADER = "X-Email";
+    public static final String NICKNAME_HEADER = "X-Nickname";
+    public static final String EMAIL_HEADER = "X-Email";
     final IHttpUtil httpDelegate;
 
     private String mozApiKey;

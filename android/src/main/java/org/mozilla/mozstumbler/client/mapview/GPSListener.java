@@ -49,7 +49,16 @@ class GPSListener implements LocationListener {
                 }
             }
         };
+
         mLocationManager.addGpsStatusListener(mStatusListener);
+        Location lastGpsLoc = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        Location lastNetworkLoc = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+
+        if (lastGpsLoc != null) {
+            onLocationChanged(lastGpsLoc);
+        } else if (lastNetworkLoc != null) {
+            onLocationChanged(lastNetworkLoc);
+        }
     }
 
     void removeListener() {

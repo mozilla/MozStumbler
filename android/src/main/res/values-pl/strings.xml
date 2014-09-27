@@ -12,9 +12,13 @@
     <string name="wifi_access_points">Przeskanowane punkty dostępowe Wi-Fi: %1$d</string>
     <string name="wifi_disabled">0 (Wi-Fi jest wyłączone)</string>
     <string name="visible_wifi_access_points">Widoczne punkty dostępowe Wi-Fi: %1$s</string>
+    <string name="wifi_info">Widoczne punkty dostępowe Wi-Fi: %1$d, przeskanowane: %2$d</string>
     <string name="cells_scanned">Przeskanowane stacje sieci komórkowej: %1$d</string>
     <string name="cells_visible">Widoczne stacje sieci komórkowej: %1$d</string>
+    <string name="cells_info">Widoczne stacje sieci komórkowej: %1$d, przeskanowane: %2$d</string>
     <string name="gps_satellites">Używane/widoczne satelity GPS: %1$d/%2$d</string>
+    <string name="num_used">Używane: %1d</string>
+    <string name="num_visible">Widoczne: %1d</string>
     <string name="last_location">Ostatnie położenie: %1$s</string>
     <string name="coordinate">%1$.4f, %2$.4f</string>
     <string name="locations_scanned">Przeskanowane położenia: %1$d</string>
@@ -32,29 +36,38 @@
     <string name="yes">Tak</string>
     <string name="no">Nie</string>
     <string name="about_version">Wersja %1$s</string>
-	<string name="about_openstreetmap">Widok mapy © Współtwórcy projektu OpenStreetMap\nhttp://www.openstreetmap.org</string>
-	<string name="about_mapbox_title">Mapbox</string>
-    <string name="about_mapbox">Więcej informacji o dostawcy map…</string>
+    <string name="about_openstreetmap">Widok mapy © Współtwórcy projektu OpenStreetMap\nhttp://www.openstreetmap.org</string>
+    <string name="about_mapbox_title">Mapbox</string>
+    <string name="about_mapbox">Więcej informacji na http://www.mapbox.com</string>
     <string name="about_legal_aosp">Niektóre ikony w tej aplikacji pochodzą z Android Open Source Project i są używane zgodnie z warunkami licencji Creative Commons 2.5 Attribution.</string>
-    <string name="upload_observations_sent_title">Wysłane</string>
+    <string name="about_legal_icons8">Dodatkowe ikony z http://icons8.com na licencji: https://creativecommons.org/licenses/by-nd/3.0</string>
+    <string name="about_legal_flaticons">Ikony GPS, stacji sieci komórkowej, Wi-Fi i lornetki stworzone przez Freepik z http://www.flaticon.com na licencji: https://creativecommons.org/licenses/by-nd/3.0</string>
+    <string name="upload_observations_sent_title">Wysłane (ogółem)</string>
     <string name="metrics_observations_last_upload_time_title">Ostatnio wysłano o:</string>
     <string name="metrics_observations_title">Obserwacje:</string>
     <string name="metrics_observations_wifis_title">Punkty dostępowe Wi-Fi:</string>
     <string name="metrics_observations_cell_towers_title">Stacje sieci komórkowej:</string>
-    <string name="upload_observations_in_queue_title">W kolejce</string>
-    <string name="upload_observations_observations_queued_title">Obserwacje:</string>
-    <string name="upload_observations_wifis_queued_title">Punkty dostępowe Wi-Fi:</string>
-    <string name="upload_observations_cells_queued_title">Stacje sieci komórkowej:</string>
+    <string name="upload_observations_in_queue_title">Gotowe do wysłania</string>
     <string name="upload_observations_button">Wyślij</string>
     <string name="upload_observations_dialog_title">Wysyłanie obserwacji</string>
     <string name="upload_wifi_only_title">Wysyłanie tylko przez Wi-Fi</string>
     <string name="upload_wifi_only_summary">Ta opcja zmniejszy zużycie danych w sieci komórkowej.</string>
 
+    <string name="metrics_activity_title">Parametry</string>
+    <string name="metrics_this_session">Ta sesja</string>
+    <string name="drawer_map_option_show_mls_locations">Wyświetlanie położeń MLS</string>
+    <string name="drawer_map_option_show_observation_type">Oznaczanie stacji sieci komórkowej △, Wi-Fi □ lub obu ○</string>
 
-    <string name="refresh_map">Odśwież położenie</string>
-	<string name="title_activity_log">Dziennik</string>
-	<string name="action_view_log">Wyświetl dziennik</string>
-	<string name="scroll_to_start">Przewiń do góry</string>
-	<string name="scroll_to_end">Przewiń na dół</string>
-  <string name="upload_observations_data_size">Size:</string>
+    <string name="title_activity_log">Dziennik</string>
+    <string name="action_view_log">Wyświetl dziennik</string>
+    <string name="scroll_to_start">Przewiń do góry</string>
+    <string name="scroll_to_end">Przewiń na dół</string>
+    <string name="upload_observations_data_size">Rozmiar:</string>
+    <string name="keep_screen_on_title">Bez wyłączania ekranu na ekranie mapy</string>
+    <string name="drawer_open">Wysuń szufladę</string>
+    <string name="drawer_close">Zamknij szufladę</string>
+
+    <string name="title_activity_leaderboard">Ranking</string>
+    <string name="drawer_map_layers_title">Warstwy mapy (dla nerdów)</string>
+
 </resources>

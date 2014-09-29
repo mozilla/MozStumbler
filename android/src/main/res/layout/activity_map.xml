@@ -104,6 +104,19 @@
 
     </RelativeLayout>
 
+    <TextView
+        android:id="@+id/message_area"
+        android:textColor="@android:color/black"
+        android:background="#77ffffff"
+        android:gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        android:text="@string/map_offline_mode"
+        android:textSize="12sp"
+        android:layout_below="@+id/status_toolbar_layout"
+        android:layout_centerHorizontal="true" />
+
     <ImageButton
         android:id="@+id/my_location_button"
         android:background="@drawable/ic_mylocation_android_assets"

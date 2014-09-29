@@ -69,6 +69,8 @@
 
     <string name="title_activity_leaderboard">Leaderboard</string>
     <string name="drawer_map_layers_title">Map layers (for nerds)</string>
+    <string name="map_unavailable">The map is not available for display, as there is no SD card storage.\nYou can still collect data.</string>
+    <string name="map_offline_mode">"The map will not update without an Internet connection,\nhowever you are still able to collect data."</string>
 
 </resources>
 

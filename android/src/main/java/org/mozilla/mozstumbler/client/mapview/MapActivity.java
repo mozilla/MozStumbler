@@ -10,8 +10,11 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.location.Location;
+import android.net.ConnectivityManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -45,6 +48,9 @@ import org.osmdroid.views.overlay.Overlay;
 
 public final class MapActivity extends android.support.v4.app.Fragment
     implements MetricsView.IMapLayerToggleListener {
+
+    public enum NoMapAvailableMessage { eHideNoMapMessage, eNoMapDueToNoSdCard, eNoMapDueToNoInternet }
+
     private static final String LOG_TAG = AppGlobals.LOG_PREFIX + MapActivity.class.getSimpleName();
 
     private static final String COVERAGE_REDIRECT_URL = "https://location.services.mozilla.com/map.json";
@@ -55,6 +61,7 @@ public final class MapActivity extends android.support.v4.app.Fragment
     private static final int DEFAULT_ZOOM_AFTER_FIX = 16;
     private static final String LAT_KEY = "latitude";
     private static final String LON_KEY = "longitude";
+    private static final long MAP_TILE_AVAILABILITY_TIMER_MS = 5000;
 
     private MapView mMap;
     private AccuracyCircleOverlay mAccuracyOverlay;
@@ -67,12 +74,33 @@ public final class MapActivity extends android.support.v4.app.Fragment
 
     private View mRootView;
 
+    private final Handler mHandler = new Handler(Looper.getMainLooper());
+    private final Runnable mCheckForMapTileAvailability = new Runnable() {
+        @Override
+        public void run() {
+            ConnectivityManager cm = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+            boolean hasNetwork = cm.getActiveNetworkInfo() != null && cm.getActiveNetworkInfo().isConnectedOrConnecting();
+
+            if (getActivity().getFilesDir() == null) {
+                showMapNotAvailableMessage(NoMapAvailableMessage.eNoMapDueToNoSdCard);
+            } else if (!hasNetwork) {
+                showMapNotAvailableMessage(NoMapAvailableMessage.eNoMapDueToNoInternet);
+            } else {
+                showMapNotAvailableMessage(NoMapAvailableMessage.eHideNoMapMessage);
+            }
+
+            mHandler.postDelayed(mCheckForMapTileAvailability, MAP_TILE_AVAILABILITY_TIMER_MS);
+        }
+    };
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
 
         mRootView = inflater.inflate(R.layout.activity_map, container, false);
+
+        showMapNotAvailableMessage(NoMapAvailableMessage.eHideNoMapMessage);
 
         ImageButton centerMe = (ImageButton) mRootView.findViewById(R.id.my_location_button);
         centerMe.setVisibility(View.INVISIBLE);
@@ -88,12 +116,11 @@ public final class MapActivity extends android.support.v4.app.Fragment
 
         centerMe.setOnTouchListener(new View.OnTouchListener() {
             public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_DOWN ) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
                     //@TODO fill this in
                     //.setImageResource(R.drawable.modeitempressed);
 
-                }
-                else if (event.getAction() == MotionEvent.ACTION_UP ) {
+                } else if (event.getAction() == MotionEvent.ACTION_UP) {
                     //.setImageResource(R.drawable.modeitemnormal);
                 }
                 return false;
@@ -251,8 +278,7 @@ public final class MapActivity extends android.support.v4.app.Fragment
         TextView copyrightArea = (TextView) mRootView.findViewById(R.id.copyright_area);
         if (TileSourceFactory.MAPQUESTOSM.equals(tileSource)) {
             copyrightArea.setText("Tiles Courtesy of MapQuest\n© OpenStreetMap contributors");
-        }
-        else {
+        } else {
             copyrightArea.setText("© MapBox © OpenStreetMap contributors");
         }
     }
@@ -278,7 +304,7 @@ public final class MapActivity extends android.support.v4.app.Fragment
 
     void updateGPSInfo(int satellites, int fixes) {
         // @TODO Move this code to an appropriate place
-        if  (mCoverageTilesOverlay == null && sCoverageUrl != null) {
+        if (mCoverageTilesOverlay == null && sCoverageUrl != null) {
             mCoverageTilesOverlay = new CoverageOverlay(getActivity().getApplicationContext(), sCoverageUrl, mMap);
             mMap.getOverlays().add(mMap.getOverlays().indexOf(mAccuracyOverlay), mCoverageTilesOverlay);
         }
@@ -295,6 +321,7 @@ public final class MapActivity extends android.support.v4.app.Fragment
         }
 
         final OnSwipeListener mOnSwipe;
+
         SwipeListeningOverlay(Context ctx, OnSwipeListener onSwipe) {
             super(ctx);
             mOnSwipe = onSwipe;
@@ -325,13 +352,15 @@ public final class MapActivity extends android.support.v4.app.Fragment
         observer.setMapActivity(this);
 
         dimToolbar();
+
+        mHandler.postDelayed(mCheckForMapTileAvailability, MAP_TILE_AVAILABILITY_TIMER_MS);
     }
 
     private void saveStateToPrefs() {
         IGeoPoint center = mMap.getMapCenter();
         ClientPrefs.getInstance().setLastMapCenter(center);
     }
-    
+
     @Override
     public void onStop() {
         super.onStop();
@@ -341,6 +370,8 @@ public final class MapActivity extends android.support.v4.app.Fragment
         mGPSListener.removeListener();
         ObservedLocationsReceiver observer = ObservedLocationsReceiver.getInstance();
         observer.removeMapActivity();
+
+        mHandler.removeCallbacks(mCheckForMapTileAvailability);
     }
 
     @Override
@@ -421,4 +452,17 @@ public final class MapActivity extends android.support.v4.app.Fragment
         mObservationPointsOverlay.mDrawObservationsWithShape = isOn;
         mMap.invalidate();
     }
+
+    public void showMapNotAvailableMessage(NoMapAvailableMessage noMapAvailableMessage) {
+        TextView noMapMessage = (TextView) mRootView.findViewById(R.id.message_area);
+        if (noMapAvailableMessage == NoMapAvailableMessage.eHideNoMapMessage) {
+            noMapMessage.setVisibility(View.INVISIBLE);
+        } else {
+            noMapMessage.setVisibility(View.VISIBLE);
+            int resId = (noMapAvailableMessage == NoMapAvailableMessage.eNoMapDueToNoInternet)?
+                    R.string.map_offline_mode : R.string.map_unavailable;
+            noMapMessage.setText(resId);
+        }
+    }
+
 }

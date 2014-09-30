@@ -25,6 +25,7 @@ public class WifiBlockLists implements WifiBlockListInterface {
             "AndroidAP",
             "AndroidHotspot",
             "Android Hotspot",
+            "Autonet-", // Mercedes in-car WiFi, matching regex "^Autonet-\d+"
             "barnacle", // Android tether app
             "Galaxy Note",
             "Galaxy S",
@@ -37,6 +38,7 @@ public class WifiBlockLists implements WifiBlockListInterface {
             "LG VS910 4G",
             "LG Vortex",
             "MB526 ", // Motorola Defy Plus, matching regex "^MB526 \d{4}$"
+            "MB WLAN ", // Mercedes in-car WiFi, matching regex "^MB WLAN \d{5}$"
             "MIFI",
             "MiFi",
             "myLGNet",

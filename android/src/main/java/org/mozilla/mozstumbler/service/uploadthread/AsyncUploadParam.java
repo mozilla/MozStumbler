@@ -9,15 +9,23 @@ package org.mozilla.mozstumbler.service.uploadthread;
  */
 public class AsyncUploadParam {
 
-    boolean useWifiOnly;
-    AsyncUploaderListener asyncListener;
-    String nickname;
-    String emailAddress;
+    final boolean useWifiOnly;
+    final AsyncUploaderListener asyncListener;
+    final String nickname;
+    final String emailAddress;
 
     public AsyncUploadParam(boolean wifiOnly,
                             AsyncUploaderListener listener,
                             String nick,
                             String email) {
+
+        if (email == null) {
+            email = "";
+        }
+
+        if (nick == null) {
+            nick = "";
+        }
 
         useWifiOnly = wifiOnly;
         asyncListener = listener;

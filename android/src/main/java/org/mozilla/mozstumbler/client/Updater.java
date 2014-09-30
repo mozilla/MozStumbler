@@ -15,10 +15,9 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import org.mozilla.mozstumbler.R;
-import org.mozilla.mozstumbler.client.http.HttpUtil;
-import org.mozilla.mozstumbler.client.http.IHttpUtil;
+import org.mozilla.mozstumbler.service.core.http.IHttpUtil;
 import org.mozilla.mozstumbler.service.AppGlobals;
-import org.mozilla.mozstumbler.service.utils.NetworkUtils;
+import org.mozilla.mozstumbler.service.utils.NetworkInfo;
 
 import java.io.File;
 import java.io.IOException;
@@ -36,7 +35,7 @@ public class Updater {
     }
 
     public boolean wifiExclusiveAndUnavailable() {
-        return !NetworkUtils.getInstance().isWifiAvailable() && ClientPrefs.getInstance().getUseWifiOnly();
+        return !NetworkInfo.getInstance().isWifiAvailable() && ClientPrefs.getInstance().getUseWifiOnly();
     }
 
 
@@ -55,16 +54,8 @@ public class Updater {
         new AsyncTask<Void, Void, String>() {
             @Override
             public String doInBackground(Void... params) {
-
-                URL url = null;
                 try {
-                    url = new URL(VERSION_URL);
-                } catch (MalformedURLException e) {
-                    Log.e(LOG_TAG, "", e);
-                    return null;
-                }
-                try {
-                    return  httpClient.getUrlAsString(url);
+                    return  httpClient.getUrlAsString(VERSION_URL);
                 } catch (IOException ioEx) {
                     Log.e(LOG_TAG, "", ioEx);
                     return null;

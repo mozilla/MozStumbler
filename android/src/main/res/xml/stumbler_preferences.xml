@@ -5,6 +5,10 @@
         android:key="nickname"
         android:title="@string/enter_nickname"
         android:summary="@string/enter_nickname_longtext" />
+    <EditTextPreference
+        android:key="email"
+        android:title="@string/enter_email"
+        android:summary="@string/enter_email_longtext" />
     <CheckBoxPreference
         android:key="wifi_only"
         android:title="@string/upload_wifi_only_title"

@@ -16,6 +16,7 @@ import android.util.Log;
 public class Prefs {
     private static final String LOG_TAG = Prefs.class.getSimpleName();
     private static final String NICKNAME_PREF = "nickname";
+    private static final String EMAIL_PREF = "email";
     private static final String USER_AGENT_PREF = "user-agent";
     private static final String VALUES_VERSION_PREF = "values_version";
     private static final String WIFI_ONLY = "wifi_only";
@@ -104,6 +105,15 @@ public class Prefs {
         return TextUtils.isEmpty(nickname) ? null : nickname;
     }
 
+
+    public synchronized String getEmail() {
+        String email = getStringPref(EMAIL_PREF);
+        if (email != null) {
+            email = email.trim();
+        }
+        return TextUtils.isEmpty(email) ? null : email;
+    }
+
     public synchronized void setFirefoxScanEnabled(boolean on) {
         setBoolPref(FIREFOX_SCAN_ENABLED, on);
     }
@@ -112,6 +122,15 @@ public class Prefs {
         SharedPreferences.Editor editor = getPrefs().edit();
         editor.putLong(LAST_ATTEMPTED_UPLOAD_TIME, time);
         apply(editor);
+    }
+
+    public synchronized void setEmail(String email) {
+        if (email != null) {
+            email = email.trim();
+            if (email.length() > 0) {
+                setStringPref(EMAIL_PREF, email);
+            }
+        }
     }
 
     public synchronized void setNickname(String nick) {

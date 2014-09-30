@@ -24,16 +24,19 @@ import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.client.ClientPrefs;
 import org.mozilla.mozstumbler.client.ClientStumblerService;
 import org.mozilla.mozstumbler.client.IMainActivity;
+import org.mozilla.mozstumbler.client.MainApp;
 import org.mozilla.mozstumbler.client.Updater;
-import org.mozilla.mozstumbler.client.http.HttpUtil;
-import org.mozilla.mozstumbler.client.http.IHttpUtil;
 import org.mozilla.mozstumbler.client.mapview.MapActivity;
 import org.mozilla.mozstumbler.client.subactivities.FirstRunFragment;
 import org.mozilla.mozstumbler.client.subactivities.LeaderboardActivity;
-import org.mozilla.mozstumbler.client.MainApp;
 import org.mozilla.mozstumbler.client.subactivities.PreferencesScreen;
+import org.mozilla.mozstumbler.service.core.http.HttpUtil;
+import org.mozilla.mozstumbler.service.core.http.IHttpUtil;
 
-public class MainDrawerActivity extends ActionBarActivity implements IMainActivity {
+public class MainDrawerActivity
+        extends ActionBarActivity
+        implements IMainActivity {
+
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
     private MetricsView mMetricsView;
@@ -80,6 +83,7 @@ public class MainDrawerActivity extends ActionBarActivity implements IMainActivi
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
         mMapActivity = new MapActivity();
         fragmentTransaction.add(R.id.content_frame, mMapActivity);
         fragmentTransaction.commit();

@@ -3,9 +3,11 @@ package org.mozilla.mozstumbler.client;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mozilla.mozstumbler.client.http.IHttpUtil;
-import org.mozilla.mozstumbler.client.http.MockHttpUtil;
+
+import org.mozilla.mozstumbler.service.core.http.IHttpUtil;
+import org.mozilla.mozstumbler.service.core.http.MockHttpUtil;
 import org.mozilla.mozstumbler.client.navdrawer.MainDrawerActivity;
+
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;

@@ -4,18 +4,23 @@
 
 package org.mozilla.mozstumbler.service.uploadthread;
 
+import android.content.Intent;
 import android.os.AsyncTask;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
-import org.mozilla.mozstumbler.service.Prefs;
-import org.mozilla.mozstumbler.service.utils.AbstractCommunicator;
-import org.mozilla.mozstumbler.service.utils.AbstractCommunicator.SyncSummary;
+import org.mozilla.mozstumbler.service.core.http.HttpUtil;
+import org.mozilla.mozstumbler.service.core.http.IHttpUtil;
+import org.mozilla.mozstumbler.service.core.http.ILocationService;
+import org.mozilla.mozstumbler.service.core.http.IResponse;
+import org.mozilla.mozstumbler.service.core.http.MLS;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageManager;
-import org.mozilla.mozstumbler.service.utils.NetworkUtils;
+import org.mozilla.mozstumbler.service.utils.NetworkInfo;
 
 /* Only one at a time may be uploading. If executed while another upload is in progress
 * it will return immediately, and SyncResult is null.
@@ -23,153 +28,102 @@ import org.mozilla.mozstumbler.service.utils.NetworkUtils;
 * Threading:
 * Uploads on a separate thread. ONLY DataStorageManager is thread-safe, do not call
 * preferences, do not call any code that isn't thread-safe. You will cause suffering.
-* An exception is made for AppGlobals.isDebug, a false reading is of no consequence. */
-public class AsyncUploader extends AsyncTask<Void, Void, SyncSummary> {
+* An exception is made for AppGlobals.isDebug, a false reading is of no consequence.
+*
+* AsyncUploader is used in 3 places.
+*   1. the MetricsView in the upload button.
+*   2. MainApp where it is invoked immediately when scanning is stopped
+*   3. On a timer by the UploadAlarmReceiver.
+*
+* We have a weak method of managing access to the AsyncUploader by using an
+* AtomicBoolean AsyncUploader.isUploading and use it as a guard before
+* initiating execution of AsyncUploader.
+*
+* */
+public class AsyncUploader extends AsyncTask<AsyncUploadParam, AsyncProgressListenerStatusWrapper, Void> {
     private static final String LOG_TAG = AppGlobals.LOG_PREFIX + AsyncUploader.class.getSimpleName();
-    private final UploadSettings mSettings;
-    private final Object mListenerLock = new Object();
-    private AsyncUploaderListener mListener;
-    private static AtomicBoolean sIsUploading = new AtomicBoolean();
-    private String mNickname;
-
     public static final AtomicLong sTotalBytesUploadedThisSession = new AtomicLong();
 
-    public interface AsyncUploaderListener {
-        public void onUploadComplete(SyncSummary result);
-        public void onUploadProgress();
-    }
+    public static final AtomicBoolean isUploading = new AtomicBoolean();
+    public AsyncUploader() {}
 
-    public static class UploadSettings {
-        public final boolean mUseWifiOnly;
-        public UploadSettings(boolean useWifiOnly) {
-            mUseWifiOnly = useWifiOnly;
-        }
-    }
-
-    public AsyncUploader(UploadSettings settings, AsyncUploaderListener listener) {
-        mListener = listener;
-        mSettings = settings;
-    }
-
-    public void setNickname(String name) {
-        mNickname = name;
-    }
-
-    public void clearListener() {
-        synchronized (mListenerLock) {
-            mListener = null;
-        }
-    }
-
-    public static boolean isUploading() {
-        return sIsUploading.get();
-    }
 
     @Override
-    protected SyncSummary doInBackground(Void... voids) {
-        if (sIsUploading.get()) {
-            // This if-block is not synchronized, don't care, this is an erroneous usage.
-            Log.d(LOG_TAG, "Usage error: check isUploading first, only one at a time task usage is permitted.");
-            return null;
-        }
+    protected Void doInBackground(AsyncUploadParam... params) {
+       if (params.length != 1) {
+           return null;
+       }
 
-        sIsUploading.set(true);
-        Runnable progressListener = null;
+       AsyncUploadParam param = params[0];
+       if (!isUploading.compareAndSet(false, true)) {
+           return null;
+       }
 
-        // no need to lock here, lock is checked again later
-        if (mListener != null) {
-            progressListener = new Runnable() {
-                @Override
-                public void run() {
-                    synchronized (mListenerLock) {
-                        if (mListener != null) {
-                            mListener.onUploadProgress();
-                        }
-                    }
-                }
-            };
-        }
+       AsyncProgressListenerStatusWrapper wrapper = new AsyncProgressListenerStatusWrapper(
+               param.asyncListener,
+               true);
 
-        SyncSummary result = new SyncSummary();
-        uploadReports(result, progressListener);
-        return result;
+       publishProgress(wrapper);
+
+       AsyncUploaderListener listener = param.asyncListener;
+       uploadReports(param);
+
+       isUploading.set(false);
+       wrapper = new AsyncProgressListenerStatusWrapper(param.asyncListener, false);
+       publishProgress(wrapper);
+
+       return null;
     }
+
+    /*
+    The android framework calls this only on the UI thread
+    */
     @Override
-    protected void onPostExecute(SyncSummary result) {
-        sIsUploading.set(false);
-
-        synchronized (mListenerLock) {
-            if (mListener != null) {
-                mListener.onUploadComplete(result);
-            }
-        }
-    }
-    @Override
-    protected void onCancelled(SyncSummary result) {
-        sIsUploading.set(false);
-    }
-
-    private class Submitter extends AbstractCommunicator {
-        private static final String SUBMIT_URL = "https://location.services.mozilla.com/v1/submit";
-
-        public Submitter() {
-            super(Prefs.getInstance().getUserAgent());
-        }
-
-        @Override
-        public String getUrlString() {
-            return SUBMIT_URL;
-        }
-
-        @Override
-        public String getNickname(){
-            return mNickname;
-        }
-
-        @Override
-        public NetworkSendResult cleanSend(byte[] data) {
-            final NetworkSendResult result = new NetworkSendResult();
-            try {
-                result.bytesSent = this.send(data, ZippedState.eAlreadyZipped);
-                result.errorCode = 0;
-            } catch (IOException ex) {
-                String msg = "Error submitting: " + ex;
-                if (ex instanceof HttpErrorException) {
-                    result.errorCode = ((HttpErrorException) ex).responseCode;
-                    msg += " Code:" + result.errorCode;
-                }
-                Log.e(LOG_TAG, msg);
-                AppGlobals.guiLogError(msg);
-            }
-            return result;
-        }
-    }
-
-    private void uploadReports(AbstractCommunicator.SyncSummary syncResult, Runnable progressListener) {
-        long uploadedObservations = 0;
-        long uploadedCells = 0;
-        long uploadedWifis = 0;
-
-        if (mSettings.mUseWifiOnly && !NetworkUtils.getInstance().isWifiAvailable()) {
-            if (AppGlobals.isDebug) {
-                Log.d(LOG_TAG, "not on WiFi, not sending");
-            }
-            syncResult.numIoExceptions += 1;
+    protected void onProgressUpdate(AsyncProgressListenerStatusWrapper... params) {
+        if (params.length != 1) {
             return;
         }
 
-        Submitter submitter = new Submitter();
+        AsyncProgressListenerStatusWrapper callback = params[0];
+
+        // @TODO: change this to send a broadcast signalling that
+        // upload status has changed, and capture it in MainApp.
+
+        if (callback.listener != null) {
+            callback.listener.onUploadProgress(callback.uploading_flag);
+        }
+    }
+
+    private void uploadReports(AsyncUploadParam param) {
+        long uploadedObservations = 0;
+        long uploadedCells = 0;
+        long uploadedWifis = 0;
+        long totalBytesSent = 0;
+
+        if (param.useWifiOnly && !NetworkInfo.getInstance().isWifiAvailable()) {
+            if (AppGlobals.isDebug) {
+                Log.d(LOG_TAG, "not on WiFi, not sending");
+            }
+            return;
+        }
+
+        IHttpUtil httpUtil = new HttpUtil();
+        ILocationService mls = new MLS(httpUtil);
         DataStorageManager dm = DataStorageManager.getInstance();
 
         String error = null;
 
         try {
             DataStorageManager.ReportBatch batch = dm.getFirstBatch();
-            while (batch != null) {
-                AbstractCommunicator.NetworkSendResult result = submitter.cleanSend(batch.data);
+            HashMap<String, String> headers = new HashMap<String, String>();
+            headers.put(MLS.EMAIL_HEADER, param.emailAddress);
+            headers.put(MLS.NICKNAME_HEADER, param.nickname);
 
-                if (result.errorCode == 0) {
-                    syncResult.totalBytesSent += result.bytesSent;
+            while (batch != null) {
+               IResponse result = mls.submit(batch.data, headers, true);
+
+                if (result.isSuccessCode2XX()) {
+                    totalBytesSent += result.bytesSent();
 
                     dm.delete(batch.filename);
 
@@ -177,17 +131,12 @@ public class AsyncUploader extends AsyncTask<Void, Void, SyncSummary> {
                     uploadedWifis += batch.wifiCount;
                     uploadedCells += batch.cellCount;
                 } else {
-                    if (result.errorCode / 100 == 4) {
+                    if (result.isErrorCode4xx()) {
                         // delete on 4xx, no point in resending
                         dm.delete(batch.filename);
                     } else {
                         DataStorageManager.getInstance().saveCurrentReportsSendBufferToDisk();
                     }
-                    syncResult.numIoExceptions += 1;
-                }
-
-                if (progressListener != null) {
-                    progressListener.run();
                 }
 
                 batch = dm.getNextBatch();
@@ -197,19 +146,17 @@ public class AsyncUploader extends AsyncTask<Void, Void, SyncSummary> {
             error = ex.toString();
         }
 
-        sTotalBytesUploadedThisSession.addAndGet(syncResult.totalBytesSent);
+        sTotalBytesUploadedThisSession.addAndGet(totalBytesSent);
 
         try {
-            dm.incrementSyncStats(syncResult.totalBytesSent, uploadedObservations, uploadedCells, uploadedWifis);
+            dm.incrementSyncStats(totalBytesSent, uploadedObservations, uploadedCells, uploadedWifis);
         } catch (IOException ex) {
             error = ex.toString();
         } finally {
             if (error != null) {
-                syncResult.numIoExceptions += 1;
                 Log.d(LOG_TAG, error);
                 AppGlobals.guiLogError(error + " (uploadReports)");
             }
-            submitter.close();
         }
     }
 }

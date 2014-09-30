@@ -21,7 +21,7 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import java.net.URL;
+
 import java.util.Timer;
 import java.util.TimerTask;
 import org.json.JSONException;
@@ -31,6 +31,8 @@ import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.client.ClientPrefs;
 import org.mozilla.mozstumbler.client.ClientStumblerService;
 import org.mozilla.mozstumbler.client.MainApp;
+import org.mozilla.mozstumbler.service.core.http.HttpUtil;
+import org.mozilla.mozstumbler.service.core.http.IHttpUtil;
 import org.mozilla.mozstumbler.client.ObservedLocationsReceiver;
 import org.mozilla.mozstumbler.client.navdrawer.MetricsView;
 import org.mozilla.mozstumbler.service.AppGlobals;
@@ -90,11 +92,8 @@ public final class MapActivity extends android.support.v4.app.Fragment
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN ) {
                     //@TODO fill this in
-                    //.setImageResource(R.drawable.modeitempressed);
-
                 }
                 else if (event.getAction() == MotionEvent.ACTION_UP ) {
-                    //.setImageResource(R.drawable.modeitemnormal);
                 }
                 return false;
             }
@@ -154,9 +153,12 @@ public final class MapActivity extends android.support.v4.app.Fragment
             mGetUrl.schedule(new TimerTask() {
                 @Override
                 public void run() {
+
+                    IHttpUtil httpUtil = new HttpUtil();
+
                     java.util.Scanner scanner;
                     try {
-                        scanner = new java.util.Scanner(new URL(COVERAGE_REDIRECT_URL).openStream(), "UTF-8");
+                        scanner = new java.util.Scanner(httpUtil.getUrlAsStream(COVERAGE_REDIRECT_URL), "UTF-8");
                     } catch (Exception ex) {
                         Log.d(LOG_TAG, ex.toString());
                         AppGlobals.guiLogInfo("Failed to get coverage url:" + ex.toString());

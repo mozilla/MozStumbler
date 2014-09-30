@@ -89,14 +89,6 @@ android {
 
 }
 
-// Declare dependency between building the android app and grabbing the
-// JAR files.  I hate you gradle and your crappy DSL.
-project.afterEvaluate{
-    prepareDebugDependencies.dependsOn("updateJars")
-    prepareReleaseDependencies.dependsOn("updateJars")
-}
-
-
 dependencies {
     androidTestCompile 'junit:junit:4.10'
     androidTestCompile 'org.robolectric:robolectric:2.3'

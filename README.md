@@ -1,12 +1,20 @@
 MozStumbler
 [![Build Status](https://travis-ci.org/mozilla/MozStumbler.png)](https://travis-ci.org/mozilla/MozStumbler.png)
 
-# Building # 
+# Building a debug version from command line #
 
 ```
-./gradlew build
-./gradlew installRelease
+make
 ```
+
+# Building a debug version from Android Studio #
+
+[![Add new run configuration](https://raw.githubusercontent.com/mozilla/MozStumbler/dev/docs/screencaps/add_new_config.png)](https://raw.githubusercontent.com/mozilla/MozStumbler/dev/docs/screencaps/add_new_config.png)
+
+Setup the Android Application to use two gradle aware make targets.
+Make sure you run updateJars first, then assembleDebug.
+
+[![Setup new run configuration](https://raw.githubusercontent.com/mozilla/MozStumbler/dev/docs/screencaps/setup_android_config.png)](https://raw.githubusercontent.com/mozilla/MozStumbler/dev/docs/screencaps/setup_android_config.png)
 
 # Signing #
 

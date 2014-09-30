@@ -26,6 +26,7 @@ import android.util.Log;
 import org.mozilla.mozstumbler.BuildConfig;
 import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.client.cellscanner.DefaultCellScanner;
+import org.mozilla.mozstumbler.client.navdrawer.MainDrawerActivity;
 import org.mozilla.mozstumbler.client.subactivities.LogActivity;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.Prefs;
@@ -234,8 +235,10 @@ public class MainApp extends Application implements ObservedLocationsReceiver.IC
                 IntentFilter intentFilter = new IntentFilter();
                 intentFilter.addAction(WifiScanner.ACTION_WIFIS_SCANNED);
                 intentFilter.addAction(CellScanner.ACTION_CELLS_SCANNED);
-                intentFilter.addAction(INTENT_TURN_OFF);
-                LocalBroadcastManager.getInstance(MainApp.this).registerReceiver(this, intentFilter);
+                LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(this, intentFilter);
+
+                // This can't be a local broadcast as it comes from notification menu
+                getApplicationContext().registerReceiver(this, new IntentFilter(INTENT_TURN_OFF));
             }
         }
 
@@ -248,6 +251,11 @@ public class MainApp extends Application implements ObservedLocationsReceiver.IC
 
         @Override
         public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals(INTENT_TURN_OFF)) {
+                Log.d(LOG_TAG, "INTENT_TURN_OFF");
+                stopScanning();
+            }
+
             if (mMainActivity.get() != null) {
                 mMainActivity.get().updateUiOnMainThread();
             }
@@ -256,10 +264,9 @@ public class MainApp extends Application implements ObservedLocationsReceiver.IC
 
     private Notification buildNotification() {
         Context context = getApplicationContext();
-        Intent turnOffIntent = new Intent(INTENT_TURN_OFF);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, turnOffIntent, 0);
+        PendingIntent turnOffIntent = PendingIntent.getBroadcast(context, 0, new Intent(INTENT_TURN_OFF), 0);
 
-        Intent notificationIntent = new Intent(context, MainApp.class);
+        Intent notificationIntent = new Intent(context, MainDrawerActivity.class);
         notificationIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_FROM_BACKGROUND);
         PendingIntent contentIntent = PendingIntent.getActivity(context, NOTIFICATION_ID,
                 notificationIntent,
@@ -273,7 +280,7 @@ public class MainApp extends Application implements ObservedLocationsReceiver.IC
                 .setOngoing(true)
                 .setPriority(NotificationCompat.PRIORITY_LOW)
                 .addAction(R.drawable.ic_action_cancel,
-                        getString(R.string.stop_scanning), pendingIntent)
+                        getString(R.string.stop_scanning), turnOffIntent)
                 .build();
 
     }

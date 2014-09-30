@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <string name="app_name">MozStumbler</string>
     <string name="action_about">About MozStumbler</string>
     <string name="action_preferences">Settings</string>
@@ -52,12 +53,10 @@
     <string name="upload_observations_dialog_title">Upload observations</string>
     <string name="upload_wifi_only_title">Upload only on Wi-Fi</string>
     <string name="upload_wifi_only_summary">This option will reduce your data usage over the cellular network.</string>
-
     <string name="metrics_activity_title">Metrics</string>
     <string name="metrics_this_session">This session</string>
     <string name="drawer_map_option_show_mls_locations">Show MLS locations</string>
     <string name="drawer_map_option_show_observation_type">Indicate cell △, Wi-Fi □, or both ○</string>
-
     <string name="title_activity_log">Log</string>
     <string name="action_view_log">View Log</string>
     <string name="scroll_to_start">Scroll to Top</string>
@@ -66,10 +65,11 @@
     <string name="keep_screen_on_title">Keep screen on while in map</string>
     <string name="drawer_open">Show drawer</string>
     <string name="drawer_close">Close drawer</string>
-
     <string name="title_activity_leaderboard">Leaderboard</string>
     <string name="drawer_map_layers_title">Map layers (for nerds)</string>
+    <string name="first_run_message_part1">Mozilla Location Service is an open service for locating devices using Wi-Fi access points and cell towers.</string>
+    <string name="first_run_message_part2">Read our <a href="https://location.services.mozilla.com/privacy">privacy policy</a> and then start stumbling to begin contributing your current location.</string>
+    <string name="first_run_start_stumbling">Start Stumbling</string>
+    <string name="first_run_welcome_to_mozstumbler">Welcome to MozStumbler</string>
 
 </resources>
-
-

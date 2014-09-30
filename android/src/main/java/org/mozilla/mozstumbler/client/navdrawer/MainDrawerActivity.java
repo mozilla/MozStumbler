@@ -28,6 +28,7 @@ import org.mozilla.mozstumbler.client.Updater;
 import org.mozilla.mozstumbler.client.http.HttpUtil;
 import org.mozilla.mozstumbler.client.http.IHttpUtil;
 import org.mozilla.mozstumbler.client.mapview.MapActivity;
+import org.mozilla.mozstumbler.client.subactivities.FirstRunFragment;
 import org.mozilla.mozstumbler.client.subactivities.LeaderboardActivity;
 import org.mozilla.mozstumbler.client.MainApp;
 import org.mozilla.mozstumbler.client.subactivities.PreferencesScreen;
@@ -133,6 +134,11 @@ public class MainDrawerActivity extends ActionBarActivity implements IMainActivi
     public void onStart() {
         super.onStart();
         mMetricsView.setMapLayerToggleListener(mMapActivity);
+
+        if (ClientPrefs.getInstance().isFirstRun()) {
+            FragmentManager fm = getSupportFragmentManager();
+            FirstRunFragment.showInstance(fm);
+        }
     }
 
     @Override

@@ -10,6 +10,7 @@ public class ClientPrefs extends Prefs {
     private static final String LOG_TAG = ClientPrefs.class.getSimpleName();
     private static final String LAT_PREF = "lat";
     private static final String LON_PREF = "lon";
+    private static final String IS_FIRST_RUN = "isfirstrun";
     public static final String KEEP_SCREEN_ON_PREF = "keep_screen_on";
 
     private static final String ON_MAP_SHOW_MLS_PREF = "show_mls";
@@ -74,4 +75,11 @@ public class ClientPrefs extends Prefs {
         setBoolPref(ON_MAP_SHOW_OBSERVATION_TYPE, on);
     }
 
+    public boolean isFirstRun() {
+        return getBoolPrefWithDefault(IS_FIRST_RUN, true);
+    }
+
+    public void setFirstRun(boolean b) {
+        setBoolPref(IS_FIRST_RUN, b);
+    }
 }

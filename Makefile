@@ -5,6 +5,8 @@ debug: updateJars
 	./gradlew assembleDebug
 
 release: updateJars
+	# private.properties has our special sauce for Mozilla builds
+	cp private.properties gradle.properties
 	./gradlew assembleRelease
 
 updateJars:

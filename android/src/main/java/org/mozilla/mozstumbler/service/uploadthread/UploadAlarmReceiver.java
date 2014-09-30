@@ -34,10 +34,6 @@ public class UploadAlarmReceiver extends BroadcastReceiver {
     private static final String EXTRA_IS_REPEATING = "is_repeating";
     private static boolean sIsAlreadyScheduled;
 
-    public UploadAlarmReceiver() {
-
-    }
-
     public static class UploadAlarmService extends IntentService {
 
         public UploadAlarmService(String name) {

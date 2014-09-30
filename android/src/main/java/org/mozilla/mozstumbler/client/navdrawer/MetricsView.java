@@ -157,8 +157,8 @@ public class MetricsView implements AsyncUploaderListener {
     }
 
     @Override
-    public void onUploadProgress(boolean async_uploading) {
-        AsyncUploader.isUploading.set(async_uploading);
+    public void onUploadProgress(boolean isUploading) {
+        AsyncUploader.isUploading.set(isUploading);
         updateUiThread();
     }
 

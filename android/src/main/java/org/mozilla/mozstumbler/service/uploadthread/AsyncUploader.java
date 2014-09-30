@@ -55,21 +55,22 @@ public class AsyncUploader extends AsyncTask<AsyncUploadParam, AsyncProgressList
        }
 
        AsyncUploadParam param = params[0];
-
-       if (isUploading.compareAndSet(false, true)) {
-           AsyncProgressListenerStatusWrapper wrapper = new AsyncProgressListenerStatusWrapper(
-                   param.asyncListener,
-                   true);
-
-           publishProgress(wrapper);
-
-           AsyncUploaderListener listener = param.asyncListener;
-           uploadReports(param);
-
-           isUploading.set(false);
-           wrapper.uploading_flag = false;
-           publishProgress(wrapper);
+       if (!isUploading.compareAndSet(false, true)) {
+           return null;
        }
+
+       AsyncProgressListenerStatusWrapper wrapper = new AsyncProgressListenerStatusWrapper(
+               param.asyncListener,
+               true);
+
+       publishProgress(wrapper);
+
+       AsyncUploaderListener listener = param.asyncListener;
+       uploadReports(param);
+
+       isUploading.set(false);
+       wrapper = new AsyncProgressListenerStatusWrapper(param.asyncListener, false);
+       publishProgress(wrapper);
 
        return null;
     }

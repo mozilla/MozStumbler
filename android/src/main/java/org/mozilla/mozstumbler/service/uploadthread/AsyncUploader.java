@@ -115,6 +115,13 @@ public class AsyncUploader extends AsyncTask<AsyncUploadParam, AsyncProgressList
         try {
             DataStorageManager.ReportBatch batch = dm.getFirstBatch();
             HashMap<String, String> headers = new HashMap<String, String>();
+            if (param.emailAddress == null) {
+                param.emailAddress = "";
+            }
+            if (param.nickname == null) {
+                param.nickname = "";
+            }
+
             headers.put(MLS.EMAIL_HEADER, param.emailAddress);
             headers.put(MLS.NICKNAME_HEADER, param.nickname);
 

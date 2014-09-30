@@ -74,5 +74,7 @@
     <string name="first_run_message_part2">Read our <a href="https://location.services.mozilla.com/privacy">privacy policy</a> and then start stumbling to begin contributing your current location.</string>
     <string name="first_run_start_stumbling">Start Stumbling</string>
     <string name="first_run_welcome_to_mozstumbler">Welcome to MozStumbler</string>
+    <string name="map_unavailable">The map is not available for display, as there is no SD card storage.\nYou can still collect data.</string>
+    <string name="map_offline_mode">"The map will not update without an Internet connection,\nhowever you are still able to collect data."</string>
 
 </resources>

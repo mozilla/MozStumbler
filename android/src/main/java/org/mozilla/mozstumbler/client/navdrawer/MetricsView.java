@@ -13,6 +13,8 @@ import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.ocpsoft.pretty.time.PrettyTime;
+
 import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.client.ClientPrefs;
 import org.mozilla.mozstumbler.client.ClientStumblerService;
@@ -21,8 +23,9 @@ import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.Prefs;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageContract;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageManager;
+import org.mozilla.mozstumbler.service.uploadthread.AsyncUploadParam;
 import org.mozilla.mozstumbler.service.uploadthread.AsyncUploader;
-import org.mozilla.mozstumbler.service.utils.SyncSummary;
+import org.mozilla.mozstumbler.service.uploadthread.AsyncUploaderListener;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
@@ -31,9 +34,7 @@ import java.util.Properties;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import com.ocpsoft.pretty.time.PrettyTime;
-
-public class MetricsView implements AsyncUploader.AsyncUploaderListener {
+public class MetricsView implements AsyncUploaderListener {
 
     public interface IMapLayerToggleListener {
         public void setShowMLS(boolean isOn);
@@ -65,7 +66,6 @@ public class MetricsView implements AsyncUploader.AsyncUploaderListener {
     private final String mObservationAndSize = "%1$d  %2$s";
 
     private boolean mHasQueuedObservations;
-    private AsyncUploader mUploader;
     private Timer mUpdateTimer;
 
     public MetricsView(View view) {
@@ -114,10 +114,16 @@ public class MetricsView implements AsyncUploader.AsyncUploaderListener {
                     return;
                 }
                 
-                AsyncUploader.UploadSettings settings = new AsyncUploader.UploadSettings(false);
-                mUploader = new AsyncUploader(settings, MetricsView.this);
-                mUploader.setNickname(ClientPrefs.getInstance().getNickname());
-                mUploader.execute();
+                // @TODO: Emit a signal here to initiate an upload
+                // and have it handled by MainApp
+                boolean useWifiOnly = false;
+                 AsyncUploader uploader = new AsyncUploader();
+                AsyncUploadParam param = new AsyncUploadParam(useWifiOnly,
+                    MetricsView.this,
+                    Prefs.getInstance().getNickname(),
+                    Prefs.getInstance().getEmail());
+                uploader.execute(param);
+
                 setUploadButtonToSyncing(true);
             }
         });
@@ -151,12 +157,8 @@ public class MetricsView implements AsyncUploader.AsyncUploaderListener {
     }
 
     @Override
-    public void onUploadComplete(SyncSummary result) {
-        updateUiThread();
-    }
-
-    @Override
-    public void onUploadProgress() {
+    public void onUploadProgress(boolean async_uploading) {
+        AsyncUploader.isUploading.set(async_uploading);
         updateUiThread();
     }
 
@@ -176,8 +178,10 @@ public class MetricsView implements AsyncUploader.AsyncUploaderListener {
         updateThisSessionStats();
 
         // If already uploading check the stats in a few seconds
-        if (AsyncUploader.isUploading()) {
-            setUploadButtonToSyncing(true);
+        boolean isUpdating = AsyncUploader.isUploading.get();
+        setUploadButtonToSyncing(isUpdating);
+
+        if (isUpdating) {
             if (mUpdateTimer == null) {
                 mUpdateTimer = new Timer();
                 mUpdateTimer.scheduleAtFixedRate(new TimerTask() {
@@ -192,8 +196,9 @@ public class MetricsView implements AsyncUploader.AsyncUploaderListener {
                 mUpdateTimer.purge();
                 mUpdateTimer = null;
             }
-            setUploadButtonToSyncing(false);
         }
+
+
     }
 
     private void updateThisSessionStats() {

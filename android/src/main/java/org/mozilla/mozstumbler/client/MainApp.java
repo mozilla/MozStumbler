@@ -23,26 +23,29 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
+import org.mozilla.mozstumbler.BuildConfig;
+import org.mozilla.mozstumbler.R;
+import org.mozilla.mozstumbler.client.cellscanner.DefaultCellScanner;
+import org.mozilla.mozstumbler.client.subactivities.LogActivity;
+import org.mozilla.mozstumbler.service.AppGlobals;
+import org.mozilla.mozstumbler.service.Prefs;
+import org.mozilla.mozstumbler.service.stumblerthread.StumblerService;
+import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageManager;
+import org.mozilla.mozstumbler.service.stumblerthread.scanners.WifiScanner;
+import org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner.CellScanner;
+import org.mozilla.mozstumbler.service.uploadthread.AsyncUploadParam;
+import org.mozilla.mozstumbler.service.uploadthread.AsyncUploader;
+import org.mozilla.mozstumbler.service.utils.NetworkInfo;
+
 import java.io.File;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.mozilla.mozstumbler.BuildConfig;
-import org.mozilla.mozstumbler.R;
-import org.mozilla.mozstumbler.client.cellscanner.DefaultCellScanner;
-import org.mozilla.mozstumbler.client.navdrawer.MainDrawerActivity;
-import org.mozilla.mozstumbler.client.subactivities.LogActivity;
-import org.mozilla.mozstumbler.service.AppGlobals;
-import org.mozilla.mozstumbler.service.stumblerthread.StumblerService;
-import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageManager;
-import org.mozilla.mozstumbler.service.stumblerthread.scanners.WifiScanner;
-import org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner.CellScanner;
-import org.mozilla.mozstumbler.service.uploadthread.AsyncUploader;
-import org.mozilla.mozstumbler.service.utils.NetworkInfo;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class MainApp extends Application implements ObservedLocationsReceiver.ICountObserver {
+    public static final AtomicBoolean isUploading = new AtomicBoolean();
     private final String LOG_TAG = AppGlobals.LOG_PREFIX + MainApp.class.getSimpleName();
     private ClientStumblerService mStumblerService;
     private ServiceConnection mConnection;
@@ -185,11 +188,15 @@ public class MainApp extends Application implements ObservedLocationsReceiver.IC
         mStumblerService.stopForeground(true);
         mStumblerService.stopScanning();
 
-        AsyncUploader.UploadSettings settings =
-            new AsyncUploader.UploadSettings(ClientPrefs.getInstance().getUseWifiOnly());
-        AsyncUploader uploader = new AsyncUploader(settings, null /* don't need to listen for completion */);
-        uploader.setNickname(ClientPrefs.getInstance().getNickname());
-        uploader.execute();
+        AsyncUploader uploader = new AsyncUploader();
+        AsyncUploadParam param = new AsyncUploadParam(
+                ClientPrefs.getInstance().getUseWifiOnly(),
+                null, /* don't need to listen for completion */
+                Prefs.getInstance().getNickname(),
+                Prefs.getInstance().getEmail());
+
+        uploader.execute(param);
+
     }
 
     @TargetApi(9)

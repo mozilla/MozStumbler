@@ -34,7 +34,9 @@ public class UploadAlarmReceiver extends BroadcastReceiver {
     private static final String EXTRA_IS_REPEATING = "is_repeating";
     private static boolean sIsAlreadyScheduled;
 
-    public UploadAlarmReceiver() {}
+    public UploadAlarmReceiver() {
+
+    }
 
     public static class UploadAlarmService extends IntentService {
 
@@ -73,15 +75,21 @@ public class UploadAlarmReceiver extends BroadcastReceiver {
                 }
             }
 
-            if (NetworkInfo.getInstance().isWifiAvailable() &&
-                !AsyncUploader.isUploading()) {
+            // @TODO: Check the buildtype to see if we're running in Client mode
+            // or inside of Fennec.  If we're in Client mode, we should send a
+            // signal to MainApp that we want to initiate
+            // an upload instead of doing it right here.
+            if (NetworkInfo.getInstance().isWifiAvailable()) {
                 Log.d(LOG_TAG, "Alarm upload(), call AsyncUploader");
-                AsyncUploader.UploadSettings settings =
-                    new AsyncUploader.UploadSettings(Prefs.getInstance().getUseWifiOnly());
-                AsyncUploader uploader = new AsyncUploader(settings, null);
-                uploader.setNickname(Prefs.getInstance().getNickname());
-                uploader.execute();
-                // we could listen for completion and cancel, instead, cancel on next alarm when db empty
+
+                AsyncUploader uploader = new AsyncUploader();
+                AsyncUploadParam param = new AsyncUploadParam(
+                        Prefs.getInstance().getUseWifiOnly(),
+                        null,
+                        Prefs.getInstance().getNickname(),
+                        Prefs.getInstance().getEmail()
+                );
+                uploader.execute(param);
             }
         }
     }

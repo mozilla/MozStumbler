@@ -41,6 +41,7 @@ public class MainDrawerActivity
     private ActionBarDrawerToggle mDrawerToggle;
     private MetricsView mMetricsView;
     private MapActivity mMapActivity;
+    private MenuItem mMenuItemStartStop;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,28 +103,31 @@ public class MainDrawerActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
-        MenuItem startStop = menu.add(Menu.NONE, MENU_START_STOP, Menu.NONE, R.string.start_scanning);
+        mMenuItemStartStop = menu.add(Menu.NONE, MENU_START_STOP, Menu.NONE, R.string.start_scanning);
         if (Build.VERSION.SDK_INT >= 11) {
-            startStop.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+            mMenuItemStartStop.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
         }
         else {
-            MenuItemCompat.setShowAsAction(startStop, MenuItemCompat.SHOW_AS_ACTION_ALWAYS);
+            MenuItemCompat.setShowAsAction(mMenuItemStartStop, MenuItemCompat.SHOW_AS_ACTION_ALWAYS);
             MenuItem item = menu.findItem(R.id.action_preferences);
             MenuItemCompat.setShowAsAction(item, MenuItemCompat.SHOW_AS_ACTION_ALWAYS);
         }
 
-        boolean isScanning = ((MainApp) getApplication()).getService().isScanning();
-        setStartStopMenuState(startStop, isScanning);
+        setStartStopMenuItemState();
         return true;
     }
 
-    private void setStartStopMenuState(MenuItem menuItem, boolean scanning) {
-        if (scanning) {
-            menuItem.setIcon(android.R.drawable.ic_media_pause);
-            menuItem.setTitle(R.string.stop_scanning);
+    public void setStartStopMenuItemState() {
+        if (mMenuItemStartStop == null) {
+            return;
+        }
+        boolean isScanning = ((MainApp) getApplication()).getService().isScanning();
+        if (isScanning) {
+            mMenuItemStartStop.setIcon(android.R.drawable.ic_media_pause);
+            mMenuItemStartStop.setTitle(R.string.stop_scanning);
         } else {
-            menuItem.setIcon(android.R.drawable.ic_media_play);
-            menuItem.setTitle(R.string.start_scanning);
+            mMenuItemStartStop.setIcon(android.R.drawable.ic_media_play);
+            mMenuItemStartStop.setTitle(R.string.start_scanning);
         }
     }
 
@@ -181,6 +185,7 @@ public class MainDrawerActivity
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                setStartStopMenuItemState();
                 updateNumberDisplay();
             }
         });

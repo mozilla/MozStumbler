@@ -34,10 +34,8 @@ class ObservationPointsOverlay extends Overlay {
     final DevicePixelConverter mConvertPx;
     private final WeakReference<MapView> mMapView;
 
-    //private LinkedList<ObservationPoint> mPoints = new LinkedList<ObservationPoint>();
-
-    private static final long DRAW_TIME_MILLIS = 150; // Abort drawing after 150 ms
-    private static final int TIME_CHECK_MULTIPLE = 10; // Check the time after drawing 10 points
+    private static final long DRAW_TIME_MILLIS = 60; // Abort drawing after this time
+    private static final int TIME_CHECK_MULTIPLE = 100; // Check the time after drawing this many
 
     public boolean mOnMapShowMLS;
     public boolean mDrawObservationsWithShape;

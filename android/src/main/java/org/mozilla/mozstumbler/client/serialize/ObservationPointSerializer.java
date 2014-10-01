@@ -5,6 +5,7 @@ import android.util.Log;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.InputMismatchException;
 import java.util.Iterator;
@@ -290,12 +291,10 @@ public class ObservationPointSerializer extends AsyncTask<Void, Void, Boolean> {
             }
         }
 
-        Iterator it = mlsList.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry pairs = (Map.Entry)it.next();
-            ObservationPoint obs = gpsList.get(pairs.getKey());
+        for (Map.Entry<String, Coordinate> entry : mlsList.entrySet()) {
+            ObservationPoint obs = gpsList.get(entry.getKey());
             if (obs != null) {
-                obs.setMLSCoordinate((Coordinate)pairs.getValue());
+                obs.setMLSCoordinate(entry.getValue());
             }
         }
 

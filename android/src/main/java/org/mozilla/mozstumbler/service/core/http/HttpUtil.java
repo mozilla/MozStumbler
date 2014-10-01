@@ -194,11 +194,9 @@ public class HttpUtil implements IHttpUtil {
                     getContentBody(httpURLConnection),
                     wire_data.length);
         } catch (IOException e) {
-            Log.e(LOG_TAG, "", e);
+            Log.i(LOG_TAG, "post error:" + e.toString() + " Data:" + data.toString());
         } finally {
-            if (httpURLConnection != null) {
-                httpURLConnection.disconnect();
-            }
+            httpURLConnection.disconnect();
         }
         return null;
     }

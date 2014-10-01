@@ -147,7 +147,7 @@ public class MetricsView implements AsyncUploaderListener {
 
     private void setUploadButtonToSyncing(boolean isSyncing) {
         if (isSyncing) {
-            mUploadButton.setImageResource(R.drawable.ic_action_refresh);
+            mUploadButton.setImageResource(android.R.drawable.ic_popup_sync);
         } else {
             mUploadButton.setImageResource(R.drawable.ic_action_upload);
         }

@@ -8,11 +8,12 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Path;
 import android.graphics.Point;
+import android.graphics.RectF;
 import android.os.SystemClock;
 
 import org.mozilla.mozstumbler.client.ObservedLocationsReceiver;
+import org.mozilla.mozstumbler.service.core.logging.Log;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.Projection;
 import org.osmdroid.views.overlay.Overlay;
@@ -23,10 +24,11 @@ import java.util.LinkedList;
 
 
 class ObservationPointsOverlay extends Overlay {
+    private static final String LOG_TAG = ObservationPointsOverlay.class.getSimpleName();
     private final Paint mRedPaint = new Paint();
     private final Paint mGreenPaint = new Paint();
-    private final Paint mTrianglePaint = new Paint();
-    private final Paint mSquarePaint = new Paint();
+    private final Paint mCellPaint = new Paint();
+    private final Paint mWifiPaint = new Paint();
     private final Paint mBlackStrokePaint = new Paint();
     private final Paint mBlackStrokePaintThin = new Paint();
     private final Paint mBlackMLSLinePaint = new Paint();
@@ -34,7 +36,7 @@ class ObservationPointsOverlay extends Overlay {
     final DevicePixelConverter mConvertPx;
     private final WeakReference<MapView> mMapView;
 
-    private static final long DRAW_TIME_MILLIS = 60; // Abort drawing after this time
+    private static final long DRAW_TIME_MILLIS = 30; // Abort drawing after this time
     private static final int TIME_CHECK_MULTIPLE = 100; // Check the time after drawing this many
 
     public boolean mOnMapShowMLS;
@@ -48,12 +50,6 @@ class ObservationPointsOverlay extends Overlay {
         mGreenPaint.setColor(Color.GREEN);
         mGreenPaint.setStyle(Paint.Style.FILL);
 
-        mSquarePaint.setARGB(255, 0, 170, 0);
-        mSquarePaint.setStyle(Paint.Style.FILL);
-
-        mTrianglePaint.setARGB(255, 190, 225, 0);
-        mTrianglePaint.setStyle(Paint.Style.FILL);
-
         mRedPaint.setColor(Color.RED);
         mRedPaint.setStyle(Paint.Style.FILL);
 
@@ -63,12 +59,18 @@ class ObservationPointsOverlay extends Overlay {
 
         mBlackMLSLinePaint.setARGB(160, 0, 0, 0);
         mBlackMLSLinePaint.setStyle(Paint.Style.STROKE);
-        mBlackMLSLinePaint.setStrokeWidth(mConvertPx.pxToDp(2));
-        mBlackMLSLinePaint.setStrokeCap(Paint.Cap.ROUND);
+        mBlackMLSLinePaint.setStrokeWidth(mConvertPx.pxToDp(1));
 
         mBlackStrokePaintThin.setColor(Color.BLACK);
         mBlackStrokePaintThin.setStyle(Paint.Style.STROKE);
-        mBlackMLSLinePaint.setStrokeWidth(mConvertPx.pxToDp(1));
+
+        mCellPaint.setColor(Color.BLUE);
+        mCellPaint.setStyle(Paint.Style.STROKE);
+        mCellPaint.setStrokeWidth(mConvertPx.pxToDp(2.5f));
+
+        mWifiPaint.setARGB(255, 160, 0, 180);
+        mWifiPaint.setStyle(Paint.Style.STROKE);
+        mWifiPaint.setStrokeWidth(mConvertPx.pxToDp(2.5f));
     }
 
     boolean mIsDirty = false;
@@ -85,32 +87,15 @@ class ObservationPointsOverlay extends Overlay {
         c.drawCircle(p.x, p.y, radiusInnerRing, strokePaint);
     }
 
-    private void drawRect(Canvas c, Point p, Paint fillPaint) {
-        final int size = mConvertPx.pxToDp(4f);
-        c.drawRect(p.x - size, p.y - size, p.x + size, p.y + size, fillPaint);
-        c.drawRect(p.x - size, p.y - size, p.x + size, p.y + size, mBlackStrokePaintThin);
+    private void drawCellScan(Canvas c, Point p) {
+        final int size = mConvertPx.pxToDp(3f);
+        RectF r = new RectF(p.x - size, p.y - size, p.x + size, p.y + size);
+        c.drawRoundRect(r, 1f, 1f, mCellPaint);
     }
 
-    private void drawTriangle(Canvas c, Point p, Paint fillPaint) {
-        final int size = mConvertPx.pxToDp(5f);
-
-        Point p1 = new Point(p);
-        Point p2 = new Point(p);
-        Point p3 = new Point(p);
-        p1.offset(size, size);
-        p2.offset(-size, size);
-        p3.offset(0, -size);
-
-        Path path = new Path();
-        path.setFillType(Path.FillType.EVEN_ODD);
-        path.moveTo(p1.x, p1.y);
-        path.lineTo(p2.x, p2.y);
-        path.lineTo(p3.x, p3.y);
-        path.lineTo(p1.x, p1.y);
-        path.close();
-
-        c.drawPath(path, fillPaint);
-        c.drawPath(path, mBlackStrokePaintThin);
+    private void drawWifiScan(Canvas c, Point p) {
+        final int size = mConvertPx.pxToDp(3f);
+        c.drawCircle(p.x, p.y, size, mWifiPaint);
     }
 
     protected void draw(Canvas c, MapView osmv, boolean shadow) {
@@ -138,14 +123,15 @@ class ObservationPointsOverlay extends Overlay {
             boolean hasCellScan = point.mCellCount > 0;
 
             if (mDrawObservationsWithShape && hasWifiScan && !hasCellScan) {
-                drawRect(c, gps, mSquarePaint);
+                drawWifiScan(c, gps);
             } else if (mDrawObservationsWithShape && hasCellScan && !hasWifiScan) {
-                drawTriangle(c, gps, mTrianglePaint);
+                drawCellScan(c, gps);
             } else {
                 drawDot(c, gps, radiusInnerRing, mGreenPaint, mBlackStrokePaint);
             }
 
             if ((++count % TIME_CHECK_MULTIPLE == 0) && (SystemClock.uptimeMillis() > endTime)) {
+                Log.i(LOG_TAG, "timed out");
                 break;
             }
         }

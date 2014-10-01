@@ -18,3 +18,7 @@ android/libs/*.jar
 
 # ctags
 tags
+
+# Mozilla Special Sauce
+gradle.properties
+private.properties

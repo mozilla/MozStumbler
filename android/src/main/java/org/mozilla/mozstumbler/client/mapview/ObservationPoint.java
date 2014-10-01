@@ -14,6 +14,7 @@ import org.mozilla.mozstumbler.client.ClientPrefs;
 import org.mozilla.mozstumbler.service.utils.NetworkInfo;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageContract;
 import org.osmdroid.util.GeoPoint;
+import org.mozilla.mozstumbler.service.core.logging.Log;
 
 public class ObservationPoint implements MLSLocationGetter.MLSLocationGetterCallback {
     public final GeoPoint pointGPS;
@@ -80,5 +81,10 @@ public class ObservationPoint implements MLSLocationGetter.MLSLocationGetterCall
 
     public void setMLSCoordinate(Coordinate c) {
         pointMLS = new GeoPoint(c.getLatitude(), c.getLongitude());
+    }
+
+    public void errorMLSResponse() {
+        Log.i(ObservationPoint.class.getSimpleName(), "Error:" + mMLSQuery.toString());
+        mMLSLocationGetter = null;
     }
 }

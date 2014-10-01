@@ -122,7 +122,12 @@ public final class MapActivity extends android.support.v4.app.Fragment
                     centerMe.setBackgroundResource(R.drawable.ic_mylocation_click_android_assets);
 
                 } else if (event.getAction() == MotionEvent.ACTION_UP) {
-                    centerMe.setBackgroundResource(R.drawable.ic_mylocation_android_assets);
+                    v.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            centerMe.setBackgroundResource(R.drawable.ic_mylocation_android_assets);
+                        }
+                    }, 200);
                 }
                 return false;
             }

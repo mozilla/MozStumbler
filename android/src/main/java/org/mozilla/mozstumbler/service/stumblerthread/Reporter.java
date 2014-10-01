@@ -247,8 +247,9 @@ public final class Reporter extends BroadcastReceiver implements IReporter {
             Log.d(LOG_TAG, "Received bundle: " + mlsObj.toString());
         }
 
-        if (wifiCount + cellCount < 1)
+        if (wifiCount + cellCount < 1) {
             return;
+        }
 
         mPreviousBundleJSON = mlsObj;
 

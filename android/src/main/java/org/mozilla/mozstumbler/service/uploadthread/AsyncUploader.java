@@ -65,7 +65,6 @@ public class AsyncUploader extends AsyncTask<AsyncUploadParam, AsyncProgressList
 
        publishProgress(wrapper);
 
-       AsyncUploaderListener listener = param.asyncListener;
        uploadReports(param);
 
        isUploading.set(false);
@@ -122,7 +121,7 @@ public class AsyncUploader extends AsyncTask<AsyncUploadParam, AsyncProgressList
             while (batch != null) {
                IResponse result = mls.submit(batch.data, headers, true);
 
-                if (result.isSuccessCode2XX()) {
+                if (result != null && result.isSuccessCode2XX()) {
                     totalBytesSent += result.bytesSent();
 
                     dm.delete(batch.filename);
@@ -131,7 +130,7 @@ public class AsyncUploader extends AsyncTask<AsyncUploadParam, AsyncProgressList
                     uploadedWifis += batch.wifiCount;
                     uploadedCells += batch.cellCount;
                 } else {
-                    if (result.isErrorCode4xx()) {
+                    if (result != null && result.isErrorCode4xx()) {
                         // delete on 4xx, no point in resending
                         dm.delete(batch.filename);
                     } else {

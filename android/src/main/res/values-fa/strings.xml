@@ -43,9 +43,9 @@
     <string name="metrics_observations_wifis_title">نقاط دسترسی وای‌فای:</string>
     <string name="metrics_observations_cell_towers_title">شبکه‌های گوشی همراه:</string>
     <string name="upload_observations_in_queue_title">در صف</string>
-    <string name="upload_observations_observations_queued_title">مشاهده‌ها:</string>
-    <string name="upload_observations_wifis_queued_title">نقاط دسترسی وای‌فای:</string>
-    <string name="upload_observations_cells_queued_title">شبکه‌های گوشی همراه:</string>
+
+
+
     <string name="upload_observations_button">بارگذاری</string>
     <string name="upload_observations_dialog_title">بارگذاری مشاهده‌ها</string>
     <string name="upload_wifi_only_title">بارگذاری فقط هنگام وای‌فای</string>
@@ -54,7 +54,7 @@
 
     <string name="upload_observations_data_size">Size:</string>
     <!--translations missing
-	<string name="refresh_map">Refresh location</string>
+
 	
 	<string name="title_activity_log">Log</string>
     <string name="action_view_log">View Log</string>

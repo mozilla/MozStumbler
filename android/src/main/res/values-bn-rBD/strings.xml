@@ -43,16 +43,16 @@
     <string name="metrics_observations_wifis_title">ওয়াই-ফাই এক্সেস পয়েন্ট:</string>
     <string name="metrics_observations_cell_towers_title">সেল:</string>
     <string name="upload_observations_in_queue_title">আপলোডের জন্যে অপেক্ষমান</string>
-    <string name="upload_observations_observations_queued_title">অথ্য:</string>
-    <string name="upload_observations_wifis_queued_title">ওয়াই-ফাই এক্সেস পয়েন্ট:</string>
-    <string name="upload_observations_cells_queued_title">সেল:</string>
+
+
+
     <string name="upload_observations_button">আপলোড</string>
     <string name="upload_observations_dialog_title">তথ্য আপলোড করুন</string>
 	<string name="upload_wifi_only_title">শুধুমাত্র ওয়াই-ফাই দ্বারা আপলোড</string>
     <string name="upload_wifi_only_summary">এই অপশনটি আপনার মোবাইল নেটওয়ার্কের ডাটা ব্যবহার কমাবে।</string>
 
 
-    <string name="refresh_map">অবস্থান রিফ্রেশ কর</string>
+
     <string name="upload_observations_data_size">Size:</string>
     <!--translations missing
     <string name="title_activity_log">Log</string>

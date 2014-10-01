@@ -43,16 +43,16 @@
     <string name="metrics_observations_wifis_title">Σημεία πρόσβασης Wi-Fi:</string>
     <string name="metrics_observations_cell_towers_title">Κυψέλες τηλεφωνίας:</string>
     <string name="upload_observations_in_queue_title">Στην ουρά</string>
-    <string name="upload_observations_observations_queued_title">Παρατηρήσεις:</string>
-    <string name="upload_observations_wifis_queued_title">Σημεία πρόσβασης Wi-Fi:</string>
-    <string name="upload_observations_cells_queued_title">Κυψέλες τηλεφωνίας:</string>
+
+
+
     <string name="upload_observations_button">Αποστολή</string>
     <string name="upload_observations_dialog_title">Αποστολή παρατηρήσεων</string>
     <string name="upload_wifi_only_title">Μεταφόρτωση μόνο μέσω Wi-Fi</string>
     <string name="upload_wifi_only_summary">Η επιλογή αυτή θα μειώσει τη χρήση των δεδομένων σας μέσω του δικτύου κινητής τηλεφωνίας.</string>
 
 
-    <string name="refresh_map">Ανανέωση θέσης</string>
+
     <string name="upload_observations_data_size">Size:</string>
     <!--translations missing
     <string name="title_activity_log">Log</string>

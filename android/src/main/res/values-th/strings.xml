@@ -46,16 +46,16 @@
     <string name="metrics_observations_wifis_title">Wi-Fi แอคเซสพอยต์:</string>
     <string name="metrics_observations_cell_towers_title">เสาสัญญานมือถือ:</string>
     <string name="upload_observations_in_queue_title">ในคิว</string>
-    <string name="upload_observations_observations_queued_title">ค่าที่เห็น:</string>
-    <string name="upload_observations_wifis_queued_title">Wi-Fi แอคเซสพอยต์:</string>
-    <string name="upload_observations_cells_queued_title">เสาสัญญานมือถือ:</string>
+
+
+
     <string name="upload_observations_button">อัพโหลด</string>
     <string name="upload_observations_dialog_title">อัพโหลดค่าที่เก็บไว้</string>
     <string name="upload_wifi_only_title">อัพโหลดเฉพาะเวลาต่อ Wi-Fi</string>
     <string name="upload_wifi_only_summary">ค่านี้จะช่วยลดการใช้ข้อมูลผ่านเครือข่ายมือถือ</string>
 
 
-    <string name="refresh_map">หาตำแหน่งใหม่</string>
+
     <string name="title_activity_log">บันทึก</string>
     <string name="action_view_log">ดูค่าบันทึก</string>
     <string name="scroll_to_start">Scroll to Top</string>

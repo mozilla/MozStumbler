@@ -43,16 +43,16 @@
     <string name="metrics_observations_wifis_title">Wi-Fi प्रवेश बिंदू:</string>
     <string name="metrics_observations_cell_towers_title">भ्रमणध्वनी जाळे :</string>
     <string name="upload_observations_in_queue_title">पाठवण्याच्या प्रतीक्षेत असलेली निरीक्षणे</string>
-    <string name="upload_observations_observations_queued_title">निरीक्षणे:</string>
-    <string name="upload_observations_wifis_queued_title">Wi-Fi प्रवेश बिंदू:</string>
-    <string name="upload_observations_cells_queued_title">भ्रमणध्वनी जाळे:</string>
+
+
+
     <string name="upload_observations_button">पाठवा</string>
     <string name="upload_observations_dialog_title">निरीक्षणे पाठवा</string>
     <string name="upload_wifi_only_title">फक्त Wi-Fi वर निरीक्षणे पाठवा</string>
     <string name="upload_wifi_only_summary">हा पर्याय आपला भ्रमणध्वनी जाळ्यावरील डेटा वापर कमी करेल.</string>
 
 
-    <string name="refresh_map">स्थळ अद्यतन करा</string>
+
     <string name="title_activity_log">नोंदवही</string>
     <string name="action_view_log">नोंदी बघा</string>
     <string name="scroll_to_start">सुरुवात बघा</string>

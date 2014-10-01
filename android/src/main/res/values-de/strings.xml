@@ -42,9 +42,9 @@
     <string name="metrics_observations_wifis_title">Wi-Fi Zugangspunkte:</string>
     <string name="metrics_observations_cell_towers_title">Funkzellen:</string>
     <string name="upload_observations_in_queue_title">Warteschlange</string>
-    <string name="upload_observations_observations_queued_title">Beobachtungen:</string>
-    <string name="upload_observations_wifis_queued_title">Wi-Fi Zugangspunkte:</string>
-    <string name="upload_observations_cells_queued_title">Funkzellen:</string>
+
+
+
     <string name="upload_observations_button">Hochladen</string>
     <string name="upload_observations_dialog_title">Beobachtungen hochladen</string>
     <string name="upload_wifi_only_title">Nur über Wi-Fi hochladen</string>
@@ -52,7 +52,7 @@
     
 
 
-    <string name="refresh_map">Standort aktualisieren</string>
+
 	
     <string name="title_activity_log">Protokoll</string>
     <string name="action_view_log">Protokoll anzeigen</string>

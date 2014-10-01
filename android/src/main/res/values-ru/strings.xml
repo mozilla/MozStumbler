@@ -43,9 +43,9 @@
     <string name="metrics_observations_wifis_title">Wi-Fi точки:</string>
     <string name="metrics_observations_cell_towers_title">GSM соты:</string>
     <string name="upload_observations_in_queue_title">В очереди</string>
-    <string name="upload_observations_observations_queued_title">Измерений:</string>
-    <string name="upload_observations_wifis_queued_title">Wi-Fi точки:</string>
-    <string name="upload_observations_cells_queued_title">GSM соты:</string>
+
+
+
     <string name="upload_observations_button">Отправить</string>
     <string name="upload_observations_dialog_title">Отправить измерения</string>
     <string name="upload_wifi_only_title">Передача данных только через Wi-Fi</string>
@@ -54,7 +54,7 @@
     <!--translations missing
 
 
-    <string name="refresh_map">Refresh location</string>
+
 	
 	<string name="title_activity_log">Log</string>
     <string name="action_view_log">View Log</string>

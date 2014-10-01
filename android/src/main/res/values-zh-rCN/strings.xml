@@ -42,16 +42,16 @@
     <string name="metrics_observations_wifis_title">Wi-Fi 接入点：</string>
     <string name="metrics_observations_cell_towers_title">移动基站：</string>
     <string name="upload_observations_in_queue_title">排队中</string>
-    <string name="upload_observations_observations_queued_title">报告：</string>
-    <string name="upload_observations_wifis_queued_title">Wi-Fi 接入点：</string>
-    <string name="upload_observations_cells_queued_title">移动基站：</string>
+
+
+
     <string name="upload_observations_button">上传</string>
     <string name="upload_observations_dialog_title">上传报告</string>
     <string name="upload_wifi_only_title">仅通过 Wi-Fi 网络上传</string>
     <string name="upload_wifi_only_summary">这一选项有助于减少您的移动数据流量</string>
 
 
-    <string name="refresh_map">刷新位置</string>
+
     <string name="upload_observations_data_size">大小:</string>
     <string name="title_activity_log">日志</string>
     <string name="action_view_log">查看日志</string>

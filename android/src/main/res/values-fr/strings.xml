@@ -43,16 +43,16 @@
     <string name="metrics_observations_wifis_title">Points d\'accès Wi-Fi :</string>
     <string name="metrics_observations_cell_towers_title">Antennes cellulaires :</string>
     <string name="upload_observations_in_queue_title">En attente</string>
-    <string name="upload_observations_observations_queued_title">Emplacements :</string>
-    <string name="upload_observations_wifis_queued_title">Points d\'accès Wi-Fi :</string>
-    <string name="upload_observations_cells_queued_title">Antennes cellulaires :</string>
+
+
+
     <string name="upload_observations_button">Envoyer</string>
     <string name="upload_observations_dialog_title">Envoi des rapports</string>
     <string name="upload_wifi_only_title">Envoi des rapports par le Wi-Fi uniquement</string>
     <string name="upload_wifi_only_summary">Cette option réduira votre consommation de données de votre forfait.</string>
 
 
-    <string name="refresh_map">Rafraichir la position</string>
+
     <string name="upload_observations_data_size">Size:</string>
     <!--translations missing
     <string name="title_activity_log">Log</string>

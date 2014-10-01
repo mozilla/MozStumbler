@@ -43,16 +43,16 @@
     <string name="metrics_observations_wifis_title">Wi-Fi Access Points:</string>
     <string name="metrics_observations_cell_towers_title">Cells:</string>
     <string name="upload_observations_in_queue_title">In queue</string>
-    <string name="upload_observations_observations_queued_title">Observations:</string>
-    <string name="upload_observations_wifis_queued_title">Wi-Fi Access Points:</string>
-    <string name="upload_observations_cells_queued_title">Cells:</string>
+
+
+
     <string name="upload_observations_button">Upload</string>
     <string name="upload_observations_dialog_title">Upload observations</string>-->
     <!--translations missing <string name="upload_wifi_only_title">Upload only on Wi-Fi</string>
     <string name="upload_wifi_only_summary">This option will reduce your data usage over the cellular network.</string>
 
 
-    <string name="refresh_map">Refresh location</string>
+
 	<string name="title_activity_log">Log</string>
     <string name="action_view_log">View Log</string>
     <string name="scroll_to_start">Scroll to Top</string>

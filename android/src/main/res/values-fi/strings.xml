@@ -42,14 +42,14 @@
     <string name="metrics_observations_wifis_title">Wi-Fi:</string>
     <string name="metrics_observations_cell_towers_title">Mastoja:</string>
     <string name="upload_observations_in_queue_title">Jonossa</string>
-    <string name="upload_observations_observations_queued_title">Tietoja:</string>
-    <string name="upload_observations_wifis_queued_title">Wi-Fi:</string>
-    <string name="upload_observations_cells_queued_title">Mastoja:</string>
+
+
+
     <string name="upload_observations_button">Lähetä</string>
     <string name="upload_observations_dialog_title">Lähetä tiedot</string>
     <string name="upload_wifi_only_title">Lähetä vain Wi-Fi:n yli</string>
     <string name="upload_wifi_only_summary">Tämä asetus vähentää datan käyttöä matkapuhelinverkon yli</string>
-    <string name="refresh_map">Päivitä sijainti</string>
+
     <string name="title_activity_log">Loki</string>
     <string name="action_view_log">Näytä loki</string>
     <string name="scroll_to_start">Siirry alkuun</string>

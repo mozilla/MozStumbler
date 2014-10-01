@@ -46,16 +46,16 @@
     <string name="metrics_observations_wifis_title">Wi-Fi 基地台:</string>
     <string name="metrics_observations_cell_towers_title">行動網路基地台:</string>
     <string name="upload_observations_in_queue_title">等候上傳佇列</string>
-    <string name="upload_observations_observations_queued_title">觀測到的位置:</string>
-    <string name="upload_observations_wifis_queued_title">Wi-Fi 基地台:</string>
-    <string name="upload_observations_cells_queued_title">行動網路基地台:</string>
+
+
+
     <string name="upload_observations_button">上傳</string>
     <string name="upload_observations_dialog_title">上傳觀測結果</string>
     <string name="upload_wifi_only_title">僅在使用 Wi-Fi 時上傳資料</string>
     <string name="upload_wifi_only_summary">此選項將可減少您的行動網路使用量。</string>
 
 
-    <string name="refresh_map">重新整理位置</string>
+
 	
     <string name="title_activity_log">紀錄</string>
     <string name="action_view_log">檢視紀錄</string>

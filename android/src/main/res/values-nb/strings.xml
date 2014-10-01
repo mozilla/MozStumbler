@@ -43,9 +43,9 @@
     <string name="metrics_observations_wifis_title">Trådløspunkt:</string>
     <string name="metrics_observations_cell_towers_title">Mobilnettverk:</string>
     <string name="upload_observations_in_queue_title">I kø</string>
-    <string name="upload_observations_observations_queued_title">Observasjoner:</string>
-    <string name="upload_observations_wifis_queued_title">Trådløspunkt:</string>
-    <string name="upload_observations_cells_queued_title">Mobilnettverk:</string>
+
+
+
     <string name="upload_observations_button">Last opp</string>
     <string name="upload_observations_dialog_title">Last opp observasjoner</string>
     <string name="upload_wifi_only_title">Last bare opp via trådløsnett</string>
@@ -54,7 +54,7 @@
     <!--translations missing
 
 
-    <string name="refresh_map">Refresh location</string>
+
 	
 	<string name="title_activity_log">Log</string>
     <string name="action_view_log">View Log</string>

@@ -42,16 +42,16 @@
 	<string name="metrics_observations_wifis_title">נקודות גישת Wi-Fi:</string>
 	<string name="metrics_observations_cell_towers_title">אנטנות:</string>
 	<string name="upload_observations_in_queue_title">בתור</string>
-	<string name="upload_observations_observations_queued_title">תצפיות:</string>
-	<string name="upload_observations_wifis_queued_title">נקודות גישת Wi-Fi:</string>
-	<string name="upload_observations_cells_queued_title">אנטנות:</string>
+
+
+
 	<string name="upload_observations_button">העלאה</string>
 	<string name="upload_observations_dialog_title">העלאת תצפיות</string>
 	<string name="upload_wifi_only_title">העלאה רק באמצעות Wi-Fi</string>
 	<string name="upload_wifi_only_summary">אפשרות זו תפחית את השימוש בנתונים של הרשת הסלולרית.</string>
 
 
-	<string name="refresh_map">רענון המיקום</string>
+
 	<string name="title_activity_log">רישום</string>
 	<string name="action_view_log">צפייה ברישום</string>
 	<string name="scroll_to_start">גלילה להתחלה</string>

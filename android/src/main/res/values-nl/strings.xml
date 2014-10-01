@@ -44,9 +44,9 @@
     <string name="metrics_observations_wifis_title">Access point Wi-Fi:</string>
     <string name="metrics_observations_cell_towers_title">Celle:</string>
     <string name="upload_observations_in_queue_title">In coda</string>
-    <string name="upload_observations_observations_queued_title">Osservazioni:</string>
-    <string name="upload_observations_wifis_queued_title">Access point Wi-Fi:</string>
-    <string name="upload_observations_cells_queued_title">Celle:</string>
+
+
+
     <string name="upload_observations_button">Invia</string>
     <string name="upload_observations_dialog_title">Invia osservazioni</string>-->
     <string name="upload_wifi_only_title">Upload alleen over een wifiverbinding</string>
@@ -55,7 +55,7 @@
     <!--translations missing
 
 
-    <string name="refresh_map">Refresh location</string>
+
 	
 	<string name="title_activity_log">Log</string>
     <string name="action_view_log">View Log</string>

@@ -42,16 +42,16 @@
     <string name="metrics_observations_wifis_title">Wi-Fi प्रवेश बिंदु:</string>
     <string name="metrics_observations_cell_towers_title">भ्रमणध्वनि कोशिकाएं:</string>
     <string name="upload_observations_in_queue_title">भेजने की प्रतीक्षा कर रहे अवलोकन</string>
-    <string name="upload_observations_observations_queued_title">अवलोकन:</string>
-    <string name="upload_observations_wifis_queued_title">Wi-Fi प्रवेश बिंदु:</string>
-    <string name="upload_observations_cells_queued_title">भ्रमणध्वनि कोशिकाएं:</string>
+
+
+
     <string name="upload_observations_button">भेजें</string>
     <string name="upload_observations_dialog_title">अवलोकन भेजें</string>
     <string name="upload_wifi_only_title">केवल Wi-Fi पर अवलोकन भेजें</string>
     <string name="upload_wifi_only_summary">यह पर्याय आपका भ्रमणध्वनि जाल पर डेटा उपयोग काम करेगा.</string>
 
 
-    <string name="refresh_map">स्थान अद्यतन करेंं</string>
+
     <string name="title_activity_log">पंजी</string>
     <string name="action_view_log">पंजी देखें </string>
     <string name="scroll_to_start">शुरुआत में जाएं</string>

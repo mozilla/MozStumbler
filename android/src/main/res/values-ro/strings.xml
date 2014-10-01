@@ -46,16 +46,16 @@
     <string name="metrics_observations_wifis_title">Puncte acces Wi-Fi:</string>
     <string name="metrics_observations_cell_towers_title">Celule:</string>
     <string name="upload_observations_in_queue_title">În coadă</string>
-    <string name="upload_observations_observations_queued_title">Obvervații:</string>
-    <string name="upload_observations_wifis_queued_title">Puncte acces Wi-Fi:</string>
-    <string name="upload_observations_cells_queued_title">Celule:</string>
+
+
+
     <string name="upload_observations_button">Încarcă</string>
     <string name="upload_observations_dialog_title">Încarcă observații</string>
     <string name="upload_wifi_only_title">Încarcă numai prin Wi-Fi</string>
     <string name="upload_wifi_only_summary">Această opțiune va reduce cantitatea de date utilizate prin rețeaua celulară.</string>
 
 
-    <string name="refresh_map">Reactualizează locația</string>
+
     <string name="title_activity_log">Jurnal</string>
     <string name="action_view_log">Arată jurnal</string>
     <string name="scroll_to_start">Derulare la început</string>

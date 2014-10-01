@@ -104,7 +104,7 @@ public final class MapActivity extends android.support.v4.app.Fragment
 
         showMapNotAvailableMessage(NoMapAvailableMessage.eHideNoMapMessage);
 
-        ImageButton centerMe = (ImageButton) mRootView.findViewById(R.id.my_location_button);
+        final ImageButton centerMe = (ImageButton) mRootView.findViewById(R.id.my_location_button);
         centerMe.setVisibility(View.INVISIBLE);
         centerMe.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -119,10 +119,10 @@ public final class MapActivity extends android.support.v4.app.Fragment
         centerMe.setOnTouchListener(new View.OnTouchListener() {
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    //.setImageResource(R.drawable.modeitempressed);
+                    centerMe.setBackgroundResource(R.drawable.ic_mylocation_click_android_assets);
 
                 } else if (event.getAction() == MotionEvent.ACTION_UP) {
-                    //.setImageResource(R.drawable.modeitemnormal);
+                    centerMe.setBackgroundResource(R.drawable.ic_mylocation_android_assets);
                 }
                 return false;
             }

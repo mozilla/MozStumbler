@@ -51,8 +51,8 @@
     <string name="upload_observations_in_queue_title">Ready to send</string>
     <string name="upload_observations_button">Upload</string>
     <string name="upload_observations_dialog_title">Upload observations</string>
-    <string name="upload_wifi_only_title">Upload only on Wi-Fi</string>
-    <string name="upload_wifi_only_summary">This option will reduce your data usage over the cellular network.</string>
+    <string name="upload_wifi_only_title">Auto-upload only on Wi-Fi</string>
+    <string name="upload_wifi_only_summary">This option will reduce your data usage over the cellular network. Pressing the upload button in Metrics will always upload.</string>
     <string name="metrics_activity_title">Metrics</string>
     <string name="metrics_this_session">This session</string>
     <string name="drawer_map_option_show_mls_locations">Show MLS locations</string>

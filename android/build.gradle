@@ -118,6 +118,7 @@ dependencies {
         exclude group: 'xpp3', module: 'xpp3'
     }
 
+    compile "joda-time:joda-time:2.2"
 }
 
 FileTree getJacocoClassDirs(List projects) {

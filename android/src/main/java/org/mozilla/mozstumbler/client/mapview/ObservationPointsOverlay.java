@@ -134,9 +134,12 @@ class ObservationPointsOverlay extends Overlay {
             ObservationPoint point = i.next();
             final Point gps = pj.toPixels(point.pointGPS, null);
 
-            if (mDrawObservationsWithShape && point.mHasWifiScan && !point.mHasCellScan) {
+            boolean hasWifiScan = point.mWifiCount > 0;
+            boolean hasCellScan = point.mCellCount > 0;
+
+            if (mDrawObservationsWithShape && hasWifiScan && !hasCellScan) {
                 drawRect(c, gps, mSquarePaint);
-            } else if (mDrawObservationsWithShape && point.mHasCellScan && !point.mHasWifiScan) {
+            } else if (mDrawObservationsWithShape && hasCellScan && !hasWifiScan) {
                 drawTriangle(c, gps, mTrianglePaint);
             } else {
                 drawDot(c, gps, radiusInnerRing, mGreenPaint, mBlackStrokePaint);

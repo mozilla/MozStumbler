@@ -67,24 +67,25 @@ public class ObservedLocationsReceiver extends BroadcastReceiver {
     private final Runnable mFetchMLSRunnable = new Runnable() {
         @Override
         public void run() {
-            mHandler.postDelayed(mFetchMLSRunnable, FREQ_FETCH_MLS_MS);
-            if (mQueuedForMLS.size() < 1 || !ClientPrefs.getInstance().getOnMapShowMLS()) {
-                return;
-            }
-            int count = 0;
-            Iterator<ObservationPoint> li = mQueuedForMLS.iterator();
-            while (li.hasNext() && count < MAX_QUEUED_MLS_POINTS_TO_FETCH) {
-                ObservationPoint obs = li.next();
-                if (obs.needsToFetchMLS()) {
-                    obs.fetchMLS();
-                    count++;
-                } else {
-                    synchronized (this) {
+            synchronized (ObservedLocationsReceiver.this) {
+                mHandler.postDelayed(mFetchMLSRunnable, FREQ_FETCH_MLS_MS);
+                if (mQueuedForMLS.size() < 1 || !ClientPrefs.getInstance().getOnMapShowMLS()) {
+                    return;
+                }
+                int count = 0;
+                Iterator<ObservationPoint> li = mQueuedForMLS.iterator();
+                while (li.hasNext() && count < MAX_QUEUED_MLS_POINTS_TO_FETCH) {
+                    ObservationPoint obs = li.next();
+                    if (obs.needsToFetchMLS()) {
+                        obs.fetchMLS();
+                        count++;
+                    } else {
                         if (getMapActivity() != null) {
                             getMapActivity().newMLSPoint(obs);
                         }
                     }
                     li.remove();
+
                 }
             }
         }

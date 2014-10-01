@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <string name="app_name">MozStumbler</string>
     <string name="action_about">Acerca de MozStumbler</string>
     <string name="action_preferences">Configuración</string>
@@ -38,26 +39,42 @@
     <string name="about_version">Versión %1$s</string>
     <string name="about_openstreetmap">Mosaico para construir los mapas © colaboradores de OpenStreetMap \nhttp://www.openstreetmap.org</string>
     <string name="about_mapbox_title">MapBox</string>
-    <string name="about_mapbox">Aprenda más acerca de nuestro proveedor de cartografía…</string>
+    <string name="about_mapbox">Aprenda más en http://www.mapbox.com</string>
     <string name="about_legal_aosp">Algunos iconos en esta aplicación son reproducidos de trabajo creado y compartido por el Proyecto de código abierto de Android y se usa de acuerdo a los términos descritos en la Licencia 2.5 de Creative Commons.</string>
     <string name="about_legal_icons8">Iconos adicionales de http://icons8.com bajo licencia: https://creativecommons.org/licenses/by-nd/3.0</string>
-    <string name="upload_observations_sent_title">Enviado</string>
+    <string name="about_legal_flaticons">Los iconos de GPS, torre celular, Wi-Fi, y binoculares están hechos por Freepik de http://flaticon.com bajo la licencia: https://creativecommons.org/licenses/by-nd/3.0</string>
+    <string name="upload_observations_sent_title">Enviado (desde el principio)</string>
     <string name="metrics_observations_last_upload_time_title">Última fecha de envío:</string>
     <string name="metrics_observations_title">Observaciones:</string>
     <string name="metrics_observations_wifis_title">Puntos de acceso Wi-Fi:</string>
     <string name="metrics_observations_cell_towers_title">Celdas móviles:</string>
-    <string name="upload_observations_in_queue_title">En cola</string>
-    <string name="upload_observations_observations_queued_title">Observaciones:</string>
-    <string name="upload_observations_wifis_queued_title">Puntos de acceso Wi-Fi:</string>
-    <string name="upload_observations_cells_queued_title">Celdas móviles:</string>
+    <string name="upload_observations_in_queue_title">Listo para subir</string>
     <string name="upload_observations_button">Subir</string>
     <string name="upload_observations_dialog_title">Subir observaciones</string>
-    <string name="upload_wifi_only_title">Subir sólo por Wi-Fi</string>
-    <string name="upload_wifi_only_summary">Está opción reducirá tu consumo de datos de tu operador móvil.</string>
-    <string name="refresh_map">Recargar ubicación</string>
+    <string name="upload_wifi_only_title">Auto-Subir sólo por Wi-Fi</string>
+    <string name="upload_wifi_only_summary">Está opción reducirá tu consumo de datos de tu operador móvil. Presionando el botón subir en las Metricas siempre subirá los reportes.</string>
+    <string name="metrics_activity_title">Metricas</string>
+    <string name="metrics_this_session">Esta sesión</string>
+    <string name="drawer_map_option_show_mls_locations">Mostrar ubicaciones de MLS</string>
+    <string name="drawer_map_option_show_observation_type">Marca para sólo celdas (□) / sólo Wi-Fi(○)</string>
     <string name="title_activity_log">Log</string>
     <string name="action_view_log">Ver log</string>
     <string name="scroll_to_start">Ir al principio</string>
     <string name="scroll_to_end">Ir al final</string>
     <string name="upload_observations_data_size">Tamaño:</string>
+    <string name="keep_screen_on_title">Mantener la pantalla encendida mientras se esta en el mapa</string>
+    <string name="enter_email">Ingresa tu dirección de correo (opcional)</string>
+    <string name="enter_email_title">Correo: </string>
+    <string name="enter_email_longtext">Tu dirección de correo jamas es mostrada a las personas y sólo es usada para tus reportes</string>
+    <string name="drawer_open">Mostrar barra lateral</string>
+    <string name="drawer_close">Cerrar barra lateral</string>
+    <string name="title_activity_leaderboard">Tabla de posiciones</string>
+    <string name="drawer_map_layers_title">Capas del mapa (para nerds)</string>
+    <string name="first_run_message_part1">El Servicio de Ubicación de Mozilla es un servicio abierto para localizar dispositivos usando puntos de acceso Wi-Fi y torres celulares.</string>
+    <string name="first_run_message_part2">Lee nuestra <a href="https://location.services.mozilla.com/privacy">política de privacidad</a> y luego inicia escaneando para comenzar a colaborar en tu ubicación actual.</string>
+    <string name="first_run_start_stumbling">Inicia escaneando</string>
+    <string name="first_run_welcome_to_mozstumbler">Bienvenido a MozStumbler</string>
+    <string name="map_unavailable">El mapa no está disponible para mostrarse, ya que no hay una tarjeta SD.\nAún no puedes recolectar datos.</string>
+    <string name="map_offline_mode">"El mapa no se actualizará sin una conexión a Internet,\nsin embargo todavía eres capaz de recolectar datos."</string>
+
 </resources>

@@ -34,6 +34,7 @@ public class MLSLocationGetter extends AsyncTask<String, Void, Location> {
 
     public interface MLSLocationGetterCallback {
         void setMLSResponseLocation(Location loc);
+        void errorMLSResponse();
     }
 
     public MLSLocationGetter(MLSLocationGetterCallback callback, JSONObject mlsQueryObj) {
@@ -54,7 +55,7 @@ public class MLSLocationGetter extends AsyncTask<String, Void, Location> {
 
         IResponse resp = mls.search(mQueryMLSBytes, null, false);
         if (resp == null) {
-            Log.e(LOG_TAG, "Error processing search request", new RuntimeException("Error processing search"));
+            Log.i(LOG_TAG, "Error processing search request");
             return null;
         }
         int bytesSent = resp.bytesSent();
@@ -86,8 +87,9 @@ public class MLSLocationGetter extends AsyncTask<String, Void, Location> {
     protected void onPostExecute(Location location) {
         sRequestCounter.decrementAndGet();
         if (location == null) {
-            return;
+            mCallback.errorMLSResponse();
+        } else {
+            mCallback.setMLSResponseLocation(location);
         }
-        mCallback.setMLSResponseLocation(location);
     }
 }

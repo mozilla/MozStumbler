@@ -105,13 +105,10 @@ public final class Reporter extends BroadcastReceiver implements IReporter {
 
         if (subject.equals(GPSScanner.SUBJECT_NEW_LOCATION)) {
             Location newPosition = intent.getParcelableExtra(GPSScanner.NEW_LOCATION_ARG_LOCATION);
-            if (newPosition != null) {
+            // Only create StumblerBundle instances if the NMEA data looks marginally ok
+            if (newPosition != null && this.hasNMEAData()) {
                 flush();
-                // Only create StumblerBundle instances if the NMEA
-                // data looks marginally ok
-                if (this.hasNMEAData()) {
-                    mBundle = new StumblerBundle(newPosition, mPhoneType);
-                }
+                mBundle = new StumblerBundle(newPosition, mPhoneType);
             }
         }
     }
@@ -250,6 +247,9 @@ public final class Reporter extends BroadcastReceiver implements IReporter {
             Log.d(LOG_TAG, "Received bundle: " + mlsObj.toString());
         }
 
+        if (wifiCount + cellCount < 1)
+            return;
+
         mPreviousBundleJSON = mlsObj;
 
         AppGlobals.guiLogInfo(mlsObj.toString());
@@ -259,7 +259,5 @@ public final class Reporter extends BroadcastReceiver implements IReporter {
         } catch (IOException e) {
             Log.w(LOG_TAG, e.toString());
         }
-
-        mBundle.wasSent();
     }
 }

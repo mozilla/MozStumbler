@@ -7,7 +7,6 @@ assets
 bin
 gen
 build
-*.keystore
 local.properties
 
 # ignore vim swap files
@@ -19,6 +18,9 @@ android/libs/*.jar
 # ctags
 tags
 
-# Mozilla Special Sauce
 gradle.properties
+
+# Mozilla Special Sauce
+# Never commit your private.properties file or your keystore
 private.properties
+*.keystore

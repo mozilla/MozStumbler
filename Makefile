@@ -1,13 +1,15 @@
 test: updateJars
 	./gradlew testUnittest
 
+release_check:
+	. ./release_check.sh
+
 debug: updateJars
 	./gradlew assembleDebug
 
-release: updateJars
-	# private.properties has our special sauce for Mozilla builds
-	cp private.properties gradle.properties
+release: release_check updateJars
 	./gradlew assembleRelease
+	rename_release.sh
 
 updateJars:
 	./gradlew -q updateJars

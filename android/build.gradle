@@ -1,3 +1,9 @@
+// each of the version numbers must be 0-99
+def versionMajor = 0
+def versionMinor = 9
+def versionPatch = 0
+def versionBuild = 0 // bump for dogfood builds, public betas, etc...
+
 buildscript {
     repositories {
         mavenCentral()
@@ -26,6 +32,7 @@ repositories {
 }
 
 import de.undercouch.gradle.tasks.download.Download
+import java.util.regex.Pattern
 
 def libDir = new File("android/libs")
 libDir.mkdirs()
@@ -46,10 +53,13 @@ android {
         minSdkVersion 10
         targetSdkVersion 18
 
-        // versionCode and versioName need to be automated
-        // by gradle
-        versionCode 1
-        versionName "1.0"
+        versionCode versionMajor * 1000000 + versionMinor * 10000 + versionPatch * 100 + versionBuild
+        versionName "${versionMajor}.${versionMinor}.${versionPatch}.${versionPatch}"
+
+        // I'm so happy I have to compute the versionCode, versionName
+        // and then duplicate it in the manifest.  yay android.
+        writeVersionCode(versionCode)
+        writeVersionName(versionName)
 
         buildConfigField "boolean", "ROBOLECTRIC", "false"
         buildConfigField "String", "MOZILLA_API_KEY", getMozillaApiKey()
@@ -96,10 +106,8 @@ dependencies {
     testCompile 'junit:junit:4.10'
     testCompile 'org.robolectric:robolectric:2.3'
 
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-
     // pickup osmdroid and simplekml
-    compile fileTree(dir: 'android/libs', include: ['*.jar'])
+    compile fileTree(dir: 'libs', include: ['*.jar'])
 
     compile 'org.slf4j:slf4j-android:1.7.7'
 
@@ -181,24 +189,80 @@ tasks.withType(JavaCompile) {
     options.compilerArgs = ['-Xlint:all', '-Werror', '-Xlint:-deprecation']
 }
 
-if (hasProperty('StoreFile')) {
-    android.signingConfigs.release.storeFile = file(StoreFile)
-    android.signingConfigs.release.storePassword = StorePassword
-    android.signingConfigs.release.keyAlias = KeyAlias
-    android.signingConfigs.release.keyPassword = KeyPassword
+
+File signFile = rootProject.file('private.properties')
+if (signFile.exists()) {
+    Properties p = new Properties()
+    p.load(new FileInputStream(signFile))
+
+    android.signingConfigs.release.storeFile = rootProject.file(p.StoreFile)
+    android.signingConfigs.release.storePassword = p.StorePassword
+    android.signingConfigs.release.keyAlias = p.KeyAlias
+    android.signingConfigs.release.keyPassword = p.KeyPassword
 } else {
+    println "No private.properties file was found.";
     android.buildTypes.release.signingConfig = null
 }
 
+
 String getMozillaApiKey() {
-    return project.hasProperty('MozAPIKey') ? '"' +  project['MozAPIKey'] + '"' : "null";
+    // Yeah, this is lame, opening the file again.  Sosume.
+    File signFile = rootProject.file('private.properties')
+    if (signFile.exists()) {
+        Properties p = new Properties()
+        p.load(new FileInputStream(signFile))
+        def result = '"' + p['MozAPIKey'] + '"';
+        println "Writing custom MozAPIKey: ["+result+"]";
+        return result;
+    }
+    println "No private.properties for Mozilla API Key configuration.."
+    return "null";
 }
 
 String getTileServerUrl() {
-    if (project.hasProperty('TileServerURL')) {
-        return '"' + project['TileServerURL'] + '"';
-    } else if (project.hasProperty('MapAPIKey')) {
-        return "\"http://api.tiles.mapbox.com/v3/${project['MapAPIKey']}/\"";
+    // Yeah, this is lame, opening the file again.  Sosume.
+    File signFile = rootProject.file('private.properties')
+    if (signFile.exists()) {
+        Properties p = new Properties()
+        p.load(new FileInputStream(signFile))
+
+        if (p['TileServerURL']) {
+            def result = '"' + p['TileServerURL'] + '"';
+            println "Using custom TileServerURL: ["+result+"]";
+            return result;
+        } else if (p['MapAPIKey']) {
+            def result = "\"http://api.tiles.mapbox.com/v3/${p['MapAPIKey']}/\"";
+            println "Using MapAPIKey: ["+result+"]";
+            return result;
+        }
     }
+    println "No private.properties for TileServer configuration."
     return "null";
 }
+
+
+void writeVersionCode(int versionCode) {
+    def manifestFile = file("src/main/AndroidManifest.xml")
+    def pattern = Pattern.compile("versionCode=\"(\\d+)\"")
+    def manifestText = manifestFile.getText()
+    def matcher = pattern.matcher(manifestText)
+    matcher.find()
+    def manifestContent = matcher.replaceAll("versionCode=\"" + versionCode + "\"")
+    manifestFile.write(manifestContent)
+}
+
+void writeVersionName(String versionName) {
+    def manifestFile = file("src/main/AndroidManifest.xml")
+    def patternVersionNumber = Pattern.compile("versionName=\"[^\"]*\"")
+    def manifestText = manifestFile.getText()
+    def matcherVersionNumber = patternVersionNumber.matcher(manifestText)
+    def manifestContent = matcherVersionNumber.replaceAll("versionName=\"" + versionName + "\"")
+    manifestFile.write(manifestContent)
+
+    def versionFile = file("../VERSION")
+    versionFile.write(versionName)
+}
+
+// Yay for apk basenames that you can only figure out by reading the
+// gradle source.
+project.archivesBaseName = "MozStumbler";

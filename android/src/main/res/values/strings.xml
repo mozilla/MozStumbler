@@ -56,7 +56,7 @@
     <string name="metrics_activity_title">Metrics</string>
     <string name="metrics_this_session">This session</string>
     <string name="drawer_map_option_show_mls_locations">Show MLS locations</string>
-    <string name="drawer_map_option_show_observation_type">Indicate cell △, Wi-Fi □, or both ○</string>
+    <string name="drawer_map_option_show_observation_type">Mark cell-only (□) / Wi-Fi-only (○)</string>
     <string name="title_activity_log">Log</string>
     <string name="action_view_log">View Log</string>
     <string name="scroll_to_start">Scroll to Top</string>

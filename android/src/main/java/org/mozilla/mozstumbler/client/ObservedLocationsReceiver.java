@@ -33,11 +33,11 @@ public class ObservedLocationsReceiver extends BroadcastReceiver {
     private WeakReference<MapActivity> mMapActivity = new WeakReference<MapActivity>(null);
     private final LinkedList<ObservationPoint> mCollectionPoints = new LinkedList<ObservationPoint>();
     private final LinkedList<ObservationPoint> mQueuedForMLS = new LinkedList<ObservationPoint>();
-
     private final int MAX_QUEUED_MLS_POINTS_TO_FETCH = 10;
     private final long FREQ_FETCH_MLS_MS = 5 * 1000;
     private JSONObject mPreviousBundleForDuplicateCheck;
     private WeakReference<ICountObserver> mCountObserver = new WeakReference<ICountObserver>(null);
+    private final Handler mHandler = new Handler(Looper.getMainLooper());
 
     // Upper bound on the size of the linked lists of points, for memory and performance safety.
     private final int MAX_SIZE_OF_POINT_LISTS = 5000;
@@ -68,7 +68,7 @@ public class ObservedLocationsReceiver extends BroadcastReceiver {
         @Override
         public void run() {
             mHandler.postDelayed(mFetchMLSRunnable, FREQ_FETCH_MLS_MS);
-            if (mQueuedForMLS.size() < 1) {
+            if (mQueuedForMLS.size() < 1 || !ClientPrefs.getInstance().getOnMapShowMLS()) {
                 return;
             }
             int count = 0;
@@ -89,8 +89,6 @@ public class ObservedLocationsReceiver extends BroadcastReceiver {
             }
         }
     };
-
-    private final Handler mHandler = new Handler(Looper.getMainLooper());
 
     // Must be called by map activity when it is showing to get points displayed
     public synchronized void setMapActivity(MapActivity m) {

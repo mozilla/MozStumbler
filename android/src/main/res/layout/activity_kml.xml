@@ -13,18 +13,28 @@
         android:layout_height="wrap_content"
         android:text="Load KML File"
         android:id="@+id/buttonLoad"
-        android:layout_below="@+id/textView"
-        android:onClick="onClickLoad" />
+        android:onClick="onClickLoad"
+        android:layout_below="@+id/buttonSave"
+        android:layout_alignParentLeft="true" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Save KML File"
-        android:layout_below="@+id/buttonLoad"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
         android:id="@+id/buttonSave"
-        android:onClick="onClickSave" />
+        android:onClick="onClickSave"
+        android:layout_below="@+id/textView3"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Developer"
+        android:id="@+id/textView2"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -32,8 +42,39 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="KML Observations File"
         android:id="@+id/textView"
-        android:layout_alignParentTop="true"
+        android:layout_below="@+id/textView2"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="21dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Save/Load the observations (location, wifi+cell counts) for debugging. "
+        android:id="@+id/textView3"
+        android:layout_below="@+id/textView"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/buttonLoad"
+        android:id="@+id/textViewSavedFileLabel"
+        android:text="Saved File:"
+        android:textSize="10sp"
+        android:paddingTop="20dp"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/textViewSavedFileLabel"
+        android:id="@+id/textViewSavedFile"
+        android:textSize="10sp"
+        android:text="       "
+        />
 
 </RelativeLayout>

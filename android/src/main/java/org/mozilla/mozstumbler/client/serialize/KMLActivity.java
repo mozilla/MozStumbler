@@ -1,3 +1,7 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 package org.mozilla.mozstumbler.client.serialize;
 
 import android.app.Activity;
@@ -14,6 +18,8 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
+
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -25,11 +31,14 @@ import java.io.FilenameFilter;
 import java.lang.ref.WeakReference;
 import java.util.LinkedList;
 
+/* This is the "Developer" activity but this is temporary. Once the developer activity
+* has more items, we will split this up properly. */
 public class KMLActivity extends Activity
     implements ObservationPointSerializer.IListener {
 
     private LinkedList<ObservationPoint> mPointsToWrite;
     private WeakReference<ProgressDialog> mProgressDialog;
+    private TextView mSavedFileLocation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +47,8 @@ public class KMLActivity extends Activity
         setContentView(R.layout.activity_kml);
         mPointsToWrite = ObservedLocationsReceiver.getInstance().getObservationPoints();
         mProgressDialog = new WeakReference<ProgressDialog>(null);
+
+        mSavedFileLocation = (TextView)findViewById(R.id.textViewSavedFile);
     }
 
     private boolean mIsRunning;
@@ -87,6 +98,8 @@ public class KMLActivity extends Activity
 
     public void onWriteComplete(final File file) {
         showProgress(false, null);
+
+        mSavedFileLocation.setText(file.getAbsolutePath());
 
         new AlertDialog.Builder(this)
                 .setTitle(R.string.kml_file_saved)

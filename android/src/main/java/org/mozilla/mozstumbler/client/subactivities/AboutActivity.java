@@ -12,9 +12,7 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.TextView;
 import org.mozilla.mozstumbler.R;
-import org.mozilla.mozstumbler.client.MainApp;
 import org.mozilla.mozstumbler.client.PackageUtils;
-import org.mozilla.mozstumbler.service.AppGlobals;
 
 public class AboutActivity extends ActionBarActivity {
     private static final String ABOUT_MAPBOX_URL = "https://www.mapbox.com/about/maps/";
@@ -32,18 +30,6 @@ public class AboutActivity extends ActionBarActivity {
         String str = getResources().getString(R.string.about_version);
         str = String.format(str, PackageUtils.getAppVersion(this));
         textView.setText(str);
-        
-        if (AppGlobals.isDebug) {
-            // In debug, add KML I/O as a long press on the version number,
-            // this feature is not ready for release
-            textView.setLongClickable(true);
-            textView.setOnLongClickListener(new View.OnLongClickListener() {
-                public boolean onLongClick(View view) {
-                    ((MainApp) getApplication()).showKmlDialog(AboutActivity.this);
-                    return true;
-                }
-            });
-        }
     }
 
     public void onClick_ViewMapboxAttribution(View v) {

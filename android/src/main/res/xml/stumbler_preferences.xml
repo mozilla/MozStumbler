@@ -29,4 +29,6 @@
         android:key="log_button"/>
     <Preference android:title="@string/action_about"
         android:key="about_button"/>
+    <Preference android:title="@string/action_developer"
+        android:key="developer_button"/>
 </PreferenceScreen>

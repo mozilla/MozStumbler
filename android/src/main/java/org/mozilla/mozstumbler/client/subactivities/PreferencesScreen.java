@@ -14,10 +14,13 @@ import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceGroup;
 import android.text.TextUtils;
+import android.view.View;
 
 import org.mozilla.mozstumbler.BuildConfig;
 import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.client.ClientPrefs;
+import org.mozilla.mozstumbler.client.MainApp;
+import org.mozilla.mozstumbler.service.AppGlobals;
 
 public class PreferencesScreen extends PreferenceActivity {
     private EditTextPreference mNicknamePreference;
@@ -82,6 +85,16 @@ public class PreferencesScreen extends PreferenceActivity {
                 return true;
             }
         });
+
+
+        button = findPreference("developer_button");
+        button.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference arg) {
+                ((MainApp) getApplication()).showKmlDialog(PreferencesScreen.this);
+                return true;
+            }
+        });
     }
 
     private void setPreferenceListener() {
@@ -135,5 +148,4 @@ public class PreferencesScreen extends PreferenceActivity {
             mEmailPreference.setTitle(R.string.enter_email);
         }
     }
-
 }

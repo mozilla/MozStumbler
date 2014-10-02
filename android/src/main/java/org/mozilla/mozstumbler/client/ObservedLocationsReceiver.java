@@ -83,9 +83,8 @@ public class ObservedLocationsReceiver extends BroadcastReceiver {
                         if (getMapActivity() != null) {
                             getMapActivity().newMLSPoint(obs);
                         }
+                        li.remove();
                     }
-                    li.remove();
-
                 }
             }
         }

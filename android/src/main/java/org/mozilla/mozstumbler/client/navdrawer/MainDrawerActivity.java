@@ -18,6 +18,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Switch;
 
 import org.mozilla.mozstumbler.BuildConfig;
 import org.mozilla.mozstumbler.R;
@@ -103,8 +104,18 @@ public class MainDrawerActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
+
         mMenuItemStartStop = menu.add(Menu.NONE, MENU_START_STOP, Menu.NONE, R.string.start_scanning);
         if (Build.VERSION.SDK_INT >= 11) {
+            Switch s = new Switch(this);
+            s.setChecked(false);
+            s.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mMapActivity.toggleScanning(mMenuItemStartStop);
+                }
+            });
+            mMenuItemStartStop.setActionView(s);
             mMenuItemStartStop.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
         }
         else {
@@ -122,12 +133,21 @@ public class MainDrawerActivity
             return;
         }
         boolean isScanning = ((MainApp) getApplication()).getService().isScanning();
-        if (isScanning) {
-            mMenuItemStartStop.setIcon(android.R.drawable.ic_media_pause);
-            mMenuItemStartStop.setTitle(R.string.stop_scanning);
+        if (Build.VERSION.SDK_INT >= 11) {
+            Switch s = (Switch)mMenuItemStartStop.getActionView();
+            if (isScanning) {
+                s.setChecked(true);
+            } else {
+                s.setChecked(false);
+            }
         } else {
-            mMenuItemStartStop.setIcon(android.R.drawable.ic_media_play);
-            mMenuItemStartStop.setTitle(R.string.start_scanning);
+            if (isScanning) {
+                mMenuItemStartStop.setIcon(android.R.drawable.ic_media_pause);
+                mMenuItemStartStop.setTitle(R.string.stop_scanning);
+            } else {
+                mMenuItemStartStop.setIcon(android.R.drawable.ic_media_play);
+                mMenuItemStartStop.setTitle(R.string.start_scanning);
+            }
         }
     }
 

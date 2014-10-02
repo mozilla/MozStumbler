@@ -9,7 +9,7 @@ debug: updateJars
 
 release: release_check updateJars
 	./gradlew assembleRelease
-	rename_release.sh
+	. ./rename_release.sh
 
 updateJars:
 	./gradlew -q updateJars

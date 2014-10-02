@@ -124,18 +124,24 @@ public class AsyncUploader extends AsyncTask<AsyncUploadParam, AsyncProgressList
                 if (result != null && result.isSuccessCode2XX()) {
                     totalBytesSent += result.bytesSent();
 
+                    String logMsg =  "HTTP Status: " + result.httpResponse() + ", Bytes Sent: " + result.bytesSent();
+                    AppGlobals.guiLogInfo(logMsg, "#FFFFCC", true);
+
                     dm.delete(batch.filename);
 
                     uploadedObservations += batch.reportCount;
                     uploadedWifis += batch.wifiCount;
                     uploadedCells += batch.cellCount;
                 } else {
+                    String logMsg =  "HTTP non-success code: " + result.httpResponse();
                     if (result != null && result.isErrorCode4xx()) {
+                        logMsg += ", Error, deleting bad report";
                         // delete on 4xx, no point in resending
                         dm.delete(batch.filename);
                     } else {
                         DataStorageManager.getInstance().saveCurrentReportsSendBufferToDisk();
                     }
+                    AppGlobals.guiLogInfo(logMsg, "#FFCCCC", true);
                 }
 
                 batch = dm.getNextBatch();

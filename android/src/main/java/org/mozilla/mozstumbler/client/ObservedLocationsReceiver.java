@@ -119,8 +119,11 @@ public class ObservedLocationsReceiver extends BroadcastReceiver {
 
         final Context appContext = context.getApplicationContext();
         final ClientStumblerService service = ((MainApp) appContext).getService();
-        if (mCollectionPoints.size() > 0 && service != null) {
-            final ObservationPoint lastObservation = mCollectionPoints.getLast();
+        ObservationPoint lastObservation = null;
+        if (mCollectionPoints.size() > 0) {
+            lastObservation = mCollectionPoints.getLast();
+        }
+        if (lastObservation != null && service != null) {
             JSONObject currentBundle = service.getLastReportedBundle();
             if (mPreviousBundleForDuplicateCheck == currentBundle) {
                 return;
@@ -142,7 +145,11 @@ public class ObservedLocationsReceiver extends BroadcastReceiver {
             return;
         }
 
-        mCollectionPoints.add(new ObservationPoint(new GeoPoint(newPosition)));
+        ObservationPoint observation = new ObservationPoint(new GeoPoint(newPosition));
+        mCollectionPoints.add(observation);
+        if (lastObservation != null) {
+            observation.mHeading = observation.pointGPS.bearingTo(lastObservation.pointGPS);
+        }
 
         if (getMapActivity() == null) {
             return;

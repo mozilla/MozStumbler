@@ -5,6 +5,7 @@
 package org.mozilla.mozstumbler.client;
 
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.app.Application;
 import android.app.Notification;
 import android.app.PendingIntent;
@@ -27,6 +28,7 @@ import org.mozilla.mozstumbler.BuildConfig;
 import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.client.cellscanner.DefaultCellScanner;
 import org.mozilla.mozstumbler.client.navdrawer.MainDrawerActivity;
+import org.mozilla.mozstumbler.client.serialize.KMLActivity;
 import org.mozilla.mozstumbler.client.subactivities.LogActivity;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.Prefs;
@@ -327,5 +329,13 @@ public class MainApp extends Application implements ObservedLocationsReceiver.IC
         if (mMainActivity.get() != null) {
             mMainActivity.get().displayObservationCount(observationCount);
         }
+    }
+
+    public void showKmlDialog(Activity activity) {
+       if (getService().isScanning()) {
+          stopScanning();
+           mMainActivity.get().updateUiOnMainThread();
+       }
+       activity.startActivity(new Intent(activity, KMLActivity.class));
     }
 }

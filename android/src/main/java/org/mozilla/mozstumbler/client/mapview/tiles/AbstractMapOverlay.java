@@ -2,11 +2,10 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package org.mozilla.mozstumbler.client.mapview;
+package org.mozilla.mozstumbler.client.mapview.tiles;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
@@ -15,44 +14,33 @@ import org.osmdroid.DefaultResourceProxyImpl;
 import org.osmdroid.tileprovider.MapTile;
 import org.osmdroid.tileprovider.MapTileProviderBasic;
 import org.osmdroid.tileprovider.ReusableBitmapDrawable;
-import org.osmdroid.tileprovider.tilesource.ITileSource;
-import org.osmdroid.tileprovider.tilesource.XYTileSource;
-import org.osmdroid.tileprovider.util.SimpleInvalidationHandler;
 import org.osmdroid.util.TileLooper;
-import org.osmdroid.views.MapView;
 import org.osmdroid.views.Projection;
 import org.osmdroid.views.overlay.TilesOverlay;
 
 import java.util.HashSet;
 import java.util.Set;
 
-/**
- * This class provides the Mozilla Coverage overlay
- */
-public class CoverageOverlay extends TilesOverlay {
-
+public abstract class AbstractMapOverlay extends TilesOverlay {
+    // We want the map to zoom to level 20, even if tiles have less zoom available
+    public static final int MAX_ZOOM_LEVEL_OF_MAP = 20;
+    public static final int TILE_PIXEL_SIZE = 256;
+    // Use png32 which is a 32-color indexed image, the tiles are ~30% smaller
+    public static String FILE_TYPE_SUFFIX_PNG = ".png32";
     private final Rect mTileRect = new Rect();
     private final Point mTilePoint = new Point();
     private final Point mTilePointMercator = new Point();
     private final Set<MapTile> mDrawnSet = new HashSet<MapTile>();
     private Projection mProjection;
 
-    public CoverageOverlay(final Context aContext, final String coverageUrl, MapView mapView) {
+    public AbstractMapOverlay(final Context aContext) {
         super(new MapTileProviderBasic(aContext), new DefaultResourceProxyImpl(aContext));
-        final ITileSource coverageTileSource = new XYTileSource("Mozilla Location Service Coverage Map",
-                null,
-                1, 13, 256,
-                ".png",
-                new String[] { coverageUrl });
-        this.setLoadingBackgroundColor(Color.TRANSPARENT);
-        mTileProvider.setTileRequestCompleteHandler(new SimpleInvalidationHandler(mapView));
-        mTileProvider.setTileSource(coverageTileSource);
     }
 
     // Though the tile provider can only provide up to 13, this overlay will display higher.
     @Override
     public int getMaximumZoomLevel() {
-        return 18;
+        return MAX_ZOOM_LEVEL_OF_MAP;
     }
 
     @Override
@@ -67,7 +55,7 @@ public class CoverageOverlay extends TilesOverlay {
         }
     }
 
-    private final TileLooper mCoverageTileLooper = new TileLooper() {
+    protected final TileLooper mCoverageTileLooper = new TileLooper() {
         @Override
         public void initialiseLoop(int pZoomLevel, int pTileSizePx) {
             // make sure the cache is big enough for all the tiles

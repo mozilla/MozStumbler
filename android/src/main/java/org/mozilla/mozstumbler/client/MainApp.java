@@ -39,6 +39,7 @@ import org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner.CellS
 import org.mozilla.mozstumbler.service.uploadthread.AsyncUploadParam;
 import org.mozilla.mozstumbler.service.uploadthread.AsyncUploader;
 import org.mozilla.mozstumbler.service.utils.NetworkInfo;
+import org.osmdroid.tileprovider.constants.TileFilePath;
 
 import java.io.File;
 import java.io.IOException;
@@ -74,9 +75,26 @@ public class MainApp extends Application implements ObservedLocationsReceiver.IC
         mMainActivity = new WeakReference<IMainActivity>(mainActivity);
     }
 
+    private File getStorageDir(Context c) {
+        File dir = c.getExternalFilesDir(null);
+
+        if (dir == null) {
+            dir = c.getFilesDir();
+        }
+
+        if (dir == null) {
+            Log.i(LOG_TAG, "No tile storage available");
+            return null;
+        }
+
+        return new File(dir, "osmdroid");
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
+
+        TileFilePath.directoryOverride = getStorageDir(getApplicationContext());
 
         AppGlobals.isDebug = BuildConfig.DEBUG;
         AppGlobals.isRobolectric = BuildConfig.ROBOLECTRIC;

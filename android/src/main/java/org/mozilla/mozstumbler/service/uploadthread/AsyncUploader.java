@@ -133,7 +133,11 @@ public class AsyncUploader extends AsyncTask<AsyncUploadParam, AsyncProgressList
                     uploadedWifis += batch.wifiCount;
                     uploadedCells += batch.cellCount;
                 } else {
-                    String logMsg =  "HTTP non-success code: " + result.httpResponse();
+                    String logMsg = "HTTP error unknown";
+                    if (result != null) {
+                        logMsg = "HTTP non-success code: " + result.httpResponse();
+                    }
+                    
                     if (result != null && result.isErrorCode4xx()) {
                         logMsg += ", Error, deleting bad report";
                         // delete on 4xx, no point in resending

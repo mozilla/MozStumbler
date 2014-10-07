@@ -20,11 +20,11 @@ public class ClientPrefs extends Prefs {
         super(context);
     }
 
-    public static synchronized void createGlobalInstance(Context c) {
-        if (sInstance != null) {
-            return;
+    public static synchronized Prefs createGlobalInstance(Context c) {
+        if (sInstance == null) {
+            sInstance = new ClientPrefs(c);
         }
-        sInstance = new ClientPrefs(c);
+        return sInstance;
     }
 
     public static synchronized ClientPrefs getInstance() {

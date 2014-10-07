@@ -46,11 +46,11 @@ public class Prefs {
     }
 
     /* Prefs must be created on application startup or service startup. */
-    public static synchronized void createGlobalInstance(Context c) {
-        if (sInstance != null) {
-            return;
+    public static synchronized Prefs createGlobalInstance(Context c) {
+        if (sInstance == null) {
+            sInstance = new Prefs(c);
         }
-        sInstance = new Prefs(c);
+        return sInstance;
     }
 
     /* Only access after CreatePrefsInstance(Context) has been called at startup. */

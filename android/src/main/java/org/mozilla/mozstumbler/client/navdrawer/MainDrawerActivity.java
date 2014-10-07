@@ -234,4 +234,8 @@ public class MainDrawerActivity
         });
     }
 
+    @Override
+    public void setUploadState(boolean isUploadingObservations) {
+        mMetricsView.setUploadState(isUploadingObservations);
+    }
 }

@@ -112,7 +112,9 @@ public class MainApp extends Application
           oldPrefs.renameTo(new File(dir, ClientPrefs.getPrefsFileNameForUpgrade()));
         }
 
-        ClientPrefs.createGlobalInstance(this);
+        Prefs prefs = ClientPrefs.createGlobalInstance(this);
+        prefs.setMozApiKey(BuildConfig.MOZILLA_API_KEY);
+
         NetworkInfo.createGlobalInstance(this);
         LogActivity.LogMessageReceiver.createGlobalInstance(this);
         CellScanner.setCellScannerImpl(new DefaultCellScanner(this));

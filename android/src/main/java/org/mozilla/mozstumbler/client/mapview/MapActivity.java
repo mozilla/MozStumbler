@@ -90,7 +90,8 @@ public final class MapActivity extends android.support.v4.app.Fragment
     // Used to blank the high-res tile source when adding a low-res overlay
     private class BlankTileSource extends OnlineTileSourceBase {
         BlankTileSource() {
-            super("fake", ResourceProxy.string.mapquest_aerial /* arbitrary value */, 13,
+            super("fake", ResourceProxy.string.mapquest_aerial /* arbitrary value */,
+                    AbstractMapOverlay.MIN_ZOOM_LEVEL_OF_MAP,
                     AbstractMapOverlay.MAX_ZOOM_LEVEL_OF_MAP, AbstractMapOverlay.TILE_PIXEL_SIZE,
                     "", new String[] {""});
         }
@@ -168,7 +169,7 @@ public final class MapActivity extends android.support.v4.app.Fragment
         final int zoom = zoomLevel;
         mMap.getController().setZoom(zoom);
         mMap.getController().setCenter(loc);
-        mMap.setMinZoomLevel(13);
+        mMap.setMinZoomLevel(AbstractMapOverlay.MIN_ZOOM_LEVEL_OF_MAP);
 
         mMap.post(new Runnable() {
             @Override
@@ -320,8 +321,10 @@ public final class MapActivity extends android.support.v4.app.Fragment
 
         mMap.post(mCoverageUrlQuery);
 
-        ConnectivityManager cm = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
-        boolean hasNetwork = cm.getActiveNetworkInfo() != null && cm.getActiveNetworkInfo().isConnectedOrConnecting();
+        final ConnectivityManager cm = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        final NetworkInfo info = cm.getActiveNetworkInfo();
+        final boolean hasNetwork = (info != null) && cm.getActiveNetworkInfo().isConnected();
+        final boolean hasWifi = (info != null) && (info.getType() == ConnectivityManager.TYPE_WIFI);
 
         if (!hasNetwork) {
             showMapNotAvailableMessage(NoMapAvailableMessage.eNoMapDueToNoInternet);
@@ -329,9 +332,7 @@ public final class MapActivity extends android.support.v4.app.Fragment
         }
 
         showMapNotAvailableMessage(NoMapAvailableMessage.eHideNoMapMessage);
-
-        NetworkInfo info = cm.getActiveNetworkInfo();
-        setHighBandwidthMap(info.getType() == ConnectivityManager.TYPE_WIFI);
+        setHighBandwidthMap(hasWifi);
     }
 
     private void initNetworkConnectionChangedListener() {

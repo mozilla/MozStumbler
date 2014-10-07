@@ -24,6 +24,8 @@ import java.util.Set;
 public abstract class AbstractMapOverlay extends TilesOverlay {
     // We want the map to zoom to level 20, even if tiles have less zoom available
     public static final int MAX_ZOOM_LEVEL_OF_MAP = 20;
+    public static final int MIN_ZOOM_LEVEL_OF_MAP = 13;
+
     public static final int TILE_PIXEL_SIZE = 256;
     // Use png32 which is a 32-color indexed image, the tiles are ~30% smaller
     public static String FILE_TYPE_SUFFIX_PNG = ".png32";

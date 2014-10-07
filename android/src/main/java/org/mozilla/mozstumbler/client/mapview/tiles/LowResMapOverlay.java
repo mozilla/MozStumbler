@@ -21,15 +21,17 @@ public class LowResMapOverlay extends AbstractMapOverlay {
 
         ITileSource coverageTileSource;
         if (isMLSTileStore) {
-            coverageTileSource = new XYTileSource("MozStumbler Tile Store",
-                    null,
-                    13, 13, AbstractMapOverlay.TILE_PIXEL_SIZE,
+            coverageTileSource = new XYTileSource("MozStumbler Tile Store", null,
+                    AbstractMapOverlay.MIN_ZOOM_LEVEL_OF_MAP,
+                    AbstractMapOverlay.MIN_ZOOM_LEVEL_OF_MAP,
+                    AbstractMapOverlay.TILE_PIXEL_SIZE,
                     AbstractMapOverlay.FILE_TYPE_SUFFIX_PNG,
                     new String[]{BuildConfig.TILE_SERVER_URL});
         } else {
-            coverageTileSource
-                    = new XYTileSource("MapquestOSM",
-                    ResourceProxy.string.mapquest_osm, 13, 13, AbstractMapOverlay.TILE_PIXEL_SIZE, ".jpg", new String[]{
+            coverageTileSource = new XYTileSource("MapquestOSM", ResourceProxy.string.mapquest_osm,
+                    AbstractMapOverlay.MIN_ZOOM_LEVEL_OF_MAP,
+                    AbstractMapOverlay.MIN_ZOOM_LEVEL_OF_MAP,
+                    AbstractMapOverlay.TILE_PIXEL_SIZE, ".jpg", new String[]{
                     "http://otile1.mqcdn.com/tiles/1.0.0/map/",
                     "http://otile2.mqcdn.com/tiles/1.0.0/map/",
                     "http://otile3.mqcdn.com/tiles/1.0.0/map/",

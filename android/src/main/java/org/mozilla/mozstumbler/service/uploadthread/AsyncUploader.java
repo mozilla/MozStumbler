@@ -124,7 +124,7 @@ public class AsyncUploader extends AsyncTask<AsyncUploadParam, AsyncProgressList
                 if (result != null && result.isSuccessCode2XX()) {
                     totalBytesSent += result.bytesSent();
 
-                    String logMsg =  "HTTP Status: " + result.httpResponse() + ", Bytes Sent: " + result.bytesSent();
+                    String logMsg =  "MLS Submit: [HTTP Status:" + result.httpResponse() + "], [Bytes Sent:" + result.bytesSent() + "]";
                     AppGlobals.guiLogInfo(logMsg, "#FFFFCC", true);
 
                     dm.delete(batch.filename);

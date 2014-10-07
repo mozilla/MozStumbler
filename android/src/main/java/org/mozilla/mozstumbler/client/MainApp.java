@@ -38,6 +38,7 @@ import org.mozilla.mozstumbler.service.stumblerthread.scanners.WifiScanner;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner.CellScanner;
 import org.mozilla.mozstumbler.service.uploadthread.AsyncUploadParam;
 import org.mozilla.mozstumbler.service.uploadthread.AsyncUploader;
+import org.mozilla.mozstumbler.service.uploadthread.AsyncUploaderListener;
 import org.mozilla.mozstumbler.service.utils.NetworkInfo;
 import org.osmdroid.tileprovider.constants.TileFilePath;
 
@@ -48,7 +49,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class MainApp extends Application implements ObservedLocationsReceiver.ICountObserver {
+public class MainApp extends Application
+        implements ObservedLocationsReceiver.ICountObserver,
+        AsyncUploaderListener {
     public static final AtomicBoolean isUploading = new AtomicBoolean();
     private final String LOG_TAG = AppGlobals.LOG_PREFIX + MainApp.class.getSimpleName();
     private ClientStumblerService mStumblerService;
@@ -351,9 +354,16 @@ public class MainApp extends Application implements ObservedLocationsReceiver.IC
 
     public void showDeveloperDialog(Activity activity) {
        if (getService().isScanning()) {
-          stopScanning();
+           stopScanning();
            mMainActivity.get().updateUiOnMainThread();
        }
        activity.startActivity(new Intent(activity, DeveloperActivity.class));
+    }
+
+    @Override
+    public void onUploadProgress(boolean isUploading) {
+        if (mMainActivity.get() != null) {
+            mMainActivity.get().setUploadState(isUploading);
+        }
     }
 }

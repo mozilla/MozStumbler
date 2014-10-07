@@ -92,4 +92,6 @@
     <string name="enable_option_show_mls_on_map_summary">At the cost of a bit more memory and network usage, the map can show MLS location queries for your scans.</string>
     <string name="cell_only_observation">Cell only observation</string>
     <string name="wifi_only_observation">Wi-Fi only observation</string>
+    <string name="switch_to_low_res_tile">Using low resolution map</string>
+    <string name="switch_to_high_res_tile">Using high resolution map</string>
 </resources>

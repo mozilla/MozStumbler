@@ -5,16 +5,18 @@
 package org.mozilla.mozstumbler.client.mapview;
 
 import android.annotation.SuppressLint;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.location.Location;
 import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -24,9 +26,8 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import java.util.Timer;
-import java.util.TimerTask;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.mozilla.mozstumbler.BuildConfig;
@@ -34,13 +35,19 @@ import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.client.ClientPrefs;
 import org.mozilla.mozstumbler.client.ClientStumblerService;
 import org.mozilla.mozstumbler.client.MainApp;
-import org.mozilla.mozstumbler.service.core.http.HttpUtil;
-import org.mozilla.mozstumbler.service.core.http.IHttpUtil;
 import org.mozilla.mozstumbler.client.ObservedLocationsReceiver;
+import org.mozilla.mozstumbler.client.mapview.tiles.AbstractMapOverlay;
+import org.mozilla.mozstumbler.client.mapview.tiles.CoverageOverlay;
+import org.mozilla.mozstumbler.client.mapview.tiles.LowResMapOverlay;
 import org.mozilla.mozstumbler.client.navdrawer.MetricsView;
 import org.mozilla.mozstumbler.service.AppGlobals;
+import org.mozilla.mozstumbler.service.core.http.HttpUtil;
+import org.mozilla.mozstumbler.service.core.http.IHttpUtil;
+import org.osmdroid.ResourceProxy;
 import org.osmdroid.api.IGeoPoint;
 import org.osmdroid.tileprovider.BitmapPool;
+import org.osmdroid.tileprovider.MapTile;
+import org.osmdroid.tileprovider.tilesource.ITileSource;
 import org.osmdroid.tileprovider.tilesource.OnlineTileSourceBase;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.tileprovider.tilesource.XYTileSource;
@@ -48,10 +55,14 @@ import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Overlay;
 
+import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+
 public final class MapActivity extends android.support.v4.app.Fragment
     implements MetricsView.IMapLayerToggleListener {
 
-    public enum NoMapAvailableMessage { eHideNoMapMessage, eNoMapDueToNoSdCard, eNoMapDueToNoInternet }
+    public enum NoMapAvailableMessage { eHideNoMapMessage, eNoMapDueToNoAccessibleStorage, eNoMapDueToNoInternet }
 
     private static final String LOG_TAG = AppGlobals.LOG_PREFIX + MapActivity.class.getSimpleName();
 
@@ -59,11 +70,10 @@ public final class MapActivity extends android.support.v4.app.Fragment
     private static String sCoverageUrl = null;
     private static int sGPSColor;
     private static final String ZOOM_KEY = "zoom";
-    private static final int DEFAULT_ZOOM = 8;
+    private static final int DEFAULT_ZOOM = 13;
     private static final int DEFAULT_ZOOM_AFTER_FIX = 16;
     private static final String LAT_KEY = "latitude";
     private static final String LON_KEY = "longitude";
-    private static final long MAP_TILE_AVAILABILITY_TIMER_MS = 5000;
 
     private MapView mMap;
     private AccuracyCircleOverlay mAccuracyOverlay;
@@ -73,27 +83,23 @@ public final class MapActivity extends android.support.v4.app.Fragment
     private Overlay mCoverageTilesOverlay = null;
     private ObservationPointsOverlay mObservationPointsOverlay;
     private GPSListener mGPSListener;
-
+    private LowResMapOverlay mLowResMapOverlay;
+    private ITileSource mHighResMapSource;
     private View mRootView;
 
-    private final Handler mHandler = new Handler(Looper.getMainLooper());
-    private final Runnable mCheckForMapTileAvailability = new Runnable() {
-        @Override
-        public void run() {
-            ConnectivityManager cm = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
-            boolean hasNetwork = cm.getActiveNetworkInfo() != null && cm.getActiveNetworkInfo().isConnectedOrConnecting();
-
-            if (getActivity().getFilesDir() == null) {
-                showMapNotAvailableMessage(NoMapAvailableMessage.eNoMapDueToNoSdCard);
-            } else if (!hasNetwork) {
-                showMapNotAvailableMessage(NoMapAvailableMessage.eNoMapDueToNoInternet);
-            } else {
-                showMapNotAvailableMessage(NoMapAvailableMessage.eHideNoMapMessage);
-            }
-
-            mHandler.postDelayed(mCheckForMapTileAvailability, MAP_TILE_AVAILABILITY_TIMER_MS);
+    // Used to blank the high-res tile source when adding a low-res overlay
+    private class BlankTileSource extends OnlineTileSourceBase {
+        BlankTileSource() {
+            super("fake", ResourceProxy.string.mapquest_aerial /* arbitrary value */,
+                    AbstractMapOverlay.MIN_ZOOM_LEVEL_OF_MAP,
+                    AbstractMapOverlay.MAX_ZOOM_LEVEL_OF_MAP, AbstractMapOverlay.TILE_PIXEL_SIZE,
+                    "", new String[] {""});
         }
-    };
+        @Override
+        public String getTileURLString(MapTile aTile) {
+            return null;
+        }
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -134,9 +140,6 @@ public final class MapActivity extends android.support.v4.app.Fragment
         });
 
         mMap = (MapView) mRootView.findViewById(R.id.map);
-        final OnlineTileSourceBase tileSource = getTileSource();
-        showCopyright(tileSource);
-        mMap.setTileSource(tileSource);
         mMap.setBuiltInZoomControls(true);
         mMap.setMultiTouchControls(true);
 
@@ -145,7 +148,7 @@ public final class MapActivity extends android.support.v4.app.Fragment
         sGPSColor = getResources().getColor(R.color.gps_track);
 
         mFirstLocationFix = true;
-        int zoomLevel = DEFAULT_ZOOM; // Default to seeing the world, until we get a fix
+        int zoomLevel = DEFAULT_ZOOM;
         GeoPoint lastLoc = null;
         if (savedInstanceState != null) {
             mFirstLocationFix = false;
@@ -166,6 +169,7 @@ public final class MapActivity extends android.support.v4.app.Fragment
         final int zoom = zoomLevel;
         mMap.getController().setZoom(zoom);
         mMap.getController().setCenter(loc);
+        mMap.setMinZoomLevel(AbstractMapOverlay.MIN_ZOOM_LEVEL_OF_MAP);
 
         mMap.post(new Runnable() {
             @Override
@@ -182,37 +186,6 @@ public final class MapActivity extends android.support.v4.app.Fragment
 
         Log.d(LOG_TAG, "onCreate");
 
-        // @TODO: we do a similar "read from URL" in Updater, AbstractCommunicator, make one function for this
-        if (sCoverageUrl == null) {
-            mGetUrl.schedule(new TimerTask() {
-                @Override
-                public void run() {
-
-                    IHttpUtil httpUtil = new HttpUtil();
-
-                    java.util.Scanner scanner;
-                    try {
-                        scanner = new java.util.Scanner(httpUtil.getUrlAsStream(COVERAGE_REDIRECT_URL), "UTF-8");
-                    } catch (Exception ex) {
-                        Log.d(LOG_TAG, ex.toString());
-                        AppGlobals.guiLogInfo("Failed to get coverage url:" + ex.toString());
-                        return;
-                    }
-                    scanner.useDelimiter("\\A");
-                    String result = scanner.next();
-                    try {
-                        sCoverageUrl = new JSONObject(result).getString("tiles_url");
-                    } catch (JSONException ex) {
-                        AppGlobals.guiLogInfo("Failed to get coverage url:" + ex.toString());
-                    }
-                    scanner.close();
-                }
-            }, 0);
-        } else {
-            mCoverageTilesOverlay = new CoverageOverlay(mRootView.getContext(), sCoverageUrl, mMap);
-            mMap.getOverlays().add(mCoverageTilesOverlay);
-        }
-
         mAccuracyOverlay = new AccuracyCircleOverlay(mRootView.getContext(), sGPSColor);
         mMap.getOverlays().add(mAccuracyOverlay);
 
@@ -226,11 +199,148 @@ public final class MapActivity extends android.support.v4.app.Fragment
         initTextView(R.id.text_wifis_visible);
         initTextView(R.id.text_observation_count);
 
+        initNetworkConnectionChangedListener();
+
+        showCopyright();
+
         return mRootView;
     }
 
     MainApp getApplication() {
         return (MainApp) getActivity().getApplication();
+    }
+
+    private Runnable mCoverageUrlQuery = new Runnable() {
+        @Override
+        public void run() {
+            // @TODO: we do a similar "read from URL" in Updater, AbstractCommunicator, make one function for this
+            if (sCoverageUrl == null) {
+                mGetUrl.schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+
+                        IHttpUtil httpUtil = new HttpUtil();
+
+                        java.util.Scanner scanner;
+                        try {
+                            scanner = new java.util.Scanner(httpUtil.getUrlAsStream(COVERAGE_REDIRECT_URL), "UTF-8");
+                        } catch (Exception ex) {
+                            Log.d(LOG_TAG, ex.toString());
+                            AppGlobals.guiLogInfo("Failed to get coverage url:" + ex.toString());
+                            return;
+                        }
+                        scanner.useDelimiter("\\A");
+                        String result = scanner.next();
+                        try {
+                            sCoverageUrl = new JSONObject(result).getString("tiles_url");
+                        } catch (JSONException ex) {
+                            AppGlobals.guiLogInfo("Failed to get coverage url:" + ex.toString());
+                        }
+                        scanner.close();
+                    }
+                }, 0);
+            } else if (mCoverageTilesOverlay == null) {
+                mCoverageTilesOverlay = new CoverageOverlay(mRootView.getContext(), sCoverageUrl, mMap);
+                addOverlayCoverageLayer();
+            }
+        }
+    };
+
+    private void addOverlayBaseLayer() {
+        if (mLowResMapOverlay == null) {
+            return;
+        }
+        List<Overlay> overlays = mMap.getOverlays();
+        if (overlays.indexOf(mLowResMapOverlay) == -1) {
+            overlays.add(0, mLowResMapOverlay);
+        }
+    }
+
+    private void addOverlayCoverageLayer() {
+        if (mCoverageTilesOverlay == null) {
+            return;
+        }
+        List<Overlay> overlays = mMap.getOverlays();
+        int idx = 0;
+        if (overlays.indexOf(mLowResMapOverlay) > -1) {
+           idx = 1;
+        }
+        overlays.add(idx, mCoverageTilesOverlay);
+    }
+
+    private void setHighBandwidthMap(boolean isHighBandwidth) {
+        if (ClientPrefs.getInstance().isForcedLowBandwidthTiles()) {
+            isHighBandwidth = false;
+        }
+
+        boolean isMLSTileStore = (BuildConfig.TILE_SERVER_URL != null);
+
+        if (isHighBandwidth) {
+            if (mLowResMapOverlay == null && mMap.getTileProvider().getTileSource() == mHighResMapSource) {
+                // already have set this tile source
+                return;
+            } else  {
+                mMap.getOverlays().remove(mLowResMapOverlay);
+                mLowResMapOverlay = null;
+                Toast.makeText(this.getActivity(), R.string.switch_to_high_res_tile, Toast.LENGTH_SHORT).show();
+            }
+
+            if (!isMLSTileStore) {
+                mHighResMapSource = TileSourceFactory.MAPQUESTOSM;
+            } else {
+                // TODO replace me with MapBoxTileSource
+                mHighResMapSource = new XYTileSource("MozStumbler Tile Store",
+                        null, 1, AbstractMapOverlay.MAX_ZOOM_LEVEL_OF_MAP,
+                        AbstractMapOverlay.TILE_PIXEL_SIZE,
+                        AbstractMapOverlay.FILE_TYPE_SUFFIX_PNG,
+                        new String[]{BuildConfig.TILE_SERVER_URL});
+            }
+            mMap.setTileSource(mHighResMapSource);
+        } else {
+            if (mLowResMapOverlay != null) {
+                // already set this
+                return;
+            }
+            mMap.setTileSource(new BlankTileSource());
+            if (mLowResMapOverlay == null) {
+                mLowResMapOverlay = new LowResMapOverlay(this.getActivity(), isMLSTileStore, mMap);
+                addOverlayBaseLayer();
+            }
+
+            Toast.makeText(this.getActivity(), R.string.switch_to_low_res_tile, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void mapNetworkConnectionChanged() {
+        if (getActivity().getFilesDir() == null) {
+            // Not the ideal spot for this check perhaps, but there is no point in checking
+            // the network when storage is not available.
+            showMapNotAvailableMessage(NoMapAvailableMessage.eNoMapDueToNoAccessibleStorage);
+            return;
+        }
+
+        mMap.post(mCoverageUrlQuery);
+
+        final ConnectivityManager cm = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        final NetworkInfo info = cm.getActiveNetworkInfo();
+        final boolean hasNetwork = (info != null) && cm.getActiveNetworkInfo().isConnected();
+        final boolean hasWifi = (info != null) && (info.getType() == ConnectivityManager.TYPE_WIFI);
+
+        if (!hasNetwork) {
+            showMapNotAvailableMessage(NoMapAvailableMessage.eNoMapDueToNoInternet);
+            return;
+        }
+
+        showMapNotAvailableMessage(NoMapAvailableMessage.eHideNoMapMessage);
+        setHighBandwidthMap(hasWifi);
+    }
+
+    private void initNetworkConnectionChangedListener() {
+        getActivity().registerReceiver(new BroadcastReceiver() {
+            public void onReceive(Context context, Intent intent) {
+                mapNetworkConnectionChanged();
+            }
+        }, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
     }
 
     private void setStartStopMenuState(MenuItem menuItem, boolean scanning) {
@@ -271,21 +381,9 @@ public final class MapActivity extends android.support.v4.app.Fragment
         setStartStopMenuState(menuItem, !isScanning);
     }
 
-    @SuppressWarnings("ConstantConditions")
-    private static OnlineTileSourceBase getTileSource() {
-        if (BuildConfig.TILE_SERVER_URL == null) {
-            return TileSourceFactory.MAPQUESTOSM;
-        }
-        return new XYTileSource("MozStumbler Tile Store",
-                                null,
-                                1, 20, 256,
-                                ".png",
-                                new String[] { BuildConfig.TILE_SERVER_URL });
-    }
-
-    private void showCopyright(OnlineTileSourceBase tileSource) {
+    private void showCopyright() {
         TextView copyrightArea = (TextView) mRootView.findViewById(R.id.copyright_area);
-        if (TileSourceFactory.MAPQUESTOSM.equals(tileSource)) {
+        if (BuildConfig.TILE_SERVER_URL == null) {
             copyrightArea.setText("Tiles Courtesy of MapQuest\n© OpenStreetMap contributors");
         } else {
             copyrightArea.setText("© MapBox © OpenStreetMap contributors");
@@ -315,7 +413,7 @@ public final class MapActivity extends android.support.v4.app.Fragment
         // @TODO Move this code to an appropriate place
         if (mCoverageTilesOverlay == null && sCoverageUrl != null) {
             mCoverageTilesOverlay = new CoverageOverlay(getActivity().getApplicationContext(), sCoverageUrl, mMap);
-            mMap.getOverlays().add(mMap.getOverlays().indexOf(mAccuracyOverlay), mCoverageTilesOverlay);
+            addOverlayCoverageLayer();
         }
 
         formatTextView(R.id.text_satellites_used, "%d", fixes);
@@ -362,7 +460,7 @@ public final class MapActivity extends android.support.v4.app.Fragment
 
         dimToolbar();
 
-        mHandler.postDelayed(mCheckForMapTileAvailability, MAP_TILE_AVAILABILITY_TIMER_MS);
+        mapNetworkConnectionChanged();
     }
 
     private void saveStateToPrefs() {
@@ -379,8 +477,6 @@ public final class MapActivity extends android.support.v4.app.Fragment
         mGPSListener.removeListener();
         ObservedLocationsReceiver observer = ObservedLocationsReceiver.getInstance();
         observer.removeMapActivity();
-
-        mHandler.removeCallbacks(mCheckForMapTileAvailability);
     }
 
     @Override

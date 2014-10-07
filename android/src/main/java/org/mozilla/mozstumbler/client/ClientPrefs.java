@@ -11,6 +11,7 @@ public class ClientPrefs extends Prefs {
     private static final String LAT_PREF = "lat";
     private static final String LON_PREF = "lon";
     private static final String IS_FIRST_RUN = "is_first_run";
+    private static final String FORCE_LOW_BANDWIDTH_TILES = "force_low_bandwidth_tiles";
     public static final String KEEP_SCREEN_ON_PREF = "keep_screen_on";
     public static final String ENABLE_OPTION_TO_SHOW_MLS_ON_MAP = "enable_the_option_to_show_mls_on_map";
     private static final String ON_MAP_MLS_DRAW_IS_ON = "actually_draw_mls_dots_on_map";
@@ -85,4 +86,11 @@ public class ClientPrefs extends Prefs {
         setOnMapShowMLS(isEnabled);
     }
 
+    public boolean isForcedLowBandwidthTiles() {
+        return getBoolPrefWithDefault(FORCE_LOW_BANDWIDTH_TILES, false);
+    }
+
+    public void setForcedLowBandwidthTiles(boolean b) {
+        setBoolPref(FORCE_LOW_BANDWIDTH_TILES, b);
+    }
 }

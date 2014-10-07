@@ -78,8 +78,7 @@
                 android:value=".client.navdrawer.MainDrawerActivity" />
         </activity>
         <activity
-            android:name=".client.serialize.KMLActivity"
-            android:label="@string/title_activity_kml"
+            android:name=".client.subactivities.DeveloperActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:parentActivityName=".client.navdrawer.MainDrawerActivity" >
             <!-- Parent activity meta-data to support 4.0 and lower -->

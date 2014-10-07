@@ -4,7 +4,6 @@
 
 package org.mozilla.mozstumbler.client.serialize;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -12,14 +11,16 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.ContextMenu;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -31,30 +32,45 @@ import java.io.FilenameFilter;
 import java.lang.ref.WeakReference;
 import java.util.LinkedList;
 
-/* This is the "Developer" activity but this is temporary. Once the developer activity
-* has more items, we will split this up properly. */
-public class KMLActivity extends Activity
+public class KMLFragment extends Fragment
     implements ObservationPointSerializer.IListener {
 
     private LinkedList<ObservationPoint> mPointsToWrite;
     private WeakReference<ProgressDialog> mProgressDialog;
     private TextView mSavedFileLocation;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    View mRootView;
 
-        setContentView(R.layout.activity_kml);
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        mRootView = inflater.inflate(R.layout.fragment_kml, container, false);
         mPointsToWrite = ObservedLocationsReceiver.getInstance().getObservationPoints();
         mProgressDialog = new WeakReference<ProgressDialog>(null);
+        mSavedFileLocation = (TextView)mRootView.findViewById(R.id.textViewSavedFile);
 
-        mSavedFileLocation = (TextView)findViewById(R.id.textViewSavedFile);
+        View buttonLoad = mRootView.findViewById(R.id.buttonLoad);
+        View buttonSave = mRootView.findViewById(R.id.buttonSave);
+
+        buttonLoad.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onClickLoad(v);
+            }
+        });
+        buttonSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onClickSave(v);
+            }
+        });
+
+        return mRootView;
     }
 
     private boolean mIsRunning;
     private void showProgress(boolean isStarted, String msg) {
         if (isStarted) {
-            mProgressDialog = new WeakReference<ProgressDialog>(new ProgressDialog(this));
+            mProgressDialog = new WeakReference<ProgressDialog>(new ProgressDialog(getActivity()));
             mProgressDialog.get().setCancelable(false);
             mProgressDialog.get().setCanceledOnTouchOutside(false);
             mProgressDialog.get().setMessage(msg);
@@ -76,15 +92,15 @@ public class KMLActivity extends Activity
     }
 
     private void setButtonsEnabledState() {
-        View button = this.findViewById(R.id.buttonLoad);
-        View buttonSave = this.findViewById(R.id.buttonSave);
+        View buttonLoad = mRootView.findViewById(R.id.buttonLoad);
+        View buttonSave = mRootView.findViewById(R.id.buttonSave);
 
-        button.setEnabled(!mIsRunning);
+        buttonLoad.setEnabled(!mIsRunning);
         buttonSave.setEnabled(!mIsRunning);
 
         if (!mIsRunning) {
             String[] files = getFileList();
-            button.setEnabled(files != null && files.length > 0);
+            buttonLoad.setEnabled(files != null && files.length > 0);
         }
     }
 
@@ -101,7 +117,7 @@ public class KMLActivity extends Activity
 
         mSavedFileLocation.setText(file.getAbsolutePath());
 
-        new AlertDialog.Builder(this)
+        new AlertDialog.Builder(getActivity())
                 .setTitle(R.string.kml_file_saved)
                 .setMessage(R.string.share_after_kml_saved)
                 .setIcon(android.R.drawable.ic_dialog_info)
@@ -128,7 +144,7 @@ public class KMLActivity extends Activity
         final DateTime date = DateTime.now();
         final DateTimeFormatter dtf = DateTimeFormat.forPattern("dd-MM-yyyy-HH:mm");
         final String name = "obs-" +  mPointsToWrite.size() + "-date-" + dtf.print(date) + ".kml";
-        final File dir = this.getExternalFilesDir(null);
+        final File dir = getActivity().getExternalFilesDir(null);
         final File file = new File(dir, name);
 
         showProgress(true, getString(R.string.saving_kml) + " to " + dir.toString());
@@ -187,13 +203,13 @@ public class KMLActivity extends Activity
             showProgress(true, getString(R.string.loading_kml));
             ObservationPointSerializer obs = new ObservationPointSerializer(this,
                     ObservationPointSerializer.Mode.READ,
-                    new File(getExternalFilesDir(null), filename), mPointsToWrite);
+                    new File(getActivity().getExternalFilesDir(null), filename), mPointsToWrite);
             obs.execute();
             return;
         }
 
         if (isShareFile) {
-            shareFile(new File(getExternalFilesDir(null), filename));
+            shareFile(new File(getActivity().getExternalFilesDir(null), filename));
             return;
         }
 
@@ -201,20 +217,20 @@ public class KMLActivity extends Activity
             return;
         }
 
-        new AlertDialog.Builder(this)
+        new AlertDialog.Builder(getActivity())
                 .setTitle(item.getTitle())
                 .setMessage(R.string.are_you_sure)
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         if (isDeleteFile) {
-                            File f = new File(getExternalFilesDir(null), filename);
+                            File f = new File(getActivity().getExternalFilesDir(null), filename);
                             f.delete();
                         } else {
                             String[] files = getFileList();
                             if (files != null) {
                                 for (String file : files) {
-                                    new File(getExternalFilesDir(null), file).delete();
+                                    new File(getActivity().getExternalFilesDir(null), file).delete();
                                 }
                             }
                         }
@@ -224,7 +240,7 @@ public class KMLActivity extends Activity
     }
 
     private String[] getFileList() {
-        final File dir = getExternalFilesDir(null);
+        final File dir = getActivity().getExternalFilesDir(null);
         if (dir == null) {
             return null;
         }
@@ -251,11 +267,11 @@ public class KMLActivity extends Activity
         mIsRunning = true;
         setButtonsEnabledState();
 
-        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle("Select File");
-        final ListView listView = new ListView(this);
+        final ListView listView = new ListView(getActivity());
         registerForContextMenu(listView);
-        final ArrayAdapter<String> modeAdapter = new ArrayAdapter<String>(this,
+        final ArrayAdapter<String> modeAdapter = new ArrayAdapter<String>(getActivity(),
                                                                     android.R.layout.simple_list_item_1,
                                                                     android.R.id.text1,
                                                                     files);
@@ -273,8 +289,8 @@ public class KMLActivity extends Activity
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 showProgress(true, getString(R.string.loading_kml));
-                File file = new File(getExternalFilesDir(null), files[position]);
-                ObservationPointSerializer obs = new ObservationPointSerializer(KMLActivity.this,
+                File file = new File(getActivity().getExternalFilesDir(null), files[position]);
+                ObservationPointSerializer obs = new ObservationPointSerializer(KMLFragment.this,
                         ObservationPointSerializer.Mode.READ,
                         file, mPointsToWrite);
                 obs.execute();

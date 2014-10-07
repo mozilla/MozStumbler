@@ -28,7 +28,7 @@ import org.mozilla.mozstumbler.BuildConfig;
 import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.client.cellscanner.DefaultCellScanner;
 import org.mozilla.mozstumbler.client.navdrawer.MainDrawerActivity;
-import org.mozilla.mozstumbler.client.serialize.KMLActivity;
+import org.mozilla.mozstumbler.client.subactivities.DeveloperActivity;
 import org.mozilla.mozstumbler.client.subactivities.LogActivity;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.Prefs;
@@ -349,11 +349,11 @@ public class MainApp extends Application implements ObservedLocationsReceiver.IC
         }
     }
 
-    public void showKmlDialog(Activity activity) {
+    public void showDeveloperDialog(Activity activity) {
        if (getService().isScanning()) {
           stopScanning();
            mMainActivity.get().updateUiOnMainThread();
        }
-       activity.startActivity(new Intent(activity, KMLActivity.class));
+       activity.startActivity(new Intent(activity, DeveloperActivity.class));
     }
 }

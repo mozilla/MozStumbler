@@ -28,6 +28,7 @@ public class PreferencesScreen extends PreferenceActivity {
 
     private CheckBoxPreference mWifiPreference;
     private CheckBoxPreference mKeepScreenOn;
+    private CheckBoxPreference mEnableShowMLSLocations;
     private static ClientPrefs sPrefs;
 
     /* Precondition to using this class, call this method to set Prefs */
@@ -50,9 +51,13 @@ public class PreferencesScreen extends PreferenceActivity {
         mWifiPreference = (CheckBoxPreference) getPreferenceManager().findPreference("wifi_only");
         mKeepScreenOn = (CheckBoxPreference) getPreferenceManager().findPreference(ClientPrefs.KEEP_SCREEN_ON_PREF);
 
+        mEnableShowMLSLocations = (CheckBoxPreference) getPreferenceManager().findPreference(ClientPrefs.ENABLE_OPTION_TO_SHOW_MLS_ON_MAP);
+        mEnableShowMLSLocations.setChecked(sPrefs.isOptionEnabledToShowMLSOnMap());
+
         setNicknamePreferenceTitle(sPrefs.getNickname());
         setEmailPreferenceTitle(sPrefs.getEmail());
         mWifiPreference.setChecked(sPrefs.getUseWifiOnly());
+
 
         setPreferenceListener();
 
@@ -128,6 +133,13 @@ public class PreferencesScreen extends PreferenceActivity {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
                 sPrefs.setKeepScreenOn(newValue.equals(true));
+                return true;
+            }
+        });
+        mEnableShowMLSLocations.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                sPrefs.setOptionEnabledToShowMLSOnMap(newValue.equals(true));
                 return true;
             }
         });

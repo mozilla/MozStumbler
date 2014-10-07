@@ -12,7 +12,7 @@ public class ClientPrefs extends Prefs {
     private static final String LON_PREF = "lon";
     private static final String IS_FIRST_RUN = "isfirstrun";
     public static final String KEEP_SCREEN_ON_PREF = "keep_screen_on";
-
+    public static final String ENABLE_OPTION_TO_SHOW_MLS_ON_MAP = "enable_show_mls_on_map";
     private static final String ON_MAP_SHOW_MLS_PREF = "show_mls";
     private static final String ON_MAP_SHOW_OBSERVATION_TYPE = "show_observation_type";
 
@@ -82,4 +82,16 @@ public class ClientPrefs extends Prefs {
     public void setFirstRun(boolean b) {
         setBoolPref(IS_FIRST_RUN, b);
     }
+
+    public boolean isOptionEnabledToShowMLSOnMap() {
+        return getBoolPrefWithDefault(ENABLE_OPTION_TO_SHOW_MLS_ON_MAP, false);
+    }
+
+    public void setOptionEnabledToShowMLSOnMap(boolean isEnabled) {
+        setBoolPref(ENABLE_OPTION_TO_SHOW_MLS_ON_MAP, isEnabled);
+        if (!isEnabled) {
+            setOnMapShowMLS(false);
+        }
+    }
+
 }

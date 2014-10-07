@@ -34,7 +34,6 @@ public class MetricsView {
 
     public interface IMapLayerToggleListener {
         public void setShowMLS(boolean isOn);
-        public void setShowObservationType(boolean isOn);
     }
 
     private static final String LOG_TAG = AppGlobals.LOG_PREFIX + MetricsView.class.getSimpleName();
@@ -47,12 +46,9 @@ public class MetricsView {
             mQueuedObservationsView,
             mQueuedCellsView,
             mQueuedWifisView,
-            mThisSessionObservationsView,
-            mThisSessionCellsView,
-            mThisSessionWifisView;
+            mThisSessionObservationsView;
 
     private final CheckBox mOnMapShowMLS;
-    private final CheckBox mOnMapShowObservationType;
 
     private WeakReference<IMapLayerToggleListener> mMapLayerToggleListener;
 
@@ -67,8 +63,7 @@ public class MetricsView {
         mView = view;
 
         mOnMapShowMLS = (CheckBox) mView.findViewById(R.id.checkBox_show_mls);
-        mOnMapShowObservationType = (CheckBox) mView.findViewById(R.id.checkBox_show_observation_type);
-
+        mOnMapShowMLS.setVisibility(View.GONE);
         mOnMapShowMLS.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -79,20 +74,6 @@ public class MetricsView {
             }
         });
 
-        mOnMapShowObservationType.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                ClientPrefs.getInstance().setOnMapShowObservationType(mOnMapShowObservationType.isChecked());
-                if (mMapLayerToggleListener.get() != null) {
-                    mMapLayerToggleListener.get().setShowObservationType(mOnMapShowObservationType.isChecked());
-                }
-            }
-        });
-
-        if (!ClientPrefs.getInstance().isOptionEnabledToShowMLSOnMap()) {
-            mOnMapShowMLS.setVisibility(View.GONE);
-        }
-
         mLastUpdateTimeView = (TextView) mView.findViewById(R.id.last_upload_time_value);
         mAllTimeObservationsSentView = (TextView) mView.findViewById(R.id.observations_sent_value);
         mAllTimeCellsSentView = (TextView) mView.findViewById(R.id.cells_sent_value);
@@ -101,8 +82,6 @@ public class MetricsView {
         mQueuedCellsView = (TextView) mView.findViewById(R.id.cells_queued_value);
         mQueuedWifisView = (TextView) mView.findViewById(R.id.wifis_queued_value);
         mThisSessionObservationsView = (TextView) mView.findViewById(R.id.this_session_observations_value);
-        mThisSessionCellsView = (TextView) mView.findViewById(R.id.this_session_cells_value);
-        mThisSessionWifisView = (TextView) mView.findViewById(R.id.this_session_wifis_value);
 
         mUploadButton = (ImageButton) mView.findViewById(R.id.upload_observations_button);
         mUploadButton.setEnabled(false);
@@ -131,7 +110,6 @@ public class MetricsView {
     public void setMapLayerToggleListener(IMapLayerToggleListener listener) {
         mMapLayerToggleListener = new WeakReference<IMapLayerToggleListener>(listener);
         mOnMapShowMLS.setChecked(ClientPrefs.getInstance().getOnMapShowMLS());
-        mOnMapShowObservationType.setChecked(ClientPrefs.getInstance().getOnMapShowObservationType());
     }
 
 
@@ -174,23 +152,23 @@ public class MetricsView {
         updateSentStats();
         updateThisSessionStats();
 
-        // If already uploading check the stats in a few seconds
         setUploadButtonToSyncing(AsyncUploader.isUploading.get());
     }
 
-    private void updateThisSessionStats() {
-        mThisSessionCellsView.setText("");
-        mThisSessionWifisView.setText("");
+    public void onOpened() {
+        if (ClientPrefs.getInstance().isOptionEnabledToShowMLSOnMap()) {
+            mOnMapShowMLS.setVisibility(View.VISIBLE);
+        } else {
+            mOnMapShowMLS.setVisibility(View.GONE);
+        }
+    }
 
+    private void updateThisSessionStats() {
         MainApp app = (MainApp)mView.getContext().getApplicationContext();
         ClientStumblerService service = app.getService();
         if (service == null) {
             return;
         }
-
-        mThisSessionWifisView.setText(String.valueOf(service.getAPCount()));
-        mThisSessionCellsView.setText(String.valueOf(service.getCellInfoCount()));
-
         CharSequence obs = mThisSessionObservationsView.getText();
         if (obs == null || obs.length() < 1) {
             mThisSessionObservationsView.setText("0");

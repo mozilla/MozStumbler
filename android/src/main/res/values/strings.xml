@@ -80,7 +80,7 @@
     <string name="drawer_open">Show drawer</string>
     <string name="drawer_close">Close drawer</string>
     <string name="title_activity_leaderboard">Leaderboard</string>
-    <string name="drawer_map_layers_title">Map layers (for nerds)</string>
+    <string name="drawer_map_layers_title">Map Legend</string>
     <string name="first_run_message_part1">Mozilla Location Service is an open service for locating devices using Wi-Fi access points and cell towers.</string>
     <string name="first_run_message_part2">Read our <a href="https://location.services.mozilla.com/privacy">privacy policy</a> and then start stumbling to begin contributing your current location.</string>
     <string name="first_run_start_stumbling">Start Stumbling</string>
@@ -90,4 +90,6 @@
     <string name="action_developer">Developer</string>
     <string name="enable_option_show_mls_on_map">Enable MLS layer toggle</string>
     <string name="enable_option_show_mls_on_map_summary">At the cost of a bit more memory and network usage, the map can show MLS location queries for your scans.</string>
+    <string name="cell_only_observation">Cell only observation</string>
+    <string name="wifi_only_observation">Wi-Fi only observation</string>
 </resources>

@@ -456,12 +456,6 @@ public final class MapActivity extends android.support.v4.app.Fragment
         mMap.invalidate();
     }
 
-    @Override
-    public void setShowObservationType(boolean isOn) {
-        mObservationPointsOverlay.mDrawObservationsWithShape = isOn;
-        mMap.invalidate();
-    }
-
     public void showMapNotAvailableMessage(NoMapAvailableMessage noMapAvailableMessage) {
         TextView noMapMessage = (TextView) mRootView.findViewById(R.id.message_area);
         if (noMapAvailableMessage == NoMapAvailableMessage.eHideNoMapMessage) {

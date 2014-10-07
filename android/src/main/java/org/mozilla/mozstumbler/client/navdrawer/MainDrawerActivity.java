@@ -74,7 +74,9 @@ public class MainDrawerActivity
             public void onDrawerClosed(View view) {}
 
             @Override
-            public void onDrawerOpened(View drawerView) {}
+            public void onDrawerOpened(View drawerView) {
+                mMetricsView.onOpened();
+            }
         };
 
         // Set the drawer toggle as the DrawerListener

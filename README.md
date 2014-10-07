@@ -38,7 +38,7 @@ For the OSM (OpenStreetMap) Tile Server, you have several options:
 
   1. Visit [mapbox.com](https://www.mapbox.com/) and sign up
   2. From the [MapBox Dashboad](https://www.mapbox.com/dashboard/)
-     click the big blue "New Project" button
+     click the big blue "Create Project" button
   3. Customize your map as you please. The only requirement is that
      you allow public API access. To do this click on the gear in the
      white box at the top, select the "Advanced" option at the bottom, and

@@ -88,6 +88,7 @@ public class WifiBlockLists implements WifiBlockListInterface {
             "egged.co.il", // Egged transportation services (Israel)
             "gb-tours.com", // GB Tours transportation services (Israel)
             "ISRAEL-RAILWAYS",
+            "KATNET_", // Konstanz-Friedrichshafen public transport on-boat WiFi (Germany)
             "Kolumbus", // Stavanger public transport on-boat WiFi (Norway)
             "KOLUMBUS", // Stavanger public transport on-bus WiFi (Norway)
             "Kystbussen_Kundennett", // Kystbussen on-bus WiFi (Norway)

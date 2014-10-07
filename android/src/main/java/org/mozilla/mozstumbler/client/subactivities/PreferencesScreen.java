@@ -91,7 +91,7 @@ public class PreferencesScreen extends PreferenceActivity {
         button.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference arg) {
-                ((MainApp) getApplication()).showKmlDialog(PreferencesScreen.this);
+                ((MainApp) getApplication()).showDeveloperDialog(PreferencesScreen.this);
                 return true;
             }
         });

@@ -145,7 +145,7 @@ public class AsyncUploader extends AsyncTask<AsyncUploadParam, AsyncProgressList
                     } else {
                         DataStorageManager.getInstance().saveCurrentReportsSendBufferToDisk();
                     }
-                    AppGlobals.guiLogInfo(logMsg, "#FFCCCC", true);
+                    AppGlobals.guiLogError(logMsg);
                 }
 
                 batch = dm.getNextBatch();

@@ -189,12 +189,11 @@ public class HttpUtil implements IHttpUtil {
             OutputStream out = new BufferedOutputStream(httpURLConnection.getOutputStream());
             out.write(wire_data);
             out.flush();
-
             return new HTTPResponse(httpURLConnection.getResponseCode(),
                     getContentBody(httpURLConnection),
                     wire_data.length);
         } catch (IOException e) {
-            Log.i(LOG_TAG, "post error:" + e.toString() + " Data:" + data.toString());
+            Log.e(LOG_TAG, "post error:" + e.toString());
         } finally {
             httpURLConnection.disconnect();
         }
@@ -203,7 +202,15 @@ public class HttpUtil implements IHttpUtil {
 
     private String getContentBody(HttpURLConnection httpURLConnection) throws IOException {
         String contentBody;
-        InputStream in = new BufferedInputStream(httpURLConnection.getInputStream());
+        InputStream in = null;
+        try {
+            in = new BufferedInputStream(httpURLConnection.getInputStream());
+        } catch (Exception ex) {
+            in = httpURLConnection.getErrorStream();
+        }
+        if (in == null) {
+            return "";
+        }
         BufferedReader r = new BufferedReader(new InputStreamReader(in));
         String line;
         StringBuilder total = new StringBuilder(in.available());

@@ -40,7 +40,6 @@ class ObservationPointsOverlay extends Overlay {
     private static final int TIME_CHECK_MULTIPLE = 100; // Check the time after drawing this many
 
     public boolean mOnMapShowMLS;
-    public boolean mDrawObservationsWithShape;
 
     ObservationPointsOverlay(Context ctx, MapView mapView) {
         super(ctx);
@@ -122,9 +121,9 @@ class ObservationPointsOverlay extends Overlay {
             boolean hasWifiScan = point.mWifiCount > 0;
             boolean hasCellScan = point.mCellCount > 0;
 
-            if (mDrawObservationsWithShape && hasWifiScan && !hasCellScan) {
+            if (hasWifiScan && !hasCellScan) {
                 drawWifiScan(c, gps);
-            } else if (mDrawObservationsWithShape && hasCellScan && !hasWifiScan) {
+            } else if (hasCellScan && !hasWifiScan) {
                 drawCellScan(c, gps);
             } else {
                 drawDot(c, gps, radiusInnerRing, mGreenPaint, mBlackStrokePaint);

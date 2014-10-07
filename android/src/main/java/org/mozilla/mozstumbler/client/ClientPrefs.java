@@ -10,11 +10,10 @@ public class ClientPrefs extends Prefs {
     private static final String LOG_TAG = ClientPrefs.class.getSimpleName();
     private static final String LAT_PREF = "lat";
     private static final String LON_PREF = "lon";
-    private static final String IS_FIRST_RUN = "isfirstrun";
+    private static final String IS_FIRST_RUN = "is_first_run";
     public static final String KEEP_SCREEN_ON_PREF = "keep_screen_on";
-    public static final String ENABLE_OPTION_TO_SHOW_MLS_ON_MAP = "enable_show_mls_on_map";
-    private static final String ON_MAP_SHOW_MLS_PREF = "show_mls";
-    private static final String ON_MAP_SHOW_OBSERVATION_TYPE = "show_observation_type";
+    public static final String ENABLE_OPTION_TO_SHOW_MLS_ON_MAP = "enable_the_option_to_show_mls_on_map";
+    private static final String ON_MAP_MLS_DRAW_IS_ON = "actually_draw_mls_dots_on_map";
 
     protected ClientPrefs(Context context) {
         super(context);
@@ -60,19 +59,11 @@ public class ClientPrefs extends Prefs {
     }
 
     public boolean getOnMapShowMLS() {
-        return getBoolPrefWithDefault(ON_MAP_SHOW_MLS_PREF, false);
+        return getBoolPrefWithDefault(ON_MAP_MLS_DRAW_IS_ON, false);
     }
 
     public void setOnMapShowMLS(boolean on) {
-        setBoolPref(ON_MAP_SHOW_MLS_PREF, on);
-    }
-
-    public boolean getOnMapShowObservationType() {
-        return getBoolPrefWithDefault(ON_MAP_SHOW_OBSERVATION_TYPE, false);
-    }
-
-    public void setOnMapShowObservationType(boolean on) {
-        setBoolPref(ON_MAP_SHOW_OBSERVATION_TYPE, on);
+        setBoolPref(ON_MAP_MLS_DRAW_IS_ON, on);
     }
 
     public boolean isFirstRun() {
@@ -89,9 +80,9 @@ public class ClientPrefs extends Prefs {
 
     public void setOptionEnabledToShowMLSOnMap(boolean isEnabled) {
         setBoolPref(ENABLE_OPTION_TO_SHOW_MLS_ON_MAP, isEnabled);
-        if (!isEnabled) {
-            setOnMapShowMLS(false);
-        }
+        // have this pref follow the parent pref, so when the parent is turned on
+        // this starts in the on state, and when parent is off, this pref is off
+        setOnMapShowMLS(isEnabled);
     }
 
 }

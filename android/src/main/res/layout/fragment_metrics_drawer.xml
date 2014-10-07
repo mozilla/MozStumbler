@@ -48,8 +48,7 @@
             android:layout_alignParentStart="true"
             android:textSize="@dimen/font_size_for_metrics"
             android:paddingBottom="@dimen/padding_below_for_metrics_titles"
-            android:layout_alignRight="@+id/this_session_cells_title"
-            android:layout_alignEnd="@+id/this_session_cells_title" />
+        />
         <TextView
             android:id="@+id/this_session_observations_value"
             android:layout_width="wrap_content"
@@ -61,52 +60,6 @@
             android:layout_toRightOf="@+id/this_session_observations_title"
             android:layout_alignRight="@+id/last_upload_time_value"
             android:layout_alignEnd="@+id/last_upload_time_value" />
-        <TextView
-            android:id="@+id/this_session_cells_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_below="@id/this_session_observations_title"
-            android:text="@string/metrics_observations_cell_towers_title"
-            android:textSize="@dimen/font_size_for_metrics"
-            android:paddingBottom="@dimen/padding_below_for_metrics_titles"
-            android:layout_alignRight="@+id/this_session_wifis_title"
-            android:layout_alignEnd="@+id/this_session_wifis_title" />
-        <TextView
-            android:id="@+id/this_session_cells_value"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBaseline="@id/this_session_cells_title"
-            tools:text="10"
-            android:textSize="@dimen/font_size_for_metrics"
-            android:paddingBottom="@dimen/padding_below_for_metrics_titles"
-            android:layout_toRightOf="@+id/this_session_observations_title"
-            android:layout_toEndOf="@+id/this_session_observations_title"
-            android:layout_alignRight="@+id/this_session_observations_value"
-            android:layout_alignEnd="@+id/this_session_observations_value" />
-        <TextView
-            android:id="@+id/this_session_wifis_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_below="@id/this_session_cells_title"
-            android:text="@string/metrics_observations_wifis_title"
-            android:textSize="@dimen/font_size_for_metrics"
-            android:layout_alignRight="@+id/queued_header"
-            android:layout_alignEnd="@+id/queued_header" />
-        <TextView
-            android:id="@+id/this_session_wifis_value"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBaseline="@id/this_session_wifis_title"
-            tools:text="50"
-            android:textSize="@dimen/font_size_for_metrics"
-            android:layout_toLeftOf="@+id/upload_observations_button"
-            android:layout_toStartOf="@+id/upload_observations_button"
-            android:layout_toRightOf="@+id/this_session_wifis_title"
-            android:layout_toEndOf="@+id/this_session_wifis_title" />
 
         <TextView
             android:id="@+id/sent_header"
@@ -117,7 +70,7 @@
             android:textStyle="bold"
             android:paddingBottom="@dimen/padding_below_for_metrics_titles"
             android:paddingTop="@dimen/padding_above_for_metrics_titles"
-            android:layout_below="@+id/this_session_wifis_title" />
+            android:layout_below="@+id/this_session_observations_title" />
         <TextView
             android:id="@+id/last_upload_time_title"
             android:layout_width="wrap_content"
@@ -128,8 +81,8 @@
             android:layout_alignParentStart="true"
             android:layout_alignParentLeft="true"
             android:paddingBottom="@dimen/padding_below_for_metrics_titles"
-            android:layout_alignRight="@+id/this_session_wifis_title"
-            android:layout_alignEnd="@+id/this_session_wifis_title" />
+            android:layout_alignRight="@+id/wifis_sent_title"
+            android:layout_alignEnd="@+id/wifis_sent_title" />
         <TextView
             android:id="@+id/last_upload_time_value"
             android:layout_width="wrap_content"
@@ -195,6 +148,8 @@
             android:textSize="@dimen/font_size_for_metrics"
             android:paddingBottom="@dimen/padding_below_for_metrics_titles"
             />
+
+        <!-- Item widths are relative to this item-->
         <TextView
             android:id="@+id/wifis_sent_title"
             android:layout_width="wrap_content"
@@ -202,11 +157,10 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:layout_below="@id/cells_sent_title"
-            android:layout_alignRight="@id/last_upload_time_title"
-            android:layout_alignEnd="@id/last_upload_time_title"
             android:text="@string/metrics_observations_wifis_title"
             android:textSize="@dimen/font_size_for_metrics"
             android:paddingBottom="@dimen/padding_below_for_metrics_titles"
+            android:paddingRight="3dp"
              />
         <TextView
             android:id="@+id/wifis_sent_value"
@@ -332,7 +286,7 @@
             />
 
         <TextView
-            android:id="@+id/textView"
+            android:id="@+id/map_info_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/drawer_map_layers_title"
@@ -345,32 +299,77 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true" />
 
+        <LinearLayout
+            android:id="@+id/cell_only_layout"
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_below="@+id/map_info_title"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true">
+
+            <ImageView
+                android:id="@+id/cell_only_imageview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_purplering"
+                android:adjustViewBounds="true"
+                android:maxHeight="14dp"
+                android:maxWidth="14dp"
+                />
+
+
+            <TextView
+                android:textSize="@dimen/font_size_for_metrics"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/wifi_only_observation"
+                android:paddingLeft="5dp"
+                />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/wifi_only_layout"
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_below="@id/cell_only_layout"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:paddingBottom="10dp"
+            >
+
+            <ImageView
+                android:id="@+id/wifi_only_imageview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_bluerect"
+                android:adjustViewBounds="true"
+                android:maxHeight="14dp"
+                android:maxWidth="14dp"
+                />
+
+            <TextView
+                android:textSize="@dimen/font_size_for_metrics"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/cell_only_observation"
+                android:paddingLeft="5dp"
+                />
+
+        </LinearLayout>
+
         <CheckBox
             android:layout_width="wrap_content"
             android:layout_height="34dp"
             android:text="@string/drawer_map_option_show_mls_locations"
             android:id="@+id/checkBox_show_mls"
-            android:layout_below="@+id/textView"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-            android:layout_alignRight="@+id/upload_observations_button"
-            android:layout_alignEnd="@+id/upload_observations_button"
-            android:checked="false"
-            android:textSize="14sp" />
-
-        <CheckBox
-            android:layout_width="wrap_content"
-            android:layout_height="34dp"
-            android:text="@string/drawer_map_option_show_observation_type"
-            android:id="@+id/checkBox_show_observation_type"
+            android:layout_below="@id/wifi_only_layout"
             android:checked="false"
             android:textSize="14sp"
-            android:layout_below="@+id/checkBox_show_mls"
-            android:layout_alignRight="@+id/checkBox_show_mls"
-            android:layout_alignEnd="@+id/checkBox_show_mls"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_marginTop="6dp" />
+            />
 
     </RelativeLayout>
 </ScrollView>

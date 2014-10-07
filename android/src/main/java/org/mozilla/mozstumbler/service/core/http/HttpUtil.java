@@ -149,7 +149,12 @@ public class HttpUtil implements IHttpUtil {
 
         try {
             httpURLConnection = (HttpURLConnection) url.openConnection();
+
+            // HttpURLConnection and Java are braindead.
+            // http://stackoverflow.com/questions/8587913/what-exactly-does-urlconnection-setdooutput-affect
+            httpURLConnection.setDoOutput(true);
             httpURLConnection.setRequestMethod("POST");
+
         } catch (IOException e) {
             Log.e(LOG_TAG, "Couldn't open a connection: " + e);
             return null;

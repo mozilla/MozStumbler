@@ -123,7 +123,9 @@ public class ObservedLocationsReceiver extends BroadcastReceiver {
         if (mCollectionPoints.size() > 0) {
             lastObservation = mCollectionPoints.getLast();
         }
-        if (lastObservation != null && service != null) {
+
+        boolean getInfoForMLS = ClientPrefs.getInstance().isOptionEnabledToShowMLSOnMap();
+        if (getInfoForMLS && lastObservation != null && service != null) {
             JSONObject currentBundle = service.getLastReportedBundle();
             if (mPreviousBundleForDuplicateCheck == currentBundle) {
                 return;

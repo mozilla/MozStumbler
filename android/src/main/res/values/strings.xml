@@ -88,4 +88,6 @@
     <string name="map_unavailable">The map is not available for display, as there is no SD card storage.\nYou can still collect data.</string>
     <string name="map_offline_mode">"The map will not update without an Internet connection,\nhowever you are still able to collect data."</string>
     <string name="action_developer">Developer</string>
+    <string name="enable_option_show_mls_on_map">Enable MLS layer toggle</string>
+    <string name="enable_option_show_mls_on_map_summary">At the cost of a bit more memory and network usage, the map can show MLS location queries for your scans.</string>
 </resources>

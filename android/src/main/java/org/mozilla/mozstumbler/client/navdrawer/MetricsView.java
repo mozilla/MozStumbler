@@ -94,6 +94,10 @@ public class MetricsView implements AsyncUploaderListener {
             }
         });
 
+        if (!ClientPrefs.getInstance().isOptionEnabledToShowMLSOnMap()) {
+            mOnMapShowMLS.setVisibility(View.GONE);
+        }
+
         mLastUpdateTimeView = (TextView) mView.findViewById(R.id.last_upload_time_value);
         mAllTimeObservationsSentView = (TextView) mView.findViewById(R.id.observations_sent_value);
         mAllTimeCellsSentView = (TextView) mView.findViewById(R.id.cells_sent_value);

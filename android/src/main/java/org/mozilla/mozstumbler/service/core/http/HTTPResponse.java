@@ -15,7 +15,7 @@ public class HTTPResponse implements IResponse {
         statusCode = responseCode;
         body = contentBody;
         bytesSent = txByteLength;
-        Log.i(LOG_TAG, "HTTP Status: " + Integer.toString(statusCode) +
+        Log.d(LOG_TAG, "HTTP Status: " + Integer.toString(statusCode) +
                 ", Bytes Sent: " + Integer.toString(bytesSent) +
                 ", Bytes received: " + Integer.toString(body.length()));
     }

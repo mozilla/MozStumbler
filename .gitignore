@@ -24,3 +24,6 @@ gradle.properties
 # Never commit your private.properties file or your keystore
 private.properties
 *.keystore
+
+# Ignore final release APK builds
+outputs/*

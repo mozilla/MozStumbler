@@ -41,12 +41,21 @@ import org.mozilla.mozstumbler.service.utils.NetworkInfo;
 *
 * */
 public class AsyncUploader extends AsyncTask<AsyncUploadParam, AsyncProgressListenerStatusWrapper, Void> {
+    public interface AsyncUploaderListener {
+        // This is called by Android on the UI thread
+        public void onUploadProgress(boolean isUploading);
+    }
+
+    private static AsyncUploaderListener sAsyncListener;
     private static final String LOG_TAG = AppGlobals.LOG_PREFIX + AsyncUploader.class.getSimpleName();
     public static final AtomicLong sTotalBytesUploadedThisSession = new AtomicLong();
-
     public static final AtomicBoolean isUploading = new AtomicBoolean();
-    public AsyncUploader() {}
 
+    // This listener can show progress for any AsyncUploader. This global use is particularly
+    // useful for UI to show progress when this has been scheduled internally in the service.
+    public static void setGlobalUploadListener(AsyncUploaderListener listener) {
+        sAsyncListener = listener;
+    }
 
     @Override
     protected Void doInBackground(AsyncUploadParam... params) {
@@ -59,16 +68,16 @@ public class AsyncUploader extends AsyncTask<AsyncUploadParam, AsyncProgressList
            return null;
        }
 
-       AsyncProgressListenerStatusWrapper wrapper = new AsyncProgressListenerStatusWrapper(
-               param.asyncListener,
-               true);
+       AsyncProgressListenerStatusWrapper wrapper =
+               new AsyncProgressListenerStatusWrapper(sAsyncListener, true);
+        sAsyncListener.onUploadProgress(true);
 
        publishProgress(wrapper);
 
        uploadReports(param);
 
        isUploading.set(false);
-       wrapper = new AsyncProgressListenerStatusWrapper(param.asyncListener, false);
+       wrapper = new AsyncProgressListenerStatusWrapper(sAsyncListener, false);
        publishProgress(wrapper);
 
        return null;
@@ -84,9 +93,6 @@ public class AsyncUploader extends AsyncTask<AsyncUploadParam, AsyncProgressList
         }
 
         AsyncProgressListenerStatusWrapper callback = params[0];
-
-        // @TODO: change this to send a broadcast signalling that
-        // upload status has changed, and capture it in MainApp.
 
         if (callback.listener != null) {
             callback.listener.onUploadProgress(callback.uploading_flag);

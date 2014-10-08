@@ -38,7 +38,6 @@ import org.mozilla.mozstumbler.service.stumblerthread.scanners.WifiScanner;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner.CellScanner;
 import org.mozilla.mozstumbler.service.uploadthread.AsyncUploadParam;
 import org.mozilla.mozstumbler.service.uploadthread.AsyncUploader;
-import org.mozilla.mozstumbler.service.uploadthread.AsyncUploaderListener;
 import org.mozilla.mozstumbler.service.utils.NetworkInfo;
 import org.osmdroid.tileprovider.constants.TileFilePath;
 
@@ -51,7 +50,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class MainApp extends Application
         implements ObservedLocationsReceiver.ICountObserver,
-        AsyncUploaderListener {
+        AsyncUploader.AsyncUploaderListener {
     public static final AtomicBoolean isUploading = new AtomicBoolean();
     private final String LOG_TAG = AppGlobals.LOG_PREFIX + MainApp.class.getSimpleName();
     private ClientStumblerService mStumblerService;
@@ -105,11 +104,13 @@ public class MainApp extends Application
         AppGlobals.appVersionCode = BuildConfig.VERSION_CODE;
         AppGlobals.appName = this.getResources().getString(R.string.app_name);
 
+        AsyncUploader.setGlobalUploadListener(this);
+
         final String OLD_NAME = "org.mozilla.mozstumbler.preferences.Prefs.xml";
         File dir = this.getDir("shared_prefs", Context.MODE_PRIVATE);
         File oldPrefs = new File(dir, OLD_NAME);
         if (oldPrefs.exists()) {
-          oldPrefs.renameTo(new File(dir, ClientPrefs.getPrefsFileNameForUpgrade()));
+            oldPrefs.renameTo(new File(dir, ClientPrefs.getPrefsFileNameForUpgrade()));
         }
 
         Prefs prefs = ClientPrefs.createGlobalInstance(this);
@@ -217,7 +218,6 @@ public class MainApp extends Application
         AsyncUploader uploader = new AsyncUploader();
         AsyncUploadParam param = new AsyncUploadParam(
                 ClientPrefs.getInstance().getUseWifiOnly(),
-                null, /* don't need to listen for completion */
                 Prefs.getInstance().getNickname(),
                 Prefs.getInstance().getEmail());
 

@@ -191,9 +191,6 @@ public class GPSScanner implements LocationListener {
             }
         }
 
-        Date date = new Date(location.getTime());
-        SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
-        String time = formatter.format(date);
         logMsg += location.toString();
         sendToLogActivity(logMsg);
 

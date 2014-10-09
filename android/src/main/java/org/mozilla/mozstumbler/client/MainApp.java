@@ -114,6 +114,9 @@ public class MainApp extends Application
 
         Prefs prefs = ClientPrefs.createGlobalInstance(this);
         prefs.setMozApiKey(BuildConfig.MOZILLA_API_KEY);
+        String userAgent = System.getProperty("http.agent") + " " +
+                AppGlobals.appName + "/" + AppGlobals.appVersionName;
+        prefs.setUserAgent(userAgent);
 
         NetworkInfo.createGlobalInstance(this);
         LogActivity.LogMessageReceiver.createGlobalInstance(this);

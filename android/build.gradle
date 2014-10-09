@@ -1,7 +1,7 @@
 // each of the version numbers must be 0-99
 def versionMajor = 0
 def versionMinor = 40
-def versionPatch = 0
+def versionPatch = 1
 def versionBuild = 0 // bump for dogfood builds, public betas, etc...
 
 buildscript {

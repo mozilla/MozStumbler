@@ -34,6 +34,7 @@ import org.mozilla.mozstumbler.client.subactivities.DeveloperActivity;
 import org.mozilla.mozstumbler.client.subactivities.LogActivity;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.Prefs;
+import org.mozilla.mozstumbler.service.core.logging.MockAcraLog;
 import org.mozilla.mozstumbler.service.stumblerthread.StumblerService;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageManager;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.WifiScanner;
@@ -109,6 +110,11 @@ public class MainApp extends Application
         super.onCreate();
         // The following line triggers the initialization of ACRA
         ACRA.init(this);
+
+        // This must be called after init to get a copy of the
+        // original ACRA.log instance so that we can toggle the logger on
+        // and off.
+        MockAcraLog.setOriginalLog();
 
         TileFilePath.directoryOverride = getStorageDir(getApplicationContext());
 

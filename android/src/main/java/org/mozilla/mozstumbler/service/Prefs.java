@@ -9,6 +9,7 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.location.Location;
+import android.os.Build;
 import android.os.Build.VERSION;
 import android.text.TextUtils;
 import android.util.Log;
@@ -78,8 +79,9 @@ public class Prefs {
     /// Getters
     ///
     public synchronized String getUserAgent() {
-        String s = getStringPref(USER_AGENT_PREF);
-        return (s == null)? AppGlobals.appName + "/" + AppGlobals.appVersionName : s;
+        String appInfo = getStringPref(USER_AGENT_PREF);
+        appInfo =  (appInfo == null)? AppGlobals.appName + "/" + AppGlobals.appVersionName : appInfo;
+        return Build.FINGERPRINT + "__" + appInfo;
     }
 
     public synchronized boolean getFirefoxScanEnabled() {

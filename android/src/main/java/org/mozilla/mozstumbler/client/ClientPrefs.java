@@ -16,6 +16,8 @@ public class ClientPrefs extends Prefs {
     public static final String ENABLE_OPTION_TO_SHOW_MLS_ON_MAP = "enable_the_option_to_show_mls_on_map";
     private static final String ON_MAP_MLS_DRAW_IS_ON = "actually_draw_mls_dots_on_map";
 
+    public static final String ENABLE_SAVING_JSON_IN_KML = "save_json_in_kml";
+
     protected ClientPrefs(Context context) {
         super(context);
     }
@@ -92,5 +94,10 @@ public class ClientPrefs extends Prefs {
 
     public void setForcedLowBandwidthTiles(boolean b) {
         setBoolPref(FORCE_LOW_BANDWIDTH_TILES, b);
+    }
+
+    public boolean isSavingJsonInKmlEnabled() {
+        return true;
+      //  return getBoolPrefWithDefault(ENABLE_SAVING_JSON_IN_KML, false);
     }
 }

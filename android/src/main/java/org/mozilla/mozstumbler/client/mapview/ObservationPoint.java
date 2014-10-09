@@ -66,7 +66,9 @@ public class ObservationPoint implements MLSLocationGetter.MLSLocationGetterCall
     public void setMLSResponseLocation(Location location) {
         mMLSLocationGetter = null;
         if (location != null) {
-            mMLSQuery = null; // todo decide how to persist this to kml
+            if (!ClientPrefs.getInstance().isSavingJsonInKmlEnabled()) {
+                mMLSQuery = null; // todo decide how to persist this to kml
+            }
             pointMLS = new GeoPoint(location);
         }
     }

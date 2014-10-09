@@ -81,7 +81,6 @@ public class UploadAlarmReceiver extends BroadcastReceiver {
                 AsyncUploader uploader = new AsyncUploader();
                 AsyncUploadParam param = new AsyncUploadParam(
                         Prefs.getInstance().getUseWifiOnly(),
-                        null,
                         Prefs.getInstance().getNickname(),
                         Prefs.getInstance().getEmail()
                 );
@@ -90,7 +89,7 @@ public class UploadAlarmReceiver extends BroadcastReceiver {
         }
     }
 
-    static PendingIntent createIntent(Context c, boolean isRepeating) {
+    private static PendingIntent createIntent(Context c, boolean isRepeating) {
         Intent intent = new Intent(c, UploadAlarmReceiver.class);
         intent.putExtra(EXTRA_IS_REPEATING, isRepeating);
         PendingIntent pi = PendingIntent.getBroadcast(c, 0, intent, 0);

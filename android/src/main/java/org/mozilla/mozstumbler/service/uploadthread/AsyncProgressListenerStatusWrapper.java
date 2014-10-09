@@ -7,10 +7,10 @@ package org.mozilla.mozstumbler.service.uploadthread;
  * Created by victorng on 2014-09-29.
  */
 public class AsyncProgressListenerStatusWrapper {
-    public final AsyncUploaderListener listener;
+    public final AsyncUploader.AsyncUploaderListener listener;
     public final boolean uploading_flag;
 
-    public AsyncProgressListenerStatusWrapper(AsyncUploaderListener l, boolean status) {
+    public AsyncProgressListenerStatusWrapper(AsyncUploader.AsyncUploaderListener l, boolean status) {
         listener = l;
         uploading_flag = status;
     }

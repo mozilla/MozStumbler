@@ -97,7 +97,6 @@ public class MetricsView {
                 boolean useWifiOnly = false;
                 AsyncUploader uploader = new AsyncUploader();
                 AsyncUploadParam param = new AsyncUploadParam(useWifiOnly,
-                    (MainApp)mView.getContext().getApplicationContext(),
                     Prefs.getInstance().getNickname(),
                     Prefs.getInstance().getEmail());
                 uploader.execute(param);
@@ -161,6 +160,7 @@ public class MetricsView {
         } else {
             mOnMapShowMLS.setVisibility(View.GONE);
         }
+        update();
     }
 
     private void updateThisSessionStats() {

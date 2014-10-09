@@ -56,9 +56,7 @@ public class MainDrawerActivity
                     WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED);
         }
 
-        if (ClientPrefs.getInstance().getKeepScreenOn()) {
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        }
+        keepScreenOnChanged(ClientPrefs.getInstance().getKeepScreenOn());
 
         getSupportActionBar().setTitle(getString(R.string.app_name));
 
@@ -248,16 +246,12 @@ public class MainDrawerActivity
         mMetricsView.setUploadState(isUploadingObservations);
     }
 
-    public void recreatePausedActivity() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
-            Intent i = getApplicationContext().getPackageManager()
-                    .getLaunchIntentForPackage(getApplicationContext().getPackageName());
-            i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK );
-            startActivity(i);
-            PreferencesScreen.setPrefs(getApp().getPrefs());
-            startActivity(new Intent(getApplication(), PreferencesScreen.class));
+    public void keepScreenOnChanged(boolean isEnabled) {
+        int flag = android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON;
+        if (isEnabled) {
+            getWindow().addFlags(flag);
         } else {
-            recreate();
+            getWindow().clearFlags(flag);
         }
     }
 }

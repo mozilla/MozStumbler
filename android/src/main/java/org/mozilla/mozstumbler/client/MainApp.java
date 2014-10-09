@@ -369,9 +369,9 @@ public class MainApp extends Application
         }
     }
 
-    public void keepScreenOnPrefChanged() {
+    public void keepScreenOnPrefChanged(boolean isEnabled) {
         if (mMainActivity.get() != null) {
-            mMainActivity.get().recreatePausedActivity();
+            mMainActivity.get().keepScreenOnChanged(isEnabled);
         }
     }
 }

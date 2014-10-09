@@ -368,4 +368,10 @@ public class MainApp extends Application
             mMainActivity.get().setUploadState(isUploading);
         }
     }
+
+    public void keepScreenOnPrefChanged(boolean isEnabled) {
+        if (mMainActivity.get() != null) {
+            mMainActivity.get().keepScreenOnChanged(isEnabled);
+        }
+    }
 }

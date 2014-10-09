@@ -59,6 +59,8 @@ public class MetricsView {
 
     private boolean mHasQueuedObservations;
 
+    private static int mThisSessionObservationsCount;
+
     public MetricsView(View view) {
         mView = view;
 
@@ -147,8 +149,13 @@ public class MetricsView {
     }
 
     public void update() {
-        updateQueuedStats();
-        updateSentStats();
+        DataStorageManager dm = DataStorageManager.getInstance();
+        if (dm == null) {
+            return;
+        }
+
+        updateQueuedStats(dm);
+        updateSentStats(dm);
         updateThisSessionStats();
 
         setUploadButtonToSyncing(AsyncUploader.isUploading.get());
@@ -164,15 +171,14 @@ public class MetricsView {
     }
 
     private void updateThisSessionStats() {
-        MainApp app = (MainApp)mView.getContext().getApplicationContext();
-        ClientStumblerService service = app.getService();
-        if (service == null) {
+        if (mThisSessionObservationsCount < 1) {
+            mThisSessionObservationsView.setText("0");
             return;
         }
-        CharSequence obs = mThisSessionObservationsView.getText();
-        if (obs == null || obs.length() < 1) {
-            mThisSessionObservationsView.setText("0");
-        }
+
+        long bytesUploadedThisSession = AsyncUploader.sTotalBytesUploadedThisSession.get();
+        String val = String.format(mObservationAndSize, mThisSessionObservationsCount, formatKb(bytesUploadedThisSession));
+        mThisSessionObservationsView.setText(val);
     }
 
     String formatKb(long bytes) {
@@ -183,7 +189,7 @@ public class MetricsView {
         return "(" + (Math.round(kb * 10.0f) / 10.0f) + " KB)";
     }
 
-    private void updateSentStats() {
+    private void updateSentStats(DataStorageManager dataStorageManager) {
         final long bytesUploadedThisSession = AsyncUploader.sTotalBytesUploadedThisSession.get();
 
         if (mTotalBytesUploadedThisSession_lastDisplayed > 0 &&
@@ -194,7 +200,7 @@ public class MetricsView {
         mTotalBytesUploadedThisSession_lastDisplayed = bytesUploadedThisSession;
 
         try {
-            Properties props = DataStorageManager.getInstance().readSyncStats();
+            Properties props = dataStorageManager.readSyncStats();
             String value;
             value = props.getProperty(DataStorageContract.Stats.KEY_CELLS_SENT, "0");
             mAllTimeCellsSentView.setText(String.valueOf(value));
@@ -217,8 +223,8 @@ public class MetricsView {
         }
     }
 
-    private void updateQueuedStats() {
-        DataStorageManager.QueuedCounts q = DataStorageManager.getInstance().getQueuedCounts();
+    private void updateQueuedStats(DataStorageManager dataStorageManager) {
+        DataStorageManager.QueuedCounts q = dataStorageManager.getQueuedCounts();
         mQueuedCellsView.setText(String.valueOf(q.mCellCount));
         mQueuedWifisView.setText(String.valueOf(q.mWifiCount));
 
@@ -230,8 +236,7 @@ public class MetricsView {
     }
 
     public void setObservationCount(int count) {
-        long bytesUploadedThisSession = AsyncUploader.sTotalBytesUploadedThisSession.get();
-        String val = String.format(mObservationAndSize, count, formatKb(bytesUploadedThisSession));
-        mThisSessionObservationsView.setText(val);
+        mThisSessionObservationsCount = count;
+        updateThisSessionStats();
     }
 }

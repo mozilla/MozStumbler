@@ -219,9 +219,12 @@ String getAcraURI() {
     if (signFile.exists()) {
         Properties p = new Properties()
         p.load(new FileInputStream(signFile))
+        if (p['ACRA_URI'] == null) {
+            return '""';
+        }
         return '"' + p['ACRA_URI'] + '"'
     }
-    return "";
+    return '""';
 }
 
 String getAcraUser() {
@@ -230,9 +233,12 @@ String getAcraUser() {
     if (signFile.exists()) {
         Properties p = new Properties()
         p.load(new FileInputStream(signFile))
+        if (p['ACRA_USER'] == null) {
+            return '""';
+        }
         return '"' + p['ACRA_USER'] + '"'
     }
-    return "";
+    return '""';
 }
 
 String getAcraPass() {
@@ -241,9 +247,12 @@ String getAcraPass() {
     if (signFile.exists()) {
         Properties p = new Properties()
         p.load(new FileInputStream(signFile))
+        if (p['ACRA_PASS'] == null) {
+            return '""';
+        }
         return '"' + p['ACRA_PASS'] + '"'
     }
-    return "";
+    return '""';
 }
 
 

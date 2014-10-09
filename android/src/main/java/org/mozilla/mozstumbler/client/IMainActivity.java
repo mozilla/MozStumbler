@@ -16,5 +16,6 @@ public interface IMainActivity {
     public void updateUiOnMainThread();
     public void displayObservationCount(int count);
     public void setUploadState(boolean isUploadingObservations);
+    public void recreatePausedActivity();
 }
 

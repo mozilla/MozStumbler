@@ -133,6 +133,7 @@ public class PreferencesScreen extends PreferenceActivity {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
                 sPrefs.setKeepScreenOn(newValue.equals(true));
+                ((MainApp) getApplication()).keepScreenOnPrefChanged();
                 return true;
             }
         });

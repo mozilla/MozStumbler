@@ -247,4 +247,17 @@ public class MainDrawerActivity
     public void setUploadState(boolean isUploadingObservations) {
         mMetricsView.setUploadState(isUploadingObservations);
     }
+
+    public void recreatePausedActivity() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
+            Intent i = getApplicationContext().getPackageManager()
+                    .getLaunchIntentForPackage(getApplicationContext().getPackageName());
+            i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK );
+            startActivity(i);
+            PreferencesScreen.setPrefs(getApp().getPrefs());
+            startActivity(new Intent(getApplication(), PreferencesScreen.class));
+        } else {
+            recreate();
+        }
+    }
 }

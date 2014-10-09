@@ -78,11 +78,20 @@ public class MainApp extends Application
         mMainActivity = new WeakReference<IMainActivity>(mainActivity);
     }
 
-    private File getStorageDir(Context c) {
-        File dir = c.getExternalFilesDir(null);
+    private File getCacheDir(Context c) {
+        File dir = null;
+        if (Build.VERSION.SDK_INT >= 8) {
+            dir = c.getExternalCacheDir();
+        } else {
+            dir = c.getExternalFilesDir(null);
+        }
 
         if (dir == null) {
-            dir = c.getFilesDir();
+            if (Build.VERSION.SDK_INT >= 8) {
+                dir = c.getCacheDir();
+            } else {
+                dir = c.getFilesDir();
+            }
         }
 
         if (dir == null) {
@@ -97,7 +106,7 @@ public class MainApp extends Application
     public void onCreate() {
         super.onCreate();
 
-        TileFilePath.directoryOverride = getStorageDir(getApplicationContext());
+        TileFilePath.directoryOverride = getCacheDir(getApplicationContext());
 
         AppGlobals.isDebug = BuildConfig.DEBUG;
         AppGlobals.isRobolectric = BuildConfig.ROBOLECTRIC;

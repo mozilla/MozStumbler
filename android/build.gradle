@@ -65,6 +65,11 @@ android {
         buildConfigField "String", "MOZILLA_API_KEY", getMozillaApiKey()
         buildConfigField "String", "TILE_SERVER_URL", getTileServerUrl()
 
+        // Crash report settings
+        buildConfigField "String", "ACRA_URI", getAcraURI()
+        buildConfigField "String", "ACRA_USER", getAcraUser()
+        buildConfigField "String", "ACRA_PASS", getAcraPass()
+
     }
 
     signingConfigs {
@@ -206,6 +211,39 @@ if (signFile.exists()) {
 } else {
     println "No private.properties file was found.";
     android.buildTypes.release.signingConfig = null
+}
+
+String getAcraURI() {
+    // Yeah, this is lame, opening the file again.  Sosume.
+    File signFile = rootProject.file('private.properties')
+    if (signFile.exists()) {
+        Properties p = new Properties()
+        p.load(new FileInputStream(signFile))
+        return '"' + p['ACRA_URI'] + '"'
+    }
+    return "";
+}
+
+String getAcraUser() {
+    // Yeah, this is lame, opening the file again.  Sosume.
+    File signFile = rootProject.file('private.properties')
+    if (signFile.exists()) {
+        Properties p = new Properties()
+        p.load(new FileInputStream(signFile))
+        return '"' + p['ACRA_USER'] + '"'
+    }
+    return "";
+}
+
+String getAcraPass() {
+    // Yeah, this is lame, opening the file again.  Sosume.
+    File signFile = rootProject.file('private.properties')
+    if (signFile.exists()) {
+        Properties p = new Properties()
+        p.load(new FileInputStream(signFile))
+        return '"' + p['ACRA_PASS'] + '"'
+    }
+    return "";
 }
 
 

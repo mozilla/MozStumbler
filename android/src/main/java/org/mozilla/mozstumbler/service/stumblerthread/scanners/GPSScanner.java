@@ -191,11 +191,7 @@ public class GPSScanner implements LocationListener {
             }
         }
 
-        Date date = new Date(location.getTime());
-        SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
-        String time = formatter.format(date);
-        logMsg += String.format("%s Coord: %.4f,%.4f, Acc: %.0f, Speed: %.0f, Alt: %.0f, Bearing: %.1f", time, location.getLatitude(),
-                location.getLongitude(), location.getAccuracy(), location.getSpeed(), location.getAltitude(), location.getBearing());
+        logMsg += location.toString();
         sendToLogActivity(logMsg);
 
         if (stumbleFilter.blockLocation(location)) {

@@ -24,6 +24,8 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
+import org.acra.ACRA;
+import org.acra.sender.HttpSender;
 import org.mozilla.mozstumbler.BuildConfig;
 import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.client.cellscanner.DefaultCellScanner;
@@ -32,6 +34,7 @@ import org.mozilla.mozstumbler.client.subactivities.DeveloperActivity;
 import org.mozilla.mozstumbler.client.subactivities.LogActivity;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.Prefs;
+import org.mozilla.mozstumbler.service.core.logging.MockAcraLog;
 import org.mozilla.mozstumbler.service.stumblerthread.StumblerService;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageManager;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.WifiScanner;
@@ -48,6 +51,15 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.acra.annotation.ReportsCrashes;
+
+@ReportsCrashes(
+    formKey="",
+    httpMethod = HttpSender.Method.PUT,
+    reportType = HttpSender.Type.JSON,
+    formUri = BuildConfig.ACRA_URI,
+    formUriBasicAuthLogin = BuildConfig.ACRA_USER,
+    formUriBasicAuthPassword = BuildConfig.ACRA_PASS)
 public class MainApp extends Application
         implements ObservedLocationsReceiver.ICountObserver,
         AsyncUploader.AsyncUploaderListener {
@@ -95,6 +107,13 @@ public class MainApp extends Application
     @Override
     public void onCreate() {
         super.onCreate();
+        // The following line triggers the initialization of ACRA
+        ACRA.init(this);
+
+        // This must be called after init to get a copy of the
+        // original ACRA.log instance so that we can toggle the logger on
+        // and off.
+        MockAcraLog.setOriginalLog();
 
         TileFilePath.directoryOverride = getCacheDir(getApplicationContext());
 

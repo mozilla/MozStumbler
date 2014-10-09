@@ -21,12 +21,20 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.ToggleButton;
+
+import org.acra.ACRA;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.mozilla.mozstumbler.R;
+import org.mozilla.mozstumbler.client.ClientPrefs;
 import org.mozilla.mozstumbler.client.ObservedLocationsReceiver;
 import org.mozilla.mozstumbler.client.mapview.ObservationPoint;
+import org.mozilla.mozstumbler.service.AppGlobals;
+import org.mozilla.mozstumbler.service.core.logging.Log;
+import org.mozilla.mozstumbler.service.core.logging.MockAcraLog;
+
 import java.io.File;
 import java.io.FilenameFilter;
 import java.lang.ref.WeakReference;
@@ -35,6 +43,8 @@ import java.util.LinkedList;
 public class KMLFragment extends Fragment
     implements ObservationPointSerializer.IListener {
 
+    private final String LOG_TAG = AppGlobals.LOG_PREFIX + KMLFragment.class.getSimpleName();
+;
     private LinkedList<ObservationPoint> mPointsToWrite;
     private WeakReference<ProgressDialog> mProgressDialog;
     private TextView mSavedFileLocation;
@@ -63,6 +73,10 @@ public class KMLFragment extends Fragment
                 onClickSave(v);
             }
         });
+
+        boolean crashEnabled = ClientPrefs.getInstance().isCrashReportingEnabled();
+        ToggleButton button = (ToggleButton) mRootView.findViewById(R.id.toggleCrashReports);
+        button.setChecked(crashEnabled);
 
         return mRootView;
     }

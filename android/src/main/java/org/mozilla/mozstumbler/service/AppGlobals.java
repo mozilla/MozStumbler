@@ -5,6 +5,8 @@
 package org.mozilla.mozstumbler.service;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.Date;
+import java.text.SimpleDateFormat;
 
 public class AppGlobals {
     public static final String LOG_PREFIX = "Stumbler:";
@@ -37,6 +39,8 @@ public class AppGlobals {
     public static boolean isDebug;
     public static boolean isRobolectric;
 
+    private static final SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS : ");
+
     /* The log activity will clear this periodically, and display the messages.
      * Always null when the stumbler service is used stand-alone. */
     public static volatile ConcurrentLinkedQueue<String> guiLogMessageBuffer;
@@ -54,7 +58,8 @@ public class AppGlobals {
             if (isBold) {
                 msg = "<b>" + msg + "</b>";
             }
-            guiLogMessageBuffer.add("<font color='" + color +"'>" + msg + "</font>");
+            String ts = formatter.format(new Date());
+            guiLogMessageBuffer.add(ts + "<font color='" + color +"'>" + msg + "</font>");
         }
     }
 }

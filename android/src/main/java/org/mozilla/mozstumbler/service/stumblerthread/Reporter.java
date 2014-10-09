@@ -253,7 +253,7 @@ public final class Reporter extends BroadcastReceiver implements IReporter {
 
         mPreviousBundleJSON = mlsObj;
 
-        AppGlobals.guiLogInfo(mlsObj.toString());
+        AppGlobals.guiLogInfo("MLS record: " + mlsObj.toString());
 
         try {
             DataStorageManager.getInstance().insert(mlsObj.toString(), wifiCount, cellCount);

@@ -75,4 +75,23 @@
         android:text="       "
         />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/textViewSavedFile"
+        android:id="@+id/textViewCrashReportLabel"
+        android:text="Toggle Crash Reports"
+        android:textSize="10sp"
+        android:paddingTop="20dp"
+        />
+
+    <ToggleButton 
+        android:id="@+id/toggleCrashReports"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/textViewCrashReportLabel"
+        android:textOn="Crash Reports on"
+        android:textOff="Crash Reports off"
+        android:onClick="onToggleCrashReportClicked"/>
+
 </RelativeLayout>

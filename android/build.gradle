@@ -54,7 +54,7 @@ android {
         targetSdkVersion 18
 
         versionCode versionMajor * 1000000 + versionMinor * 10000 + versionPatch * 100 + versionBuild
-        versionName "${versionMajor}.${versionMinor}.${versionPatch}.${versionPatch}"
+        versionName "${versionMajor}.${versionMinor}.${versionPatch}.${versionBuild}"
 
         // I'm so happy I have to compute the versionCode, versionName
         // and then duplicate it in the manifest.  yay android.

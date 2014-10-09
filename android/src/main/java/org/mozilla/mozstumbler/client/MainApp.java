@@ -79,19 +79,10 @@ public class MainApp extends Application
     }
 
     private File getCacheDir(Context c) {
-        File dir = null;
-        if (Build.VERSION.SDK_INT >= 8) {
-            dir = c.getExternalCacheDir();
-        } else {
-            dir = c.getExternalFilesDir(null);
-        }
+        File dir = c.getExternalCacheDir();
 
         if (dir == null) {
-            if (Build.VERSION.SDK_INT >= 8) {
-                dir = c.getCacheDir();
-            } else {
-                dir = c.getFilesDir();
-            }
+            dir = c.getCacheDir();
         }
 
         if (dir == null) {

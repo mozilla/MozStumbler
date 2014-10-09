@@ -30,8 +30,6 @@
         <activity
             android:name=".client.navdrawer.MainDrawerActivity"
             android:label="@string/app_name"
-            android:launchMode="singleTask"
-            android:configChanges="orientation|screenSize|keyboard"
             >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -268,6 +268,9 @@ public final class MapActivity extends android.support.v4.app.Fragment
         overlays.add(idx, mCoverageTilesOverlay);
     }
 
+    // use this to track whether to show a toast
+    private static Boolean sIsHighBandwidth;
+
     private void setHighBandwidthMap(boolean isHighBandwidth) {
         if (ClientPrefs.getInstance().isForcedLowBandwidthTiles()) {
             isHighBandwidth = false;
@@ -275,14 +278,26 @@ public final class MapActivity extends android.support.v4.app.Fragment
 
         boolean isMLSTileStore = (BuildConfig.TILE_SERVER_URL != null);
 
+        boolean showToast = false;
+        if (sIsHighBandwidth != null) {
+            showToast = sIsHighBandwidth.booleanValue() != isHighBandwidth;
+        }
+        sIsHighBandwidth = new Boolean(isHighBandwidth);
+
         if (isHighBandwidth) {
             if (mLowResMapOverlay == null && mMap.getTileProvider().getTileSource() == mHighResMapSource) {
                 // already have set this tile source
                 return;
             } else  {
-                mMap.getOverlays().remove(mLowResMapOverlay);
-                mLowResMapOverlay = null;
-                Toast.makeText(this.getActivity(), R.string.switch_to_high_res_tile, Toast.LENGTH_SHORT).show();
+                if (mLowResMapOverlay != null) {
+                    mMap.getOverlays().remove(mLowResMapOverlay);
+                    mLowResMapOverlay.onDetach(mMap);
+                    mLowResMapOverlay = null;
+
+                    if (showToast) {
+                        Toast.makeText(this.getActivity(), R.string.switch_to_high_res_tile, Toast.LENGTH_SHORT).show();
+                    }
+                }
             }
 
             if (!isMLSTileStore) {
@@ -307,7 +322,9 @@ public final class MapActivity extends android.support.v4.app.Fragment
                 addOverlayBaseLayer();
             }
 
-            Toast.makeText(this.getActivity(), R.string.switch_to_low_res_tile, Toast.LENGTH_SHORT).show();
+            if (showToast) {
+                Toast.makeText(this.getActivity(), R.string.switch_to_low_res_tile, Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
@@ -335,12 +352,15 @@ public final class MapActivity extends android.support.v4.app.Fragment
         setHighBandwidthMap(hasWifi);
     }
 
+    private final BroadcastReceiver mNetworkConnectionReceiver = new BroadcastReceiver() {
+        public void onReceive(Context context, Intent intent) {
+            mapNetworkConnectionChanged();
+        }
+    };
+
     private void initNetworkConnectionChangedListener() {
-        getActivity().registerReceiver(new BroadcastReceiver() {
-            public void onReceive(Context context, Intent intent) {
-                mapNetworkConnectionChanged();
-            }
-        }, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
+        getActivity().registerReceiver(mNetworkConnectionReceiver,
+                new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
     }
 
     private void setStartStopMenuState(MenuItem menuItem, boolean scanning) {
@@ -501,6 +521,15 @@ public final class MapActivity extends android.support.v4.app.Fragment
         super.onDestroy();
         Log.d(LOG_TAG, "onDestroy");
 
+        if (mLowResMapOverlay != null) {
+            mMap.getOverlays().remove(mLowResMapOverlay);
+            mLowResMapOverlay.onDetach(mMap);
+        }
+        if (mCoverageTilesOverlay != null) {
+            mMap.getOverlays().remove(mCoverageTilesOverlay);
+            mCoverageTilesOverlay.onDetach(mMap);
+        }
+        getActivity().unregisterReceiver(mNetworkConnectionReceiver);
         mMap.getTileProvider().clearTileCache();
         BitmapPool.getInstance().clearBitmapPool();
     }

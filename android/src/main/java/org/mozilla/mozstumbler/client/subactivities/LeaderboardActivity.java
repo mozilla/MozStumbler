@@ -28,6 +28,11 @@ public class LeaderboardActivity extends ActionBarActivity {
         mWebView = (WebView) findViewById(R.id.webview);
         mWebView.setVisibility(View.INVISIBLE);
         mWebView.getSettings().setJavaScriptEnabled(true);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
         setSupportProgressBarVisibility(true);
         final Activity activity = this;
         mWebView.setWebChromeClient(new WebChromeClient() {

@@ -9,6 +9,7 @@ import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.MenuItemCompat;
@@ -86,11 +87,15 @@ public class MainDrawerActivity
         getSupportActionBar().setHomeButtonEnabled(true);
 
         FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
-        mMapActivity = new MapActivity();
-        fragmentTransaction.add(R.id.content_frame, mMapActivity);
-        fragmentTransaction.commit();
+        Fragment fragment = fragmentManager.findFragmentById(R.id.content_frame);
+        if (fragment == null) {
+            mMapActivity = new MapActivity();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.add(R.id.content_frame, mMapActivity);
+            fragmentTransaction.commit();
+        } else {
+            mMapActivity = (MapActivity) fragment;
+        }
 
         getApp().setMainActivity(this);
 
@@ -164,11 +169,13 @@ public class MainDrawerActivity
     public void onStart() {
         super.onStart();
         mMetricsView.setMapLayerToggleListener(mMapActivity);
+        mMetricsView.update();
 
         if (ClientPrefs.getInstance().isFirstRun()) {
             FragmentManager fm = getSupportFragmentManager();
             FirstRunFragment.showInstance(fm);
         }
+
     }
 
     @Override

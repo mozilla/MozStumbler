@@ -48,9 +48,9 @@ import org.osmdroid.api.IGeoPoint;
 import org.osmdroid.tileprovider.BitmapPool;
 import org.osmdroid.tileprovider.MapTile;
 import org.osmdroid.tileprovider.tilesource.ITileSource;
+import org.osmdroid.tileprovider.tilesource.MapBoxTileSource;
 import org.osmdroid.tileprovider.tilesource.OnlineTileSourceBase;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
-import org.osmdroid.tileprovider.tilesource.XYTileSource;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Overlay;
@@ -303,12 +303,14 @@ public final class MapActivity extends android.support.v4.app.Fragment
             if (!isMLSTileStore) {
                 mHighResMapSource = TileSourceFactory.MAPQUESTOSM;
             } else {
-                // TODO replace me with MapBoxTileSource
-                mHighResMapSource = new XYTileSource("MozStumbler Tile Store",
+                // This has to be called prior to instantiating the
+                // MapBoxTileSouce to set the Mapbox API Key
+                MapBoxTileSource.retrieveMapBoxMapId(getApplication().getApplicationContext());
+
+                mHighResMapSource = new MapBoxTileSource("MozStumbler Tile Store",
                         null, 1, AbstractMapOverlay.MAX_ZOOM_LEVEL_OF_MAP,
                         AbstractMapOverlay.TILE_PIXEL_SIZE,
-                        AbstractMapOverlay.FILE_TYPE_SUFFIX_PNG,
-                        new String[]{BuildConfig.TILE_SERVER_URL});
+                        AbstractMapOverlay.FILE_TYPE_SUFFIX_PNG);
             }
             mMap.setTileSource(mHighResMapSource);
         } else {

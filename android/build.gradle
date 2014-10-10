@@ -91,6 +91,30 @@ android {
         unittest {
             buildConfigField "boolean", "ROBOLECTRIC", "true"
         }
+
+        applicationVariants.all { variant ->
+            variant.processManifest.doLast {
+                println("configuring AndroidManifest.xml");
+                copy {
+                    from("${buildDir}/intermediates/manifests") {
+                        include "${variant.dirName}/AndroidManifest.xml"
+                    }
+                    into("${buildDir}/intermediates/filtered_manifests")
+                }
+
+                def manifestFile = new File("${buildDir}/intermediates/filtered_manifests/${variant.dirName}/AndroidManifest.xml")
+                    def content = manifestFile.getText()
+                    def updatedContent = content.replaceAll("FAKE_MAPBOX_MAPID", getMapboxAPIKey())
+                    manifestFile.write(updatedContent)
+            }
+
+            // This is a bit confusing, we want to swap in the
+            // filtered AndroidManifest.xml file so that we don't
+            // modify the original AndroidManifest.xml. This prevents
+            // accidental commit of the mapbox key into source
+            // control.
+            variant.processResources.manifestFile = new File("${buildDir}/intermediates/filtered_manifests/${variant.dirName}/AndroidManifest.xml")
+        }
     }
 
     sourceSets {
@@ -268,6 +292,20 @@ String getMozillaApiKey() {
     }
     println "No private.properties for Mozilla API Key configuration.."
     return "null";
+}
+
+String getMapboxAPIKey() {
+    // Yeah, this is lame, opening the file again.  Sosume.
+    File signFile = rootProject.file('private.properties')
+    if (signFile.exists()) {
+        Properties p = new Properties()
+        p.load(new FileInputStream(signFile))
+
+        if (p['MapAPIKey'] != null) {
+            return p['MapAPIKey'];
+        }
+    }
+    return '';
 }
 
 String getTileServerUrl() {

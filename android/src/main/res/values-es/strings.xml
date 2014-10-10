@@ -52,8 +52,8 @@
     <string name="upload_observations_button">Subir</string>
     <string name="upload_observations_dialog_title">Subir observaciones</string>
     <string name="upload_wifi_only_title">Auto-Subir sólo por Wi-Fi</string>
-    <string name="upload_wifi_only_summary">Está opción reducirá tu consumo de datos de tu operador móvil. Presionando el botón subir en las Metricas siempre subirá los reportes.</string>
-    <string name="metrics_activity_title">Metricas</string>
+    <string name="upload_wifi_only_summary">Está opción reducirá tu consumo de datos de tu operador móvil. Presionando el botón subir en las Métricas siempre subirá los reportes.</string>
+    <string name="metrics_activity_title">Métricas</string>
     <string name="metrics_this_session">Esta sesión</string>
     <string name="drawer_map_option_show_mls_locations">Mostrar ubicaciones de MLS</string>
     <string name="drawer_map_option_show_observation_type">Marca para sólo celdas (□) / sólo Wi-Fi(○)</string>
@@ -62,7 +62,18 @@
     <string name="scroll_to_start">Ir al principio</string>
     <string name="scroll_to_end">Ir al final</string>
     <string name="upload_observations_data_size">Tamaño:</string>
-    <string name="keep_screen_on_title">Mantener la pantalla encendida mientras se esta en el mapa</string>
+    <string name="title_activity_kml">Guardar/Cargar observaciones</string>
+    <string name="keep_screen_on_title">Mantener la pantalla encendida mientras se está en el mapa</string>
+    <string name="delete_all">Borrar todo</string>
+    <string name="are_you_sure">¿Estás seguro?</string>
+    <string name="loading_kml">Cargando KML</string>
+    <string name="saving_kml">Guardando KML</string>
+    <string name="mozstumbler_kml_file">Archivo MozStumbler KML</string>
+    <string name="share_file">Compartir archivo</string>
+    <string name="load_file">Cargar archivo</string>
+    <string name="delete_file">Borrar archivo</string>
+    <string name="kml_file_saved">KML guardado</string>
+    <string name="share_after_kml_saved">El archivo se ha grabado en el dispositivo, ¿te gustaría compartir el archivo?</string>
     <string name="enter_email">Ingresa tu dirección de correo (opcional)</string>
     <string name="enter_email_title">Correo: </string>
     <string name="enter_email_longtext">Tu dirección de correo jamas es mostrada a las personas y sólo es usada para tus reportes</string>
@@ -76,5 +87,11 @@
     <string name="first_run_welcome_to_mozstumbler">Bienvenido a MozStumbler</string>
     <string name="map_unavailable">El mapa no está disponible para mostrarse, ya que no hay una tarjeta SD.\nAún no puedes recolectar datos.</string>
     <string name="map_offline_mode">"El mapa no se actualizará sin una conexión a Internet,\nsin embargo todavía eres capaz de recolectar datos."</string>
-
+    <string name="action_developer">Desarrollador</string>
+    <string name="enable_option_show_mls_on_map">Activar interruptor para la capa MLS</string>
+    <string name="enable_option_show_mls_on_map_summary">A costa de usar un poco más de memoria y de red, el mapa puede mostrar consultas de ubicación de MLS para sus exploraciones.</string>
+    <string name="cell_only_observation">Sólo observaciones de celdas</string>
+    <string name="wifi_only_observation">Sólo observaciones de Wi-Fi</string>
+    <string name="switch_to_low_res_tile">Utilizando mapa de baja resolución</string>
+    <string name="switch_to_high_res_tile">Utilizando mapa de alta resolución</string>
 </resources>

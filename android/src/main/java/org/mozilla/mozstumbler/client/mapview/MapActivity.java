@@ -340,7 +340,7 @@ public final class MapActivity extends android.support.v4.app.Fragment
 
         final ConnectivityManager cm = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
         final NetworkInfo info = cm.getActiveNetworkInfo();
-        final boolean hasNetwork = (info != null) && cm.getActiveNetworkInfo().isConnected();
+        final boolean hasNetwork = (info != null) && info.isConnected();
         final boolean hasWifi = (info != null) && (info.getType() == ConnectivityManager.TYPE_WIFI);
 
         if (!hasNetwork) {

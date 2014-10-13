@@ -39,6 +39,7 @@ public final class NetworkInfo {
 
         if (Build.VERSION.SDK_INT >= 16) {
             if (mConnectivityManager.isActiveNetworkMetered()) {
+                Log.d(LOG_TAG, "Network is metered");
                 return false;
             }
         }

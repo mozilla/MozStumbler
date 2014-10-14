@@ -1,8 +1,11 @@
-test: updateJars
-	./gradlew testUnittest
+test: unittest
+	./gradlew testUnittest --info
 
 release_check:
 	. ./release_check.sh
+
+unittest: updateJars
+	./gradlew assembleUnittest
 
 debug: updateJars
 	./gradlew assembleDebug

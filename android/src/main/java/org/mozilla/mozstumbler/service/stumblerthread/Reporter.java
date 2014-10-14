@@ -12,7 +12,6 @@ import android.location.Location;
 import android.net.wifi.ScanResult;
 import android.support.v4.content.LocalBroadcastManager;
 import android.telephony.TelephonyManager;
-import android.util.Log;
 
 import java.io.IOException;
 import java.util.List;
@@ -21,6 +20,7 @@ import java.util.Map;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.mozilla.mozstumbler.service.AppGlobals;
+import org.mozilla.mozstumbler.service.core.logging.Log;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageContract;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageManager;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.StumblerBundle;
@@ -35,10 +35,10 @@ public final class Reporter extends BroadcastReceiver implements IReporter {
     private boolean mIsStarted;
 
     /* The maximum number of Wi-Fi access points in a single observation. */
-    private static final int MAX_WIFIS_PER_LOCATION = 200;
+    public static final int MAX_WIFIS_PER_LOCATION = 200;
 
     /* The maximum number of cells in a single observation */
-    private static final int MAX_CELLS_PER_LOCATION  = 50;
+    public static final int MAX_CELLS_PER_LOCATION  = 50;
 
     private Context mContext;
     private int mPhoneType;
@@ -134,20 +134,44 @@ public final class Reporter extends BroadcastReceiver implements IReporter {
         }
     }
 
+    public synchronized Map<String, ScanResult> getWifiData() {
+        if (mBundle == null){
+            return null;
+        }
+        return mBundle.getWifiData();
+    }
+
+    public synchronized Map<String, CellInfo> getCellData() {
+        if (mBundle == null){
+            return null;
+        }
+        return mBundle.getCellData();
+    }
+
+    public synchronized Location getGPSLocation() {
+        if (mBundle == null){
+            return null;
+        }
+        return mBundle.getGpsPosition();
+    }
+
     private void putWifiResults(List<ScanResult> results) {
         if (mBundle == null) {
             return;
         }
 
-        // TODO: vng - this get/test/put loop should really just 
-        // push key/value pairs into the mBundle celldata map through
-        // something like an update call.
         Map<String, ScanResult> currentWifiData = mBundle.getWifiData();
         for (ScanResult result : results) {
+            if (currentWifiData.size() >= MAX_WIFIS_PER_LOCATION) {
+                AppGlobals.guiLogInfo("Max wifi limit exceeded for this location, ignoring data.");
+                return;
+            }
+
             String key = result.BSSID;
             if (!currentWifiData.containsKey(key)) {
                 currentWifiData.put(key, result);
             }
+
         }
     }
 
@@ -156,11 +180,12 @@ public final class Reporter extends BroadcastReceiver implements IReporter {
             return;
         }
 
-        // TODO: vng - this get/test/put loop should really just 
-        // push key/value pairs into the mBundle celldata map through
-        // something like an update call.
         Map<String, CellInfo> currentCellData = mBundle.getCellData();
         for (CellInfo result : cells) {
+            if (currentCellData.size() >= MAX_CELLS_PER_LOCATION) {
+                AppGlobals.guiLogInfo("Max cell limit exceeded for this location, ignoring data.");
+                return;
+            }
             String key = result.getCellIdentity();
             if (!currentCellData.containsKey(key)) {
                 currentCellData.put(key, result);

@@ -5,8 +5,8 @@
 package org.mozilla.mozstumbler.service.stumblerthread.datahandling;
 
 import android.content.Context;
-import android.util.Log;
 import org.mozilla.mozstumbler.service.AppGlobals;
+import org.mozilla.mozstumbler.service.core.logging.Log;
 import org.mozilla.mozstumbler.service.utils.Zipper;
 import java.io.File;
 import java.io.FileInputStream;
@@ -230,12 +230,12 @@ public class DataStorageManager {
                 DEFAULT_MAX_BYTES_STORED_ON_DISK, DEFAULT_MAX_WEEKS_DATA_ON_DISK);
     }
 
-    public static synchronized void createGlobalInstance(Context context, StorageIsEmptyTracker tracker,
+    public static synchronized DataStorageManager createGlobalInstance(Context context, StorageIsEmptyTracker tracker,
                                                          long maxBytesStoredOnDisk, int maxWeeksDataStored) {
-        if (sInstance != null) {
-            return;
+        if (sInstance == null) {
+            sInstance = new DataStorageManager(context, tracker, maxBytesStoredOnDisk, maxWeeksDataStored);
         }
-        sInstance = new DataStorageManager(context, tracker, maxBytesStoredOnDisk, maxWeeksDataStored);
+        return sInstance;
     }
 
     public static synchronized DataStorageManager getInstance() {

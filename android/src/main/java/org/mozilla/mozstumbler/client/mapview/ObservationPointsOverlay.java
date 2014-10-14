@@ -26,6 +26,7 @@ import java.util.LinkedList;
 class ObservationPointsOverlay extends Overlay {
     private static final String LOG_TAG = ObservationPointsOverlay.class.getSimpleName();
     private final Paint mRedPaint = new Paint();
+    private final Paint mGrayPaint = new Paint();
     private final Paint mGreenPaint = new Paint();
     private final Paint mCellPaint = new Paint();
     private final Paint mWifiPaint = new Paint();
@@ -51,6 +52,9 @@ class ObservationPointsOverlay extends Overlay {
 
         mRedPaint.setColor(Color.RED);
         mRedPaint.setStyle(Paint.Style.FILL);
+
+        mGrayPaint.setColor(Color.GRAY);
+        mGrayPaint.setStyle(Paint.Style.FILL);
 
         mBlackStrokePaint.setColor(Color.BLACK);
         mBlackStrokePaint.setStyle(Paint.Style.STROKE);
@@ -121,12 +125,14 @@ class ObservationPointsOverlay extends Overlay {
             boolean hasWifiScan = point.mWifiCount > 0;
             boolean hasCellScan = point.mCellCount > 0;
 
-            if (hasWifiScan && !hasCellScan) {
-                drawWifiScan(c, gps);
-            } else if (hasCellScan && !hasWifiScan) {
-                drawCellScan(c, gps);
-            } else {
+            if (hasCellScan && hasWifiScan) {
                 drawDot(c, gps, radiusInnerRing, mGreenPaint, mBlackStrokePaint);
+            } else if (hasCellScan) {
+                drawCellScan(c, gps);
+            } else if (hasWifiScan) {
+                drawWifiScan(c, gps);
+            } else {
+                drawDot(c, gps, radiusInnerRing, mGrayPaint, mBlackStrokePaint);
             }
 
             if ((++count % TIME_CHECK_MULTIPLE == 0) && (SystemClock.uptimeMillis() > endTime)) {

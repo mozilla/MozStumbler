@@ -211,7 +211,6 @@ public class MainDrawerActivity
                 mMapActivity.toggleScanning(item);
                 return true;
             case R.id.action_preferences:
-                PreferencesScreen.setPrefs(getApp().getPrefs());
                 startActivity(new Intent(getApplication(), PreferencesScreen.class));
                 return true;
             case R.id.action_view_leaderboard:

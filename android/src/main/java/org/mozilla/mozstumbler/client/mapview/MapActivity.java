@@ -211,7 +211,7 @@ public final class MapActivity extends android.support.v4.app.Fragment
         return (MainApp) getActivity().getApplication();
     }
 
-    private Runnable mCoverageUrlQuery = new Runnable() {
+    final private Runnable mCoverageUrlQuery = new Runnable() {
         @Override
         public void run() {
             // @TODO: we do a similar "read from URL" in Updater, AbstractCommunicator, make one function for this
@@ -273,11 +273,15 @@ public final class MapActivity extends android.support.v4.app.Fragment
     private static Boolean sIsHighBandwidth;
 
     private void setHighBandwidthMap(boolean isHighBandwidth) {
-        if (ClientPrefs.getInstance().isForcedLowBandwidthTiles()) {
-            isHighBandwidth = false;
+        final ClientPrefs prefs = ClientPrefs.getInstance();
+        if (prefs == null) {
+            return;
         }
 
-        boolean isMLSTileStore = (BuildConfig.TILE_SERVER_URL != null);
+        final ClientPrefs.MapTileResolutionOptions tileType = prefs.getMapTileResolutionType();
+
+
+        final boolean isMLSTileStore = (BuildConfig.TILE_SERVER_URL != null);
 
         boolean showToast = false;
         if (sIsHighBandwidth != null) {
@@ -480,9 +484,9 @@ public final class MapActivity extends android.support.v4.app.Fragment
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-        Log.d(LOG_TAG, "onStart");
+    public void onResume() {
+        super.onResume();
+        Log.d(LOG_TAG, "onResume");
 
         mGPSListener = new GPSListener(this);
 
@@ -499,16 +503,6 @@ public final class MapActivity extends android.support.v4.app.Fragment
         ClientPrefs.getInstance().setLastMapCenter(center);
     }
 
-    @Override
-    public void onStop() {
-        super.onStop();
-
-        Log.d(LOG_TAG, "onStop");
-
-        mGPSListener.removeListener();
-        ObservedLocationsReceiver observer = ObservedLocationsReceiver.getInstance();
-        observer.removeMapActivity();
-    }
 
     @Override
     public void onSaveInstanceState(Bundle bundle) {
@@ -525,7 +519,11 @@ public final class MapActivity extends android.support.v4.app.Fragment
         super.onPause();
         Log.d(LOG_TAG, "onPause");
         saveStateToPrefs();
-    }
+
+        mGPSListener.removeListener();
+        ObservedLocationsReceiver observer = ObservedLocationsReceiver.getInstance();
+        observer.removeMapActivity();
+}
 
     @Override
     public void onDestroy() {

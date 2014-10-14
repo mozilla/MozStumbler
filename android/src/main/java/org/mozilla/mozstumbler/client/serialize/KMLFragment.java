@@ -21,20 +21,14 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.ToggleButton;
-
-import org.acra.ACRA;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.mozilla.mozstumbler.R;
-import org.mozilla.mozstumbler.client.ClientPrefs;
 import org.mozilla.mozstumbler.client.ObservedLocationsReceiver;
 import org.mozilla.mozstumbler.client.mapview.ObservationPoint;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.core.logging.Log;
-import org.mozilla.mozstumbler.service.core.logging.MockAcraLog;
-
 import java.io.File;
 import java.io.FilenameFilter;
 import java.lang.ref.WeakReference;
@@ -44,12 +38,12 @@ public class KMLFragment extends Fragment
     implements ObservationPointSerializer.IListener {
 
     private final String LOG_TAG = AppGlobals.LOG_PREFIX + KMLFragment.class.getSimpleName();
-;
+
     private LinkedList<ObservationPoint> mPointsToWrite;
     private WeakReference<ProgressDialog> mProgressDialog;
     private TextView mSavedFileLocation;
 
-    View mRootView;
+    private View mRootView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -73,10 +67,6 @@ public class KMLFragment extends Fragment
                 onClickSave(v);
             }
         });
-
-        boolean crashEnabled = ClientPrefs.getInstance().isCrashReportingEnabled();
-        ToggleButton button = (ToggleButton) mRootView.findViewById(R.id.toggleCrashReports);
-        button.setChecked(crashEnabled);
 
         return mRootView;
     }
@@ -143,7 +133,7 @@ public class KMLFragment extends Fragment
                 .setNegativeButton(android.R.string.no, null).show();
     }
 
-    public void onClickSave(View v) {
+    private void onClickSave(View v) {
         if (mPointsToWrite == null) {
             return;
         }
@@ -203,7 +193,7 @@ public class KMLFragment extends Fragment
         startActivity(Intent.createChooser(intent, getString(R.string.share_file)));
     }
 
-    public void contextItemSelected(MenuItem item, final String filename) {
+    private void contextItemSelected(MenuItem item, final String filename) {
         final boolean isDeleteFile = item.getTitle().equals(getString(R.string.delete_file));
         boolean isLoadFile = item.getTitle().equals(getString(R.string.load_file));
         boolean isDeleteAll = item.getTitle().equals(getString(R.string.delete_all));
@@ -269,7 +259,7 @@ public class KMLFragment extends Fragment
 
     private Dialog mLoadFileDialog;
 
-    public void onClickLoad(View v) {
+    private void onClickLoad(View v) {
         final String[] files = getFileList();
         if (files == null || files.length < 1) {
             return;

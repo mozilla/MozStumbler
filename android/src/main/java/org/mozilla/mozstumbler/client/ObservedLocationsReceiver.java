@@ -19,6 +19,7 @@ import org.mozilla.mozstumbler.client.mapview.ObservationPoint;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.GPSScanner;
 import org.mozilla.mozstumbler.service.utils.CoordinateUtils;
 import org.osmdroid.util.GeoPoint;
+
 import java.lang.ref.WeakReference;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -124,17 +125,24 @@ public class ObservedLocationsReceiver extends BroadcastReceiver {
             lastObservation = mCollectionPoints.getLast();
         }
 
-        boolean getInfoForMLS = ClientPrefs.getInstance().isOptionEnabledToShowMLSOnMap();
-        if (getInfoForMLS && lastObservation != null && service != null) {
+        if (lastObservation != null && service != null) {
             JSONObject currentBundle = service.getLastReportedBundle();
-            if (mPreviousBundleForDuplicateCheck == currentBundle) {
-                return;
-            }
-            lastObservation.setMLSQuery(currentBundle);
-            mPreviousBundleForDuplicateCheck = currentBundle;
+            if (currentBundle != null) {
+                lastObservation.setCounts(currentBundle);
 
-            if (mQueuedForMLS.size() < MAX_SIZE_OF_POINT_LISTS) {
-                mQueuedForMLS.addFirst(lastObservation);
+                if (mPreviousBundleForDuplicateCheck == currentBundle) {
+                    return;
+                }
+
+                boolean getInfoForMLS = ClientPrefs.getInstance().isOptionEnabledToShowMLSOnMap();
+                if (getInfoForMLS) {
+                    lastObservation.setMLSQuery(currentBundle);
+                    mPreviousBundleForDuplicateCheck = currentBundle;
+
+                    if (mQueuedForMLS.size() < MAX_SIZE_OF_POINT_LISTS) {
+                        mQueuedForMLS.addFirst(lastObservation);
+                    }
+                }
             }
         }
 

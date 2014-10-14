@@ -19,6 +19,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.CompoundButton;
 import android.widget.Switch;
 
 import org.mozilla.mozstumbler.BuildConfig;
@@ -114,9 +115,9 @@ public class MainDrawerActivity
         if (Build.VERSION.SDK_INT >= 11) {
             Switch s = new Switch(this);
             s.setChecked(false);
-            s.setOnClickListener(new View.OnClickListener() {
+            s.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
-                public void onClick(View v) {
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                     mMapActivity.toggleScanning(mMenuItemStartStop);
                 }
             });

@@ -131,6 +131,19 @@
         android:layout_alignParentBottom="true"/>
 
     <TextView
+        android:id="@+id/low_resolution_map_message"
+        android:textColor="@android:color/black"
+        android:gravity="right"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingRight="5dp"
+        android:text="@string/low_resolution_map"
+        android:textSize="10sp"
+        android:layout_above="@+id/copyright_area"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <TextView
         android:id="@+id/copyright_area"
         android:textColor="@android:color/black"
         android:gravity="right"

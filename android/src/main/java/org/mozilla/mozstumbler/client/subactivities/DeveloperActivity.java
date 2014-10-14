@@ -27,7 +27,6 @@ public class DeveloperActivity extends ActionBarActivity {
 
     private final String LOG_TAG = AppGlobals.LOG_PREFIX + DeveloperActivity.class.getSimpleName();
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,21 +41,11 @@ public class DeveloperActivity extends ActionBarActivity {
 
     }
 
-    private void onToggleCrashReportClicked(boolean isOn) {
-        ClientPrefs.getInstance().setCrashReportingEnabled(isOn);
-
-        if (isOn) {
-            Log.d(LOG_TAG, "Enabled crash reporting");
-            ACRA.setLog(MockAcraLog.getOriginalLog());
-        } else {
-            Log.d(LOG_TAG, "Disabled crash reporting");
-            ACRA.setLog(new MockAcraLog());
-        }
-    }
-
     // For misc developer options
-    class DeveloperOptions extends Fragment {
-        View mRootView;
+    private static class DeveloperOptions extends Fragment {
+        private final String LOG_TAG = AppGlobals.LOG_PREFIX + DeveloperOptions.class.getSimpleName();
+
+        private View mRootView;
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -73,12 +62,13 @@ public class DeveloperActivity extends ActionBarActivity {
             });
 
             final Spinner spinner = (Spinner) mRootView.findViewById(R.id.spinnerMapResolutionOptions);
+            spinner.setSelection(ClientPrefs.getInstance().getMapTileResolutionType().ordinal());
             spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> arg0, View arg1, int position, long id) {
                     String item = spinner.getSelectedItem().toString();
                     Log.d(LOG_TAG, item + ", pos:" + position);
-                    ClientPrefs prefs = (ClientPrefs) ClientPrefs.createGlobalInstance(getApplicationContext());
+                    ClientPrefs prefs = (ClientPrefs) ClientPrefs.createGlobalInstance(getActivity().getApplicationContext());
                     prefs.setMapTileResolutionType(position);
                 }
 
@@ -87,8 +77,19 @@ public class DeveloperActivity extends ActionBarActivity {
                 }
 
             });
-
             return mRootView;
+        }
+
+        private void onToggleCrashReportClicked(boolean isOn) {
+            ClientPrefs.getInstance().setCrashReportingEnabled(isOn);
+
+            if (isOn) {
+                Log.d(LOG_TAG, "Enabled crash reporting");
+                ACRA.setLog(MockAcraLog.getOriginalLog());
+            } else {
+                Log.d(LOG_TAG, "Disabled crash reporting");
+                ACRA.setLog(new MockAcraLog());
+            }
         }
     }
 }

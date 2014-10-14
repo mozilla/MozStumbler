@@ -41,7 +41,6 @@ public class ObservationPoint implements MLSLocationGetter.MLSLocationGetterCall
 
     public void setMLSQuery(JSONObject ichnaeaQueryObj) {
         mMLSQuery = ichnaeaQueryObj;
-        setCounts(ichnaeaQueryObj);
     }
 
     public void setCounts(JSONObject ichnaeaQueryObj) {

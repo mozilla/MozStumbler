@@ -266,6 +266,9 @@ public final class MapActivity extends android.support.v4.app.Fragment
                     }
                 }, 0);
             } else if (mCoverageTilesOverlayLowZoom == null) {
+                if (ClientPrefs.getInstance().getMapTileResolutionType() == ClientPrefs.MapTileResolutionOptions.NoMap) {
+                    return;
+                }
                 initCoverageTiles(sCoverageUrl);
                 updateOverlayCoverageLayer(mMap.getZoomLevel());
             }
@@ -350,7 +353,12 @@ public final class MapActivity extends android.support.v4.app.Fragment
                 isHighBandwidth = false;
             } else if (tileType == ClientPrefs.MapTileResolutionOptions.NoMap) {
                 mMap.setTileSource(new BlankTileSource());
-                // WIP: delete other layers
+                removeLayer(mLowResMapOverlayLowZoom);
+                removeLayer(mLowResMapOverlayHighZoom);
+                removeLayer(mCoverageTilesOverlayLowZoom);
+                removeLayer(mCoverageTilesOverlayHighZoom);
+                mLowResMapOverlayHighZoom = mLowResMapOverlayLowZoom = null;
+                mCoverageTilesOverlayHighZoom = mCoverageTilesOverlayLowZoom = null;
                 return;
             }
         }
@@ -523,12 +531,6 @@ public final class MapActivity extends android.support.v4.app.Fragment
     }
 
     void updateGPSInfo(int satellites, int fixes) {
-        // @TODO Move this code to an appropriate place
-        if (mCoverageTilesOverlayLowZoom == null && sCoverageUrl != null) {
-            initCoverageTiles(sCoverageUrl);
-            updateOverlayCoverageLayer(mMap.getZoomLevel());
-        }
-
         formatTextView(R.id.text_satellites_used, "%d", fixes);
         int icon = fixes > 0 ? R.drawable.ic_gps_receiving_flaticondotcom : R.drawable.ic_gps_no_signal_flaticondotcom;
         ((ImageView) mRootView.findViewById(R.id.fix_indicator)).setImageResource(icon);

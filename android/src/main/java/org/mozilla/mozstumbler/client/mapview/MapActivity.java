@@ -279,8 +279,17 @@ public final class MapActivity extends android.support.v4.app.Fragment
         }
 
         final ClientPrefs.MapTileResolutionOptions tileType = prefs.getMapTileResolutionType();
-
-
+        if (tileType.ordinal() > 0) {
+            if (tileType == ClientPrefs.MapTileResolutionOptions.HighRes) {
+                isHighBandwidth = true;
+            } else if (tileType == ClientPrefs.MapTileResolutionOptions.LowRes) {
+                isHighBandwidth = false;
+            } else if (tileType == ClientPrefs.MapTileResolutionOptions.NoMap) {
+                mMap.setTileSource(new BlankTileSource());
+                // WIP: delete other layers
+                return;
+            }
+        }
         final boolean isMLSTileStore = (BuildConfig.TILE_SERVER_URL != null);
 
         boolean showToast = false;

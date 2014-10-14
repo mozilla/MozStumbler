@@ -31,8 +31,8 @@ public class ClientPrefs extends Prefs {
     }
 
     public static synchronized ClientPrefs getInstance() {
-        if (AppGlobals.isDebug && sInstance != null) {
-            assert (sInstance.getClass().isInstance(ClientPrefs.class));
+        if (sInstance == null || !sInstance.getClass().isInstance(ClientPrefs.class)) {
+            throw new IllegalArgumentException("sInstance is improperly initialized; is null:" + (sInstance == null));
         }
         return (ClientPrefs)sInstance;
     }

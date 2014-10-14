@@ -14,7 +14,8 @@
         android:text="Load KML File"
         android:id="@+id/buttonLoad"
         android:layout_below="@+id/buttonSave"
-        android:layout_alignParentLeft="true" />
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
     <Button
         android:layout_width="wrap_content"

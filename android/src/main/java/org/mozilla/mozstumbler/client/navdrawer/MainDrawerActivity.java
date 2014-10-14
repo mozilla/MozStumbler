@@ -4,6 +4,7 @@
 
 package org.mozilla.mozstumbler.client.navdrawer;
 
+import android.app.Service;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Build;
@@ -138,9 +139,20 @@ public class MainDrawerActivity
         if (mMenuItemStartStop == null) {
             return;
         }
-        boolean isScanning = ((MainApp) getApplication()).getService().isScanning();
+
+        MainApp app = (MainApp) getApplication();
+        if (app == null) {
+            return;
+        }
+
+        ClientStumblerService svc = app.getService();
+        if (svc == null) {
+            return;
+        }
+        boolean isScanning = svc.isScanning();
+
         if (Build.VERSION.SDK_INT >= 11) {
-            Switch s = (Switch)mMenuItemStartStop.getActionView();
+            Switch s = (Switch) mMenuItemStartStop.getActionView();
             if (isScanning) {
                 s.setChecked(true);
             } else {

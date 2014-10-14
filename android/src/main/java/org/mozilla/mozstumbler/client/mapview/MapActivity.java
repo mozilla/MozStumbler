@@ -337,7 +337,6 @@ public final class MapActivity extends android.support.v4.app.Fragment
         // can return NULL.  Lesson learned - never trust android framework.
         // https://github.com/mozilla/MozStumbler/issues/981
         if (activity == null) {
-            showMapNotAvailableMessage(NoMapAvailableMessage.eNoMapDueToNoAccessibleStorage);
             return;
         }
 

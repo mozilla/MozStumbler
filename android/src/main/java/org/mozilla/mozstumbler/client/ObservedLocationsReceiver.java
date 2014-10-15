@@ -119,12 +119,12 @@ public class ObservedLocationsReceiver extends BroadcastReceiver {
         }
 
         final Context appContext = context.getApplicationContext();
-        final ClientStumblerService service = ((MainApp) appContext).getService();
         ObservationPoint lastObservation = null;
         if (mCollectionPoints.size() > 0) {
             lastObservation = mCollectionPoints.getLast();
         }
 
+        final ClientStumblerService service = ((MainApp) appContext).getService();
         if (lastObservation != null && service != null) {
             JSONObject currentBundle = service.getLastReportedBundle();
             if (currentBundle != null) {

@@ -224,6 +224,10 @@ public class MainDrawerActivity
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                if (mMapFragment == null || mMapFragment.getActivity() == null) {
+                    return;
+                }
+
                 setStartStopMenuItemState();
                 updateNumberDisplay();
             }

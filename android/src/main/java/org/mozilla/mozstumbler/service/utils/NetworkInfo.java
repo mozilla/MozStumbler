@@ -6,6 +6,7 @@ package org.mozilla.mozstumbler.service.utils;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
+import android.os.Build;
 import android.util.Log;
 import org.mozilla.mozstumbler.service.AppGlobals;
 
@@ -34,6 +35,13 @@ public final class NetworkInfo {
         if (mConnectivityManager == null) {
             Log.e(LOG_TAG, "ConnectivityManager is null!");
             return false;
+        }
+
+        if (Build.VERSION.SDK_INT >= 16) {
+            if (mConnectivityManager.isActiveNetworkMetered()) {
+                Log.d(LOG_TAG, "Network is metered");
+                return false;
+            }
         }
 
         android.net.NetworkInfo aNet = mConnectivityManager.getActiveNetworkInfo();

@@ -28,6 +28,9 @@ apply plugin: 'android-test'
 repositories {
     mavenCentral()
     maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
+    ivy {
+        url 'http://mozilla-services.github.io/ivy-repo' 
+    }
 }
 
 import de.undercouch.gradle.tasks.download.Download
@@ -38,8 +41,7 @@ libDir.mkdirs()
 
 task updateJars(type: Download) {
     src([
-        'https://github.com/mozilla/osmdroid/releases/download/4.3pre0/osmdroid-android-4.3-SNAPSHOT.jar',
-        'https://github.com/crankycoder/SimpleKML/releases/download/v1.0/SimpleKML.jar'
+        'https://github.com/mozilla/osmdroid/releases/download/4.3pre0/osmdroid-android-4.3-SNAPSHOT.jar'
     ])
     dest libDir
 }
@@ -110,8 +112,10 @@ dependencies {
     testCompile 'junit:junit:4.10'
     testCompile 'org.robolectric:robolectric:2.3'
 
-    // pickup osmdroid and simplekml
+    // pickup osmdroid
     compile fileTree(dir: 'libs', include: ['*.jar'])
+
+    compile 'com.crankycoder:SimpleKML:1.0'
 
     compile 'org.slf4j:slf4j-android:1.7.7'
 

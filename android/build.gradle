@@ -1,8 +1,8 @@
 // each of the version numbers must be 0-99
 def versionMajor = 0
 def versionMinor = 40
-def versionPatch = 0
-def versionBuild = 0 // bump for dogfood builds, public betas, etc...
+def versionPatch = 1
+def versionBuild = 1 // this is non-zero for any dev build
 
 buildscript {
     repositories {
@@ -24,7 +24,6 @@ buildscript {
 
 apply plugin: 'android'
 apply plugin: 'android-test'
-apply plugin: 'jacoco'
 
 repositories {
     mavenCentral()
@@ -54,7 +53,7 @@ android {
         targetSdkVersion 18
 
         versionCode versionMajor * 1000000 + versionMinor * 10000 + versionPatch * 100 + versionBuild
-        versionName "${versionMajor}.${versionMinor}.${versionPatch}.${versionPatch}"
+        versionName "${versionMajor}.${versionMinor}.${versionPatch}.${versionBuild}"
 
         // I'm so happy I have to compute the versionCode, versionName
         // and then duplicate it in the manifest.  yay android.
@@ -135,63 +134,6 @@ dependencies {
 
     // Acralyzer crash reports
     compile 'ch.acra:acra:4.5.0'
-}
-
-FileTree getJacocoClassDirs(List projects) {
-    def classDirs = fileTree(
-            dir: "${buildDir}/classes/debug",
-            excludes: ['**/R*.class', '**/BuildConfig.class']
-    )
-
-    projects.each {
-        def projectBuildDir = project(it).buildDir
-        classDirs += fileTree(
-                dir: "${projectBuildDir}/classes/release",
-                excludes: ['**/R*.class', '**/BuildConfig.class']
-        )
-    }
-
-    return classDirs
-}
-
-FileCollection getJacocoSrcFiles(List projects) {
-    Set srcFiles = android.sourceSets.main.java.srcDirs
-
-    projects.each {
-        def projectDir = project(it).projectDir
-        srcFiles.add("${projectDir}/src/main/java")
-    }
-
-    return files(srcFiles)
-}
-
-FileCollection getJacocoExecFiles(List projects) {
-    Set execFiles = new HashSet();
-    execFiles.add("${buildDir}/jacoco/testDebug.exec")
-
-    projects.each {
-        def projectBuildDir = project(it).buildDir
-        execFiles.add("${projectBuildDir}/jacoco/testDebug.exec")
-    }
-
-    return files(execFiles)
-}
-
-task jacocoTestReport(type: JacocoReport, dependsOn: test) {
-    description 'Generate code coverage.'
-    group 'Verification'
-
-    reports {
-        xml.enabled false
-        csv.enabled false
-        html.destination "${buildDir}/reports/coverage"
-    }
-
-    def dependencies = []
-
-    classDirectories = getJacocoClassDirs(dependencies)
-    sourceDirectories = getJacocoSrcFiles(dependencies)
-    executionData = getJacocoExecFiles(dependencies)
 }
 
 tasks.withType(JavaCompile) {

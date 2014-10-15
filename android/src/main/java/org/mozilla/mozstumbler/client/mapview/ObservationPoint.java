@@ -41,9 +41,12 @@ public class ObservationPoint implements MLSLocationGetter.MLSLocationGetterCall
 
     public void setMLSQuery(JSONObject ichnaeaQueryObj) {
         mMLSQuery = ichnaeaQueryObj;
+    }
+
+    public void setCounts(JSONObject ichnaeaQueryObj) {
         try {
-            mCellCount = mMLSQuery.getInt(DataStorageContract.ReportsColumns.CELL_COUNT);
-            mWifiCount = mMLSQuery.getInt(DataStorageContract.ReportsColumns.WIFI_COUNT);
+            mCellCount = ichnaeaQueryObj.getInt(DataStorageContract.ReportsColumns.CELL_COUNT);
+            mWifiCount = ichnaeaQueryObj.getInt(DataStorageContract.ReportsColumns.WIFI_COUNT);
         } catch (JSONException ex) {}
     }
 

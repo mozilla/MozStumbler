@@ -14,6 +14,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -398,7 +399,17 @@ public final class MapFragment extends android.support.v4.app.Fragment
     }
 
     public void mapNetworkConnectionChanged() {
-        if (getActivity().getFilesDir() == null) {
+
+        FragmentActivity activity = getActivity();
+
+        // Amazingly, getActivity() while you're in a fragment
+        // can return NULL.  Lesson learned - never trust android framework.
+        // https://github.com/mozilla/MozStumbler/issues/981
+        if (activity == null) {
+            return;
+        }
+
+        if (activity.getFilesDir() == null) {
             // Not the ideal spot for this check perhaps, but there is no point in checking
             // the network when storage is not available.
             showMapNotAvailableMessage(NoMapAvailableMessage.eNoMapDueToNoAccessibleStorage);
@@ -409,7 +420,7 @@ public final class MapFragment extends android.support.v4.app.Fragment
 
         final ConnectivityManager cm = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
         final NetworkInfo info = cm.getActiveNetworkInfo();
-        final boolean hasNetwork = (info != null) && cm.getActiveNetworkInfo().isConnected();
+        final boolean hasNetwork = (info != null) && info.isConnected();
         final boolean hasWifi = (info != null) && (info.getType() == ConnectivityManager.TYPE_WIFI);
 
         if (!hasNetwork) {

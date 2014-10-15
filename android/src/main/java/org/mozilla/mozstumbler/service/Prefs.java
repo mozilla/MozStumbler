@@ -127,9 +127,7 @@ public class Prefs {
     public synchronized void setEmail(String email) {
         if (email != null) {
             email = email.trim();
-            if (email.length() > 0) {
-                setStringPref(EMAIL_PREF, email);
-            }
+            setStringPref(EMAIL_PREF, email);
         }
     }
 

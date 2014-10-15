@@ -4,6 +4,7 @@
 
 package org.mozilla.mozstumbler.client.navdrawer;
 
+import android.app.Service;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Build;
@@ -19,6 +20,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.CompoundButton;
 import android.widget.Switch;
 
 import org.mozilla.mozstumbler.BuildConfig;
@@ -114,9 +116,9 @@ public class MainDrawerActivity
         if (Build.VERSION.SDK_INT >= 11) {
             Switch s = new Switch(this);
             s.setChecked(false);
-            s.setOnClickListener(new View.OnClickListener() {
+            s.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
-                public void onClick(View v) {
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                     mMapFragment.toggleScanning(mMenuItemStartStop);
                 }
             });
@@ -137,9 +139,20 @@ public class MainDrawerActivity
         if (mMenuItemStartStop == null) {
             return;
         }
-        boolean isScanning = ((MainApp) getApplication()).getService().isScanning();
+
+        MainApp app = (MainApp) getApplication();
+        if (app == null) {
+            return;
+        }
+
+        ClientStumblerService svc = app.getService();
+        if (svc == null) {
+            return;
+        }
+        boolean isScanning = svc.isScanning();
+
         if (Build.VERSION.SDK_INT >= 11) {
-            Switch s = (Switch)mMenuItemStartStop.getActionView();
+            Switch s = (Switch) mMenuItemStartStop.getActionView();
             if (isScanning) {
                 s.setChecked(true);
             } else {
@@ -198,7 +211,6 @@ public class MainDrawerActivity
                 mMapFragment.toggleScanning(item);
                 return true;
             case R.id.action_preferences:
-                PreferencesScreen.setPrefs(getApp().getPrefs());
                 startActivity(new Intent(getApplication(), PreferencesScreen.class));
                 return true;
             case R.id.action_view_leaderboard:

@@ -29,19 +29,19 @@ public class PreferencesScreen extends PreferenceActivity {
     private CheckBoxPreference mWifiPreference;
     private CheckBoxPreference mKeepScreenOn;
     private CheckBoxPreference mEnableShowMLSLocations;
-    private static ClientPrefs sPrefs;
 
-    /* Precondition to using this class, call this method to set Prefs */
-    public static void setPrefs(ClientPrefs p) {
-        sPrefs = p;
+    private ClientPrefs getPrefs() {
+        ClientPrefs prefs = ClientPrefs.getInstance();
+        if (prefs == null) {
+            prefs = ClientPrefs.createGlobalInstance(getApplicationContext());
+        }
+        return prefs;
     }
 
     @SuppressWarnings("deprecation")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        assert(sPrefs != null);
 
         addPreferencesFromResource(R.xml.stumbler_preferences);
 
@@ -52,11 +52,12 @@ public class PreferencesScreen extends PreferenceActivity {
         mKeepScreenOn = (CheckBoxPreference) getPreferenceManager().findPreference(ClientPrefs.KEEP_SCREEN_ON_PREF);
 
         mEnableShowMLSLocations = (CheckBoxPreference) getPreferenceManager().findPreference(ClientPrefs.ENABLE_OPTION_TO_SHOW_MLS_ON_MAP);
-        mEnableShowMLSLocations.setChecked(sPrefs.isOptionEnabledToShowMLSOnMap());
 
-        setNicknamePreferenceTitle(sPrefs.getNickname());
-        setEmailPreferenceTitle(sPrefs.getEmail());
-        mWifiPreference.setChecked(sPrefs.getUseWifiOnly());
+        mEnableShowMLSLocations.setChecked(getPrefs().isOptionEnabledToShowMLSOnMap());
+
+        setNicknamePreferenceTitle(getPrefs().getNickname());
+        setEmailPreferenceTitle(getPrefs().getEmail());
+        mWifiPreference.setChecked(getPrefs().getUseWifiOnly());
 
 
         setPreferenceListener();
@@ -106,7 +107,7 @@ public class PreferencesScreen extends PreferenceActivity {
         mNicknamePreference.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
-                sPrefs.setNickname(newValue.toString());
+                getPrefs().setNickname(newValue.toString());
                 setNicknamePreferenceTitle(newValue.toString());
                 return true;
             }
@@ -115,7 +116,7 @@ public class PreferencesScreen extends PreferenceActivity {
         mEmailPreference.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
-                sPrefs.setEmail(newValue.toString());
+                getPrefs().setEmail(newValue.toString());
                 setEmailPreferenceTitle(newValue.toString());
                 return true;
             }
@@ -124,7 +125,7 @@ public class PreferencesScreen extends PreferenceActivity {
         mWifiPreference.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
-                sPrefs.setUseWifiOnly(newValue.equals(true));
+                getPrefs().setUseWifiOnly(newValue.equals(true));
                 return true;
             }
         });
@@ -132,7 +133,7 @@ public class PreferencesScreen extends PreferenceActivity {
         mKeepScreenOn.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
-                sPrefs.setKeepScreenOn(newValue.equals(true));
+                getPrefs().setKeepScreenOn(newValue.equals(true));
                 ((MainApp) getApplication()).keepScreenOnPrefChanged(newValue.equals(true));
                 return true;
             }
@@ -140,7 +141,7 @@ public class PreferencesScreen extends PreferenceActivity {
         mEnableShowMLSLocations.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
-                sPrefs.setOptionEnabledToShowMLSOnMap(newValue.equals(true));
+                getPrefs().setOptionEnabledToShowMLSOnMap(newValue.equals(true));
                 return true;
             }
         });

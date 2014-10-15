@@ -78,7 +78,7 @@ public final class MapActivity extends android.support.v4.app.Fragment
     private static final int DEFAULT_ZOOM_AFTER_FIX = 16;
     private static final String LAT_KEY = "latitude";
     private static final String LON_KEY = "longitude";
-    private static final int HIGH_LOW_ZOOM_THRESHOLD = 14;
+    private static final int HIGH_ZOOM_THRESHOLD = 14;
 
     private MapView mMap;
     private AccuracyCircleOverlay mAccuracyOverlay;
@@ -282,7 +282,7 @@ public final class MapActivity extends android.support.v4.app.Fragment
     // This determines which level of detail of tile layer is shown.
     //
     private boolean isHighZoom(int zoomLevel) {
-        return zoomLevel > HIGH_LOW_ZOOM_THRESHOLD;
+        return zoomLevel > HIGH_ZOOM_THRESHOLD;
     }
 
     private void updateOverlayBaseLayer(int zoomLevel) {

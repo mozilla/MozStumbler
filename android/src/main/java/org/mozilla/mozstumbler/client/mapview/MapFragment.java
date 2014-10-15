@@ -5,9 +5,7 @@
 package org.mozilla.mozstumbler.client.mapview;
 
 import android.annotation.SuppressLint;
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -63,12 +61,12 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public final class MapActivity extends android.support.v4.app.Fragment
+public final class MapFragment extends android.support.v4.app.Fragment
     implements MetricsView.IMapLayerToggleListener {
 
     public enum NoMapAvailableMessage { eHideNoMapMessage, eNoMapDueToNoAccessibleStorage, eNoMapDueToNoInternet }
 
-    private static final String LOG_TAG = AppGlobals.LOG_PREFIX + MapActivity.class.getSimpleName();
+    private static final String LOG_TAG = AppGlobals.LOG_PREFIX + MapFragment.class.getSimpleName();
 
     private static final String COVERAGE_REDIRECT_URL = "https://location.services.mozilla.com/map.json";
     private static String sCoverageUrl = null;

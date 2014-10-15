@@ -28,7 +28,7 @@ import org.mozilla.mozstumbler.client.ClientStumblerService;
 import org.mozilla.mozstumbler.client.IMainActivity;
 import org.mozilla.mozstumbler.client.MainApp;
 import org.mozilla.mozstumbler.client.Updater;
-import org.mozilla.mozstumbler.client.mapview.MapActivity;
+import org.mozilla.mozstumbler.client.mapview.MapFragment;
 import org.mozilla.mozstumbler.client.subactivities.FirstRunFragment;
 import org.mozilla.mozstumbler.client.subactivities.LeaderboardActivity;
 import org.mozilla.mozstumbler.client.subactivities.PreferencesScreen;
@@ -42,7 +42,7 @@ public class MainDrawerActivity
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
     private MetricsView mMetricsView;
-    private MapActivity mMapActivity;
+    private MapFragment mMapFragment;
     private MenuItem mMenuItemStartStop;
 
     @Override
@@ -87,12 +87,12 @@ public class MainDrawerActivity
         FragmentManager fragmentManager = getSupportFragmentManager();
         Fragment fragment = fragmentManager.findFragmentById(R.id.content_frame);
         if (fragment == null) {
-            mMapActivity = new MapActivity();
+            mMapFragment = new MapFragment();
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.add(R.id.content_frame, mMapActivity);
+            fragmentTransaction.add(R.id.content_frame, mMapFragment);
             fragmentTransaction.commit();
         } else {
-            mMapActivity = (MapActivity) fragment;
+            mMapFragment = (MapFragment) fragment;
         }
 
         getApp().setMainActivity(this);
@@ -117,7 +117,7 @@ public class MainDrawerActivity
             s.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mMapActivity.toggleScanning(mMenuItemStartStop);
+                    mMapFragment.toggleScanning(mMenuItemStartStop);
                 }
             });
             mMenuItemStartStop.setActionView(s);
@@ -166,7 +166,7 @@ public class MainDrawerActivity
     @Override
     public void onStart() {
         super.onStart();
-        mMetricsView.setMapLayerToggleListener(mMapActivity);
+        mMetricsView.setMapLayerToggleListener(mMapFragment);
         mMetricsView.update();
 
         if (ClientPrefs.getInstance().isFirstRun()) {
@@ -195,7 +195,7 @@ public class MainDrawerActivity
         }
         switch (item.getItemId()) {
             case MENU_START_STOP:
-                mMapActivity.toggleScanning(item);
+                mMapFragment.toggleScanning(item);
                 return true;
             case R.id.action_preferences:
                 PreferencesScreen.setPrefs(getApp().getPrefs());
@@ -224,8 +224,8 @@ public class MainDrawerActivity
             return;
         }
 
-        mMapActivity.formatTextView(R.id.text_cells_visible, "%d", service.getCurrentCellInfoCount());
-        mMapActivity.formatTextView(R.id.text_wifis_visible, "%d", service.getVisibleAPCount());
+        mMapFragment.formatTextView(R.id.text_cells_visible, "%d", service.getCurrentCellInfoCount());
+        mMapFragment.formatTextView(R.id.text_wifis_visible, "%d", service.getVisibleAPCount());
 
         mMetricsView.update();
     }
@@ -235,7 +235,7 @@ public class MainDrawerActivity
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                mMapActivity.formatTextView(R.id.text_observation_count, "%d", count);
+                mMapFragment.formatTextView(R.id.text_observation_count, "%d", count);
                 mMetricsView.setObservationCount(count);
             }
         });

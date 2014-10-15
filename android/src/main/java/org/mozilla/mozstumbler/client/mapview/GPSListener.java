@@ -11,19 +11,19 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.util.Log;
+
 import java.lang.ref.WeakReference;
 
 class GPSListener implements LocationListener {
-    private WeakReference<MapActivity> mMapActivity;
+    private WeakReference<MapFragment> mMapActivity;
     private LocationManager mLocationManager;
     private final GpsStatus.Listener mStatusListener;
 
     private static GpsStatus sGpsStatus;
 
-    GPSListener(MapActivity mapActivity) {
-        mMapActivity = new WeakReference<MapActivity>(mapActivity);
-        mLocationManager = (LocationManager) mapActivity.getActivity().getApplicationContext().
+    GPSListener(MapFragment mapFragment) {
+        mMapActivity = new WeakReference<MapFragment>(mapFragment);
+        mLocationManager = (LocationManager) mapFragment.getActivity().getApplicationContext().
                 getSystemService(Context.LOCATION_SERVICE);
         mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 1, this);
         mStatusListener = new GpsStatus.Listener() {

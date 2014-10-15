@@ -19,7 +19,7 @@ public interface IReporter {
      * There are 2 threads of control that can access the
      * reporter.  
      *
-     * The StumberService (or ClientStumblerService)
+     * The StumblerService (or ClientStumblerService)
      * has a reference called mReporter which is an instance of
      * the Reporter object.  It invokes the flush() method when
      * StumblerService::stopScanning() is called - usually from UI

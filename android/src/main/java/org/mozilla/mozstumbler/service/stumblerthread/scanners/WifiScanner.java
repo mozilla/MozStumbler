@@ -50,22 +50,16 @@ public class WifiScanner extends BroadcastReceiver {
     private final Set<String> mAPs = Collections.synchronizedSet(new HashSet<String>());
     private AtomicInteger mVisibleAPs = new AtomicInteger();
 
-    /* Testing */
-    public static boolean sIsTestMode;
-    public List<ScanResult> mTestModeFakeScanResults = new ArrayList<ScanResult>();
-    public Set<String> getAccessPoints(android.test.AndroidTestCase restrictedAccessor) { return mAPs; }
-    /* ------- */
-
     public WifiScanner(Context c) {
         mContext = c;
     }
 
     private boolean isWifiEnabled() {
-        return (sIsTestMode) || getWifiManager().isWifiEnabled();
+        return getWifiManager().isWifiEnabled();
     }
 
     private List<ScanResult> getScanResults() {
-        return (sIsTestMode)? mTestModeFakeScanResults : getWifiManager().getScanResults();
+        return getWifiManager().getScanResults();
     }
 
 

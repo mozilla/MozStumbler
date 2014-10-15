@@ -24,7 +24,6 @@ buildscript {
 
 apply plugin: 'android'
 apply plugin: 'android-test'
-apply plugin: 'jacoco'
 
 repositories {
     mavenCentral()
@@ -135,63 +134,6 @@ dependencies {
 
     // Acralyzer crash reports
     compile 'ch.acra:acra:4.5.0'
-}
-
-FileTree getJacocoClassDirs(List projects) {
-    def classDirs = fileTree(
-            dir: "${buildDir}/classes/debug",
-            excludes: ['**/R*.class', '**/BuildConfig.class']
-    )
-
-    projects.each {
-        def projectBuildDir = project(it).buildDir
-        classDirs += fileTree(
-                dir: "${projectBuildDir}/classes/release",
-                excludes: ['**/R*.class', '**/BuildConfig.class']
-        )
-    }
-
-    return classDirs
-}
-
-FileCollection getJacocoSrcFiles(List projects) {
-    Set srcFiles = android.sourceSets.main.java.srcDirs
-
-    projects.each {
-        def projectDir = project(it).projectDir
-        srcFiles.add("${projectDir}/src/main/java")
-    }
-
-    return files(srcFiles)
-}
-
-FileCollection getJacocoExecFiles(List projects) {
-    Set execFiles = new HashSet();
-    execFiles.add("${buildDir}/jacoco/testDebug.exec")
-
-    projects.each {
-        def projectBuildDir = project(it).buildDir
-        execFiles.add("${projectBuildDir}/jacoco/testDebug.exec")
-    }
-
-    return files(execFiles)
-}
-
-task jacocoTestReport(type: JacocoReport, dependsOn: test) {
-    description 'Generate code coverage.'
-    group 'Verification'
-
-    reports {
-        xml.enabled false
-        csv.enabled false
-        html.destination "${buildDir}/reports/coverage"
-    }
-
-    def dependencies = []
-
-    classDirectories = getJacocoClassDirs(dependencies)
-    sourceDirectories = getJacocoSrcFiles(dependencies)
-    executionData = getJacocoExecFiles(dependencies)
 }
 
 tasks.withType(JavaCompile) {

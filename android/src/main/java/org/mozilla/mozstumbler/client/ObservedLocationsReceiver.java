@@ -14,7 +14,7 @@ import android.os.Looper;
 import android.support.v4.content.LocalBroadcastManager;
 
 import org.json.JSONObject;
-import org.mozilla.mozstumbler.client.mapview.MapActivity;
+import org.mozilla.mozstumbler.client.mapview.MapFragment;
 import org.mozilla.mozstumbler.client.mapview.ObservationPoint;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.GPSScanner;
 import org.mozilla.mozstumbler.service.utils.CoordinateUtils;
@@ -31,7 +31,7 @@ public class ObservedLocationsReceiver extends BroadcastReceiver {
     }
 
     private static final String LOG_TAG = ObservedLocationsReceiver.class.getSimpleName();
-    private WeakReference<MapActivity> mMapActivity = new WeakReference<MapActivity>(null);
+    private WeakReference<MapFragment> mMapActivity = new WeakReference<MapFragment>(null);
     private final LinkedList<ObservationPoint> mCollectionPoints = new LinkedList<ObservationPoint>();
     private final LinkedList<ObservationPoint> mQueuedForMLS = new LinkedList<ObservationPoint>();
     private final int MAX_QUEUED_MLS_POINTS_TO_FETCH = 10;
@@ -92,8 +92,8 @@ public class ObservedLocationsReceiver extends BroadcastReceiver {
     };
 
     // Must be called by map activity when it is showing to get points displayed
-    public synchronized void setMapActivity(MapActivity m) {
-        mMapActivity = new WeakReference<MapActivity>(m);
+    public synchronized void setMapActivity(MapFragment m) {
+        mMapActivity = new WeakReference<MapFragment>(m);
     }
 
     // Must call when map activity stopped, to clear the reference to the map activity object
@@ -101,7 +101,7 @@ public class ObservedLocationsReceiver extends BroadcastReceiver {
         setMapActivity(null);
     }
 
-    private synchronized MapActivity getMapActivity() {
+    private synchronized MapFragment getMapActivity() {
         return mMapActivity.get();
     }
 

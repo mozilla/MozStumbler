@@ -5,10 +5,7 @@
 package org.mozilla.mozstumbler.client.mapview;
 
 import android.annotation.SuppressLint;
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
@@ -46,6 +43,10 @@ import org.mozilla.mozstumbler.service.core.http.HttpUtil;
 import org.mozilla.mozstumbler.service.core.http.IHttpUtil;
 import org.osmdroid.ResourceProxy;
 import org.osmdroid.api.IGeoPoint;
+import org.osmdroid.events.DelayedMapListener;
+import org.osmdroid.events.MapListener;
+import org.osmdroid.events.ScrollEvent;
+import org.osmdroid.events.ZoomEvent;
 import org.osmdroid.tileprovider.BitmapPool;
 import org.osmdroid.tileprovider.MapTile;
 import org.osmdroid.tileprovider.tilesource.ITileSource;
@@ -60,12 +61,12 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public final class MapActivity extends android.support.v4.app.Fragment
+public final class MapFragment extends android.support.v4.app.Fragment
     implements MetricsView.IMapLayerToggleListener {
 
     public enum NoMapAvailableMessage { eHideNoMapMessage, eNoMapDueToNoAccessibleStorage, eNoMapDueToNoInternet }
 
-    private static final String LOG_TAG = AppGlobals.LOG_PREFIX + MapActivity.class.getSimpleName();
+    private static final String LOG_TAG = AppGlobals.LOG_PREFIX + MapFragment.class.getSimpleName();
 
     private static final String COVERAGE_REDIRECT_URL = "https://location.services.mozilla.com/map.json";
     private static String sCoverageUrl = null;
@@ -75,18 +76,22 @@ public final class MapActivity extends android.support.v4.app.Fragment
     private static final int DEFAULT_ZOOM_AFTER_FIX = 16;
     private static final String LAT_KEY = "latitude";
     private static final String LON_KEY = "longitude";
+    private static final int HIGH_ZOOM_THRESHOLD = 14;
 
     private MapView mMap;
     private AccuracyCircleOverlay mAccuracyOverlay;
     private boolean mFirstLocationFix;
     private boolean mUserPanning = false;
     private final Timer mGetUrl = new Timer();
-    private Overlay mCoverageTilesOverlay = null;
     private ObservationPointsOverlay mObservationPointsOverlay;
     private GPSListener mGPSListener;
-    private LowResMapOverlay mLowResMapOverlay;
+    private LowResMapOverlay mLowResMapOverlayHighZoom;
+    private LowResMapOverlay mLowResMapOverlayLowZoom;
+    private Overlay mCoverageTilesOverlayLowZoom;
+    private Overlay mCoverageTilesOverlayHighZoom;
     private ITileSource mHighResMapSource;
     private View mRootView;
+    private HighLowBandwidthReceiver mHighLowBandwidthChecker;
 
     // Used to blank the high-res tile source when adding a low-res overlay
     private class BlankTileSource extends OnlineTileSourceBase {
@@ -200,9 +205,25 @@ public final class MapActivity extends android.support.v4.app.Fragment
         initTextView(R.id.text_wifis_visible);
         initTextView(R.id.text_observation_count);
 
-        initNetworkConnectionChangedListener();
-
         showCopyright();
+
+        mMap.setMapListener(new DelayedMapListener(new MapListener() {
+            @Override
+            public boolean onZoom(final ZoomEvent e) {
+                // This is key to no-wifi (low-res) tile functions, that
+                // when the zoom level changes, we check to see if the
+                // low-zoom or high-zoom should be shown
+                int z = e.getZoomLevel();
+                updateOverlayBaseLayer(z);
+                updateOverlayCoverageLayer(z);
+                return true;
+            }
+
+            @Override
+            public boolean onScroll(final ScrollEvent e) {
+                return true;
+            }
+        }, 0));
 
         return mRootView;
     }
@@ -240,38 +261,81 @@ public final class MapActivity extends android.support.v4.app.Fragment
                         scanner.close();
                     }
                 }, 0);
-            } else if (mCoverageTilesOverlay == null) {
-                mCoverageTilesOverlay = new CoverageOverlay(mRootView.getContext(), sCoverageUrl, mMap);
-                addOverlayCoverageLayer();
+            } else if (mCoverageTilesOverlayLowZoom == null) {
+                initCoverageTiles(sCoverageUrl);
+                updateOverlayCoverageLayer(mMap.getZoomLevel());
             }
         }
     };
 
-    private void addOverlayBaseLayer() {
-        if (mLowResMapOverlay == null) {
+    private void initCoverageTiles(String coverageUrl) {
+        mCoverageTilesOverlayLowZoom = new CoverageOverlay(CoverageOverlay.LOW_ZOOM,
+                mRootView.getContext(), coverageUrl, mMap);
+        mCoverageTilesOverlayHighZoom = new CoverageOverlay(CoverageOverlay.HIGH_ZOOM,
+                mRootView.getContext(), coverageUrl, mMap);
+    }
+
+    //
+    // This determines which level of detail of tile layer is shown.
+    //
+    private boolean isHighZoom(int zoomLevel) {
+        return zoomLevel > HIGH_ZOOM_THRESHOLD;
+    }
+
+    // If the map is not in low res mode, return.
+    // Otherwise, set the low res overlay based on the current zoom level, and set it to a
+    // lower resolution than the zoom level of the map (trick it into showing lower resolution
+    // tiles than the map normally would at a given zoom level)
+    private void updateOverlayBaseLayer(int zoomLevel) {
+        if (mLowResMapOverlayHighZoom == null || mLowResMapOverlayLowZoom == null) {
             return;
         }
-        List<Overlay> overlays = mMap.getOverlays();
-        if (overlays.indexOf(mLowResMapOverlay) == -1) {
-            overlays.add(0, mLowResMapOverlay);
+        final List<Overlay> overlays = mMap.getOverlays();
+        final Overlay overlayRemoved = (!isHighZoom(zoomLevel))? mLowResMapOverlayHighZoom : mLowResMapOverlayLowZoom;
+        final Overlay overlayAdded = (isHighZoom(zoomLevel))? mLowResMapOverlayHighZoom : mLowResMapOverlayLowZoom;
+        if (overlays.indexOf(overlayRemoved) > -1) {
+            overlays.remove(overlayRemoved);
+        }
+        if (overlays.indexOf(overlayAdded) == -1) {
+            overlays.add(0, overlayAdded);
+            mMap.invalidate();
         }
     }
 
-    private void addOverlayCoverageLayer() {
-        if (mCoverageTilesOverlay == null) {
+    // The MLS coverage follows the same logic as the lower resolution map overlay, in that
+    // when at low zoom level, show even lower resolution tiles. The MLS coverage is not
+    // dependant on the isHighBandwidth for this behaviour, it always does this.
+    private void updateOverlayCoverageLayer(int zoomLevel) {
+        if (mCoverageTilesOverlayLowZoom == null || mCoverageTilesOverlayHighZoom == null) {
             return;
         }
-        List<Overlay> overlays = mMap.getOverlays();
+
+        final List<Overlay> overlays = mMap.getOverlays();
         int idx = 0;
-        if (overlays.indexOf(mLowResMapOverlay) > -1) {
+        if (overlays.indexOf(mLowResMapOverlayHighZoom) > -1 || overlays.indexOf(mLowResMapOverlayLowZoom) > -1 ) {
            idx = 1;
         }
-        overlays.add(idx, mCoverageTilesOverlay);
+
+        final Overlay overlayRemoved = (!isHighZoom(zoomLevel))? mCoverageTilesOverlayHighZoom : mCoverageTilesOverlayLowZoom;
+        final Overlay overlayAdded = (isHighZoom(zoomLevel))? mCoverageTilesOverlayHighZoom : mCoverageTilesOverlayLowZoom;
+        if (overlays.indexOf(overlayRemoved) > -1) {
+            overlays.remove(overlayRemoved);
+        }
+        if (overlays.indexOf(overlayAdded) == -1) {
+            overlays.add(idx, overlayAdded);
+            mMap.invalidate();
+        }
     }
+
+
 
     // use this to track whether to show a toast
     private static Boolean sIsHighBandwidth;
 
+    // Unfortunately, just showing low/high detail isn't enough data reduction.
+    // To handle the case where the user zooms out to show a large area when in low bandwidth mode,
+    // we need an additional "LowZoom" overlay. So in low bandwidth mode, you will see
+    // that based on the current zoom level of the map, we show "HighZoom" or "LowZoom" overlays.
     private void setHighBandwidthMap(boolean isHighBandwidth) {
         if (ClientPrefs.getInstance().isForcedLowBandwidthTiles()) {
             isHighBandwidth = false;
@@ -286,14 +350,16 @@ public final class MapActivity extends android.support.v4.app.Fragment
         sIsHighBandwidth = new Boolean(isHighBandwidth);
 
         if (isHighBandwidth) {
-            if (mLowResMapOverlay == null && mMap.getTileProvider().getTileSource() == mHighResMapSource) {
+            if (mLowResMapOverlayHighZoom == null && mMap.getTileProvider().getTileSource() == mHighResMapSource) {
                 // already have set this tile source
                 return;
             } else  {
-                if (mLowResMapOverlay != null) {
-                    mMap.getOverlays().remove(mLowResMapOverlay);
-                    mLowResMapOverlay.onDetach(mMap);
-                    mLowResMapOverlay = null;
+                if (mLowResMapOverlayHighZoom != null) {
+                    removeLayer(mLowResMapOverlayHighZoom);
+                    removeLayer(mLowResMapOverlayLowZoom);
+
+                    mLowResMapOverlayLowZoom = null;
+                    mLowResMapOverlayHighZoom = null;
 
                     if (showToast) {
                         Toast.makeText(this.getActivity(), R.string.switch_to_high_res_tile, Toast.LENGTH_SHORT).show();
@@ -304,7 +370,6 @@ public final class MapActivity extends android.support.v4.app.Fragment
             if (!isMLSTileStore) {
                 mHighResMapSource = TileSourceFactory.MAPQUESTOSM;
             } else {
-                // TODO replace me with MapBoxTileSource
                 mHighResMapSource = new XYTileSource("MozStumbler Tile Store",
                         null, 1, AbstractMapOverlay.MAX_ZOOM_LEVEL_OF_MAP,
                         AbstractMapOverlay.TILE_PIXEL_SIZE,
@@ -313,14 +378,18 @@ public final class MapActivity extends android.support.v4.app.Fragment
             }
             mMap.setTileSource(mHighResMapSource);
         } else {
-            if (mLowResMapOverlay != null) {
+            if (mLowResMapOverlayHighZoom != null) {
                 // already set this
                 return;
             }
             mMap.setTileSource(new BlankTileSource());
-            if (mLowResMapOverlay == null) {
-                mLowResMapOverlay = new LowResMapOverlay(this.getActivity(), isMLSTileStore, mMap);
-                addOverlayBaseLayer();
+            if (mLowResMapOverlayHighZoom == null) {
+                mLowResMapOverlayLowZoom = new LowResMapOverlay(LowResMapOverlay.LOW_ZOOM,
+                        this.getActivity(), isMLSTileStore, mMap);
+                mLowResMapOverlayHighZoom = new LowResMapOverlay(LowResMapOverlay.HIGH_ZOOM,
+                        this.getActivity(), isMLSTileStore, mMap);
+
+                updateOverlayBaseLayer(mMap.getZoomLevel());
             }
 
             if (showToast) {
@@ -329,7 +398,7 @@ public final class MapActivity extends android.support.v4.app.Fragment
         }
     }
 
-    private void mapNetworkConnectionChanged() {
+    public void mapNetworkConnectionChanged() {
 
         FragmentActivity activity = getActivity();
 
@@ -361,17 +430,6 @@ public final class MapActivity extends android.support.v4.app.Fragment
 
         showMapNotAvailableMessage(NoMapAvailableMessage.eHideNoMapMessage);
         setHighBandwidthMap(hasWifi);
-    }
-
-    private final BroadcastReceiver mNetworkConnectionReceiver = new BroadcastReceiver() {
-        public void onReceive(Context context, Intent intent) {
-            mapNetworkConnectionChanged();
-        }
-    };
-
-    private void initNetworkConnectionChangedListener() {
-        getActivity().registerReceiver(mNetworkConnectionReceiver,
-                new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
     }
 
     private void setStartStopMenuState(MenuItem menuItem, boolean scanning) {
@@ -445,9 +503,9 @@ public final class MapActivity extends android.support.v4.app.Fragment
 
     void updateGPSInfo(int satellites, int fixes) {
         // @TODO Move this code to an appropriate place
-        if (mCoverageTilesOverlay == null && sCoverageUrl != null) {
-            mCoverageTilesOverlay = new CoverageOverlay(getActivity().getApplicationContext(), sCoverageUrl, mMap);
-            addOverlayCoverageLayer();
+        if (mCoverageTilesOverlayLowZoom == null && sCoverageUrl != null) {
+            initCoverageTiles(sCoverageUrl);
+            updateOverlayCoverageLayer(mMap.getZoomLevel());
         }
 
         formatTextView(R.id.text_satellites_used, "%d", fixes);
@@ -495,6 +553,8 @@ public final class MapActivity extends android.support.v4.app.Fragment
         dimToolbar();
 
         mapNetworkConnectionChanged();
+
+        mHighLowBandwidthChecker = new HighLowBandwidthReceiver(this);
     }
 
     private void saveStateToPrefs() {
@@ -511,6 +571,8 @@ public final class MapActivity extends android.support.v4.app.Fragment
         mGPSListener.removeListener();
         ObservedLocationsReceiver observer = ObservedLocationsReceiver.getInstance();
         observer.removeMapActivity();
+
+        mHighLowBandwidthChecker.unregister(this.getApplication());
     }
 
     @Override
@@ -530,20 +592,24 @@ public final class MapActivity extends android.support.v4.app.Fragment
         saveStateToPrefs();
     }
 
+    private void removeLayer(Overlay layer) {
+        if (layer == null) {
+            return;
+        }
+        mMap.getOverlays().remove(layer);
+        layer.onDetach(mMap);
+    }
+
     @Override
     public void onDestroy() {
         super.onDestroy();
         Log.d(LOG_TAG, "onDestroy");
 
-        if (mLowResMapOverlay != null) {
-            mMap.getOverlays().remove(mLowResMapOverlay);
-            mLowResMapOverlay.onDetach(mMap);
-        }
-        if (mCoverageTilesOverlay != null) {
-            mMap.getOverlays().remove(mCoverageTilesOverlay);
-            mCoverageTilesOverlay.onDetach(mMap);
-        }
-        getActivity().unregisterReceiver(mNetworkConnectionReceiver);
+        removeLayer(mLowResMapOverlayHighZoom);
+        removeLayer(mLowResMapOverlayLowZoom);
+        removeLayer(mCoverageTilesOverlayHighZoom);
+        removeLayer(mCoverageTilesOverlayLowZoom);
+
         mMap.getTileProvider().clearTileCache();
         BitmapPool.getInstance().clearBitmapPool();
     }

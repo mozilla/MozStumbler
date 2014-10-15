@@ -18,6 +18,7 @@ updateJars:
 	./gradlew -q updateJars
 
 clean:
+	rm -rf android/libs/*.jar
 	./gradlew clean
 
 install_debug:

@@ -16,6 +16,10 @@ import android.widget.Button;
 import android.widget.TextView;
 import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.client.ClientPrefs;
+import org.mozilla.mozstumbler.client.IMainActivity;
+import org.mozilla.mozstumbler.client.MainApp;
+
+import java.lang.ref.WeakReference;
 
 public class FirstRunFragment extends DialogFragment {
     private static FirstRunFragment mInstance;
@@ -43,6 +47,7 @@ public class FirstRunFragment extends DialogFragment {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                ((MainApp) getActivity().getApplication()).startScanning();
                 ClientPrefs.getInstance().setFirstRun(false);
                 getDialog().dismiss();
             }

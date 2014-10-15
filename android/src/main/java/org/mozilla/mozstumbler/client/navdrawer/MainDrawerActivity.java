@@ -47,10 +47,20 @@ public class MainDrawerActivity
     private MapFragment mMapFragment;
     private MenuItem mMenuItemStartStop;
 
+    final CompoundButton.OnCheckedChangeListener mStartStopButtonListener =
+        new CompoundButton.OnCheckedChangeListener() {
+        @Override
+        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            mMapFragment.toggleScanning(mMenuItemStartStop);
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_drawer);
+
+        assert(findViewById(android.R.id.content) != null);
 
         if (Build.VERSION.SDK_INT > 10) {
             getWindow().setFlags(
@@ -116,12 +126,7 @@ public class MainDrawerActivity
         if (Build.VERSION.SDK_INT >= 11) {
             Switch s = new Switch(this);
             s.setChecked(false);
-            s.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    mMapFragment.toggleScanning(mMenuItemStartStop);
-                }
-            });
+            s.setOnCheckedChangeListener(mStartStopButtonListener);
             mMenuItemStartStop.setActionView(s);
             mMenuItemStartStop.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
         }
@@ -131,11 +136,11 @@ public class MainDrawerActivity
             MenuItemCompat.setShowAsAction(item, MenuItemCompat.SHOW_AS_ACTION_ALWAYS);
         }
 
-        setStartStopMenuItemState();
+        updateStartStopMenuItemState();
         return true;
     }
 
-    public void setStartStopMenuItemState() {
+    private void updateStartStopMenuItemState() {
         if (mMenuItemStartStop == null) {
             return;
         }
@@ -153,16 +158,19 @@ public class MainDrawerActivity
 
         if (Build.VERSION.SDK_INT >= 11) {
             Switch s = (Switch) mMenuItemStartStop.getActionView();
-            if (isScanning) {
+            s.setOnCheckedChangeListener(null);
+            if (isScanning && !s.isChecked()) {
                 s.setChecked(true);
-            } else {
+            } else if (!isScanning && s.isChecked()) {
                 s.setChecked(false);
             }
+            s.setOnCheckedChangeListener(mStartStopButtonListener);
         } else {
-            if (isScanning) {
+            boolean buttonStateIsScanning = mMenuItemStartStop.getTitle().equals(getString(R.string.stop_scanning));
+            if (isScanning && !buttonStateIsScanning) {
                 mMenuItemStartStop.setIcon(android.R.drawable.ic_media_pause);
                 mMenuItemStartStop.setTitle(R.string.stop_scanning);
-            } else {
+            } else if (!isScanning && buttonStateIsScanning) {
                 mMenuItemStartStop.setIcon(android.R.drawable.ic_media_play);
                 mMenuItemStartStop.setTitle(R.string.start_scanning);
             }
@@ -177,14 +185,22 @@ public class MainDrawerActivity
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
+    public void onPostResume() {
+        super.onPostResume();
         mMetricsView.setMapLayerToggleListener(mMapFragment);
         mMetricsView.update();
 
         if (ClientPrefs.getInstance().isFirstRun()) {
             FragmentManager fm = getSupportFragmentManager();
             FirstRunFragment.showInstance(fm);
+        } else if (!MainApp.getAndSetHasBootedOnce()) {
+            findViewById(android.R.id.content).postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    getApp().startScanning();
+                    updateStartStopMenuItemState();
+                }
+            }, 750);
         }
 
     }
@@ -228,7 +244,7 @@ public class MainDrawerActivity
                     return;
                 }
 
-                setStartStopMenuItemState();
+                updateStartStopMenuItemState();
                 updateNumberDisplay();
             }
         });

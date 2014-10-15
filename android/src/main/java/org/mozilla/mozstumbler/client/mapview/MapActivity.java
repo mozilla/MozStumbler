@@ -403,6 +403,9 @@ public final class MapActivity extends android.support.v4.app.Fragment
 
     public void toggleScanning(MenuItem menuItem) {
         MainApp app = getApplication();
+        if (app.getService() == null) {
+            return;
+        }
         boolean isScanning = app.getService().isScanning();
         if (isScanning) {
             app.stopScanning();

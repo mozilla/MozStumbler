@@ -1,8 +1,8 @@
 // each of the version numbers must be 0-99
 def versionMajor = 0
 def versionMinor = 40
-def versionPatch = 2
-def versionBuild = 1 // this is non-zero for any dev build
+def versionPatch = 4
+def versionBuild = 0 // this is non-zero for any dev build
 
 buildscript {
     repositories {

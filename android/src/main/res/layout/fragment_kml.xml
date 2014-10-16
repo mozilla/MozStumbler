@@ -1,39 +1,11 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin"
     tools:context="org.mozilla.mozstumbler.client.mapview.serialize.KMLActivity">
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Load KML File"
-        android:id="@+id/buttonLoad"
-        android:layout_below="@+id/buttonSave"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Save KML File"
-        android:id="@+id/buttonSave"
-        android:layout_below="@+id/textView3"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Developer"
-        android:id="@+id/textView2"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -44,7 +16,37 @@
         android:layout_below="@+id/textView2"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_marginTop="21dp" />
+        android:layout_marginTop="20dp" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Load KML File"
+        android:id="@+id/buttonLoad"
+        android:layout_alignTop="@+id/buttonSave"
+        android:layout_toRightOf="@+id/buttonSave"
+        android:layout_toEndOf="@+id/buttonSave"
+        android:textSize="14sp"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Save KML File"
+        android:id="@+id/buttonSave"
+        android:layout_below="@+id/textView3"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:textSize="14sp"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Developer"
+        android:id="@+id/textView2"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
 
     <TextView
         android:layout_width="wrap_content"
@@ -64,35 +66,21 @@
         android:id="@+id/textViewSavedFileLabel"
         android:text="Saved File:"
         android:textSize="10sp"
-        android:paddingTop="20dp"
+        android:paddingTop="5dp"
         />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/textViewSavedFileLabel"
         android:id="@+id/textViewSavedFile"
+        android:paddingLeft="5dp"
+        android:paddingStart="5dp"
         android:textSize="10sp"
-        android:text="       "
-        />
+        android:text="     "
+        android:layout_alignBaseline="@id/textViewSavedFileLabel"
+        android:layout_toRightOf="@+id/textViewSavedFileLabel"
+        android:layout_toEndOf="@+id/textViewSavedFileLabel" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/textViewSavedFile"
-        android:id="@+id/textViewCrashReportLabel"
-        android:text="Toggle Crash Reports"
-        android:textSize="10sp"
-        android:paddingTop="20dp"
-        />
 
-    <ToggleButton 
-        android:id="@+id/toggleCrashReports"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/textViewCrashReportLabel"
-        android:textOn="Crash Reports on"
-        android:textOff="Crash Reports off"
-        android:onClick="onToggleCrashReportClicked"/>
 
 </RelativeLayout>

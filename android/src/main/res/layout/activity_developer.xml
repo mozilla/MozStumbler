@@ -1,7 +1,22 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/container"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="org.mozilla.mozstumbler.client.subactivities.DeveloperActivity"
-    tools:ignore="MergeRootFrame" />
+
+
+
+ <ScrollView
+     xmlns:android="http://schemas.android.com/apk/res/android"
+     xmlns:tools="http://schemas.android.com/tools"
+     android:layout_width="match_parent"
+     android:layout_height="match_parent">
+
+     <RelativeLayout android:layout_width="match_parent"
+         android:layout_height="wrap_content">
+     <FrameLayout
+         android:id="@+id/frame1"
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content"/>
+     <FrameLayout
+             android:id="@+id/frame2"
+             android:layout_below="@id/frame1"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"/>
+     </RelativeLayout>
+ </ScrollView>

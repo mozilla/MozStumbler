@@ -182,12 +182,12 @@ public class MainDrawerActivity
         super.onPostCreate(savedInstanceState);
         // Sync the toggle state after onRestoreInstanceState has occurred.
         mDrawerToggle.syncState();
+        mMetricsView.setMapLayerToggleListener(mMapFragment);
     }
 
     @Override
     public void onPostResume() {
         super.onPostResume();
-        mMetricsView.setMapLayerToggleListener(mMapFragment);
         mMetricsView.update();
 
         if (ClientPrefs.getInstance().isFirstRun()) {

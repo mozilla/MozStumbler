@@ -558,6 +558,9 @@ public final class MapFragment extends android.support.v4.app.Fragment
         mapNetworkConnectionChanged();
 
         mHighLowBandwidthChecker = new HighLowBandwidthReceiver(this);
+
+        ClientPrefs prefs = ClientPrefs.createGlobalInstance(getActivity().getApplicationContext());
+        setShowMLS(prefs.getOnMapShowMLS());
     }
 
     private void saveStateToPrefs() {

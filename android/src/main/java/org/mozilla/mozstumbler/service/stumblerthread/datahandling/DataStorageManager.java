@@ -278,7 +278,9 @@ public class DataStorageManager {
 
     /* Pass filename returned from dataToSend() */
     public synchronized boolean delete(String filename) {
-        if (filename.equals(MEMORY_BUFFER_NAME)) {
+        // do not use .equals()
+        //noinspection StringEquality
+        if (filename == MEMORY_BUFFER_NAME) {
             mCurrentReportsSendBuffer = null;
             return true;
         }

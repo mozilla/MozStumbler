@@ -94,9 +94,8 @@ public class MetricsView {
                 
                 // @TODO: Emit a signal here to initiate an upload
                 // and have it handled by MainApp
-                boolean useWifiOnly = false;
                 AsyncUploader uploader = new AsyncUploader();
-                AsyncUploadParam param = new AsyncUploadParam(useWifiOnly,
+                AsyncUploadParam param = new AsyncUploadParam(false /* useWifiOnly */,
                     Prefs.getInstance().getNickname(),
                     Prefs.getInstance().getEmail());
                 uploader.execute(param);

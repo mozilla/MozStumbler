@@ -50,7 +50,7 @@ public class MetricsView {
 
     private final CheckBox mOnMapShowMLS;
 
-    private WeakReference<IMapLayerToggleListener> mMapLayerToggleListener;
+    private WeakReference<IMapLayerToggleListener> mMapLayerToggleListener = new WeakReference<IMapLayerToggleListener>(null);
 
     private ImageButton mUploadButton;
     private final View mView;

@@ -92,8 +92,7 @@ public class UploadAlarmReceiver extends BroadcastReceiver {
     private static PendingIntent createIntent(Context c, boolean isRepeating) {
         Intent intent = new Intent(c, UploadAlarmReceiver.class);
         intent.putExtra(EXTRA_IS_REPEATING, isRepeating);
-        PendingIntent pi = PendingIntent.getBroadcast(c, 0, intent, 0);
-        return pi;
+        return PendingIntent.getBroadcast(c, 0, intent, 0);
     }
 
     public static void cancelAlarm(Context c, boolean isRepeating) {

@@ -17,8 +17,6 @@ import com.ocpsoft.pretty.time.PrettyTime;
 
 import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.client.ClientPrefs;
-import org.mozilla.mozstumbler.client.ClientStumblerService;
-import org.mozilla.mozstumbler.client.MainApp;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.Prefs;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageContract;
@@ -96,9 +94,8 @@ public class MetricsView {
                 
                 // @TODO: Emit a signal here to initiate an upload
                 // and have it handled by MainApp
-                boolean useWifiOnly = false;
                 AsyncUploader uploader = new AsyncUploader();
-                AsyncUploadParam param = new AsyncUploadParam(useWifiOnly,
+                AsyncUploadParam param = new AsyncUploadParam(false /* useWifiOnly */,
                     Prefs.getInstance().getNickname(),
                     Prefs.getInstance().getEmail());
                 uploader.execute(param);

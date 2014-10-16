@@ -23,8 +23,6 @@ public final class StumblerFilter {
     private static final long MIN_TIMESTAMP = 946684801; // 2000-01-01 00:00:01
     private static final long MILLISECONDS_PER_DAY = 86400000;
 
-    private Location mBlockedLocation;
-
     public boolean blockLocation(Location location) {
         final float inaccuracy = location.getAccuracy();
         final double altitude = location.getAltitude();

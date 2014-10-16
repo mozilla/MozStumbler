@@ -43,7 +43,7 @@ public class HttpUtil implements IHttpUtil {
     }
     public HttpUtil(String ua){
         userAgent = ua;
-    };
+    }
 
     private URLConnection openConnectionWithProxy(URL url) throws IOException {
         Proxy proxy = Proxy.NO_PROXY;
@@ -206,7 +206,6 @@ public class HttpUtil implements IHttpUtil {
     }
 
     private String getContentBody(HttpURLConnection httpURLConnection) throws IOException {
-        String contentBody;
         InputStream in = null;
         try {
             in = new BufferedInputStream(httpURLConnection.getInputStream());
@@ -224,7 +223,6 @@ public class HttpUtil implements IHttpUtil {
         }
         r.close();
         in.close();
-        contentBody = total.toString();
-        return contentBody;
+        return total.toString();
     }
 }

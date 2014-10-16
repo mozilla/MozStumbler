@@ -30,8 +30,8 @@ public class ShaUtil {
 
         b = md.digest(email.getBytes());
 
-        for (int i=0; i < b.length; i++) {
-            result += Integer.toString((b[i] & 0xff) + 0x100, 16).substring(1);
+        for (byte bi : b) {
+            result += Integer.toString((bi & 0xff) + 0x100, 16).substring(1);
         }
         return result;
     }

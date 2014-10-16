@@ -33,4 +33,4 @@ public class HighLowBandwidthReceiver extends BroadcastReceiver {
         applicationContext.unregisterReceiver(this);
         mMapFragment = new WeakReference<MapFragment>(null);
     }
-};
+}

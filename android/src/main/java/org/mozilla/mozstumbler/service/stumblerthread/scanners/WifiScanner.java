@@ -27,7 +27,6 @@ import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.stumblerthread.blocklist.BSSIDBlockList;
 import org.mozilla.mozstumbler.service.stumblerthread.blocklist.SSIDBlockList;
 import org.mozilla.mozstumbler.service.AppGlobals.ActiveOrPassiveStumbling;
-import org.mozilla.mozstumbler.service.Prefs;
 import org.mozilla.mozstumbler.service.stumblerthread.blocklist.WifiBlockListInterface;
 
 public class WifiScanner extends BroadcastReceiver {

@@ -10,15 +10,15 @@ public class WifiBlockLists implements WifiBlockListInterface {
 
     public String[] getSsidPrefixList() {
         return SSID_PREFIX_LIST;
-    };
+    }
 
     public String[] getSsidSuffixList() {
         return SSID_SUFFIX_LIST;
-    };
+    }
 
     public String[] getBssidOuiList() {
         return BSSID_OUI_LIST;
-    };
+    }
 
     private static final String[] SSID_PREFIX_LIST = {
             // Mobile devices

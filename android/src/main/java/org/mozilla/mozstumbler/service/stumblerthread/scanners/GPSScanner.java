@@ -19,9 +19,6 @@ import android.util.Log;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.AppGlobals.ActiveOrPassiveStumbling;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 public class GPSScanner implements LocationListener {
     public static final String ACTION_BASE = AppGlobals.ACTION_NAMESPACE + ".GPSScanner.";
     public static final String ACTION_GPS_UPDATED = ACTION_BASE + "GPS_UPDATED";

@@ -97,8 +97,6 @@ public class DataStorageManagerTest {
     }
 
     private Intent getCellIntent(ArrayList<CellInfo> cells) {
-        ArrayList<ScanResult> scanResults = new ArrayList<ScanResult>();
-
         long curTime = System.currentTimeMillis();
         Intent intent = new Intent(CellScanner.ACTION_CELLS_SCANNED);
         intent.putParcelableArrayListExtra(CellScanner.ACTION_CELLS_SCANNED_ARG_CELLS, cells);

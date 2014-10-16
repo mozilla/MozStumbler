@@ -28,7 +28,7 @@ import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.client.ObservedLocationsReceiver;
 import org.mozilla.mozstumbler.client.mapview.ObservationPoint;
 import org.mozilla.mozstumbler.service.AppGlobals;
-import org.mozilla.mozstumbler.service.core.logging.Log;
+
 import java.io.File;
 import java.io.FilenameFilter;
 import java.lang.ref.WeakReference;
@@ -151,7 +151,7 @@ public class KMLFragment extends Fragment
         final File dir = getActivity().getExternalFilesDir(null);
         final File file = new File(dir, name);
 
-        showProgress(true, getString(R.string.saving_kml) + " to " + dir.toString());
+        showProgress(true, getString(R.string.saving_kml) + " to " + (dir != null ? dir.toString() : "null"));
         ObservationPointSerializer obs = new ObservationPointSerializer(this,
                 ObservationPointSerializer.Mode.WRITE, file, mPointsToWrite);
         obs.execute();

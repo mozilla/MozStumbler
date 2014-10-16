@@ -58,7 +58,7 @@ public class MLSLocationGetter extends AsyncTask<String, Void, Location> {
             Log.i(LOG_TAG, "Error processing search request");
             return null;
         }
-        int bytesSent = resp.bytesSent();
+        // int bytesSent = resp.bytesSent();
 
         JSONObject response = null;
         try {

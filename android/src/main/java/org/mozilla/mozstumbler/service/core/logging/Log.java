@@ -1,6 +1,5 @@
 package org.mozilla.mozstumbler.service.core.logging;
 
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 

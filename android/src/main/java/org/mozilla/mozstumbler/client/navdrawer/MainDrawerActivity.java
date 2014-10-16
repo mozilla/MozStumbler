@@ -4,7 +4,6 @@
 
 package org.mozilla.mozstumbler.client.navdrawer;
 
-import android.app.Service;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Build;

@@ -14,13 +14,10 @@ import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceGroup;
 import android.text.TextUtils;
-import android.view.View;
 
-import org.mozilla.mozstumbler.BuildConfig;
 import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.client.ClientPrefs;
 import org.mozilla.mozstumbler.client.MainApp;
-import org.mozilla.mozstumbler.service.AppGlobals;
 
 public class PreferencesScreen extends PreferenceActivity {
     private EditTextPreference mNicknamePreference;

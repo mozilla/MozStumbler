@@ -8,7 +8,6 @@ import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.location.Location;
 import android.os.Build.VERSION;
 import android.text.TextUtils;
 import android.util.Log;

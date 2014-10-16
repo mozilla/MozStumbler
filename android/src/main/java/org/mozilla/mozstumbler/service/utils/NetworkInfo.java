@@ -15,7 +15,7 @@ public final class NetworkInfo {
     ConnectivityManager mConnectivityManager;
     static NetworkInfo sInstance;
 
-    private NetworkInfo() {};
+    private NetworkInfo() {}
 
     /* Created at startup by app, or service, using a context. */
     public static synchronized void createGlobalInstance(Context context) {

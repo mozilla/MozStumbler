@@ -5,7 +5,6 @@
 package org.mozilla.mozstumbler.service.stumblerthread;
 
 import android.content.Context;
-import android.content.Intent;
 
 import org.json.JSONObject;
 

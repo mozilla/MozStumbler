@@ -14,6 +14,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
 import org.mozilla.mozstumbler.R;
+import org.mozilla.mozstumbler.client.ClientPrefs;
 
 public class LeaderboardActivity extends ActionBarActivity {
     private static final String LEADERBOARD_URL = "https://location.services.mozilla.com/leaders";
@@ -42,9 +43,7 @@ public class LeaderboardActivity extends ActionBarActivity {
                 if (progress > 45 && !mHasError) {
                     mWebView.setVisibility(View.VISIBLE);
                 }
-                if (progress > 60) {
-                    injectJS();
-                }
+
                 if (progress > 90) {
                     setSupportProgressBarVisibility(false);
                 }
@@ -61,30 +60,25 @@ public class LeaderboardActivity extends ActionBarActivity {
             public void onPageFinished(WebView webview, String url) {
                 if (!mHasError) {
                     mWebView.setVisibility(View.VISIBLE);
-                    injectJS();
                 }
                 setSupportProgressBarVisibility(false);
             }
         });
 
         setProgress(0);
-        mWebView.loadUrl(LEADERBOARD_URL);
-    }
-
-    // onPageFinished takes way too long to get called, and the page appears for a second before scrolling down.
-    // As a work around just call this frequently while the page is loading
-    private void injectJS() {
-        String js = "(function(id){" +
-                "var elem = document.getElementById(id);" +
-                "var x = 0;" +
-                "var y = 0;" +
-                "while (elem != null) {" +
-                "    x += elem.offsetLeft;" +
-                "    y += elem.offsetTop;" +
-                "    elem = elem.offsetParent;" +
-                "}" +
-                "window.scrollTo(x, y);" +
-                "})('main-content')";
-        mWebView.loadUrl("javascript:" + js);
+        ClientPrefs prefs = ClientPrefs.getInstance();
+        if (prefs == null) {
+            prefs = ClientPrefs.createGlobalInstance(this.getApplicationContext());
+        }
+        String nick = prefs.getNickname();
+        String url = LEADERBOARD_URL;
+        if (nick != null) {
+            url += "#" + nick;
+        } else {
+            // TODO Get server side to add this anchor
+            // https://github.com/mozilla/ichnaea/issues/327
+            url += "#leaderboard_start";
+        }
+        mWebView.loadUrl(url);
     }
 }

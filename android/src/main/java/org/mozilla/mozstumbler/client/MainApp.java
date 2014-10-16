@@ -71,7 +71,7 @@ public class MainApp extends Application
     private WeakReference<IMainActivity> mMainActivity = new WeakReference<IMainActivity>(null);
     private final long MAX_BYTES_DISK_STORAGE = 1000 * 1000 * 20; // 20MB for MozStumbler by default, is ok?
     private final int MAX_WEEKS_OLD_STORED = 4;
-    private static final String INTENT_TURN_OFF = "org.mozilla.mozstumbler.turnMeOff";
+    public static final String INTENT_TURN_OFF = "org.mozilla.mozstumbler.turnMeOff";
     private static final int NOTIFICATION_ID = 1;
     public static final String ACTION_BASE = AppGlobals.ACTION_NAMESPACE + ".MainApp.";
     public static final String ACTION_UI_UNPAUSE_SCANNING = ACTION_BASE + "UNPAUSE_SCANNING";

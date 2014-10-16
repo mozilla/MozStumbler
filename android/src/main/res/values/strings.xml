@@ -4,7 +4,7 @@
     <string name="app_name">MozStumbler</string>
     <string name="action_about">About MozStumbler</string>
     <string name="action_preferences">Settings</string>
-    <string name="action_upload_observations">Upload observations</string>
+    <string name="action_upload_observations">Upload reports</string>
     <string name="start_scanning">Start Scanning</string>
     <string name="stop_scanning">Stop Scanning</string>
     <string name="view_leaderboard">View Leaderboard</string>
@@ -45,12 +45,12 @@
     <string name="about_legal_flaticons">GPS, cell tower, Wi-Fi, and binoculars icons made by Freepik from http://www.flaticon.com. under license: https://creativecommons.org/licenses/by-nd/3.0</string>
     <string name="upload_observations_sent_title">Sent (all time)</string>
     <string name="metrics_observations_last_upload_time_title">Last upload:</string>
-    <string name="metrics_observations_title">Observations:</string>
-    <string name="metrics_observations_wifis_title">Wi-Fi access points:</string>
-    <string name="metrics_observations_cell_towers_title">Cell towers:</string>
+    <string name="metrics_observations_title">Reports:</string>
+    <string name="metrics_observations_wifis_title">Wi-Fi networks:</string>
+    <string name="metrics_observations_cell_towers_title">Cell networks:</string>
     <string name="upload_observations_in_queue_title">Ready to send</string>
     <string name="upload_observations_button">Upload</string>
-    <string name="upload_observations_dialog_title">Upload observations</string>
+    <string name="upload_observations_dialog_title">Upload reports</string>
     <string name="upload_wifi_only_title">Auto-upload only on Wi-Fi</string>
     <string name="upload_wifi_only_summary">This option will reduce your data usage over the cellular network. Pressing the upload button in Metrics will always upload.</string>
     <string name="metrics_activity_title">Metrics</string>
@@ -62,7 +62,7 @@
     <string name="scroll_to_start">Scroll to Top</string>
     <string name="scroll_to_end">Scroll to End</string>
     <string name="upload_observations_data_size">Size:</string>
-    <string name="title_activity_kml">Save/Load Observations</string>
+    <string name="title_activity_kml">Save/Load Reports</string>
     <string name="keep_screen_on_title">Keep screen on while in map</string>
     <string name="delete_all">Delete all</string>
     <string name="are_you_sure">Are you sure?</string>
@@ -81,7 +81,7 @@
     <string name="drawer_close">Close drawer</string>
     <string name="title_activity_leaderboard">Leaderboard</string>
     <string name="drawer_map_layers_title">Map Legend</string>
-    <string name="first_run_message_part1">Mozilla Location Service is an open service for locating devices using Wi-Fi access points and cell towers.</string>
+    <string name="first_run_message_part1">Mozilla Location Service is an open service for locating devices using Wi-Fi and cell networks.</string>
     <string name="first_run_message_part2">Read our <a href="https://location.services.mozilla.com/privacy">privacy policy</a> and then start stumbling to begin contributing your current location.</string>
     <string name="first_run_start_stumbling">Start Stumbling</string>
     <string name="first_run_welcome_to_mozstumbler">Welcome to MozStumbler</string>
@@ -90,8 +90,8 @@
     <string name="action_developer">Developer</string>
     <string name="enable_option_show_mls_on_map">Enable MLS layer toggle</string>
     <string name="enable_option_show_mls_on_map_summary">At the cost of a bit more memory and network usage, the map can show MLS location queries for your scans.</string>
-    <string name="cell_only_observation">Cell only observation</string>
-    <string name="wifi_only_observation">Wi-Fi only observation</string>
+    <string name="cell_only_observation">Cell only report</string>
+    <string name="wifi_only_observation">Wi-Fi only report</string>
     <string name="switch_to_low_res_tile">Using low resolution map</string>
     <string name="switch_to_high_res_tile">Using high resolution map</string>
 </resources>

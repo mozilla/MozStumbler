@@ -566,19 +566,6 @@ public final class MapFragment extends android.support.v4.app.Fragment
     }
 
     @Override
-    public void onStop() {
-        super.onStop();
-
-        Log.d(LOG_TAG, "onStop");
-
-        mGPSListener.removeListener();
-        ObservedLocationsReceiver observer = ObservedLocationsReceiver.getInstance();
-        observer.removeMapActivity();
-
-        mHighLowBandwidthChecker.unregister(this.getApplication());
-    }
-
-    @Override
     public void onSaveInstanceState(Bundle bundle) {
         super.onSaveInstanceState(bundle);
         bundle.putInt(ZOOM_KEY, mMap.getZoomLevel());
@@ -597,7 +584,8 @@ public final class MapFragment extends android.support.v4.app.Fragment
         mGPSListener.removeListener();
         ObservedLocationsReceiver observer = ObservedLocationsReceiver.getInstance();
         observer.removeMapActivity();
-}
+        mHighLowBandwidthChecker.unregister(this.getApplication());
+    }
 
     private void removeLayer(Overlay layer) {
         if (layer == null) {

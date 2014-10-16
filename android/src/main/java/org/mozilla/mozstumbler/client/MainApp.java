@@ -231,11 +231,17 @@ public class MainApp extends Application
     public void startScanning() {
         mStumblerService.startForeground(NOTIFICATION_ID, buildNotification());
         mStumblerService.startScanning();
+        if (mMainActivity.get() != null) {
+            mMainActivity.get().updateUiOnMainThread();
+        }
     }
 
     public void stopScanning() {
         mStumblerService.stopForeground(true);
         mStumblerService.stopScanning();
+        if (mMainActivity.get() != null) {
+            mMainActivity.get().updateUiOnMainThread();
+        }
 
         AsyncUploader uploader = new AsyncUploader();
         AsyncUploadParam param = new AsyncUploadParam(
@@ -402,5 +408,12 @@ public class MainApp extends Application
         if (mMainActivity.get() != null) {
             mMainActivity.get().keepScreenOnChanged(isEnabled);
         }
+    }
+
+    private static boolean sHasBootedOnce;
+    public static boolean getAndSetHasBootedOnce() {
+        boolean b = sHasBootedOnce;
+        sHasBootedOnce = true;
+        return b;
     }
 }

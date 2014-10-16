@@ -432,18 +432,6 @@ public final class MapFragment extends android.support.v4.app.Fragment
         setHighBandwidthMap(hasWifi);
     }
 
-    private void setStartStopMenuState(MenuItem menuItem, boolean scanning) {
-        if (scanning) {
-            menuItem.setIcon(android.R.drawable.ic_media_pause);
-            menuItem.setTitle(R.string.stop_scanning);
-        } else {
-            menuItem.setIcon(android.R.drawable.ic_media_play);
-            menuItem.setTitle(R.string.start_scanning);
-        }
-
-        dimToolbar();
-    }
-
     @SuppressLint("NewApi")
     public void dimToolbar() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
@@ -464,13 +452,15 @@ public final class MapFragment extends android.support.v4.app.Fragment
         if (app.getService() == null) {
             return;
         }
+
         boolean isScanning = app.getService().isScanning();
         if (isScanning) {
             app.stopScanning();
         } else {
             app.startScanning();
         }
-        setStartStopMenuState(menuItem, !isScanning);
+
+        dimToolbar();
     }
 
     private void showCopyright() {

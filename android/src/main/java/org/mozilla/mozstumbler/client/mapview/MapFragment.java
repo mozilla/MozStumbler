@@ -5,10 +5,7 @@
 package org.mozilla.mozstumbler.client.mapview;
 
 import android.annotation.SuppressLint;
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
@@ -63,12 +60,12 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public final class MapActivity extends android.support.v4.app.Fragment
+public final class MapFragment extends android.support.v4.app.Fragment
     implements MetricsView.IMapLayerToggleListener {
 
     public enum NoMapAvailableMessage { eHideNoMapMessage, eNoMapDueToNoAccessibleStorage, eNoMapDueToNoInternet }
 
-    private static final String LOG_TAG = AppGlobals.LOG_PREFIX + MapActivity.class.getSimpleName();
+    private static final String LOG_TAG = AppGlobals.LOG_PREFIX + MapFragment.class.getSimpleName();
 
     private static final String COVERAGE_REDIRECT_URL = "https://location.services.mozilla.com/map.json";
     private static String sCoverageUrl = null;
@@ -78,7 +75,7 @@ public final class MapActivity extends android.support.v4.app.Fragment
     private static final int DEFAULT_ZOOM_AFTER_FIX = 16;
     private static final String LAT_KEY = "latitude";
     private static final String LON_KEY = "longitude";
-    private static final int HIGH_LOW_ZOOM_THRESHOLD = 14;
+    private static final int HIGH_ZOOM_THRESHOLD = 14;
 
     private MapView mMap;
     private AccuracyCircleOverlay mAccuracyOverlay;
@@ -94,6 +91,7 @@ public final class MapActivity extends android.support.v4.app.Fragment
     private ITileSource mHighResMapSource;
     private View mRootView;
     private TextView mTextViewIsLowResMap;
+    private HighLowBandwidthReceiver mHighLowBandwidthChecker;
 
     // Used to blank the high-res tile source when adding a low-res overlay
     private class BlankTileSource extends OnlineTileSourceBase {
@@ -210,8 +208,6 @@ public final class MapActivity extends android.support.v4.app.Fragment
         initTextView(R.id.text_wifis_visible);
         initTextView(R.id.text_observation_count);
 
-        initNetworkConnectionChangedListener();
-
         showCopyright();
 
         mMap.setMapListener(new DelayedMapListener(new MapListener() {
@@ -289,9 +285,13 @@ public final class MapActivity extends android.support.v4.app.Fragment
     // This determines which level of detail of tile layer is shown.
     //
     private boolean isHighZoom(int zoomLevel) {
-        return zoomLevel > HIGH_LOW_ZOOM_THRESHOLD;
+        return zoomLevel > HIGH_ZOOM_THRESHOLD;
     }
 
+    // If the map is not in low res mode, return.
+    // Otherwise, set the low res overlay based on the current zoom level, and set it to a
+    // lower resolution than the zoom level of the map (trick it into showing lower resolution
+    // tiles than the map normally would at a given zoom level)
     private void updateOverlayBaseLayer(int zoomLevel) {
         if (mLowResMapOverlayHighZoom == null || mLowResMapOverlayLowZoom == null) {
             return;
@@ -417,7 +417,7 @@ public final class MapActivity extends android.support.v4.app.Fragment
         }
     }
 
-    private void mapNetworkConnectionChanged() {
+    public void mapNetworkConnectionChanged() {
 
         FragmentActivity activity = getActivity();
 
@@ -451,17 +451,6 @@ public final class MapActivity extends android.support.v4.app.Fragment
         setHighBandwidthMap(hasWifi);
     }
 
-    private final BroadcastReceiver mNetworkConnectionReceiver = new BroadcastReceiver() {
-        public void onReceive(Context context, Intent intent) {
-            mapNetworkConnectionChanged();
-        }
-    };
-
-    private void initNetworkConnectionChangedListener() {
-        getActivity().registerReceiver(mNetworkConnectionReceiver,
-                new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
-    }
-
     private void setStartStopMenuState(MenuItem menuItem, boolean scanning) {
         if (scanning) {
             menuItem.setIcon(android.R.drawable.ic_media_pause);
@@ -491,6 +480,9 @@ public final class MapActivity extends android.support.v4.app.Fragment
 
     public void toggleScanning(MenuItem menuItem) {
         MainApp app = getApplication();
+        if (app.getService() == null) {
+            return;
+        }
         boolean isScanning = app.getService().isScanning();
         if (isScanning) {
             app.stopScanning();
@@ -574,6 +566,8 @@ public final class MapActivity extends android.support.v4.app.Fragment
         dimToolbar();
 
         mapNetworkConnectionChanged();
+
+        mHighLowBandwidthChecker = new HighLowBandwidthReceiver(this);
     }
 
     private void saveStateToPrefs() {
@@ -581,6 +575,18 @@ public final class MapActivity extends android.support.v4.app.Fragment
         ClientPrefs.getInstance().setLastMapCenter(center);
     }
 
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        Log.d(LOG_TAG, "onStop");
+
+        mGPSListener.removeListener();
+        ObservedLocationsReceiver observer = ObservedLocationsReceiver.getInstance();
+        observer.removeMapActivity();
+
+        mHighLowBandwidthChecker.unregister(this.getApplication());
+    }
 
     @Override
     public void onSaveInstanceState(Bundle bundle) {
@@ -621,7 +627,6 @@ public final class MapActivity extends android.support.v4.app.Fragment
         removeLayer(mCoverageTilesOverlayHighZoom);
         removeLayer(mCoverageTilesOverlayLowZoom);
 
-        getActivity().unregisterReceiver(mNetworkConnectionReceiver);
         mMap.getTileProvider().clearTileCache();
         BitmapPool.getInstance().clearBitmapPool();
     }

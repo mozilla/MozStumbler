@@ -2,7 +2,7 @@
 def versionMajor = 0
 def versionMinor = 40
 def versionPatch = 1
-def versionBuild = 0 // bump for dogfood builds, public betas, etc...
+def versionBuild = 1 // this is non-zero for any dev build
 
 buildscript {
     repositories {
@@ -24,11 +24,13 @@ buildscript {
 
 apply plugin: 'android'
 apply plugin: 'android-test'
-apply plugin: 'jacoco'
 
 repositories {
     mavenCentral()
     maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
+    ivy {
+        url 'http://mozilla-services.github.io/ivy-repo' 
+    }
 }
 
 import de.undercouch.gradle.tasks.download.Download
@@ -39,8 +41,7 @@ libDir.mkdirs()
 
 task updateJars(type: Download) {
     src([
-        'https://github.com/mozilla/osmdroid/releases/download/4.3pre0/osmdroid-android-4.3-SNAPSHOT.jar',
-        'https://github.com/crankycoder/SimpleKML/releases/download/v1.0/SimpleKML.jar'
+        'https://github.com/mozilla/osmdroid/releases/download/4.3pre0/osmdroid-android-4.3-SNAPSHOT.jar'
     ])
     dest libDir
 }
@@ -111,8 +112,10 @@ dependencies {
     testCompile 'junit:junit:4.10'
     testCompile 'org.robolectric:robolectric:2.3'
 
-    // pickup osmdroid and simplekml
+    // pickup osmdroid
     compile fileTree(dir: 'libs', include: ['*.jar'])
+
+    compile 'com.crankycoder:SimpleKML:1.0'
 
     compile 'org.slf4j:slf4j-android:1.7.7'
 
@@ -135,63 +138,6 @@ dependencies {
 
     // Acralyzer crash reports
     compile 'ch.acra:acra:4.5.0'
-}
-
-FileTree getJacocoClassDirs(List projects) {
-    def classDirs = fileTree(
-            dir: "${buildDir}/classes/debug",
-            excludes: ['**/R*.class', '**/BuildConfig.class']
-    )
-
-    projects.each {
-        def projectBuildDir = project(it).buildDir
-        classDirs += fileTree(
-                dir: "${projectBuildDir}/classes/release",
-                excludes: ['**/R*.class', '**/BuildConfig.class']
-        )
-    }
-
-    return classDirs
-}
-
-FileCollection getJacocoSrcFiles(List projects) {
-    Set srcFiles = android.sourceSets.main.java.srcDirs
-
-    projects.each {
-        def projectDir = project(it).projectDir
-        srcFiles.add("${projectDir}/src/main/java")
-    }
-
-    return files(srcFiles)
-}
-
-FileCollection getJacocoExecFiles(List projects) {
-    Set execFiles = new HashSet();
-    execFiles.add("${buildDir}/jacoco/testDebug.exec")
-
-    projects.each {
-        def projectBuildDir = project(it).buildDir
-        execFiles.add("${projectBuildDir}/jacoco/testDebug.exec")
-    }
-
-    return files(execFiles)
-}
-
-task jacocoTestReport(type: JacocoReport, dependsOn: test) {
-    description 'Generate code coverage.'
-    group 'Verification'
-
-    reports {
-        xml.enabled false
-        csv.enabled false
-        html.destination "${buildDir}/reports/coverage"
-    }
-
-    def dependencies = []
-
-    classDirectories = getJacocoClassDirs(dependencies)
-    sourceDirectories = getJacocoSrcFiles(dependencies)
-    executionData = getJacocoExecFiles(dependencies)
 }
 
 tasks.withType(JavaCompile) {

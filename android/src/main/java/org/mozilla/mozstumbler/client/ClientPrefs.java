@@ -2,7 +2,6 @@ package org.mozilla.mozstumbler.client;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-
 import org.mozilla.mozstumbler.service.Prefs;
 import org.osmdroid.api.IGeoPoint;
 import org.osmdroid.util.GeoPoint;
@@ -24,16 +23,17 @@ public class ClientPrefs extends Prefs {
         super(context);
     }
 
-    public static synchronized Prefs createGlobalInstance(Context c) {
+    public static synchronized ClientPrefs createGlobalInstance(Context c) {
         if (sInstance == null) {
             sInstance = new ClientPrefs(c);
         }
-        return sInstance;
+        return (ClientPrefs)sInstance;
     }
 
     public static synchronized ClientPrefs getInstance() {
-        assert(sInstance != null);
-        assert(sInstance.getClass().isInstance(ClientPrefs.class));
+        if (sInstance != null && sInstance.getClass().isInstance(ClientPrefs.class)) {
+            throw new IllegalArgumentException("sInstance is improperly initialized");
+        }
         return (ClientPrefs)sInstance;
     }
 

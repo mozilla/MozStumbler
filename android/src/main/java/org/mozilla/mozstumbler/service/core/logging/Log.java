@@ -14,7 +14,7 @@ import org.mozilla.mozstumbler.service.AppGlobals;
 public class Log {
     public static void e(String logTag, String s) {
         if (BuildConfig.BUILD_TYPE.equals("unittest")) {
-            System.out.print("E: "+logTag + ", " + s);
+            System.out.println("E: " + logTag + ", " + s);
         } else {
             android.util.Log.e(logTag, s);
         }
@@ -23,16 +23,16 @@ public class Log {
 
     public static void w(String logTag, String s) {
         if (BuildConfig.BUILD_TYPE.equals("unittest")) {
-            System.out.print("W: " + logTag + ", " + s);
+            System.out.println("W: " + logTag + ", " + s);
         } else {
             android.util.Log.w(logTag, s);
         }
         AppGlobals.guiLogInfo(logTag + ":" + s);
     }
 
-    public static void e(String logTag, String s, IOException e) {
+    public static void e(String logTag, String s, Exception e) {
         if (BuildConfig.BUILD_TYPE.equals("unittest")) {
-            System.out.print("E: " + logTag + ", " + s);
+            System.out.println("E: " + logTag + ", " + s);
             e.printStackTrace();
         } else {
             android.util.Log.e(logTag, s, e);
@@ -48,7 +48,7 @@ public class Log {
 
     public static void i(String logTag, String s) {
         if (BuildConfig.BUILD_TYPE.equals("unittest")) {
-            System.out.print("i: " + logTag + ", " + s);
+            System.out.println("i: " + logTag + ", " + s);
         } else {
             android.util.Log.i(logTag, s);
         }
@@ -57,10 +57,11 @@ public class Log {
 
     public static void d(String logTag, String s) {
         if (BuildConfig.BUILD_TYPE.equals("unittest")) {
-            System.out.print("d: " + logTag + ", " + s);
+            System.out.println("d: " + logTag + ", " + s);
         } else {
             android.util.Log.d(logTag, s);
         }
         // Note that debug level messages do not go to the GUI log
     }
+
 }

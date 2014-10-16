@@ -1,8 +1,11 @@
-test: updateJars
-	./gradlew testUnittest
+test: unittest
+	./gradlew testUnittest --info
 
 release_check:
 	. ./release_check.sh
+
+unittest: updateJars
+	./gradlew assembleUnittest
 
 debug: updateJars
 	./gradlew assembleDebug
@@ -15,6 +18,7 @@ updateJars:
 	./gradlew -q updateJars
 
 clean:
+	rm -rf android/libs/*.jar
 	./gradlew clean
 
 install_debug:

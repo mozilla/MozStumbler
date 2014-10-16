@@ -42,7 +42,7 @@ public class DeveloperActivity extends ActionBarActivity {
     }
 
     // For misc developer options
-    private static class DeveloperOptions extends Fragment {
+    public static class DeveloperOptions extends Fragment {
         private final String LOG_TAG = AppGlobals.LOG_PREFIX + DeveloperOptions.class.getSimpleName();
 
         private View mRootView;

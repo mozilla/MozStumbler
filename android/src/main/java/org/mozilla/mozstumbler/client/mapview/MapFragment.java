@@ -24,7 +24,6 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -91,6 +90,7 @@ public final class MapFragment extends android.support.v4.app.Fragment
     private Overlay mCoverageTilesOverlayHighZoom;
     private ITileSource mHighResMapSource;
     private View mRootView;
+    private TextView mTextViewIsLowResMap;
     private HighLowBandwidthReceiver mHighLowBandwidthChecker;
 
     // Used to blank the high-res tile source when adding a low-res overlay
@@ -144,6 +144,9 @@ public final class MapFragment extends android.support.v4.app.Fragment
                 return false;
             }
         });
+
+        mTextViewIsLowResMap = (TextView) mRootView.findViewById(R.id.low_resolution_map_message);
+        mTextViewIsLowResMap.setVisibility(View.GONE);
 
         mMap = (MapView) mRootView.findViewById(R.id.map);
         mMap.setBuiltInZoomControls(true);
@@ -232,7 +235,7 @@ public final class MapFragment extends android.support.v4.app.Fragment
         return (MainApp) getActivity().getApplication();
     }
 
-    private Runnable mCoverageUrlQuery = new Runnable() {
+    final private Runnable mCoverageUrlQuery = new Runnable() {
         @Override
         public void run() {
             // @TODO: we do a similar "read from URL" in Updater, AbstractCommunicator, make one function for this
@@ -262,6 +265,9 @@ public final class MapFragment extends android.support.v4.app.Fragment
                     }
                 }, 0);
             } else if (mCoverageTilesOverlayLowZoom == null) {
+                if (ClientPrefs.getInstance().getMapTileResolutionType() == ClientPrefs.MapTileResolutionOptions.NoMap) {
+                    return;
+                }
                 initCoverageTiles(sCoverageUrl);
                 updateOverlayCoverageLayer(mMap.getZoomLevel());
             }
@@ -327,27 +333,47 @@ public final class MapFragment extends android.support.v4.app.Fragment
         }
     }
 
-
-
-    // use this to track whether to show a toast
-    private static Boolean sIsHighBandwidth;
-
     // Unfortunately, just showing low/high detail isn't enough data reduction.
     // To handle the case where the user zooms out to show a large area when in low bandwidth mode,
     // we need an additional "LowZoom" overlay. So in low bandwidth mode, you will see
     // that based on the current zoom level of the map, we show "HighZoom" or "LowZoom" overlays.
     private void setHighBandwidthMap(boolean isHighBandwidth) {
-        if (ClientPrefs.getInstance().isForcedLowBandwidthTiles()) {
-            isHighBandwidth = false;
+        final ClientPrefs prefs = ClientPrefs.getInstance();
+        if (prefs == null || getActivity() == null) {
+            return;
         }
 
-        boolean isMLSTileStore = (BuildConfig.TILE_SERVER_URL != null);
-
-        boolean showToast = false;
-        if (sIsHighBandwidth != null) {
-            showToast = sIsHighBandwidth.booleanValue() != isHighBandwidth;
+        final ClientPrefs.MapTileResolutionOptions tileType = prefs.getMapTileResolutionType();
+        if (tileType.ordinal() > 0) {
+            if (tileType == ClientPrefs.MapTileResolutionOptions.NoMap) {
+                mTextViewIsLowResMap.setVisibility(View.VISIBLE);
+                mTextViewIsLowResMap.setText(getActivity().getString(R.string.map_turned_off));
+                mMap.setTileSource(new BlankTileSource());
+                removeLayer(mLowResMapOverlayLowZoom);
+                removeLayer(mLowResMapOverlayHighZoom);
+                removeLayer(mCoverageTilesOverlayLowZoom);
+                removeLayer(mCoverageTilesOverlayHighZoom);
+                mLowResMapOverlayHighZoom = mLowResMapOverlayLowZoom = null;
+                mCoverageTilesOverlayHighZoom = mCoverageTilesOverlayLowZoom = null;
+                return;
+            } else if (tileType == ClientPrefs.MapTileResolutionOptions.HighRes) {
+                isHighBandwidth = true;
+            } else if (tileType == ClientPrefs.MapTileResolutionOptions.LowRes) {
+                isHighBandwidth = false;
+            }
         }
-        sIsHighBandwidth = new Boolean(isHighBandwidth);
+
+        final boolean isMLSTileStore = (BuildConfig.TILE_SERVER_URL != null);
+
+        if (isHighBandwidth) {
+            mTextViewIsLowResMap.setVisibility(View.GONE);
+        } else {
+            String msg = getActivity().getString(R.string.map_turned_off);
+            if (mTextViewIsLowResMap.getText().equals(msg)) {
+                mTextViewIsLowResMap.setText(msg);
+            }
+            mTextViewIsLowResMap.setVisibility(View.VISIBLE);
+        }
 
         if (isHighBandwidth) {
             if (mLowResMapOverlayHighZoom == null && mMap.getTileProvider().getTileSource() == mHighResMapSource) {
@@ -360,10 +386,6 @@ public final class MapFragment extends android.support.v4.app.Fragment
 
                     mLowResMapOverlayLowZoom = null;
                     mLowResMapOverlayHighZoom = null;
-
-                    if (showToast) {
-                        Toast.makeText(this.getActivity(), R.string.switch_to_high_res_tile, Toast.LENGTH_SHORT).show();
-                    }
                 }
             }
 
@@ -392,9 +414,6 @@ public final class MapFragment extends android.support.v4.app.Fragment
                 updateOverlayBaseLayer(mMap.getZoomLevel());
             }
 
-            if (showToast) {
-                Toast.makeText(this.getActivity(), R.string.switch_to_low_res_tile, Toast.LENGTH_SHORT).show();
-            }
         }
     }
 
@@ -492,12 +511,6 @@ public final class MapFragment extends android.support.v4.app.Fragment
     }
 
     void updateGPSInfo(int satellites, int fixes) {
-        // @TODO Move this code to an appropriate place
-        if (mCoverageTilesOverlayLowZoom == null && sCoverageUrl != null) {
-            initCoverageTiles(sCoverageUrl);
-            updateOverlayCoverageLayer(mMap.getZoomLevel());
-        }
-
         formatTextView(R.id.text_satellites_used, "%d", fixes);
         int icon = fixes > 0 ? R.drawable.ic_gps_receiving_flaticondotcom : R.drawable.ic_gps_no_signal_flaticondotcom;
         ((ImageView) mRootView.findViewById(R.id.fix_indicator)).setImageResource(icon);
@@ -531,9 +544,9 @@ public final class MapFragment extends android.support.v4.app.Fragment
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-        Log.d(LOG_TAG, "onStart");
+    public void onResume() {
+        super.onResume();
+        Log.d(LOG_TAG, "onResume");
 
         mGPSListener = new GPSListener(this);
 
@@ -580,7 +593,11 @@ public final class MapFragment extends android.support.v4.app.Fragment
         super.onPause();
         Log.d(LOG_TAG, "onPause");
         saveStateToPrefs();
-    }
+
+        mGPSListener.removeListener();
+        ObservedLocationsReceiver observer = ObservedLocationsReceiver.getInstance();
+        observer.removeMapActivity();
+}
 
     private void removeLayer(Overlay layer) {
         if (layer == null) {

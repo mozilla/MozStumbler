@@ -43,7 +43,7 @@
     <string name="about_legal_aosp">Some iconography in this app is reproduced from work created and shared by the Android Open Source Project and used according to terms described in the Creative Commons 2.5 Attribution License.</string>
     <string name="about_legal_icons8">Additional icons from http://icons8.com under license: https://creativecommons.org/licenses/by-nd/3.0</string>
     <string name="about_legal_flaticons">GPS, cell tower, Wi-Fi, and binoculars icons made by Freepik from http://www.flaticon.com. under license: https://creativecommons.org/licenses/by-nd/3.0</string>
-    <string name="upload_observations_sent_title">Sent (all time)</string>
+    <string name="upload_observations_sent_title">All sessions</string>
     <string name="metrics_observations_last_upload_time_title">Last upload:</string>
     <string name="metrics_observations_title">Reports:</string>
     <string name="metrics_observations_wifis_title">Wi-Fi networks:</string>
@@ -90,8 +90,8 @@
     <string name="action_developer">Developer</string>
     <string name="enable_option_show_mls_on_map">Enable MLS layer toggle</string>
     <string name="enable_option_show_mls_on_map_summary">At the cost of a bit more memory and network usage, the map can show MLS location queries for your scans.</string>
-    <string name="cell_only_observation">Cell only observation</string>
-    <string name="wifi_only_observation">Wi-Fi only observation</string>
+    <string name="cell_only_observation">Cell only report</string>
+    <string name="wifi_only_observation">Wi-Fi only report</string>
     <string name="low_resolution_map">Low resolution map</string>
     <string name="map_turned_off">Map display off</string>
     <string name="map_tile_resolution_options_label">Map tile options:</string>

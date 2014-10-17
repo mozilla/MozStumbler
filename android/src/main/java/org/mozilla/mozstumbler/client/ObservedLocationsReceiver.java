@@ -13,9 +13,13 @@ import android.os.Handler;
 import android.os.Looper;
 import android.support.v4.content.LocalBroadcastManager;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.mozilla.mozstumbler.client.mapview.MapFragment;
 import org.mozilla.mozstumbler.client.mapview.ObservationPoint;
+import org.mozilla.mozstumbler.service.core.logging.Log;
+import org.mozilla.mozstumbler.service.stumblerthread.Reporter;
+import org.mozilla.mozstumbler.service.stumblerthread.datahandling.StumblerBundle;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.GPSScanner;
 import org.mozilla.mozstumbler.service.utils.CoordinateUtils;
 import org.osmdroid.util.GeoPoint;
@@ -32,11 +36,11 @@ public class ObservedLocationsReceiver extends BroadcastReceiver {
 
     private static final String LOG_TAG = ObservedLocationsReceiver.class.getSimpleName();
     private WeakReference<MapFragment> mMapActivity = new WeakReference<MapFragment>(null);
+    private ObservationPoint mCurrentObservationPoint = null;
     private final LinkedList<ObservationPoint> mCollectionPoints = new LinkedList<ObservationPoint>();
     private final LinkedList<ObservationPoint> mQueuedForMLS = new LinkedList<ObservationPoint>();
     private final int MAX_QUEUED_MLS_POINTS_TO_FETCH = 10;
     private final long FREQ_FETCH_MLS_MS = 5 * 1000;
-    private JSONObject mPreviousBundleForDuplicateCheck;
     private WeakReference<ICountObserver> mCountObserver = new WeakReference<ICountObserver>(null);
     private final Handler mHandler = new Handler(Looper.getMainLooper());
 
@@ -54,11 +58,16 @@ public class ObservedLocationsReceiver extends BroadcastReceiver {
         sInstance.mCountObserver = new WeakReference<ICountObserver>(countObserver);
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(GPSScanner.ACTION_GPS_UPDATED);
+        intentFilter.addAction(Reporter.ACTION_NEW_BUNDLE);
         LocalBroadcastManager.getInstance(context).registerReceiver(sInstance, intentFilter);
     }
 
     public static ObservedLocationsReceiver getInstance() {
         return sInstance;
+    }
+
+    public ObservationPoint getCurrentObservationPoint() {
+        return mCurrentObservationPoint;
     }
 
     public LinkedList<ObservationPoint> getObservationPoints() {
@@ -82,7 +91,7 @@ public class ObservedLocationsReceiver extends BroadcastReceiver {
                         count++;
                     } else {
                         if (getMapActivity() != null) {
-                            getMapActivity().newMLSPoint(obs);
+                            getMapActivity().newMLSPoint();
                         }
                         li.remove();
                     }
@@ -109,41 +118,51 @@ public class ObservedLocationsReceiver extends BroadcastReceiver {
     public synchronized void onReceive(Context context, Intent intent) {
         final String action = intent.getAction();
         final String subject = intent.getStringExtra(Intent.EXTRA_SUBJECT);
-        if (!action.equals(GPSScanner.ACTION_GPS_UPDATED) || !subject.equals(GPSScanner.SUBJECT_NEW_LOCATION)) {
-            return;
-        }
 
-        final Location newPosition = intent.getParcelableExtra(GPSScanner.NEW_LOCATION_ARG_LOCATION);
-        if (newPosition == null || !CoordinateUtils.isValidLocation(newPosition)) {
-            return;
-        }
-
-        final Context appContext = context.getApplicationContext();
-        ObservationPoint lastObservation = null;
-        if (mCollectionPoints.size() > 0) {
-            lastObservation = mCollectionPoints.getLast();
-        }
-
-        final ClientStumblerService service = ((MainApp) appContext).getService();
-        if (lastObservation != null && service != null) {
-            JSONObject currentBundle = service.getLastReportedBundle();
-            if (currentBundle != null) {
-                lastObservation.setCounts(currentBundle);
-
-                if (mPreviousBundleForDuplicateCheck == currentBundle) {
-                    return;
-                }
-
-                boolean getInfoForMLS = ClientPrefs.getInstance().isOptionEnabledToShowMLSOnMap();
-                if (getInfoForMLS) {
-                    lastObservation.setMLSQuery(currentBundle);
-                    mPreviousBundleForDuplicateCheck = currentBundle;
-
-                    if (mQueuedForMLS.size() < MAX_SIZE_OF_POINT_LISTS) {
-                        mQueuedForMLS.addFirst(lastObservation);
-                    }
+        if (action.equals(GPSScanner.ACTION_GPS_UPDATED) && subject.equals(GPSScanner.SUBJECT_NEW_LOCATION)) {
+            final Location newPosition = intent.getParcelableExtra(GPSScanner.NEW_LOCATION_ARG_LOCATION);
+            if (newPosition != null && CoordinateUtils.isValidLocation(newPosition)) {
+                mCurrentObservationPoint = new ObservationPoint(new GeoPoint(newPosition));
+                if (getMapActivity() != null) {
+                    getMapActivity().getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            updateMap();
+                        }
+                    });
                 }
             }
+            return;
+
+        } else if (!action.equals(Reporter.ACTION_NEW_BUNDLE)) {
+            return;
+        }
+
+        final StumblerBundle bundle = intent.getParcelableExtra(Reporter.NEW_BUNDLE_ARG_BUNDLE);
+        if (bundle == null) {
+            return;
+        }
+
+        Location position = bundle.getGpsPosition();
+        if (position == null) {
+            return;
+        }
+        ObservationPoint observation = new ObservationPoint(new GeoPoint(position));
+
+        try {
+            JSONObject jsonBundle = bundle.toMLSJSON();
+            observation.setCounts(jsonBundle);
+
+            boolean getInfoForMLS = ClientPrefs.getInstance().isOptionEnabledToShowMLSOnMap();
+            if (getInfoForMLS) {
+                observation.setMLSQuery(jsonBundle);
+
+                if (mQueuedForMLS.size() < MAX_SIZE_OF_POINT_LISTS) {
+                    mQueuedForMLS.addFirst(observation);
+                }
+            }
+        } catch (JSONException e) {
+            Log.w(LOG_TAG, "Failed to convert bundle to JSON: " + e);
         }
 
         // Notify main app of observation
@@ -151,15 +170,14 @@ public class ObservedLocationsReceiver extends BroadcastReceiver {
             mCountObserver.get().observedLocationCountIncrement();
         }
 
-        if (mCollectionPoints.size() > MAX_SIZE_OF_POINT_LISTS) {
-            return;
+        while (mCollectionPoints.size() > MAX_SIZE_OF_POINT_LISTS) {
+            mCollectionPoints.removeFirst();
         }
 
-        ObservationPoint observation = new ObservationPoint(new GeoPoint(newPosition));
-        mCollectionPoints.add(observation);
-        if (lastObservation != null) {
-            observation.mHeading = observation.pointGPS.bearingTo(lastObservation.pointGPS);
+        if (mCollectionPoints.size() > 0) {
+            observation.mHeading = observation.pointGPS.bearingTo(mCollectionPoints.getLast().pointGPS);
         }
+        mCollectionPoints.addLast(observation);
 
         if (getMapActivity() == null) {
             return;
@@ -168,16 +186,16 @@ public class ObservedLocationsReceiver extends BroadcastReceiver {
         getMapActivity().getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                addObservationPointToMap();
+                updateMap();
             }
         });
     }
 
-    private synchronized void addObservationPointToMap() {
+    private synchronized void updateMap() {
         if (getMapActivity() == null) {
             return;
         }
 
-        getMapActivity().newObservationPoint(mCollectionPoints.getLast());
+        getMapActivity().newObservationPoint();
     }
 }

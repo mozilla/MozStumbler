@@ -9,11 +9,13 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
+import android.graphics.Rect;
 import android.graphics.RectF;
 import android.os.SystemClock;
 
 import org.mozilla.mozstumbler.client.ObservedLocationsReceiver;
 import org.mozilla.mozstumbler.service.core.logging.Log;
+import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.Projection;
 import org.osmdroid.views.overlay.Overlay;
@@ -34,7 +36,6 @@ class ObservationPointsOverlay extends Overlay {
     private final Paint mBlackMLSLinePaint = new Paint();
 
     final DevicePixelConverter mConvertPx;
-    private final WeakReference<MapView> mMapView;
 
     private static final long DRAW_TIME_MILLIS = 30; // Abort drawing after this time
     private static final int TIME_CHECK_MULTIPLE = 100; // Check the time after drawing this many
@@ -43,7 +44,6 @@ class ObservationPointsOverlay extends Overlay {
 
     ObservationPointsOverlay(Context ctx, MapView mapView) {
         super(ctx);
-        mMapView = new WeakReference<MapView>(mapView);
         mConvertPx = new DevicePixelConverter(ctx);
 
         mGreenPaint.setColor(Color.GREEN);
@@ -72,13 +72,13 @@ class ObservationPointsOverlay extends Overlay {
         mWifiPaint.setStrokeWidth(mConvertPx.pxToDp(2.5f));
     }
 
-    boolean mIsDirty = false;
-    void update() {
-        if (mIsDirty) {
-            return;
-        }
-        mIsDirty = true;
-        mMapView.get().postInvalidate();
+    void update(GeoPoint p, MapView mapView) {
+        final Projection pj = mapView.getProjection();
+        final Point point = pj.toPixels(p, null);
+        final int size = mConvertPx.pxToDp(6);
+        final Rect dirty = new Rect(point.x - size, point.y - size, point.x + size, point.y + size);
+        dirty.offset(mapView.getScrollX(), mapView.getScrollY());
+        mapView.postInvalidate(dirty.left, dirty.top, dirty.right, dirty.bottom);
     }
 
     private void drawDot(Canvas c, Point p, float radiusInnerRing, Paint fillPaint, Paint strokePaint) {
@@ -99,9 +99,6 @@ class ObservationPointsOverlay extends Overlay {
 
     protected void draw(Canvas c, MapView osmv, boolean shadow) {
         final long endTime = SystemClock.uptimeMillis() + DRAW_TIME_MILLIS;
-
-        mIsDirty = false;
-
         LinkedList<ObservationPoint> points = ObservedLocationsReceiver.getInstance().getObservationPoints();
         if (shadow || points.size() < 1) {
             return;
@@ -111,12 +108,19 @@ class ObservationPointsOverlay extends Overlay {
         final float radiusInnerRing = mConvertPx.pxToDp(3);
 
         int count = 0;
+        // The overlay occupies the entire screen, so this returns the screen (0,0,w,h).
+        Rect clip = c.getClipBounds();
 
         // iterate newest to oldest
         Iterator<ObservationPoint> i = points.descendingIterator();
+        ObservationPoint point;
+        final Point gps = new Point();
         while (i.hasNext()) {
-            ObservationPoint point = i.next();
-            final Point gps = pj.toPixels(point.pointGPS, null);
+            point = i.next();
+            pj.toPixels(point.pointGPS, gps);
+            if (!clip.contains(gps.x, gps.y)) {
+                continue;
+            }
 
             boolean hasWifiScan = point.mWifiCount > 0;
             boolean hasCellScan = point.mCellCount > 0;
@@ -141,11 +145,12 @@ class ObservationPointsOverlay extends Overlay {
 
         // Draw as a 2nd layer over the observation points
         i = points.descendingIterator();
+        final Point mls = new Point();
         while (i.hasNext()) {
-            ObservationPoint point = i.next();
+            point = i.next();
             if (point.pointMLS != null) {
-                final Point gps = pj.toPixels(point.pointGPS, null);
-                final Point mls = pj.toPixels(point.pointMLS, null);
+                pj.toPixels(point.pointGPS, gps);
+                pj.toPixels(point.pointMLS, mls);
                 drawDot(c, mls, radiusInnerRing - 1, mRedPaint, mBlackStrokePaintThin);
                 c.drawLine(gps.x, gps.y, mls.x, mls.y, mBlackMLSLinePaint);
             }

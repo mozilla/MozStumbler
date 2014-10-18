@@ -646,11 +646,11 @@ public final class MapFragment extends android.support.v4.app.Fragment
     }
 
     public void newMLSPoint(ObservationPoint point) {
-        mObservationPointsOverlay.update();
+        mObservationPointsOverlay.update(point.pointMLS, mMap);
     }
 
     public void newObservationPoint(ObservationPoint point) {
-        mObservationPointsOverlay.update();
+        mObservationPointsOverlay.update(point.pointGPS, mMap);
     }
 
     @Override

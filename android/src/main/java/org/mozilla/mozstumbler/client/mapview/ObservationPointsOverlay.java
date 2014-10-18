@@ -103,24 +103,19 @@ class ObservationPointsOverlay extends Overlay {
         mIsDirty = false;
 
         LinkedList<ObservationPoint> points = ObservedLocationsReceiver.getInstance().getObservationPoints();
-        ObservationPoint point = ObservedLocationsReceiver.getInstance().getCurrentObservationPoint();
-        if (shadow || (points.size() < 1 && point == null)) {
+        if (shadow || points.size() < 1) {
             return;
         }
 
         final Projection pj = osmv.getProjection();
         final float radiusInnerRing = mConvertPx.pxToDp(3);
 
-        if (point != null) {
-            drawDot(c, pj.toPixels(point.pointGPS, null), radiusInnerRing, mGreenPaint, mBlackStrokePaint);
-        }
-
         int count = 0;
 
         // iterate newest to oldest
         Iterator<ObservationPoint> i = points.descendingIterator();
         while (i.hasNext()) {
-            point = i.next();
+            ObservationPoint point = i.next();
             final Point gps = pj.toPixels(point.pointGPS, null);
 
             boolean hasWifiScan = point.mWifiCount > 0;
@@ -147,7 +142,7 @@ class ObservationPointsOverlay extends Overlay {
         // Draw as a 2nd layer over the observation points
         i = points.descendingIterator();
         while (i.hasNext()) {
-            point = i.next();
+            ObservationPoint point = i.next();
             if (point.pointMLS != null) {
                 final Point gps = pj.toPixels(point.pointGPS, null);
                 final Point mls = pj.toPixels(point.pointMLS, null);
@@ -160,6 +155,4 @@ class ObservationPointsOverlay extends Overlay {
             }
         }
     }
-
-
 }

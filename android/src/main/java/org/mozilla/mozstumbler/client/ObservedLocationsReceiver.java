@@ -20,8 +20,6 @@ import org.mozilla.mozstumbler.client.mapview.ObservationPoint;
 import org.mozilla.mozstumbler.service.core.logging.Log;
 import org.mozilla.mozstumbler.service.stumblerthread.Reporter;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.StumblerBundle;
-import org.mozilla.mozstumbler.service.stumblerthread.scanners.GPSScanner;
-import org.mozilla.mozstumbler.service.utils.CoordinateUtils;
 import org.osmdroid.util.GeoPoint;
 
 import java.lang.ref.WeakReference;
@@ -36,7 +34,6 @@ public class ObservedLocationsReceiver extends BroadcastReceiver {
 
     private static final String LOG_TAG = ObservedLocationsReceiver.class.getSimpleName();
     private WeakReference<MapFragment> mMapActivity = new WeakReference<MapFragment>(null);
-    private ObservationPoint mCurrentObservationPoint = null;
     private final LinkedList<ObservationPoint> mCollectionPoints = new LinkedList<ObservationPoint>();
     private final LinkedList<ObservationPoint> mQueuedForMLS = new LinkedList<ObservationPoint>();
     private final int MAX_QUEUED_MLS_POINTS_TO_FETCH = 10;
@@ -57,17 +54,12 @@ public class ObservedLocationsReceiver extends BroadcastReceiver {
         sInstance = new ObservedLocationsReceiver();
         sInstance.mCountObserver = new WeakReference<ICountObserver>(countObserver);
         IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(GPSScanner.ACTION_GPS_UPDATED);
         intentFilter.addAction(Reporter.ACTION_NEW_BUNDLE);
         LocalBroadcastManager.getInstance(context).registerReceiver(sInstance, intentFilter);
     }
 
     public static ObservedLocationsReceiver getInstance() {
         return sInstance;
-    }
-
-    public ObservationPoint getCurrentObservationPoint() {
-        return mCurrentObservationPoint;
     }
 
     public LinkedList<ObservationPoint> getObservationPoints() {
@@ -117,24 +109,7 @@ public class ObservedLocationsReceiver extends BroadcastReceiver {
     @Override
     public synchronized void onReceive(Context context, Intent intent) {
         final String action = intent.getAction();
-        final String subject = intent.getStringExtra(Intent.EXTRA_SUBJECT);
-
-        if (action.equals(GPSScanner.ACTION_GPS_UPDATED) && subject.equals(GPSScanner.SUBJECT_NEW_LOCATION)) {
-            final Location newPosition = intent.getParcelableExtra(GPSScanner.NEW_LOCATION_ARG_LOCATION);
-            if (newPosition != null && CoordinateUtils.isValidLocation(newPosition)) {
-                mCurrentObservationPoint = new ObservationPoint(new GeoPoint(newPosition));
-                if (getMapActivity() != null) {
-                    getMapActivity().getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            updateMap();
-                        }
-                    });
-                }
-            }
-            return;
-
-        } else if (!action.equals(Reporter.ACTION_NEW_BUNDLE)) {
+        if (!action.equals(Reporter.ACTION_NEW_BUNDLE)) {
             return;
         }
 

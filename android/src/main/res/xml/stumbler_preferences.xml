@@ -7,6 +7,7 @@
         android:summary="@string/enter_nickname_longtext" />
     <EditTextPreference
         android:key="email"
+        android:inputType="textEmailAddress"
         android:title="@string/enter_email"
         android:summary="@string/enter_email_longtext" />
     <CheckBoxPreference

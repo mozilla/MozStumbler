@@ -83,7 +83,7 @@ public class ObservedLocationsReceiver extends BroadcastReceiver {
                         count++;
                     } else {
                         if (getMapActivity() != null) {
-                            getMapActivity().newMLSPoint();
+                            getMapActivity().newMLSPoint(obs);
                         }
                         li.remove();
                     }
@@ -161,16 +161,16 @@ public class ObservedLocationsReceiver extends BroadcastReceiver {
         getMapActivity().getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                updateMap();
+                addObservationPointToMap();
             }
         });
     }
 
-    private synchronized void updateMap() {
+    private synchronized void addObservationPointToMap() {
         if (getMapActivity() == null) {
             return;
         }
 
-        getMapActivity().newObservationPoint();
+        getMapActivity().newObservationPoint(mCollectionPoints.getLast());
     }
 }

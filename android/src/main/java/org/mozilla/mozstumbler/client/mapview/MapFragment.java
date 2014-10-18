@@ -645,11 +645,11 @@ public final class MapFragment extends android.support.v4.app.Fragment
         textView.setText("0");
     }
 
-    public void newMLSPoint() {
+    public void newMLSPoint(ObservationPoint point) {
         mObservationPointsOverlay.update();
     }
 
-    public void newObservationPoint() {
+    public void newObservationPoint(ObservationPoint point) {
         mObservationPointsOverlay.update();
     }
 

@@ -229,6 +229,9 @@ public class MainApp extends Application
     }
 
     public void startScanning() {
+        if (mStumblerService == null) {
+            return;
+        }
         mStumblerService.startForeground(NOTIFICATION_ID, buildNotification());
         mStumblerService.startScanning();
         if (mMainActivity.get() != null) {
@@ -237,6 +240,9 @@ public class MainApp extends Application
     }
 
     public void stopScanning() {
+        if (mStumblerService == null) {
+            return;
+        }
         mStumblerService.stopForeground(true);
         mStumblerService.stopScanning();
         if (mMainActivity.get() != null) {

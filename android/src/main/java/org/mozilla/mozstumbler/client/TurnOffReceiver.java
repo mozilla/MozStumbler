@@ -12,7 +12,7 @@ import org.mozilla.mozstumbler.service.core.logging.Log;
 
 import org.mozilla.mozstumbler.service.AppGlobals;
 
-/* Test low power in adb with am broad  cast -a android.intent.action.BATTERY_LOW
+/* Test low power in adb with am broadcast -a android.intent.action.BATTERY_LOW
  * Test cancel button in notification list by swiping down on the entry for the
  * stumbler, and [X] Stop Scanning will appear.
  */

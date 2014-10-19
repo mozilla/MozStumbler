@@ -174,6 +174,8 @@ public class MainDrawerActivity
                 mMenuItemStartStop.setTitle(R.string.start_scanning);
             }
         }
+
+        mMapFragment.dimToolbar();
     }
 
     @Override
@@ -197,7 +199,6 @@ public class MainDrawerActivity
                 @Override
                 public void run() {
                     getApp().startScanning();
-                    updateStartStopMenuItemState();
                 }
             }, 750);
         }

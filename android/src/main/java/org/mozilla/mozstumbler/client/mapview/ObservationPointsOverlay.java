@@ -155,6 +155,4 @@ class ObservationPointsOverlay extends Overlay {
             }
         }
     }
-
-
 }

@@ -219,6 +219,7 @@ public final class MapFragment extends android.support.v4.app.Fragment
                 int z = e.getZoomLevel();
                 updateOverlayBaseLayer(z);
                 updateOverlayCoverageLayer(z);
+                mObservationPointsOverlay.zoomChanged();
                 return true;
             }
 

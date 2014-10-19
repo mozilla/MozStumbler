@@ -19,10 +19,9 @@ import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.Projection;
 import org.osmdroid.views.overlay.Overlay;
-
-import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 
 
@@ -44,6 +43,8 @@ class ObservationPointsOverlay extends Overlay {
     public boolean mOnMapShowMLS;
 
     private final int mSize3px;
+
+    LinkedHashMap<Integer, ObservationPoint> mHashedGrid;
 
     ObservationPointsOverlay(Context ctx, MapView mapView) {
         super(ctx);
@@ -102,23 +103,20 @@ class ObservationPointsOverlay extends Overlay {
         c.drawCircle(p.x, p.y, size, mWifiPaint);
     }
 
-    static private class GridPoint {
-        static final int cell = 1;
-        static final int wifi = 2;
-        static final int both = 4;
-        final int mType;
-        final Point mPoint;
-
-        public GridPoint(int type, Point point) {
-            mType = type;
-            mPoint = point;
-        }
-
+    public void zoomChanged() {
+        mHashedGrid = null;
     }
+
     private int toGridPoint(int x, int y) {
-        x = x / (mSize3px * 2);
-        y = y / (mSize3px * 2);
+        x = (int) Math.round(x / (mSize3px * 2.0));
+        y = (int) Math.round(y / (mSize3px * 2.0));
         return x * 10000 + y;
+    }
+
+    private int toTypeBitField(ObservationPoint point) {
+        int wifiBit = point.mWifiCount > 0 ? 2 : 0;
+        int cellBit = point.mCellCount > 0 ? 1 : 0;
+        return cellBit | wifiBit;
     }
 
     protected void draw(Canvas c, MapView osmv, boolean shadow) {
@@ -135,33 +133,34 @@ class ObservationPointsOverlay extends Overlay {
         // The overlay occupies the entire screen, so this returns the screen (0,0,w,h).
         Rect clip = c.getClipBounds();
 
-        HashMap<Integer, GridPoint> grid = new HashMap<Integer, GridPoint>();
+        if (mHashedGrid == null) {
+            mHashedGrid = new LinkedHashMap<Integer, ObservationPoint>();
 
-        Iterator<ObservationPoint> i = points.iterator();
-        ObservationPoint point;
-        while (i.hasNext()) {
-            point = i.next();
-            Point gps = pj.toPixels(point.pointGPS, null);
-            if (!clip.contains(gps.x, gps.y)) {
-                continue;
-            }
-            int hasWifiScan = point.mWifiCount > 0 ? GridPoint.wifi : 0;
-            int hasCellScan = point.mCellCount > 0 ? GridPoint.cell : 0;
-            int type = hasCellScan | hasWifiScan;
-
-            int hash = toGridPoint(gps.x, gps.y);
-            GridPoint gp = grid.get(hash);
-            if (gp == null || gp.mType < type) {
-                grid.put(hash, new GridPoint(type, gps));
+            final Iterator<ObservationPoint> i = points.iterator();
+            ObservationPoint point;
+            final Point gps = new Point();
+            while (i.hasNext()) {
+                point = i.next();
+                pj.toPixels(point.pointGPS, gps);
+                int hash = toGridPoint(gps.x, gps.y);
+                ObservationPoint gp = mHashedGrid.get(hash);
+                if (gp == null || toTypeBitField(point) > toTypeBitField(gp)) {
+                    mHashedGrid.put(hash, point);
+                }
             }
         }
 
-        for (HashMap.Entry<Integer, GridPoint> entry : grid.entrySet()) {
-            GridPoint gp = entry.getValue();
-            Point gps = gp.mPoint;
+        final Point gps = new Point();
+        for (HashMap.Entry<Integer, ObservationPoint> entry : mHashedGrid.entrySet()) {
+            ObservationPoint point = entry.getValue();
+            pj.toPixels(point.pointGPS, gps);
 
-            boolean hasWifiScan = (gp.mType & GridPoint.wifi) == GridPoint.wifi;
-            boolean hasCellScan = (gp.mType & GridPoint.cell) == GridPoint.cell;
+            if (!clip.contains(gps.x, gps.y)) {
+                continue;
+            }
+
+            boolean hasWifiScan = point.mWifiCount > 0;
+            boolean hasCellScan = point.mCellCount > 0;
 
             if (hasWifiScan && !hasCellScan) {
                 drawWifiScan(c, gps);
@@ -182,21 +181,21 @@ class ObservationPointsOverlay extends Overlay {
         }
 
         // Draw as a 2nd layer over the observation points
-        i = points.descendingIterator();
-        final Point mls = new Point();
-        while (i.hasNext()) {
-            point = i.next();
-            if (point.pointMLS != null) {
-                Point gps = new Point();
-                pj.toPixels(point.pointGPS, gps);
-                pj.toPixels(point.pointMLS, mls);
-                drawDot(c, mls, radiusInnerRing - 1, mRedPaint, mBlackStrokePaintThin);
-                c.drawLine(gps.x, gps.y, mls.x, mls.y, mBlackMLSLinePaint);
-            }
-
-            if ((++count % TIME_CHECK_MULTIPLE == 0) && (SystemClock.uptimeMillis() > endTime)) {
-                break;
-            }
-        }
+//        i = points.descendingIterator();
+//        final Point mls = new Point();
+//        while (i.hasNext()) {
+//            point = i.next();
+//            if (point.pointMLS != null) {
+//                Point gps = new Point();
+//                pj.toPixels(point.pointGPS, gps);
+//                pj.toPixels(point.pointMLS, mls);
+//                drawDot(c, mls, radiusInnerRing - 1, mRedPaint, mBlackStrokePaintThin);
+//                c.drawLine(gps.x, gps.y, mls.x, mls.y, mBlackMLSLinePaint);
+//            }
+//
+//            if ((++count % TIME_CHECK_MULTIPLE == 0) && (SystemClock.uptimeMillis() > endTime)) {
+//                break;
+//            }
+//        }
     }
 }

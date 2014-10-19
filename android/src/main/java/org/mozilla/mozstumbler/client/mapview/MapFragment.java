@@ -219,7 +219,7 @@ public final class MapFragment extends android.support.v4.app.Fragment
                 int z = e.getZoomLevel();
                 updateOverlayBaseLayer(z);
                 updateOverlayCoverageLayer(z);
-                mObservationPointsOverlay.zoomChanged();
+                mObservationPointsOverlay.zoomChanged(mMap);
                 return true;
             }
 
@@ -562,6 +562,8 @@ public final class MapFragment extends android.support.v4.app.Fragment
 
         ClientPrefs prefs = ClientPrefs.createGlobalInstance(getActivity().getApplicationContext());
         setShowMLS(prefs.getOnMapShowMLS());
+
+        mObservationPointsOverlay.zoomChanged(mMap);
     }
 
     private void saveStateToPrefs() {
@@ -647,11 +649,11 @@ public final class MapFragment extends android.support.v4.app.Fragment
     }
 
     public void newMLSPoint(ObservationPoint point) {
-        mObservationPointsOverlay.update(point.pointMLS, mMap);
+        mObservationPointsOverlay.update(point, mMap, true);
     }
 
     public void newObservationPoint(ObservationPoint point) {
-        mObservationPointsOverlay.update(point.pointGPS, mMap);
+        mObservationPointsOverlay.update(point, mMap, false);
     }
 
     @Override

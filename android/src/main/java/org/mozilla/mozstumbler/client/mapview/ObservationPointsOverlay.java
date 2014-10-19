@@ -19,11 +19,13 @@ import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.Projection;
 import org.osmdroid.views.overlay.Overlay;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
-
+import java.util.ListIterator;
 
 class ObservationPointsOverlay extends Overlay {
     private static final String LOG_TAG = ObservationPointsOverlay.class.getSimpleName();
@@ -78,13 +80,19 @@ class ObservationPointsOverlay extends Overlay {
         mSize3px = mConvertPx.pxToDp(3f);
     }
 
-    void update(GeoPoint p, MapView mapView) {
+    void update(ObservationPoint obsPoint, MapView mapView, boolean isMlsPointUpdate) {
         final Projection pj = mapView.getProjection();
-        final Point point = pj.toPixels(p, null);
-        final int size = mSize3px * 2;
+        GeoPoint geoPoint = (isMlsPointUpdate)? obsPoint.pointMLS : obsPoint.pointGPS;
+        final Point point = pj.toPixels(geoPoint, null);
+        final int size = mSize3px * 2; // update a rectangle 2x large as the point radius
         final Rect dirty = new Rect(point.x - size, point.y - size, point.x + size, point.y + size);
         dirty.offset(mapView.getScrollX(), mapView.getScrollY());
         mapView.postInvalidate(dirty.left, dirty.top, dirty.right, dirty.bottom);
+
+        if (!isMlsPointUpdate) {
+            // add to hashed grid
+            addToGridHash(obsPoint, point);
+        }
     }
 
     private void drawDot(Canvas c, Point p, float radiusInnerRing, Paint fillPaint, Paint strokePaint) {
@@ -103,8 +111,26 @@ class ObservationPointsOverlay extends Overlay {
         c.drawCircle(p.x, p.y, size, mWifiPaint);
     }
 
-    public void zoomChanged() {
-        mHashedGrid = null;
+    private void addToGridHash(ObservationPoint obsPoint, Point screenPoint) {
+        int hash = toGridPoint(screenPoint.x, screenPoint.y);
+        ObservationPoint gp = mHashedGrid.get(hash);
+        if (gp == null || toTypeBitField(obsPoint) > toTypeBitField(gp)) {
+            mHashedGrid.put(hash, obsPoint);
+        }
+    }
+
+    public void zoomChanged(MapView mapView) {
+        mHashedGrid = new LinkedHashMap<Integer, ObservationPoint>();
+        final Projection pj = mapView.getProjection();
+        LinkedList<ObservationPoint> points = ObservedLocationsReceiver.getInstance().getObservationPoints();
+        final Iterator<ObservationPoint> i = points.iterator();
+        final Point gps = new Point();
+        ObservationPoint point;
+        while (i.hasNext()) {
+            point = i.next();
+            pj.toPixels(point.pointGPS, gps);
+            addToGridHash(point, gps);
+        }
     }
 
     private int toGridPoint(int x, int y) {
@@ -133,25 +159,18 @@ class ObservationPointsOverlay extends Overlay {
         // The overlay occupies the entire screen, so this returns the screen (0,0,w,h).
         Rect clip = c.getClipBounds();
 
-        if (mHashedGrid == null) {
-            mHashedGrid = new LinkedHashMap<Integer, ObservationPoint>();
-
-            final Iterator<ObservationPoint> i = points.iterator();
-            ObservationPoint point;
-            final Point gps = new Point();
-            while (i.hasNext()) {
-                point = i.next();
-                pj.toPixels(point.pointGPS, gps);
-                int hash = toGridPoint(gps.x, gps.y);
-                ObservationPoint gp = mHashedGrid.get(hash);
-                if (gp == null || toTypeBitField(point) > toTypeBitField(gp)) {
-                    mHashedGrid.put(hash, point);
-                }
-            }
+        if (mHashedGrid == null || mHashedGrid.size() < 1) {
+            return;
         }
 
         final Point gps = new Point();
-        for (HashMap.Entry<Integer, ObservationPoint> entry : mHashedGrid.entrySet()) {
+
+        ArrayList<HashMap.Entry<Integer, ObservationPoint>> arrayList =
+                new ArrayList<HashMap.Entry<Integer, ObservationPoint>>(mHashedGrid.entrySet());
+        ListIterator<HashMap.Entry<Integer, ObservationPoint>> revIterator =
+                arrayList.listIterator(mHashedGrid.size());
+        while (revIterator.hasPrevious()) {
+            HashMap.Entry<Integer, ObservationPoint> entry = revIterator.previous();
             ObservationPoint point = entry.getValue();
             pj.toPixels(point.pointGPS, gps);
 
@@ -171,7 +190,6 @@ class ObservationPointsOverlay extends Overlay {
             }
 
             if ((++count % TIME_CHECK_MULTIPLE == 0) && (SystemClock.uptimeMillis() > endTime)) {
-                Log.i(LOG_TAG, "timed out");
                 break;
             }
         }
@@ -181,21 +199,21 @@ class ObservationPointsOverlay extends Overlay {
         }
 
         // Draw as a 2nd layer over the observation points
-//        i = points.descendingIterator();
-//        final Point mls = new Point();
-//        while (i.hasNext()) {
-//            point = i.next();
-//            if (point.pointMLS != null) {
-//                Point gps = new Point();
-//                pj.toPixels(point.pointGPS, gps);
-//                pj.toPixels(point.pointMLS, mls);
-//                drawDot(c, mls, radiusInnerRing - 1, mRedPaint, mBlackStrokePaintThin);
-//                c.drawLine(gps.x, gps.y, mls.x, mls.y, mBlackMLSLinePaint);
-//            }
-//
-//            if ((++count % TIME_CHECK_MULTIPLE == 0) && (SystemClock.uptimeMillis() > endTime)) {
-//                break;
-//            }
-//        }
+        final Point mls = new Point();
+        revIterator = arrayList.listIterator(mHashedGrid.size());
+        while (revIterator.hasPrevious()) {
+            HashMap.Entry<Integer, ObservationPoint> entry = revIterator.previous();
+            ObservationPoint point = entry.getValue();
+            if (point.pointMLS != null) {
+                pj.toPixels(point.pointGPS, gps);
+                pj.toPixels(point.pointMLS, mls);
+                drawDot(c, mls, radiusInnerRing - 1, mRedPaint, mBlackStrokePaintThin);
+                c.drawLine(gps.x, gps.y, mls.x, mls.y, mBlackMLSLinePaint);
+            }
+
+            if ((++count % TIME_CHECK_MULTIPLE == 0) && (SystemClock.uptimeMillis() > endTime)) {
+                break;
+            }
+        }
     }
 }

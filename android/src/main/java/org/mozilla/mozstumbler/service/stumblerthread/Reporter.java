@@ -32,6 +32,8 @@ import org.mozilla.mozstumbler.service.stumblerthread.scanners.WifiScanner;
 public final class Reporter extends BroadcastReceiver implements IReporter {
     private static final String LOG_TAG = AppGlobals.LOG_PREFIX + Reporter.class.getSimpleName();
     public static final String ACTION_FLUSH_TO_BUNDLE = AppGlobals.ACTION_NAMESPACE + ".FLUSH";
+    public static final String ACTION_NEW_BUNDLE = AppGlobals.ACTION_NAMESPACE + ".NEW_BUNDLE";
+    public static final String NEW_BUNDLE_ARG_BUNDLE = "bundle";
     private boolean mIsStarted;
 
     /* The maximum number of Wi-Fi access points in a single observation. */
@@ -223,6 +225,11 @@ public final class Reporter extends BroadcastReceiver implements IReporter {
         mPreviousBundleJSON = mlsObj;
 
         AppGlobals.guiLogInfo("MLS record: " + mlsObj.toString());
+
+        Intent i = new Intent(ACTION_NEW_BUNDLE);
+        i.putExtra(NEW_BUNDLE_ARG_BUNDLE, mBundle);
+        i.putExtra(AppGlobals.ACTION_ARG_TIME, System.currentTimeMillis());
+        LocalBroadcastManager.getInstance(mContext).sendBroadcastSync(i);
 
         try {
             DataStorageManager.getInstance().insert(mlsObj.toString(), wifiCount, cellCount);

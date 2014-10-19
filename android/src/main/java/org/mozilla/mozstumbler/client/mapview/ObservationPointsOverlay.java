@@ -21,6 +21,7 @@ import org.osmdroid.views.Projection;
 import org.osmdroid.views.overlay.Overlay;
 
 import java.lang.ref.WeakReference;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 
@@ -41,6 +42,8 @@ class ObservationPointsOverlay extends Overlay {
     private static final int TIME_CHECK_MULTIPLE = 100; // Check the time after drawing this many
 
     public boolean mOnMapShowMLS;
+
+    private final int mSize3px;
 
     ObservationPointsOverlay(Context ctx, MapView mapView) {
         super(ctx);
@@ -70,12 +73,14 @@ class ObservationPointsOverlay extends Overlay {
         mWifiPaint.setARGB(255, 160, 0, 180);
         mWifiPaint.setStyle(Paint.Style.STROKE);
         mWifiPaint.setStrokeWidth(mConvertPx.pxToDp(2.5f));
+
+        mSize3px = mConvertPx.pxToDp(3f);
     }
 
     void update(GeoPoint p, MapView mapView) {
         final Projection pj = mapView.getProjection();
         final Point point = pj.toPixels(p, null);
-        final int size = mConvertPx.pxToDp(6);
+        final int size = mSize3px * 2;
         final Rect dirty = new Rect(point.x - size, point.y - size, point.x + size, point.y + size);
         dirty.offset(mapView.getScrollX(), mapView.getScrollY());
         mapView.postInvalidate(dirty.left, dirty.top, dirty.right, dirty.bottom);
@@ -87,14 +92,33 @@ class ObservationPointsOverlay extends Overlay {
     }
 
     private void drawCellScan(Canvas c, Point p) {
-        final int size = mConvertPx.pxToDp(3f);
+        final int size = mSize3px;
         RectF r = new RectF(p.x - size, p.y - size, p.x + size, p.y + size);
         c.drawRoundRect(r, 1f, 1f, mCellPaint);
     }
 
     private void drawWifiScan(Canvas c, Point p) {
-        final int size = mConvertPx.pxToDp(3f);
+        final int size = mSize3px;
         c.drawCircle(p.x, p.y, size, mWifiPaint);
+    }
+
+    static private class GridPoint {
+        static final int cell = 1;
+        static final int wifi = 2;
+        static final int both = 4;
+        final int mType;
+        final Point mPoint;
+
+        public GridPoint(int type, Point point) {
+            mType = type;
+            mPoint = point;
+        }
+
+    }
+    private int toGridPoint(int x, int y) {
+        x = x / (mSize3px * 2);
+        y = y / (mSize3px * 2);
+        return x * 10000 + y;
     }
 
     protected void draw(Canvas c, MapView osmv, boolean shadow) {
@@ -105,25 +129,39 @@ class ObservationPointsOverlay extends Overlay {
         }
 
         final Projection pj = osmv.getProjection();
-        final float radiusInnerRing = mConvertPx.pxToDp(3);
+        final float radiusInnerRing = mSize3px;
 
         int count = 0;
         // The overlay occupies the entire screen, so this returns the screen (0,0,w,h).
         Rect clip = c.getClipBounds();
 
-        // iterate newest to oldest
-        Iterator<ObservationPoint> i = points.descendingIterator();
+        HashMap<Integer, GridPoint> grid = new HashMap<Integer, GridPoint>();
+
+        Iterator<ObservationPoint> i = points.iterator();
         ObservationPoint point;
-        final Point gps = new Point();
         while (i.hasNext()) {
             point = i.next();
-            pj.toPixels(point.pointGPS, gps);
+            Point gps = pj.toPixels(point.pointGPS, null);
             if (!clip.contains(gps.x, gps.y)) {
                 continue;
             }
+            int hasWifiScan = point.mWifiCount > 0 ? GridPoint.wifi : 0;
+            int hasCellScan = point.mCellCount > 0 ? GridPoint.cell : 0;
+            int type = hasCellScan | hasWifiScan;
 
-            boolean hasWifiScan = point.mWifiCount > 0;
-            boolean hasCellScan = point.mCellCount > 0;
+            int hash = toGridPoint(gps.x, gps.y);
+            GridPoint gp = grid.get(hash);
+            if (gp == null || gp.mType < type) {
+                grid.put(hash, new GridPoint(type, gps));
+            }
+        }
+
+        for (HashMap.Entry<Integer, GridPoint> entry : grid.entrySet()) {
+            GridPoint gp = entry.getValue();
+            Point gps = gp.mPoint;
+
+            boolean hasWifiScan = (gp.mType & GridPoint.wifi) == GridPoint.wifi;
+            boolean hasCellScan = (gp.mType & GridPoint.cell) == GridPoint.cell;
 
             if (hasWifiScan && !hasCellScan) {
                 drawWifiScan(c, gps);
@@ -149,6 +187,7 @@ class ObservationPointsOverlay extends Overlay {
         while (i.hasNext()) {
             point = i.next();
             if (point.pointMLS != null) {
+                Point gps = new Point();
                 pj.toPixels(point.pointGPS, gps);
                 pj.toPixels(point.pointMLS, mls);
                 drawDot(c, mls, radiusInnerRing - 1, mRedPaint, mBlackStrokePaintThin);

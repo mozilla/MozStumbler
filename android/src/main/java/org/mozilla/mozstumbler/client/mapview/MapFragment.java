@@ -61,7 +61,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public final class MapFragment extends android.support.v4.app.Fragment
-    implements MetricsView.IMapLayerToggleListener {
+        implements MetricsView.IMapLayerToggleListener {
 
     public enum NoMapAvailableMessage { eHideNoMapMessage, eNoMapDueToNoAccessibleStorage, eNoMapDueToNoInternet }
 
@@ -319,7 +319,7 @@ public final class MapFragment extends android.support.v4.app.Fragment
         final List<Overlay> overlays = mMap.getOverlays();
         int idx = 0;
         if (overlays.indexOf(mLowResMapOverlayHighZoom) > -1 || overlays.indexOf(mLowResMapOverlayLowZoom) > -1 ) {
-           idx = 1;
+            idx = 1;
         }
 
         final Overlay overlayRemoved = (!isHighZoom(zoomLevel))? mCoverageTilesOverlayHighZoom : mCoverageTilesOverlayLowZoom;
@@ -344,7 +344,8 @@ public final class MapFragment extends android.support.v4.app.Fragment
         }
 
         final ClientPrefs.MapTileResolutionOptions tileType = prefs.getMapTileResolutionType();
-        if (tileType.ordinal() > 0) {
+        final int idxTileType = tileType.ordinal();
+        if (idxTileType > 0) {
             if (tileType == ClientPrefs.MapTileResolutionOptions.NoMap) {
                 mTextViewIsLowResMap.setVisibility(View.VISIBLE);
                 mTextViewIsLowResMap.setText(getActivity().getString(R.string.map_turned_off));
@@ -365,13 +366,16 @@ public final class MapFragment extends android.support.v4.app.Fragment
 
         final boolean isMLSTileStore = (BuildConfig.TILE_SERVER_URL != null);
 
-        if (isHighBandwidth) {
-            mTextViewIsLowResMap.setVisibility(View.GONE);
-        } else {
-            String msg = getActivity().getString(R.string.map_turned_off);
-            if (mTextViewIsLowResMap.getText().equals(msg)) {
-                mTextViewIsLowResMap.setText(msg);
+        if (idxTileType == 0) {
+            if (isHighBandwidth) {
+                mTextViewIsLowResMap.setVisibility(View.GONE);
+            } else {
+                mTextViewIsLowResMap.setText(getActivity().getString(R.string.low_resolution_map));
+                mTextViewIsLowResMap.setVisibility(View.VISIBLE);
             }
+        } else {
+            String[] labels = getActivity().getResources().getStringArray(R.array.map_tile_resolution_options);
+            mTextViewIsLowResMap.setText(labels[idxTileType]);
             mTextViewIsLowResMap.setVisibility(View.VISIBLE);
         }
 

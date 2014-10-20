@@ -40,6 +40,7 @@ import org.mozilla.mozstumbler.client.navdrawer.MetricsView;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.core.http.HttpUtil;
 import org.mozilla.mozstumbler.service.core.http.IHttpUtil;
+import org.mozilla.mozstumbler.service.stumblerthread.scanners.GPSScanner;
 import org.osmdroid.ResourceProxy;
 import org.osmdroid.api.IGeoPoint;
 import org.osmdroid.events.DelayedMapListener;
@@ -515,8 +516,10 @@ public final class MapFragment extends android.support.v4.app.Fragment
     }
 
     void updateGPSInfo(int satellites, int fixes) {
+        formatTextView(R.id.text_satellites_avail, "%d", satellites);
         formatTextView(R.id.text_satellites_used, "%d", fixes);
-        int icon = fixes > 0 ? R.drawable.ic_gps_receiving_flaticondotcom : R.drawable.ic_gps_no_signal_flaticondotcom;
+        // @TODO this is still not accurate
+        int icon = fixes >= GPSScanner.MIN_SAT_USED_IN_FIX ? R.drawable.ic_gps_receiving_flaticondotcom : R.drawable.ic_gps_no_signal_flaticondotcom;
         ((ImageView) mRootView.findViewById(R.id.fix_indicator)).setImageResource(icon);
     }
 

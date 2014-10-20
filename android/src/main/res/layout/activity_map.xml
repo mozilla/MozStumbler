@@ -31,11 +31,31 @@
             <TextView
                 android:id="@+id/text_satellites_used"
                 android:textColor="@android:color/black"
-                android:layout_width="28dp"
+                android:layout_width="22dp"
                 android:layout_height="match_parent"
                 android:text="0"
                 android:gravity="center_vertical"
                 android:textSize="@dimen/font_size_for_map_view_report_icon"
+                />
+            <TextView
+                android:id="@+id/text_satellites_sep"
+                android:textColor="@android:color/black"
+                android:layout_width="4dp"
+                android:layout_height="match_parent"
+                android:text="@string/satellites_separator"
+                android:gravity="bottom"
+                android:layout_marginBottom="4sp"
+                android:textSize="12sp"
+                />
+            <TextView
+                android:id="@+id/text_satellites_avail"
+                android:textColor="@android:color/black"
+                android:layout_width="14dp"
+                android:layout_height="match_parent"
+                android:text="21"
+                android:gravity="bottom"
+                android:layout_marginBottom="4sp"
+                android:textSize="12sp"
                 />
             <View
                 android:layout_height="match_parent"
@@ -97,9 +117,9 @@
             <TextView
                 android:id="@+id/text_observation_count"
                 android:textColor="@android:color/black"
-                android:layout_width="40dp"
+                android:layout_width="54dp"
                 android:layout_height="match_parent"
-                android:text="3456"
+                android:text="23456"
                 android:gravity="center_vertical"
                 android:textSize="@dimen/font_size_for_map_view_report_icon"
                 />

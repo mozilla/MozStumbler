@@ -11,7 +11,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="KML Observations File"
+        android:text="@string/kml_file_title"
         android:id="@+id/textView"
         android:layout_below="@+id/textView2"
         android:layout_alignParentLeft="true"
@@ -21,7 +21,7 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Load KML File"
+        android:text="@string/kml_file_load"
         android:id="@+id/buttonLoad"
         android:layout_alignTop="@+id/buttonSave"
         android:layout_toRightOf="@+id/buttonSave"
@@ -31,7 +31,7 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Save KML File"
+        android:text="@string/klm_file_save"
         android:id="@+id/buttonSave"
         android:layout_below="@+id/textView3"
         android:layout_alignParentLeft="true"
@@ -41,7 +41,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Developer"
+        android:text="@string/developer_title"
         android:id="@+id/textView2"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
@@ -51,7 +51,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Save/Load the reports (location, wifi+cell counts) for debugging. "
+        android:text="@string/kml_file_description"
         android:id="@+id/textView3"
         android:layout_below="@+id/textView"
         android:layout_alignParentRight="true"
@@ -64,7 +64,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/buttonLoad"
         android:id="@+id/textViewSavedFileLabel"
-        android:text="Saved File:"
+        android:text="@string/kml_file_saved_name"
         android:textSize="10sp"
         android:paddingTop="5dp"
         />
@@ -80,7 +80,5 @@
         android:layout_alignBaseline="@id/textViewSavedFileLabel"
         android:layout_toRightOf="@+id/textViewSavedFileLabel"
         android:layout_toEndOf="@+id/textViewSavedFileLabel" />
-
-
 
 </RelativeLayout>

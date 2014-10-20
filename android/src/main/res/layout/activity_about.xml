@@ -75,7 +75,6 @@
             android:gravity="center"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:paddingTop="32dp"
-            android:clickable="true"
             android:text="@string/about_mapbox_title"
             android:textSize="13sp"
             />
@@ -84,13 +83,12 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:clickable="true"
             android:autoLink="web"
             android:text="@string/about_mapbox"
             android:singleLine="false"
             android:textSize="13sp"
-
             />
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

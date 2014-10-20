@@ -4,18 +4,15 @@
 
 package org.mozilla.mozstumbler.client.subactivities;
 
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
-import android.view.View;
 import android.widget.TextView;
+
 import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.client.PackageUtils;
 
 public class AboutActivity extends ActionBarActivity {
-    private static final String ABOUT_MAPBOX_URL = "https://www.mapbox.com/about/maps/";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,11 +27,6 @@ public class AboutActivity extends ActionBarActivity {
         String str = getResources().getString(R.string.about_version);
         str = String.format(str, PackageUtils.getAppVersion(this));
         textView.setText(str);
-    }
-
-    public void onClick_ViewMapboxAttribution(View v) {
-        Intent openMapboxPage = new Intent(Intent.ACTION_VIEW, Uri.parse(ABOUT_MAPBOX_URL));
-        startActivity(openMapboxPage);
     }
 
     @Override

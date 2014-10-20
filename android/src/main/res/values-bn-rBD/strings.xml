@@ -7,17 +7,7 @@
     <string name="start_scanning">স্ক্যান চালু করুন</string>
     <string name="stop_scanning">স্ক্যান বন্ধ করুন</string>
     <string name="view_leaderboard">লীডারবোর্ড দেখুন</string>
-    <string name="view_map">মোজিলা লোকেশন সার্ভিস পরীক্ষা করুন</string>
     <string name="service_name">Mozilla Stumbler</string>
-    <string name="wifi_access_points">ওয়াই-ফাই এক্সেস পয়েন্ট স্ক্যান হয়েছে: %1$d</string>
-    <string name="wifi_disabled">০ (ওয়াই-ফাই বন্ধ আছে)</string>
-    <string name="visible_wifi_access_points">ওয়াই-ফাই এক্সেস পয়েন্ট বিদ্যমান আছে: %1$s</string>
-    <string name="cells_scanned">সেল স্ক্যান হয়েছে: %1$d</string>
-    <string name="cells_visible">সেল বিদ্যমান আছে: %1$d</string>
-    <string name="gps_satellites">জিপিএস স্যাটেলাইট বিদ্যমান রয়েছে: %1$d/%2$d</string>
-    <string name="last_location">সর্বশেষ অবস্থান: %1$s</string>
-    <string name="coordinate">%1$.4f, %2$.4f</string>
-    <string name="locations_scanned">অবস্থান স্ক্যান হয়েছে: %1$d</string>
     <string name="last_upload_time">সর্বশেষ আপলোড এর সময়: %1$s</string>
     <string name="reports_sent">রিপোর্ট পাঠানো হয়েছে: %1$d</string>
     <string name="service_scanning">ওয়াই-ফাই এবং মোবাইল নেটওয়ার্ক এর জন্য স্ক্যান করা হচ্ছে</string>

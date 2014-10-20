@@ -7,17 +7,7 @@
     <string name="start_scanning">Start innsamling</string>
     <string name="stop_scanning">Stopp innsamling</string>
     <string name="view_leaderboard">Vis resultatliste</string>
-    <string name="view_map">Test Mozillas plasseringstjeneste</string>
     <string name="service_name">Mozilla Stumbler</string>
-    <string name="wifi_access_points">Innsamlede trådløspunkt: %1$d</string>
-    <!--<string name="wifi_disabled">0 (Wi-Fi disabled)</string> translation missing-->
-    <string name="visible_wifi_access_points">Synlige trådløspunkt: %1$s</string>
-    <string name="cells_scanned">Innsamlede mobilnettverk: %1$d</string>
-    <string name="cells_visible">Synlige mobilnettverk: %1$d</string>
-    <string name="gps_satellites">Synlige GPS-satellitter: %1$d/%2$d</string>
-    <string name="last_location">Forrige plassering: %1$s</string>
-    <string name="coordinate">%1$.4f, %2$.4f</string>
-    <string name="locations_scanned">Innsamlede plasseringer: %1$d</string>
     <string name="last_upload_time">Siste opplastingstidspunkt: %1$s</string>
     <string name="reports_sent">Sendte rapporter: %1$d</string>
     <string name="service_scanning">Samler inn trådløspunkt og mobilnettverk</string>

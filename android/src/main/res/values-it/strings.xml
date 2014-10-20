@@ -7,17 +7,7 @@
     <string name="start_scanning">Inizia l\'analisi</string>
     <string name="stop_scanning">Interrompi l\'analisi</string>
     <string name="view_leaderboard">Guarda la classifica</string>
-    <string name="view_map">Prova il servizio di localizzazione di Mozilla</string>
     <string name="service_name">Mozilla Stumbler</string>
-    <string name="wifi_access_points">Access point Wi-Fi analizzati: %1$d</string>
-    <!--<string name="wifi_disabled">0 (Wi-Fi disabled)</string> translation missing-->
-    <string name="visible_wifi_access_points">Access point Wi-Fi visibili: %1$s</string>
-    <string name="cells_scanned">Celle analizzate: %1$d</string>
-    <string name="cells_visible">Celle visibili: %1$d</string>
-    <string name="gps_satellites">Satelliti GPS visibili: %1$d/%2$d</string>
-    <string name="last_location">Ultima posizione: %1$s</string>
-    <string name="coordinate">%1$.4f, %2$.4f</string>
-    <string name="locations_scanned">Posizioni analizzate: %1$d</string>
     <string name="last_upload_time">Ultimo invio dati: %1$s</string>
     <string name="reports_sent">Rapporti inviati: %1$d</string>
     <string name="service_scanning">Analisi delle reti Wi-Fi e cellulari in corso</string>

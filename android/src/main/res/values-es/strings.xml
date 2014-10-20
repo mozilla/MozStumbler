@@ -8,21 +8,7 @@
     <string name="start_scanning">Comenzar escaneo</string>
     <string name="stop_scanning">Detener escaneo</string>
     <string name="view_leaderboard">Ver tabla de posiciones</string>
-    <string name="view_map">Probar servicio de ubicación de Mozilla</string>
     <string name="service_name">Mozilla Stumbler</string>
-    <string name="wifi_access_points">Puntos de acceso Wi-Fi escaneados: %1$d</string>
-    <string name="wifi_disabled">0 (Wi-Fi deshabilitado)</string>
-    <string name="visible_wifi_access_points">Puntos de acceso Wi-Fi visibles: %1$s</string>
-    <string name="wifi_info">Wi-Fi: %1$d visibles, %2$d escaneadas</string>
-    <string name="cells_scanned">Celdas móviles escaneadas: %1$d</string>
-    <string name="cells_visible">Celdas móviles visibles: %1$d</string>
-    <string name="cells_info">Celdas: %1$d visibles, %2$d escaneadas</string>
-    <string name="gps_satellites">Satélites GPS usados/visibles: %1$d/%2$d</string>
-    <string name="num_used">%1d utilizados</string>
-    <string name="num_visible">%1d visibles</string>
-    <string name="last_location">Última ubicación: %1$s</string>
-    <string name="coordinate">%1$.4f, %2$.4f</string>
-    <string name="locations_scanned">Ubicaciones escaneadas: %1$d</string>
     <string name="last_upload_time">Último envío de datos: %1$s</string>
     <string name="reports_sent">Reportes enviados: %1$d</string>
     <string name="service_scanning">Escaneando redes Wi-Fi y móviles</string>
@@ -80,7 +66,7 @@
     <string name="drawer_open">Mostrar barra lateral</string>
     <string name="drawer_close">Cerrar barra lateral</string>
     <string name="title_activity_leaderboard">Tabla de posiciones</string>
-    <string name="drawer_map_layers_title">Capas del mapa (para nerds)</string>
+    <string name="drawer_map_layers_title">Leyenda del mapa</string>
     <string name="first_run_message_part1">El Servicio de Ubicación de Mozilla es un servicio abierto para localizar dispositivos usando puntos de acceso Wi-Fi y torres celulares.</string>
     <string name="first_run_message_part2">Lee nuestra <a href="https://location.services.mozilla.com/privacy">política de privacidad</a> y luego inicia escaneando para comenzar a colaborar en tu ubicación actual.</string>
     <string name="first_run_start_stumbling">Inicia escaneando</string>

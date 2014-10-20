@@ -7,17 +7,7 @@
     <string name="start_scanning">شروع اسکن</string>
     <string name="stop_scanning">توقف اسکن</string>
     <string name="view_leaderboard">مشاهدهٔ برد بالاترین‌ها</string>
-    <string name="view_map">آزمایش خدمات مکانی موزیلا</string>
     <string name="service_name">Mozilla Stumbler</string>
-    <string name="wifi_access_points">نقاط دسترسی وای‌فای اسکن‌شده: %1$d</string>
-    <string name="wifi_disabled">۰ (وای‌فای غیرفعال‌شده)</string>
-    <string name="visible_wifi_access_points">نقاط دسترسی نمایان وای‌فای: %1$s</string>
-    <string name="cells_scanned">شبکه‌های گوشی همراه اسکن‌شده: %1$d</string>
-    <string name="cells_visible">شبکه‌های گوشی همراه نمایان: %1$d</string>
-    <string name="gps_satellites">ماهواره‌های استفاده‌شده / نمایان: %1$d/%2$d</string>
-    <string name="last_location">آخرین مکان: %1$s</string>
-    <string name="coordinate">%1$.4f، %2$.4f</string>
-    <string name="locations_scanned">مکان‌های اسکن‌شده: %1$d</string>
     <string name="last_upload_time">آخرین زمان بارگذاری: %1$s</string>
     <string name="reports_sent">گزارش‌های ارسال‌شده: %1$d</string>
     <string name="service_scanning">اسکن‌کردن برای وای‌فای و شبکه‌های گوشی همراه</string>

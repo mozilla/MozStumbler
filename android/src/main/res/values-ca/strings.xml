@@ -7,17 +7,7 @@
     <string name="start_scanning">Iniciar Escaneig</string>
     <string name="stop_scanning">Detindre Escaneig</string>
     <string name="view_leaderboard">Vore Classificació</string>
-    <string name="view_map">Provar el Servei de Posició de Mozilla</string>
     <string name="service_name">Mozilla Stumbler</string>
-    <string name="wifi_access_points">Punts d\'accés Wi-Fi escanejats: %1$d</string>
-    <!--translation missing <string name="wifi_disabled">0 (Wi-Fi disabled)</string>-->
-    <string name="visible_wifi_access_points">Punts d\'accés Wi-Fi visibles: %1$s</string>
-    <string name="cells_scanned">Cel·les escanejades: %1$d</string>
-    <string name="cells_visible">Cel·les visibles: %1$d</string>
-    <string name="gps_satellites">Satèl·lits GPS: %1$d/%2$d</string>
-    <string name="last_location">Última posició: %1$s</string>
-    <!--translation missing <string name="coordinate">%1$.4f, %2$.4f</string>-->
-    <string name="locations_scanned">Posicions escanejades: %1$d</string>
     <string name="last_upload_time">Temps de l\'ùltima càrrega: %1$s</string>
     <string name="reports_sent">Informes enviats: %1$d</string>
     <string name="service_scanning">Escaneat en cerca de xarxes Wi-Fi i cel·lulars</string>

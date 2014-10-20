@@ -7,16 +7,7 @@
     <string name="start_scanning">क्रमवीक्षण शुरू करें</string>
     <string name="stop_scanning">क्रमवीक्षण बंद करें</string>
     <string name="view_leaderboard">अग्रणी उपयोगकर्ता फलक देखें</string>
-    <string name="view_map">मोज़िला स्थानसेवा जांचे</string>
     <string name="service_name">मोज़िला स्टम्बलर</string>
-    <string name="wifi_access_points">जांचे गए Wi-Fi प्रवेश बिंदु: %1$d</string>
-    <string name="wifi_disabled">० (Wi-Fi बंद है)</string>
-    <string name="visible_wifi_access_points">दिखाई दे रहे Wi-Fi प्रवेश बिंदु: %1$s</string>
-    <string name="cells_scanned">खोजी गई भ्रमणध्वनि कोशिकाएं: %1$d</string>
-    <string name="cells_visible">दिखाई दे रही भ्रमणध्वनि कोशिकाएं: %1$d</string>
-    <string name="gps_satellites">इस्तेमाल किये गए/दिखाई दे रहे GPS उपग्रह: %1$d/%2$d</string>
-    <string name="locations_scanned">जांचे गए स्थान: %1$d</string>
-    <string name="last_location">आखिरी स्थान: %1$s</string>
     <string name="coordinate">%1$.4f, %2$.4f</string>
     <string name="last_upload_time">अंतिम विवरण भेजने का समय: %1$s</string>
     <string name="reports_sent">भेजे गए विवरण: %1$d</string>

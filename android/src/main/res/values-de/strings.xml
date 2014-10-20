@@ -7,17 +7,7 @@
     <string name="start_scanning">Scanvorgang starten</string>
     <string name="stop_scanning">Scanvorgang stoppen</string>
     <string name="view_leaderboard">Bestenliste ansehen</string>
-    <string name="view_map">Mozillas Ortungsdienst testen</string>
     <string name="service_name">Mozilla Stumbler</string>
-    <string name="wifi_access_points">Wi-Fi Zugangspunkte gescannt: %1$d</string>
-    <string name="wifi_disabled">0 (Wi-Fi deaktiviert)</string>
-    <string name="visible_wifi_access_points">Wi-Fi Zugangspunkte sichtbar: %1$s</string>
-    <string name="cells_scanned">Funkzellen gescannt: %1$d</string>
-    <string name="cells_visible">Funkzellen sichtbar: %1$d</string>
-    <string name="gps_satellites">GPS Satelliten verwendet/sichtbar: %1$d/%2$d</string>
-    <string name="last_location">Letzter Standort: %1$s</string>
-    <string name="coordinate">%1$.4f, %2$.4f</string>
-    <string name="locations_scanned">Standorte gescannt: %1$d</string>
     <string name="last_upload_time">Letzter Upload: %1$s</string>
     <string name="reports_sent">Gesendete Berichte: %1$d</string>
     <string name="service_scanning">Scanne Wi-Fi und Mobilfunknetze</string>

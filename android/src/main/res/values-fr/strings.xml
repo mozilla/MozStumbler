@@ -8,8 +8,6 @@
     <string name="stop_scanning">Arrêter l\'analyse</string>
     <string name="view_leaderboard">Voir le classement</string>
     <string name="service_name">Mozilla Stumbler</string>
-    <string name="coordinate">%1$.4f, %2$.4f</string>
-    <string name="locations_scanned">Emplacements enregistrés : %1$d</string>
     <string name="last_upload_time">Date du dernier envoi : %1$s</string>
     <string name="reports_sent">Rapports envoyés : %1$d</string>
     <string name="service_scanning">Détection des réseaux Wi-Fi et cellulaires</string>

@@ -36,6 +36,29 @@
             android:text="https://location.services.mozilla.com"
             android:textSize="13sp"
             />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:paddingTop="16dp"
+            android:autoLink="web"
+            android:text="@string/privacy_policy"
+            android:textSize="13sp"
+            android:id="@+id/textViewPrivacyTitle"
+            android:layout_gravity="center_horizontal" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:autoLink="web"
+            android:text="https://location.services.mozilla.com/privacy"
+            android:textSize="13sp"
+            android:id="@+id/textViewPrivacyLink"
+            android:layout_gravity="center_horizontal" />
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

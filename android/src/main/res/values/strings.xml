@@ -37,7 +37,7 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="about_version">Version %1$s</string>
-    <string name="about_openstreetmap">Map view tiles © OpenStreetMap contributors\nhttp://www.openstreetmap.org</string>
+    <string name="about_openstreetmap">Map view tiles\n© OpenStreetMap contributors\nhttp://www.openstreetmap.org</string>
     <string name="about_mapbox_title">MapBox</string>
     <string name="about_mapbox">Learn more at http://www.mapbox.com</string>
     <string name="about_legal_aosp">Some iconography in this app is reproduced from work created and shared by the Android Open Source Project and used according to terms described in the Creative Commons 2.5 Attribution License.</string>
@@ -76,7 +76,7 @@
     <string name="share_after_kml_saved">The file is saved on device, would you like to share the file?</string>
     <string name="enter_email">Enter e-mail address (optional)</string>
     <string name="enter_email_title">Email: </string>
-    <string name="enter_email_longtext">Your email address is never displayed to people and is only used for your own reports</string>
+    <string name="enter_email_longtext">Your email address is never displayed to people and is only used for your own reports.</string>
     <string name="drawer_open">Show drawer</string>
     <string name="drawer_close">Close drawer</string>
     <string name="title_activity_leaderboard">Leaderboard</string>
@@ -89,9 +89,9 @@
     <string name="map_offline_mode">"The map will not update without an Internet connection,\nhowever you are still able to collect data."</string>
     <string name="action_developer">Developer</string>
     <string name="enable_option_show_mls_on_map">Enable MLS layer toggle</string>
-    <string name="enable_option_show_mls_on_map_summary">At the cost of a bit more memory and network usage, the map can show MLS location queries for your scans.</string>
-    <string name="cell_only_observation">Cell only observation</string>
-    <string name="wifi_only_observation">Wi-Fi only observation</string>
+    <string name="enable_option_show_mls_on_map_summary">At the cost of a bit more memory and network usage the map can show MLS location queries for your scans.</string>
+    <string name="cell_only_observation">Cell only report</string>
+    <string name="wifi_only_observation">Wi-Fi only report</string>
     <string name="low_resolution_map">Low resolution map</string>
     <string name="map_turned_off">Map display off</string>
     <string name="map_tile_resolution_options_label">Map tile options:</string>

@@ -7,7 +7,17 @@
     <string name="start_scanning">Начать сканирование</string>
     <string name="stop_scanning">Остановить сканирование</string>
     <string name="view_leaderboard">Открыть таблицу лидеров</string>
+    <string name="view_map">Показать карту</string>
     <string name="service_name">Mozilla Stumbler</string>
+    <string name="wifi_access_points">Отсканировано Wi-Fi точек: %1$d</string>
+    <!--<string name="wifi_disabled">0 (Wi-Fi disabled)</string> translation missing-->
+    <string name="visible_wifi_access_points">Доступно Wi-Fi точек: %1$s</string>
+    <string name="cells_scanned">Отсканировано GSM сот: %1$d</string>
+    <string name="cells_visible">Доступно GSM сот: %1$d</string>
+    <string name="gps_satellites">Доступно GPS спутников: %1$d/%2$d</string>
+    <string name="last_location">Координаты: %1$s</string>
+    <string name="coordinate">%1$.4f, %2$.4f</string>
+    <string name="locations_scanned">Отсканировано координат: %1$d</string>
     <string name="last_upload_time">Время последней отправки: %1$s</string>
     <string name="reports_sent">Отправлено измерений: %1$d</string>
     <string name="service_scanning">Сканирование Wi-Fi и сотовых сетей</string>

@@ -7,7 +7,18 @@
     <string name="start_scanning">Spusť vyhledávání</string>
     <string name="stop_scanning">Zastav vyhledávání</string>
     <string name="view_leaderboard">Zobraz žebříček</string>
+    <string name="view_map">Vyzkoušet zjišťování pozice</string>
     <string name="service_name">Mozilla Stumbler</string>
+    <string name="wifi_access_points">Vyhledány Wi-Fi přístupové body: %1$d</string>
+    <!--<string name="wifi_disabled">0 (Wi-Fi disabled)</string> translation missing-->
+    <string name="visible_wifi_access_points">Wi-Fi přístupové body v dosahu: %1$s</string>
+    <!--translations missing
+    <string name="cells_scanned">Cells Scanned: %1$d</string>
+    <string name="cells_visible">Cells Visible: %1$d</string>-->
+    <string name="gps_satellites">GPS satelity v dosahu: %1$d/%2$d</string>
+    <string name="last_location">Poslední pozice: %1$s</string>
+    <string name="coordinate">%1$.4f, %2$.4f</string>
+    <string name="locations_scanned">Prohledáno míst: %1$d</string>
     <string name="last_upload_time">Čas posledniho reportu: %1$s</string>
     <string name="reports_sent">Odesláno reportů: %1$d</string>
     <string name="service_scanning">Vyhledávám Wi-Fi a mobilní sítě</string>

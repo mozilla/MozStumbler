@@ -28,7 +28,6 @@ public class LeaderboardActivity extends ActionBarActivity {
         setContentView(R.layout.activity_leaderboard);
         mWebView = (WebView) findViewById(R.id.webview);
         mWebView.setVisibility(View.INVISIBLE);
-        mWebView.getSettings().setJavaScriptEnabled(true);
     }
 
     @Override

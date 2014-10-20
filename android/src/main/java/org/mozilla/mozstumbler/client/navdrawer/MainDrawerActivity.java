@@ -47,12 +47,12 @@ public class MainDrawerActivity
     private MenuItem mMenuItemStartStop;
 
     final CompoundButton.OnCheckedChangeListener mStartStopButtonListener =
-        new CompoundButton.OnCheckedChangeListener() {
-        @Override
-        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-            mMapFragment.toggleScanning(mMenuItemStartStop);
-        }
-    };
+            new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    mMapFragment.toggleScanning(mMenuItemStartStop);
+                }
+            };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -259,18 +259,11 @@ public class MainDrawerActivity
         mMapFragment.formatTextView(R.id.text_cells_visible, "%d", service.getCurrentCellInfoCount());
         mMapFragment.formatTextView(R.id.text_wifis_visible, "%d", service.getVisibleAPCount());
 
-        mMetricsView.update();
-    }
+        int count = getApp().getObservedLocationCount();
+        mMapFragment.formatTextView(R.id.text_observation_count, "%d", count);
+        mMetricsView.setObservationCount(count);
 
-    @Override
-    public void displayObservationCount(final int count) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                mMapFragment.formatTextView(R.id.text_observation_count, "%d", count);
-                mMetricsView.setObservationCount(count);
-            }
-        });
+        mMetricsView.update();
     }
 
     @Override

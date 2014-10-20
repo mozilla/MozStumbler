@@ -25,6 +25,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import org.acra.ACRA;
+import org.acra.annotation.ReportsCrashes;
 import org.acra.sender.HttpSender;
 import org.mozilla.mozstumbler.BuildConfig;
 import org.mozilla.mozstumbler.R;
@@ -51,8 +52,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.acra.annotation.ReportsCrashes;
-
 @ReportsCrashes(
     formKey="",
     httpMethod = HttpSender.Method.PUT,
@@ -69,6 +68,7 @@ public class MainApp extends Application
     private ServiceConnection mConnection;
     private ServiceBroadcastReceiver mReceiver;
     private WeakReference<IMainActivity> mMainActivity = new WeakReference<IMainActivity>(null);
+    private int mObservationCount = 0;
     private final long MAX_BYTES_DISK_STORAGE = 1000 * 1000 * 20; // 20MB for MozStumbler by default, is ok?
     private final int MAX_WEEKS_OLD_STORED = 4;
     public static final String INTENT_TURN_OFF = "org.mozilla.mozstumbler.turnMeOff";
@@ -380,12 +380,12 @@ public class MainApp extends Application
         }
     }
 
-    private int observationCount = 0;
     public void observedLocationCountIncrement() {
-        observationCount++;
-        if (mMainActivity.get() != null) {
-            mMainActivity.get().displayObservationCount(observationCount);
-        }
+        mObservationCount++;
+    }
+
+    public int getObservedLocationCount() {
+        return mObservationCount;
     }
 
     public void showDeveloperDialog(Activity activity) {

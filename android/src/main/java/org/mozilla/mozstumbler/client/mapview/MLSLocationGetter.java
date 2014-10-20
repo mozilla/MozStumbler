@@ -58,9 +58,13 @@ public class MLSLocationGetter extends AsyncTask<String, Void, Location> {
             Log.i(LOG_TAG, "Error processing search request");
             return null;
         }
-        // int bytesSent = resp.bytesSent();
 
-        JSONObject response = null;
+        if (!resp.isSuccessCode2XX()) {
+            //TODO detect malformed request, and clear out mlsrequest on observation point
+            return null;
+        }
+
+        JSONObject response;
         try {
             response = new JSONObject(resp.body());
         } catch (JSONException e) {
@@ -72,7 +76,7 @@ public class MLSLocationGetter extends AsyncTask<String, Void, Location> {
         try {
             status = response.getString("status");
         } catch (JSONException ex) {
-            Log.e(LOG_TAG, "Error deserializing status from JSON", ex);
+            Log.e(LOG_TAG, "Error deserializing status from JSON");
             return null;
         }
 

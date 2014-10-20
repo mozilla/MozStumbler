@@ -8,6 +8,7 @@
     <EditTextPreference
         android:key="email"
         android:title="@string/enter_email"
+        android:inputType="textEmailAddress"
         android:summary="@string/enter_email_longtext" />
     <CheckBoxPreference
         android:key="wifi_only"

@@ -31,10 +31,10 @@
             <TextView
                 android:id="@+id/text_satellites_used"
                 android:textColor="@android:color/black"
-                android:layout_width="20dp"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:text="0"
-                android:gravity="center_vertical|end"
+                android:gravity="center_vertical"
                 android:textSize="@dimen/font_size_for_map_view_report_icon"
                 />
             <TextView
@@ -43,7 +43,7 @@
                 android:layout_width="6dp"
                 android:layout_height="match_parent"
                 android:text="@string/satellites_separator"
-                android:gravity="bottom|center_horizontal"
+                android:gravity="bottom"
                 android:layout_marginBottom="4sp"
                 android:textSize="12sp"
                 />
@@ -53,7 +53,7 @@
                 android:layout_width="14dp"
                 android:layout_height="match_parent"
                 android:text="0"
-                android:gravity="bottom|start"
+                android:gravity="bottom"
                 android:layout_marginBottom="4sp"
                 android:textSize="12sp"
                 />

@@ -28,15 +28,40 @@
             android:layout_toRightOf="@id/fix_indicator"
             android:layout_toEndOf="@id/fix_indicator"
             >
-            <TextView
-                android:id="@+id/text_satellites_used"
-                android:textColor="@android:color/black"
-                android:layout_width="28dp"
+            <LinearLayout
+                android:layout_width="40dp"
                 android:layout_height="match_parent"
-                android:text="0"
-                android:gravity="center_vertical"
-                android:textSize="@dimen/font_size_for_map_view_report_icon"
-                />
+                >
+                <TextView
+                    android:id="@+id/text_satellites_used"
+                    android:textColor="@android:color/black"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="0"
+                    android:gravity="center_vertical"
+                    android:textSize="@dimen/font_size_for_map_view_report_icon"
+                    />
+                <TextView
+                    android:id="@+id/text_satellites_sep"
+                    android:textColor="@android:color/black"
+                    android:layout_width="6dp"
+                    android:layout_height="match_parent"
+                    android:text="@string/satellites_separator"
+                    android:gravity="bottom"
+                    android:layout_marginBottom="4sp"
+                    android:textSize="12sp"
+                    />
+                <TextView
+                    android:id="@+id/text_satellites_avail"
+                    android:textColor="@android:color/black"
+                    android:layout_width="14dp"
+                    android:layout_height="match_parent"
+                    android:text="0"
+                    android:gravity="bottom"
+                    android:layout_marginBottom="4sp"
+                    android:textSize="12sp"
+                    />
+            </LinearLayout>
             <View
                 android:layout_height="match_parent"
                 android:layout_width="wrap_content"
@@ -53,9 +78,9 @@
             <TextView
                 android:id="@+id/text_cells_visible"
                 android:textColor="@android:color/black"
-                android:layout_width="40dp"
+                android:layout_width="32dp"
                 android:layout_height="match_parent"
-                android:text="3456"
+                android:text="999"
                 android:gravity="center_vertical"
                 android:textSize="@dimen/font_size_for_map_view_report_icon"
                 />
@@ -75,9 +100,9 @@
             <TextView
                 android:id="@+id/text_wifis_visible"
                 android:textColor="@android:color/black"
-                android:layout_width="40dp"
+                android:layout_width="32dp"
                 android:layout_height="match_parent"
-                android:text="3456"
+                android:text="999"
                 android:gravity="center_vertical"
                 android:textSize="@dimen/font_size_for_map_view_report_icon"
                 />
@@ -97,9 +122,9 @@
             <TextView
                 android:id="@+id/text_observation_count"
                 android:textColor="@android:color/black"
-                android:layout_width="40dp"
+                android:layout_width="50dp"
                 android:layout_height="match_parent"
-                android:text="3456"
+                android:text="99999"
                 android:gravity="center_vertical"
                 android:textSize="@dimen/font_size_for_map_view_report_icon"
                 />

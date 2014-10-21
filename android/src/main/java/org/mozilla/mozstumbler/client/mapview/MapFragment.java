@@ -8,7 +8,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.graphics.Rect;
 import android.location.Location;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -40,6 +39,7 @@ import org.mozilla.mozstumbler.client.navdrawer.MetricsView;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.core.http.HttpUtil;
 import org.mozilla.mozstumbler.service.core.http.IHttpUtil;
+import org.mozilla.mozstumbler.service.stumblerthread.scanners.GPSScanner;
 import org.osmdroid.ResourceProxy;
 import org.osmdroid.api.IGeoPoint;
 import org.osmdroid.events.DelayedMapListener;
@@ -204,9 +204,9 @@ public final class MapFragment extends android.support.v4.app.Fragment
         ObservedLocationsReceiver observer = ObservedLocationsReceiver.getInstance();
         observer.setMapActivity(this);
 
-        initTextView(R.id.text_cells_visible);
-        initTextView(R.id.text_wifis_visible);
-        initTextView(R.id.text_observation_count);
+        initTextView(R.id.text_cells_visible, "000");
+        initTextView(R.id.text_wifis_visible, "000");
+        initTextView(R.id.text_observation_count, "00000");
 
         showCopyright();
 
@@ -515,8 +515,10 @@ public final class MapFragment extends android.support.v4.app.Fragment
     }
 
     void updateGPSInfo(int satellites, int fixes) {
+        formatTextView(R.id.text_satellites_avail, "%d", satellites);
         formatTextView(R.id.text_satellites_used, "%d", fixes);
-        int icon = fixes > 0 ? R.drawable.ic_gps_receiving_flaticondotcom : R.drawable.ic_gps_no_signal_flaticondotcom;
+        // @TODO this is still not accurate
+        int icon = fixes >= GPSScanner.MIN_SAT_USED_IN_FIX ? R.drawable.ic_gps_receiving_flaticondotcom : R.drawable.ic_gps_no_signal_flaticondotcom;
         ((ImageView) mRootView.findViewById(R.id.fix_indicator)).setImageResource(icon);
     }
 
@@ -636,12 +638,10 @@ public final class MapFragment extends android.support.v4.app.Fragment
         textView.setText(str);
     }
 
-    private void initTextView(int textViewId) {
+    private void initTextView(int textViewId, String bound) {
         TextView textView = (TextView) mRootView.findViewById(textViewId);
-        Rect bounds = new Rect();
         Paint textPaint = textView.getPaint();
-        textPaint.getTextBounds("00000", 0, "00000".length(), bounds);
-        int width = bounds.width();
+        int width = (int) Math.ceil(textPaint.measureText(bound));
         textView.setWidth(width);
         android.widget.LinearLayout.LayoutParams params =
                 new android.widget.LinearLayout.LayoutParams(width, android.widget.LinearLayout.LayoutParams.MATCH_PARENT);

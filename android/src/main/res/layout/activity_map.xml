@@ -78,9 +78,9 @@
             <TextView
                 android:id="@+id/text_cells_visible"
                 android:textColor="@android:color/black"
-                android:layout_width="40dp"
+                android:layout_width="32dp"
                 android:layout_height="match_parent"
-                android:text="3456"
+                android:text="999"
                 android:gravity="center_vertical"
                 android:textSize="@dimen/font_size_for_map_view_report_icon"
                 />
@@ -100,9 +100,9 @@
             <TextView
                 android:id="@+id/text_wifis_visible"
                 android:textColor="@android:color/black"
-                android:layout_width="40dp"
+                android:layout_width="32dp"
                 android:layout_height="match_parent"
-                android:text="3456"
+                android:text="999"
                 android:gravity="center_vertical"
                 android:textSize="@dimen/font_size_for_map_view_report_icon"
                 />
@@ -122,9 +122,9 @@
             <TextView
                 android:id="@+id/text_observation_count"
                 android:textColor="@android:color/black"
-                android:layout_width="54dp"
+                android:layout_width="50dp"
                 android:layout_height="match_parent"
-                android:text="23456"
+                android:text="99999"
                 android:gravity="center_vertical"
                 android:textSize="@dimen/font_size_for_map_view_report_icon"
                 />

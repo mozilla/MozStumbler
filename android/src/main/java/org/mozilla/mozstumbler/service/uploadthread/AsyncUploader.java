@@ -142,9 +142,8 @@ public class AsyncUploader extends AsyncTask<AsyncUploadParam, AsyncProgressList
                         logMsg = "HTTP non-success code: " + result.httpResponse();
                     }
                     
-                    if (result != null && result.isErrorCode4xx()) {
-                        logMsg += ", Error, deleting bad report";
-                        // delete on 4xx, no point in resending
+                    if (result != null && result.isErrorCode400BadRequest()) {
+                        logMsg += ", 400 Error, deleting bad report";
                         dm.delete(batch.filename);
                     } else {
                         DataStorageManager.getInstance().saveCurrentReportsSendBufferToDisk();

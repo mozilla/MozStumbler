@@ -389,17 +389,6 @@ public class MainApp extends Application
     }
 
     public void showDeveloperDialog(Activity activity) {
-       if (getService() == null) {
-           return;
-       }
-
-       // TODO stop doing this, move it to kml only
-       if (getService().isScanning()) {
-           stopScanning();
-           if (mMainActivity.get() != null) {
-               mMainActivity.get().updateUiOnMainThread();
-           }
-       }
        activity.startActivity(new Intent(activity, DeveloperActivity.class));
     }
 

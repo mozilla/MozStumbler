@@ -205,9 +205,9 @@ public final class MapFragment extends android.support.v4.app.Fragment
         ObservedLocationsReceiver observer = ObservedLocationsReceiver.getInstance();
         observer.setMapActivity(this);
 
-        initTextView(R.id.text_cells_visible);
-        initTextView(R.id.text_wifis_visible);
-        initTextView(R.id.text_observation_count);
+        initTextView(R.id.text_cells_visible, "000");
+        initTextView(R.id.text_wifis_visible, "000");
+        initTextView(R.id.text_observation_count, "00000");
 
         showCopyright();
 
@@ -639,11 +639,11 @@ public final class MapFragment extends android.support.v4.app.Fragment
         textView.setText(str);
     }
 
-    private void initTextView(int textViewId) {
+    private void initTextView(int textViewId, String bound) {
         TextView textView = (TextView) mRootView.findViewById(textViewId);
         Rect bounds = new Rect();
         Paint textPaint = textView.getPaint();
-        textPaint.getTextBounds("00000", 0, "00000".length(), bounds);
+        textPaint.getTextBounds(bound, 0, bound.length(), bounds);
         int width = bounds.width();
         textView.setWidth(width);
         android.widget.LinearLayout.LayoutParams params =

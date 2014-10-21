@@ -32,8 +32,8 @@ public class GPSScanner implements LocationListener {
 
     private static final String LOG_TAG = AppGlobals.LOG_PREFIX + GPSScanner.class.getSimpleName();
     private static final int MIN_SAT_USED_IN_FIX = 3;
-    private static final long ACTIVE_MODE_GPS_MIN_UPDATE_TIME_MS = 1000;
-    private static final float ACTIVE_MODE_GPS_MIN_UPDATE_DISTANCE_M = 10;
+    private static final long ACTIVE_MODE_GPS_MIN_UPDATE_TIME_MS = 2000;
+    private static final float ACTIVE_MODE_GPS_MIN_UPDATE_DISTANCE_M = 30;
     private static final long PASSIVE_GPS_MIN_UPDATE_FREQ_MS = 3000;
     private static final float PASSIVE_GPS_MOVEMENT_MIN_DELTA_M = 30;
 

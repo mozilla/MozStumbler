@@ -8,7 +8,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.graphics.Rect;
 import android.location.Location;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -641,10 +640,8 @@ public final class MapFragment extends android.support.v4.app.Fragment
 
     private void initTextView(int textViewId, String bound) {
         TextView textView = (TextView) mRootView.findViewById(textViewId);
-        Rect bounds = new Rect();
         Paint textPaint = textView.getPaint();
-        textPaint.getTextBounds(bound, 0, bound.length(), bounds);
-        int width = bounds.width();
+        int width = (int) Math.ceil(textPaint.measureText(bound));
         textView.setWidth(width);
         android.widget.LinearLayout.LayoutParams params =
                 new android.widget.LinearLayout.LayoutParams(width, android.widget.LinearLayout.LayoutParams.MATCH_PARENT);

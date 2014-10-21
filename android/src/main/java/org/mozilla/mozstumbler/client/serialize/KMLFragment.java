@@ -25,6 +25,7 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.mozilla.mozstumbler.R;
+import org.mozilla.mozstumbler.client.MainApp;
 import org.mozilla.mozstumbler.client.ObservedLocationsReceiver;
 import org.mozilla.mozstumbler.client.mapview.ObservationPoint;
 import org.mozilla.mozstumbler.service.AppGlobals;
@@ -134,6 +135,8 @@ public class KMLFragment extends Fragment
     }
 
     private void onClickSave(View v) {
+        stopScanning();
+        
         if (mPointsToWrite == null) {
             return;
         }
@@ -257,9 +260,14 @@ public class KMLFragment extends Fragment
         return (list != null)? list : new String[0];
     }
 
+    private void stopScanning() {
+        ((MainApp)getActivity().getApplication()).stopScanning();
+    }
+
     private Dialog mLoadFileDialog;
 
     private void onClickLoad(View v) {
+        stopScanning();
         final String[] files = getFileList();
         if (files == null || files.length < 1) {
             return;

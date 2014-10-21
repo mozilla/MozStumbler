@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.location.Location;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.v4.content.LocalBroadcastManager;
@@ -42,7 +43,9 @@ public class ObservedLocationsReceiver extends BroadcastReceiver {
     private final Handler mHandler = new Handler(Looper.getMainLooper());
 
     // Upper bound on the size of the linked lists of points, for memory and performance safety.
-    private final int MAX_SIZE_OF_POINT_LISTS = 5000;
+    // On older devices, store fewer observations
+    private final int MAX_SIZE_OF_POINT_LISTS = (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH)?
+                                                5000 : 2500;
 
     private ObservedLocationsReceiver() {
         mHandler.postDelayed(mFetchMLSRunnable, FREQ_FETCH_MLS_MS);

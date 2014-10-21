@@ -59,6 +59,7 @@ import org.osmdroid.views.overlay.Overlay;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public final class MapFragment extends android.support.v4.app.Fragment
         implements MetricsView.IMapLayerToggleListener {
@@ -68,7 +69,6 @@ public final class MapFragment extends android.support.v4.app.Fragment
     private static final String LOG_TAG = AppGlobals.LOG_PREFIX + MapFragment.class.getSimpleName();
 
     private static final String COVERAGE_REDIRECT_URL = "https://location.services.mozilla.com/map.json";
-    private static String sCoverageUrl = null;
     private static int sGPSColor;
     private static final String ZOOM_KEY = "zoom";
     private static final int DEFAULT_ZOOM = 13;
@@ -92,6 +92,7 @@ public final class MapFragment extends android.support.v4.app.Fragment
     private View mRootView;
     private TextView mTextViewIsLowResMap;
     private HighLowBandwidthReceiver mHighLowBandwidthChecker;
+    private CoverageSetup mCoverageSetup = new CoverageSetup();
 
     // Used to blank the high-res tile source when adding a low-res overlay
     private class BlankTileSource extends OnlineTileSourceBase {
@@ -235,44 +236,72 @@ public final class MapFragment extends android.support.v4.app.Fragment
         return (MainApp) getActivity().getApplication();
     }
 
-    final private Runnable mCoverageUrlQuery = new Runnable() {
-        @Override
-        public void run() {
-            // @TODO: we do a similar "read from URL" in Updater, AbstractCommunicator, make one function for this
-            if (sCoverageUrl == null) {
-                mGetUrl.schedule(new TimerTask() {
-                    @Override
-                    public void run() {
+    private class CoverageSetup {
+        private AtomicBoolean isGetUrlAndInitCoverageRunning = new AtomicBoolean();
+        private String coverageUrl;
 
-                        IHttpUtil httpUtil = new HttpUtil();
-
-                        java.util.Scanner scanner;
-                        try {
-                            scanner = new java.util.Scanner(httpUtil.getUrlAsStream(COVERAGE_REDIRECT_URL), "UTF-8");
-                        } catch (Exception ex) {
-                            Log.d(LOG_TAG, ex.toString());
-                            AppGlobals.guiLogInfo("Failed to get coverage url:" + ex.toString());
-                            return;
-                        }
-                        scanner.useDelimiter("\\A");
-                        String result = scanner.next();
-                        try {
-                            sCoverageUrl = new JSONObject(result).getString("tiles_url");
-                        } catch (JSONException ex) {
-                            AppGlobals.guiLogInfo("Failed to get coverage url:" + ex.toString());
-                        }
-                        scanner.close();
+        private void initOnMainThread() {
+            final Runnable runnable = new Runnable() {
+                @Override
+                public void run() {
+                    if (mCoverageTilesOverlayLowZoom != null ||  // checks if init() has already happened
+                        ClientPrefs.getInstance().getMapTileResolutionType() == ClientPrefs.MapTileResolutionOptions.NoMap) {
+                        return;
                     }
-                }, 0);
-            } else if (mCoverageTilesOverlayLowZoom == null) {
-                if (ClientPrefs.getInstance().getMapTileResolutionType() == ClientPrefs.MapTileResolutionOptions.NoMap) {
-                    return;
+                    initCoverageTiles(coverageUrl);
+                    updateOverlayCoverageLayer(mMap.getZoomLevel());
                 }
-                initCoverageTiles(sCoverageUrl);
-                updateOverlayCoverageLayer(mMap.getZoomLevel());
-            }
+            };
+            mMap.post(runnable);
         }
-    };
+
+        void getUrlAndInit() {
+            if (isGetUrlAndInitCoverageRunning.get() || mCoverageTilesOverlayLowZoom != null) {
+                return;
+            }
+            isGetUrlAndInitCoverageRunning.set(true);
+
+            final Runnable coverageUrlQuery = new Runnable() {
+                @Override
+                public void run() {
+                    if (coverageUrl != null) {
+                        initOnMainThread();
+                        isGetUrlAndInitCoverageRunning.set(false);
+                        return;
+                    }
+
+                    mGetUrl.schedule(new TimerTask() {
+                        @Override
+                        public void run() {
+                            IHttpUtil httpUtil = new HttpUtil();
+
+                            java.util.Scanner scanner;
+                            try {
+                                scanner = new java.util.Scanner(httpUtil.getUrlAsStream(COVERAGE_REDIRECT_URL), "UTF-8");
+                            } catch (Exception ex) {
+                                Log.d(LOG_TAG, ex.toString());
+                                AppGlobals.guiLogInfo("Failed to get coverage url:" + ex.toString());
+                                isGetUrlAndInitCoverageRunning.set(false);
+                                return;
+                            }
+                            scanner.useDelimiter("\\A");
+                            String result = scanner.next();
+                            try {
+                                coverageUrl = new JSONObject(result).getString("tiles_url");
+                            } catch (JSONException ex) {
+                                AppGlobals.guiLogInfo("Failed to get coverage url:" + ex.toString());
+                            }
+                            scanner.close();
+                            initOnMainThread();
+                            isGetUrlAndInitCoverageRunning.set(false);
+                        }
+                    }, 0);
+                }
+            };
+
+            mMap.post(coverageUrlQuery);
+        }
+    }
 
     private void initCoverageTiles(String coverageUrl) {
         mCoverageTilesOverlayLowZoom = new CoverageOverlay(CoverageOverlay.LOW_ZOOM,
@@ -439,7 +468,7 @@ public final class MapFragment extends android.support.v4.app.Fragment
             return;
         }
 
-        mMap.post(mCoverageUrlQuery);
+        mCoverageSetup.getUrlAndInit();
 
         final ConnectivityManager cm = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
         final NetworkInfo info = cm.getActiveNetworkInfo();

@@ -31,10 +31,10 @@ public class MLSLocationGetter extends AsyncTask<String, Void, Location> {
     private byte[] mQueryMLSBytes;
     private final int MAX_REQUESTS = 10;
     private static AtomicInteger sRequestCounter = new AtomicInteger(0);
-
+    private boolean mIsBadRequest;
     public interface MLSLocationGetterCallback {
         void setMLSResponseLocation(Location loc);
-        void errorMLSResponse();
+        void errorMLSResponse(boolean stopRequesting);
     }
 
     public MLSLocationGetter(MLSLocationGetterCallback callback, JSONObject mlsQueryObj) {
@@ -59,8 +59,9 @@ public class MLSLocationGetter extends AsyncTask<String, Void, Location> {
             return null;
         }
 
-        if (!resp.isSuccessCode2XX()) {
+        if (resp.isErrorCode400BadRequest()) {
             //TODO detect malformed request, and clear out mlsrequest on observation point
+            mIsBadRequest = true;
             return null;
         }
 
@@ -91,7 +92,7 @@ public class MLSLocationGetter extends AsyncTask<String, Void, Location> {
     protected void onPostExecute(Location location) {
         sRequestCounter.decrementAndGet();
         if (location == null) {
-            mCallback.errorMLSResponse();
+            mCallback.errorMLSResponse(mIsBadRequest);
         } else {
             mCallback.setMLSResponseLocation(location);
         }

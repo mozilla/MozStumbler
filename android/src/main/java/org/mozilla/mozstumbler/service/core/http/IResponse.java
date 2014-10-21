@@ -17,4 +17,6 @@ public interface IResponse {
     public boolean isSuccessCode2XX();
     public boolean isErrorCode4xx();
 
+    public boolean isErrorCode400BadRequest();
+
 }

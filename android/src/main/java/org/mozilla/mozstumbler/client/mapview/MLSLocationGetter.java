@@ -31,10 +31,10 @@ public class MLSLocationGetter extends AsyncTask<String, Void, Location> {
     private byte[] mQueryMLSBytes;
     private final int MAX_REQUESTS = 10;
     private static AtomicInteger sRequestCounter = new AtomicInteger(0);
-
+    private boolean mIsBadRequest;
     public interface MLSLocationGetterCallback {
         void setMLSResponseLocation(Location loc);
-        void errorMLSResponse();
+        void errorMLSResponse(boolean stopRequesting);
     }
 
     public MLSLocationGetter(MLSLocationGetterCallback callback, JSONObject mlsQueryObj) {
@@ -58,9 +58,14 @@ public class MLSLocationGetter extends AsyncTask<String, Void, Location> {
             Log.i(LOG_TAG, "Error processing search request");
             return null;
         }
-        // int bytesSent = resp.bytesSent();
 
-        JSONObject response = null;
+        if (resp.isErrorCode400BadRequest()) {
+            //TODO detect malformed request, and clear out mlsrequest on observation point
+            mIsBadRequest = true;
+            return null;
+        }
+
+        JSONObject response;
         try {
             response = new JSONObject(resp.body());
         } catch (JSONException e) {
@@ -72,7 +77,7 @@ public class MLSLocationGetter extends AsyncTask<String, Void, Location> {
         try {
             status = response.getString("status");
         } catch (JSONException ex) {
-            Log.e(LOG_TAG, "Error deserializing status from JSON", ex);
+            Log.e(LOG_TAG, "Error deserializing status from JSON");
             return null;
         }
 
@@ -87,7 +92,7 @@ public class MLSLocationGetter extends AsyncTask<String, Void, Location> {
     protected void onPostExecute(Location location) {
         sRequestCounter.decrementAndGet();
         if (location == null) {
-            mCallback.errorMLSResponse();
+            mCallback.errorMLSResponse(mIsBadRequest);
         } else {
             mCallback.setMLSResponseLocation(location);
         }

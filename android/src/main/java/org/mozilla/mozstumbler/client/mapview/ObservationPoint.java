@@ -86,8 +86,11 @@ public class ObservationPoint implements MLSLocationGetter.MLSLocationGetterCall
         pointMLS = new GeoPoint(c.getLatitude(), c.getLongitude());
     }
 
-    public void errorMLSResponse() {
-        Log.i(ObservationPoint.class.getSimpleName(), "Error:" + mMLSQuery.toString());
+    public void errorMLSResponse(boolean stopRequesting) {
+        if (stopRequesting) {
+            mMLSQuery = null;
+            Log.i(ObservationPoint.class.getSimpleName(), "Error:" + mMLSQuery.toString());
+        }
         mMLSLocationGetter = null;
     }
 }

@@ -29,7 +29,7 @@ public class GPSScanner implements LocationListener {
     public static final String NEW_STATUS_ARG_FIXES = "fixes";
     public static final String NEW_STATUS_ARG_SATS = "sats";
     public static final String NEW_LOCATION_ARG_LOCATION = "location";
-    public static final int MIN_SAT_USED_IN_FIX = 4;
+    public static final int MIN_SAT_USED_IN_FIX = 3;
 
     private static final String LOG_TAG = AppGlobals.LOG_PREFIX + GPSScanner.class.getSimpleName();
     private static final long ACTIVE_MODE_GPS_MIN_UPDATE_TIME_MS = 1000;

@@ -158,9 +158,9 @@ public class ScanManager {
         return (mCellScanner == null)? 0 :mCellScanner.getCellInfoCount();
     }
 
-    public int getCurrentCellInfoCount() {
-        return (mCellScanner == null)? 0 :mCellScanner.getCurrentCellInfoCount();
-    }
+//    public int getCurrentCellInfoCount() {
+//        return (mCellScanner == null)? 0 :mCellScanner.getCurrentCellInfoCount();
+//    }
 
     public int getLocationCount() {
         return (mGPSScanner == null)? 0 : mGPSScanner.getLocationCount();

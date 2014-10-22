@@ -178,12 +178,13 @@ public class MetricsView {
         mThisSessionObservationsView.setText(val);
     }
 
-    String formatKb(long bytes) {
-        float kb = bytes / 1000.0f;
+    private static String formatKb(long bytes) {
+        final float kb = bytes / 1000.0f;
         if (kb < 0.1) {
-            return ""; // don't show 0.0 for size.
+            return ""; // Don't show "0 KB".
         }
-        return "(" + (Math.round(kb * 10.0f) / 10.0f) + " KB)";
+        // Round KB up to nearest whole number.
+        return = "(" + (int) Math.ceil(kb) + " KB)";
     }
 
     private void updateSentStats(DataStorageManager dataStorageManager) {

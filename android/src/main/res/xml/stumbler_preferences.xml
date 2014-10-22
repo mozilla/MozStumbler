@@ -18,7 +18,7 @@
     <CheckBoxPreference
         android:key="keep_screen_on"
         android:title="@string/keep_screen_on_title"
-        android:defaultValue="true" />
+        android:defaultValue="false" />
     <CheckBoxPreference
         android:key="enable_the_option_to_show_mls_on_map"
         android:title="@string/enable_option_show_mls_on_map"

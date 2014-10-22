@@ -29,7 +29,7 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="about_version">Version %1$s</string>
-    <string name="about_openstreetmap">Map view tiles © OpenStreetMap contributors\nhttp://www.openstreetmap.org</string>
+    <string name="about_openstreetmap">Map view tiles\n© OpenStreetMap contributors\nhttp://www.openstreetmap.org</string>
     <string name="about_mapbox_title">MapBox</string>
     <string name="about_mapbox">Learn more at http://www.mapbox.com</string>
     <string name="about_legal_aosp">Some iconography in this app is reproduced from work created and shared by the Android Open Source Project and used according to terms described in the Creative Commons 2.5 Attribution License.</string>
@@ -49,10 +49,10 @@
     <string name="action_view_log">View Log</string>
     <string name="scroll_to_start">Scroll to Top</string>
     <string name="scroll_to_end">Scroll to End</string>
-    <string name="kml_file_title">KML Observations File</string>
+    <string name="kml_file_title">KML Reports File</string>
     <string name="kml_file_load">Load KML File</string>
     <string name="klm_file_save">Save KML File</string>
-    <string name="kml_file_description">Save/Load the reports (location, wifi+cell counts) for debugging. </string>
+    <string name="kml_file_description">Save/Load the reports (location, wi-fi+cell counts) for debugging. </string>
     <string name="kml_file_saved_name">Saved File:</string>
     <string name="title_activity_kml">Save/Load Reports</string>
     <string name="keep_screen_on_title">Keep screen on while in map</string>
@@ -68,7 +68,7 @@
     <string name="share_after_kml_saved">The file is saved on device, would you like to share the file?</string>
     <string name="enter_email">Enter e-mail address (optional)</string>
     <string name="enter_email_title">Email: </string>
-    <string name="enter_email_longtext">Your email address is never displayed to people and is only used for your own reports</string>
+    <string name="enter_email_longtext">Your email address is never displayed to people and is only used for your own reports.</string>
     <string name="drawer_open">Show drawer</string>
     <string name="drawer_close">Close drawer</string>
     <string name="title_activity_leaderboard">Leaderboard</string>

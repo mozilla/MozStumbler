@@ -192,6 +192,10 @@ public class CellScannerNoWCDMA implements CellScanner.CellScannerImpl {
     protected boolean addCellToList(List<CellInfo> cells,
                                  android.telephony.CellInfo observedCell,
                                  TelephonyManager tm) {
+        if (tm.getPhoneType() == 0) {
+            return false;
+        }
+
         boolean added = false;
         if (observedCell instanceof CellInfoGsm) {
             CellIdentityGsm ident = ((CellInfoGsm) observedCell).getCellIdentity();

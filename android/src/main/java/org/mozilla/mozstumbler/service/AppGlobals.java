@@ -39,7 +39,7 @@ public class AppGlobals {
     public static boolean isDebug;
     public static boolean isRobolectric;
 
-    private static final SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS : ");
+    private static final SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss: ");
 
     /* The log activity will clear this periodically, and display the messages.
      * Always null when the stumbler service is used stand-alone. */

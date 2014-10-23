@@ -4,8 +4,10 @@
 
 package org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
@@ -18,6 +20,7 @@ import java.util.TimerTask;
 
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.AppGlobals.ActiveOrPassiveStumbling;
+import org.mozilla.mozstumbler.service.stumblerthread.Reporter;
 
 
 public class CellScanner {
@@ -33,6 +36,8 @@ public class CellScanner {
     private static CellScannerImpl sImpl;
     private Timer mCellScanTimer;
     private final Set<String> mCells = new HashSet<String>();
+    private ReportFlushedReceiver mReportFlushedReceiver = new ReportFlushedReceiver();
+    private boolean mReportWasFlushed;
 
     public ArrayList<CellInfo> sTestingModeCellInfoArray;
 
@@ -77,6 +82,9 @@ public class CellScanner {
             return;
         }
 
+        LocalBroadcastManager.getInstance(mContext).registerReceiver(mReportFlushedReceiver,
+                new IntentFilter(Reporter.ACTION_NEW_BUNDLE));
+
         mCellScanTimer = new Timer();
 
         mCellScanTimer.schedule(new TimerTask() {
@@ -104,6 +112,11 @@ public class CellScanner {
                     return;
                 }
 
+                if (mReportWasFlushed) {
+                    mReportWasFlushed = false;
+                    mCells.clear();
+                }
+
                 for (CellInfo cell : cells) {
                     mCells.add(cell.getCellIdentity());
                 }
@@ -117,6 +130,10 @@ public class CellScanner {
     }
 
     public void stop() {
+        mReportWasFlushed = false;
+        mCells.clear();
+        LocalBroadcastManager.getInstance(mContext).unregisterReceiver(mReportFlushedReceiver);
+
         if (mCellScanTimer != null) {
             mCellScanTimer.cancel();
             mCellScanTimer = null;
@@ -128,5 +145,12 @@ public class CellScanner {
 
     public int getCellInfoCount() {
         return mCells.size();
+    }
+
+    private class ReportFlushedReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context c, Intent i) {
+            mReportWasFlushed = true;
+        }
     }
 }

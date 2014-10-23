@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">MozStumbler</string>
-    <string name="action_about">Über MozStumbler</string>
+    <string name="app_name">Mozilla Stumbler</string>
+    <string name="action_about">Über Mozilla Stumbler</string>
     <string name="action_preferences">Einstellungen</string>
     <string name="start_scanning">Scanvorgang starten</string>
     <string name="stop_scanning">Scanvorgang stoppen</string>
@@ -21,7 +21,7 @@
     <string name="enter_nickname">Namen eingeben (optional)</string>
     <string name="enter_nickname_title">Name: </string>
     <string name="enter_nickname_longtext">Dieser Name wird in der Bestenliste erscheinen.</string>
-    <string name="update_title">MozStumbler Aktualisierung herunterladen?</string>
+    <string name="update_title">Mozilla Stumbler Aktualisierung herunterladen?</string>
     <string name="update_message">Installierte Version: %1$s\nAktuellste Version: %2$s</string>
     <string name="update_now">Jetzt aktualisieren</string>
     <string name="update_later">Später aktualisieren</string>
@@ -60,7 +60,7 @@
     <string name="are_you_sure">Sind Sie sicher?</string>
     <string name="loading_kml">KML wird geladen</string>
     <string name="saving_kml">KML wird gespeichert</string>
-    <string name="mozstumbler_kml_file">MozStumbler KML Datei</string>
+    <string name="mozstumbler_kml_file">Mozilla Stumbler KML Datei</string>
     <string name="share_file">Datei teilen</string>
     <string name="load_file">Datei laden</string>
     <string name="delete_file">Datei löschen</string>
@@ -76,7 +76,7 @@
     <string name="first_run_message_part1">Der Mozilla Ortungsdienst ist ein offener Dienst zur Ortung von Geräten unter der Verwendung von Wi-Fi- und Mobilfunk-Netzwerken.</string>
     <string name="first_run_message_part2">Lesen Sie unsere <a href="https://location.services.mozilla.com/privacy">Datenschutzerklärung</a> und fangen Sie dann an zu Scannen, um anzufangen Ihren jetzigen Standort beizusteuern.</string>
     <string name="first_run_start_stumbling">Scannen starten</string>
-    <string name="first_run_welcome_to_mozstumbler">Willkommen bei MozStumbler</string>
+    <string name="first_run_welcome_to_mozstumbler">Willkommen bei Mozilla Stumbler</string>
     <string name="map_unavailable">Die Karte kann nicht angezeigt werden, da es keinen SD-Kartenspeicher gibt.\nSie können aber immer noch Daten sammeln.</string>
     <string name="map_offline_mode">"Die Karte kann ohne eine verfügbare Internetverbindung nicht aktualisiert werden,\nSie können aber immer noch Daten sammeln."</string>
     <string name="action_developer">Entwickler</string>

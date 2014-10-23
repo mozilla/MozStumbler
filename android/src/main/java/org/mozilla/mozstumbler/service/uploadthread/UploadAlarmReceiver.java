@@ -18,7 +18,7 @@ import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageMa
 import org.mozilla.mozstumbler.service.utils.NetworkInfo;
 
 // Only if data is queued and device awake: check network availability and upload.
-// MozStumbler use: this alarm is periodic and repeating.
+// Mozilla Stumbler use: this alarm is periodic and repeating.
 // Fennec use: The alarm is single-shot and it is set to run -if there is data in the queue-
 // under these conditions:
 // 1) Fennec start/pause (actually gecko start which is ~4 sec after Fennec start).

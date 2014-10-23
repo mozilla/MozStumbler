@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">MozStumbler</string>
-    <string name="action_about">เกี่ยวกับ MozStumbler</string>
+    <string name="app_name">Mozilla Stumbler</string>
+    <string name="action_about">เกี่ยวกับ Mozilla Stumbler</string>
     <string name="action_preferences">ตั้งค่า</string>
     <string name="action_upload_observations">อัพโหลดข้อมูล</string>
     <string name="start_scanning">เริ่มการแสกน</string>
@@ -28,7 +28,7 @@
     <string name="enter_nickname">ใส่ชื่อเล่น (ไม่จำเป็น)</string>
     <string name="enter_nickname_title">ชื่อเล่น: </string>
     <string name="enter_nickname_longtext">ชื่อเล่นของคุณจะถูกแสดงในตารางคะแนน</string>
-    <string name="update_title">ดาวน์โหลดอัพเดท MozStumbler?</string>
+    <string name="update_title">ดาวน์โหลดอัพเดท Mozilla Stumbler?</string>
     <string name="update_message">รุ่นที่ลง: %1$s\nรุ่นล่าสุด: %2$s</string>
     <string name="update_now">ปรับปรุงตอนนี้</string>
     <string name="update_later">ปรับปรุงภายหลัง</string>

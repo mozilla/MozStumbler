@@ -426,7 +426,7 @@ public final class MapFragment extends android.support.v4.app.Fragment
             if (!isMLSTileStore) {
                 mHighResMapSource = TileSourceFactory.MAPQUESTOSM;
             } else {
-                mHighResMapSource = new XYTileSource("MozStumbler Tile Store",
+                mHighResMapSource = new XYTileSource("Stumbler-BaseMap-Tiles",
                         null, 1, AbstractMapOverlay.MAX_ZOOM_LEVEL_OF_MAP,
                         AbstractMapOverlay.TILE_PIXEL_SIZE,
                         AbstractMapOverlay.FILE_TYPE_SUFFIX_PNG,
@@ -455,9 +455,6 @@ public final class MapFragment extends android.support.v4.app.Fragment
 
         FragmentActivity activity = getActivity();
 
-        // Amazingly, getActivity() while you're in a fragment
-        // can return NULL.  Lesson learned - never trust android framework.
-        // https://github.com/mozilla/MozStumbler/issues/981
         if (activity == null) {
             return;
         }

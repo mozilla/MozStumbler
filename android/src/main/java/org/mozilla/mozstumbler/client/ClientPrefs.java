@@ -37,7 +37,7 @@ public class ClientPrefs extends Prefs {
         return (ClientPrefs)sInstance;
     }
 
-    // For MozStumbler to use for manual upgrade of old prefs.
+    // For Mozilla Stumbler to use for manual upgrade of old prefs.
     static String getPrefsFileNameForUpgrade() {
         return PREFS_FILE;
     }

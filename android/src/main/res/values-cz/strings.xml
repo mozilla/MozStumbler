@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">MozStumbler</string>
+    <string name="app_name">Mozilla Stumbler</string>
     <string name="action_about">O Aplikaci</string>
     <string name="action_preferences">Nastavení</string>
     <!--<string name="action_upload_observations">Upload observations</string> translation missing-->
@@ -27,7 +27,7 @@
     <string name="enter_nickname_longtext">Vaše jméno se zobrazí v žebříčku.</string>
     
     <!--translations missing
-    <string name="update_title">Stáhnout novou verzi MozStumbleru?</string>
+    <string name="update_title">Stáhnout novou verzi Mozilla Stumbleru?</string>
     <string name="update_message">Nainstalovana verze: %1$s\nPoslední verze: %2$s</string>
     <string name="update_now">Aktualizovat nyní</string>
     <string name="update_later">Aktualizovat později</string>

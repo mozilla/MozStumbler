@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">MozStumbler</string>
-    <string name="action_about">Over MozStumbler</string>
+    <string name="app_name">Mozilla Stumbler</string>
+    <string name="action_about">Over Mozilla Stumbler</string>
     <string name="action_preferences">Instellingen</string>
     <!--<string name="action_upload_observations">Upload observations</string> translation missing-->
     <string name="start_scanning">Begin met scannen</string>
@@ -24,7 +24,7 @@
     <string name="enter_nickname">Alias (niet verplicht)</string>
     <string name="enter_nickname_title">Alias: </string>
     <string name="enter_nickname_longtext">Alias wordt gepubliceerd op het scorebord.</string>
-    <string name="update_title">Download MozStumbler-update?</string>
+    <string name="update_title">Download Mozilla Stumbler-update?</string>
     <string name="update_message">Geïnstalleerde versie: %1$s\nMeeste recente versie: %2$s</string>
     <string name="update_now">Nu updaten</string>
     <string name="update_later">Later updaten</string>

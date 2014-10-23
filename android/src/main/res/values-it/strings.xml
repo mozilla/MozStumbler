@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">MozStumbler</string>
-    <string name="action_about">Informazioni su MozStumbler</string>
+    <string name="app_name">Mozilla Stumbler</string>
+    <string name="action_about">Informazioni su Mozilla Stumbler</string>
     <string name="action_preferences">Impostazioni</string>
     <string name="action_upload_observations">Invia osservazioni</string>
     <string name="start_scanning">Inizia l\'analisi</string>
@@ -26,7 +26,7 @@
     <string name="enter_nickname_title">Soprannome:</string>
     <string name="enter_nickname_longtext">Il tuo soprannome comparirà sulla classifica.</string>
     
-    <string name="update_title">Scaricare l\'aggiornamento di MozStumbler?</string>
+    <string name="update_title">Scaricare l\'aggiornamento di Mozilla Stumbler?</string>
     <string name="update_message">Versione installata: %1$s\nVersione più recente: %2$s</string>
     <string name="update_now">Aggiorna ora</string>
     <string name="update_later">Aggiorna più tardi</string>

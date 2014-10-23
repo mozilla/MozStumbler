@@ -14,11 +14,10 @@ import android.graphics.RectF;
 import android.os.SystemClock;
 
 import org.mozilla.mozstumbler.client.ObservedLocationsReceiver;
-import org.mozilla.mozstumbler.service.core.logging.Log;
-import org.osmdroid.util.GeoPoint;
-import org.osmdroid.views.MapView;
-import org.osmdroid.views.Projection;
-import org.osmdroid.views.overlay.Overlay;
+import org.mozilla.osmdroid.util.GeoPoint;
+import org.mozilla.osmdroid.views.MapView;
+import org.mozilla.osmdroid.views.Projection;
+import org.mozilla.osmdroid.views.overlay.Overlay;
 
 import java.util.ArrayList;
 import java.util.HashMap;

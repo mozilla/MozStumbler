@@ -10,13 +10,15 @@ import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.telephony.TelephonyManager;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner.CellInfo;
+
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A StumblerBundle contains stumbling data related to a single GPS lat/long fix.

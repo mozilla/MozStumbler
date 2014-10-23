@@ -10,13 +10,13 @@ import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.core.http.HttpUtil;
 import org.mozilla.mozstumbler.service.core.http.IHttpUtil;
-import org.mozilla.mozstumbler.service.utils.LocationAdapter;
 import org.mozilla.mozstumbler.service.core.http.ILocationService;
 import org.mozilla.mozstumbler.service.core.http.IResponse;
 import org.mozilla.mozstumbler.service.core.http.MLS;
-import org.mozilla.mozstumbler.service.AppGlobals;
+import org.mozilla.mozstumbler.service.utils.LocationAdapter;
 
 import java.util.concurrent.atomic.AtomicInteger;
 

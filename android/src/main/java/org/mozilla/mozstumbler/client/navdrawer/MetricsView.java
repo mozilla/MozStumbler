@@ -24,6 +24,7 @@ import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageCo
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageManager;
 import org.mozilla.mozstumbler.service.uploadthread.AsyncUploadParam;
 import org.mozilla.mozstumbler.service.uploadthread.AsyncUploader;
+
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.text.DateFormat;

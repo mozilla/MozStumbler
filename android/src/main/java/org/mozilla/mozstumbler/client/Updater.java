@@ -15,8 +15,8 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import org.mozilla.mozstumbler.R;
-import org.mozilla.mozstumbler.service.core.http.IHttpUtil;
 import org.mozilla.mozstumbler.service.AppGlobals;
+import org.mozilla.mozstumbler.service.core.http.IHttpUtil;
 import org.mozilla.mozstumbler.service.utils.NetworkInfo;
 
 import java.io.File;

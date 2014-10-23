@@ -28,11 +28,11 @@ public class MLS implements ILocationService {
     }
 
     public IResponse submit(byte[] data, Map<String, String> headers, boolean precompressed) {
-        return httpDelegate.post(SUBMIT_URL + "?key=" + mozApiKey, data, headers, precompressed, this);
+        return httpDelegate.post(SUBMIT_URL + "?key=" + mozApiKey, data, headers, precompressed);
     }
 
     public IResponse search(byte[] data, Map<String, String> headers, boolean precompressed) {
-        return httpDelegate.post(SEARCH_URL + "?key=" + mozApiKey, data, headers, precompressed, this);
+        return httpDelegate.post(SEARCH_URL + "?key=" + mozApiKey, data, headers, precompressed);
     }
 
 

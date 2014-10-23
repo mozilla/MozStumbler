@@ -8,8 +8,6 @@ import android.content.Intent;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.util.Log;
-import java.io.IOException;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.json.JSONObject;
 import org.mozilla.mozstumbler.service.AppGlobals;
@@ -22,6 +20,9 @@ import org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner.CellS
 import org.mozilla.mozstumbler.service.uploadthread.UploadAlarmReceiver;
 import org.mozilla.mozstumbler.service.utils.NetworkInfo;
 import org.mozilla.mozstumbler.service.utils.PersistentIntentService;
+
+import java.io.IOException;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 // In stand-alone service mode (a.k.a passive scanning mode), this is created from PassiveServiceReceiver (by calling startService).
 // The StumblerService is a sticky unbound service in this usage.

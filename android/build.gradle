@@ -1,8 +1,8 @@
 // each of the version numbers must be 0-99
 def versionMajor = 0
-def versionMinor = 40
-def versionPatch = 4
-def versionBuild = 1 // this is non-zero for any dev build
+def versionMinor = 41
+def versionPatch = 0
+def versionBuild = 2 // this is non-zero for any dev build
 
 buildscript {
     repositories {
@@ -39,16 +39,18 @@ import java.util.regex.Pattern
 def libDir = new File("android/libs")
 libDir.mkdirs()
 
-task updateJars(type: Download) {
-    src([
-        'https://github.com/mozilla/osmdroid/releases/download/4.3pre0/osmdroid-android-4.3-SNAPSHOT.jar'
-    ])
-    dest libDir
-}
-
 android {
     compileSdkVersion 19
     buildToolsVersion "19.1.0"
+
+    packagingOptions {
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/DEPENDENCIES.txt'
+    }
 
     defaultConfig {
         minSdkVersion 10
@@ -66,6 +68,8 @@ android {
         buildConfigField "String", "MOZILLA_API_KEY", getMozillaApiKey()
         buildConfigField "String", "TILE_SERVER_URL", getTileServerUrl()
 
+        buildConfigField "boolean", "LABEL_MAP_TILES", "false"
+
         // Crash report settings
         buildConfigField "String", "ACRA_URI", getAcraURI()
         buildConfigField "String", "ACRA_USER", getAcraUser()
@@ -80,6 +84,11 @@ android {
     buildTypes {
         debug {
             jniDebugBuild true
+
+            // set this to false if you want your debug builds to have
+            // standard unlabelled tiles.
+            buildConfigField "boolean", "LABEL_MAP_TILES", "false"
+
         }
 
         release {
@@ -138,6 +147,10 @@ dependencies {
 
     // Acralyzer crash reports
     compile 'ch.acra:acra:4.5.0'
+
+    // osmdroid stuff
+    compile "org.apache.httpcomponents:httpmime:4.0.1"
+    compile "org.apache.james:apache-mime4j:0.6"
 }
 
 tasks.withType(JavaCompile) {

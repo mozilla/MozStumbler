@@ -13,10 +13,6 @@ import android.net.wifi.ScanResult;
 import android.support.v4.content.LocalBroadcastManager;
 import android.telephony.TelephonyManager;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.mozilla.mozstumbler.service.AppGlobals;
@@ -24,10 +20,14 @@ import org.mozilla.mozstumbler.service.core.logging.Log;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageContract;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageManager;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.StumblerBundle;
-import org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner.CellInfo;
-import org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner.CellScanner;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.GPSScanner;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.WifiScanner;
+import org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner.CellInfo;
+import org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner.CellScanner;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 public final class Reporter extends BroadcastReceiver implements IReporter {
     private static final String LOG_TAG = AppGlobals.LOG_PREFIX + Reporter.class.getSimpleName();

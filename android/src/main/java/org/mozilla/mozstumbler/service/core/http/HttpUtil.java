@@ -10,10 +10,12 @@ import org.mozilla.mozstumbler.client.ClientPrefs;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.core.logging.Log;
 import org.mozilla.mozstumbler.service.utils.Zipper;
+import org.mozilla.osmdroid.tileprovider.util.StreamUtils;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -126,8 +128,60 @@ public class HttpUtil implements IHttpUtil {
         }
     }
 
+    public IResponse get(String urlString, Map<String, String> headers) {
+
+        URL url = null;
+        HttpURLConnection httpURLConnection = null;
+
+        try {
+            url = new URL(urlString);
+        } catch (MalformedURLException e) {
+            Log.e(LOG_TAG, "Bad URL", e);
+            return null;
+        }
+
+        if (headers == null) {
+            headers = new HashMap<String, String>();
+        }
+
+        try {
+            httpURLConnection = (HttpURLConnection) url.openConnection();
+            httpURLConnection.setConnectTimeout(5000); // set timeout to 5 seconds
+            httpURLConnection.setRequestMethod("GET");
+            httpURLConnection.setRequestProperty(USER_AGENT_HEADER, userAgent);
+        } catch (IOException e) {
+            Log.e(LOG_TAG, "Couldn't open a connection: ", e);
+            return null;
+        }
+
+
+        // Workaround for a bug in Android mHttpURLConnection. When the library
+        // reuses a stale connection, the connection may fail with an EOFException
+        // http://stackoverflow.com/questions/15411213/android-httpsurlconnection-eofexception/17791819#17791819
+        if (Build.VERSION.SDK_INT > 13 && Build.VERSION.SDK_INT < 19) {
+            httpURLConnection.setRequestProperty("Connection", "Close");
+        }
+
+        // Set headers
+        for (Map.Entry<String, String> entry : headers.entrySet()) {
+            httpURLConnection.setRequestProperty(entry.getKey(), entry.getValue());
+        }
+
+        try {
+            return new HTTPResponse(httpURLConnection.getResponseCode(),
+                                    httpURLConnection.getHeaderFields(),
+                                    getContentBody(httpURLConnection),
+                                    0);
+        } catch (IOException e) {
+            Log.e(LOG_TAG, "Networking error", e);
+        } finally {
+            httpURLConnection.disconnect();
+        }
+        return null;
+    }
+
     @Override
-    public IResponse post(String urlString, byte[] data, Map<String, String> headers, boolean precompressed, MLS mls) {
+    public IResponse post(String urlString, byte[] data, Map<String, String> headers, boolean precompressed) {
 
         URL url = null;
         HttpURLConnection httpURLConnection = null;
@@ -149,14 +203,14 @@ public class HttpUtil implements IHttpUtil {
 
         try {
             httpURLConnection = (HttpURLConnection) url.openConnection();
-
+            httpURLConnection.setConnectTimeout(5000); // set timeout to 5 seconds
             // HttpURLConnection and Java are braindead.
             // http://stackoverflow.com/questions/8587913/what-exactly-does-urlconnection-setdooutput-affect
             httpURLConnection.setDoOutput(true);
             httpURLConnection.setRequestMethod("POST");
 
         } catch (IOException e) {
-            Log.e(LOG_TAG, "Couldn't open a connection: " + e);
+            Log.e(LOG_TAG, "Couldn't open a connection: ", e);
             return null;
         }
 
@@ -195,17 +249,18 @@ public class HttpUtil implements IHttpUtil {
             out.write(wire_data);
             out.flush();
             return new HTTPResponse(httpURLConnection.getResponseCode(),
+                    httpURLConnection.getHeaderFields(),
                     getContentBody(httpURLConnection),
                     wire_data.length);
         } catch (IOException e) {
-            Log.e(LOG_TAG, "post error:" + e.toString());
+            Log.e(LOG_TAG, "post error", e);
         } finally {
             httpURLConnection.disconnect();
         }
         return null;
     }
 
-    private String getContentBody(HttpURLConnection httpURLConnection) throws IOException {
+    private byte[] getContentBody(HttpURLConnection httpURLConnection) throws IOException {
         InputStream in = null;
         try {
             in = new BufferedInputStream(httpURLConnection.getInputStream());
@@ -213,16 +268,34 @@ public class HttpUtil implements IHttpUtil {
             in = httpURLConnection.getErrorStream();
         }
         if (in == null) {
-            return "";
+            return new byte[]{};
         }
-        BufferedReader r = new BufferedReader(new InputStreamReader(in));
-        String line;
-        StringBuilder total = new StringBuilder(in.available());
-        while ((line = r.readLine()) != null) {
-            total.append(line);
+
+        ByteArrayOutputStream dataStream = null;
+        OutputStream out = null;
+
+        try {
+            dataStream = new ByteArrayOutputStream();
+            out = new BufferedOutputStream(dataStream, StreamUtils.IO_BUFFER_SIZE);
+            StreamUtils.copy(in, out);
+            out.flush();
+        } finally {
+            if (out != null) {
+                try {
+                    out.close();
+                } catch (IOException ioEx) {
+                    Log.e(LOG_TAG, "Error closing tile output stream.", ioEx);
+                }
+            }
+            if (in != null) {
+                try {
+                    in.close();
+                } catch (IOException ioEx) {
+                    Log.e(LOG_TAG, "Error closing tile output stream.", ioEx);
+                }
+            }
         }
-        r.close();
-        in.close();
-        return total.toString();
+
+        return dataStream.toByteArray();
     }
 }

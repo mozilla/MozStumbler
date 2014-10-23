@@ -7,10 +7,10 @@ package org.mozilla.mozstumbler.client.mapview.tiles;
 import android.content.Context;
 import android.graphics.Color;
 
-import org.osmdroid.tileprovider.tilesource.ITileSource;
-import org.osmdroid.tileprovider.tilesource.XYTileSource;
-import org.osmdroid.tileprovider.util.SimpleInvalidationHandler;
-import org.osmdroid.views.MapView;
+import org.mozilla.osmdroid.tileprovider.tilesource.ITileSource;
+import org.mozilla.osmdroid.tileprovider.tilesource.XYTileSource;
+import org.mozilla.osmdroid.tileprovider.util.SimpleInvalidationHandler;
+import org.mozilla.osmdroid.views.MapView;
 
 /**
  * This class provides the Mozilla Coverage overlay

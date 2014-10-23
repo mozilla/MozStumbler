@@ -4,18 +4,15 @@ test: unittest
 release_check:
 	. ./release_check.sh
 
-unittest: updateJars
+unittest:
 	./gradlew assembleUnittest
 
-debug: updateJars
+debug:
 	./gradlew assembleDebug
 
-release: release_check updateJars
+release: release_check
 	./gradlew assembleRelease
 	sh rename_release.sh
-
-updateJars:
-	./gradlew -q updateJars
 
 clean:
 	rm -rf android/libs/*.jar

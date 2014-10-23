@@ -6,7 +6,9 @@ package org.mozilla.mozstumbler.service.stumblerthread.blocklist;
 
 import android.net.wifi.ScanResult;
 import android.util.Log;
+
 import org.mozilla.mozstumbler.service.AppGlobals;
+
 import java.util.Locale;
 import java.util.regex.Pattern;
 

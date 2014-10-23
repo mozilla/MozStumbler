@@ -9,10 +9,11 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.location.Location;
-import org.osmdroid.util.GeoPoint;
-import org.osmdroid.views.MapView;
-import org.osmdroid.views.Projection;
-import org.osmdroid.views.overlay.Overlay;
+
+import org.mozilla.osmdroid.util.GeoPoint;
+import org.mozilla.osmdroid.views.MapView;
+import org.mozilla.osmdroid.views.Projection;
+import org.mozilla.osmdroid.views.overlay.Overlay;
 
 class AccuracyCircleOverlay extends Overlay {
     private GeoPoint mPoint;

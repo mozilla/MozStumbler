@@ -21,7 +21,7 @@ import org.mozilla.mozstumbler.client.mapview.ObservationPoint;
 import org.mozilla.mozstumbler.service.core.logging.Log;
 import org.mozilla.mozstumbler.service.stumblerthread.Reporter;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.StumblerBundle;
-import org.osmdroid.util.GeoPoint;
+import org.mozilla.osmdroid.util.GeoPoint;
 
 import java.lang.ref.WeakReference;
 import java.util.Iterator;

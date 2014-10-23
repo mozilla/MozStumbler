@@ -90,8 +90,8 @@ public class ObservationPoint implements MLSLocationGetter.MLSLocationGetterCall
 
     public void errorMLSResponse(boolean stopRequesting) {
         if (stopRequesting) {
-            mMLSQuery = null;
             Log.i(ObservationPoint.class.getSimpleName(), "Error:" + mMLSQuery.toString());
+            mMLSQuery = null;
         }
         mIsMLSLocationQueryRunning = false;
     }

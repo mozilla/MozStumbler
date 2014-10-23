@@ -22,22 +22,23 @@ public class Log {
     }
 
     public static void e(String logTag, String s, Throwable e) {
+        String msg;
+        if (e == null) {
+            msg = "";
+        } else {
+            msg = e.toString();
+        }
+
         if (BuildConfig.BUILD_TYPE.equals("unittest")) {
             System.out.println("E: " + logTag + ", " + s);
             if (e != null) {
                 e.printStackTrace();
             }
         } else {
-            android.util.Log.e(logTag, s, e);
+            android.util.Log.e(logTag, s + ":" + msg);
         }
 
-        StringWriter sw = new StringWriter();
-        PrintWriter pw = new PrintWriter(sw);
-
-        if (e != null) {
-            e.printStackTrace(pw);
-        }
-        AppGlobals.guiLogError(logTag + ":" + s  + sw.toString());
+        AppGlobals.guiLogError(logTag + ":" + s  + ":" + msg);
     }
 
     public static void i(String logTag, String s) {

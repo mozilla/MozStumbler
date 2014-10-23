@@ -3,27 +3,10 @@
     <string name="app_name">Mozilla Stumbler</string>
     <string name="action_about">เกี่ยวกับ Mozilla Stumbler</string>
     <string name="action_preferences">ตั้งค่า</string>
-    <string name="action_upload_observations">อัพโหลดข้อมูล</string>
     <string name="start_scanning">เริ่มการแสกน</string>
     <string name="stop_scanning">หยุดการแสกน</string>
     <string name="view_leaderboard">ดูตารางคะแนน</string>
-    <string name="view_map">ทดสอบบริการหาตำแหน่งของ Mozilla</string>
     <string name="service_name">Mozilla Stumbler</string>
-    <string name="wifi_access_points">แอคเซสพอยต์ Wi-Fi ที่แสกนได้: %1$d</string>
-    <string name="wifi_disabled">0 (Wi-Fi ปิดใช้งาน)</string>
-    <string name="visible_wifi_access_points">จุดเชื่อมต่อ Wi-Fi ที่มองเห็น: %1$s</string>
-    <string name="wifi_info">Wi-Fi: %1$d มองเห็น %2$d Scanned</string>
-    <string name="cells_scanned">เสาสัญญานมือถือที่แสกน: %1$d</string>
-    <string name="cells_visible">เสาสัญญานมือถือที่มองเห็น: %1$d</string>
-    <string name="cells_info">เสาสัญญาน: %1$d มองเห็น %2$d แสกน</string>
-    <string name="gps_satellites">ดาวเทียม GPS ใช้ได้ / มองเห็น: %1$d/%2$d</string>
-    <string name="num_used">%1d ใช้ได้</string>
-    <string name="num_visible">%1d มองเห็น</string>
-    <string name="last_location">ตำแหน่งสุดท้าย: %1$s</string>
-    <string name="coordinate">%1$.4f, %2$.4f</string>
-    <string name="locations_scanned">ตำแหน่งที่แสกน: %1$d</string>
-    <string name="last_upload_time">อัพโหลดครั้งสุดท้าย: %1$s</string>
-    <string name="reports_sent">รายงานที่ส่งไป: %1$d</string>
     <string name="service_scanning">กำลังแสกนหาเครือข่าย Wi-Fi และมือถือ</string>
     <string name="enter_nickname">ใส่ชื่อเล่น (ไม่จำเป็น)</string>
     <string name="enter_nickname_title">ชื่อเล่น: </string>
@@ -32,7 +15,6 @@
     <string name="update_message">รุ่นที่ลง: %1$s\nรุ่นล่าสุด: %2$s</string>
     <string name="update_now">ปรับปรุงตอนนี้</string>
     <string name="update_later">ปรับปรุงภายหลัง</string>
-    <string name="gps_alert_msg">GPS ถูกปิดเอาไว้ คุณต้องการที่จะเข้าการตั้งค่าเพื่อเปิดหรือไม่?</string>
     <string name="yes">ใช่</string>
     <string name="no">ไม่ใช่</string>
     <string name="about_version">รุ่น %1$s</string>
@@ -49,8 +31,6 @@
 
 
 
-    <string name="upload_observations_button">อัพโหลด</string>
-    <string name="upload_observations_dialog_title">อัพโหลดค่าที่เก็บไว้</string>
     <string name="upload_wifi_only_title">อัพโหลดเฉพาะเวลาต่อ Wi-Fi</string>
     <string name="upload_wifi_only_summary">ค่านี้จะช่วยลดการใช้ข้อมูลผ่านเครือข่ายมือถือ</string>
 
@@ -60,5 +40,4 @@
     <string name="action_view_log">ดูค่าบันทึก</string>
     <string name="scroll_to_start">Scroll to Top</string>
     <string name="scroll_to_end">Scroll to End</string>
-    <string name="upload_observations_data_size">ขนาด:</string>
 </resources>

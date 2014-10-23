@@ -3,27 +3,10 @@
     <string name="app_name">Mozilla Stumbler</string>
     <string name="action_about">Despre Mozilla Stumbler</string>
     <string name="action_preferences">Setări</string>
-    <string name="action_upload_observations">Încarcă observații</string>
     <string name="start_scanning">Pornește scanarea</string>
     <string name="stop_scanning">Oprește scanarea</string>
     <string name="view_leaderboard">Arată clasament lideri</string>
-    <string name="view_map">Testează Serviciul de localizare Mozilla</string>
     <string name="service_name">Mozilla Stumbler</string>
-    <string name="wifi_access_points">Puncte acces Wi-Fi scanate: %1$d</string>
-    <string name="wifi_disabled">0 (Wi-Fi dezactivat)</string>
-    <string name="visible_wifi_access_points">Puncte acces Wi-Fi vizibile: %1$s</string>
-    <string name="wifi_info">Wi-Fi: %1$d vizibile, %2$d scanate</string>
-    <string name="cells_scanned">Celule scanate: %1$d</string>
-    <string name="cells_visible">Celule vizibile: %1$d</string>
-    <string name="cells_info">Celule: %1$d vizibile, %2$d scanate</string>
-    <string name="gps_satellites">Sateliți GPS utilizați / vizibili: %1$d/%2$d</string>
-    <string name="num_used">%1d utilizați</string>
-    <string name="num_visible">%1d vizibili</string>
-    <string name="last_location">Ultima locație: %1$s</string>
-    <string name="coordinate">%1$.4f, %2$.4f</string>
-    <string name="locations_scanned">Locații scanate: %1$d</string>
-    <string name="last_upload_time">Ora ultimei încărcări: %1$s</string>
-    <string name="reports_sent">Rapoarte trimise: %1$d</string>
     <string name="service_scanning">Se scanează după Wi-Fi și rețele celulare</string>
     <string name="enter_nickname">Introduceți pseudonim (opțional)</string>
     <string name="enter_nickname_title">Pseudonim: </string>
@@ -32,7 +15,6 @@
     <string name="update_message">Versiune instalată: %1$s\nUltima versiune: %2$s</string>
     <string name="update_now">Actualizează acum</string>
     <string name="update_later">Actualizează mai târziu</string>
-    <string name="gps_alert_msg">GPS-ul este oprit. Doriți să mergeți la setări și să-l porniți?</string>
     <string name="yes">Da</string>
     <string name="no">Nu</string>
     <string name="about_version">Versiune %1$s</string>
@@ -49,8 +31,6 @@
 
 
 
-    <string name="upload_observations_button">Încarcă</string>
-    <string name="upload_observations_dialog_title">Încarcă observații</string>
     <string name="upload_wifi_only_title">Încarcă numai prin Wi-Fi</string>
     <string name="upload_wifi_only_summary">Această opțiune va reduce cantitatea de date utilizate prin rețeaua celulară.</string>
 
@@ -60,5 +40,4 @@
     <string name="action_view_log">Arată jurnal</string>
     <string name="scroll_to_start">Derulare la început</string>
     <string name="scroll_to_end">Derulare la sfârșit</string>
-    <string name="upload_observations_data_size">Mărime:</string>
 </resources>

@@ -3,23 +3,10 @@
     <string name="app_name">Mozilla Stumbler</string>
     <string name="action_about">À propos de Mozilla Stumbler</string>
     <string name="action_preferences">Paramètres</string>
-    <string name="action_upload_observations">Envoyer les rapports</string>
     <string name="start_scanning">Démarrer l\'analyse</string>
     <string name="stop_scanning">Arrêter l\'analyse</string>
     <string name="view_leaderboard">Voir le classement</string>
-    <string name="view_map">Tester le service de géolocalisation de Mozilla</string>
     <string name="service_name">Mozilla Stumbler</string>
-    <string name="wifi_access_points">Points d\'accès Wi-Fi détectés : %1$d</string>
-    <string name="wifi_disabled">0 (Wi-Fi désactivé)</string>
-    <string name="visible_wifi_access_points">Points d\'accès Wi-Fi visibles : %1$s</string>
-    <string name="cells_scanned">Antennes cellulaires détectées : %1$d</string>
-    <string name="cells_visible">Antennes cellulaires visibles : %1$d</string>
-    <string name="gps_satellites">Satellites GPS utilisés/visibles : %1$d/%2$d</string>
-    <string name="last_location">Dernier emplacement : %1$s</string>
-    <string name="coordinate">%1$.4f, %2$.4f</string>
-    <string name="locations_scanned">Emplacements enregistrés : %1$d</string>
-    <string name="last_upload_time">Date du dernier envoi : %1$s</string>
-    <string name="reports_sent">Rapports envoyés : %1$d</string>
     <string name="service_scanning">Détection des réseaux Wi-Fi et cellulaires</string>
     <string name="enter_nickname">Saisir un pseudo (optionnel)</string>
     <string name="enter_nickname_title">Pseudo : </string>
@@ -28,7 +15,6 @@
     <string name="update_message">Version installée : %1$s\nDernière version : %2$s</string>
     <string name="update_now">Mettre à jour maintenant</string>
     <string name="update_later">Mettre à jour ultérieurement</string>
-    <string name="gps_alert_msg">Le GPS n\'est pas activé. Voulez-vous aller dans les paramètres afin de l\'activer ? </string>
     <string name="yes">Oui</string>
     <string name="no">Non</string>
     <string name="about_version">Version %1$s</string>
@@ -46,14 +32,11 @@
 
 
 
-    <string name="upload_observations_button">Envoyer</string>
-    <string name="upload_observations_dialog_title">Envoi des rapports</string>
     <string name="upload_wifi_only_title">Envoi des rapports par le Wi-Fi uniquement</string>
     <string name="upload_wifi_only_summary">Cette option réduira votre consommation de données de votre forfait.</string>
 
 
 
-    <string name="upload_observations_data_size">Size:</string>
     <!--translations missing
     <string name="title_activity_log">Log</string>
     <string name="action_view_log">View Log</string>

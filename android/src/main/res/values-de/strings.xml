@@ -8,15 +8,6 @@
     <string name="stop_scanning">Scanvorgang stoppen</string>
     <string name="view_leaderboard">Bestenliste ansehen</string>
     <string name="service_name">Mozilla Stumbler</string>
-    <string name="wifi_access_points">Gescannte Wi-Fi Zugangspunkte: %1$d</string>
-    <string name="visible_wifi_access_points">Sichtbare Wi-Fi Zugangspunkte: %1$s</string>
-    <string name="cells_scanned">Gescannte Funkzellen: %1$d</string>
-    <string name="cells_visible">Sichtbare Funkzellen: %1$d</string>
-    <string name="gps_satellites">Verwendete/sichtbare GPS Satelliten: %1$d/%2$d</string>
-    <string name="last_location">Letzter Standort: %1$s</string>
-    <string name="locations_scanned">Gescannte Standorte: %1$d</string>
-    <string name="last_upload_time">Letzter Upload: %1$s</string>
-    <string name="reports_sent">Gesendete Berichte: %1$d</string>
     <string name="service_scanning">Scanne Wi-Fi und Mobilfunknetze</string>
     <string name="enter_nickname">Namen eingeben (optional)</string>
     <string name="enter_nickname_title">Name: </string>
@@ -25,7 +16,6 @@
     <string name="update_message">Installierte Version: %1$s\nAktuellste Version: %2$s</string>
     <string name="update_now">Jetzt aktualisieren</string>
     <string name="update_later">Später aktualisieren</string>
-    <string name="gps_alert_msg">GPS ist ausgeschaltet. Wollen Sie die Einstellungen aufrufen, um es einzuschalten?</string>
     <string name="yes">Ja</string>
     <string name="no">Nein</string>
     <string name="about_version">Version %1$s</string>
@@ -54,7 +44,6 @@
     <string name="klm_file_save">KML Datei speichern</string>
     <string name="kml_file_description">Berichte zu Debugzwecken speichern/laden (Standort, Wi-Fi+Funk Zählungen). </string>
     <string name="kml_file_saved_name">Gespeicherte Datei:</string>
-    <string name="title_activity_kml">Berichte Speichern/Laden</string>
     <string name="keep_screen_on_title">Bildschirm in der Karte anlassen</string>
     <string name="delete_all">Alle löschen</string>
     <string name="are_you_sure">Sind Sie sicher?</string>

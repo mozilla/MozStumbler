@@ -7,19 +7,9 @@
     <string name="start_scanning">Begin met scannen</string>
     <string name="stop_scanning">Stop met scannen</string>
     <string name="view_leaderboard">Bekijk scorebord</string>
-    <string name="view_map">Test Mozilla locatiedienst</string>
     <string name="service_name">Mozilla Stumbler</string>
-    <string name="wifi_access_points">Gevonden wifinetwerken: %1$d</string>
     <!--<string name="wifi_disabled">0 (Wi-Fi disabled)</string> translation missing-->
-    <string name="visible_wifi_access_points">Zichtbare wifinetwerken: %1$s</string>
-    <string name="cells_scanned">Gevonden telefoonnetwerken: %1$d</string>
-    <string name="cells_visible">Zichtbare telefoonnetwerken: %1$d</string>
-    <string name="gps_satellites">Zichtbare GPS-satellieten: %1$d/%2$d</string>
-    <string name="last_location">Laatste locatie: %1$s</string>
     <!--<string name="coordinate">%1$.4f, %2$.4f</string> translation missing-->
-    <string name="locations_scanned">Gevonden locaties: %1$d</string>
-    <string name="last_upload_time">Laatste upload om: %1$s</string>
-    <string name="reports_sent">Verzonden rapportages: %1$d</string>
     <string name="service_scanning">Bezig met scannen van Wi-Fi en mobiele netwerken</string>
     <string name="enter_nickname">Alias (niet verplicht)</string>
     <string name="enter_nickname_title">Alias: </string>
@@ -28,7 +18,6 @@
     <string name="update_message">Geïnstalleerde versie: %1$s\nMeeste recente versie: %2$s</string>
     <string name="update_now">Nu updaten</string>
     <string name="update_later">Later updaten</string>
-    <string name="gps_alert_msg">GPS staat uit. Aanzetten in de instellingen?</string>
     <string name="yes">Ja</string>
     <string name="no">Nee</string>
     <string name="about_version">Versie %1$s</string>
@@ -51,7 +40,6 @@
     <string name="upload_observations_dialog_title">Invia osservazioni</string>-->
     <string name="upload_wifi_only_title">Upload alleen over een wifiverbinding</string>
     <string name="upload_wifi_only_summary">Deze optie zal uw mobiel dataverbruik verminderen.</string>
-    <string name="upload_observations_data_size">Size:</string>
     <!--translations missing
 
 

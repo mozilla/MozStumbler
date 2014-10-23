@@ -8,15 +8,6 @@
     <string name="stop_scanning">Zatrzymaj skanowanie</string>
     <string name="view_leaderboard">Wyświetl ranking</string>
     <string name="service_name">Mozilla Stumbler</string>
-    <string name="wifi_access_points">Przeskanowane punkty dostępowe Wi-Fi: %1$d</string>
-    <string name="visible_wifi_access_points">Widoczne punkty dostępowe Wi-Fi: %1$s</string>
-    <string name="cells_scanned">Przeskanowane stacje sieci komórkowej: %1$d</string>
-    <string name="cells_visible">Widoczne stacje sieci komórkowej: %1$d</string>
-    <string name="gps_satellites">Używane/widoczne satelity GPS: %1$d/%2$d</string>
-    <string name="last_location">Ostatnie położenie: %1$s</string>
-    <string name="locations_scanned">Przeskanowane położenia: %1$d</string>
-    <string name="last_upload_time">Ostatnio wysłano: %1$s</string>
-    <string name="reports_sent">Wysłane raporty: %1$d</string>
     <string name="service_scanning">Skanowanie w poszukiwaniu sieci Wi-Fi i komórkowych</string>
     <string name="enter_nickname">Wpisz pseudonim (opcjonalnie)</string>
     <string name="enter_nickname_title">Pseudonim: </string>
@@ -25,7 +16,6 @@
     <string name="update_message">Zainstalowana wersja: %1$s\nNajnowsza wersja: %2$s</string>
     <string name="update_now">Zaktualizuj teraz</string>
     <string name="update_later">Zaktualizuj później</string>
-    <string name="gps_alert_msg">GPS jest wyłączony. Przejść do ustawień, aby go włączyć?</string>
     <string name="yes">Tak</string>
     <string name="no">Nie</string>
     <string name="about_version">Wersja %1$s</string>
@@ -54,7 +44,6 @@
     <string name="klm_file_save">Zapisz plik KML</string>
     <string name="kml_file_description">Zapisywanie/wczytywanie zgłoszeń (położenia, liczby sieci Wi-Fi i komórkowych) do celów debugowania. </string>
     <string name="kml_file_saved_name">Zapisany plik:</string>
-    <string name="title_activity_kml">Zapisywanie/wczytywanie zgłoszeń</string>
     <string name="keep_screen_on_title">Bez wyłączania ekranu na ekranie mapy</string>
     <string name="delete_all">Usuń wszystko</string>
     <string name="are_you_sure">Na pewno?</string>

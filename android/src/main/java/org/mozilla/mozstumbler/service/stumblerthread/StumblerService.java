@@ -98,10 +98,6 @@ public class StumblerService extends PersistentIntentService
         return mScanManager.getCellInfoCount();
     }
 
-    public synchronized int getCurrentCellInfoCount() {
-        return mScanManager.getCurrentCellInfoCount();
-    }
-
     // Previously this was done in onCreate(). Moved out of that so that in the passive standalone service
     // use (i.e. Fennec), init() can be called from this class's dedicated thread.
     // Safe to call more than once, ensure added code complies with that intent.

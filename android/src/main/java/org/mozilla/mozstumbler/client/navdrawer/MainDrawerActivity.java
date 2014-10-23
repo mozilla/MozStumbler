@@ -260,7 +260,7 @@ public class MainDrawerActivity
             return;
         }
 
-        mMapFragment.formatTextView(R.id.text_cells_visible, "%d", service.getCurrentCellInfoCount());
+        mMapFragment.formatTextView(R.id.text_cells_visible, "%d", service.getCellInfoCount());
         mMapFragment.formatTextView(R.id.text_wifis_visible, "%d", service.getVisibleAPCount());
 
         int count = getApp().getObservedLocationCount();

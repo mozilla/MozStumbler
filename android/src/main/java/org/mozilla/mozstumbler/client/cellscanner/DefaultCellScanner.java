@@ -59,6 +59,9 @@ public class DefaultCellScanner extends CellScannerNoWCDMA {
     protected boolean addCellToList(List<CellInfo> cells,
                                     android.telephony.CellInfo observedCell,
                                     TelephonyManager tm) {
+        if (tm.getPhoneType() == 0) {
+            return false;
+        }
         boolean added = false;
         if (Build.VERSION.SDK_INT >= 18 &&
             observedCell instanceof CellInfoWcdma) {

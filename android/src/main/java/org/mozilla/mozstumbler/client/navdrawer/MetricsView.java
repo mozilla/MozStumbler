@@ -17,6 +17,7 @@ import com.ocpsoft.pretty.time.PrettyTime;
 
 import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.client.ClientPrefs;
+import org.mozilla.mozstumbler.client.DateTimeUtils;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.Prefs;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageContract;
@@ -25,7 +26,9 @@ import org.mozilla.mozstumbler.service.uploadthread.AsyncUploadParam;
 import org.mozilla.mozstumbler.service.uploadthread.AsyncUploader;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
+import java.text.DateFormat;
 import java.util.Date;
+import java.util.Locale;
 import java.util.Properties;
 
 public class MetricsView {
@@ -211,7 +214,11 @@ public class MetricsView {
             value = "never";
             final long lastUploadTime = Long.parseLong(props.getProperty(DataStorageContract.Stats.KEY_LAST_UPLOAD_TIME, "0"));
             if (lastUploadTime > 0) {
-                value = new PrettyTime().format(new Date(lastUploadTime));
+                if (Locale.getDefault().getLanguage().equals("en")) {
+                    value = new PrettyTime().format(new Date(lastUploadTime));
+                } else {
+                    value = DateTimeUtils.formatTimeForLocale(lastUploadTime);
+                }
             }
             mLastUpdateTimeView.setText(value);
         }

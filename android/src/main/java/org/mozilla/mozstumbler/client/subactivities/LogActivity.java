@@ -32,7 +32,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class LogActivity extends ActionBarActivity {
     static LinkedList<String> buffer = new LinkedList<String>();
-    static final int MAX_SIZE = 1000;
+    static final int MAX_SIZE = 500;
     private static LogMessageReceiver sInstance;
 
     public static class LogMessageReceiver extends BroadcastReceiver {
@@ -87,17 +87,23 @@ public class LogActivity extends ActionBarActivity {
                 buffer.removeFirst();
             }
 
-            int kMaxChars = 150;
-            int kBufSizeBeforeTruncate = 30;
+            // size of log is: 1000 * 30 + 200 * 470 = 30 kb + 94 kb, should be a very safe size
+
+            final int kMaxCharsOfLongerLines = 1000;
+            final int kMaxCharsOfTruncatedLine = 200;
+            final int kBufSizeBeforeTruncate = 30;
+            final int maxChars = (buffer.size() > kBufSizeBeforeTruncate)? kMaxCharsOfTruncatedLine :kMaxCharsOfLongerLines;
             if (buffer.size() == kBufSizeBeforeTruncate + 1) {
-                String msg = "BUFFER REACHED " + kBufSizeBeforeTruncate +" MESSAGES. TRUNCATING MESSAGES.";
+                String msg = "LOG VIEWER REACHED " + kBufSizeBeforeTruncate +" MESSAGES. TRUNCATING MESSAGES.";
                 buffer.add(msg);
                 if (sConsoleView != null) {
                     sConsoleView.println(msg);
                 }
             }
-            if (buffer.size() > kBufSizeBeforeTruncate && s.length() > kMaxChars) {
-                s = s.substring(0, kMaxChars) + " ...";
+
+            if (s.length() > maxChars) {
+                // 1/3 of max length, ellipse, then last 2/3 of max length
+                s = s.substring(0, maxChars / 3) + " ... " + s.substring(s.length() - 1 - maxChars * 2/3);
             }
 
             buffer.add(s);

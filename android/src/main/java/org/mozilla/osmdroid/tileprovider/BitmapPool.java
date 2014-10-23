@@ -31,7 +31,7 @@ public class BitmapPool {
     public void applyReusableOptions(final BitmapFactory.Options aBitmapOptions) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             aBitmapOptions.inBitmap = obtainBitmapFromPool();
-            aBitmapOptions.inSampleSize = 1;
+            aBitmapOptions.inSampleSize = 2;
             aBitmapOptions.inMutable = true;
         }
     }

@@ -43,7 +43,7 @@ import org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner.CellS
 import org.mozilla.mozstumbler.service.uploadthread.AsyncUploadParam;
 import org.mozilla.mozstumbler.service.uploadthread.AsyncUploader;
 import org.mozilla.mozstumbler.service.utils.NetworkInfo;
-import org.osmdroid.tileprovider.constants.TileFilePath;
+import org.mozilla.osmdroid.tileprovider.constants.TileFilePath;
 
 import java.io.File;
 import java.io.IOException;

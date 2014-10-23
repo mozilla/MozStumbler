@@ -4,12 +4,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MapActivity" >
-    <org.osmdroid.views.MapView
+    <org.mozilla.osmdroid.views.MapView
         android:id="@+id/map"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         >
-    </org.osmdroid.views.MapView>
+    </org.mozilla.osmdroid.views.MapView>
     <RelativeLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"

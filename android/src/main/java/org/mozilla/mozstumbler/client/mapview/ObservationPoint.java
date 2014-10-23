@@ -13,7 +13,7 @@ import org.json.JSONObject;
 import org.mozilla.mozstumbler.client.ClientPrefs;
 import org.mozilla.mozstumbler.service.utils.NetworkInfo;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageContract;
-import org.osmdroid.util.GeoPoint;
+import org.mozilla.osmdroid.util.GeoPoint;
 import org.mozilla.mozstumbler.service.core.logging.Log;
 
 public class ObservationPoint implements MLSLocationGetter.MLSLocationGetterCallback {

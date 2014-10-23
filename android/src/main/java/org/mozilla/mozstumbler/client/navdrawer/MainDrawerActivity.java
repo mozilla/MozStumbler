@@ -154,9 +154,9 @@ public class MainDrawerActivity
         boolean isScanning = svc.isScanning();
 
         if (isScanning) {
-            keepScreenOnChanged(ClientPrefs.getInstance().getKeepScreenOn());
+            keepScreenOn(ClientPrefs.getInstance().getKeepScreenOn());
         } else {
-            keepScreenOnChanged(false);
+            keepScreenOn(false);
         }
 
         if (Build.VERSION.SDK_INT >= 11) {
@@ -275,7 +275,7 @@ public class MainDrawerActivity
         mMetricsView.setUploadState(isUploadingObservations);
     }
 
-    public void keepScreenOnChanged(boolean isEnabled) {
+    public void keepScreenOn(boolean isEnabled) {
         int flag = android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON;
         if (isEnabled) {
             getWindow().addFlags(flag);

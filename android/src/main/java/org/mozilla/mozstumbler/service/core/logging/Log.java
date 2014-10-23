@@ -1,24 +1,16 @@
 package org.mozilla.mozstumbler.service.core.logging;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-
 import org.mozilla.mozstumbler.BuildConfig;
 import org.mozilla.mozstumbler.service.AppGlobals;
+
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
 /*
  This is a proxy around the android logger so that we can see what the heck
  is happening when we run under test.
  */
 public class Log {
-    public static void e(String logTag, String s) {
-        if (BuildConfig.BUILD_TYPE.equals("unittest")) {
-            System.out.println("E: " + logTag + ", " + s);
-        } else {
-            android.util.Log.e(logTag, s);
-        }
-        AppGlobals.guiLogError(logTag + ":" + s);
-    }
 
     public static void w(String logTag, String s) {
         if (BuildConfig.BUILD_TYPE.equals("unittest")) {
@@ -29,20 +21,24 @@ public class Log {
         AppGlobals.guiLogInfo(logTag + ":" + s);
     }
 
-    public static void e(String logTag, String s, Exception e) {
-        if (BuildConfig.BUILD_TYPE.equals("unittest")) {
-            System.out.println("E: " + logTag + ", " + s);
-            e.printStackTrace();
+    public static void e(String logTag, String s, Throwable e) {
+        String msg;
+        if (e == null) {
+            msg = "";
         } else {
-            android.util.Log.e(logTag, s, e);
-        }
-        StringWriter sw = new StringWriter();
-        PrintWriter pw = new PrintWriter(sw);
-        if (e != null) {
-            e.printStackTrace(pw);
+            msg = e.toString();
         }
 
-        AppGlobals.guiLogError(logTag + ":" + s  + sw.toString());
+        if (BuildConfig.BUILD_TYPE.equals("unittest")) {
+            System.out.println("E: " + logTag + ", " + s);
+            if (e != null) {
+                e.printStackTrace();
+            }
+        } else {
+            android.util.Log.e(logTag, s + ":" + msg);
+        }
+
+        AppGlobals.guiLogError(logTag + ":" + s  + ":" + msg);
     }
 
     public static void i(String logTag, String s) {
@@ -55,6 +51,10 @@ public class Log {
     }
 
     public static void d(String logTag, String s) {
+        if (BuildConfig.BUILD_TYPE.equals("release")) {
+            return;
+        }
+
         if (BuildConfig.BUILD_TYPE.equals("unittest")) {
             System.out.println("d: " + logTag + ", " + s);
         } else {

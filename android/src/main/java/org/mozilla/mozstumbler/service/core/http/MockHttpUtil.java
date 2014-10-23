@@ -37,7 +37,12 @@ public class MockHttpUtil implements IHttpUtil {
     }
 
     @Override
-    public IResponse post(String urlString, byte[] data, Map<String, String> headers, boolean precompressed, MLS mls) {
+    public IResponse get(String urlString, Map<String, String> headers) {
+        return null;
+    }
+
+    @Override
+    public IResponse post(String urlString, byte[] data, Map<String, String> headers, boolean precompressed) {
         return null;
     }
 

@@ -40,21 +40,21 @@ import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.core.http.HttpUtil;
 import org.mozilla.mozstumbler.service.core.http.IHttpUtil;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.GPSScanner;
-import org.osmdroid.ResourceProxy;
-import org.osmdroid.api.IGeoPoint;
-import org.osmdroid.events.DelayedMapListener;
-import org.osmdroid.events.MapListener;
-import org.osmdroid.events.ScrollEvent;
-import org.osmdroid.events.ZoomEvent;
-import org.osmdroid.tileprovider.BitmapPool;
-import org.osmdroid.tileprovider.MapTile;
-import org.osmdroid.tileprovider.tilesource.ITileSource;
-import org.osmdroid.tileprovider.tilesource.OnlineTileSourceBase;
-import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
-import org.osmdroid.tileprovider.tilesource.XYTileSource;
-import org.osmdroid.util.GeoPoint;
-import org.osmdroid.views.MapView;
-import org.osmdroid.views.overlay.Overlay;
+import org.mozilla.osmdroid.ResourceProxy;
+import org.mozilla.osmdroid.api.IGeoPoint;
+import org.mozilla.osmdroid.events.DelayedMapListener;
+import org.mozilla.osmdroid.events.MapListener;
+import org.mozilla.osmdroid.events.ScrollEvent;
+import org.mozilla.osmdroid.events.ZoomEvent;
+import org.mozilla.osmdroid.tileprovider.BitmapPool;
+import org.mozilla.osmdroid.tileprovider.MapTile;
+import org.mozilla.osmdroid.tileprovider.tilesource.ITileSource;
+import org.mozilla.osmdroid.tileprovider.tilesource.OnlineTileSourceBase;
+import org.mozilla.osmdroid.tileprovider.tilesource.TileSourceFactory;
+import org.mozilla.osmdroid.tileprovider.tilesource.XYTileSource;
+import org.mozilla.osmdroid.util.GeoPoint;
+import org.mozilla.osmdroid.views.MapView;
+import org.mozilla.osmdroid.views.overlay.Overlay;
 
 import java.util.List;
 import java.util.Timer;
@@ -181,7 +181,7 @@ public final class MapFragment extends android.support.v4.app.Fragment
         mMap.getController().setCenter(loc);
         mMap.setMinZoomLevel(AbstractMapOverlay.MIN_ZOOM_LEVEL_OF_MAP);
 
-        mMap.post(new Runnable() {
+        mMap.postDelayed(new Runnable() {
             @Override
             public void run() {
                 // https://github.com/osmdroid/osmdroid/issues/22
@@ -192,7 +192,7 @@ public final class MapFragment extends android.support.v4.app.Fragment
                 mMap.getController().setZoom(zoom);
                 mMap.getController().setCenter(loc);
             }
-        });
+        }, 300);
 
         Log.d(LOG_TAG, "onCreate");
 
@@ -305,6 +305,7 @@ public final class MapFragment extends android.support.v4.app.Fragment
     }
 
     private void initCoverageTiles(String coverageUrl) {
+        Log.i(LOG_TAG, "initCoverageTiles: " + coverageUrl);
         mCoverageTilesOverlayLowZoom = new CoverageOverlay(CoverageOverlay.LOW_ZOOM,
                 mRootView.getContext(), coverageUrl, mMap);
         mCoverageTilesOverlayHighZoom = new CoverageOverlay(CoverageOverlay.HIGH_ZOOM,

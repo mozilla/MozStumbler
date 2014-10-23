@@ -22,7 +22,9 @@ import android.telephony.PhoneStateListener;
 import android.telephony.SignalStrength;
 import android.telephony.TelephonyManager;
 import android.util.Log;
+
 import org.mozilla.mozstumbler.service.AppGlobals;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -190,6 +192,10 @@ public class CellScannerNoWCDMA implements CellScanner.CellScannerImpl {
     protected boolean addCellToList(List<CellInfo> cells,
                                  android.telephony.CellInfo observedCell,
                                  TelephonyManager tm) {
+        if (tm.getPhoneType() == 0) {
+            return false;
+        }
+
         boolean added = false;
         if (observedCell instanceof CellInfoGsm) {
             CellIdentityGsm ident = ((CellInfoGsm) observedCell).getCellIdentity();

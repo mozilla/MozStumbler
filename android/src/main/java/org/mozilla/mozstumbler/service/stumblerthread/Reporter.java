@@ -164,7 +164,7 @@ public final class Reporter extends BroadcastReceiver implements IReporter {
 
         Map<String, ScanResult> currentWifiData = mBundle.getWifiData();
         for (ScanResult result : results) {
-            if (currentWifiData.size() >= MAX_WIFIS_PER_LOCATION) {
+            if (currentWifiData.size() > MAX_WIFIS_PER_LOCATION) {
                 AppGlobals.guiLogInfo("Max wifi limit exceeded for this location, ignoring data.");
                 return;
             }
@@ -184,7 +184,7 @@ public final class Reporter extends BroadcastReceiver implements IReporter {
 
         Map<String, CellInfo> currentCellData = mBundle.getCellData();
         for (CellInfo result : cells) {
-            if (currentCellData.size() >= MAX_CELLS_PER_LOCATION) {
+            if (currentCellData.size() > MAX_CELLS_PER_LOCATION) {
                 AppGlobals.guiLogInfo("Max cell limit exceeded for this location, ignoring data.");
                 return;
             }
@@ -208,9 +208,9 @@ public final class Reporter extends BroadcastReceiver implements IReporter {
             mlsObj = mBundle.toMLSJSON();
             wifiCount = mlsObj.getInt(DataStorageContract.ReportsColumns.WIFI_COUNT);
             cellCount = mlsObj.getInt(DataStorageContract.ReportsColumns.CELL_COUNT);
-
         } catch (JSONException e) {
             Log.w(LOG_TAG, "Failed to convert bundle to JSON: " + e);
+            mBundle = null;
             return;
         }
 
@@ -219,6 +219,7 @@ public final class Reporter extends BroadcastReceiver implements IReporter {
         }
 
         if (wifiCount + cellCount < 1) {
+            mBundle = null;
             return;
         }
 
@@ -236,5 +237,7 @@ public final class Reporter extends BroadcastReceiver implements IReporter {
         } catch (IOException e) {
             Log.w(LOG_TAG, e.toString());
         }
+
+        mBundle = null;
     }
 }

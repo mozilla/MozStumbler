@@ -1,6 +1,5 @@
 package org.mozilla.osmdroid.views.overlay;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -14,7 +13,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
 
-import org.mozilla.osmdroid.DefaultResourceProxyImpl;
+import org.mozilla.mozstumbler.service.AppGlobals;
+import org.mozilla.mozstumbler.service.core.logging.Log;
 import org.mozilla.osmdroid.ResourceProxy;
 import org.mozilla.osmdroid.tileprovider.MapTile;
 import org.mozilla.osmdroid.tileprovider.MapTileProviderBase;
@@ -25,8 +25,6 @@ import org.mozilla.osmdroid.util.TileLooper;
 import org.mozilla.osmdroid.util.TileSystem;
 import org.mozilla.osmdroid.views.MapView;
 import org.mozilla.osmdroid.views.Projection;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * These objects are the principle consumer of map tiles.
@@ -36,11 +34,13 @@ import org.slf4j.LoggerFactory;
 
 public class TilesOverlay extends Overlay implements IOverlayMenuProvider {
 
+    private static final String LOG_TAG = AppGlobals.LOG_PREFIX + TilesOverlay.class.getSimpleName();
+
     public static final int MENU_MAP_MODE = getSafeMenuId();
     public static final int MENU_TILE_SOURCE_STARTING_ID = getSafeMenuIdSequence(TileSourceFactory
             .getTileSources().size());
     public static final int MENU_OFFLINE = getSafeMenuId();
-    private static final Logger logger = LoggerFactory.getLogger(TilesOverlay.class);
+
     /**
      * Current tile source
      */
@@ -69,13 +69,106 @@ public class TilesOverlay extends Overlay implements IOverlayMenuProvider {
     /**
      * For overshooting the tile cache *
      */
-    private int mOvershootTileCache = 0;
+    // @TODO vng: I bumped this number up while debugging the scaling
+    // issue.  Caching in osmdroid is treated as reliable storage with
+    // respect to loading of tiles.  The problem is that the caches
+    // are specified as LRUCaches backed by a LinkedHashMap, so there
+    // is no formal policy for when a tile is evicted from the LRU
+    // cache.  The caches really need to just go away and we should
+    // load directly from storage.
+    public static final int OVERSHOOT_TILE_CACHE_SIZE = 100;
+
+    public TilesOverlay(final MapTileProviderBase aTileProvider, final ResourceProxy pResourceProxy) {
+        super(pResourceProxy);
+        if (aTileProvider == null) {
+            throw new IllegalArgumentException(
+                    "You must pass a valid tile provider to the tiles overlay.");
+        }
+        this.mTileProvider = aTileProvider;
+    }
+
+    @Override
+    public void onDetach(final MapView pMapView) {
+        this.mTileProvider.detach();
+    }
+
+    public int getMinimumZoomLevel() {
+        return mTileProvider.getMinimumZoomLevel();
+    }
+
+    public int getMaximumZoomLevel() {
+        return mTileProvider.getMaximumZoomLevel();
+    }
+
+    /**
+     * Whether to use the network connection if it's available.
+     */
+    public boolean useDataConnection() {
+        return mTileProvider.useDataConnection();
+    }
+
+    /**
+     * Set whether to use the network connection if it's available.
+     *
+     * @param aMode if true use the network connection if it's available. if false don't use the
+     *              network connection even if it's available.
+     */
+    public void setUseDataConnection(final boolean aMode) {
+        mTileProvider.setUseDataConnection(aMode);
+    }
+
+    @Override
+    protected void draw(Canvas c, MapView osmv, boolean shadow) {
+
+        if (DEBUGMODE) {
+            Log.d(LOG_TAG, "onDraw(" + shadow + ")");
+        }
+
+        if (shadow) {
+            return;
+        }
+
+        Projection projection = osmv.getProjection();
+
+        // Get the area we are drawing to
+        Rect screenRect = projection.getScreenRect();
+        projection.toMercatorPixels(screenRect.left, screenRect.top, mTopLeftMercator);
+        projection.toMercatorPixels(screenRect.right, screenRect.bottom, mBottomRightMercator);
+        mViewPort.set(mTopLeftMercator.x, mTopLeftMercator.y, mBottomRightMercator.x,
+                mBottomRightMercator.y);
+
+        // Draw the tiles!
+        drawTiles(c, projection, projection.getZoomLevel(), TileSystem.getTileSize(), mViewPort);
+    }
+
+    /**
+     * This is meant to be a "pure" tile drawing function that doesn't take into account
+     * osmdroid-specific characteristics (like osmdroid's canvas's having 0,0 as the center rather
+     * than the upper-left corner). Once the tile is ready to be drawn, it is passed to
+     * onTileReadyToDraw where custom manipulations can be made before drawing the tile.
+     */
+    public void drawTiles(final Canvas c, final Projection projection, final int zoomLevel,
+                          final int tileSizePx, final Rect viewPort) {
+
+        mProjection = projection;
+        mTileLooper.loop(c, zoomLevel, tileSizePx, viewPort);
+
+        // draw a cross at center in debug mode
+        if (DEBUGMODE) {
+            // final GeoPoint center = osmv.getMapCenter();
+            final Point centerPoint = new Point(viewPort.centerX(), viewPort.centerY());
+            c.drawLine(centerPoint.x, centerPoint.y - 9, centerPoint.x, centerPoint.y + 9, mDebugPaint);
+            c.drawLine(centerPoint.x - 9, centerPoint.y, centerPoint.x + 9, centerPoint.y, mDebugPaint);
+        }
+
+    }
+
     private final TileLooper mTileLooper = new TileLooper() {
         @Override
         public void initialiseLoop(final int pZoomLevel, final int pTileSizePx) {
             // make sure the cache is big enough for all the tiles
             final int numNeeded = (mLowerRight.y - mUpperLeft.y + 1) * (mLowerRight.x - mUpperLeft.x + 1);
-            mTileProvider.ensureCapacity(numNeeded + mOvershootTileCache);
+            mTileProvider.ensureCapacity(numNeeded + OVERSHOOT_TILE_CACHE_SIZE);
         }
 
         @Override
@@ -125,95 +218,6 @@ public class TilesOverlay extends Overlay implements IOverlayMenuProvider {
         }
     };
 
-    public TilesOverlay(final MapTileProviderBase aTileProvider, final Context aContext) {
-        this(aTileProvider, new DefaultResourceProxyImpl(aContext));
-    }
-
-    public TilesOverlay(final MapTileProviderBase aTileProvider, final ResourceProxy pResourceProxy) {
-        super(pResourceProxy);
-        if (aTileProvider == null) {
-            throw new IllegalArgumentException(
-                    "You must pass a valid tile provider to the tiles overlay.");
-        }
-        this.mTileProvider = aTileProvider;
-    }
-
-    @Override
-    public void onDetach(final MapView pMapView) {
-        this.mTileProvider.detach();
-    }
-
-    public int getMinimumZoomLevel() {
-        return mTileProvider.getMinimumZoomLevel();
-    }
-
-    public int getMaximumZoomLevel() {
-        return mTileProvider.getMaximumZoomLevel();
-    }
-
-    /**
-     * Whether to use the network connection if it's available.
-     */
-    public boolean useDataConnection() {
-        return mTileProvider.useDataConnection();
-    }
-
-    /**
-     * Set whether to use the network connection if it's available.
-     *
-     * @param aMode if true use the network connection if it's available. if false don't use the
-     *              network connection even if it's available.
-     */
-    public void setUseDataConnection(final boolean aMode) {
-        mTileProvider.setUseDataConnection(aMode);
-    }
-
-    @Override
-    protected void draw(Canvas c, MapView osmv, boolean shadow) {
-
-        if (DEBUGMODE) {
-            logger.trace("onDraw(" + shadow + ")");
-        }
-
-        if (shadow) {
-            return;
-        }
-
-        Projection projection = osmv.getProjection();
-
-        // Get the area we are drawing to
-        Rect screenRect = projection.getScreenRect();
-        projection.toMercatorPixels(screenRect.left, screenRect.top, mTopLeftMercator);
-        projection.toMercatorPixels(screenRect.right, screenRect.bottom, mBottomRightMercator);
-        mViewPort.set(mTopLeftMercator.x, mTopLeftMercator.y, mBottomRightMercator.x,
-                mBottomRightMercator.y);
-
-        // Draw the tiles!
-        drawTiles(c, projection, projection.getZoomLevel(), TileSystem.getTileSize(), mViewPort);
-    }
-
-    /**
-     * This is meant to be a "pure" tile drawing function that doesn't take into account
-     * osmdroid-specific characteristics (like osmdroid's canvas's having 0,0 as the center rather
-     * than the upper-left corner). Once the tile is ready to be drawn, it is passed to
-     * onTileReadyToDraw where custom manipulations can be made before drawing the tile.
-     */
-    public void drawTiles(final Canvas c, final Projection projection, final int zoomLevel,
-                          final int tileSizePx, final Rect viewPort) {
-
-        mProjection = projection;
-        mTileLooper.loop(c, zoomLevel, tileSizePx, viewPort);
-
-        // draw a cross at center in debug mode
-        if (DEBUGMODE) {
-            // final GeoPoint center = osmv.getMapCenter();
-            final Point centerPoint = new Point(viewPort.centerX(), viewPort.centerY());
-            c.drawLine(centerPoint.x, centerPoint.y - 9, centerPoint.x, centerPoint.y + 9, mDebugPaint);
-            c.drawLine(centerPoint.x - 9, centerPoint.y, centerPoint.x + 9, centerPoint.y, mDebugPaint);
-        }
-
-    }
-
     protected void onTileReadyToDraw(final Canvas c, final Drawable currentMapTile,
                                      final Rect tileRect) {
         mProjection.toPixelsFromMercator(tileRect.left, tileRect.top, mTilePointMercator);
@@ -223,13 +227,13 @@ public class TilesOverlay extends Overlay implements IOverlayMenuProvider {
     }
 
     @Override
-    public boolean isOptionsMenuEnabled() {
-        return this.mOptionsMenuEnabled;
+    public void setOptionsMenuEnabled(final boolean pOptionsMenuEnabled) {
+        this.mOptionsMenuEnabled = pOptionsMenuEnabled;
     }
 
     @Override
-    public void setOptionsMenuEnabled(final boolean pOptionsMenuEnabled) {
-        this.mOptionsMenuEnabled = pOptionsMenuEnabled;
+    public boolean isOptionsMenuEnabled() {
+        return this.mOptionsMenuEnabled;
     }
 
     @Override
@@ -321,6 +325,9 @@ public class TilesOverlay extends Overlay implements IOverlayMenuProvider {
         }
     }
 
+    // @TODO vng - this can be refactored and pushed down into the
+    // TileProvider.  All the details about the tile size are already
+    // in the tileprovider anyway.
     private Drawable getLoadingTile() {
         if (mLoadingTile == null && mLoadingBackgroundColor != Color.TRANSPARENT) {
             try {
@@ -340,7 +347,8 @@ public class TilesOverlay extends Overlay implements IOverlayMenuProvider {
                 }
                 mLoadingTile = new BitmapDrawable(bitmap);
             } catch (final OutOfMemoryError e) {
-                logger.error("OutOfMemoryError getting loading tile");
+                // OOM is 'normal' for bitmap operations on Android
+                Log.e(LOG_TAG, "OutOfMemoryError getting loading tile", e);
                 System.gc();
             }
         }
@@ -358,24 +366,4 @@ public class TilesOverlay extends Overlay implements IOverlayMenuProvider {
         }
     }
 
-    /**
-     * Get the tile cache overshoot value.
-     *
-     * @return the number of tiles to overshoot tile cache
-     */
-    public int getOvershootTileCache() {
-        return mOvershootTileCache;
-    }
-
-    /**
-     * Set this to overshoot the tile cache. By default the TilesOverlay only creates a cache large
-     * enough to hold the minimum number of tiles necessary to draw to the screen. Setting this
-     * value will allow you to overshoot the tile cache and allow more tiles to be cached. This
-     * increases the memory usage, but increases drawing performance.
-     *
-     * @param overshootTileCache the number of tiles to overshoot the tile cache by
-     */
-    public void setOvershootTileCache(int overshootTileCache) {
-        mOvershootTileCache = overshootTileCache;
-    }
 }

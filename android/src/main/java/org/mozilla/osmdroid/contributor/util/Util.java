@@ -10,71 +10,69 @@ import java.util.Date;
 import java.util.TimeZone;
 
 /**
+ * 
  * @author Nicolas Gramlich
+ * 
  */
 public class Util implements OpenStreetMapContributorConstants {
 
-    // ===========================================================
-    // Constants
-    // ===========================================================
+	// ===========================================================
+	// Constants
+	// ===========================================================
 
-    public static final SimpleDateFormat UTCSimpleDateFormat = new SimpleDateFormat(
-            "yyyy-MM-dd'T'HH:mm:ss'Z'");
+	public static final SimpleDateFormat UTCSimpleDateFormat = new SimpleDateFormat(
+			"yyyy-MM-dd'T'HH:mm:ss'Z'");
+	{
+		UTCSimpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+	}
 
-    {
-        UTCSimpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-    }
+	// ===========================================================
+	// Fields
+	// ===========================================================
 
-    // ===========================================================
-    // Fields
-    // ===========================================================
+	// ===========================================================
+	// Constructors
+	// ===========================================================
 
-    // ===========================================================
-    // Constructors
-    // ===========================================================
+	/**
+	 * This is a utility class with only static members.
+	 */
+	private Util() {
+	}
 
-    /**
-     * This is a utility class with only static members.
-     */
-    private Util() {
-    }
+	// ===========================================================
+	// Getter & Setter
+	// ===========================================================
 
-    // ===========================================================
-    // Getter & Setter
-    // ===========================================================
+	// ===========================================================
+	// Methods from SuperClass/Interfaces
+	// ===========================================================
 
-    // ===========================================================
-    // Methods from SuperClass/Interfaces
-    // ===========================================================
+	// ===========================================================
+	// Methods
+	// ===========================================================
 
-    // ===========================================================
-    // Methods
-    // ===========================================================
+	public static final String convertTimestampToUTCString(final long aTimestamp) {
+		return UTCSimpleDateFormat.format(new Date(aTimestamp));
+	}
 
-    public static final String convertTimestampToUTCString(final long aTimestamp) {
-        return UTCSimpleDateFormat.format(new Date(aTimestamp));
-    }
+	public static boolean isSufficienDataForUpload(
+			final ArrayList<RecordedGeoPoint> recordedGeoPoints) {
+		if (recordedGeoPoints == null)
+			return false;
 
-    public static boolean isSufficienDataForUpload(
-            final ArrayList<RecordedGeoPoint> recordedGeoPoints) {
-        if (recordedGeoPoints == null) {
-            return false;
-        }
+		if (recordedGeoPoints.size() < MINGEOPOINTS_FOR_OSM_CONTRIBUTION)
+			return false;
 
-        if (recordedGeoPoints.size() < MINGEOPOINTS_FOR_OSM_CONTRIBUTION) {
-            return false;
-        }
+		final BoundingBoxE6 bb = BoundingBoxE6.fromGeoPoints(recordedGeoPoints);
+		final int diagMeters = bb.getDiagonalLengthInMeters();
+		if (diagMeters < MINDIAGONALMETERS_FOR_OSM_CONTRIBUTION)
+			return false;
 
-        final BoundingBoxE6 bb = BoundingBoxE6.fromGeoPoints(recordedGeoPoints);
-        final int diagMeters = bb.getDiagonalLengthInMeters();
-        if (diagMeters < MINDIAGONALMETERS_FOR_OSM_CONTRIBUTION) {
-            return false;
-        }
+		return true;
+	}
 
-        return true;
-    }
-
-    // ===========================================================
-    // Inner and Anonymous Classes
-    // ===========================================================
+	// ===========================================================
+	// Inner and Anonymous Classes
+	// ===========================================================
 }

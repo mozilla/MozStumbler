@@ -19,11 +19,6 @@ public class RecordedRouteGPXFormatter implements OpenStreetMapContributorConsta
     // Constants
     // ===========================================================
 
-    public static final String GPX_TAG_TRACK_SEGMENT_POINT = "<trkpt lat=\"%f\" lon=\"%f\">";
-    public static final String GPX_TAG_TRACK_SEGMENT_POINT_CLOSE = "</trkpt>";
-    public static final String GPX_TAG_TRACK_SEGMENT_POINT_TIME = "<time>%s</time>";
-    public static final String GPX_TAG_TRACK_SEGMENT_POINT_SAT = "<sat>%d</sat>";
-    public static final String GPX_TAG_TRACK_SEGMENT_POINT_ELE = "<ele>%d</ele>";
     private static final String XML_VERSION = "<?xml version=\"1.0\"?>";
     private static final String GPX_VERSION = "1.1";
     private static final String GPX_TAG = "<gpx version=\""
@@ -36,6 +31,12 @@ public class RecordedRouteGPXFormatter implements OpenStreetMapContributorConsta
     private static final String GPX_TAG_TRACK_NAME = "<name>%s</name>";
     private static final String GPX_TAG_TRACK_SEGMENT = "<trkseg>";
     private static final String GPX_TAG_TRACK_SEGMENT_CLOSE = "</trkseg>";
+    public static final String GPX_TAG_TRACK_SEGMENT_POINT = "<trkpt lat=\"%f\" lon=\"%f\">";
+    public static final String GPX_TAG_TRACK_SEGMENT_POINT_CLOSE = "</trkpt>";
+    public static final String GPX_TAG_TRACK_SEGMENT_POINT_TIME = "<time>%s</time>";
+    public static final String GPX_TAG_TRACK_SEGMENT_POINT_SAT = "<sat>%d</sat>";
+    public static final String GPX_TAG_TRACK_SEGMENT_POINT_ELE = "<ele>%d</ele>";
+
     private static final SimpleDateFormat formatterCompleteDateTime = new SimpleDateFormat(
             "yyyyMMdd'_'HHmmss");
 

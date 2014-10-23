@@ -21,29 +21,19 @@ public class GeoPoint implements IGeoPoint, MathConstants, GeoConstants, Parcela
     // Constants
     // ===========================================================
 
-    public static final Parcelable.Creator<GeoPoint> CREATOR = new Parcelable.Creator<GeoPoint>() {
-        @Override
-        public GeoPoint createFromParcel(final Parcel in) {
-            return new GeoPoint(in);
-        }
-
-        @Override
-        public GeoPoint[] newArray(final int size) {
-            return new GeoPoint[size];
-        }
-    };
+    static final long serialVersionUID = 1L;
 
     // ===========================================================
     // Fields
     // ===========================================================
-    static final long serialVersionUID = 1L;
+
     private int mLongitudeE6;
     private int mLatitudeE6;
+    private int mAltitude;
 
     // ===========================================================
     // Constructors
     // ===========================================================
-    private int mAltitude;
 
     public GeoPoint(final int aLatitudeE6, final int aLongitudeE6) {
         this.mLatitudeE6 = aLatitudeE6;
@@ -77,15 +67,6 @@ public class GeoPoint implements IGeoPoint, MathConstants, GeoConstants, Parcela
         this.mAltitude = aGeopoint.mAltitude;
     }
 
-    // ===========================================================
-    // Parcelable
-    // ===========================================================
-    private GeoPoint(final Parcel in) {
-        this.mLatitudeE6 = in.readInt();
-        this.mLongitudeE6 = in.readInt();
-        this.mAltitude = in.readInt();
-    }
-
     public static GeoPoint fromDoubleString(final String s, final char spacer) {
         final int spacerPos1 = s.indexOf(spacer);
         final int spacerPos2 = s.indexOf(spacer, spacerPos1 + 1);
@@ -101,10 +82,6 @@ public class GeoPoint implements IGeoPoint, MathConstants, GeoConstants, Parcela
                     (int) Double.parseDouble(s.substring(spacerPos2 + 1, s.length())));
         }
     }
-
-    // ===========================================================
-    // Getter & Setter
-    // ===========================================================
 
     public static GeoPoint fromInvertedDoubleString(final String s, final char spacer) {
         final int spacerPos1 = s.indexOf(spacer);
@@ -140,27 +117,18 @@ public class GeoPoint implements IGeoPoint, MathConstants, GeoConstants, Parcela
         }
     }
 
-    public static GeoPoint fromCenterBetween(final GeoPoint geoPointA, final GeoPoint geoPointB) {
-        return new GeoPoint((geoPointA.getLatitudeE6() + geoPointB.getLatitudeE6()) / 2,
-                (geoPointA.getLongitudeE6() + geoPointB.getLongitudeE6()) / 2);
-    }
+    // ===========================================================
+    // Getter & Setter
+    // ===========================================================
 
     @Override
     public int getLongitudeE6() {
         return this.mLongitudeE6;
     }
 
-    public void setLongitudeE6(final int aLongitudeE6) {
-        this.mLongitudeE6 = aLongitudeE6;
-    }
-
     @Override
     public int getLatitudeE6() {
         return this.mLatitudeE6;
-    }
-
-    public void setLatitudeE6(final int aLatitudeE6) {
-        this.mLatitudeE6 = aLatitudeE6;
     }
 
     @Override
@@ -173,12 +141,16 @@ public class GeoPoint implements IGeoPoint, MathConstants, GeoConstants, Parcela
         return this.mLatitudeE6 * 1E-6;
     }
 
-    // ===========================================================
-    // Methods from SuperClass/Interfaces
-    // ===========================================================
-
     public int getAltitude() {
         return this.mAltitude;
+    }
+
+    public void setLongitudeE6(final int aLongitudeE6) {
+        this.mLongitudeE6 = aLongitudeE6;
+    }
+
+    public void setLatitudeE6(final int aLatitudeE6) {
+        this.mLatitudeE6 = aLatitudeE6;
     }
 
     public void setAltitude(final int aAltitude) {
@@ -189,6 +161,10 @@ public class GeoPoint implements IGeoPoint, MathConstants, GeoConstants, Parcela
         this.mLatitudeE6 = aLatitudeE6;
         this.mLongitudeE6 = aLongitudeE6;
     }
+
+    // ===========================================================
+    // Methods from SuperClass/Interfaces
+    // ===========================================================
 
     @Override
     public GeoPoint clone() {
@@ -221,14 +197,19 @@ public class GeoPoint implements IGeoPoint, MathConstants, GeoConstants, Parcela
         return 37 * (17 * mLatitudeE6 + mLongitudeE6) + mAltitude;
     }
 
+    // ===========================================================
+    // Parcelable
+    // ===========================================================
+    private GeoPoint(final Parcel in) {
+        this.mLatitudeE6 = in.readInt();
+        this.mLongitudeE6 = in.readInt();
+        this.mAltitude = in.readInt();
+    }
+
     @Override
     public int describeContents() {
         return 0;
     }
-
-    // ===========================================================
-    // Methods
-    // ===========================================================
 
     @Override
     public void writeToParcel(final Parcel out, final int flags) {
@@ -236,6 +217,22 @@ public class GeoPoint implements IGeoPoint, MathConstants, GeoConstants, Parcela
         out.writeInt(mLongitudeE6);
         out.writeInt(mAltitude);
     }
+
+    public static final Parcelable.Creator<GeoPoint> CREATOR = new Parcelable.Creator<GeoPoint>() {
+        @Override
+        public GeoPoint createFromParcel(final Parcel in) {
+            return new GeoPoint(in);
+        }
+
+        @Override
+        public GeoPoint[] newArray(final int size) {
+            return new GeoPoint[size];
+        }
+    };
+
+    // ===========================================================
+    // Methods
+    // ===========================================================
 
     /**
      * @return distance in meters
@@ -308,6 +305,11 @@ public class GeoPoint implements IGeoPoint, MathConstants, GeoConstants, Parcela
         final double lon2deg = lon2 / DEG2RAD;
 
         return new GeoPoint(lat2deg, lon2deg);
+    }
+
+    public static GeoPoint fromCenterBetween(final GeoPoint geoPointA, final GeoPoint geoPointB) {
+        return new GeoPoint((geoPointA.getLatitudeE6() + geoPointB.getLatitudeE6()) / 2,
+                (geoPointA.getLongitudeE6() + geoPointB.getLongitudeE6()) / 2);
     }
 
     public String toDoubleString() {

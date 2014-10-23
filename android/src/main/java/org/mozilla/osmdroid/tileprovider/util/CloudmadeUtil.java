@@ -11,10 +11,10 @@ import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
+import org.mozilla.mozstumbler.service.AppGlobals;
+import org.mozilla.mozstumbler.service.core.logging.Log;
 import org.mozilla.osmdroid.http.HttpClientFactory;
 import org.mozilla.osmdroid.tileprovider.constants.OpenStreetMapTileProviderConstants;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -30,7 +30,7 @@ import java.io.InputStreamReader;
  */
 public class CloudmadeUtil implements OpenStreetMapTileProviderConstants {
 
-    private static final Logger logger = LoggerFactory.getLogger(CloudmadeUtil.class);
+    private static final String LOG_TAG = AppGlobals.LOG_PREFIX + CloudmadeUtil.class.getSimpleName();
 
     /**
      * the meta data key in the manifest
@@ -115,7 +115,7 @@ public class CloudmadeUtil implements OpenStreetMapTileProviderConstants {
                         httpPost.setEntity(new StringEntity("", "utf-8"));
                         final HttpResponse response = httpClient.execute(httpPost);
                         if (DEBUGMODE) {
-                            logger.debug("Response from Cloudmade auth: " + response.getStatusLine());
+                            Log.d(LOG_TAG, "Response from Cloudmade auth: " + response.getStatusLine());
                         }
                         if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
                             final BufferedReader br =
@@ -124,7 +124,7 @@ public class CloudmadeUtil implements OpenStreetMapTileProviderConstants {
                                             StreamUtils.IO_BUFFER_SIZE);
                             final String line = br.readLine();
                             if (DEBUGMODE) {
-                                logger.debug("First line from Cloudmade auth: " + line);
+                                Log.d(LOG_TAG, "First line from Cloudmade auth: " + line);
                             }
                             mToken = line.trim();
                             if (mToken.length() > 0) {
@@ -133,11 +133,11 @@ public class CloudmadeUtil implements OpenStreetMapTileProviderConstants {
                                 // we don't need the editor any more
                                 mPreferenceEditor = null;
                             } else {
-                                logger.error("No authorization token received from Cloudmade");
+                                Log.w(LOG_TAG, "No authorization token received from Cloudmade");
                             }
                         }
                     } catch (final IOException e) {
-                        logger.error("No authorization token received from Cloudmade: " + e);
+                        Log.e(LOG_TAG, "No authorization token received from Cloudmade: ", e);
                     }
                 }
             }

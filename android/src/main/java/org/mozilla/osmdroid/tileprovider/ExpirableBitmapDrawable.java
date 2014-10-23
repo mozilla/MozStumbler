@@ -18,19 +18,6 @@ public class ExpirableBitmapDrawable extends BitmapDrawable {
         mState = new int[0];
     }
 
-    public static boolean isDrawableExpired(final Drawable pTile) {
-        if (!pTile.isStateful()) {
-            return false;
-        }
-        final int[] state = pTile.getState();
-        for (int i = 0; i < state.length; i++) {
-            if (state[i] == EXPIRED) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     @Override
     public int[] getState() {
         return mState;
@@ -45,6 +32,19 @@ public class ExpirableBitmapDrawable extends BitmapDrawable {
     public boolean setState(final int[] pStateSet) {
         mState = pStateSet;
         return true;
+    }
+
+    public static boolean isDrawableExpired(final Drawable pTile) {
+        if (!pTile.isStateful()) {
+            return false;
+        }
+        final int[] state = pTile.getState();
+        for (int i = 0; i < state.length; i++) {
+            if (state[i] == EXPIRED) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

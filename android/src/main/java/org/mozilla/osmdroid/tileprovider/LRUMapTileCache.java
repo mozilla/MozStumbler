@@ -5,19 +5,21 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 
+import org.mozilla.mozstumbler.service.AppGlobals;
+import org.mozilla.mozstumbler.service.core.logging.Log;
 import org.mozilla.osmdroid.tileprovider.constants.OpenStreetMapTileProviderConstants;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.LinkedHashMap;
 
 public class LRUMapTileCache extends LinkedHashMap<MapTile, Drawable>
         implements OpenStreetMapTileProviderConstants {
 
-    private static final Logger logger = LoggerFactory.getLogger(LRUMapTileCache.class);
+    private static final String LOG_TAG = AppGlobals.LOG_PREFIX + LRUMapTileCache.class.getSimpleName();
+
     private static final long serialVersionUID = -541142277575493335L;
+
     private int mCapacity;
-    private TileRemovedListener mTileRemovedListener;
+
     public LRUMapTileCache(final int aCapacity) {
         super(aCapacity + 2, 0.1f, true);
         mCapacity = aCapacity;
@@ -25,7 +27,7 @@ public class LRUMapTileCache extends LinkedHashMap<MapTile, Drawable>
 
     public void ensureCapacity(final int aCapacity) {
         if (aCapacity > mCapacity) {
-            logger.info("Tile cache increased from " + mCapacity + " to " + aCapacity);
+            Log.i(LOG_TAG, "Tile cache increased from " + mCapacity + " to " + aCapacity);
             mCapacity = aCapacity;
         }
     }
@@ -33,18 +35,11 @@ public class LRUMapTileCache extends LinkedHashMap<MapTile, Drawable>
     @Override
     public Drawable remove(final Object aKey) {
         final Drawable drawable = super.remove(aKey);
-        // Only recycle if we are running on a project less than 2.3.3 Gingerbread.
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD) {
-            if (drawable instanceof BitmapDrawable) {
-                final Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
-                if (bitmap != null) {
-                    bitmap.recycle();
-                }
-            }
-        }
-        if (getTileRemovedListener() != null && aKey instanceof MapTile) {
-            getTileRemovedListener().onTileRemoved((MapTile) aKey);
-        }
+
+        // @TODO: vng is there ever a case where this is not true?
+        // BitmapTileSourceBase seems like the only place where drawables are created.
+        // This seems like a case where all the interfaces pass around the super class of Drawable,
+        // but in reality, we're always actually using ReusableBitmapDrawable instances.
         if (drawable instanceof ReusableBitmapDrawable) {
             BitmapPool.getInstance().returnDrawableToPool((ReusableBitmapDrawable) drawable);
         }
@@ -67,7 +62,7 @@ public class LRUMapTileCache extends LinkedHashMap<MapTile, Drawable>
         if (size() > mCapacity) {
             final MapTile eldest = aEldest.getKey();
             if (DEBUGMODE) {
-                logger.debug("Remove old tile: " + eldest);
+                Log.d(LOG_TAG, "Remove old tile: " + eldest);
             }
             remove(eldest);
             // don't return true because we've already removed it
@@ -75,15 +70,4 @@ public class LRUMapTileCache extends LinkedHashMap<MapTile, Drawable>
         return false;
     }
 
-    public TileRemovedListener getTileRemovedListener() {
-        return mTileRemovedListener;
-    }
-
-    public void setTileRemovedListener(TileRemovedListener tileRemovedListener) {
-        mTileRemovedListener = tileRemovedListener;
-    }
-
-    public interface TileRemovedListener {
-        void onTileRemoved(MapTile mapTile);
-    }
 }

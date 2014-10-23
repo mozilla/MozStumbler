@@ -5,27 +5,6 @@ import android.graphics.drawable.Drawable;
 
 public interface ResourceProxy {
 
-    String getString(string pResId);
-
-    /**
-     * Use a string resource as a format definition, and format using the supplied format arguments.
-     */
-    String getString(string pResId, Object... formatArgs);
-
-    Bitmap getBitmap(bitmap pResId);
-
-    /**
-     * Get a bitmap as a {@link Drawable}
-     */
-    Drawable getDrawable(bitmap pResId);
-
-    /**
-     * Gets the density from the current screen's DisplayMetrics
-     *
-     * @return the screen's density
-     */
-    float getDisplayMetricsDensity();
-
     public static enum string {
 
         // tile sources
@@ -53,4 +32,25 @@ public interface ResourceProxy {
          */
         ic_menu_offline, ic_menu_mylocation, ic_menu_compass, ic_menu_mapmode
     }
+
+    String getString(string pResId);
+
+    /**
+     * Use a string resource as a format definition, and format using the supplied format arguments.
+     */
+    String getString(string pResId, Object... formatArgs);
+
+    Bitmap getBitmap(bitmap pResId);
+
+    /**
+     * Get a bitmap as a {@link Drawable}
+     */
+    Drawable getDrawable(bitmap pResId);
+
+    /**
+     * Gets the density from the current screen's DisplayMetrics
+     *
+     * @return the screen's density
+     */
+    float getDisplayMetricsDensity();
 }

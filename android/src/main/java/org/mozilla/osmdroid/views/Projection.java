@@ -26,13 +26,14 @@ import org.mozilla.osmdroid.views.util.constants.MapViewConstants;
  */
 public class Projection implements IProjection, MapViewConstants {
 
+    private final int mMapViewWidth;
+    private final int mMapViewHeight;
     // The offsets will take us from the MapView's current coordinate system
     // to a 0,0 coordinate system
     protected final int mOffsetX;
     protected final int mOffsetY;
     protected final float mMultiTouchScale;
-    private final int mMapViewWidth;
-    private final int mMapViewHeight;
+
     private final Matrix mRotateAndScaleMatrix = new Matrix();
     private final Matrix mUnrotateAndScaleMatrix = new Matrix();
     private final float[] mRotateScalePoints = new float[2];

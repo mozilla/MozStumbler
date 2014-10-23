@@ -6,12 +6,12 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.InputStreamBody;
+import org.mozilla.mozstumbler.service.AppGlobals;
+import org.mozilla.mozstumbler.service.core.logging.Log;
 import org.mozilla.osmdroid.contributor.util.RecordedGeoPoint;
 import org.mozilla.osmdroid.contributor.util.RecordedRouteGPXFormatter;
 import org.mozilla.osmdroid.contributor.util.Util;
 import org.mozilla.osmdroid.http.HttpClientFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
@@ -22,62 +22,61 @@ import java.util.ArrayList;
 
 public class GpxToPHPUploader {
 
-    protected static final String UPLOADSCRIPT_URL = "http://www.PLACEYOURDOMAINHERE.com/anyfolder/gpxuploader/upload.php";
-    private static final Logger logger = LoggerFactory.getLogger(GpxToPHPUploader.class);
+	private static final String LOG_TAG = AppGlobals.LOG_PREFIX + GpxToPHPUploader.class.getSimpleName();
 
-    /**
-     * This is a utility class with only static members.
-     */
-    private GpxToPHPUploader() {
-    }
+	protected static final String UPLOADSCRIPT_URL = "http://www.PLACEYOURDOMAINHERE.com/anyfolder/gpxuploader/upload.php";
 
-    public static void uploadAsync(final ArrayList<RecordedGeoPoint> recordedGeoPoints) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    if (!Util.isSufficienDataForUpload(recordedGeoPoints)) {
-                        return;
-                    }
+	/**
+	 * This is a utility class with only static members.
+	 */
+	private GpxToPHPUploader() {
+	}
 
-                    final InputStream gpxInputStream = new ByteArrayInputStream(
-                            RecordedRouteGPXFormatter.create(recordedGeoPoints).getBytes());
-                    final HttpClient httpClient = HttpClientFactory.createHttpClient();
+	public static void uploadAsync(final ArrayList<RecordedGeoPoint> recordedGeoPoints) {
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					if (!Util.isSufficienDataForUpload(recordedGeoPoints))
+						return;
 
-                    final HttpPost request = new HttpPost(UPLOADSCRIPT_URL);
+					final InputStream gpxInputStream = new ByteArrayInputStream(
+							RecordedRouteGPXFormatter.create(recordedGeoPoints).getBytes());
+					final HttpClient httpClient = HttpClientFactory.createHttpClient();
 
-                    // create the multipart request and add the parts to it
-                    final MultipartEntity requestEntity = new MultipartEntity();
-                    requestEntity.addPart("gpxfile", new InputStreamBody(gpxInputStream, ""
-                            + System.currentTimeMillis() + ".gpx"));
+					final HttpPost request = new HttpPost(UPLOADSCRIPT_URL);
 
-                    httpClient.getParams().setBooleanParameter("http.protocol.expect-continue",
-                            false);
+					// create the multipart request and add the parts to it
+					final MultipartEntity requestEntity = new MultipartEntity();
+					requestEntity.addPart("gpxfile", new InputStreamBody(gpxInputStream, ""
+							+ System.currentTimeMillis() + ".gpx"));
 
-                    request.setEntity(requestEntity);
+					httpClient.getParams().setBooleanParameter("http.protocol.expect-continue",
+							false);
 
-                    final HttpResponse response = httpClient.execute(request);
-                    final int status = response.getStatusLine().getStatusCode();
+					request.setEntity(requestEntity);
 
-                    if (status != HttpStatus.SC_OK) {
-                        logger.error("GPXUploader", "status != HttpStatus.SC_OK");
-                    } else {
-                        final Reader r = new InputStreamReader(new BufferedInputStream(response
-                                .getEntity().getContent()));
-                        // see above
-                        final char[] buf = new char[8 * 1024];
-                        int read;
-                        final StringBuilder sb = new StringBuilder();
-                        while ((read = r.read(buf)) != -1) {
-                            sb.append(buf, 0, read);
-                        }
+					final HttpResponse response = httpClient.execute(request);
+					final int status = response.getStatusLine().getStatusCode();
 
-                        logger.debug("GPXUploader", "Response: " + sb.toString());
-                    }
-                } catch (final Exception e) {
-                    // logger.error("OSMUpload Error", e);
-                }
-            }
-        }).start();
-    }
+					if (status != HttpStatus.SC_OK) {
+						Log.w(LOG_TAG, "GPXUploader status != HttpStatus.SC_OK");
+					} else {
+						final Reader r = new InputStreamReader(new BufferedInputStream(response
+								.getEntity().getContent()));
+						// see above
+						final char[] buf = new char[8 * 1024];
+						int read;
+						final StringBuilder sb = new StringBuilder();
+						while ((read = r.read(buf)) != -1)
+							sb.append(buf, 0, read);
+
+						Log.d(LOG_TAG, "GPXUploader Response: " + sb.toString());
+					}
+				} catch (final Exception e) {
+					Log.e(LOG_TAG, "OSMUpload Error", e);
+				}
+			}
+		}).start();
+	}
 }

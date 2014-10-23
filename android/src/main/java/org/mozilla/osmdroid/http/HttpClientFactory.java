@@ -2,7 +2,9 @@ package org.mozilla.osmdroid.http;
 
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.params.CoreProtocolPNames;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
 
 /**
  * Factory class for creating an instance of {@link HttpClient}.
@@ -22,12 +24,16 @@ import org.apache.http.params.CoreProtocolPNames;
  */
 public class HttpClientFactory {
 
+    private static final int CONNECTION_TIMEOUT_MS = 2000;
+    private static final int SOCKET_TIMEOUT_MS = 2000;
+
     private static IHttpClientFactory mFactoryInstance = new IHttpClientFactory() {
         @Override
         public HttpClient createHttpClient() {
-            final DefaultHttpClient client = new DefaultHttpClient();
-            client.getParams().setParameter(CoreProtocolPNames.USER_AGENT, "osmdroid");
-            return client;
+            HttpParams my_httpParams = new BasicHttpParams();
+            HttpConnectionParams.setConnectionTimeout(my_httpParams, CONNECTION_TIMEOUT_MS);
+            HttpConnectionParams.setSoTimeout(my_httpParams, SOCKET_TIMEOUT_MS);
+            return new DefaultHttpClient(my_httpParams);
         }
     };
 

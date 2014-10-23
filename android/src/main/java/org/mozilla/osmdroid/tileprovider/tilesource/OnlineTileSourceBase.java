@@ -5,7 +5,7 @@ import org.mozilla.osmdroid.tileprovider.MapTile;
 
 public abstract class OnlineTileSourceBase extends BitmapTileSourceBase {
 
-    private final String mBaseUrls[];
+    public String mBaseUrls[];
 
     /**
      * Constructor

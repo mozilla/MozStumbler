@@ -7,8 +7,9 @@ import android.os.Build;
 import java.util.LinkedList;
 
 public class BitmapPool {
-    private static BitmapPool sInstance;
     final LinkedList<Bitmap> mPool = new LinkedList<Bitmap>();
+
+    private static BitmapPool sInstance;
 
     public static BitmapPool getInstance() {
         if (sInstance == null) {

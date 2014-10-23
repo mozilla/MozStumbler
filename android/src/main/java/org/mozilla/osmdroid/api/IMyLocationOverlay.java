@@ -3,8 +3,6 @@ package org.mozilla.osmdroid.api;
 import android.location.Location;
 import android.os.Bundle;
 
-import org.mozilla.osmdroid.views.overlay.MyLocationOverlay;
-
 /**
  * An interface that resembles the Google Maps API MyLocationOverlay class
  * and is implemented by the osmdroid {@link MyLocationOverlay} class.

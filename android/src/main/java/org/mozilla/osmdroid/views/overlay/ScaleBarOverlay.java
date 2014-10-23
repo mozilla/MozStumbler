@@ -58,39 +58,53 @@ public class ScaleBarOverlay extends Overlay implements GeoConstants {
     // ===========================================================
 
     private static final Rect sTextBoundsRect = new Rect();
-    protected final Path barPath = new Path();
-    protected final Rect latitudeBarRect = new Rect();
-    protected final Rect longitudeBarRect = new Rect();
-    private final Context context;
-    private final ResourceProxy resourceProxy;
-    public float xdpi;
-    public float ydpi;
 
-    // Internal
-    public int screenWidth;
-    public int screenHeight;
+    public enum UnitsOfMeasure {
+        metric, imperial, nautical
+    }
+
     // Defaults
     int xOffset = 10;
     int yOffset = 10;
     int minZoom = 0;
+
     UnitsOfMeasure unitsOfMeasure = UnitsOfMeasure.metric;
+
     boolean latitudeBar = true;
     boolean longitudeBar = false;
+
+    // Internal
+
+    private final Context context;
+
+    protected final Path barPath = new Path();
+    protected final Rect latitudeBarRect = new Rect();
+    protected final Rect longitudeBarRect = new Rect();
+
     private int lastZoomLevel = -1;
     private float lastLatitude = 0;
+
+    public float xdpi;
+    public float ydpi;
+    public int screenWidth;
+    public int screenHeight;
+
+    private final ResourceProxy resourceProxy;
     private Paint barPaint;
     private Paint bgPaint;
     private Paint textPaint;
+
     private boolean centred = false;
     private boolean adjustLength = false;
     private float maxLength;
-    public ScaleBarOverlay(final Context context) {
-        this(context, new DefaultResourceProxyImpl(context));
-    }
 
     // ===========================================================
     // Constructors
     // ===========================================================
+
+    public ScaleBarOverlay(final Context context) {
+        this(context, new DefaultResourceProxyImpl(context));
+    }
 
     public ScaleBarOverlay(final Context context, final ResourceProxy pResourceProxy) {
         super(pResourceProxy);
@@ -150,6 +164,10 @@ public class ScaleBarOverlay extends Overlay implements GeoConstants {
         maxLength = 2.54f;
     }
 
+    // ===========================================================
+    // Getter & Setter
+    // ===========================================================
+
     /**
      * Sets the minimum zoom level for the scale bar to be drawn.
      *
@@ -158,10 +176,6 @@ public class ScaleBarOverlay extends Overlay implements GeoConstants {
     public void setMinZoom(final int zoom) {
         this.minZoom = zoom;
     }
-
-    // ===========================================================
-    // Getter & Setter
-    // ===========================================================
 
     /**
      * Sets the scale bar screen offset for the bar. Note: if the bar is set to be drawn centered,
@@ -194,18 +208,18 @@ public class ScaleBarOverlay extends Overlay implements GeoConstants {
     }
 
     /**
-     * Gets the units of measure to be shown in the scale bar
-     */
-    public UnitsOfMeasure getUnitsOfMeasure() {
-        return unitsOfMeasure;
-    }
-
-    /**
      * Sets the units of measure to be shown in the scale bar
      */
     public void setUnitsOfMeasure(UnitsOfMeasure unitsOfMeasure) {
         this.unitsOfMeasure = unitsOfMeasure;
         lastZoomLevel = -1; // Force redraw of scalebar
+    }
+
+    /**
+     * Gets the units of measure to be shown in the scale bar
+     */
+    public UnitsOfMeasure getUnitsOfMeasure() {
+        return unitsOfMeasure;
     }
 
     /**
@@ -315,6 +329,10 @@ public class ScaleBarOverlay extends Overlay implements GeoConstants {
         lastZoomLevel = -1; // Force redraw of scalebar
     }
 
+    // ===========================================================
+    // Methods from SuperClass/Interfaces
+    // ===========================================================
+
     @Override
     protected void draw(Canvas c, MapView mapView, boolean shadow) {
         if (shadow) {
@@ -343,8 +361,8 @@ public class ScaleBarOverlay extends Overlay implements GeoConstants {
                 rebuildBarPath(projection);
             }
 
-            int offsetX = (int) xOffset;
-            int offsetY = (int) yOffset;
+            int offsetX = xOffset;
+            int offsetY = yOffset;
             if (centred && latitudeBar) {
                 offsetX += -latitudeBarRect.width() / 2;
             }
@@ -377,16 +395,12 @@ public class ScaleBarOverlay extends Overlay implements GeoConstants {
     }
 
     // ===========================================================
-    // Methods from SuperClass/Interfaces
+    // Methods
     // ===========================================================
 
     public void disableScaleBar() {
         setEnabled(false);
     }
-
-    // ===========================================================
-    // Methods
-    // ===========================================================
 
     public void enableScaleBar() {
         setEnabled(true);
@@ -394,7 +408,7 @@ public class ScaleBarOverlay extends Overlay implements GeoConstants {
 
     private void drawLatitudeText(final Canvas canvas, final Projection projection) {
         // calculate dots per centimeter
-        int xdpcm = (int) ((float) xdpi / 2.54);
+        int xdpcm = (int) (xdpi / 2.54);
 
         // get length in pixel
         int xLen = (int) (maxLength * xdpcm);
@@ -422,7 +436,7 @@ public class ScaleBarOverlay extends Overlay implements GeoConstants {
 
     private void drawLongitudeText(final Canvas canvas, final Projection projection) {
         // calculate dots per centimeter
-        int ydpcm = (int) ((float) ydpi / 2.54);
+        int ydpcm = (int) (ydpi / 2.54);
 
         // get length in pixel
         int yLen = (int) (maxLength * ydpcm);
@@ -458,8 +472,8 @@ public class ScaleBarOverlay extends Overlay implements GeoConstants {
         // to 1-inch at the latitude at the current center of the screen.
 
         // calculate dots per centimeter
-        int xdpcm = (int) ((float) xdpi / 2.54);
-        int ydpcm = (int) ((float) ydpi / 2.54);
+        int xdpcm = (int) (xdpi / 2.54);
+        int ydpcm = (int) (ydpi / 2.54);
 
         // get length in pixel
         int xLen = (int) (maxLength * xdpcm);
@@ -618,10 +632,6 @@ public class ScaleBarOverlay extends Overlay implements GeoConstants {
                             ((int) (meters * FEET_PER_METER)));
                 }
         }
-    }
-
-    public enum UnitsOfMeasure {
-        metric, imperial, nautical
     }
 
 }

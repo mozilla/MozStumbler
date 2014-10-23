@@ -21,5 +21,5 @@ public interface IFilesystemCache {
      * @return
      */
     boolean saveFile(final ITileSource pTileSourceInfo, MapTile pTile,
-                     final InputStream pStream);
+                     final InputStream pStream, String etag);
 }

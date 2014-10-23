@@ -36,17 +36,19 @@ public abstract class Overlay implements OverlayConstants {
     // Constants
     // ===========================================================
 
+    private static AtomicInteger sOrdinal = new AtomicInteger();
+
     // From Google Maps API
     protected static final float SHADOW_X_SKEW = -0.8999999761581421f;
     protected static final float SHADOW_Y_SCALE = 0.5f;
-    private static final Rect mRect = new Rect();
 
     // ===========================================================
     // Fields
     // ===========================================================
-    private static AtomicInteger sOrdinal = new AtomicInteger();
+
     protected final ResourceProxy mResourceProxy;
     protected final float mScale;
+    private static final Rect mRect = new Rect();
     private boolean mEnabled = true;
 
     // ===========================================================
@@ -66,6 +68,24 @@ public abstract class Overlay implements OverlayConstants {
     // ===========================================================
     // Getter & Setter
     // ===========================================================
+
+    /**
+     * Sets whether the Overlay is marked to be enabled. This setting does nothing by default, but
+     * should be checked before calling draw().
+     */
+    public void setEnabled(final boolean pEnabled) {
+        this.mEnabled = pEnabled;
+    }
+
+    /**
+     * Specifies if the Overlay is marked to be enabled. This should be checked before calling
+     * draw().
+     *
+     * @return true if the Overlay is marked enabled, false otherwise
+     */
+    public boolean isEnabled() {
+        return this.mEnabled;
+    }
 
     /**
      * Since the menu-chain will pass through several independent Overlays, menu IDs cannot be fixed
@@ -88,50 +108,8 @@ public abstract class Overlay implements OverlayConstants {
         return sOrdinal.getAndAdd(count);
     }
 
-    /**
-     * Convenience method to draw a Drawable at an offset. x and y are pixel coordinates. You can
-     * find appropriate coordinates from latitude/longitude using the MapView.getProjection() method
-     * on the MapView passed to you in draw(Canvas, MapView, boolean).
-     *
-     * @param shadow          If true, draw only the drawable's shadow. Otherwise, draw the drawable itself.
-     * @param aMapOrientation
-     */
-    protected synchronized static void drawAt(final Canvas canvas, final Drawable drawable,
-                                              final int x, final int y, final boolean shadow,
-                                              final float aMapOrientation) {
-        canvas.save();
-        canvas.rotate(-aMapOrientation, x, y);
-        drawable.copyBounds(mRect);
-        drawable.setBounds(mRect.left + x, mRect.top + y, mRect.right + x, mRect.bottom + y);
-        drawable.draw(canvas);
-        drawable.setBounds(mRect);
-        canvas.restore();
-    }
-
-    /**
-     * Specifies if the Overlay is marked to be enabled. This should be checked before calling
-     * draw().
-     *
-     * @return true if the Overlay is marked enabled, false otherwise
-     */
-    public boolean isEnabled() {
-        return this.mEnabled;
-    }
-
     // ===========================================================
     // Methods for SuperClass/Interfaces
-    // ===========================================================
-
-    /**
-     * Sets whether the Overlay is marked to be enabled. This setting does nothing by default, but
-     * should be checked before calling draw().
-     */
-    public void setEnabled(final boolean pEnabled) {
-        this.mEnabled = pEnabled;
-    }
-
-    // ===========================================================
-    // Methods
     // ===========================================================
 
     /**
@@ -140,6 +118,10 @@ public abstract class Overlay implements OverlayConstants {
      * should check isEnabled() before calling draw(). By default, draws nothing.
      */
     protected abstract void draw(final Canvas c, final MapView osmv, final boolean shadow);
+
+    // ===========================================================
+    // Methods
+    // ===========================================================
 
     /**
      * Override to perform clean up of resources before shutdown. By default does nothing.
@@ -178,8 +160,6 @@ public abstract class Overlay implements OverlayConstants {
         return false;
     }
 
-    /** GestureDetector.OnDoubleTapListener **/
-
     /**
      * By default does nothing (<code>return false</code>). If you handled the Event, return
      * <code>true</code>, otherwise return <code>false</code>. If you returned <code>true</code>
@@ -189,6 +169,8 @@ public abstract class Overlay implements OverlayConstants {
     public boolean onTrackballEvent(final MotionEvent event, final MapView mapView) {
         return false;
     }
+
+    /** GestureDetector.OnDoubleTapListener **/
 
     /**
      * By default does nothing (<code>return false</code>). If you handled the Event, return
@@ -210,8 +192,6 @@ public abstract class Overlay implements OverlayConstants {
         return false;
     }
 
-    /** OnGestureListener **/
-
     /**
      * By default does nothing (<code>return false</code>). If you handled the Event, return
      * <code>true</code>, otherwise return <code>false</code>. If you returned <code>true</code>
@@ -221,6 +201,8 @@ public abstract class Overlay implements OverlayConstants {
     public boolean onSingleTapConfirmed(final MotionEvent e, final MapView mapView) {
         return false;
     }
+
+    /** OnGestureListener **/
 
     /**
      * By default does nothing (<code>return false</code>). If you handled the Event, return
@@ -276,6 +258,26 @@ public abstract class Overlay implements OverlayConstants {
      */
     public boolean onSingleTapUp(final MotionEvent e, final MapView mapView) {
         return false;
+    }
+
+    /**
+     * Convenience method to draw a Drawable at an offset. x and y are pixel coordinates. You can
+     * find appropriate coordinates from latitude/longitude using the MapView.getProjection() method
+     * on the MapView passed to you in draw(Canvas, MapView, boolean).
+     *
+     * @param shadow          If true, draw only the drawable's shadow. Otherwise, draw the drawable itself.
+     * @param aMapOrientation
+     */
+    protected synchronized static void drawAt(final Canvas canvas, final Drawable drawable,
+                                              final int x, final int y, final boolean shadow,
+                                              final float aMapOrientation) {
+        canvas.save();
+        canvas.rotate(-aMapOrientation, x, y);
+        drawable.copyBounds(mRect);
+        drawable.setBounds(mRect.left + x, mRect.top + y, mRect.right + x, mRect.bottom + y);
+        drawable.draw(canvas);
+        drawable.setBounds(mRect);
+        canvas.restore();
     }
 
     // ===========================================================

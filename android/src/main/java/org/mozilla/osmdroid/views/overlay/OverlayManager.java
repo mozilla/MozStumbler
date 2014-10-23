@@ -18,8 +18,9 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public class OverlayManager extends AbstractList<Overlay> {
 
-    private final CopyOnWriteArrayList<Overlay> mOverlayList;
     private TilesOverlay mTilesOverlay;
+
+    private final CopyOnWriteArrayList<Overlay> mOverlayList;
 
     public OverlayManager(final TilesOverlay tilesOverlay) {
         setTilesOverlay(tilesOverlay);

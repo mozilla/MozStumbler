@@ -9,7 +9,7 @@ public interface IStyledTileSource<T> {
 
     public void setStyle(T style);
 
-    public T getStyle();
-
     public void setStyle(String style);
+
+    public T getStyle();
 }

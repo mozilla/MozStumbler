@@ -8,9 +8,9 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.util.DisplayMetrics;
 
+import org.mozilla.mozstumbler.service.AppGlobals;
+import org.mozilla.mozstumbler.service.core.logging.Log;
 import org.mozilla.osmdroid.views.util.constants.MapViewConstants;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -22,7 +22,7 @@ import java.lang.reflect.Field;
  */
 public class DefaultResourceProxyImpl implements ResourceProxy, MapViewConstants {
 
-    private static final Logger logger = LoggerFactory.getLogger(DefaultResourceProxyImpl.class);
+    private static final String LOG_TAG = AppGlobals.LOG_PREFIX + DefaultResourceProxyImpl.class.getSimpleName();
 
     private Resources mResources;
     private DisplayMetrics mDisplayMetrics;
@@ -39,7 +39,7 @@ public class DefaultResourceProxyImpl implements ResourceProxy, MapViewConstants
             mResources = pContext.getResources();
             mDisplayMetrics = mResources.getDisplayMetrics();
             if (DEBUGMODE) {
-                logger.debug("mDisplayMetrics=" + mDisplayMetrics);
+                Log.d(LOG_TAG, "mDisplayMetrics=" + mDisplayMetrics);
             }
         }
     }
@@ -118,7 +118,7 @@ public class DefaultResourceProxyImpl implements ResourceProxy, MapViewConstants
             }
             return BitmapFactory.decodeStream(is, null, options);
         } catch (final OutOfMemoryError e) {
-            logger.error("OutOfMemoryError getting bitmap resource: " + pResId);
+            Log.e(LOG_TAG, "OutOfMemoryError getting bitmap resource: " + pResId, e);
             System.gc();
             // there's not much we can do here
             // - when we load a bitmap from resources we expect it to be found

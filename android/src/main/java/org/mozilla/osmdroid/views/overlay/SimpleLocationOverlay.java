@@ -32,8 +32,9 @@ public class SimpleLocationOverlay extends Overlay {
      * Coordinates the feet of the person are located.
      */
     protected final android.graphics.Point PERSON_HOTSPOT = new android.graphics.Point(24, 39);
-    private final Point screenCoords = new Point();
+
     protected GeoPoint mLocation;
+    private final Point screenCoords = new Point();
 
     // ===========================================================
     // Constructors

@@ -23,30 +23,20 @@ public class BoundingBoxE6 implements Parcelable, Serializable, MapViewConstants
     // Constants
     // ===========================================================
 
-    public static final Parcelable.Creator<BoundingBoxE6> CREATOR = new Parcelable.Creator<BoundingBoxE6>() {
-        @Override
-        public BoundingBoxE6 createFromParcel(final Parcel in) {
-            return readFromParcel(in);
-        }
-
-        @Override
-        public BoundingBoxE6[] newArray(final int size) {
-            return new BoundingBoxE6[size];
-        }
-    };
+    static final long serialVersionUID = 2L;
 
     // ===========================================================
     // Fields
     // ===========================================================
-    static final long serialVersionUID = 2L;
+
     protected final int mLatNorthE6;
     protected final int mLatSouthE6;
     protected final int mLonEastE6;
+    protected final int mLonWestE6;
 
     // ===========================================================
     // Constructors
     // ===========================================================
-    protected final int mLonWestE6;
 
     public BoundingBoxE6(final int northE6, final int eastE6, final int southE6, final int westE6) {
         this.mLatNorthE6 = northE6;
@@ -54,10 +44,6 @@ public class BoundingBoxE6 implements Parcelable, Serializable, MapViewConstants
         this.mLatSouthE6 = southE6;
         this.mLonWestE6 = westE6;
     }
-
-    // ===========================================================
-    // Getter & Setter
-    // ===========================================================
 
     public BoundingBoxE6(final double north, final double east, final double south,
                          final double west) {
@@ -67,31 +53,9 @@ public class BoundingBoxE6 implements Parcelable, Serializable, MapViewConstants
         this.mLonWestE6 = (int) (west * 1E6);
     }
 
-    public static BoundingBoxE6 fromGeoPoints(final ArrayList<? extends GeoPoint> partialPolyLine) {
-        int minLat = Integer.MAX_VALUE;
-        int minLon = Integer.MAX_VALUE;
-        int maxLat = Integer.MIN_VALUE;
-        int maxLon = Integer.MIN_VALUE;
-        for (final GeoPoint gp : partialPolyLine) {
-            final int latitudeE6 = gp.getLatitudeE6();
-            final int longitudeE6 = gp.getLongitudeE6();
-
-            minLat = Math.min(minLat, latitudeE6);
-            minLon = Math.min(minLon, longitudeE6);
-            maxLat = Math.max(maxLat, latitudeE6);
-            maxLon = Math.max(maxLon, longitudeE6);
-        }
-
-        return new BoundingBoxE6(maxLat, maxLon, minLat, minLon);
-    }
-
-    private static BoundingBoxE6 readFromParcel(final Parcel in) {
-        final int latNorthE6 = in.readInt();
-        final int lonEastE6 = in.readInt();
-        final int latSouthE6 = in.readInt();
-        final int lonWestE6 = in.readInt();
-        return new BoundingBoxE6(latNorthE6, lonEastE6, latSouthE6, lonWestE6);
-    }
+    // ===========================================================
+    // Getter & Setter
+    // ===========================================================
 
     /**
      * @return GeoPoint center of this BoundingBox
@@ -156,10 +120,6 @@ public class BoundingBoxE6 implements Parcelable, Serializable, MapViewConstants
         return out;
     }
 
-    // ===========================================================
-    // Methods from SuperClass/Interfaces
-    // ===========================================================
-
     public GeoPoint getGeoPointOfRelativePositionWithLinearInterpolation(final float relX,
                                                                          final float relY) {
 
@@ -185,10 +145,6 @@ public class BoundingBoxE6 implements Parcelable, Serializable, MapViewConstants
 
         return new GeoPoint(lat, lon);
     }
-
-    // ===========================================================
-    // Methods
-    // ===========================================================
 
     public GeoPoint getGeoPointOfRelativePositionWithExactGudermannInterpolation(final float relX,
                                                                                  final float relY) {
@@ -229,6 +185,10 @@ public class BoundingBoxE6 implements Parcelable, Serializable, MapViewConstants
                 - mLatSpanE6Padded_2, pCenter.getLongitudeE6() - mLonSpanE6Padded_2);
     }
 
+    // ===========================================================
+    // Methods from SuperClass/Interfaces
+    // ===========================================================
+
     @Override
     public String toString() {
         return new StringBuffer().append("N:").append(this.mLatNorthE6).append("; E:")
@@ -236,9 +196,40 @@ public class BoundingBoxE6 implements Parcelable, Serializable, MapViewConstants
                 .append(this.mLonWestE6).toString();
     }
 
+    // ===========================================================
+    // Methods
+    // ===========================================================
+
     public GeoPoint bringToBoundingBox(final int aLatitudeE6, final int aLongitudeE6) {
         return new GeoPoint(Math.max(this.mLatSouthE6, Math.min(this.mLatNorthE6, aLatitudeE6)),
                 Math.max(this.mLonWestE6, Math.min(this.mLonEastE6, aLongitudeE6)));
+    }
+
+    public static BoundingBoxE6 fromGeoPoints(final ArrayList<? extends GeoPoint> partialPolyLine) {
+        int minLat = Integer.MAX_VALUE;
+        int minLon = Integer.MAX_VALUE;
+        int maxLat = Integer.MIN_VALUE;
+        int maxLon = Integer.MIN_VALUE;
+        for (final GeoPoint gp : partialPolyLine) {
+            final int latitudeE6 = gp.getLatitudeE6();
+            final int longitudeE6 = gp.getLongitudeE6();
+
+            minLat = Math.min(minLat, latitudeE6);
+            minLon = Math.min(minLon, longitudeE6);
+            maxLat = Math.max(maxLat, latitudeE6);
+            maxLon = Math.max(maxLon, longitudeE6);
+        }
+
+        return new BoundingBoxE6(maxLat, maxLon, minLat, minLon);
+    }
+
+    public boolean contains(final IGeoPoint pGeoPoint) {
+        return contains(pGeoPoint.getLatitudeE6(), pGeoPoint.getLongitudeE6());
+    }
+
+    public boolean contains(final int aLatitudeE6, final int aLongitudeE6) {
+        return ((aLatitudeE6 < this.mLatNorthE6) && (aLatitudeE6 > this.mLatSouthE6))
+                && ((aLongitudeE6 < this.mLonEastE6) && (aLongitudeE6 > this.mLonWestE6));
     }
 
     // ===========================================================
@@ -249,14 +240,17 @@ public class BoundingBoxE6 implements Parcelable, Serializable, MapViewConstants
     // Parcelable
     // ===========================================================
 
-    public boolean contains(final IGeoPoint pGeoPoint) {
-        return contains(pGeoPoint.getLatitudeE6(), pGeoPoint.getLongitudeE6());
-    }
+    public static final Parcelable.Creator<BoundingBoxE6> CREATOR = new Parcelable.Creator<BoundingBoxE6>() {
+        @Override
+        public BoundingBoxE6 createFromParcel(final Parcel in) {
+            return readFromParcel(in);
+        }
 
-    public boolean contains(final int aLatitudeE6, final int aLongitudeE6) {
-        return ((aLatitudeE6 < this.mLatNorthE6) && (aLatitudeE6 > this.mLatSouthE6))
-                && ((aLongitudeE6 < this.mLonEastE6) && (aLongitudeE6 > this.mLonWestE6));
-    }
+        @Override
+        public BoundingBoxE6[] newArray(final int size) {
+            return new BoundingBoxE6[size];
+        }
+    };
 
     @Override
     public int describeContents() {
@@ -269,5 +263,13 @@ public class BoundingBoxE6 implements Parcelable, Serializable, MapViewConstants
         out.writeInt(this.mLonEastE6);
         out.writeInt(this.mLatSouthE6);
         out.writeInt(this.mLonWestE6);
+    }
+
+    private static BoundingBoxE6 readFromParcel(final Parcel in) {
+        final int latNorthE6 = in.readInt();
+        final int lonEastE6 = in.readInt();
+        final int latSouthE6 = in.readInt();
+        final int lonWestE6 = in.readInt();
+        return new BoundingBoxE6(latNorthE6, lonEastE6, latSouthE6, lonWestE6);
     }
 }

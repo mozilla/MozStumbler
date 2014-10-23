@@ -6,7 +6,7 @@ import org.mozilla.osmdroid.tileprovider.MapTile;
 /**
  * An implementation of {@link org.mozilla.osmdroid.tileprovider.tilesource.OnlineTileSourceBase}
  */
-public class XYTileSource extends OnlineTileSourceBase {
+public class XYTileSource extends OnlineTileSourceBase implements ITileSource {
 
     public XYTileSource(final String aName, final string aResourceId, final int aZoomMinLevel,
                         final int aZoomMaxLevel, final int aTileSizePixels, final String aImageFilenameEnding,

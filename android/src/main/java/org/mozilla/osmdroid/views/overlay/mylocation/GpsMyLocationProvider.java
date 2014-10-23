@@ -9,113 +9,112 @@ import android.os.Bundle;
 import org.mozilla.osmdroid.util.NetworkLocationIgnorer;
 
 public class GpsMyLocationProvider implements IMyLocationProvider, LocationListener {
-    private final LocationManager mLocationManager;
-    private final NetworkLocationIgnorer mIgnorer = new NetworkLocationIgnorer();
-    private Location mLocation;
-    private IMyLocationConsumer mMyLocationConsumer;
-    private long mLocationUpdateMinTime = 0;
-    private float mLocationUpdateMinDistance = 0.0f;
+	private final LocationManager mLocationManager;
+	private Location mLocation;
 
-    public GpsMyLocationProvider(Context context) {
-        mLocationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-    }
+	private IMyLocationConsumer mMyLocationConsumer;
+	private long mLocationUpdateMinTime = 0;
+	private float mLocationUpdateMinDistance = 0.0f;
+	private final NetworkLocationIgnorer mIgnorer = new NetworkLocationIgnorer();
 
-    // ===========================================================
-    // Getter & Setter
-    // ===========================================================
+	public GpsMyLocationProvider(Context context) {
+		mLocationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+	}
 
-    public long getLocationUpdateMinTime() {
-        return mLocationUpdateMinTime;
-    }
+	// ===========================================================
+	// Getter & Setter
+	// ===========================================================
 
-    /**
-     * Set the minimum interval for location updates. See {@link
-     * LocationManager.requestLocationUpdates(String, long, float, LocationListener)}. Note that you
-     * should call this before calling {@link enableMyLocation()}.
-     *
-     * @param milliSeconds
-     */
-    public void setLocationUpdateMinTime(final long milliSeconds) {
-        mLocationUpdateMinTime = milliSeconds;
-    }
+	public long getLocationUpdateMinTime() {
+		return mLocationUpdateMinTime;
+	}
 
-    public float getLocationUpdateMinDistance() {
-        return mLocationUpdateMinDistance;
-    }
+	/**
+	 * Set the minimum interval for location updates. See {@link
+	 * LocationManager.requestLocationUpdates(String, long, float, LocationListener)}. Note that you
+	 * should call this before calling {@link enableMyLocation()}.
+	 * 
+	 * @param milliSeconds
+	 */
+	public void setLocationUpdateMinTime(final long milliSeconds) {
+		mLocationUpdateMinTime = milliSeconds;
+	}
 
-    /**
-     * Set the minimum distance for location updates. See
-     * {@link LocationManager.requestLocationUpdates}. Note that you should call this before calling
-     * {@link enableMyLocation()}.
-     *
-     * @param meters
-     */
-    public void setLocationUpdateMinDistance(final float meters) {
-        mLocationUpdateMinDistance = meters;
-    }
+	public float getLocationUpdateMinDistance() {
+		return mLocationUpdateMinDistance;
+	}
 
-    //
-    // IMyLocationProvider
-    //
+	/**
+	 * Set the minimum distance for location updates. See
+	 * {@link LocationManager.requestLocationUpdates}. Note that you should call this before calling
+	 * {@link enableMyLocation()}.
+	 * 
+	 * @param meters
+	 */
+	public void setLocationUpdateMinDistance(final float meters) {
+		mLocationUpdateMinDistance = meters;
+	}
 
-    /**
-     * Enable location updates and show your current location on the map. By default this will
-     * request location updates as frequently as possible, but you can change the frequency and/or
-     * distance by calling {@link setLocationUpdateMinTime(long)} and/or {@link
-     * setLocationUpdateMinDistance(float)} before calling this method.
-     */
-    @Override
-    public boolean startLocationProvider(IMyLocationConsumer myLocationConsumer) {
-        mMyLocationConsumer = myLocationConsumer;
-        boolean result = false;
-        for (final String provider : mLocationManager.getProviders(true)) {
-            if (LocationManager.GPS_PROVIDER.equals(provider)
-                    || LocationManager.NETWORK_PROVIDER.equals(provider)) {
-                result = true;
-                mLocationManager.requestLocationUpdates(provider, mLocationUpdateMinTime,
-                        mLocationUpdateMinDistance, this);
-            }
-        }
-        return result;
-    }
+	//
+	// IMyLocationProvider
+	//
 
-    @Override
-    public void stopLocationProvider() {
-        mMyLocationConsumer = null;
-        mLocationManager.removeUpdates(this);
-    }
+	/**
+	 * Enable location updates and show your current location on the map. By default this will
+	 * request location updates as frequently as possible, but you can change the frequency and/or
+	 * distance by calling {@link setLocationUpdateMinTime(long)} and/or {@link
+	 * setLocationUpdateMinDistance(float)} before calling this method.
+	 */
+	@Override
+	public boolean startLocationProvider(IMyLocationConsumer myLocationConsumer) {
+		mMyLocationConsumer = myLocationConsumer;
+		boolean result = false;
+		for (final String provider : mLocationManager.getProviders(true)) {
+			if (LocationManager.GPS_PROVIDER.equals(provider)
+					|| LocationManager.NETWORK_PROVIDER.equals(provider)) {
+				result = true;
+				mLocationManager.requestLocationUpdates(provider, mLocationUpdateMinTime,
+						mLocationUpdateMinDistance, this);
+			}
+		}
+		return result;
+	}
 
-    @Override
-    public Location getLastKnownLocation() {
-        return mLocation;
-    }
+	@Override
+	public void stopLocationProvider() {
+		mMyLocationConsumer = null;
+		mLocationManager.removeUpdates(this);
+	}
 
-    //
-    // LocationListener
-    //
+	@Override
+	public Location getLastKnownLocation() {
+		return mLocation;
+	}
 
-    @Override
-    public void onLocationChanged(final Location location) {
-        // ignore temporary non-gps fix
-        if (mIgnorer.shouldIgnore(location.getProvider(), System.currentTimeMillis())) {
-            return;
-        }
+	//
+	// LocationListener
+	//
 
-        mLocation = location;
-        if (mMyLocationConsumer != null) {
-            mMyLocationConsumer.onLocationChanged(mLocation, this);
-        }
-    }
+	@Override
+	public void onLocationChanged(final Location location) {
+		// ignore temporary non-gps fix
+		if (mIgnorer.shouldIgnore(location.getProvider(), System.currentTimeMillis()))
+			return;
 
-    @Override
-    public void onProviderDisabled(final String provider) {
-    }
+		mLocation = location;
+		if (mMyLocationConsumer != null)
+			mMyLocationConsumer.onLocationChanged(mLocation, this);
+	}
 
-    @Override
-    public void onProviderEnabled(final String provider) {
-    }
+	@Override
+	public void onProviderDisabled(final String provider) {
+	}
 
-    @Override
-    public void onStatusChanged(final String provider, final int status, final Bundle extras) {
-    }
+	@Override
+	public void onProviderEnabled(final String provider) {
+	}
+
+	@Override
+	public void onStatusChanged(final String provider, final int status, final Bundle extras) {
+	}
 }

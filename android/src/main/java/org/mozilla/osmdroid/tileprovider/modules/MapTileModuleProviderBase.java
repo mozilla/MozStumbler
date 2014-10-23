@@ -2,13 +2,13 @@ package org.mozilla.osmdroid.tileprovider.modules;
 
 import android.graphics.drawable.Drawable;
 
+import org.mozilla.mozstumbler.service.AppGlobals;
+import org.mozilla.mozstumbler.service.core.logging.Log;
 import org.mozilla.osmdroid.tileprovider.ExpirableBitmapDrawable;
 import org.mozilla.osmdroid.tileprovider.MapTile;
 import org.mozilla.osmdroid.tileprovider.MapTileRequestState;
 import org.mozilla.osmdroid.tileprovider.constants.OpenStreetMapTileProviderConstants;
 import org.mozilla.osmdroid.tileprovider.tilesource.ITileSource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -26,298 +26,300 @@ import java.util.concurrent.RejectedExecutionException;
  */
 public abstract class MapTileModuleProviderBase implements OpenStreetMapTileProviderConstants {
 
-    private static final Logger logger = LoggerFactory.getLogger(MapTileModuleProviderBase.class);
-    protected final Object mQueueLockObject = new Object();
-    protected final HashMap<MapTile, MapTileRequestState> mWorking;
-    protected final LinkedHashMap<MapTile, MapTileRequestState> mPending;
-    private final ExecutorService mExecutor;
+	/**
+	 * Gets the human-friendly name assigned to this tile provider.
+	 *
+	 * @return the thread name
+	 */
+	protected abstract String getName();
 
-    public MapTileModuleProviderBase(int pThreadPoolSize, final int pPendingQueueSize) {
-        if (pPendingQueueSize < pThreadPoolSize) {
-            logger.warn("The pending queue size is smaller than the thread pool size. Automatically reducing the thread pool size.");
-            pThreadPoolSize = pPendingQueueSize;
-        }
-        mExecutor = Executors.newFixedThreadPool(pThreadPoolSize,
-                new ConfigurablePriorityThreadFactory(Thread.NORM_PRIORITY, getThreadGroupName()));
+	/**
+	 * Gets the name assigned to the thread for this provider.
+	 *
+	 * @return the thread name
+	 */
+	protected abstract String getThreadGroupName();
 
-        mWorking = new HashMap<MapTile, MapTileRequestState>();
-        mPending = new LinkedHashMap<MapTile, MapTileRequestState>(pPendingQueueSize + 2, 0.1f,
-                true) {
+	/**
+	 * It is expected that the implementation will construct an internal member which internally
+	 * implements a {@link TileLoader}. This method is expected to return a that internal member to
+	 * methods of the parent methods.
+	 *
+	 * @return the internal member of this tile provider.
+	 */
+	protected abstract Runnable getTileLoader();
 
-            private static final long serialVersionUID = 6455337315681858866L;
+	/**
+	 * Returns true if implementation uses a data connection, false otherwise. This value is used to
+	 * determine if this provider should be skipped if there is no data connection.
+	 *
+	 * @return true if implementation uses a data connection, false otherwise
+	 */
+	public abstract boolean getUsesDataConnection();
 
-            @Override
-            protected boolean removeEldestEntry(
-                    final Map.Entry<MapTile, MapTileRequestState> pEldest) {
-                if (size() > pPendingQueueSize) {
-                    MapTile result = null;
+	/**
+	 * Gets the minimum zoom level this tile provider can provide
+	 *
+	 * @return the minimum zoom level
+	 */
+	public abstract int getMinimumZoomLevel();
 
-                    // get the oldest tile that isn't in the mWorking queue
-                    Iterator<MapTile> iterator = mPending.keySet().iterator();
+	/**
+	 * Gets the maximum zoom level this tile provider can provide
+	 *
+	 * @return the maximum zoom level
+	 */
+	public abstract int getMaximumZoomLevel();
 
-                    while (result == null && iterator.hasNext()) {
-                        final MapTile tile = iterator.next();
-                        if (!mWorking.containsKey(tile)) {
-                            result = tile;
-                        }
-                    }
+	/**
+	 * Sets the tile source for this tile provider.
+	 *
+	 * @param tileSource
+	 *            the tile source
+	 */
+	public abstract void setTileSource(ITileSource tileSource);
 
-                    if (result != null) {
-                        MapTileRequestState state = mPending.get(result);
-                        removeTileFromQueues(result);
-                        state.getCallback().mapTileRequestFailed(state);
-                    }
-                }
-                return false;
-            }
-        };
-    }
+	private final ExecutorService mExecutor;
 
-    /**
-     * Gets the human-friendly name assigned to this tile provider.
-     *
-     * @return the thread name
-     */
-    protected abstract String getName();
+	private static final String LOG_TAG = AppGlobals.LOG_PREFIX + MapTileModuleProviderBase.class.getSimpleName();
 
-    /**
-     * Gets the name assigned to the thread for this provider.
-     *
-     * @return the thread name
-     */
-    protected abstract String getThreadGroupName();
+	protected final Object mQueueLockObject = new Object();
+	protected final HashMap<MapTile, MapTileRequestState> mWorking;
+	protected final LinkedHashMap<MapTile, MapTileRequestState> mPending;
 
-    /**
-     * It is expected that the implementation will construct an internal member which internally
-     * implements a {@link TileLoader}. This method is expected to return a that internal member to
-     * methods of the parent methods.
-     *
-     * @return the internal member of this tile provider.
-     */
-    protected abstract Runnable getTileLoader();
+	public MapTileModuleProviderBase(int pThreadPoolSize, final int pPendingQueueSize) {
+		if (pPendingQueueSize < pThreadPoolSize) {
+			Log.w(LOG_TAG, "The pending queue size is smaller than the thread pool size. Automatically reducing the thread pool size.");
+			pThreadPoolSize = pPendingQueueSize;
+		}
+		mExecutor = Executors.newFixedThreadPool(pThreadPoolSize,
+				new ConfigurablePriorityThreadFactory(Thread.NORM_PRIORITY, getThreadGroupName()));
 
-    /**
-     * Returns true if implementation uses a data connection, false otherwise. This value is used to
-     * determine if this provider should be skipped if there is no data connection.
-     *
-     * @return true if implementation uses a data connection, false otherwise
-     */
-    public abstract boolean getUsesDataConnection();
+		mWorking = new HashMap<MapTile, MapTileRequestState>();
+		mPending = new LinkedHashMap<MapTile, MapTileRequestState>(pPendingQueueSize + 2, 0.1f,
+				true) {
 
-    /**
-     * Gets the minimum zoom level this tile provider can provide
-     *
-     * @return the minimum zoom level
-     */
-    public abstract int getMinimumZoomLevel();
+			private static final long serialVersionUID = 6455337315681858866L;
 
-    /**
-     * Gets the maximum zoom level this tile provider can provide
-     *
-     * @return the maximum zoom level
-     */
-    public abstract int getMaximumZoomLevel();
+			@Override
+			protected boolean removeEldestEntry(
+					final Map.Entry<MapTile, MapTileRequestState> pEldest) {
+				if (size() > pPendingQueueSize) {
+					MapTile result = null;
 
-    /**
-     * Sets the tile source for this tile provider.
-     *
-     * @param tileSource the tile source
-     */
-    public abstract void setTileSource(ITileSource tileSource);
+					// get the oldest tile that isn't in the mWorking queue
+					Iterator<MapTile> iterator = mPending.keySet().iterator();
 
-    public void loadMapTileAsync(final MapTileRequestState pState) {
-        synchronized (mQueueLockObject) {
-            if (DEBUG_TILE_PROVIDERS) {
-                logger.debug("MapTileModuleProviderBase.loadMaptileAsync() on provider: "
-                        + getName() + " for tile: " + pState.getMapTile());
-                if (mPending.containsKey(pState.getMapTile())) {
-                    logger.debug("MapTileModuleProviderBase.loadMaptileAsync() tile already exists in request queue for modular provider. Moving to front of queue.");
-                } else {
-                    logger.debug("MapTileModuleProviderBase.loadMaptileAsync() adding tile to request queue for modular provider.");
-                }
-            }
+					while (result == null && iterator.hasNext()) {
+						final MapTile tile = iterator.next();
+						if (!mWorking.containsKey(tile)) {
+							result = tile;
+						}
+					}
 
-            // this will put the tile in the queue, or move it to the front of
-            // the queue if it's already present
-            mPending.put(pState.getMapTile(), pState);
-        }
-        try {
-            mExecutor.execute(getTileLoader());
-        } catch (final RejectedExecutionException e) {
-            logger.warn("RejectedExecutionException", e);
-        }
-    }
+					if (result != null) {
+						MapTileRequestState state = mPending.get(result);
+						removeTileFromQueues(result);
+						state.getCallback().mapTileRequestFailed(state);
+					}
+				}
+				return false;
+			}
+		};
+	}
 
-    private void clearQueue() {
-        synchronized (mQueueLockObject) {
-            mPending.clear();
-            mWorking.clear();
-        }
-    }
+	public void loadMapTileAsync(final MapTileRequestState pState) {
+		synchronized (mQueueLockObject) {
+			if (DEBUG_TILE_PROVIDERS) {
+				Log.d(LOG_TAG, "MapTileModuleProviderBase.loadMaptileAsync() on provider: "
+						+ getName() + " for tile: " + pState.getMapTile());
+				if (mPending.containsKey(pState.getMapTile()))
+					Log.d(LOG_TAG, "MapTileModuleProviderBase.loadMaptileAsync() tile already exists in request queue for modular provider. Moving to front of queue.");
+				else
+					Log.d(LOG_TAG, "MapTileModuleProviderBase.loadMaptileAsync() adding tile to request queue for modular provider.");
+			}
 
-    /**
-     * Detach, we're shutting down - Stops all workers.
-     */
-    public void detach() {
-        this.clearQueue();
-        this.mExecutor.shutdown();
-    }
+			// this will put the tile in the queue, or move it to the front of
+			// the queue if it's already present
+			mPending.put(pState.getMapTile(), pState);
+		}
+		try {
+			mExecutor.execute(getTileLoader());
+		} catch (final RejectedExecutionException e) {
+			Log.e(LOG_TAG, "RejectedExecutionException", e);
+		}
+	}
 
-    void removeTileFromQueues(final MapTile mapTile) {
-        synchronized (mQueueLockObject) {
-            if (DEBUG_TILE_PROVIDERS) {
-                logger.debug("MapTileModuleProviderBase.removeTileFromQueues() on provider: "
-                        + getName() + " for tile: " + mapTile);
-            }
-            mPending.remove(mapTile);
-            mWorking.remove(mapTile);
-        }
-    }
+	private void clearQueue() {
+		synchronized (mQueueLockObject) {
+			mPending.clear();
+			mWorking.clear();
+		}
+	}
 
-    /**
-     * Load the requested tile. An abstract internal class whose objects are used by worker threads
-     * to acquire tiles from servers. It processes tiles from the 'pending' set to the 'working' set
-     * as they become available. The key unimplemented method is 'loadTile'.
-     */
-    protected abstract class TileLoader implements Runnable {
+	/**
+	 * Detach, we're shutting down - Stops all workers.
+	 */
+	public void detach() {
+		this.clearQueue();
+		this.mExecutor.shutdown();
+	}
 
-        /**
-         * Load the requested tile.
-         *
-         * @param pState
-         * @return the tile if it was loaded successfully, or null if failed to
-         * load and other tile providers need to be called
-         * @throws CantContinueException
-         */
-        protected abstract Drawable loadTile(MapTileRequestState pState)
-                throws CantContinueException;
+	void removeTileFromQueues(final MapTile mapTile) {
+		synchronized (mQueueLockObject) {
+			if (DEBUG_TILE_PROVIDERS) {
+				Log.d(LOG_TAG, "MapTileModuleProviderBase.removeTileFromQueues() on provider: "
+						+ getName() + " for tile: " + mapTile);
+			}
+			mPending.remove(mapTile);
+			mWorking.remove(mapTile);
+		}
+	}
 
-        protected void onTileLoaderInit() {
-            // Do nothing by default
-        }
+	/**
+	 * Load the requested tile. An abstract internal class whose objects are used by worker threads
+	 * to acquire tiles from servers. It processes tiles from the 'pending' set to the 'working' set
+	 * as they become available. The key unimplemented method is 'loadTile'.
+	 */
+	protected abstract class TileLoader implements Runnable {
 
-        protected void onTileLoaderShutdown() {
-            // Do nothing by default
-        }
+		/**
+		 * Load the requested tile.
+		 *
+		 * @return the tile if it was loaded successfully, or null if failed to
+		 *         load and other tile providers need to be called
+		 * @param pState
+		 * @throws CantContinueException
+		 */
+		protected abstract Drawable loadTile(MapTileRequestState pState)
+				throws CantContinueException;
 
-        protected MapTileRequestState nextTile() {
+		protected void onTileLoaderInit() {
+			// Do nothing by default
+		}
 
-            synchronized (mQueueLockObject) {
-                MapTile result = null;
+		protected void onTileLoaderShutdown() {
+			// Do nothing by default
+		}
 
-                // get the most recently accessed tile
-                // - the last item in the iterator that's not already being
-                // processed
-                Iterator<MapTile> iterator = mPending.keySet().iterator();
+		protected MapTileRequestState nextTile() {
 
-                // TODO this iterates the whole list, make this faster...
-                while (iterator.hasNext()) {
-                    final MapTile tile = iterator.next();
-                    if (!mWorking.containsKey(tile)) {
-                        if (DEBUG_TILE_PROVIDERS) {
-                            logger.debug("TileLoader.nextTile() on provider: " + getName()
-                                    + " found tile in working queue: " + tile);
-                        }
-                        result = tile;
-                    }
-                }
+			synchronized (mQueueLockObject) {
+				MapTile result = null;
 
-                if (result != null) {
-                    if (DEBUG_TILE_PROVIDERS) {
-                        logger.debug("TileLoader.nextTile() on provider: " + getName()
-                                + " adding tile to working queue: " + result);
-                    }
-                    mWorking.put(result, mPending.get(result));
-                }
+				// get the most recently accessed tile
+				// - the last item in the iterator that's not already being
+				// processed
+				Iterator<MapTile> iterator = mPending.keySet().iterator();
 
-                return (result != null ? mPending.get(result) : null);
-            }
-        }
+				// TODO this iterates the whole list, make this faster...
+				while (iterator.hasNext()) {
+					final MapTile tile = iterator.next();
+					if (!mWorking.containsKey(tile)) {
+						if (DEBUG_TILE_PROVIDERS) {
+							Log.d(LOG_TAG, "TileLoader.nextTile() on provider: " + getName()
+									+ " found tile in working queue: " + tile);
+						}
+						result = tile;
+					}
+				}
 
-        /**
-         * A tile has loaded.
-         */
-        protected void tileLoaded(final MapTileRequestState pState, final Drawable pDrawable) {
-            if (DEBUG_TILE_PROVIDERS) {
-                logger.debug("TileLoader.tileLoaded() on provider: " + getName() + " with tile: "
-                        + pState.getMapTile());
-            }
-            removeTileFromQueues(pState.getMapTile());
-            pState.getCallback().mapTileRequestCompleted(pState, pDrawable);
-        }
+				if (result != null) {
+					if (DEBUG_TILE_PROVIDERS) {
+						Log.d(LOG_TAG, "TileLoader.nextTile() on provider: " + getName()
+								+ " adding tile to working queue: " + result);
+					}
+					mWorking.put(result, mPending.get(result));
+				}
 
-        /**
-         * A tile has loaded but it's expired.
-         * Return it <b>and</b> send request to next provider.
-         */
-        protected void tileLoadedExpired(final MapTileRequestState pState, final Drawable pDrawable) {
-            if (DEBUG_TILE_PROVIDERS) {
-                logger.debug("TileLoader.tileLoadedExpired() on provider: " + getName()
-                        + " with tile: " + pState.getMapTile());
-            }
-            removeTileFromQueues(pState.getMapTile());
-            pState.getCallback().mapTileRequestExpiredTile(pState, pDrawable);
-        }
+				return (result != null ? mPending.get(result) : null);
+			}
+		}
 
-        protected void tileLoadedFailed(final MapTileRequestState pState) {
-            if (DEBUG_TILE_PROVIDERS) {
-                logger.debug("TileLoader.tileLoadedFailed() on provider: " + getName()
-                        + " with tile: " + pState.getMapTile());
-            }
-            removeTileFromQueues(pState.getMapTile());
-            pState.getCallback().mapTileRequestFailed(pState);
-        }
+		/**
+		 * A tile has loaded.
+		 */
+		protected void tileLoaded(final MapTileRequestState pState, final Drawable pDrawable) {
+			if (DEBUG_TILE_PROVIDERS) {
+				Log.d(LOG_TAG, "TileLoader.tileLoaded() on provider: " + getName() + " with tile: "
+						+ pState.getMapTile());
+			}
+			removeTileFromQueues(pState.getMapTile());
+			pState.getCallback().mapTileRequestCompleted(pState, pDrawable);
+		}
 
-        /**
-         * This is a functor class of type Runnable. The run method is the encapsulated function.
-         */
-        @Override
-        final public void run() {
+		/**
+		 * A tile has loaded but it's expired.
+		 * Return it <b>and</b> send request to next provider.
+		 */
+		protected void tileLoadedExpired(final MapTileRequestState pState, final Drawable pDrawable) {
+			if (DEBUG_TILE_PROVIDERS) {
+				Log.d(LOG_TAG, "TileLoader.tileLoadedExpired() on provider: " + getName()
+						+ " with tile: " + pState.getMapTile());
+			}
+			removeTileFromQueues(pState.getMapTile());
+			pState.getCallback().mapTileRequestExpiredTile(pState, pDrawable);
+		}
 
-            onTileLoaderInit();
+		protected void tileLoadedFailed(final MapTileRequestState pState) {
+			if (DEBUG_TILE_PROVIDERS) {
+				Log.d(LOG_TAG, "TileLoader.tileLoadedFailed() on provider: " + getName()
+						+ " with tile: " + pState.getMapTile());
+			}
+			removeTileFromQueues(pState.getMapTile());
+			pState.getCallback().mapTileRequestFailed(pState);
+		}
 
-            MapTileRequestState state;
-            Drawable result = null;
-            while ((state = nextTile()) != null) {
-                if (DEBUG_TILE_PROVIDERS) {
-                    logger.debug("TileLoader.run() processing next tile: " + state.getMapTile());
-                }
-                try {
-                    result = null;
-                    result = loadTile(state);
-                } catch (final CantContinueException e) {
-                    logger.info("Tile loader can't continue: " + state.getMapTile(), e);
-                    clearQueue();
-                } catch (final Throwable e) {
-                    logger.error("Error downloading tile: " + state.getMapTile(), e);
-                }
+		/**
+		 * This is a functor class of type Runnable. The run method is the encapsulated function.
+		 */
+		@Override
+		final public void run() {
 
-                if (result == null) {
-                    tileLoadedFailed(state);
-                } else if (ExpirableBitmapDrawable.isDrawableExpired(result)) {
-                    tileLoadedExpired(state, result);
-                } else {
-                    tileLoaded(state, result);
-                }
-            }
+			onTileLoaderInit();
 
-            onTileLoaderShutdown();
-        }
-    }
+			MapTileRequestState state;
+			Drawable result = null;
+			while ((state = nextTile()) != null) {
+				if (DEBUG_TILE_PROVIDERS) {
+					Log.d(LOG_TAG, "TileLoader.run() processing next tile: " + state.getMapTile());
+				}
+				try {
+					result = null;
+					result = loadTile(state);
+				} catch (final CantContinueException e) {
+					Log.e(LOG_TAG, "Tile loader can't continue: " + state.getMapTile(), e);
+					clearQueue();
+				} catch (final Throwable e) {
+					Log.e(LOG_TAG, "Error downloading tile: " + state.getMapTile(), e);
+				}
 
-    /**
-     * Thrown by a tile provider module in TileLoader.loadTile() to signal that it can no longer
-     * function properly. This will typically clear the pending queue.
-     */
-    public class CantContinueException extends Exception {
-        private static final long serialVersionUID = 146526524087765133L;
+				if (result == null) {
+					tileLoadedFailed(state);
+				} else if (ExpirableBitmapDrawable.isDrawableExpired(result)) {
+					tileLoadedExpired(state, result);
+				} else {
+					tileLoaded(state, result);
+				}
+			}
 
-        public CantContinueException(final String pDetailMessage) {
-            super(pDetailMessage);
-        }
+			onTileLoaderShutdown();
+		}
+	}
 
-        public CantContinueException(final Throwable pThrowable) {
-            super(pThrowable);
-        }
-    }
+	/**
+	 * Thrown by a tile provider module in TileLoader.loadTile() to signal that it can no longer
+	 * function properly. This will typically clear the pending queue.
+	 */
+	public class CantContinueException extends Exception {
+		private static final long serialVersionUID = 146526524087765133L;
+
+		public CantContinueException(final String pDetailMessage) {
+			super(pDetailMessage);
+		}
+
+		public CantContinueException(final Throwable pThrowable) {
+			super(pThrowable);
+		}
+	}
 }

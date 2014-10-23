@@ -49,10 +49,10 @@ package org.metalev.multitouch.controller;
  *   Dual-licensed under the Apache License v2 and the GPL v2.
  */
 
-import java.lang.reflect.Method;
-
 import android.util.Log;
 import android.view.MotionEvent;
+
+import java.lang.reflect.Method;
 
 /**
  * A class that simplifies the implementation of multitouch in applications. Subclass this and read the fields here as needed in subclasses.
@@ -354,8 +354,7 @@ public class MultiTouchController<T> {
 		mCurrXform.set(newPosX, newPosY, newScale, newScaleX, newScaleY, newAngle);
 
 		boolean success = objectCanvas.setPositionAndScale(selectedObject, mCurrXform, mCurrPt);
-		if (!success)
-			; // If we could't set those params, do nothing currently
+
 	}
 
 	/** Indicate if we are in the middle of a pinch action or not. */

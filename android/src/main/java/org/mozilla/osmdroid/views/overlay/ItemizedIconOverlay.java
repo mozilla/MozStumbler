@@ -17,9 +17,9 @@ import java.util.List;
 public class ItemizedIconOverlay<Item extends OverlayItem> extends ItemizedOverlay<Item> {
 
     protected final List<Item> mItemList;
-    private final Point mItemPoint = new Point();
     protected OnItemGestureListener<Item> mOnItemGestureListener;
     private int mDrawnItemsLimit = Integer.MAX_VALUE;
+    private final Point mItemPoint = new Point();
 
     public ItemizedIconOverlay(
             final List<Item> pList,

@@ -7,8 +7,8 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 
 public class InternalCompassOrientationProvider implements SensorEventListener, IOrientationProvider {
-    private final SensorManager mSensorManager;
     private IOrientationConsumer mOrientationConsumer;
+    private final SensorManager mSensorManager;
     private float mAzimuth;
 
     public InternalCompassOrientationProvider(Context context) {

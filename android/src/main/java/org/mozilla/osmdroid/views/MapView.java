@@ -24,6 +24,8 @@ import org.metalev.multitouch.controller.MultiTouchController;
 import org.metalev.multitouch.controller.MultiTouchController.MultiTouchObjectCanvas;
 import org.metalev.multitouch.controller.MultiTouchController.PointInfo;
 import org.metalev.multitouch.controller.MultiTouchController.PositionAndScale;
+import org.mozilla.mozstumbler.service.AppGlobals;
+import org.mozilla.mozstumbler.service.core.logging.Log;
 import org.mozilla.osmdroid.DefaultResourceProxyImpl;
 import org.mozilla.osmdroid.ResourceProxy;
 import org.mozilla.osmdroid.api.IGeoPoint;
@@ -32,10 +34,8 @@ import org.mozilla.osmdroid.api.IMapView;
 import org.mozilla.osmdroid.events.MapListener;
 import org.mozilla.osmdroid.events.ScrollEvent;
 import org.mozilla.osmdroid.events.ZoomEvent;
-import org.mozilla.osmdroid.tileprovider.MapTileProviderArray;
+import org.mozilla.osmdroid.tileprovider.BetterTileProvider;
 import org.mozilla.osmdroid.tileprovider.MapTileProviderBase;
-import org.mozilla.osmdroid.tileprovider.MapTileProviderBasic;
-import org.mozilla.osmdroid.tileprovider.modules.MapTileModuleProviderBase;
 import org.mozilla.osmdroid.tileprovider.tilesource.IStyledTileSource;
 import org.mozilla.osmdroid.tileprovider.tilesource.ITileSource;
 import org.mozilla.osmdroid.tileprovider.tilesource.TileSourceFactory;
@@ -47,8 +47,6 @@ import org.mozilla.osmdroid.views.overlay.Overlay;
 import org.mozilla.osmdroid.views.overlay.OverlayManager;
 import org.mozilla.osmdroid.views.overlay.TilesOverlay;
 import org.mozilla.osmdroid.views.util.constants.MapViewConstants;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -66,7 +64,7 @@ public class MapView extends ViewGroup implements IMapView, MapViewConstants,
     // Constants
     // ===========================================================
 
-    private static final Logger logger = LoggerFactory.getLogger(MapView.class);
+    private static final String LOG_TAG = AppGlobals.LOG_PREFIX + MapView.class.getSimpleName();
 
     private static final double ZOOM_SENSITIVITY = 1.0;
     private static final double ZOOM_LOG_BASE_INV = 1.0 / Math.log(2.0 / ZOOM_SENSITIVITY);
@@ -136,7 +134,9 @@ public class MapView extends ViewGroup implements IMapView, MapViewConstants,
     private final LinkedList<OnFirstLayoutListener> mOnFirstLayoutListeners = new LinkedList<MapView.OnFirstLayoutListener>();
     private boolean mLayoutOccurred = false;
 
-
+    public interface OnFirstLayoutListener {
+        void onFirstLayout(View v, int left, int top, int right, int bottom);
+    }
 
     // ===========================================================
     // Constructors
@@ -151,17 +151,18 @@ public class MapView extends ViewGroup implements IMapView, MapViewConstants,
         this.mScroller = new Scroller(context);
         TileSystem.setTileSize(tileSizePixels);
 
+        Log.i(LOG_TAG, "Constructor received TileProvider = [" + tileProvider + "]");
         if (tileProvider == null) {
             final ITileSource tileSource = getTileSourceFromAttributes(attrs);
-            tileProvider = isInEditMode()
-                    ? new MapTileProviderArray(tileSource, null, new MapTileModuleProviderBase[0])
-                    : new MapTileProviderBasic(context, tileSource);
+            tileProvider = new BetterTileProvider(context, tileSource);
         }
 
         mTileRequestCompleteHandler = tileRequestCompleteHandler == null
                 ? new SimpleInvalidationHandler(this)
                 : tileRequestCompleteHandler;
         mTileProvider = tileProvider;
+        Log.i(LOG_TAG, "TileProvider is: [" + mTileProvider.getClass().getName() + "]");
+
         mTileProvider.setTileRequestCompleteHandler(mTileRequestCompleteHandler);
 
         this.mMapOverlay = new TilesOverlay(mTileProvider, mResourceProxy);
@@ -297,6 +298,7 @@ public class MapView extends ViewGroup implements IMapView, MapViewConstants,
     /**
      * @deprecated use {@link #setMapCenter(IGeoPoint)}
      */
+    @Deprecated
     void setMapCenter(final int aLatitudeE6, final int aLongitudeE6) {
         setMapCenter(new GeoPoint(aLatitudeE6, aLongitudeE6));
     }
@@ -579,6 +581,10 @@ public class MapView extends ViewGroup implements IMapView, MapViewConstants,
         invalidateMapCoordinates(left, top, right, bottom, false);
     }
 
+    public void postInvalidateMapCoordinates(int left, int top, int right, int bottom) {
+        invalidateMapCoordinates(left, top, right, bottom, true);
+    }
+
     private void invalidateMapCoordinates(int left, int top, int right, int bottom, boolean post) {
         mInvalidateRect.set(left, top, right, bottom);
         mInvalidateRect.offset(getScrollX(), getScrollY());
@@ -597,8 +603,6 @@ public class MapView extends ViewGroup implements IMapView, MapViewConstants,
         } else {
             super.invalidate(mInvalidateRect);
         }
-    }    public void postInvalidateMapCoordinates(int left, int top, int right, int bottom) {
-        invalidateMapCoordinates(left, top, right, bottom, true);
     }
 
     /**
@@ -611,24 +615,6 @@ public class MapView extends ViewGroup implements IMapView, MapViewConstants,
     protected ViewGroup.LayoutParams generateDefaultLayoutParams() {
         return new MapView.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT, null, MapView.LayoutParams.BOTTOM_CENTER, 0, 0);
-    }    private void invalidateMapCoordinates(int left, int top, int right, int bottom, boolean post) {
-        mInvalidateRect.set(left, top, right, bottom);
-        mInvalidateRect.offset(getScrollX(), getScrollY());
-
-        int centerX = this.getScrollX() + getWidth() / 2;
-        int centerY = this.getScrollY() + getHeight() / 2;
-
-        if (this.getMapOrientation() != 0) {
-            GeometryMath.getBoundingBoxForRotatatedRectangle(mInvalidateRect, centerX, centerY,
-                    this.getMapOrientation() + 180, mInvalidateRect);
-        }
-
-        if (post) {
-            super.postInvalidate(mInvalidateRect.left, mInvalidateRect.top, mInvalidateRect.right,
-                    mInvalidateRect.bottom);
-        } else {
-            super.invalidate(mInvalidateRect);
-        }
     }
 
     @Override
@@ -783,7 +769,7 @@ public class MapView extends ViewGroup implements IMapView, MapViewConstants,
     public boolean dispatchTouchEvent(final MotionEvent event) {
 
         if (DEBUGMODE) {
-            logger.debug("dispatchTouchEvent(" + event + ")");
+            Log.d(LOG_TAG, "dispatchTouchEvent(" + event + ")");
         }
 
         if (mZoomController.isVisible() && mZoomController.onTouch(this, event)) {
@@ -796,7 +782,7 @@ public class MapView extends ViewGroup implements IMapView, MapViewConstants,
         try {
             if (super.dispatchTouchEvent(event)) {
                 if (DEBUGMODE) {
-                    logger.debug("super handled onTouchEvent");
+                    Log.d(LOG_TAG, "super handled onTouchEvent");
                 }
                 return true;
             }
@@ -807,14 +793,14 @@ public class MapView extends ViewGroup implements IMapView, MapViewConstants,
 
             if (mMultiTouchController != null && mMultiTouchController.onTouchEvent(event)) {
                 if (DEBUGMODE) {
-                    logger.debug("mMultiTouchController handled onTouchEvent");
+                    Log.d(LOG_TAG, "mMultiTouchController handled onTouchEvent");
                 }
                 return true;
             }
 
             if (mGestureDetector.onTouchEvent(rotatedEvent)) {
                 if (DEBUGMODE) {
-                    logger.debug("mGestureDetector handled onTouchEvent");
+                    Log.d(LOG_TAG, "mGestureDetector handled onTouchEvent");
                 }
                 return true;
             }
@@ -825,7 +811,7 @@ public class MapView extends ViewGroup implements IMapView, MapViewConstants,
         }
 
         if (DEBUGMODE) {
-            logger.debug("no-one handled onTouchEvent");
+            Log.d(LOG_TAG, "no-one handled onTouchEvent");
         }
         return false;
     }
@@ -850,7 +836,7 @@ public class MapView extends ViewGroup implements IMapView, MapViewConstants,
             try {
                 if (sMotionEventTransformMethod == null) {
                     sMotionEventTransformMethod = MotionEvent.class.getDeclaredMethod("transform",
-                            new Class[]{Matrix.class});
+                            new Class<?>[]{Matrix.class});
                 }
                 sMotionEventTransformMethod.invoke(rotatedEvent, getProjection()
                         .getInvertedScaleRotateCanvasMatrix());
@@ -998,7 +984,7 @@ public class MapView extends ViewGroup implements IMapView, MapViewConstants,
 
         if (DEBUGMODE) {
             final long endMs = System.currentTimeMillis();
-            logger.debug("Rendering overall: " + (endMs - startMs) + "ms");
+            Log.d(LOG_TAG, "Rendering overall: " + (endMs - startMs) + "ms");
         }
     }
 
@@ -1008,6 +994,10 @@ public class MapView extends ViewGroup implements IMapView, MapViewConstants,
         this.onDetach();
         super.onDetachedFromWindow();
     }
+
+    // ===========================================================
+    // Animation
+    // ===========================================================
 
     /**
      * Determines if maps are animating a zoom operation. Useful for overlays to avoid recalculating
@@ -1020,7 +1010,7 @@ public class MapView extends ViewGroup implements IMapView, MapViewConstants,
     }
 
     // ===========================================================
-    // Animation
+    // Implementation of MultiTouchObjectCanvas
     // ===========================================================
 
     @Override
@@ -1035,10 +1025,6 @@ public class MapView extends ViewGroup implements IMapView, MapViewConstants,
             return this;
         }
     }
-
-    // ===========================================================
-    // Implementation of MultiTouchObjectCanvas
-    // ===========================================================
 
     @Override
     public void getPositionAndScale(final Object obj, final PositionAndScale objPosAndScaleOut) {
@@ -1096,14 +1082,14 @@ public class MapView extends ViewGroup implements IMapView, MapViewConstants,
         mListener = ml;
     }
 
+    // ===========================================================
+    // Methods
+    // ===========================================================
+
     private void checkZoomButtons() {
         this.mZoomController.setZoomInEnabled(canZoomIn());
         this.mZoomController.setZoomOutEnabled(canZoomOut());
     }
-
-    // ===========================================================
-    // Methods
-    // ===========================================================
 
     public void setBuiltInZoomControls(final boolean on) {
         this.mEnableZoomController = on;
@@ -1123,10 +1109,10 @@ public class MapView extends ViewGroup implements IMapView, MapViewConstants,
             if (tileSourceAttr != null) {
                 try {
                     final ITileSource r = TileSourceFactory.getTileSource(tileSourceAttr);
-                    logger.info("Using tile source specified in layout attributes: " + r);
+                    Log.i(LOG_TAG, "Using tile source specified in layout attributes: " + r);
                     tileSource = r;
                 } catch (final IllegalArgumentException e) {
-                    logger.warn("Invalid tile source specified in layout attributes: " + tileSource);
+                    Log.w(LOG_TAG, "Invalid tile source specified in layout attributes: " + tileSource);
                 }
             }
         }
@@ -1134,23 +1120,140 @@ public class MapView extends ViewGroup implements IMapView, MapViewConstants,
         if (aAttributeSet != null && tileSource instanceof IStyledTileSource) {
             final String style = aAttributeSet.getAttributeValue(null, "style");
             if (style == null) {
-                logger.info("Using default style: 1");
+                Log.i(LOG_TAG, "Using default style: 1");
             } else {
-                logger.info("Using style specified in layout attributes: " + style);
+                Log.i(LOG_TAG, "Using style specified in layout attributes: " + style);
                 ((IStyledTileSource<?>) tileSource).setStyle(style);
             }
         }
 
-        logger.info("Using tile source: " + tileSource);
+        Log.i(LOG_TAG, "Using tile source: " + tileSource);
         return tileSource;
-    }
-
-    public interface OnFirstLayoutListener {
-        void onFirstLayout(View v, int left, int top, int right, int bottom);
     }
 
     // ===========================================================
     // Inner and Anonymous Classes
+    // ===========================================================
+
+    private class MapViewGestureDetectorListener implements OnGestureListener {
+
+        @Override
+        public boolean onDown(final MotionEvent e) {
+
+            // Stop scrolling if we are in the middle of a fling!
+            if (mIsFlinging) {
+                mScroller.abortAnimation();
+                mIsFlinging = false;
+            }
+
+            if (MapView.this.getOverlayManager().onDown(e, MapView.this)) {
+                return true;
+            }
+
+            mZoomController.setVisible(mEnableZoomController);
+            return true;
+        }
+
+        @Override
+        public boolean onFling(final MotionEvent e1, final MotionEvent e2, final float velocityX,
+                               final float velocityY) {
+            if (MapView.this.getOverlayManager()
+                    .onFling(e1, e2, velocityX, velocityY, MapView.this)) {
+                return true;
+            }
+
+            final int worldSize = TileSystem.MapSize(MapView.this.getZoomLevel(false));
+            mIsFlinging = true;
+            mScroller.fling(getScrollX(), getScrollY(), (int) -velocityX, (int) -velocityY,
+                    -worldSize, worldSize, -worldSize, worldSize);
+            return true;
+        }
+
+        @Override
+        public void onLongPress(final MotionEvent e) {
+            if (mMultiTouchController != null && mMultiTouchController.isPinching()) {
+                return;
+            }
+            MapView.this.getOverlayManager().onLongPress(e, MapView.this);
+        }
+
+        @Override
+        public boolean onScroll(final MotionEvent e1, final MotionEvent e2, final float distanceX,
+                                final float distanceY) {
+            if (MapView.this.getOverlayManager().onScroll(e1, e2, distanceX, distanceY,
+                    MapView.this)) {
+                return true;
+            }
+
+            scrollBy((int) distanceX, (int) distanceY);
+            return true;
+        }
+
+        @Override
+        public void onShowPress(final MotionEvent e) {
+            MapView.this.getOverlayManager().onShowPress(e, MapView.this);
+        }
+
+        @Override
+        public boolean onSingleTapUp(final MotionEvent e) {
+            if (MapView.this.getOverlayManager().onSingleTapUp(e, MapView.this)) {
+                return true;
+            }
+
+            return false;
+        }
+
+    }
+
+    private class MapViewDoubleClickListener implements GestureDetector.OnDoubleTapListener {
+        @Override
+        public boolean onDoubleTap(final MotionEvent e) {
+            if (MapView.this.getOverlayManager().onDoubleTap(e, MapView.this)) {
+                return true;
+            }
+
+            // final IGeoPoint center = getProjection().fromPixels((int) e.getX(), (int) e.getY(),
+            // null);
+            getProjection().rotateAndScalePoint((int) e.getX(), (int) e.getY(), mRotateScalePoint);
+            return zoomInFixing(mRotateScalePoint.x, mRotateScalePoint.y);
+        }
+
+        @Override
+        public boolean onDoubleTapEvent(final MotionEvent e) {
+            if (MapView.this.getOverlayManager().onDoubleTapEvent(e, MapView.this)) {
+                return true;
+            }
+
+            return false;
+        }
+
+        @Override
+        public boolean onSingleTapConfirmed(final MotionEvent e) {
+            if (MapView.this.getOverlayManager().onSingleTapConfirmed(e, MapView.this)) {
+                return true;
+            }
+
+            return false;
+        }
+    }
+
+    private class MapViewZoomListener implements OnZoomListener {
+        @Override
+        public void onZoom(final boolean zoomIn) {
+            if (zoomIn) {
+                getController().zoomIn();
+            } else {
+                getController().zoomOut();
+            }
+        }
+
+        @Override
+        public void onVisibilityChanged(final boolean visible) {
+        }
+    }
+
+    // ===========================================================
+    // Public Classes
     // ===========================================================
 
     /**
@@ -1261,127 +1364,6 @@ public class MapView extends ViewGroup implements IMapView, MapViewConstants,
 
         public LayoutParams(final ViewGroup.LayoutParams source) {
             super(source);
-        }
-    }
-
-    private class MapViewGestureDetectorListener implements OnGestureListener {
-
-        @Override
-        public boolean onDown(final MotionEvent e) {
-
-            // Stop scrolling if we are in the middle of a fling!
-            if (mIsFlinging) {
-                mScroller.abortAnimation();
-                mIsFlinging = false;
-            }
-
-            if (MapView.this.getOverlayManager().onDown(e, MapView.this)) {
-                return true;
-            }
-
-            mZoomController.setVisible(mEnableZoomController);
-            return true;
-        }
-
-        @Override
-        public boolean onFling(final MotionEvent e1, final MotionEvent e2, final float velocityX,
-                               final float velocityY) {
-            if (MapView.this.getOverlayManager()
-                    .onFling(e1, e2, velocityX, velocityY, MapView.this)) {
-                return true;
-            }
-
-            final int worldSize = TileSystem.MapSize(MapView.this.getZoomLevel(false));
-            mIsFlinging = true;
-            mScroller.fling(getScrollX(), getScrollY(), (int) -velocityX, (int) -velocityY,
-                    -worldSize, worldSize, -worldSize, worldSize);
-            return true;
-        }
-
-        @Override
-        public void onLongPress(final MotionEvent e) {
-            if (mMultiTouchController != null && mMultiTouchController.isPinching()) {
-                return;
-            }
-            MapView.this.getOverlayManager().onLongPress(e, MapView.this);
-        }
-
-        @Override
-        public boolean onScroll(final MotionEvent e1, final MotionEvent e2, final float distanceX,
-                                final float distanceY) {
-            if (MapView.this.getOverlayManager().onScroll(e1, e2, distanceX, distanceY,
-                    MapView.this)) {
-                return true;
-            }
-
-            scrollBy((int) distanceX, (int) distanceY);
-            return true;
-        }
-
-        @Override
-        public void onShowPress(final MotionEvent e) {
-            MapView.this.getOverlayManager().onShowPress(e, MapView.this);
-        }
-
-        @Override
-        public boolean onSingleTapUp(final MotionEvent e) {
-            if (MapView.this.getOverlayManager().onSingleTapUp(e, MapView.this)) {
-                return true;
-            }
-
-            return false;
-        }
-
-    }
-
-    private class MapViewDoubleClickListener implements GestureDetector.OnDoubleTapListener {
-        @Override
-        public boolean onDoubleTap(final MotionEvent e) {
-            if (MapView.this.getOverlayManager().onDoubleTap(e, MapView.this)) {
-                return true;
-            }
-
-            // final IGeoPoint center = getProjection().fromPixels((int) e.getX(), (int) e.getY(),
-            // null);
-            getProjection().rotateAndScalePoint((int) e.getX(), (int) e.getY(), mRotateScalePoint);
-            return zoomInFixing(mRotateScalePoint.x, mRotateScalePoint.y);
-        }
-
-        @Override
-        public boolean onDoubleTapEvent(final MotionEvent e) {
-            if (MapView.this.getOverlayManager().onDoubleTapEvent(e, MapView.this)) {
-                return true;
-            }
-
-            return false;
-        }
-
-        @Override
-        public boolean onSingleTapConfirmed(final MotionEvent e) {
-            if (MapView.this.getOverlayManager().onSingleTapConfirmed(e, MapView.this)) {
-                return true;
-            }
-
-            return false;
-        }
-    }
-
-    // ===========================================================
-    // Public Classes
-    // ===========================================================
-
-    private class MapViewZoomListener implements OnZoomListener {
-        @Override
-        public void onZoom(final boolean zoomIn) {
-            if (zoomIn) {
-                getController().zoomIn();
-            } else {
-                getController().zoomOut();
-            }
-        }
-
-        @Override
-        public void onVisibilityChanged(final boolean visible) {
         }
     }
 

@@ -32,14 +32,18 @@ public class DirectedLocationOverlay extends Overlay {
     protected final Paint mAccuracyPaint = new Paint();
 
     protected final Bitmap DIRECTION_ARROW;
+
+    protected GeoPoint mLocation;
+    protected float mBearing;
+
     private final Matrix directionRotater = new Matrix();
     private final Point screenCoords = new Point();
+
     private final float DIRECTION_ARROW_CENTER_X;
     private final float DIRECTION_ARROW_CENTER_Y;
     private final int DIRECTION_ARROW_WIDTH;
     private final int DIRECTION_ARROW_HEIGHT;
-    protected GeoPoint mLocation;
-    protected float mBearing;
+
     private int mAccuracy = 0;
     private boolean mShowAccuracy = true;
 
@@ -74,12 +78,12 @@ public class DirectedLocationOverlay extends Overlay {
         this.mShowAccuracy = pShowIt;
     }
 
-    public GeoPoint getLocation() {
-        return this.mLocation;
-    }
-
     public void setLocation(final GeoPoint mp) {
         this.mLocation = mp;
+    }
+
+    public GeoPoint getLocation() {
+        return this.mLocation;
     }
 
     /**

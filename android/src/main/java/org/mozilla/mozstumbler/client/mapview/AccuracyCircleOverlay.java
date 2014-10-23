@@ -9,6 +9,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.location.Location;
+
 import org.mozilla.osmdroid.util.GeoPoint;
 import org.mozilla.osmdroid.views.MapView;
 import org.mozilla.osmdroid.views.Projection;

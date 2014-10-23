@@ -14,6 +14,12 @@ import android.net.wifi.WifiManager.WifiLock;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
+import org.mozilla.mozstumbler.service.AppGlobals;
+import org.mozilla.mozstumbler.service.AppGlobals.ActiveOrPassiveStumbling;
+import org.mozilla.mozstumbler.service.stumblerthread.blocklist.BSSIDBlockList;
+import org.mozilla.mozstumbler.service.stumblerthread.blocklist.SSIDBlockList;
+import org.mozilla.mozstumbler.service.stumblerthread.blocklist.WifiBlockListInterface;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -22,12 +28,6 @@ import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import org.mozilla.mozstumbler.service.AppGlobals;
-import org.mozilla.mozstumbler.service.stumblerthread.blocklist.BSSIDBlockList;
-import org.mozilla.mozstumbler.service.stumblerthread.blocklist.SSIDBlockList;
-import org.mozilla.mozstumbler.service.AppGlobals.ActiveOrPassiveStumbling;
-import org.mozilla.mozstumbler.service.stumblerthread.blocklist.WifiBlockListInterface;
 
 public class WifiScanner extends BroadcastReceiver {
     public static final String ACTION_BASE = AppGlobals.ACTION_NAMESPACE + ".WifiScanner.";
@@ -136,7 +136,7 @@ public class WifiScanner extends BroadcastReceiver {
         }
 
         if (AppGlobals.isDebug) {
-            Log.v(LOG_TAG, "Activate Periodic Scan");
+            Log.d(LOG_TAG, "Activate Periodic Scan");
         }
 
         mWifiLock = getWifiManager().createWifiLock(WifiManager.WIFI_MODE_SCAN_ONLY, "MozStumbler");
@@ -156,7 +156,7 @@ public class WifiScanner extends BroadcastReceiver {
                     return;
                 }
                 if (AppGlobals.isDebug) {
-                    Log.v(LOG_TAG, "WiFi Scanning Timer fired");
+                    Log.d(LOG_TAG, "WiFi Scanning Timer fired");
                 }
                 getWifiManager().startScan();
             }
@@ -169,7 +169,7 @@ public class WifiScanner extends BroadcastReceiver {
         }
 
         if (AppGlobals.isDebug) {
-            Log.v(LOG_TAG, "Deactivate periodic scan");
+            Log.d(LOG_TAG, "Deactivate periodic scan");
         }
 
         mWifiLock.release();

@@ -2,6 +2,7 @@ package org.mozilla.mozstumbler.client;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+
 import org.mozilla.mozstumbler.service.Prefs;
 import org.mozilla.osmdroid.api.IGeoPoint;
 import org.mozilla.osmdroid.util.GeoPoint;

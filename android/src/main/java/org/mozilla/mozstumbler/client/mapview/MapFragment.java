@@ -181,7 +181,7 @@ public final class MapFragment extends android.support.v4.app.Fragment
         mMap.getController().setCenter(loc);
         mMap.setMinZoomLevel(AbstractMapOverlay.MIN_ZOOM_LEVEL_OF_MAP);
 
-        mMap.post(new Runnable() {
+        mMap.postDelayed(new Runnable() {
             @Override
             public void run() {
                 // https://github.com/osmdroid/osmdroid/issues/22
@@ -192,7 +192,7 @@ public final class MapFragment extends android.support.v4.app.Fragment
                 mMap.getController().setZoom(zoom);
                 mMap.getController().setCenter(loc);
             }
-        });
+        }, 300);
 
         Log.d(LOG_TAG, "onCreate");
 
@@ -305,6 +305,7 @@ public final class MapFragment extends android.support.v4.app.Fragment
     }
 
     private void initCoverageTiles(String coverageUrl) {
+        Log.i(LOG_TAG, "initCoverageTiles: " + coverageUrl);
         mCoverageTilesOverlayLowZoom = new CoverageOverlay(CoverageOverlay.LOW_ZOOM,
                 mRootView.getContext(), coverageUrl, mMap);
         mCoverageTilesOverlayHighZoom = new CoverageOverlay(CoverageOverlay.HIGH_ZOOM,

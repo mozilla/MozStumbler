@@ -11,8 +11,8 @@ import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 
 import org.mozilla.osmdroid.DefaultResourceProxyImpl;
+import org.mozilla.osmdroid.tileprovider.BetterTileProvider;
 import org.mozilla.osmdroid.tileprovider.MapTile;
-import org.mozilla.osmdroid.tileprovider.MapTileProviderBasic;
 import org.mozilla.osmdroid.tileprovider.ReusableBitmapDrawable;
 import org.mozilla.osmdroid.util.TileLooper;
 import org.mozilla.osmdroid.views.Projection;
@@ -36,7 +36,7 @@ public abstract class AbstractMapOverlay extends TilesOverlay {
     private Projection mProjection;
 
     public AbstractMapOverlay(final Context aContext) {
-        super(new MapTileProviderBasic(aContext), new DefaultResourceProxyImpl(aContext));
+        super(new BetterTileProvider(aContext), new DefaultResourceProxyImpl(aContext));
     }
 
     // Though the tile provider can only provide up to 13, this overlay will display higher.
@@ -62,7 +62,7 @@ public abstract class AbstractMapOverlay extends TilesOverlay {
         public void initialiseLoop(int pZoomLevel, int pTileSizePx) {
             // make sure the cache is big enough for all the tiles
             final int numNeeded = (mLowerRight.y - mUpperLeft.y + 1) * (mLowerRight.x - mUpperLeft.x + 1);
-            mTileProvider.ensureCapacity(numNeeded + getOvershootTileCache());
+            mTileProvider.ensureCapacity(numNeeded + OVERSHOOT_TILE_CACHE_SIZE);
         }
 
         @Override

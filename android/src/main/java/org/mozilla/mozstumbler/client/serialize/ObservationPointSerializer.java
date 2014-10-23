@@ -7,13 +7,6 @@ package org.mozilla.mozstumbler.client.serialize;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import java.io.File;
-import java.lang.ref.WeakReference;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
 import com.ekito.simpleKML.Serializer;
 import com.ekito.simpleKML.model.Coordinate;
 import com.ekito.simpleKML.model.Data;
@@ -24,15 +17,22 @@ import com.ekito.simpleKML.model.Folder;
 import com.ekito.simpleKML.model.Geometry;
 import com.ekito.simpleKML.model.Icon;
 import com.ekito.simpleKML.model.IconStyle;
+import com.ekito.simpleKML.model.Kml;
 import com.ekito.simpleKML.model.Placemark;
 import com.ekito.simpleKML.model.Point;
-import com.ekito.simpleKML.model.Kml;
 import com.ekito.simpleKML.model.Style;
 import com.ekito.simpleKML.model.StyleSelector;
 import com.ekito.simpleKML.model.TimeStamp;
 
 import org.joda.time.DateTime;
 import org.mozilla.mozstumbler.client.mapview.ObservationPoint;
+
+import java.io.File;
+import java.lang.ref.WeakReference;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 // add menu item for save/load observations
 // activity will have save and load buttons

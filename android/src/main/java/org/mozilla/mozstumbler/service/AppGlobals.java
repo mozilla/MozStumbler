@@ -4,9 +4,9 @@
 
 package org.mozilla.mozstumbler.service;
 
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.Date;
 import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class AppGlobals {
     public static final String LOG_PREFIX = "Stumbler:";

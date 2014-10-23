@@ -16,6 +16,7 @@ import android.telephony.TelephonyManager;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner.CellInfo;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner.CellScannerNoWCDMA;
+
 import java.util.List;
 
 public class DefaultCellScanner extends CellScannerNoWCDMA {

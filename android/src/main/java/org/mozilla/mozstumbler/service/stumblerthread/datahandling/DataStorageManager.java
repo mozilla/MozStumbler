@@ -5,9 +5,11 @@
 package org.mozilla.mozstumbler.service.stumblerthread.datahandling;
 
 import android.content.Context;
+
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.core.logging.Log;
 import org.mozilla.mozstumbler.service.utils.Zipper;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -459,7 +461,7 @@ public class DataStorageManager {
                     try {
                         saveCurrentReportsToDisk();
                     } catch (IOException ex) {
-                        Log.e(LOG_TAG, "mFlushMemoryBuffersToDiskTimer exception" + ex);
+                        Log.e(LOG_TAG, "mFlushMemoryBuffersToDiskTimer exception", ex);
                     }
                 }
             }, kMillis);

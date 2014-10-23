@@ -8,9 +8,9 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.content.LocalBroadcastManager;
-import org.mozilla.mozstumbler.service.core.logging.Log;
 
 import org.mozilla.mozstumbler.service.AppGlobals;
+import org.mozilla.mozstumbler.service.core.logging.Log;
 
 /* Test low power in adb with am broadcast -a android.intent.action.BATTERY_LOW
  * Test cancel button in notification list by swiping down on the entry for the

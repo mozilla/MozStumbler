@@ -6,6 +6,7 @@ package org.mozilla.mozstumbler.service.stumblerthread.scanners;
 
 import android.location.Location;
 import android.util.Log;
+
 import org.mozilla.mozstumbler.service.AppGlobals;
 
 /*

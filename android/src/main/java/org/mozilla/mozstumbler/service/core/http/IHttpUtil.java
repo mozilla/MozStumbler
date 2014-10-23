@@ -27,5 +27,7 @@ public interface IHttpUtil {
     Return a response object from the server
     On IOException, this will return null.
     */
-    IResponse post(String urlString, byte[] data, Map<String, String> headers, boolean precompressed, MLS mls);
+    IResponse post(String urlString, byte[] data, Map<String, String> headers, boolean precompressed);
+
+    IResponse get(String urlString, Map<String, String> headers);
 }

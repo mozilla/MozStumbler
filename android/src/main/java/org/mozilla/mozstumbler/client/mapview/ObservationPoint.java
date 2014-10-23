@@ -11,10 +11,10 @@ import com.ekito.simpleKML.model.Coordinate;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.mozilla.mozstumbler.client.ClientPrefs;
-import org.mozilla.mozstumbler.service.utils.NetworkInfo;
-import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageContract;
-import org.mozilla.osmdroid.util.GeoPoint;
 import org.mozilla.mozstumbler.service.core.logging.Log;
+import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageContract;
+import org.mozilla.mozstumbler.service.utils.NetworkInfo;
+import org.mozilla.osmdroid.util.GeoPoint;
 
 public class ObservationPoint implements MLSLocationGetter.MLSLocationGetterCallback {
     public final GeoPoint pointGPS;

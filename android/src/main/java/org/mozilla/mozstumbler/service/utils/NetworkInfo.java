@@ -7,6 +7,7 @@ package org.mozilla.mozstumbler.service.utils;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.util.Log;
+
 import org.mozilla.mozstumbler.service.AppGlobals;
 
 public final class NetworkInfo {

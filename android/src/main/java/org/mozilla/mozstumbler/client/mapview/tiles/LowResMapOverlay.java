@@ -23,7 +23,7 @@ public class LowResMapOverlay extends AbstractMapOverlay {
 
         ITileSource coverageTileSource;
         if (isMLSTileStore) {
-            coverageTileSource = new XYTileSource("MozStumbler Tile Store", null,
+            coverageTileSource = new XYTileSource("MLS-coverage-tiles", null,
                     zoomLevel, zoomLevel,
                     AbstractMapOverlay.TILE_PIXEL_SIZE,
                     AbstractMapOverlay.FILE_TYPE_SUFFIX_PNG,

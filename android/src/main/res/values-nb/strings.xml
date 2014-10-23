@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">MozStumbler</string>
-    <string name="action_about">Om MozStumbler</string>
+    <string name="app_name">Mozilla Stumbler</string>
+    <string name="action_about">Om Mozilla Stumbler</string>
     <string name="action_preferences">Innstillinger</string>
     <string name="action_upload_observations">Last opp</string>
     <string name="start_scanning">Start innsamling</string>

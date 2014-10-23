@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">MozStumbler</string>
+    <string name="app_name">Mozilla Stumbler</string>
     <string name="action_about">О программе</string>
     <string name="action_preferences">Настройки</string>
     <string name="action_upload_observations">Отправка измерений</string>
@@ -24,7 +24,7 @@
     <string name="enter_nickname">Укажите свой псевдоним (не обязательно)</string>
     <string name="enter_nickname_title">Псевдоним: </string>
     <string name="enter_nickname_longtext">Ваш псевдоним появится в таблице лидеров.</string>
-    <string name="update_title">Загрузить обновление MozStumbler?</string>
+    <string name="update_title">Загрузить обновление Mozilla Stumbler?</string>
     <string name="update_message">Установленная версия: %1$s\nПоследняя версия: %2$s</string>
     <string name="update_now">Обновить сейчас</string>
     <string name="update_later">Обновить позже</string>

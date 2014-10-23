@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">MozStumbler</string>
-    <string name="action_about">About MozStumbler</string>
+    <string name="app_name">Mozilla Stumbler</string>
+    <string name="action_about">About Mozilla Stumbler</string>
     <string name="action_preferences">Settings</string>
     <string name="start_scanning">Start Scanning</string>
     <string name="stop_scanning">Stop Scanning</string>
@@ -21,7 +21,7 @@
     <string name="enter_nickname">Enter Nickname (optional)</string>
     <string name="enter_nickname_title">Nickname: </string>
     <string name="enter_nickname_longtext">Your nickname will appear on the leaderboard.</string>
-    <string name="update_title">Download MozStumbler Update?</string>
+    <string name="update_title">Download Mozilla Stumbler Update?</string>
     <string name="update_message">Installed version: %1$s\nLatest version: %2$s</string>
     <string name="update_now">Update Now</string>
     <string name="update_later">Update Later</string>
@@ -60,7 +60,7 @@
     <string name="are_you_sure">Are you sure?</string>
     <string name="loading_kml">Loading KML</string>
     <string name="saving_kml">Saving KML</string>
-    <string name="mozstumbler_kml_file">MozStumbler KML file</string>
+    <string name="mozstumbler_kml_file">Mozilla Stumbler KML file</string>
     <string name="share_file">Share file</string>
     <string name="load_file">Load file</string>
     <string name="delete_file">Delete file</string>
@@ -76,7 +76,7 @@
     <string name="first_run_message_part1">Mozilla Location Service is an open service for locating devices using Wi-Fi and cell networks.</string>
     <string name="first_run_message_part2">Read our <a href="https://location.services.mozilla.com/privacy">privacy policy</a> and then start stumbling to begin contributing your current location.</string>
     <string name="first_run_start_stumbling">Start Stumbling</string>
-    <string name="first_run_welcome_to_mozstumbler">Welcome to MozStumbler</string>
+    <string name="first_run_welcome_to_mozstumbler">Welcome to Mozilla Stumbler</string>
     <string name="map_unavailable">The map is not available for display, as there is no SD card storage.\nYou can still collect data.</string>
     <string name="map_offline_mode">"The map will not update without an Internet connection,\nhowever you are still able to collect data."</string>
     <string name="action_developer">Developer</string>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">MozStumbler</string>
-    <string name="action_about">Despre MozStumbler</string>
+    <string name="app_name">Mozilla Stumbler</string>
+    <string name="action_about">Despre Mozilla Stumbler</string>
     <string name="action_preferences">Setări</string>
     <string name="action_upload_observations">Încarcă observații</string>
     <string name="start_scanning">Pornește scanarea</string>
@@ -28,7 +28,7 @@
     <string name="enter_nickname">Introduceți pseudonim (opțional)</string>
     <string name="enter_nickname_title">Pseudonim: </string>
     <string name="enter_nickname_longtext">Pseudonimul va fi afișat în clasamentul liderilor.</string>
-    <string name="update_title">Descarcă actualizare MozStumbler?</string>
+    <string name="update_title">Descarcă actualizare Mozilla Stumbler?</string>
     <string name="update_message">Versiune instalată: %1$s\nUltima versiune: %2$s</string>
     <string name="update_now">Actualizează acum</string>
     <string name="update_later">Actualizează mai târziu</string>

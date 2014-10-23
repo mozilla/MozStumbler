@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">MozStumbler</string>
+    <string name="app_name">Mozilla Stumbler</string>
     <string name="action_about">Tietoja</string>
     <string name="action_preferences">Asetukset</string>
     <string name="action_upload_observations">Lähetä tiedot</string>
@@ -24,7 +24,7 @@
     <string name="enter_nickname">Valitse nimimerkki (ei pakollinen)</string>
     <string name="enter_nickname_title">Nimimerkki: </string>
     <string name="enter_nickname_longtext">Nimimerkkisi näytetään pistetilastossa.</string>
-    <string name="update_title">Lataa MozStumblerin päivitys?</string>
+    <string name="update_title">Lataa Mozilla Stumblerin päivitys?</string>
     <string name="update_message">Asennettu versio: %1$s\nUusin versio: %2$s</string>
     <string name="update_now">Päivitä nyt</string>
     <string name="update_later">Päivitä myöhemmin</string>

@@ -14,7 +14,7 @@ import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.stumblerthread.StumblerService;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageManager;
 
-// Used as a bound service (with foreground priority) in MozStumbler, a.k.a. active scanning mode.
+// Used as a bound service (with foreground priority) in Mozilla Stumbler, a.k.a. active scanning mode.
 // -- In accordance with Android service docs -and experimental findings- this puts the service as low
 //    as possible on the Android process kill list.
 // -- Binding functions are commented in this class as being unused in the stand-alone service mode.
@@ -24,7 +24,7 @@ public class ClientStumblerService extends StumblerService {
 
     // Service binding is not used in stand-alone passive mode.
     public final class StumblerBinder extends Binder {
-        // Only to be used in the non-standalone, non-passive case (MozStumbler). In the passive standalone usage
+        // Only to be used in the non-standalone, non-passive case (Mozilla Stumbler). In the passive standalone usage
         // of this class, everything, including initialization, is done on its dedicated thread
         // This function is written to enforce the contract of its usage, and will throw if called from the wrong thread
         public ClientStumblerService getServiceAndInitialize(Thread callingThread,

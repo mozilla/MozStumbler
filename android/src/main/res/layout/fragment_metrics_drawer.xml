@@ -39,6 +39,7 @@
                 <TextView
                     android:id="@+id/this_session_header"
                     android:layout_gravity="start"
+                    android:layout_span="2"
                     android:paddingBottom="@dimen/padding_below_for_metrics_titles"
                     android:paddingTop="@dimen/padding_above_for_metrics_titles"
                     android:text="@string/metrics_this_session"
@@ -68,9 +69,10 @@
                 <TextView
                     android:id="@+id/sent_header"
                     android:layout_gravity="start"
+                    android:layout_span="2"
                     android:paddingBottom="@dimen/padding_below_for_metrics_titles"
                     android:paddingTop="@dimen/padding_above_for_metrics_titles"
-                    android:text="@string/upload_observations_sent_title"
+                    android:text="blablablablablablabla"
                     android:textSize="@dimen/font_size_for_metrics_titles"
                     android:textStyle="bold" />
             </TableRow>
@@ -156,6 +158,7 @@
                 <TextView
                     android:id="@+id/queued_header"
                     android:layout_gravity="start"
+                    android:layout_span="2"
                     android:paddingBottom="@dimen/padding_below_for_metrics_titles"
                     android:paddingTop="@dimen/padding_above_for_metrics_titles"
                     android:text="@string/upload_observations_in_queue_title"

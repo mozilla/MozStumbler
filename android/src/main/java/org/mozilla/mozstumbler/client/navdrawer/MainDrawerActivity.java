@@ -67,8 +67,6 @@ public class MainDrawerActivity
                     WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED);
         }
 
-        keepScreenOnChanged(ClientPrefs.getInstance().getKeepScreenOn());
-
         getSupportActionBar().setTitle(getString(R.string.app_name));
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -154,6 +152,12 @@ public class MainDrawerActivity
             return;
         }
         boolean isScanning = svc.isScanning();
+
+        if (isScanning) {
+            keepScreenOn(ClientPrefs.getInstance().getKeepScreenOn());
+        } else {
+            keepScreenOn(false);
+        }
 
         if (Build.VERSION.SDK_INT >= 11) {
             Switch s = (Switch) mMenuItemStartStop.getActionView();
@@ -271,7 +275,7 @@ public class MainDrawerActivity
         mMetricsView.setUploadState(isUploadingObservations);
     }
 
-    public void keepScreenOnChanged(boolean isEnabled) {
+    public void keepScreenOn(boolean isEnabled) {
         int flag = android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON;
         if (isEnabled) {
             getWindow().addFlags(flag);

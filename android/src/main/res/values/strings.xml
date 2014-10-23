@@ -55,7 +55,7 @@
     <string name="kml_file_description">Save/Load the reports (location, wi-fi+cell counts) for debugging. </string>
     <string name="kml_file_saved_name">Saved File:</string>
     <string name="title_activity_kml">Save/Load Reports</string>
-    <string name="keep_screen_on_title">Keep screen on while in map</string>
+    <string name="keep_screen_on_title">Keep screen on while scanning</string>
     <string name="delete_all">Delete all</string>
     <string name="are_you_sure">Are you sure?</string>
     <string name="loading_kml">Loading KML</string>

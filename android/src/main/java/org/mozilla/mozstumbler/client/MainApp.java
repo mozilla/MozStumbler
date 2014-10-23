@@ -401,7 +401,7 @@ public class MainApp extends Application
 
     public void keepScreenOnPrefChanged(boolean isEnabled) {
         if (mMainActivity.get() != null) {
-            mMainActivity.get().keepScreenOnChanged(isEnabled);
+            mMainActivity.get().keepScreenOn(isEnabled);
         }
     }
 

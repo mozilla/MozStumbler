@@ -67,8 +67,6 @@ public class MainDrawerActivity
                     WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED);
         }
 
-        keepScreenOnChanged(ClientPrefs.getInstance().getKeepScreenOn());
-
         getSupportActionBar().setTitle(getString(R.string.app_name));
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -154,6 +152,12 @@ public class MainDrawerActivity
             return;
         }
         boolean isScanning = svc.isScanning();
+
+        if (isScanning) {
+            keepScreenOnChanged(ClientPrefs.getInstance().getKeepScreenOn());
+        } else {
+            keepScreenOnChanged(false);
+        }
 
         if (Build.VERSION.SDK_INT >= 11) {
             Switch s = (Switch) mMenuItemStartStop.getActionView();

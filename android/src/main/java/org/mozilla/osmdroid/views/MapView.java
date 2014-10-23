@@ -151,7 +151,7 @@ public class MapView extends ViewGroup implements IMapView, MapViewConstants,
         this.mScroller = new Scroller(context);
         TileSystem.setTileSize(tileSizePixels);
 
-        Log.i(LOG_TAG, "Constructor received TileProvider = [" + tileProvider + "]");
+        Log.d(LOG_TAG, "Constructor received TileProvider = [" + tileProvider + "]");
         if (tileProvider == null) {
             final ITileSource tileSource = getTileSourceFromAttributes(attrs);
             tileProvider = new BetterTileProvider(context, tileSource);
@@ -161,7 +161,7 @@ public class MapView extends ViewGroup implements IMapView, MapViewConstants,
                 ? new SimpleInvalidationHandler(this)
                 : tileRequestCompleteHandler;
         mTileProvider = tileProvider;
-        Log.i(LOG_TAG, "TileProvider is: [" + mTileProvider.getClass().getName() + "]");
+        Log.d(LOG_TAG, "TileProvider is: [" + mTileProvider.getClass().getName() + "]");
 
         mTileProvider.setTileRequestCompleteHandler(mTileRequestCompleteHandler);
 
@@ -1109,7 +1109,7 @@ public class MapView extends ViewGroup implements IMapView, MapViewConstants,
             if (tileSourceAttr != null) {
                 try {
                     final ITileSource r = TileSourceFactory.getTileSource(tileSourceAttr);
-                    Log.i(LOG_TAG, "Using tile source specified in layout attributes: " + r);
+                    Log.d(LOG_TAG, "Using tile source specified in layout attributes: " + r);
                     tileSource = r;
                 } catch (final IllegalArgumentException e) {
                     Log.w(LOG_TAG, "Invalid tile source specified in layout attributes: " + tileSource);
@@ -1120,14 +1120,14 @@ public class MapView extends ViewGroup implements IMapView, MapViewConstants,
         if (aAttributeSet != null && tileSource instanceof IStyledTileSource) {
             final String style = aAttributeSet.getAttributeValue(null, "style");
             if (style == null) {
-                Log.i(LOG_TAG, "Using default style: 1");
+                Log.d(LOG_TAG, "Using default style: 1");
             } else {
-                Log.i(LOG_TAG, "Using style specified in layout attributes: " + style);
+                Log.d(LOG_TAG, "Using style specified in layout attributes: " + style);
                 ((IStyledTileSource<?>) tileSource).setStyle(style);
             }
         }
 
-        Log.i(LOG_TAG, "Using tile source: " + tileSource);
+        Log.d(LOG_TAG, "Using tile source: " + tileSource);
         return tileSource;
     }
 

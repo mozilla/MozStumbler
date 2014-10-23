@@ -232,7 +232,7 @@ public class SmartFSProvider extends MapTileModuleProviderBase {
     // Stuff from superclass
     void checkSdCard() {
         final String state = Environment.getExternalStorageState();
-        Log.i(LOG_TAG, "sdcard state: " + state);
+        Log.d(LOG_TAG, "sdcard state: " + state);
         mSdCardAvailable = Environment.MEDIA_MOUNTED.equals(state);
     }
 

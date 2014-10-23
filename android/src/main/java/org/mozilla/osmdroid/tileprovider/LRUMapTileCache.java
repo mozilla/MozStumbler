@@ -27,7 +27,7 @@ public class LRUMapTileCache extends LinkedHashMap<MapTile, Drawable>
 
     public void ensureCapacity(final int aCapacity) {
         if (aCapacity > mCapacity) {
-            Log.i(LOG_TAG, "Tile cache increased from " + mCapacity + " to " + aCapacity);
+            Log.d(LOG_TAG, "Tile cache increased from " + mCapacity + " to " + aCapacity);
             mCapacity = aCapacity;
         }
     }

@@ -51,6 +51,10 @@ public class DataStorageManagerTest {
 
         dm = DataStorageManager.createGlobalInstance(ctx, tracker, maxBytes, maxWeeks);
         rp = new Reporter();
+
+        // The Reporter class needs a reference to a context
+        rp.startup(ctx);
+
         Intent gpsUpdated = getLocationIntent();
         rp.onReceive(ctx, gpsUpdated);
         assertTrue(null != rp.getGPSLocation());
@@ -71,10 +75,12 @@ public class DataStorageManagerTest {
         Map<String, ScanResult> wifiData = rp.getWifiData();
         Assert.assertTrue("Max wifi limit is exceeded", wifiData.size() <= Reporter.MAX_WIFIS_PER_LOCATION);
 
+        // This should push the reporter into a state that forces a
+        // flush
         rp.onReceive(ctx, wifiIntent);
 
         wifiData = rp.getWifiData();
-        Assert.assertTrue("Max wifi limit exceeded", wifiData.size() <= Reporter.MAX_WIFIS_PER_LOCATION);
+        Assert.assertTrue("Max wifi limit exceeded", wifiData == null);
     }
 
     @Test
@@ -89,11 +95,14 @@ public class DataStorageManagerTest {
 
         Intent cellIntent = getCellIntent(cellIdList);
         Map<String, CellInfo> cellData = rp.getCellData();
-        Assert.assertTrue("Max cell limit exceeded", cellData.size() <= Reporter.MAX_CELLS_PER_LOCATION);
+        Assert.assertTrue("Max cell limit exceeded", cellData.size() < Reporter.MAX_CELLS_PER_LOCATION);
+
+        // Accepting the extra content into the Report should force
+        // the Reporter to flush content
         rp.onReceive(ctx, cellIntent);
 
         cellData = rp.getCellData();
-        Assert.assertTrue("Max cell limit exceeded", cellData.size() <= Reporter.MAX_CELLS_PER_LOCATION);
+        Assert.assertTrue("Cell data was not flushed properly", cellData == null);
     }
 
     private Intent getCellIntent(ArrayList<CellInfo> cells) {

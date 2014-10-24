@@ -215,7 +215,7 @@ public final class Reporter extends BroadcastReceiver implements IReporter {
         }
 
         if (AppGlobals.isDebug) {
-            Log.d(LOG_TAG, "Received a MLS bundle");
+            Log.d(LOG_TAG, "Received a MLS bundle" + mlsObj.toString());
         }
 
         if (wifiCount + cellCount < 1) {

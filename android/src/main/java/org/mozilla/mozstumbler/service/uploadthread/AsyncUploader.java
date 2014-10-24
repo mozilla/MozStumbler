@@ -15,6 +15,7 @@ import org.mozilla.mozstumbler.service.core.http.IResponse;
 import org.mozilla.mozstumbler.service.core.http.MLS;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageManager;
 import org.mozilla.mozstumbler.service.utils.NetworkInfo;
+import org.mozilla.mozstumbler.service.utils.Zipper;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -130,7 +131,7 @@ public class AsyncUploader extends AsyncTask<AsyncUploadParam, AsyncProgressList
                     totalBytesSent += result.bytesSent();
 
                     String logMsg =  "MLS Submit: [HTTP Status:" + result.httpResponse() + "], [Bytes Sent:" + result.bytesSent() + "]";
-                    AppGlobals.guiLogInfo(logMsg, "#FFFFCC", true);
+                    AppGlobals.guiLogInfo(logMsg, "#FFFFCC", true, false);
 
                     dm.delete(batch.filename);
 
@@ -145,6 +146,10 @@ public class AsyncUploader extends AsyncTask<AsyncUploadParam, AsyncProgressList
                     
                     if (result != null && result.isErrorCode400BadRequest()) {
                         logMsg += ", 400 Error, deleting bad report";
+                        if (AppGlobals.guiLogMessageBuffer != null) { // if true, this is a GUI app
+                            String unzipped = Zipper.unzipData(batch.data);
+                            AppGlobals.guiLogInfo(unzipped, "red", false, true);
+                        }
                         dm.delete(batch.filename);
                     } else {
                         DataStorageManager.getInstance().saveCurrentReportsSendBufferToDisk();

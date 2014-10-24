@@ -40,26 +40,28 @@ public class AppGlobals {
     public static boolean isRobolectric;
 
     private static final SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss: ");
+    public static final String NO_TRUNCATE_FLAG = "~";
 
     /* The log activity will clear this periodically, and display the messages.
      * Always null when the stumbler service is used stand-alone. */
     public static volatile ConcurrentLinkedQueue<String> guiLogMessageBuffer;
 
     public static void guiLogError(String msg) {
-        guiLogInfo(msg, "red", true);
+        guiLogInfo(msg, "red", true, false);
     }
 
     public static void guiLogInfo(String msg) {
-        guiLogInfo(msg, "white", false);
+        guiLogInfo(msg, "white", false, false);
     }
 
-    public static void guiLogInfo(String msg, String color, boolean isBold) {
+    public static void guiLogInfo(String msg, String color, boolean isBold, boolean doNotTruncateLongString) {
         if (guiLogMessageBuffer != null) {
             if (isBold) {
                 msg = "<b>" + msg + "</b>";
             }
+            String noTruncateFlag = doNotTruncateLongString? NO_TRUNCATE_FLAG : "";
             String ts = formatter.format(new Date());
-            guiLogMessageBuffer.add(ts + "<font color='" + color +"'>" + msg + "</font>");
+            guiLogMessageBuffer.add(noTruncateFlag + ts + "<font color='" + color +"'>" + msg + "</font>");
         }
     }
 }

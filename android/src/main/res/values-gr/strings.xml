@@ -3,23 +3,10 @@
     <string name="app_name">Mozilla Stumbler</string>
     <string name="action_about">Σχετικά με το Mozilla Stumbler</string>
     <string name="action_preferences">Ρυθμίσεις</string>
-    <string name="action_upload_observations">Αποστολή παρατηρήσεων</string>
     <string name="start_scanning">Έναρξη σάρωσης</string>
     <string name="stop_scanning">Τέλος σάρωσης</string>
     <string name="view_leaderboard">Προβολή Πίνακα κατάταξης</string>
-    <string name="view_map">Δοκιμή του Mozilla Location Service</string>
     <string name="service_name">Mozilla Stumbler</string>
-    <string name="wifi_access_points">Σαρωμένα Σημεία πρόσβασης Wi-Fi: %1$d</string>
-    <string name="wifi_disabled">0 (Wi-Fi Απενεργοποιήθηκε)</string>
-    <string name="visible_wifi_access_points">Ορατά Σημεία πρόσβασης Wi-Fi: %1$s</string>
-    <string name="cells_scanned">Σαρωμένες κυψέλες: %1$d</string>
-    <string name="cells_visible">Ορατές κυψέλες: %1$d</string>
-    <string name="gps_satellites">Χρησιμοποιημένοι/Ορατοί δορυφόροι GPS: %1$d/%2$d</string>
-    <string name="last_location">Τελευταία Τοποθεσία: %1$s</string>
-    <string name="coordinate">%1$.4f, %2$.4f</string>
-    <string name="locations_scanned">Σαρωμένες τοποθεσίες : %1$d</string>
-    <string name="last_upload_time">Τελευταία Ώρα Μεταφόρτωσης: %1$s</string>
-    <string name="reports_sent">Απεσταλμένες Αναφορές  %1$d</string>
     <string name="service_scanning">Σάρωση για  Wi-Fi και κυψέλες τηλεφωνίας</string>
     <string name="enter_nickname">Εισάγετε Ψευδώνυμο (προαιρετικό)</string>
     <string name="enter_nickname_title">Ψευδώνυμο: </string>
@@ -28,7 +15,6 @@
     <string name="update_message">Εγκατεστημένη έκδοση: %1$s\n Τελευταία έκδοση: %2$s</string>
     <string name="update_now">Ενημέρωση τώρα</string>
     <string name="update_later">Ενημέρωση αργότερα</string>
-    <string name="gps_alert_msg">Το GPS είναι απενεργοποιημένο. Θέλετε να πάτε στις ρυθμίσεις και να το ενεργοποιήσετε;</string>
     <string name="yes">Ναι</string>
     <string name="no">Όχι</string>
     <string name="about_version">Έκδοση:%1$s</string>
@@ -46,14 +32,11 @@
 
 
 
-    <string name="upload_observations_button">Αποστολή</string>
-    <string name="upload_observations_dialog_title">Αποστολή παρατηρήσεων</string>
     <string name="upload_wifi_only_title">Μεταφόρτωση μόνο μέσω Wi-Fi</string>
     <string name="upload_wifi_only_summary">Η επιλογή αυτή θα μειώσει τη χρήση των δεδομένων σας μέσω του δικτύου κινητής τηλεφωνίας.</string>
 
 
 
-    <string name="upload_observations_data_size">Size:</string>
     <!--translations missing
     <string name="title_activity_log">Log</string>
     <string name="action_view_log">View Log</string>

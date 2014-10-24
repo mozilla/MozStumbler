@@ -3,23 +3,11 @@
     <string name="app_name">Mozilla Stumbler</string>
     <string name="action_about">Om Mozilla Stumbler</string>
     <string name="action_preferences">Innstillinger</string>
-    <string name="action_upload_observations">Last opp</string>
     <string name="start_scanning">Start innsamling</string>
     <string name="stop_scanning">Stopp innsamling</string>
     <string name="view_leaderboard">Vis resultatliste</string>
-    <string name="view_map">Test Mozillas plasseringstjeneste</string>
     <string name="service_name">Mozilla Stumbler</string>
-    <string name="wifi_access_points">Innsamlede trådløspunkt: %1$d</string>
     <!--<string name="wifi_disabled">0 (Wi-Fi disabled)</string> translation missing-->
-    <string name="visible_wifi_access_points">Synlige trådløspunkt: %1$s</string>
-    <string name="cells_scanned">Innsamlede mobilnettverk: %1$d</string>
-    <string name="cells_visible">Synlige mobilnettverk: %1$d</string>
-    <string name="gps_satellites">Synlige GPS-satellitter: %1$d/%2$d</string>
-    <string name="last_location">Forrige plassering: %1$s</string>
-    <string name="coordinate">%1$.4f, %2$.4f</string>
-    <string name="locations_scanned">Innsamlede plasseringer: %1$d</string>
-    <string name="last_upload_time">Siste opplastingstidspunkt: %1$s</string>
-    <string name="reports_sent">Sendte rapporter: %1$d</string>
     <string name="service_scanning">Samler inn trådløspunkt og mobilnettverk</string>
     <string name="enter_nickname">Skriv inn kallenavn (valgfri)</string>
     <string name="enter_nickname_title">Kallenavn: </string>
@@ -28,7 +16,6 @@
     <string name="update_message">Installert versjon: %1$s\nSiste versjon: %2$s</string>
     <string name="update_now">Oppdater nå</string>
     <string name="update_later">Oppdater senere</string>
-    <string name="gps_alert_msg">GPS er slått av. Vil du gå til telefonens innstillinger og slå det på?</string>
     <string name="yes">Ja</string>
     <string name="no">Nei</string>
     <string name="about_version">Versjon %1$s</string>
@@ -46,11 +33,8 @@
 
 
 
-    <string name="upload_observations_button">Last opp</string>
-    <string name="upload_observations_dialog_title">Last opp observasjoner</string>
     <string name="upload_wifi_only_title">Last bare opp via trådløsnett</string>
     <string name="upload_wifi_only_summary">Dette valget reduserer databruk via mobilnettverk.</string>
-    <string name="upload_observations_data_size">Size:</string>
     <!--translations missing
 
 

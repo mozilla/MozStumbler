@@ -7,20 +7,11 @@
     <string name="start_scanning">Spusť vyhledávání</string>
     <string name="stop_scanning">Zastav vyhledávání</string>
     <string name="view_leaderboard">Zobraz žebříček</string>
-    <string name="view_map">Vyzkoušet zjišťování pozice</string>
     <string name="service_name">Mozilla Stumbler</string>
-    <string name="wifi_access_points">Vyhledány Wi-Fi přístupové body: %1$d</string>
     <!--<string name="wifi_disabled">0 (Wi-Fi disabled)</string> translation missing-->
-    <string name="visible_wifi_access_points">Wi-Fi přístupové body v dosahu: %1$s</string>
     <!--translations missing
     <string name="cells_scanned">Cells Scanned: %1$d</string>
     <string name="cells_visible">Cells Visible: %1$d</string>-->
-    <string name="gps_satellites">GPS satelity v dosahu: %1$d/%2$d</string>
-    <string name="last_location">Poslední pozice: %1$s</string>
-    <string name="coordinate">%1$.4f, %2$.4f</string>
-    <string name="locations_scanned">Prohledáno míst: %1$d</string>
-    <string name="last_upload_time">Čas posledniho reportu: %1$s</string>
-    <string name="reports_sent">Odesláno reportů: %1$d</string>
     <string name="service_scanning">Vyhledávám Wi-Fi a mobilní sítě</string>
     <string name="enter_nickname">Vložte jméno (nepovinné)</string>
     <string name="enter_nickname_title">Jméno: </string>
@@ -33,7 +24,6 @@
     <string name="update_later">Aktualizovat později</string>
     <string name="">Pozice nenalezena</string>
     -->
-    <string name="gps_alert_msg">GPS je vypnuté. Chcete zobrazit nastavení a zapnout GPS?</string>
     <string name="yes">Ano</string>
     <string name="no">Ne</string>
     <string name="about_version">Verze %1$s</string>
@@ -41,7 +31,6 @@
 	<string name="about_openstreetmap">Map view tiles © OpenStreetMap contributors\nhttp://www.openstreetmap.org</string>
     <string name="about_mapbox_title">MapBox</string>-->
     <string name="about_mapbox">Zjistit více informací o mapových datech…</string>
-    <string name="upload_observations_data_size">Size:</string>
     <!--<string name="about_legal_aosp">Some iconography in this app is reproduced from work created and shared by the Android Open Source Project and used according to terms described in the Creative Commons 2.5 Attribution License.</string> translation missing-->
     <!--translations missing
     <string name="upload_observations_sent_title">Sent</string>

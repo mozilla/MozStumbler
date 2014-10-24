@@ -3,23 +3,10 @@
     <string name="app_name">Mozilla Stumbler</string>
     <string name="action_about">Tietoja</string>
     <string name="action_preferences">Asetukset</string>
-    <string name="action_upload_observations">Lähetä tiedot</string>
     <string name="start_scanning">Aloita skannaus</string>
     <string name="stop_scanning">Lopeta skannaus</string>
     <string name="view_leaderboard">Näytä pistetilasto</string>
-    <string name="view_map">Kokeile Mozillan paikannuspalvelua</string>
     <string name="service_name">Mozilla Stumbler</string>
-    <string name="wifi_access_points">Wi-Fi-tukiasemia skannattu: %1$d</string>
-    <string name="wifi_disabled">0 (Wi-Fi pois päältä)</string>
-    <string name="visible_wifi_access_points">Wi-Fi-tukiasemia näkyvillä: %1$s</string>
-    <string name="cells_scanned">Mastoja skannattu: %1$d</string>
-    <string name="cells_visible">Mastoja näkyvillä: %1$d</string>
-    <string name="gps_satellites">GPS-satelliitteja käytössä / näkyvillä: %1$d/%2$d</string>
-    <string name="last_location">Viimeisin sijainti: %1$s</string>
-    <string name="coordinate">%1$.4f, %2$.4f</string>
-    <string name="locations_scanned">Sijainteja skannattu: %1$d</string>
-    <string name="last_upload_time">Viimeisin lähetysaika: %1$s</string>
-    <string name="reports_sent">Raportteja lähetetty: %1$d</string>
     <string name="service_scanning">Skannataan Wi-Fi-tukiasemia ja verkkomastoja</string>
     <string name="enter_nickname">Valitse nimimerkki (ei pakollinen)</string>
     <string name="enter_nickname_title">Nimimerkki: </string>
@@ -28,7 +15,6 @@
     <string name="update_message">Asennettu versio: %1$s\nUusin versio: %2$s</string>
     <string name="update_now">Päivitä nyt</string>
     <string name="update_later">Päivitä myöhemmin</string>
-    <string name="gps_alert_msg">GPS on pois päältä. Haluatko mennä asetuksiin laittamaan sen päälle?</string>
     <string name="yes">Kyllä</string>
     <string name="no">Ei</string>
     <string name="about_version">Versio %1$s</string>
@@ -45,8 +31,6 @@
 
 
 
-    <string name="upload_observations_button">Lähetä</string>
-    <string name="upload_observations_dialog_title">Lähetä tiedot</string>
     <string name="upload_wifi_only_title">Lähetä vain Wi-Fi:n yli</string>
     <string name="upload_wifi_only_summary">Tämä asetus vähentää datan käyttöä matkapuhelinverkon yli</string>
 
@@ -54,5 +38,4 @@
     <string name="action_view_log">Näytä loki</string>
     <string name="scroll_to_start">Siirry alkuun</string>
     <string name="scroll_to_end">Siirry loppuun</string>
-    <string name="upload_observations_data_size">Size:</string>
 </resources>

@@ -3,23 +3,10 @@
 	<string name="app_name">Mozilla Stumbler</string>
 	<string name="action_about">על אודות Mozilla Stumbler</string>
 	<string name="action_preferences">העדפות</string>
-	<string name="action_upload_observations">העלאת תצפיות</string>
 	<string name="start_scanning">התחלת הסריקה</string>
 	<string name="stop_scanning">עצירת הסריקה</string>
 	<string name="view_leaderboard">צפייה בלוח המובילים</string>
-	<string name="view_map">בדיקת שירות האיכון של Mozilla</string>
 	<string name="service_name">מאתר מוזילה</string>
-	<string name="wifi_access_points">נקודות גישה מסוג Wi-Fi שנסרקו: %1$d</string>
-	<string name="wifi_disabled">0 (ה־Wi-Fi כבוי)</string>
-	<string name="visible_wifi_access_points">נקודות Wi-Fi גלויות: %1$s</string>
-	<string name="cells_scanned">אנטנות שנסרקו: %1$d</string>
-	<string name="cells_visible">אנטנות גלויות: %1$d</string>
-	<string name="gps_satellites">לווייני GPS בשימוש / גלויים: %1$d/%2$d</string>
-	<string name="last_location">מיקום אחרון: %1$s</string>
-	<string name="coordinate">%1$.4f, %2$.4f</string>
-	<string name="locations_scanned">מיקומים שנסרקו: %1$d</string>
-	<string name="last_upload_time">מועד ההעלאה האחרון: %1$s</string>
-	<string name="reports_sent">דיווחים שנשלחו: %1$d</string>
 	<string name="service_scanning">מתבצעת סריקה לאיתור רשתות סלולריות ו־Wi-Fi</string>
 	<string name="enter_nickname">הזנת שם המשתמש (רשות)</string>
 	<string name="enter_nickname_title">כינוי: </string>
@@ -28,7 +15,6 @@
 	<string name="update_message">הגרסה המותקנת: %1$s\nהגרסה העדכנית: %2$s</string>
 	<string name="update_now">לעדכן כעת</string>
 	<string name="update_later">לעדכן מאוחר יותר</string>
-	<string name="gps_alert_msg">האיכון כבוי. האם ברצונך לגשת להגדרות כדי להפעיל אותו?</string>
 	<string name="yes">כן</string>
 	<string name="no">לא</string>
 	<string name="about_version">גרסה %1$s</string>
@@ -45,8 +31,6 @@
 
 
 
-	<string name="upload_observations_button">העלאה</string>
-	<string name="upload_observations_dialog_title">העלאת תצפיות</string>
 	<string name="upload_wifi_only_title">העלאה רק באמצעות Wi-Fi</string>
 	<string name="upload_wifi_only_summary">אפשרות זו תפחית את השימוש בנתונים של הרשת הסלולרית.</string>
 
@@ -56,5 +40,4 @@
 	<string name="action_view_log">צפייה ברישום</string>
 	<string name="scroll_to_start">גלילה להתחלה</string>
 	<string name="scroll_to_end">גלילה לסוף</string>
-  <string name="upload_observations_data_size">גודל (ק״ב):</string>
 </resources>

@@ -3,23 +3,10 @@
     <string name="app_name">Mozilla Stumbler</string>
     <string name="action_about">دربارهٔ Mozilla Stumbler</string>
     <string name="action_preferences">تنظیمات</string>
-    <string name="action_upload_observations">بارگذاری مشاهده‌ها</string>
     <string name="start_scanning">شروع اسکن</string>
     <string name="stop_scanning">توقف اسکن</string>
     <string name="view_leaderboard">مشاهدهٔ برد بالاترین‌ها</string>
-    <string name="view_map">آزمایش خدمات مکانی موزیلا</string>
     <string name="service_name">Mozilla Stumbler</string>
-    <string name="wifi_access_points">نقاط دسترسی وای‌فای اسکن‌شده: %1$d</string>
-    <string name="wifi_disabled">۰ (وای‌فای غیرفعال‌شده)</string>
-    <string name="visible_wifi_access_points">نقاط دسترسی نمایان وای‌فای: %1$s</string>
-    <string name="cells_scanned">شبکه‌های گوشی همراه اسکن‌شده: %1$d</string>
-    <string name="cells_visible">شبکه‌های گوشی همراه نمایان: %1$d</string>
-    <string name="gps_satellites">ماهواره‌های استفاده‌شده / نمایان: %1$d/%2$d</string>
-    <string name="last_location">آخرین مکان: %1$s</string>
-    <string name="coordinate">%1$.4f، %2$.4f</string>
-    <string name="locations_scanned">مکان‌های اسکن‌شده: %1$d</string>
-    <string name="last_upload_time">آخرین زمان بارگذاری: %1$s</string>
-    <string name="reports_sent">گزارش‌های ارسال‌شده: %1$d</string>
     <string name="service_scanning">اسکن‌کردن برای وای‌فای و شبکه‌های گوشی همراه</string>
     <string name="enter_nickname">ورود نام اختصاری (اختیاری)</string>
     <string name="enter_nickname_title">نام اختصاری: </string>
@@ -28,7 +15,6 @@
     <string name="update_message">نسخهٔ نصب‌شده: %1$s\nآخرین نسخه: %2$s</string>
     <string name="update_now">الآن به‌روز شود</string>
     <string name="update_later">بعداً به‌روز شود</string>
-    <string name="gps_alert_msg">چی‌پی‌اس خاموش است. می‌خواهید به تنظیمات بروید و روشنش کنید؟</string>
     <string name="yes">بله</string>
     <string name="no">خیر</string>
     <string name="about_version">نسخهٔ %1$s</string>
@@ -46,13 +32,10 @@
 
 
 
-    <string name="upload_observations_button">بارگذاری</string>
-    <string name="upload_observations_dialog_title">بارگذاری مشاهده‌ها</string>
     <string name="upload_wifi_only_title">بارگذاری فقط هنگام وای‌فای</string>
     <string name="upload_wifi_only_summary">این گزینه مصرف‌داده‌ای شما را هنگام استفاده از شبکهٔ گوشی همراه کاهش خواهد داد.</string>
 
 
-    <string name="upload_observations_data_size">Size:</string>
     <!--translations missing
 
 	

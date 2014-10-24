@@ -7,20 +7,11 @@
     <string name="start_scanning">Começar a escanear</string>
     <string name="stop_scanning">Parar de escanear</string>
     <string name="view_leaderboard">Ver ranking</string>
-    <string name="view_map">Testar serviço de localização do Mozilla</string>
     <string name="service_name">Mozilla Stumbler</string>
-    <string name="wifi_access_points">Pontos de acesso Wi-Fi escaneados: %1$d</string>
     <!--<string name="wifi_disabled">0 (Wi-Fi disabled)</string> translation missing-->
-    <string name="visible_wifi_access_points">Pontos de acesso Wi-Fi visíveis: %1$s</string>
-    <string name="gps_satellites">Satélites GPS visíveis: %1$d/%2$d</string>
     <!-- translations missing
     <string name="cells_scanned">Cells Scanned: %1$d</string>
     <string name="cells_visible">Cells Visible: %1$d</string>-->
-    <string name="last_location">Última localização: %1$s</string>
-    <string name="coordinate">%1$.4f, %2$.4f</string>
-    <string name="locations_scanned">Localizações escaneadas: %1$d</string>
-    <string name="last_upload_time">Horário do último upload: %1$s</string>
-    <string name="reports_sent">Relatórios enviados: %1$d</string>
     <string name="service_scanning">Escanear para redes Wi-Fi e Cellular</string>
     <string name="enter_nickname">Entre com seu nickname (opcional)</string>
     <string name="enter_nickname_title">Nickname: </string>
@@ -32,7 +23,6 @@
     <string name="update_now">Atualizar Agora</string>
     <string name="update_later">Atualizar Depois</string>
     -->
-    <string name="gps_alert_msg">O GPS está desligado. Você quer ir para as configurações e ativá-lo?</string>
     <string name="yes">Sim</string>
     <string name="no">Não</string>
     <string name="about_version">Versão %1$s</string>
@@ -40,7 +30,6 @@
 	<string name="about_openstreetmap">Map view tiles © OpenStreetMap contributors\nhttp://www.openstreetmap.org</string>
     <string name="about_mapbox_title">MapBox</string>-->
     <string name="about_mapbox">Saiba mais sobre o provedor de mapemento…</string>
-    <string name="upload_observations_data_size">Size:</string>
     <!--<string name="about_legal_aosp">Some iconography in this app is reproduced from work created and shared by the Android Open Source Project and used according to terms described in the Creative Commons 2.5 Attribution License.</string> translation missing-->
     <!--translations missing
     <string name="upload_observations_sent_title">Sent</string>

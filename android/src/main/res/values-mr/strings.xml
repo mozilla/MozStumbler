@@ -3,23 +3,10 @@
     <string name="app_name">मोझस्टंबलर</string>
     <string name="action_about">मोझस्टंबलर बद्दल</string>
     <string name="action_preferences">मांडणी पर्याय</string>
-    <string name="action_upload_observations">निरीक्षणे पाठवा</string>
     <string name="start_scanning">सर्वेक्षण सुरु करा</string>
     <string name="stop_scanning">सर्वेक्षण बंद करा</string>
     <string name="view_leaderboard">अग्रेसर वापरकर्ता फलक बघा</string>
-    <string name="view_map">मोझिला स्थळसेवा तपासा</string>
     <string name="service_name">मोझिला स्टंबलर</string>
-    <string name="wifi_access_points">तपासलेले Wi-Fi प्रवेश बिंदू: %1$d</string>
-    <string name="wifi_disabled">० (Wi-Fi बंद आहे)</string>
-    <string name="visible_wifi_access_points">दिसणारे Wi-Fi प्रवेश बिंदू:: %1$s</string>
-    <string name="cells_scanned">शोधलेले भ्रमणध्वनी जाळे: %1$d</string>
-    <string name="cells_visible">दिसणारे भ्रमणध्वनी जाळे: %1$d</string>
-    <string name="gps_satellites">वापरलेले/दिसणारे GPS उपग्रह: %1$d/%2$d</string>
-    <string name="last_location">शेवटची जागा: %1$s</string>
-    <string name="coordinate">%1$.4f, %2$.4f</string>
-    <string name="locations_scanned">शोधलेल्या जागा: %1$d</string>
-    <string name="last_upload_time">शेवटचा अहवाल पाठवण्याची वेळ: %1$s</string>
-    <string name="reports_sent">पाठवलेले अहवाल: %1$d</string>
     <string name="service_scanning">Wi-Fi आणि भ्रमणध्वनी जाळे शोधत आहे</string>
     <string name="enter_nickname">टोपणनाव टाका (ऐच्छिक)</string>
     <string name="enter_nickname_title">टोपणनाव: </string>
@@ -28,7 +15,6 @@
     <string name="update_message">प्रतिष्ठापित आवृत्ती: %1$s\nनवीनतम आवृत्ती: %2$s</string>
     <string name="update_now">आता अद्ययावत करा</string>
     <string name="update_later">नंतर अद्ययावत करा</string>
-    <string name="gps_alert_msg">GPS बंद आहे. सेटिंग मध्ये जाऊन सुरु करायचे का?</string>
     <string name="yes">हो</string>
     <string name="no">नाही</string>
     <string name="about_version">आवृत्ती %1$s</string>
@@ -46,8 +32,6 @@
 
 
 
-    <string name="upload_observations_button">पाठवा</string>
-    <string name="upload_observations_dialog_title">निरीक्षणे पाठवा</string>
     <string name="upload_wifi_only_title">फक्त Wi-Fi वर निरीक्षणे पाठवा</string>
     <string name="upload_wifi_only_summary">हा पर्याय आपला भ्रमणध्वनी जाळ्यावरील डेटा वापर कमी करेल.</string>
 
@@ -57,5 +41,4 @@
     <string name="action_view_log">नोंदी बघा</string>
     <string name="scroll_to_start">सुरुवात बघा</string>
     <string name="scroll_to_end">शेवट बघा</string>
-    <string name="upload_observations_data_size">Size:</string>
 </resources>

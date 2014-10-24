@@ -52,12 +52,14 @@ public class SerializableTile {
 
     public void setHeaders(Map<String, String> h) {
         headers = new HashMap<String, String>();
-        for (Map.Entry<String, String> entry : headers.entrySet()) {
+        for (Map.Entry<String, String> entry : h.entrySet()) {
             if (entry.getValue() == null || entry.getKey() == null) {
                 // skip over this
                 continue;
             }
-            headers.put(entry.getKey(), entry.getValue());
+
+            // Always make headers lowercase
+            headers.put(entry.getKey().toLowerCase(), entry.getValue());
         }
     }
 
@@ -99,30 +101,33 @@ public class SerializableTile {
         ByteArrayBuffer buff = new ByteArrayBuffer(10);
         buff.append(FILE_HEADER, 0, FILE_HEADER.length);
 
-        buff.append(headers.size());
+        buff.append(intAsBytes(headers.size()), 0, 4);
 
         for (Map.Entry<String, String> entry : headers.entrySet()) {
             byte[] keyBytes = encoder.encode(CharBuffer.wrap(entry.getKey())).array();
             byte[] valueBytes = encoder.encode(CharBuffer.wrap(entry.getValue())).array();
 
-            buff.append(keyBytes.length);
+            buff.append(intAsBytes(keyBytes.length), 0, 4);
+            buff.append(intAsBytes(valueBytes.length), 0, 4);
+
             buff.append(keyBytes, 0, keyBytes.length);
             buff.append(valueBytes, 0, valueBytes.length);
+
         }
 
-        buff.append(tData.length);
-        buff.append(tData, 0, tData.length);
+        if (tData == null || tData.length == 0) {
+            buff.append(intAsBytes(0), 0, 4);
+        } else {
+            buff.append(intAsBytes(tData.length), 0, 4);
+            buff.append(tData, 0, tData.length);
+        }
 
         return buff.toByteArray();
     }
 
-    public boolean fromFile(File file) throws CharacterCodingException, FileNotFoundException {
-        Charset charsetE = Charset.forName("UTF-8");
-        CharsetDecoder decoder = charsetE.newDecoder();
-
+    public boolean fromFile(File file) throws FileNotFoundException {
         FileInputStream fis = new FileInputStream(file);
         byte[] arr = new byte[(int) file.length()];
-        byte[] buffer = new byte[(int) file.length()];
 
         try {
             fis.read(arr);
@@ -130,38 +135,64 @@ public class SerializableTile {
             Log.w(LOG_TAG, "Error reading file into array.");
         }
 
+        try {
+            return fromBytes(arr);
+        } catch (CharacterCodingException e) {
+            Log.e(LOG_TAG, "Error decoding strings from file", e);
+            return false;
+        }
+    }
+
+    public boolean fromBytes(byte[] arr) throws CharacterCodingException  {
+        byte[] buffer = null;
+
+        Charset charsetE = Charset.forName("UTF-8");
+        CharsetDecoder decoder = charsetE.newDecoder();
+
         //  create a byte buffer and wrap the array
         ByteBuffer bb = ByteBuffer.wrap(arr);
-
-
         //  read your integers using ByteBuffer's getInt().
         //  four bytes converted into an integer!
+        buffer = new byte[4];
+
         bb.get(buffer, 0, 4);
         if (!Arrays.equals(buffer, FILE_HEADER)) {
-            // invalid header
+            Log.w(LOG_TAG, "Unexpected header in tile file: ["+bytesToHex(buffer)+"]");
             return false;
         }
 
         // read # of headers
-        int headerCount = 0;
-        headerCount = bb.getInt();
+        buffer = new byte[4];
+        bb.get(buffer, 0, 4);
+        int headerCount = java.nio.ByteBuffer.wrap(buffer).getInt();
+
         headers.clear();
 
         for (int i=0; i < headerCount; i++) {
-            int keyLength = bb.getInt();
-            int valueLength = bb.getInt();
+            buffer = new byte[4];
+            bb.get(buffer, 0, 4);
+            int keyLength = java.nio.ByteBuffer.wrap(buffer).getInt();
+
+            buffer = new byte[4];
+            bb.get(buffer, 0, 4);
+            int valueLength = java.nio.ByteBuffer.wrap(buffer).getInt();
 
             buffer = new byte[keyLength];
-            String key = decoder.decode(bb.get(buffer, 0, keyLength)).toString();
+            bb.get(buffer, 0, valueLength);
+            String key = new String(buffer);
 
             buffer = new byte[valueLength];
-            String value = decoder.decode(bb.get(buffer, 0, valueLength)).toString();
+            bb.get(buffer, 0, valueLength);
+            String value = new String(buffer);
             headers.put(key, value);
         }
 
         // Remaining bytes should equal the content length of our payload.
-        int contentLength = bb.getInt();
+        buffer = new byte[4];
+        bb.get(buffer, 0, 4);
+        int contentLength = java.nio.ByteBuffer.wrap(buffer).getInt();
         if (bb.remaining() != contentLength) {
+            Log.w(LOG_TAG, "Remaining byte count does not match actual["+bb.remaining()+"] vs expected["+contentLength+"]");
             return false;
         }
 
@@ -171,6 +202,21 @@ public class SerializableTile {
         return true;
     }
 
+    private byte[] intAsBytes(int integer) {
+        return ByteBuffer.allocate(4).putInt(integer).array();
+    }
+
+    final protected static char[] hexArray = "0123456789abcdef".toCharArray();
+
+    public static String bytesToHex(byte[] bytes) {
+        char[] hexChars = new char[bytes.length * 2];
+        for ( int j = 0; j < bytes.length; j++ ) {
+            int v = bytes[j] & 0xFF;
+            hexChars[j * 2] = hexArray[v >>> 4];
+            hexChars[j * 2 + 1] = hexArray[v & 0x0F];
+        }
+        return new String(hexChars);
+    }
 
 
 

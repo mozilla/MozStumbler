@@ -4,8 +4,12 @@
 
 package org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
@@ -18,7 +22,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
-
+import java.util.concurrent.atomic.AtomicBoolean;
+import org.mozilla.mozstumbler.service.AppGlobals.ActiveOrPassiveStumbling;
+import org.mozilla.mozstumbler.service.stumblerthread.Reporter;
 
 public class CellScanner {
     public static final String ACTION_BASE = AppGlobals.ACTION_NAMESPACE + ".CellScanner.";
@@ -33,6 +39,9 @@ public class CellScanner {
     private static CellScannerImpl sImpl;
     private Timer mCellScanTimer;
     private final Set<String> mCells = new HashSet<String>();
+    private final ReportFlushedReceiver mReportFlushedReceiver = new ReportFlushedReceiver();
+    private final AtomicBoolean mReportWasFlushed = new AtomicBoolean();
+    private Handler mBroadcastScannedHandler;
 
     public ArrayList<CellInfo> sTestingModeCellInfoArray;
 
@@ -77,6 +86,18 @@ public class CellScanner {
             return;
         }
 
+        LocalBroadcastManager.getInstance(mContext).registerReceiver(mReportFlushedReceiver,
+                new IntentFilter(Reporter.ACTION_NEW_BUNDLE));
+
+        // This is to ensure the broadcast happens from the same thread the CellScanner start() is on
+        mBroadcastScannedHandler = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                Intent intent = (Intent) msg.obj;
+                LocalBroadcastManager.getInstance(mContext).sendBroadcastSync(intent);
+            }
+        };
+
         mCellScanTimer = new Timer();
 
         mCellScanTimer.schedule(new TimerTask() {
@@ -104,19 +125,39 @@ public class CellScanner {
                     return;
                 }
 
+                if (mReportWasFlushed.getAndSet(false)) {
+                    clearCells();
+                }
+
                 for (CellInfo cell : cells) {
-                    mCells.add(cell.getCellIdentity());
+                    addToCells(cell.getCellIdentity());
                 }
 
                 Intent intent = new Intent(ACTION_CELLS_SCANNED);
                 intent.putParcelableArrayListExtra(ACTION_CELLS_SCANNED_ARG_CELLS, cells);
                 intent.putExtra(ACTION_CELLS_SCANNED_ARG_TIME, curTime);
-                LocalBroadcastManager.getInstance(mContext).sendBroadcastSync(intent);
+                // send to handler, so broadcast is not from timer thread
+                Message message = new Message();
+                message.obj = intent;
+                mBroadcastScannedHandler.sendMessage(message);
+
             }
         }, 0, CELL_MIN_UPDATE_TIME);
     }
 
-    public void stop() {
+    private synchronized void clearCells() {
+        mCells.clear();
+    }
+
+    private synchronized void addToCells(String cell) {
+        mCells.add(cell);
+    }
+
+    public synchronized void stop() {
+        mReportWasFlushed.set(false);
+        clearCells();
+        LocalBroadcastManager.getInstance(mContext).unregisterReceiver(mReportFlushedReceiver);
+
         if (mCellScanTimer != null) {
             mCellScanTimer.cancel();
             mCellScanTimer = null;
@@ -126,7 +167,14 @@ public class CellScanner {
         }
     }
 
-    public int getCellInfoCount() {
+    public synchronized int getCellInfoCount() {
         return mCells.size();
+    }
+
+    private class ReportFlushedReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context c, Intent i) {
+            mReportWasFlushed.set(true);
+        }
     }
 }

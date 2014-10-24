@@ -27,7 +27,6 @@ import org.mozilla.mozstumbler.service.uploadthread.AsyncUploader;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
-import java.text.DateFormat;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Properties;

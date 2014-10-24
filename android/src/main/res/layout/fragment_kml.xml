@@ -76,7 +76,7 @@
         android:paddingLeft="5dp"
         android:paddingStart="5dp"
         android:textSize="10sp"
-        android:text="     "
+        tools:text="     "
         android:layout_alignBaseline="@id/textViewSavedFileLabel"
         android:layout_toRightOf="@+id/textViewSavedFileLabel"
         android:layout_toEndOf="@+id/textViewSavedFileLabel" />

@@ -80,7 +80,7 @@
                 android:textColor="@android:color/black"
                 android:layout_width="32dp"
                 android:layout_height="match_parent"
-                android:text="999"
+                tools:text="999"
                 android:gravity="center_vertical"
                 android:textSize="@dimen/font_size_for_map_view_report_icon"
                 />
@@ -102,7 +102,7 @@
                 android:textColor="@android:color/black"
                 android:layout_width="32dp"
                 android:layout_height="match_parent"
-                android:text="999"
+                tools:text="999"
                 android:gravity="center_vertical"
                 android:textSize="@dimen/font_size_for_map_view_report_icon"
                 />
@@ -124,7 +124,7 @@
                 android:textColor="@android:color/black"
                 android:layout_width="50dp"
                 android:layout_height="match_parent"
-                android:text="99999"
+                tools:text="99999"
                 android:gravity="center_vertical"
                 android:textSize="@dimen/font_size_for_map_view_report_icon"
                 />
@@ -176,7 +176,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="5dp"
-        android:text="Copyright Placeholder"
+        tools:text="Copyright Placeholder"
         android:textSize="9sp"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"

@@ -76,7 +76,7 @@ public class TilesOverlay extends Overlay implements IOverlayMenuProvider {
     // is no formal policy for when a tile is evicted from the LRU
     // cache.  The caches really need to just go away and we should
     // load directly from storage.
-    public static final int OVERSHOOT_TILE_CACHE_SIZE = 100;
+    public static final int OVERSHOOT_TILE_CACHE_SIZE = 0;
 
     public TilesOverlay(final MapTileProviderBase aTileProvider, final ResourceProxy pResourceProxy) {
         super(pResourceProxy);

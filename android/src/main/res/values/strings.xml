@@ -41,7 +41,7 @@
     <string name="scroll_to_end">Scroll to End</string>
     <string name="kml_file_title">KML Reports File</string>
     <string name="kml_file_load">Load KML File</string>
-    <string name="klm_file_save">Save KML File</string>
+    <string name="kml_file_save">Save KML File</string>
     <string name="kml_file_description">Save/Load the reports (location, wi-fi+cell counts) for debugging. </string>
     <string name="kml_file_saved_name">Saved File:</string>
     <string name="keep_screen_on_title">Keep screen on while scanning</string>

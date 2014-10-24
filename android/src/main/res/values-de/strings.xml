@@ -41,7 +41,7 @@
     <string name="scroll_to_end">Ans Ende scrollen</string>
     <string name="kml_file_title">KML Berichtedatei</string>
     <string name="kml_file_load">KML Datei laden</string>
-    <string name="klm_file_save">KML Datei speichern</string>
+    <string name="kml_file_save">KML Datei speichern</string>
     <string name="kml_file_description">Berichte zu Debugzwecken speichern/laden (Standort, Wi-Fi+Funk Zählungen). </string>
     <string name="kml_file_saved_name">Gespeicherte Datei:</string>
     <string name="keep_screen_on_title">Bildschirm in der Karte anlassen</string>

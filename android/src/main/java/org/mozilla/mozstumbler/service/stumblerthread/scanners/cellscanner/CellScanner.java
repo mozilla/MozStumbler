@@ -36,52 +36,28 @@ public class CellScanner {
     private static final long CELL_MIN_UPDATE_TIME = 1000; // milliseconds
 
     private final Context mContext;
-    private static CellScannerImpl sImpl;
     private Timer mCellScanTimer;
     private final Set<String> mCells = new HashSet<String>();
     private final ReportFlushedReceiver mReportFlushedReceiver = new ReportFlushedReceiver();
     private final AtomicBoolean mReportWasFlushed = new AtomicBoolean();
     private Handler mBroadcastScannedHandler;
+    private final CellScannerImpl mCellScannerImplementation;
 
     public ArrayList<CellInfo> sTestingModeCellInfoArray;
 
     public interface CellScannerImpl {
-        public void start();
-
-        public void stop();
-
-        public List<CellInfo> getCellInfo();
+        void start();
+        boolean isStarted();
+        void stop();
+        List<CellInfo> getCellInfo();
     }
 
     public CellScanner(Context context) {
         mContext = context;
-    }
-
-    private static synchronized CellScannerImpl getImplementation() {
-        return sImpl;
-    }
-
-    public static synchronized boolean isCellScannerImplSet() {
-        return sImpl != null;
-    }
-
-    /* Fennec doesn't support the apis needed for full scanning, we have different implementations.*/
-    public static synchronized void setCellScannerImpl(CellScannerImpl cellScanner) {
-        sImpl = cellScanner;
+        mCellScannerImplementation = new CellScannerImplementation(context);
     }
 
     public void start(final ActiveOrPassiveStumbling stumblingMode) {
-        if (getImplementation() == null) {
-            return;
-        }
-
-        try {
-            getImplementation().start();
-        } catch (UnsupportedOperationException uoe) {
-            Log.e(LOG_TAG, "Cell scanner probe failed", uoe);
-            return;
-        }
-
         if (mCellScanTimer != null) {
             return;
         }
@@ -98,13 +74,15 @@ public class CellScanner {
             }
         };
 
+        mCellScannerImplementation.start();
+
         mCellScanTimer = new Timer();
 
         mCellScanTimer.schedule(new TimerTask() {
             int mPassiveScanCount;
             @Override
             public void run() {
-                if (getImplementation() == null) {
+                if (!mCellScannerImplementation.isStarted()) {
                     return;
                 }
 
@@ -119,7 +97,7 @@ public class CellScanner {
                 final long curTime = System.currentTimeMillis();
 
                 ArrayList<CellInfo> cells = (sTestingModeCellInfoArray != null)? sTestingModeCellInfoArray :
-                        new ArrayList<CellInfo>(getImplementation().getCellInfo());
+                        new ArrayList<CellInfo>(mCellScannerImplementation.getCellInfo());
 
                 if (cells.isEmpty()) {
                     return;
@@ -162,9 +140,7 @@ public class CellScanner {
             mCellScanTimer.cancel();
             mCellScanTimer = null;
         }
-        if (getImplementation() != null) {
-            getImplementation().stop();
-        }
+        mCellScannerImplementation.stop();
     }
 
     public synchronized int getCellInfoCount() {

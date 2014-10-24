@@ -1,6 +1,7 @@
 // Created by plusminus on 17:45:56 - 25.09.2008
 package org.mozilla.osmdroid.views;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
@@ -872,6 +873,9 @@ public class MapView extends ViewGroup implements IMapView, MapViewConstants,
         }
     }
 
+    /* proguard yells about this method invoking onLayout directly, so we need to suppress
+     * WrongCall lint warnings. */
+    @SuppressLint("WrongCall")
     @Override
     public void scrollTo(int x, int y) {
         final int worldSize = TileSystem.MapSize(this.getZoomLevel(false));

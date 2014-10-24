@@ -107,12 +107,12 @@ public class TileDownloaderDelegate {
      */
     public boolean downloadTile(ITileSource tileSource, MapTile tile) {
         if (tileSource == null) {
-            Log.w(LOG_TAG, "tileSource is null");
+            Log.i(LOG_TAG, "tileSource is null");
             return false;
         }
 
         if (networkIsUnavailable()) {
-            Log.w(LOG_TAG, "networkIsUnavailable");
+            Log.d(LOG_TAG, "networkIsUnavailable");
             return false;
         }
 

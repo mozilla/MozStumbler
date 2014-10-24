@@ -16,12 +16,15 @@ import org.mozilla.osmdroid.views.MapView;
  * This class provides the Mozilla Coverage overlay
  */
 public class CoverageOverlay extends AbstractMapOverlay {
-    public static final int HIGH_ZOOM = AbstractMapOverlay.MIN_ZOOM_LEVEL_OF_MAP;
     // Use a lower zoom than the LowResMapOverlay, the coverage can be very low detail and still look ok
-    public static final int LOW_ZOOM = 10;
+    private static final int LOW_ZOOM_LEVEL = 10;
 
-    public CoverageOverlay(int zoomLevel, final Context aContext, final String coverageUrl, MapView mapView) {
+    public CoverageOverlay(LowResType type, final Context aContext, final String coverageUrl, MapView mapView) {
         super(aContext);
+
+        final int zoomLevel = (type == LowResType.HIGHER_ZOOM)?
+                AbstractMapOverlay.getDisplaySizeBasedMinZoomLevel() : LOW_ZOOM_LEVEL;
+
         final ITileSource coverageTileSource = new XYTileSource("Mozilla Location Service Coverage Map",
                 null,
                 zoomLevel, zoomLevel,

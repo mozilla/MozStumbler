@@ -9,6 +9,10 @@ import android.graphics.Canvas;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
+import android.util.DisplayMetrics;
+import android.view.Display;
+import android.view.WindowManager;
 
 import org.mozilla.osmdroid.DefaultResourceProxyImpl;
 import org.mozilla.osmdroid.tileprovider.BetterTileProvider;
@@ -24,7 +28,7 @@ import java.util.Set;
 public abstract class AbstractMapOverlay extends TilesOverlay {
     // We want the map to zoom to level 20, even if tiles have less zoom available
     public static final int MAX_ZOOM_LEVEL_OF_MAP = 20;
-    public static final int MIN_ZOOM_LEVEL_OF_MAP = 13;
+    private static int sMinZoomLevelOfMapDisplaySizeBased;
 
     public static final int TILE_PIXEL_SIZE = 256;
     // Use png32 which is a 32-color indexed image, the tiles are ~30% smaller
@@ -35,8 +39,25 @@ public abstract class AbstractMapOverlay extends TilesOverlay {
     private final Set<MapTile> mDrawnSet = new HashSet<MapTile>();
     private Projection mProjection;
 
-    public AbstractMapOverlay(final Context aContext) {
-        super(new BetterTileProvider(aContext), new DefaultResourceProxyImpl(aContext));
+    public enum LowResType {
+        HIGHER_ZOOM, LOWER_ZOOM
+    }
+
+    public AbstractMapOverlay(final Context context) {
+        super(new BetterTileProvider(context), new DefaultResourceProxyImpl(context));
+    }
+
+    public static void setDisplayBasedMinimumZoomLevel(Context c) {
+        WindowManager wm = (WindowManager) c.getSystemService(Context.WINDOW_SERVICE);
+        Display display = wm.getDefaultDisplay();
+        DisplayMetrics outMetrics = new DisplayMetrics();
+        display.getMetrics(outMetrics);
+
+        sMinZoomLevelOfMapDisplaySizeBased = (outMetrics.widthPixels < 500)? 11 : 13;
+    }
+
+    public static int getDisplaySizeBasedMinZoomLevel() {
+        return sMinZoomLevelOfMapDisplaySizeBased;
     }
 
     // Though the tile provider can only provide up to 13, this overlay will display higher.

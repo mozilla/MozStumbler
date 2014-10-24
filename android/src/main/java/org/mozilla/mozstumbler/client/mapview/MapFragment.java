@@ -98,7 +98,7 @@ public final class MapFragment extends android.support.v4.app.Fragment
     private class BlankTileSource extends OnlineTileSourceBase {
         BlankTileSource() {
             super("fake", ResourceProxy.string.mapquest_aerial /* arbitrary value */,
-                    AbstractMapOverlay.MIN_ZOOM_LEVEL_OF_MAP,
+                    AbstractMapOverlay.getDisplaySizeBasedMinZoomLevel(),
                     AbstractMapOverlay.MAX_ZOOM_LEVEL_OF_MAP, AbstractMapOverlay.TILE_PIXEL_SIZE,
                     "", new String[] {""});
         }
@@ -114,6 +114,8 @@ public final class MapFragment extends android.support.v4.app.Fragment
         super.onCreateView(inflater, container, savedInstanceState);
 
         mRootView = inflater.inflate(R.layout.activity_map, container, false);
+
+        AbstractMapOverlay.setDisplayBasedMinimumZoomLevel(getApplication());
 
         showMapNotAvailableMessage(NoMapAvailableMessage.eHideNoMapMessage);
 
@@ -179,7 +181,7 @@ public final class MapFragment extends android.support.v4.app.Fragment
         final int zoom = zoomLevel;
         mMap.getController().setZoom(zoom);
         mMap.getController().setCenter(loc);
-        mMap.setMinZoomLevel(AbstractMapOverlay.MIN_ZOOM_LEVEL_OF_MAP);
+        mMap.setMinZoomLevel(AbstractMapOverlay.getDisplaySizeBasedMinZoomLevel());
 
         mMap.postDelayed(new Runnable() {
             @Override
@@ -306,9 +308,9 @@ public final class MapFragment extends android.support.v4.app.Fragment
 
     private void initCoverageTiles(String coverageUrl) {
         Log.i(LOG_TAG, "initCoverageTiles: " + coverageUrl);
-        mCoverageTilesOverlayLowZoom = new CoverageOverlay(CoverageOverlay.LOW_ZOOM,
+        mCoverageTilesOverlayLowZoom = new CoverageOverlay(CoverageOverlay.LowResType.LOWER_ZOOM,
                 mRootView.getContext(), coverageUrl, mMap);
-        mCoverageTilesOverlayHighZoom = new CoverageOverlay(CoverageOverlay.HIGH_ZOOM,
+        mCoverageTilesOverlayHighZoom = new CoverageOverlay(CoverageOverlay.LowResType.HIGHER_ZOOM,
                 mRootView.getContext(), coverageUrl, mMap);
     }
 
@@ -441,9 +443,9 @@ public final class MapFragment extends android.support.v4.app.Fragment
             }
             mMap.setTileSource(new BlankTileSource());
             if (mLowResMapOverlayHighZoom == null) {
-                mLowResMapOverlayLowZoom = new LowResMapOverlay(LowResMapOverlay.LOW_ZOOM,
+                mLowResMapOverlayLowZoom = new LowResMapOverlay(LowResMapOverlay.LowResType.LOWER_ZOOM,
                         this.getActivity(), isMLSTileStore, mMap);
-                mLowResMapOverlayHighZoom = new LowResMapOverlay(LowResMapOverlay.HIGH_ZOOM,
+                mLowResMapOverlayHighZoom = new LowResMapOverlay(LowResMapOverlay.LowResType.HIGHER_ZOOM,
                         this.getActivity(), isMLSTileStore, mMap);
 
                 updateOverlayBaseLayer(mMap.getZoomLevel());

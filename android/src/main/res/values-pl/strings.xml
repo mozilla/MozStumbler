@@ -41,7 +41,7 @@
     <string name="scroll_to_end">Przewiń na dół</string>
     <string name="kml_file_title">Plik obserwacji KML</string>
     <string name="kml_file_load">Wczytaj plik KML</string>
-    <string name="klm_file_save">Zapisz plik KML</string>
+    <string name="kml_file_save">Zapisz plik KML</string>
     <string name="kml_file_description">Zapisywanie/wczytywanie zgłoszeń (położenia, liczby sieci Wi-Fi i komórkowych) do celów debugowania. </string>
     <string name="kml_file_saved_name">Zapisany plik:</string>
     <string name="keep_screen_on_title">Bez wyłączania ekranu na ekranie mapy</string>

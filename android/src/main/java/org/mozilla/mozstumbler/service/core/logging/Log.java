@@ -3,9 +3,6 @@ package org.mozilla.mozstumbler.service.core.logging;
 import org.mozilla.mozstumbler.BuildConfig;
 import org.mozilla.mozstumbler.service.AppGlobals;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-
 /*
  This is a proxy around the android logger so that we can see what the heck
  is happening when we run under test.

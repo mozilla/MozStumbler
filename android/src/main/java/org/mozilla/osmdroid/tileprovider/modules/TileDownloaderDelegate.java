@@ -112,7 +112,6 @@ public class TileDownloaderDelegate {
         }
 
         if (networkIsUnavailable()) {
-            Log.w(LOG_TAG, "networkIsUnavailable");
             return false;
         }
 

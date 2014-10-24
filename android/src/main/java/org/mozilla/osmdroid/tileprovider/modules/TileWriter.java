@@ -123,7 +123,9 @@ public class TileWriter implements IFilesystemCache, OpenStreetMapTileProviderCo
             }
             return Long.parseLong(strFileContents);
         } catch (IOException ioEx) {
-            Log.e(LOG_TAG, "Failed to read etag file: [" + cacheControlFile.getPath() + "]", ioEx);
+            if (AppGlobals.isDebug) {
+                Log.e(LOG_TAG, "Failed to read etag file: [" + cacheControlFile.getPath() + "]", ioEx);
+            }
         } finally {
             try {
                 if (fis != null) {
@@ -158,7 +160,9 @@ public class TileWriter implements IFilesystemCache, OpenStreetMapTileProviderCo
             }
             return strFileContents;
         } catch (IOException ioEx) {
-            Log.e(LOG_TAG, "Failed to read etag file: [" + etagFile.getPath() + "]", ioEx);
+            if (AppGlobals.isDebug) {
+                Log.e(LOG_TAG, "Failed to read etag file: [" + etagFile.getPath() + "]", ioEx);
+            }
         } finally {
             try {
                 if (fis != null) {

@@ -33,7 +33,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class LogActivity extends ActionBarActivity {
     static LinkedList<String> buffer = new LinkedList<String>();
-    static final int MAX_SIZE = 500;
+    static final int MAX_SIZE = 200;
     private static LogMessageReceiver sInstance;
 
     public static class LogMessageReceiver extends BroadcastReceiver {

@@ -4,6 +4,7 @@ import org.mozilla.osmdroid.tileprovider.MapTile;
 import org.mozilla.osmdroid.tileprovider.tilesource.ITileSource;
 
 import java.io.InputStream;
+import java.util.Map;
 
 /**
  * Represents a write-only interface into a file system cache.
@@ -22,4 +23,5 @@ public interface IFilesystemCache {
      */
     boolean saveFile(final ITileSource pTileSourceInfo, MapTile pTile,
                      final InputStream pStream, String etag);
+
 }

@@ -17,6 +17,7 @@ import org.mozilla.osmdroid.tileprovider.tilesource.ITileSource;
 import org.mozilla.osmdroid.tileprovider.tilesource.TileSourceFactory;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -180,6 +181,7 @@ public class SmartFSProvider extends MapTileModuleProviderBase {
             if (file.exists()) {
                 boolean tileIsCurrent = false;
                 try {
+                    // @TODO: vng check the cache control here
                     tileIsCurrent = delegate.isTileCurrent(tileSource, tile);
                 } catch (IOException ioEx) {
                     Log.e(LOG_TAG, "Error checking etag status", ioEx);
@@ -189,6 +191,7 @@ public class SmartFSProvider extends MapTileModuleProviderBase {
                 if (tileIsCurrent) {
                     // Use the ondisk tile
                     try {
+                        // @TODO: vng we've already got the bytes, just get them into a ReusableDrawable
                         drawable = tileSource.getDrawable(file.getPath());
                         return drawable;
                     } catch (final LowMemoryException e) {

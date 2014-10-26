@@ -160,16 +160,16 @@ public class TileWriter implements IFilesystemCache, OpenStreetMapTileProviderCo
         } catch (IOException ioEx) {
             Log.e(LOG_TAG, "Failed to read etag file: [" + etagFile.getPath() + "]", ioEx);
         } finally {
-            try {
+        try {
                 if (fis != null) {
                     fis.close();
-                }
-            } catch (IOException ioEx) {
+            }
+        } catch (IOException ioEx) {
                 Log.e(LOG_TAG, "osmdroid: error closing etag inputstream", ioEx);
             }
         }
         return null;
-    }
+        }
 
     private void saveCacheControl(final ITileSource pTileSource, final MapTile pTile) {
         String tileFilename = pTileSource.getTileRelativeFilenameString(pTile);
@@ -209,23 +209,23 @@ public class TileWriter implements IFilesystemCache, OpenStreetMapTileProviderCo
         File parent;
 
         if (etag != null) {
-            String tileFilename = pTileSource.getTileRelativeFilenameString(pTile);
+        String tileFilename = pTileSource.getTileRelativeFilenameString(pTile);
             etagFile = new File(TILE_PATH_BASE,
                     tileFilename + ".etag");
 
             parent = etagFile.getParentFile();
 
-            if (!parent.exists() && !createFolderAndCheckIfExists(parent)) {
-                return false;
-            }
+        if (!parent.exists() && !createFolderAndCheckIfExists(parent)) {
+            return false;
+        }
 
-            try {
+        try {
                 FileOutputStream fos = new FileOutputStream(etagFile.getPath());
                 outputStream = new BufferedOutputStream(fos);
                 outputStream.write(etag.getBytes(Charset.forName("UTF-8")));
-                outputStream.flush();
-                outputStream.close();
-            } catch (IOException ioEx) {
+            outputStream.flush();
+            outputStream.close();
+        } catch (IOException ioEx) {
                 Log.e(LOG_TAG, "Failed to create etag file: [" + etagFile.getPath() + "]", ioEx);
             }
         }
@@ -260,8 +260,8 @@ public class TileWriter implements IFilesystemCache, OpenStreetMapTileProviderCo
         } finally {
             if (outputStream != null) {
                 StreamUtils.closeStream(outputStream);
-            }
         }
+    }
         return true;
     }
 

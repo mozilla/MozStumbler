@@ -65,6 +65,9 @@ android {
 
         buildConfigField "boolean", "LABEL_MAP_TILES", "false"
 
+        buildConfigField "boolean", "GITHUB", "false"
+        buildConfigField "boolean", "PLAYSTORE", "false"
+
         // Crash report settings
         buildConfigField "String", "ACRA_URI", getAcraURI()
         buildConfigField "String", "ACRA_USER", getAcraUser()
@@ -90,6 +93,16 @@ android {
             runProguard true
             proguardFile 'proguard.cfg'
             signingConfig signingConfigs.release
+        }
+
+        github.initWith(buildTypes.release)
+        github {
+            buildConfigField "boolean", "GITHUB", "true"
+        }
+
+        playstore.initWith(buildTypes.release)
+        playstore {
+            buildConfigField "boolean", "PLAYSTORE", "true"
         }
 
         unittest.initWith(buildTypes.debug)

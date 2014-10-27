@@ -10,9 +10,13 @@ unittest:
 debug:
 	./gradlew assembleDebug
 
-release: release_check
-	./gradlew assembleRelease
-	sh rename_release.sh
+github: release_check
+	./gradlew assembleGithub
+	sh rename_release.sh github
+
+playstore: release_check
+	./gradlew assemblePlaystore
+	sh rename_release.sh playstore
 
 clean:
 	rm -rf android/libs/*.jar

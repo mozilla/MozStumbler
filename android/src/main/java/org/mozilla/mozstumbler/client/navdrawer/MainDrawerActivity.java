@@ -107,8 +107,10 @@ public class MainDrawerActivity
         getApp().setMainActivity(this);
 
         IHttpUtil httpUtil = new HttpUtil();
-        Updater upd = new Updater(httpUtil);
-        upd.checkForUpdates(this, BuildConfig.MOZILLA_API_KEY);
+        if (BuildConfig.GITHUB) {
+            Updater upd = new Updater(httpUtil);
+            upd.checkForUpdates(this, BuildConfig.MOZILLA_API_KEY);
+        }
 
         mMetricsView = new MetricsView(findViewById(R.id.left_drawer));
     }

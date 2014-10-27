@@ -23,7 +23,7 @@ public class Log {
     }
 
     public static void e(String logTag, String s, Throwable e) {
-        if (e instanceof Throwable) {
+        if (e instanceof OutOfMemoryError) {
             // These are usually going to be OutOfMemoryErrors
             // We want the full stacktrace for full errors, but
             // not regular exception types.

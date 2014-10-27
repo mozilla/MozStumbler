@@ -239,9 +239,10 @@ public final class MapFragment extends android.support.v4.app.Fragment
         return (MainApp) getActivity().getApplication();
     }
 
+    private static String sCoverageUrl; // Only used by CoverageSetup
+
     private class CoverageSetup {
         private AtomicBoolean isGetUrlAndInitCoverageRunning = new AtomicBoolean();
-        private String coverageUrl;
 
         private void initOnMainThread() {
             final Runnable runnable = new Runnable() {
@@ -251,7 +252,7 @@ public final class MapFragment extends android.support.v4.app.Fragment
                         ClientPrefs.getInstance().getMapTileResolutionType() == ClientPrefs.MapTileResolutionOptions.NoMap) {
                         return;
                     }
-                    initCoverageTiles(coverageUrl);
+                    initCoverageTiles(sCoverageUrl);
                     updateOverlayCoverageLayer(mMap.getZoomLevel());
                 }
             };
@@ -267,7 +268,7 @@ public final class MapFragment extends android.support.v4.app.Fragment
             final Runnable coverageUrlQuery = new Runnable() {
                 @Override
                 public void run() {
-                    if (coverageUrl != null) {
+                    if (sCoverageUrl != null) {
                         initOnMainThread();
                         isGetUrlAndInitCoverageRunning.set(false);
                         return;
@@ -282,15 +283,16 @@ public final class MapFragment extends android.support.v4.app.Fragment
                             try {
                                 scanner = new java.util.Scanner(httpUtil.getUrlAsStream(COVERAGE_REDIRECT_URL), "UTF-8");
                             } catch (Exception ex) {
-                                Log.d(LOG_TAG, ex.toString());
-                                AppGlobals.guiLogInfo("Failed to get coverage url:" + ex.toString());
+                                if (AppGlobals.isDebug) {
+                                    Log.d(LOG_TAG, ex.toString());
+                                }
                                 isGetUrlAndInitCoverageRunning.set(false);
                                 return;
                             }
                             scanner.useDelimiter("\\A");
                             String result = scanner.next();
                             try {
-                                coverageUrl = new JSONObject(result).getString("tiles_url");
+                                sCoverageUrl = new JSONObject(result).getString("tiles_url");
                             } catch (JSONException ex) {
                                 AppGlobals.guiLogInfo("Failed to get coverage url:" + ex.toString());
                             }

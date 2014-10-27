@@ -21,9 +21,11 @@ public class HTTPResponse implements IResponse {
         bodyBytes = contentBody;
         bytesSent = txByteLength;
         headers = headerFields;
-        Log.d(LOG_TAG, "HTTP Status: " + Integer.toString(statusCode) +
-                ", Bytes Sent: " + Integer.toString(bytesSent) +
-                ", Bytes received: " + Integer.toString(bodyBytes.length));
+        if (AppGlobals.isDebug) {
+            Log.d(LOG_TAG, "HTTP Status: " + Integer.toString(statusCode) +
+                    ", Bytes Sent: " + Integer.toString(bytesSent) +
+                    ", Bytes received: " + Integer.toString(bodyBytes.length));
+        }
     }
 
     public boolean isErrorCode400BadRequest(){

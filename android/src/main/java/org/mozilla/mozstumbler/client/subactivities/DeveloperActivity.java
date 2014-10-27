@@ -95,7 +95,6 @@ public class DeveloperActivity extends ActionBarActivity {
                 @Override
                 public void onItemSelected(AdapterView<?> arg0, View arg1, int position, long id) {
                     String item = spinner.getSelectedItem().toString();
-                    Log.d(LOG_TAG, item + ", pos:" + position);
                     ClientPrefs prefs = ClientPrefs.createGlobalInstance(getActivity().getApplicationContext());
                     prefs.setMapTileResolutionType(position);
                 }

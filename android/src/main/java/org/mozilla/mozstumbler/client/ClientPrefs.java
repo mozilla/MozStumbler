@@ -96,7 +96,7 @@ public class ClientPrefs extends Prefs {
     }
 
     public boolean isCrashReportingEnabled() {
-        return getBoolPrefWithDefault(CRASH_REPORTING, true);
+        return getBoolPrefWithDefault(CRASH_REPORTING, false);
     }
 
     public void setMapTileResolutionType(int mapTileResolutionType) {

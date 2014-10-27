@@ -34,9 +34,6 @@ repositories {
 import de.undercouch.gradle.tasks.download.Download
 import java.util.regex.Pattern
 
-def libDir = new File("android/libs")
-libDir.mkdirs()
-
 android {
     compileSdkVersion 19
     buildToolsVersion "19.1.0"
@@ -118,9 +115,6 @@ dependencies {
 
     testCompile 'junit:junit:4.10'
     testCompile 'org.robolectric:robolectric:2.3'
-
-    // pickup osmdroid
-    compile fileTree(dir: 'libs', include: ['*.jar'])
 
     compile 'com.crankycoder:SimpleKML:1.0'
 

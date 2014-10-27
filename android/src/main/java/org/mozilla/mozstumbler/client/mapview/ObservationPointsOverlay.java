@@ -18,6 +18,7 @@ import org.mozilla.osmdroid.util.GeoPoint;
 import org.mozilla.osmdroid.views.MapView;
 import org.mozilla.osmdroid.views.Projection;
 import org.mozilla.osmdroid.views.overlay.Overlay;
+import org.mozilla.mozstumbler.service.core.logging.Log;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -82,6 +83,10 @@ class ObservationPointsOverlay extends Overlay {
     void update(ObservationPoint obsPoint, MapView mapView, boolean isMlsPointUpdate) {
         final Projection pj = mapView.getProjection();
         GeoPoint geoPoint = (isMlsPointUpdate)? obsPoint.pointMLS : obsPoint.pointGPS;
+        if (geoPoint == null) {
+            Log.i(LOG_TAG, "Caller error: geoPoint is null");
+            return;
+        }
         final Point point = pj.toPixels(geoPoint, null);
         final int size = mSize3px * 2; // update a rectangle 2x large as the point radius
         final Rect dirty = new Rect(point.x - size, point.y - size, point.x + size, point.y + size);

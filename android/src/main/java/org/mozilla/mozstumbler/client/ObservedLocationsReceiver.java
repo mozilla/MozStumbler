@@ -85,7 +85,7 @@ public class ObservedLocationsReceiver extends BroadcastReceiver {
                         obs.fetchMLS();
                         count++;
                     } else {
-                        if (getMapActivity() != null) {
+                        if (getMapActivity() != null && obs.pointMLS != null) {
                             getMapActivity().newMLSPoint(obs);
                         }
                         li.remove();

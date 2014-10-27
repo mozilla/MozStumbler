@@ -39,6 +39,11 @@ public abstract class AbstractMapOverlay extends TilesOverlay {
     private final Set<MapTile> mDrawnSet = new HashSet<MapTile>();
     private Projection mProjection;
 
+    // TODO make this a single value configurable in deveoper settings
+    private static final int SMALL_SCREEN_MIN_ZOOM = 11;
+    private static final int LARGE_SCREEN_MIN_ZOOM = 13;
+
+
     public enum LowResType {
         HIGHER_ZOOM, LOWER_ZOOM
     }
@@ -53,7 +58,7 @@ public abstract class AbstractMapOverlay extends TilesOverlay {
         DisplayMetrics outMetrics = new DisplayMetrics();
         display.getMetrics(outMetrics);
 
-        sMinZoomLevelOfMapDisplaySizeBased = (outMetrics.widthPixels < 500)? 11 : 13;
+        sMinZoomLevelOfMapDisplaySizeBased = (outMetrics.widthPixels < 500)? SMALL_SCREEN_MIN_ZOOM : LARGE_SCREEN_MIN_ZOOM;
     }
 
     public static int getDisplaySizeBasedMinZoomLevel() {

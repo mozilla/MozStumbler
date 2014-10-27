@@ -51,14 +51,6 @@ public interface ITileSource {
     Drawable getDrawable(String aFilePath) throws LowMemoryException;
 
     /**
-     * Get a rendered Drawable from the specified InputStream.
-     *
-     * @param aTileInputStream an InputStream
-     * @return the rendered Drawable
-     */
-    Drawable getDrawable(InputStream aTileInputStream) throws LowMemoryException;
-
-    /**
      * Get the minimum zoom level this tile source can provide.
      *
      * @return the minimum zoom level

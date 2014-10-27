@@ -107,6 +107,7 @@ public abstract class BitmapTileSourceBase
             // a BitmapDrawable from it
             BitmapFactory.Options bitmapOptions = new BitmapFactory.Options();
             BitmapPool.getInstance().applyReusableOptions(bitmapOptions);
+            System.gc();
             final Bitmap bitmap = BitmapFactory.decodeFile(aFilePath, bitmapOptions);
             if (bitmap != null) {
                 if (BuildConfig.LABEL_MAP_TILES) {
@@ -173,25 +174,6 @@ public abstract class BitmapTileSourceBase
         sb.append(tile.getY());
         sb.append(imageFilenameEnding());
         return sb.toString();
-    }
-
-    @Override
-    public Drawable getDrawable(final InputStream aFileInputStream) throws LowMemoryException {
-        try {
-            // default implementation will load the file as a bitmap and create
-            // a BitmapDrawable from it
-            BitmapFactory.Options bitmapOptions = new BitmapFactory.Options();
-            BitmapPool.getInstance().applyReusableOptions(bitmapOptions);
-            final Bitmap bitmap = BitmapFactory.decodeStream(aFileInputStream, null, bitmapOptions);
-            if (bitmap != null) {
-                return new ReusableBitmapDrawable(bitmap);
-            }
-        } catch (final OutOfMemoryError e) {
-            Log.e(LOG_TAG, "OutOfMemoryError loading bitmap", e);
-            System.gc();
-            throw new LowMemoryException(e);
-        }
-        return null;
     }
 
     public final class LowMemoryException extends Exception {

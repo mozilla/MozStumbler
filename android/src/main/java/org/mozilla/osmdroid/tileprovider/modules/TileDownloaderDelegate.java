@@ -118,7 +118,6 @@ public class TileDownloaderDelegate {
         final String tileURLString = tileSource.getTileURLString(tile);
 
         if (tileURLString == null || tileURLString.length() == 0) {
-            Log.w(LOG_TAG, "tileURLString is empty or null");
             return false;
         }
 

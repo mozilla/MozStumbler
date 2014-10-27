@@ -3,7 +3,7 @@ package org.mozilla.osmdroid.tileprovider.modules;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.core.logging.Log;
 import org.mozilla.osmdroid.tileprovider.MapTile;
-import org.mozilla.osmdroid.tileprovider.constants.OpenStreetMapTileProviderConstants;
+import org.mozilla.osmdroid.tileprovider.constants.OSMConstants;
 import org.mozilla.osmdroid.tileprovider.tilesource.ITileSource;
 import org.mozilla.osmdroid.tileprovider.util.StreamUtils;
 
@@ -23,22 +23,17 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-/**
- * An implementation of {@link IFilesystemCache}. It writes tiles to the file system cache. If the
- * cache exceeds 600 Mb then it will be trimmed to 500 Mb.
- *
- * @author Neil Boyd
+
+/*
+ This is also not a cache at all. It's the only place in osmdroid that
+ handles disk writes.
+
+ Reads are generally handled by the BitmapTileSourceBase class.
+
+ The class has been extended to do read/write of etag and cache-control.
+
  */
-// @TODO: vng IFilesystemCache is only implemented by this one class.
-// We should just tighten up the public interface of TileWriter and
-// drop IFilesystemCache entirely
-//
-// This is also not a cache at all. It's the only place in osmdroid
-// which does any IO to storage.
-//
-// The classs has also been extended to do read/write of Etags, so
-// it's not even just a Writer anymore.
-public class TileWriter implements IFilesystemCache, OpenStreetMapTileProviderConstants {
+public class TileWriter  {
 
     // ===========================================================
     // Constants
@@ -90,8 +85,8 @@ public class TileWriter implements IFilesystemCache, OpenStreetMapTileProviderCo
             @Override
             public void run() {
                 mUsedCacheSpace = 0; // because it's static
-                calculateDirectorySize(TILE_PATH_BASE);
-                if (mUsedCacheSpace > TILE_MAX_CACHE_SIZE_BYTES) {
+                calculateDirectorySize(OSMConstants.TILE_PATH_BASE);
+                if (mUsedCacheSpace > OSMConstants.TILE_MAX_CACHE_SIZE_BYTES) {
                     cutCurrentCache();
                 }
             }
@@ -110,7 +105,7 @@ public class TileWriter implements IFilesystemCache, OpenStreetMapTileProviderCo
         BufferedInputStream inputStream;
 
         String tileFilename = pTileSource.getTileRelativeFilenameString(pTile);
-        cacheControlFile = new File(TILE_PATH_BASE,
+        cacheControlFile = new File(OSMConstants.TILE_PATH_BASE,
                 tileFilename + ".cache_control");
 
         FileInputStream fis = null;
@@ -145,7 +140,7 @@ public class TileWriter implements IFilesystemCache, OpenStreetMapTileProviderCo
         BufferedInputStream inputStream;
 
         String tileFilename = pTileSource.getTileRelativeFilenameString(pTile);
-        etagFile = new File(TILE_PATH_BASE,
+        etagFile = new File(OSMConstants.TILE_PATH_BASE,
                 tileFilename + ".etag");
 
         FileInputStream fis = null;
@@ -176,7 +171,7 @@ public class TileWriter implements IFilesystemCache, OpenStreetMapTileProviderCo
 
     private void saveCacheControl(final ITileSource pTileSource, final MapTile pTile) {
         String tileFilename = pTileSource.getTileRelativeFilenameString(pTile);
-        File cacheControlFile = new File(TILE_PATH_BASE,
+        File cacheControlFile = new File(OSMConstants.OSMDROID_PATH,
                 tileFilename + ".cache_control");
 
         File parent = cacheControlFile.getParentFile();
@@ -202,7 +197,6 @@ public class TileWriter implements IFilesystemCache, OpenStreetMapTileProviderCo
 
     // @TODO vng: this should really just take in a header defined as
     // Map<String, String> instead of the single etag header
-    @Override
     public boolean saveFile(final ITileSource pTileSource, final MapTile pTile,
                             final InputStream is, String etag) {
 
@@ -219,7 +213,7 @@ public class TileWriter implements IFilesystemCache, OpenStreetMapTileProviderCo
 
         if (etag != null) {
             String tileFilename = pTileSource.getTileRelativeFilenameString(pTile);
-            etagFile = new File(TILE_PATH_BASE,
+            etagFile = new File(OSMConstants.TILE_PATH_BASE,
                     tileFilename + ".etag");
 
             parent = etagFile.getParentFile();
@@ -241,8 +235,8 @@ public class TileWriter implements IFilesystemCache, OpenStreetMapTileProviderCo
 
         saveCacheControl(pTileSource, pTile);
 
-        file = new File(TILE_PATH_BASE,
-                pTileSource.getTileRelativeFilenameString(pTile) + TILE_PATH_EXTENSION);
+        file = new File(OSMConstants.TILE_PATH_BASE,
+                pTileSource.getTileRelativeFilenameString(pTile) + OSMConstants.TILE_PATH_EXTENSION);
 
 
         parent = file.getParentFile();
@@ -254,7 +248,7 @@ public class TileWriter implements IFilesystemCache, OpenStreetMapTileProviderCo
 
         outputStream = null;
         try {
-            File sTileFile  = new File(TILE_PATH_BASE,
+            File sTileFile  = new File(OSMConstants.TILE_PATH_BASE,
                     pTileSource.getTileRelativeFilenameString(pTile) + MERGED);
             SerializableTile serializableTile = new SerializableTile();
             serializableTile.setTileData(tileBytes);
@@ -270,7 +264,7 @@ public class TileWriter implements IFilesystemCache, OpenStreetMapTileProviderCo
             outputStream.close();
 
             mUsedCacheSpace += length;
-            if (mUsedCacheSpace > TILE_MAX_CACHE_SIZE_BYTES) {
+            if (mUsedCacheSpace > OSMConstants.TILE_MAX_CACHE_SIZE_BYTES) {
                 cutCurrentCache(); // TODO perhaps we should do this in the background
             }
         } catch (final IOException e) {
@@ -320,7 +314,7 @@ public class TileWriter implements IFilesystemCache, OpenStreetMapTileProviderCo
         if (pFile.mkdirs()) {
             return true;
         }
-        if (DEBUGMODE) {
+        if (AppGlobals.isDebug) {
             Log.d(LOG_TAG, "Failed to create " + pFile + " - wait and check again");
         }
 
@@ -331,12 +325,12 @@ public class TileWriter implements IFilesystemCache, OpenStreetMapTileProviderCo
         }
         // and then check again
         if (pFile.exists()) {
-            if (DEBUGMODE) {
+            if (AppGlobals.isDebug) {
                 Log.d(LOG_TAG, "Seems like another thread created " + pFile);
             }
             return true;
         } else {
-            if (DEBUGMODE) {
+            if (AppGlobals.isDebug) {
                 Log.d(LOG_TAG, "File still doesn't exist: " + pFile);
             }
             return false;
@@ -404,14 +398,14 @@ public class TileWriter implements IFilesystemCache, OpenStreetMapTileProviderCo
      */
     private void cutCurrentCache() {
 
-        synchronized (TILE_PATH_BASE) {
+        synchronized (OSMConstants.TILE_PATH_BASE) {
 
-            if (mUsedCacheSpace > TILE_TRIM_CACHE_SIZE_BYTES) {
+            if (mUsedCacheSpace > OSMConstants.TILE_TRIM_CACHE_SIZE_BYTES) {
 
                 Log.i(LOG_TAG, "Trimming tile cache from " + mUsedCacheSpace + " to "
-                        + TILE_TRIM_CACHE_SIZE_BYTES);
+                        + OSMConstants.TILE_TRIM_CACHE_SIZE_BYTES);
 
-                final List<File> z = getDirectoryFileList(TILE_PATH_BASE);
+                final List<File> z = getDirectoryFileList(OSMConstants.TILE_PATH_BASE);
 
                 // order list by files day created from old to new
                 final File[] files = z.toArray(new File[0]);
@@ -423,7 +417,7 @@ public class TileWriter implements IFilesystemCache, OpenStreetMapTileProviderCo
                 });
 
                 for (final File file : files) {
-                    if (mUsedCacheSpace <= TILE_TRIM_CACHE_SIZE_BYTES) {
+                    if (mUsedCacheSpace <= OSMConstants.TILE_TRIM_CACHE_SIZE_BYTES) {
                         break;
                     }
 

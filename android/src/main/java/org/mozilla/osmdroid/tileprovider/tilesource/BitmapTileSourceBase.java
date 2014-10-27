@@ -15,14 +15,13 @@ import org.mozilla.osmdroid.ResourceProxy.string;
 import org.mozilla.osmdroid.tileprovider.BitmapPool;
 import org.mozilla.osmdroid.tileprovider.MapTile;
 import org.mozilla.osmdroid.tileprovider.ReusableBitmapDrawable;
-import org.mozilla.osmdroid.tileprovider.constants.OpenStreetMapTileProviderConstants;
+import org.mozilla.osmdroid.tileprovider.constants.OSMConstants;
 
 import java.io.File;
-import java.io.InputStream;
 import java.util.Random;
 
 public abstract class BitmapTileSourceBase
-        implements ITileSource, OpenStreetMapTileProviderConstants {
+        implements ITileSource, OSMConstants {
 
     private static final String LOG_TAG = AppGlobals.LOG_PREFIX + BitmapTileSourceBase.class.getSimpleName();
 

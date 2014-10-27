@@ -14,7 +14,7 @@ import org.apache.http.entity.StringEntity;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.core.logging.Log;
 import org.mozilla.osmdroid.http.HttpClientFactory;
-import org.mozilla.osmdroid.tileprovider.constants.OpenStreetMapTileProviderConstants;
+import org.mozilla.osmdroid.tileprovider.constants.OSMConstants;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -28,7 +28,7 @@ import java.io.InputStreamReader;
  * http://support.cloudmade.com/answers/api-keys-and-authentication
  * "you will always get the same token for the unique user id"
  */
-public class CloudmadeUtil implements OpenStreetMapTileProviderConstants {
+public class CloudmadeUtil implements OSMConstants {
 
     private static final String LOG_TAG = AppGlobals.LOG_PREFIX + CloudmadeUtil.class.getSimpleName();
 

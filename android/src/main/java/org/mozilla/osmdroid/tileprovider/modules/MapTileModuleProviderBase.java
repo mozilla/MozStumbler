@@ -7,7 +7,7 @@ import org.mozilla.mozstumbler.service.core.logging.Log;
 import org.mozilla.osmdroid.tileprovider.ExpirableBitmapDrawable;
 import org.mozilla.osmdroid.tileprovider.MapTile;
 import org.mozilla.osmdroid.tileprovider.MapTileRequestState;
-import org.mozilla.osmdroid.tileprovider.constants.OpenStreetMapTileProviderConstants;
+import org.mozilla.osmdroid.tileprovider.constants.OSMConstants;
 import org.mozilla.osmdroid.tileprovider.tilesource.ITileSource;
 
 import java.util.HashMap;
@@ -24,7 +24,7 @@ import java.util.concurrent.RejectedExecutionException;
  * @author Marc Kurtz
  * @author Neil Boyd
  */
-public abstract class MapTileModuleProviderBase implements OpenStreetMapTileProviderConstants {
+public abstract class MapTileModuleProviderBase implements OSMConstants {
 
 	/**
 	 * Gets the human-friendly name assigned to this tile provider.

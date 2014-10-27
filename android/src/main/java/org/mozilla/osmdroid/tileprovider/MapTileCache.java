@@ -3,12 +3,12 @@ package org.mozilla.osmdroid.tileprovider;
 
 import android.graphics.drawable.Drawable;
 
-import org.mozilla.osmdroid.tileprovider.constants.OpenStreetMapTileProviderConstants;
+import org.mozilla.osmdroid.tileprovider.constants.OSMConstants;
 
 /**
  * @author Nicolas Gramlich
  */
-public class MapTileCache implements OpenStreetMapTileProviderConstants {
+public class MapTileCache implements OSMConstants {
     // ===========================================================
     // Constants
     // ===========================================================

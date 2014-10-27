@@ -1,19 +1,11 @@
 package org.mozilla.osmdroid.tileprovider;
 
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.core.logging.Log;
-import org.mozilla.osmdroid.tileprovider.constants.OpenStreetMapTileProviderConstants;
 
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Set;
 
 /*
  * This is an LRUCache to hold onto Drawable instances for TileOverlay instances.

@@ -7,7 +7,7 @@ import java.io.File;
  *
  * @author Neil Boyd
  */
-public interface OpenStreetMapTileProviderConstants {
+public interface OSMConstants {
 
     public static final boolean DEBUGMODE = false;
     public static final boolean DEBUG_TILE_PROVIDERS = false;

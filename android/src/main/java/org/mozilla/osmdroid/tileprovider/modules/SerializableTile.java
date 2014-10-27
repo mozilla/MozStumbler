@@ -152,6 +152,14 @@ public class SerializableTile {
             fis.read(arr);
         } catch (IOException e) {
             Log.e(LOG_TAG, "Error reading file into array.", e);
+        } finally {
+            if (fis != null) {
+                try {
+                    fis.close();
+                } catch (IOException e) {
+                    // wont' be able to do anything here anyway
+                }
+            }
         }
 
         try {

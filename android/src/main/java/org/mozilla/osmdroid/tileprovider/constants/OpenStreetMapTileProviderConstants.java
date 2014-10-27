@@ -42,6 +42,10 @@ public interface OpenStreetMapTileProviderConstants {
      * Initial tile cache size. The size will be increased as required by calling {@link
      * LRUMapTileCache.ensureCapacity(int)} The tile cache will always be at least 3x3.
      */
+    // @TODO vng: this number is too small for most devices and needs
+    // to be computed at runtime based on tilesize and screen
+    // resolution. It impacts LruMapTileCache which is already bug
+    // ridden.
     public static final int CACHE_MAPTILECOUNT_DEFAULT = 9;
 
     public static final int NUMBER_OF_IO_THREADS = 8;

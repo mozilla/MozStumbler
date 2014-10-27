@@ -9,6 +9,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -125,6 +126,20 @@ public class SerializableTile {
         return buff.toByteArray();
     }
 
+    public boolean saveFile(File aFile) {
+        try {
+            FileOutputStream fos = new FileOutputStream(aFile);
+            fos.write(this.asBytes());
+            fos.flush();
+            fos.close();
+            return true;
+        } catch (IOException e) {
+            Log.w(LOG_TAG, "Error writing SerializableTile to disk");
+            return false;
+        }
+
+    }
+
     public boolean fromFile(File file) throws FileNotFoundException {
         FileInputStream fis = new FileInputStream(file);
         byte[] arr = new byte[(int) file.length()];
@@ -218,6 +233,12 @@ public class SerializableTile {
         return new String(hexChars);
     }
 
+    public String getHeader(String k){
+        return headers.get(k.toLowerCase());
+    }
 
+    public void setHeader(String k, String v) {
+        headers.put(k.toLowerCase(), v);
+    }
 
 }

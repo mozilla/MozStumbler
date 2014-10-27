@@ -6,6 +6,9 @@ import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.nio.charset.CharacterCodingException;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -69,6 +72,29 @@ public class SerializableTileTest {
         assertEquals(2, newTile.getHeaders().size());
         assertEquals("abc", newTile.getHeaders().get("abc"));
         assertEquals("12345", newTile.getHeaders().get("12345"));
+        assertTrue(Arrays.equals(tileData, newTile.getTileData()));
+    }
+
+    @Test
+    public void testSerializeTileToFile() throws IOException {
+        File temp = File.createTempFile("temp", ".txt");
+
+        HashMap<String, String> headers = new HashMap<String, String>();
+        headers.put("abc", "abc");
+        headers.put("12345", "12345");
+        SerializableTile sTile = new SerializableTile();
+        sTile.setHeaders(headers);
+        byte[] tileData = {(byte) 0xde, (byte) 0xca, (byte) 0xfb, (byte) 0xad};
+        sTile.setTileData(tileData);
+
+        SerializableTile newTile = new SerializableTile();
+        sTile.saveFile(temp);
+        newTile.fromFile(temp);
+
+        assertEquals(2, newTile.getHeaders().size());
+        assertEquals("abc", newTile.getHeaders().get("abc"));
+        assertEquals("12345", newTile.getHeaders().get("12345"));
+
         assertTrue(Arrays.equals(tileData, newTile.getTileData()));
     }
 

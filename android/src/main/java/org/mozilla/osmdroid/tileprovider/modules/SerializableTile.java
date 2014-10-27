@@ -4,15 +4,11 @@ import org.apache.http.util.ByteArrayBuffer;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.core.logging.Log;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.CharacterCodingException;
@@ -37,6 +33,7 @@ public class SerializableTile {
 
     byte[] tData;
     Map<String, String> headers;
+    private File myFile;
 
     public SerializableTile() {
         headers = new HashMap<String, String>();
@@ -94,26 +91,18 @@ public class SerializableTile {
 
      */
     public byte[] asBytes() throws CharacterCodingException {
-
-        Charset charsetE = Charset.forName("UTF-8");
-        CharsetEncoder encoder = charsetE.newEncoder();
-
-
         ByteArrayBuffer buff = new ByteArrayBuffer(10);
-        buff.append(FILE_HEADER, 0, FILE_HEADER.length);
 
+        buff.append(FILE_HEADER, 0, FILE_HEADER.length);
         buff.append(intAsBytes(headers.size()), 0, 4);
 
         for (Map.Entry<String, String> entry : headers.entrySet()) {
-            byte[] keyBytes = encoder.encode(CharBuffer.wrap(entry.getKey())).array();
-            byte[] valueBytes = encoder.encode(CharBuffer.wrap(entry.getValue())).array();
-
+            byte[] keyBytes = entry.getKey().getBytes();
+            byte[] valueBytes = entry.getValue().getBytes();
             buff.append(intAsBytes(keyBytes.length), 0, 4);
             buff.append(intAsBytes(valueBytes.length), 0, 4);
-
             buff.append(keyBytes, 0, keyBytes.length);
             buff.append(valueBytes, 0, valueBytes.length);
-
         }
 
         if (tData == null || tData.length == 0) {
@@ -128,6 +117,10 @@ public class SerializableTile {
 
     public boolean saveFile(File aFile) {
         try {
+            myFile = aFile;
+            // Always update cache-control on save
+            setHeader("cache-control",
+                    Long.toString((300 * 1000) + System.currentTimeMillis()));
             FileOutputStream fos = new FileOutputStream(aFile);
             fos.write(this.asBytes());
             fos.flush();
@@ -137,7 +130,18 @@ public class SerializableTile {
             Log.w(LOG_TAG, "Error writing SerializableTile to disk");
             return false;
         }
+    }
 
+    /*
+    This will try to save the file if a file object is already set.
+
+    Generally only used to update a file that was previously loaded from disk.
+     */
+    public boolean saveFile() {
+        if (myFile != null) {
+            return saveFile(myFile);
+        }
+        return false;
     }
 
     public boolean fromFile(File file) throws FileNotFoundException {
@@ -147,10 +151,11 @@ public class SerializableTile {
         try {
             fis.read(arr);
         } catch (IOException e) {
-            Log.w(LOG_TAG, "Error reading file into array.");
+            Log.e(LOG_TAG, "Error reading file into array.", e);
         }
 
         try {
+            myFile  = file.getAbsoluteFile();
             return fromBytes(arr);
         } catch (CharacterCodingException e) {
             Log.e(LOG_TAG, "Error decoding strings from file", e);
@@ -158,7 +163,7 @@ public class SerializableTile {
         }
     }
 
-    public boolean fromBytes(byte[] arr) throws CharacterCodingException  {
+    protected boolean fromBytes(byte[] arr) throws CharacterCodingException  {
         byte[] buffer = null;
 
         Charset charsetE = Charset.forName("UTF-8");
@@ -192,14 +197,24 @@ public class SerializableTile {
             bb.get(buffer, 0, 4);
             int valueLength = java.nio.ByteBuffer.wrap(buffer).getInt();
 
-            buffer = new byte[keyLength];
-            bb.get(buffer, 0, valueLength);
-            String key = new String(buffer);
+            String key = null;
+            String value = null;
 
-            buffer = new byte[valueLength];
-            bb.get(buffer, 0, valueLength);
-            String value = new String(buffer);
-            headers.put(key, value);
+            if (keyLength > 0) {
+                buffer = new byte[keyLength];
+                bb.get(buffer, 0, keyLength);
+                key = new String(buffer);
+            }
+
+            if (valueLength > 0) {
+                buffer = new byte[valueLength];
+                bb.get(buffer, 0, valueLength);
+                value = new String(buffer);
+            }
+
+            if (key != null && value != null) {
+                headers.put(key, value);
+            }
         }
 
         // Remaining bytes should equal the content length of our payload.
@@ -233,6 +248,15 @@ public class SerializableTile {
         return new String(hexChars);
     }
 
+    public long getCacheControl() {
+        String cc = getHeader("cache-control");
+        if (cc == null) {
+            return 0;
+        } else {
+            return Long.parseLong(cc);
+        }
+    }
+
     public String getHeader(String k){
         return headers.get(k.toLowerCase());
     }
@@ -241,4 +265,7 @@ public class SerializableTile {
         headers.put(k.toLowerCase(), v);
     }
 
+    public String getEtag() {
+        return getHeader("etag");
+    }
 }

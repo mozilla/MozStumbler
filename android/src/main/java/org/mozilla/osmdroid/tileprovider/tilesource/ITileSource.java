@@ -48,7 +48,7 @@ public interface ITileSource {
      * @param aFilePath a file path
      * @return the rendered Drawable
      */
-    Drawable getDrawable(String aFilePath) throws LowMemoryException;
+    Drawable getDrawable(byte[] tileData) throws LowMemoryException;
 
     /**
      * Get the minimum zoom level this tile source can provide.

@@ -91,7 +91,8 @@ public class SerializableTileTest {
         sTile.saveFile(temp);
         newTile.fromFile(temp);
 
-        assertEquals(2, newTile.getHeaders().size());
+        // There's going to be an etag header
+        assertEquals(3, newTile.getHeaders().size());
         assertEquals("abc", newTile.getHeaders().get("abc"));
         assertEquals("12345", newTile.getHeaders().get("12345"));
 

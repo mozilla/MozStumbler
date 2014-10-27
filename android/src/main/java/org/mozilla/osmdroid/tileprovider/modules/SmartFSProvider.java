@@ -12,6 +12,7 @@ import org.mozilla.mozstumbler.service.core.logging.Log;
 import org.mozilla.osmdroid.tileprovider.IRegisterReceiver;
 import org.mozilla.osmdroid.tileprovider.MapTile;
 import org.mozilla.osmdroid.tileprovider.MapTileRequestState;
+import org.mozilla.osmdroid.tileprovider.constants.OSMConstants;
 import org.mozilla.osmdroid.tileprovider.tilesource.BitmapTileSourceBase.LowMemoryException;
 import org.mozilla.osmdroid.tileprovider.tilesource.ITileSource;
 import org.mozilla.osmdroid.tileprovider.tilesource.TileSourceFactory;
@@ -172,27 +173,33 @@ public class SmartFSProvider extends MapTileModuleProviderBase {
                 return null;
             }
 
-            // Check the tile source to see if its file is available and if so, then render the
-            // drawable and return the tile
-            File file = new File(TILE_PATH_BASE,
-                    tileSource.getTileRelativeFilenameString(tile) + TILE_PATH_EXTENSION);
+            File sTileFile  = new File(OSMConstants.TILE_PATH_BASE,
+                    tileSource.getTileRelativeFilenameString(tile) + OSMConstants.MERGED_FILE_EXT);
+            SerializableTile serializableTile = new SerializableTile();
+
 
             final Drawable drawable;
-            if (file.exists()) {
+            if (sTileFile.exists()) {
+
                 boolean tileIsCurrent = false;
                 try {
-                    // @TODO: vng check the cache control here
-                    tileIsCurrent = delegate.isTileCurrent(tileSource, tile);
+                    serializableTile.fromFile(sTileFile);
+                } catch (FileNotFoundException e) {
+                    Log.e(LOG_TAG, "TileFile was deleted by Android during tile load.", e);
+                    throw new RuntimeException(e);
+                }
+
+                try {
+                    tileIsCurrent = delegate.isTileCurrent(serializableTile, tileSource, tile);
                 } catch (IOException ioEx) {
                     Log.e(LOG_TAG, "Error checking etag status", ioEx);
                     return null;
                 }
 
                 if (tileIsCurrent) {
-                    // Use the ondisk tile
+                    // Use the on disk tile
                     try {
-                        // @TODO: vng we've already got the bytes, just get them into a ReusableDrawable
-                        drawable = tileSource.getDrawable(file.getPath());
+                        drawable = tileSource.getDrawable(serializableTile.getTileData());
                         return drawable;
                     } catch (final LowMemoryException e) {
                         // low memory so empty the queue
@@ -215,19 +222,21 @@ public class SmartFSProvider extends MapTileModuleProviderBase {
             // and test for file existence. The tile will get updated
             // anyway on the next redraw using conditional get.
 
-            file = new File(TILE_PATH_BASE, tileSource.getTileRelativeFilenameString(tile) + TILE_PATH_EXTENSION);
-            if (file.exists()) {
+            if (sTileFile.exists()) {
                 try {
-                    drawable = tileSource.getDrawable(file.getPath());
+                    serializableTile.fromFile(sTileFile);
+                    drawable = tileSource.getDrawable(serializableTile.getTileData());
                     return drawable;
                 } catch (final LowMemoryException e) {
                     // low memory so empty the queue
                     Log.w(LOG_TAG, "LowMemoryException downloading MapTile: " + tile + " : " + e);
                     throw new CantContinueException(e);
-                }
+                } catch (FileNotFoundException e) {
+                    Log.e(LOG_TAG, "TileFile was deleted by Android during tile load.", e);
+                    throw new RuntimeException(e);                }
             }
 
-            // If we get here then there is no file in the file cache
+            // If we get here then there is no file stored on disk or the network.
             return null;
         }
     }

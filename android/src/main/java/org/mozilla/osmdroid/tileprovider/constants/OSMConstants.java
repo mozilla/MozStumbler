@@ -61,4 +61,5 @@ public interface OSMConstants {
      */
     public static final long TILE_TRIM_CACHE_SIZE_BYTES = 500L * 1024 * 1024;
 
+    String MERGED_FILE_EXT = ".merged";
 }

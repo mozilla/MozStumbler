@@ -54,7 +54,7 @@ public class TileDownloaderDelegate {
      * Check if the tile is current by running a conditional get on
      * the URL
      */
-    public boolean isTileCurrent(ITileSource tileSource, MapTile tile) throws HttpHostConnectException {
+    public boolean isTileCurrent(SerializableTile serializableTile, ITileSource tileSource, MapTile tile) throws HttpHostConnectException {
         if (tileSource == null) {
             return false;
         }
@@ -76,13 +76,13 @@ public class TileDownloaderDelegate {
             return true;
         }
 
-        if (System.currentTimeMillis() < tileIOFacade.readCacheControl(tileSource, tile)) {
+        if (System.currentTimeMillis() < serializableTile.getCacheControl()) {
             return true;
         }
 
-        String etag = tileIOFacade.readEtag(tileSource, tile);
+        String etag = serializableTile.getEtag();
         if (etag == null) {
-            // No etags means we want to download the file, no need
+            // No etag means we want to download the file, no need
             // to go checking the etag status over the network.
             return false;
         }
@@ -97,6 +97,9 @@ public class TileDownloaderDelegate {
         }
 
         if (resp.httpResponse() == 304) {
+            // Update the cache control layer if the etag is still current
+            serializableTile.setHeader("cache-control", Long.toString(System.currentTimeMillis()+(300*1000)));
+            serializableTile.saveFile();
             return true;
         }
         return false;
@@ -161,42 +164,11 @@ public class TileDownloaderDelegate {
 
             return false;
         }
-        InputStream in = new ByteArrayInputStream(resp.bodyBytes());
-
-        ByteArrayOutputStream dataStream = null;
-        OutputStream out = null;
-
-        try {
-            dataStream = new ByteArrayOutputStream();
-            out = new BufferedOutputStream(dataStream, StreamUtils.IO_BUFFER_SIZE);
-            StreamUtils.copy(in, out);
-            out.flush();
-        } catch (IOException e) {
-            Log.e(LOG_TAG, "Error copying stream", e);
-            return false;
-        } finally {
-            if (out != null) {
-                try {
-                    out.close();
-                } catch (IOException ioEx) {
-                    Log.e(LOG_TAG, "Error closing tile output stream.", ioEx);
-                }
-            }
-            if (in != null) {
-                try {
-                    in.close();
-                } catch (IOException ioEx) {
-                    Log.e(LOG_TAG, "Error closing tile output stream.", ioEx);
-                }
-            }
-        }
-
-        final byte[] data = dataStream.toByteArray();
-        final ByteArrayInputStream byteStream = new ByteArrayInputStream(data);
+        byte[] tileBytes = resp.bodyBytes();
         String etag = resp.getFirstHeader("etag");
 
         // write the data using the TileIOFacade
-        tileIOFacade.saveFile(tileSource, tile, byteStream, etag);
+        tileIOFacade.saveFile(tileSource, tile, tileBytes, etag);
         return true;
     }
 

@@ -40,7 +40,6 @@ public class TileIOFacade  {
     // ===========================================================
 
     private static final String LOG_TAG = AppGlobals.LOG_PREFIX + TileIOFacade.class.getSimpleName();
-    public static final String MERGED = ".merged";
 
     // ===========================================================
     // Fields
@@ -198,113 +197,29 @@ public class TileIOFacade  {
     // @TODO vng: this should really just take in a header defined as
     // Map<String, String> instead of the single etag header
     public boolean saveFile(final ITileSource pTileSource, final MapTile pTile,
-                            final InputStream is, String etag) {
-
-        byte[] tileBytes = inputStreamToByteArray(is);
-
-        // Copy the byte array so that we don't clobber each other
-        InputStream pStream = new ByteArrayInputStream(tileBytes.clone());
-
-        File file;
-        File etagFile;
-        BufferedOutputStream outputStream;
-
+                            final byte[] tileBytes, String etag) {
         File parent;
 
-        if (etag != null) {
-            String tileFilename = pTileSource.getTileRelativeFilenameString(pTile);
-            etagFile = new File(OSMConstants.TILE_PATH_BASE,
-                    tileFilename + ".etag");
-
-            parent = etagFile.getParentFile();
-
-            if (!parent.exists() && !createFolderAndCheckIfExists(parent)) {
-                return false;
-            }
-
-            try {
-                FileOutputStream fos = new FileOutputStream(etagFile.getPath());
-                outputStream = new BufferedOutputStream(fos);
-                outputStream.write(etag.getBytes(Charset.forName("UTF-8")));
-                outputStream.flush();
-                outputStream.close();
-            } catch (IOException ioEx) {
-                Log.e(LOG_TAG, "Failed to create etag file: [" + etagFile.getPath() + "]", ioEx);
-            }
-        }
-
-        saveCacheControl(pTileSource, pTile);
-
-        file = new File(OSMConstants.TILE_PATH_BASE,
-                pTileSource.getTileRelativeFilenameString(pTile) + OSMConstants.TILE_PATH_EXTENSION);
-
-
-        parent = file.getParentFile();
+        File sTileFile  = new File(OSMConstants.TILE_PATH_BASE,
+                pTileSource.getTileRelativeFilenameString(pTile) + OSMConstants.MERGED_FILE_EXT);
+        parent = sTileFile.getParentFile();
 
         if (!parent.exists() && !createFolderAndCheckIfExists(parent)) {
             Log.w(LOG_TAG, "Can't create parent folder for actual PNG. parent [" + parent + "]");
             return false;
         }
 
-        outputStream = null;
-        try {
-            File sTileFile  = new File(OSMConstants.TILE_PATH_BASE,
-                    pTileSource.getTileRelativeFilenameString(pTile) + MERGED);
-            SerializableTile serializableTile = new SerializableTile();
-            serializableTile.setTileData(tileBytes);
-            serializableTile.setHeader("etag", etag);
-            serializableTile.setHeader("cache-control",
-                    Long.toString((300 * 1000) + System.currentTimeMillis()));
-            serializableTile.saveFile(sTileFile);
+        SerializableTile serializableTile = new SerializableTile();
+        serializableTile.setTileData(tileBytes);
+        serializableTile.setHeader("etag", etag);
+        serializableTile.saveFile(sTileFile);
 
-            outputStream = new BufferedOutputStream(new FileOutputStream(file.getPath()),
-                    StreamUtils.IO_BUFFER_SIZE);
-            final long length = StreamUtils.copy(pStream, outputStream);
-            outputStream.flush();
-            outputStream.close();
-
-            mUsedCacheSpace += length;
-            if (mUsedCacheSpace > OSMConstants.TILE_MAX_CACHE_SIZE_BYTES) {
-                cutCurrentCache(); // TODO perhaps we should do this in the background
-            }
-        } catch (final IOException e) {
-            Log.e(LOG_TAG, "TileIOFacade: IOException while writing tile: ", e);
-            return false;
-        } finally {
-            if (outputStream != null) {
-                StreamUtils.closeStream(outputStream);
-            }
+        mUsedCacheSpace += tileBytes.length;
+        if (mUsedCacheSpace > OSMConstants.TILE_MAX_CACHE_SIZE_BYTES) {
+            cutCurrentCache(); // TODO perhaps we should do this in the background
         }
         return true;
     }
-
-
-    private byte[] inputStreamToByteArray(InputStream is)
-    {
-        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-
-        int nRead;
-        byte[] data = new byte[16384];
-
-        try {
-            while ((nRead = is.read(data, 0, data.length)) != -1) {
-                buffer.write(data, 0, nRead);
-            }
-        } catch (IOException e) {
-            Log.w(LOG_TAG, "Error reading from input stream.");
-            return null;
-        }
-
-        try {
-            buffer.flush();
-        } catch (IOException e) {
-            Log.w(LOG_TAG, "Error writing to ByteArrayBuffer.");
-            return null;
-        }
-
-        return buffer.toByteArray();
-    }
-
 
     // ===========================================================
     // Methods

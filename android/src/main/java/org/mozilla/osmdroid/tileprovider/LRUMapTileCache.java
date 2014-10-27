@@ -16,16 +16,21 @@ import java.util.Map;
 import java.util.Set;
 
 /*
- * @TODO vng: This class should probably just go away.  It's incorrect in so many
- * ways that it's almost certainly not doing what we really want.
+ * This is an LRUCache to hold onto Drawable instances for TileOverlay instances.
  *
- * We probably want to just replace this with android.util.LruCache in the support
- * library.
+ * Note that when tiles are evicted from cache,  we attempt to push them back into
+ * the BitmapPool if they are recyclable.
  *
- * This should be done with caution as I've tried 'fixing' this LRU to actually behave in
- * LRU fashion completely breaks the map and tiles are
- * continually evicted from the view and reloaded causing a continuous checkerboard reloading
- * pattern.
+ * It is important to note that this class is tightly coupled to the BitmapPool to cache
+ * Bitmap instances.
+ *
+ * The ensureCapacity method grows the LRUMapTileCache to hold onto instances of Bitmaps, but
+ * those bitmaps are recycled into the BitmapPool.
+ *
+ *  If the LRUMapTileCache evicts tiles very quickly, the eldest tiles are pushed immediately back
+ *  into the BitmapPool.
+ *
+ *  The code in BitmapPool should really be merged into this class.
  *
  */
 public class LRUMapTileCache {
@@ -38,19 +43,6 @@ public class LRUMapTileCache {
     }
 
     public synchronized void ensureCapacity(final int aCapacity) {
-        /*
-         * @TODO vng: this method is just wrong.
-         * mCapacity is unknown to the base LinkedHashmap so the LRU properties
-         * will not apply to this new size.
-         *
-         * What *will* happen though is that tile eviction will happen in a bizarre way
-         * as removeEldestEntry is also misimplemented and will only evict tiles
-         * if the mCapacity number has been met.
-         *
-         * The combination of the two means that the buckets in the LinkedHashMap have a
-         * tendency to grow to too long and grow to be suboptimal lengths.
-         */
-
         if (aCapacity > mCapacity) {
             Log.d(LOG_TAG, "Tile cache increased from " + mCapacity + " to " + aCapacity);
             mCapacity = aCapacity;
@@ -77,12 +69,22 @@ public class LRUMapTileCache {
 
     private class InnerLRUMapTileCache extends LinkedHashMap<MapTile, Drawable> {
 
+        // This load factor is the same as what is defined in java.util.HashMap
+        final static float DEFAULT_LOAD_FACTOR = (float) 0.75;
+
+        final static boolean LRU_USES_ACCESS_ORDER = true;
 
         private static final long serialVersionUID = -541142277575493335L;
 
 
         public InnerLRUMapTileCache(final int aCapacity) {
-            super(aCapacity * 2, (float)0.75, true);
+            // The default implementation of HashMap defines
+
+            // Tile eviction happens at approximately 0.75 * total capacity,
+            // so doubling the capacity of the underlying LinkedHashMap should hold onto tiles
+            // long enough that we are not constantly constantly pushing tiles out into the
+            // BitmapPool.
+            super(aCapacity * 2, DEFAULT_LOAD_FACTOR, LRU_USES_ACCESS_ORDER);
         }
 
 
@@ -113,11 +115,6 @@ public class LRUMapTileCache {
 
         @Override
         protected boolean removeEldestEntry(final java.util.Map.Entry<MapTile, Drawable> aEldest) {
-        /*
-         * @TODO vng: this method is totally wrong.  You *must* evict
-         * when this method is called as the hashmap has exhausted the
-         * bucket size.
-         */
             if (size() > mCapacity) {
                 final MapTile eldest = aEldest.getKey();
                 if (AppGlobals.isDebug) {

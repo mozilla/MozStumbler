@@ -121,6 +121,12 @@ public class Updater {
         String msg = context.getString(R.string.update_message);
         msg = String.format(msg, installedVersion, latestVersion);
 
+        if (installedVersion.startsWith("0.") &&
+                latestVersion.startsWith("1.")) {
+            // From 0.x to 1.0 and higher, the keystore changed
+            msg += " " + context.getString(R.string.must_uninstall_to_update);
+        }
+
         final Dialog.OnCancelListener onCancel = new Dialog.OnCancelListener() {
             @Override
             public void onCancel(DialogInterface di) {

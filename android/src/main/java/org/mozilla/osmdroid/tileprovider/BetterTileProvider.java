@@ -7,7 +7,7 @@ import org.mozilla.osmdroid.tileprovider.modules.INetworkAvailablityCheck;
 import org.mozilla.osmdroid.tileprovider.modules.NetworkAvailabliltyCheck;
 import org.mozilla.osmdroid.tileprovider.modules.SmartFSProvider;
 import org.mozilla.osmdroid.tileprovider.modules.TileDownloaderDelegate;
-import org.mozilla.osmdroid.tileprovider.modules.TileWriter;
+import org.mozilla.osmdroid.tileprovider.modules.TileIOFacade;
 import org.mozilla.osmdroid.tileprovider.tilesource.ITileSource;
 import org.mozilla.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.mozilla.osmdroid.tileprovider.util.SimpleRegisterReceiver;
@@ -22,9 +22,6 @@ public class BetterTileProvider extends BetterMapTileProviderArray implements IM
 
     private static final String LOG_TAG = AppGlobals.LOG_PREFIX + BetterTileProvider.class.getSimpleName();
 
-    /**
-     * Creates a {@link MapTileProviderBasic}.
-     */
     public BetterTileProvider(final Context pContext) {
         // @TODO vng - this needs to be deleted as we are getting the
         // wrong tile source sometimes, and rely on some caller to
@@ -33,22 +30,16 @@ public class BetterTileProvider extends BetterMapTileProviderArray implements IM
         this(pContext, TileSourceFactory.DEFAULT_TILE_SOURCE);
     }
 
-    /**
-     * Creates a {@link MapTileProviderBasic}.
-     */
     public BetterTileProvider(final Context pContext, final ITileSource pTileSource) {
         this(new SimpleRegisterReceiver(pContext), new NetworkAvailabliltyCheck(pContext),
                 pTileSource);
     }
 
-    /**
-     * Creates a {@link MapTileProviderBasic}.
-     */
     public BetterTileProvider(final IRegisterReceiver pRegisterReceiver,
                               final INetworkAvailablityCheck aNetworkAvailablityCheck, final ITileSource pTileSource) {
         super(pTileSource, pRegisterReceiver);
 
-        final TileWriter tileWriter = new TileWriter();
+        final TileIOFacade tileIOFacade = new TileIOFacade();
 
         final SmartFSProvider smartProvider = new SmartFSProvider(pRegisterReceiver, pTileSource);
 
@@ -79,7 +70,7 @@ public class BetterTileProvider extends BetterMapTileProviderArray implements IM
         // hacks in the MozStumbler MapFragment which swap the
         // TileSource within the TileProvider.
 
-        TileDownloaderDelegate tileDelegate = new TileDownloaderDelegate(aNetworkAvailablityCheck, tileWriter);
+        TileDownloaderDelegate tileDelegate = new TileDownloaderDelegate(aNetworkAvailablityCheck, tileIOFacade);
         smartProvider.configureDelegate(tileDelegate);
 
         mTileProviderList.add(smartProvider);

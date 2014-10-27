@@ -36,7 +36,7 @@ public class TileDownloaderDelegate {
     public static final int ONE_HOUR_MS = 1000 * 60 * 60;
 
     private final INetworkAvailablityCheck networkAvailablityCheck;
-    private final TileWriter tileWriter;
+    private final TileIOFacade tileIOFacade;
 
     // We use an LRU cache to track any URLs that give us a HTTP 404.
     private static final int HTTP404_CACHE_SIZE = 2000;
@@ -45,8 +45,8 @@ public class TileDownloaderDelegate {
     private static final String LOG_TAG = AppGlobals.LOG_PREFIX + TileDownloaderDelegate.class.getSimpleName();
 
     public TileDownloaderDelegate(INetworkAvailablityCheck pNetworkAvailablityCheck,
-                                  TileWriter tw) {
-        tileWriter = tw;
+                                  TileIOFacade tw) {
+        tileIOFacade = tw;
         networkAvailablityCheck = pNetworkAvailablityCheck;
     }
 
@@ -76,11 +76,11 @@ public class TileDownloaderDelegate {
             return true;
         }
 
-        if (System.currentTimeMillis() < tileWriter.readCacheControl(tileSource, tile)) {
+        if (System.currentTimeMillis() < tileIOFacade.readCacheControl(tileSource, tile)) {
             return true;
         }
 
-        String etag = tileWriter.readEtag(tileSource, tile);
+        String etag = tileIOFacade.readEtag(tileSource, tile);
         if (etag == null) {
             // No etags means we want to download the file, no need
             // to go checking the etag status over the network.
@@ -195,8 +195,8 @@ public class TileDownloaderDelegate {
         final ByteArrayInputStream byteStream = new ByteArrayInputStream(data);
         String etag = resp.getFirstHeader("etag");
 
-        // write the data using the TileWriter
-        tileWriter.saveFile(tileSource, tile, byteStream, etag);
+        // write the data using the TileIOFacade
+        tileIOFacade.saveFile(tileSource, tile, byteStream, etag);
         return true;
     }
 

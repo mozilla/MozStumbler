@@ -33,13 +33,13 @@ import java.util.NoSuchElementException;
  The class has been extended to do read/write of etag and cache-control.
 
  */
-public class TileWriter  {
+public class TileIOFacade  {
 
     // ===========================================================
     // Constants
     // ===========================================================
 
-    private static final String LOG_TAG = AppGlobals.LOG_PREFIX + TileWriter.class.getSimpleName();
+    private static final String LOG_TAG = AppGlobals.LOG_PREFIX + TileIOFacade.class.getSimpleName();
     public static final String MERGED = ".merged";
 
     // ===========================================================
@@ -55,7 +55,7 @@ public class TileWriter  {
     // Constructors
     // ===========================================================
 
-    public TileWriter() {
+    public TileIOFacade() {
         shrinkCacheInBackground();
     }
 
@@ -268,7 +268,7 @@ public class TileWriter  {
                 cutCurrentCache(); // TODO perhaps we should do this in the background
             }
         } catch (final IOException e) {
-            Log.e(LOG_TAG, "TileWriter: IOException while writing tile: ", e);
+            Log.e(LOG_TAG, "TileIOFacade: IOException while writing tile: ", e);
             return false;
         } finally {
             if (outputStream != null) {

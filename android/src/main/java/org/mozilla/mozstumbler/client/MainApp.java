@@ -29,7 +29,6 @@ import org.acra.annotation.ReportsCrashes;
 import org.acra.sender.HttpSender;
 import org.mozilla.mozstumbler.BuildConfig;
 import org.mozilla.mozstumbler.R;
-import org.mozilla.mozstumbler.client.cellscanner.DefaultCellScanner;
 import org.mozilla.mozstumbler.client.navdrawer.MainDrawerActivity;
 import org.mozilla.mozstumbler.client.subactivities.DeveloperActivity;
 import org.mozilla.mozstumbler.client.subactivities.LogActivity;
@@ -140,7 +139,6 @@ public class MainApp extends Application
 
         NetworkInfo.createGlobalInstance(this);
         LogActivity.LogMessageReceiver.createGlobalInstance(this);
-        CellScanner.setCellScannerImpl(new DefaultCellScanner(this));
         // This will create, and register the receiver
         ObservedLocationsReceiver.createGlobalInstance(this.getApplicationContext(), this);
 

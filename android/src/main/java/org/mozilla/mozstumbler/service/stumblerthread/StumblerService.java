@@ -15,8 +15,6 @@ import org.mozilla.mozstumbler.service.Prefs;
 import org.mozilla.mozstumbler.service.stumblerthread.blocklist.WifiBlockListInterface;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageManager;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.ScanManager;
-import org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner.CellScanner;
-import org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner.CellScannerNoWCDMA;
 import org.mozilla.mozstumbler.service.uploadthread.UploadAlarmReceiver;
 import org.mozilla.mozstumbler.service.utils.NetworkInfo;
 import org.mozilla.mozstumbler.service.utils.PersistentIntentService;
@@ -106,11 +104,6 @@ public class StumblerService extends PersistentIntentService
         Prefs.createGlobalInstance(this);
         NetworkInfo.createGlobalInstance(this);
         DataStorageManager.createGlobalInstance(this, this);
-
-        if (!CellScanner.isCellScannerImplSet()) {
-            CellScanner.setCellScannerImpl(new CellScannerNoWCDMA(this));
-        }
-
         mReporter.startup(this);
     }
 

@@ -11,11 +11,9 @@ buildscript {
     }
 
     dependencies {
-        // robolectric won't play nice with  the gradle build tools
-        // for 0.11 or 0.12
-        classpath 'com.android.tools.build:gradle:0.10.+'
+        classpath 'com.android.tools.build:gradle:0.12.+'
 
-        classpath 'org.robolectric.gradle:gradle-android-test-plugin:0.10.+'
+        classpath 'org.robolectric:robolectric-gradle-plugin:0.12.+'
 
         // Gradle download task is from: https://github.com/michel-kraemer/gradle-download-task
         classpath 'de.undercouch:gradle-download-task:1.0'
@@ -23,7 +21,7 @@ buildscript {
 }
 
 apply plugin: 'com.android.application'
-apply plugin: 'android-test'
+apply plugin: 'robolectric'
 
 repositories {
     mavenCentral()

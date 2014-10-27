@@ -33,8 +33,8 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class LogActivity extends ActionBarActivity {
     static LinkedList<String> buffer = new LinkedList<String>();
-    static final int MAX_SIZE = 500;
     static int sLongLinesCounter;
+    static final int MAX_SIZE = 200;
     private static LogMessageReceiver sInstance;
 
     public static class LogMessageReceiver extends BroadcastReceiver {
@@ -110,7 +110,7 @@ public class LogActivity extends ActionBarActivity {
             final boolean isTruncating = sLongLinesCounter >= kLongLinesAllowedBeforeTruncate;
 
             final int maxChars = isTruncating? kMaxCharsOfTruncatedLine : kMaxCharsOfLongerLines;
-            if (s.length() > maxChars) {
+            if (s.length() > maxChars && !AppGlobals.NO_TRUNCATE_FLAG.equals(s.charAt(0))) {
                 // 1/3 of max length, ellipse, then last 2/3 of max length
                 s = s.substring(0, maxChars / 3) + " ... " + s.substring(s.length() - 1 - maxChars * 2/3);
             }

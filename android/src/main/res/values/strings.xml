@@ -80,6 +80,7 @@
     <string name="enable_crash_reporting">Enable crash reporting</string>
     <string name="privacy_policy">Privacy policy:</string>
     <string name="satellites_separator">/</string>
+    <string name="must_uninstall_to_update">You must uninstall first to update to the new version.</string>
     <string-array name="map_tile_resolution_options">
         <item>Default</item>
         <item>High resolution only</item>

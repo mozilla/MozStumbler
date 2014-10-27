@@ -84,7 +84,7 @@ class ObservationPointsOverlay extends Overlay {
         final Projection pj = mapView.getProjection();
         GeoPoint geoPoint = (isMlsPointUpdate)? obsPoint.pointMLS : obsPoint.pointGPS;
         if (geoPoint == null) {
-            Log.i(LOG_TAG, "Caller error: geoPoint is null");
+            Log.w(LOG_TAG, "Caller error: geoPoint is null");
             return;
         }
         final Point point = pj.toPixels(geoPoint, null);

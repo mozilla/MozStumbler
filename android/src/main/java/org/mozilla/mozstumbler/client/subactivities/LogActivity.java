@@ -102,7 +102,7 @@ public class LogActivity extends ActionBarActivity {
                 }
             }
 
-            if (s.length() > maxChars) {
+            if (s.length() > maxChars && !AppGlobals.NO_TRUNCATE_FLAG.equals(s.charAt(0))) {
                 // 1/3 of max length, ellipse, then last 2/3 of max length
                 s = s.substring(0, maxChars / 3) + " ... " + s.substring(s.length() - 1 - maxChars * 2/3);
             }

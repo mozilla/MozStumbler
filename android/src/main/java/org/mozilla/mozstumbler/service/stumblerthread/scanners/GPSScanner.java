@@ -142,7 +142,7 @@ public class GPSScanner implements LocationListener {
     }
 
     private void sendToLogActivity(String msg) {
-        AppGlobals.guiLogInfo(msg, "#33ccff", false);
+        AppGlobals.guiLogInfo(msg, "#33ccff", false, false);
     }
 
     @Override

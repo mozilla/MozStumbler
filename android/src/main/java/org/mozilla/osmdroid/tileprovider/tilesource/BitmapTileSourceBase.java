@@ -15,14 +15,13 @@ import org.mozilla.osmdroid.ResourceProxy.string;
 import org.mozilla.osmdroid.tileprovider.BitmapPool;
 import org.mozilla.osmdroid.tileprovider.MapTile;
 import org.mozilla.osmdroid.tileprovider.ReusableBitmapDrawable;
-import org.mozilla.osmdroid.tileprovider.constants.OpenStreetMapTileProviderConstants;
+import org.mozilla.osmdroid.tileprovider.constants.OSMConstants;
 
 import java.io.File;
-import java.io.InputStream;
 import java.util.Random;
 
 public abstract class BitmapTileSourceBase
-        implements ITileSource, OpenStreetMapTileProviderConstants {
+        implements ITileSource, OSMConstants {
 
     private static final String LOG_TAG = AppGlobals.LOG_PREFIX + BitmapTileSourceBase.class.getSimpleName();
 
@@ -101,14 +100,15 @@ public abstract class BitmapTileSourceBase
     }
 
     @Override
-    public Drawable getDrawable(final String aFilePath) {
+    public Drawable getDrawable(final byte[] tileBytes) {
         try {
             // default implementation will load the file as a bitmap and create
             // a BitmapDrawable from it
             BitmapFactory.Options bitmapOptions = new BitmapFactory.Options();
             BitmapPool.getInstance().applyReusableOptions(bitmapOptions);
-            final Bitmap bitmap = BitmapFactory.decodeFile(aFilePath, bitmapOptions);
+            final Bitmap bitmap = BitmapFactory.decodeByteArray(tileBytes, 0, tileBytes.length, bitmapOptions);
             if (bitmap != null) {
+
                 if (BuildConfig.LABEL_MAP_TILES) {
                     // Write the tile name directly onto the bitmap
                     int w = bitmap.getWidth();
@@ -132,6 +132,7 @@ public abstract class BitmapTileSourceBase
                     int top = border;
                     canvas.drawRect(left, top, right, bottom, bgPaint);
 
+                    /*
                     File f = new File(aFilePath);
                     File parentDir = f.getParentFile();
                     File zoomDir = parentDir.getParentFile();
@@ -144,18 +145,13 @@ public abstract class BitmapTileSourceBase
                     } catch (ClassCastException ccex) {
                         Log.e(LOG_TAG, "Casting error", ccex);
                     }
+                    */
                 }
+
                 return new ReusableBitmapDrawable(bitmap);
-            } else {
-                // if we couldn't load it then it's invalid - delete it
-                try {
-                    new File(aFilePath).delete();
-                } catch (final Throwable e) {
-                    Log.e(LOG_TAG, "Error deleting invalid file: " + aFilePath, e);
-                }
             }
         } catch (final OutOfMemoryError e) {
-            Log.e(LOG_TAG, "OutOfMemoryError loading bitmap: " + aFilePath, e);
+            Log.e(LOG_TAG, "OutOfMemoryError loading bitmap", e);
             System.gc();
         }
         return null;
@@ -173,25 +169,6 @@ public abstract class BitmapTileSourceBase
         sb.append(tile.getY());
         sb.append(imageFilenameEnding());
         return sb.toString();
-    }
-
-    @Override
-    public Drawable getDrawable(final InputStream aFileInputStream) throws LowMemoryException {
-        try {
-            // default implementation will load the file as a bitmap and create
-            // a BitmapDrawable from it
-            BitmapFactory.Options bitmapOptions = new BitmapFactory.Options();
-            BitmapPool.getInstance().applyReusableOptions(bitmapOptions);
-            final Bitmap bitmap = BitmapFactory.decodeStream(aFileInputStream, null, bitmapOptions);
-            if (bitmap != null) {
-                return new ReusableBitmapDrawable(bitmap);
-            }
-        } catch (final OutOfMemoryError e) {
-            Log.e(LOG_TAG, "OutOfMemoryError loading bitmap", e);
-            System.gc();
-            throw new LowMemoryException(e);
-        }
-        return null;
     }
 
     public final class LowMemoryException extends Exception {

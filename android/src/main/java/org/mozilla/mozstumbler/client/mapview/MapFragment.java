@@ -426,6 +426,10 @@ public final class MapFragment extends android.support.v4.app.Fragment
                 }
             }
 
+            // We've destroyed 2 layers for lowResMapOverlay
+            // Force GC to cleanup underlying LRU caches in overlay
+            System.gc();
+
             if (!isMLSTileStore) {
                 mHighResMapSource = TileSourceFactory.MAPQUESTOSM;
             } else {
@@ -435,12 +439,19 @@ public final class MapFragment extends android.support.v4.app.Fragment
                         AbstractMapOverlay.FILE_TYPE_SUFFIX_PNG,
                         new String[]{BuildConfig.TILE_SERVER_URL});
             }
+            System.gc();
             mMap.setTileSource(mHighResMapSource);
         } else {
             if (mLowResMapOverlayHighZoom != null) {
                 // already set this
                 return;
             }
+
+            // Unhooking the highres map means we should nullify it and force GC
+            // to cleanup underlying LRU cache in MapSource
+            mHighResMapSource = null;
+            System.gc();
+
             mMap.setTileSource(new BlankTileSource());
             if (mLowResMapOverlayHighZoom == null) {
                 mLowResMapOverlayLowZoom = new LowResMapOverlay(LowResMapOverlay.LowResType.LOWER_ZOOM,

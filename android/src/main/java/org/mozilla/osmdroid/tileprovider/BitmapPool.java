@@ -6,6 +6,15 @@ import android.os.Build;
 
 import java.util.LinkedList;
 
+/*
+ * @TODO: vng 
+ * This is crazy. We don't know how much heap or native memory is on
+ * the device, so we don't know how many Bitmap instances we can
+ * reliably hold on to. 
+ *
+ * mPool is an unbounded LinkedList and everytime the LRUMapTileCache
+ * evicts a tile, it goes back into the pool.
+ */
 public class BitmapPool {
     final LinkedList<Bitmap> mPool = new LinkedList<Bitmap>();
 

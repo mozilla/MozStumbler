@@ -3,17 +3,15 @@ package org.mozilla.osmdroid.tileprovider;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
 
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.core.logging.Log;
-import org.mozilla.osmdroid.tileprovider.constants.OpenStreetMapTileProviderConstants;
+import org.mozilla.osmdroid.tileprovider.constants.OSMConstants;
 import org.mozilla.osmdroid.tileprovider.modules.MapTileModuleProviderBase;
 import org.mozilla.osmdroid.tileprovider.tilesource.ITileSource;
 import org.mozilla.osmdroid.util.TileLooper;
@@ -34,7 +32,7 @@ import java.util.HashMap;
  *
  */
 public abstract class MapTileProviderBase implements IMapTileProviderCallback,
-		OpenStreetMapTileProviderConstants {
+        OSMConstants {
 
 	private static final String LOG_TAG = AppGlobals.LOG_PREFIX + MapTileProviderBase.class.getSimpleName();
 

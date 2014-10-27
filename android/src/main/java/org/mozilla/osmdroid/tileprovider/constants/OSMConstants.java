@@ -7,7 +7,7 @@ import java.io.File;
  *
  * @author Neil Boyd
  */
-public interface OpenStreetMapTileProviderConstants {
+public interface OSMConstants {
 
     public static final boolean DEBUGMODE = false;
     public static final boolean DEBUG_TILE_PROVIDERS = false;
@@ -42,6 +42,10 @@ public interface OpenStreetMapTileProviderConstants {
      * Initial tile cache size. The size will be increased as required by calling {@link
      * LRUMapTileCache.ensureCapacity(int)} The tile cache will always be at least 3x3.
      */
+    // @TODO vng: this number is too small for most devices and needs
+    // to be computed at runtime based on tilesize and screen
+    // resolution. It impacts LruMapTileCache which is already bug
+    // ridden.
     public static final int CACHE_MAPTILECOUNT_DEFAULT = 9;
 
     public static final int NUMBER_OF_IO_THREADS = 8;
@@ -57,4 +61,5 @@ public interface OpenStreetMapTileProviderConstants {
      */
     public static final long TILE_TRIM_CACHE_SIZE_BYTES = 500L * 1024 * 1024;
 
+    String MERGED_FILE_EXT = ".merged";
 }

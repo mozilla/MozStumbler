@@ -6,6 +6,9 @@ import android.graphics.drawable.Drawable;
 
 /**
  * A {@link BitmapDrawable} for a {@link MapTile} that has a state to indicate that it's expired.
+ *
+ * @TODO vng: this should probably be changed to be a decorator instead of a subclass.
+ *
  */
 public class ExpirableBitmapDrawable extends BitmapDrawable {
 

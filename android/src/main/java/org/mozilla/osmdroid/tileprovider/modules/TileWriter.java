@@ -9,6 +9,8 @@ import org.mozilla.osmdroid.tileprovider.util.StreamUtils;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -43,6 +45,7 @@ public class TileWriter implements IFilesystemCache, OpenStreetMapTileProviderCo
     // ===========================================================
 
     private static final String LOG_TAG = AppGlobals.LOG_PREFIX + TileWriter.class.getSimpleName();
+    public static final String MERGED = ".merged";
 
     // ===========================================================
     // Fields
@@ -60,6 +63,20 @@ public class TileWriter implements IFilesystemCache, OpenStreetMapTileProviderCo
     public TileWriter() {
         shrinkCacheInBackground();
     }
+
+    /**
+     * Get the amount of disk space used by the tile cache. This will initially be zero since the
+     * used space is calculated in the background.
+     *
+     * @return size in bytes
+     */
+    public static long getUsedCacheSpace() {
+        return mUsedCacheSpace;
+    }
+
+    // ===========================================================
+    // Getter & Setter
+    // ===========================================================
 
     private void shrinkCacheInBackground() {
         // @TODO: vng put a static synchronized guard here so that the
@@ -81,20 +98,6 @@ public class TileWriter implements IFilesystemCache, OpenStreetMapTileProviderCo
         };
         t.setPriority(Thread.MIN_PRIORITY);
         t.start();
-    }
-
-    // ===========================================================
-    // Getter & Setter
-    // ===========================================================
-
-    /**
-     * Get the amount of disk space used by the tile cache. This will initially be zero since the
-     * used space is calculated in the background.
-     *
-     * @return size in bytes
-     */
-    public static long getUsedCacheSpace() {
-        return mUsedCacheSpace;
     }
 
     // ===========================================================
@@ -160,16 +163,16 @@ public class TileWriter implements IFilesystemCache, OpenStreetMapTileProviderCo
         } catch (IOException ioEx) {
             Log.e(LOG_TAG, "Failed to read etag file: [" + etagFile.getPath() + "]", ioEx);
         } finally {
-        try {
+            try {
                 if (fis != null) {
                     fis.close();
-            }
-        } catch (IOException ioEx) {
+                }
+            } catch (IOException ioEx) {
                 Log.e(LOG_TAG, "osmdroid: error closing etag inputstream", ioEx);
             }
         }
         return null;
-        }
+    }
 
     private void saveCacheControl(final ITileSource pTileSource, final MapTile pTile) {
         String tileFilename = pTileSource.getTileRelativeFilenameString(pTile);
@@ -201,7 +204,13 @@ public class TileWriter implements IFilesystemCache, OpenStreetMapTileProviderCo
     // Map<String, String> instead of the single etag header
     @Override
     public boolean saveFile(final ITileSource pTileSource, final MapTile pTile,
-                            final InputStream pStream, String etag) {
+                            final InputStream is, String etag) {
+
+        byte[] tileBytes = inputStreamToByteArray(is);
+
+        // Copy the byte array so that we don't clobber each other
+        InputStream pStream = new ByteArrayInputStream(tileBytes.clone());
+
         File file;
         File etagFile;
         BufferedOutputStream outputStream;
@@ -209,23 +218,23 @@ public class TileWriter implements IFilesystemCache, OpenStreetMapTileProviderCo
         File parent;
 
         if (etag != null) {
-        String tileFilename = pTileSource.getTileRelativeFilenameString(pTile);
+            String tileFilename = pTileSource.getTileRelativeFilenameString(pTile);
             etagFile = new File(TILE_PATH_BASE,
                     tileFilename + ".etag");
 
             parent = etagFile.getParentFile();
 
-        if (!parent.exists() && !createFolderAndCheckIfExists(parent)) {
-            return false;
-        }
+            if (!parent.exists() && !createFolderAndCheckIfExists(parent)) {
+                return false;
+            }
 
-        try {
+            try {
                 FileOutputStream fos = new FileOutputStream(etagFile.getPath());
                 outputStream = new BufferedOutputStream(fos);
                 outputStream.write(etag.getBytes(Charset.forName("UTF-8")));
-            outputStream.flush();
-            outputStream.close();
-        } catch (IOException ioEx) {
+                outputStream.flush();
+                outputStream.close();
+            } catch (IOException ioEx) {
                 Log.e(LOG_TAG, "Failed to create etag file: [" + etagFile.getPath() + "]", ioEx);
             }
         }
@@ -234,6 +243,7 @@ public class TileWriter implements IFilesystemCache, OpenStreetMapTileProviderCo
 
         file = new File(TILE_PATH_BASE,
                 pTileSource.getTileRelativeFilenameString(pTile) + TILE_PATH_EXTENSION);
+
 
         parent = file.getParentFile();
 
@@ -244,6 +254,15 @@ public class TileWriter implements IFilesystemCache, OpenStreetMapTileProviderCo
 
         outputStream = null;
         try {
+            File sTileFile  = new File(TILE_PATH_BASE,
+                    pTileSource.getTileRelativeFilenameString(pTile) + MERGED);
+            SerializableTile serializableTile = new SerializableTile();
+            serializableTile.setTileData(tileBytes);
+            serializableTile.setHeader("etag", etag);
+            serializableTile.setHeader("cache-control",
+                    Long.toString((300 * 1000) + System.currentTimeMillis()));
+            serializableTile.saveFile(sTileFile);
+
             outputStream = new BufferedOutputStream(new FileOutputStream(file.getPath()),
                     StreamUtils.IO_BUFFER_SIZE);
             final long length = StreamUtils.copy(pStream, outputStream);
@@ -260,10 +279,38 @@ public class TileWriter implements IFilesystemCache, OpenStreetMapTileProviderCo
         } finally {
             if (outputStream != null) {
                 StreamUtils.closeStream(outputStream);
+            }
         }
-    }
         return true;
     }
+
+
+    private byte[] inputStreamToByteArray(InputStream is)
+    {
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+
+        int nRead;
+        byte[] data = new byte[16384];
+
+        try {
+            while ((nRead = is.read(data, 0, data.length)) != -1) {
+                buffer.write(data, 0, nRead);
+            }
+        } catch (IOException e) {
+            Log.w(LOG_TAG, "Error reading from input stream.");
+            return null;
+        }
+
+        try {
+            buffer.flush();
+        } catch (IOException e) {
+            Log.w(LOG_TAG, "Error writing to ByteArrayBuffer.");
+            return null;
+        }
+
+        return buffer.toByteArray();
+    }
+
 
     // ===========================================================
     // Methods

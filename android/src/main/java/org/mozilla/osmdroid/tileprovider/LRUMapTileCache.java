@@ -82,7 +82,7 @@ public class LRUMapTileCache {
 
 
         public InnerLRUMapTileCache(final int aCapacity) {
-            super(aCapacity * 2);
+            super(aCapacity * 2, (float)0.75, true);
         }
 
 

@@ -34,9 +34,6 @@ repositories {
 import de.undercouch.gradle.tasks.download.Download
 import java.util.regex.Pattern
 
-def libDir = new File("android/libs")
-libDir.mkdirs()
-
 android {
     compileSdkVersion 19
     buildToolsVersion "19.1.0"
@@ -68,6 +65,9 @@ android {
 
         buildConfigField "boolean", "LABEL_MAP_TILES", "false"
 
+        buildConfigField "boolean", "GITHUB", "false"
+        buildConfigField "boolean", "PLAYSTORE", "false"
+
         // Crash report settings
         buildConfigField "String", "ACRA_URI", getAcraURI()
         buildConfigField "String", "ACRA_USER", getAcraUser()
@@ -95,6 +95,16 @@ android {
             signingConfig signingConfigs.release
         }
 
+        github.initWith(buildTypes.release)
+        github {
+            buildConfigField "boolean", "GITHUB", "true"
+        }
+
+        playstore.initWith(buildTypes.release)
+        playstore {
+            buildConfigField "boolean", "PLAYSTORE", "true"
+        }
+
         unittest.initWith(buildTypes.debug)
         unittest {
             buildConfigField "boolean", "ROBOLECTRIC", "true"
@@ -118,9 +128,6 @@ dependencies {
 
     testCompile 'junit:junit:4.10'
     testCompile 'org.robolectric:robolectric:2.3'
-
-    // pickup osmdroid
-    compile fileTree(dir: 'libs', include: ['*.jar'])
 
     compile 'com.crankycoder:SimpleKML:1.0'
 

@@ -33,6 +33,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class LogActivity extends ActionBarActivity {
     static LinkedList<String> buffer = new LinkedList<String>();
+    static int sLongLinesCounter;
     static final int MAX_SIZE = 200;
     private static LogMessageReceiver sInstance;
 
@@ -92,16 +93,23 @@ public class LogActivity extends ActionBarActivity {
 
             final int kMaxCharsOfLongerLines = 1000;
             final int kMaxCharsOfTruncatedLine = 200;
-            final int kBufSizeBeforeTruncate = 30;
-            final int maxChars = (buffer.size() > kBufSizeBeforeTruncate)? kMaxCharsOfTruncatedLine :kMaxCharsOfLongerLines;
-            if (buffer.size() == kBufSizeBeforeTruncate + 1) {
-                String msg = "LOG VIEWER REACHED " + kBufSizeBeforeTruncate +" MESSAGES. TRUNCATING MESSAGES.";
-                buffer.add(msg);
-                if (sConsoleView != null) {
-                    sConsoleView.println(msg);
+            final int kLongLinesAllowedBeforeTruncate = 30;
+
+            if (s.length() > kMaxCharsOfTruncatedLine) {
+                sLongLinesCounter++;
+
+                if (sLongLinesCounter == kLongLinesAllowedBeforeTruncate) {
+                    String msg = "LOG VIEWER REACHED " + kLongLinesAllowedBeforeTruncate +" LONG MESSAGES. TRUNCATING MESSAGES.";
+                    buffer.add(msg);
+                    if (sConsoleView != null) {
+                        sConsoleView.println(msg);
+                    }
                 }
             }
 
+            final boolean isTruncating = sLongLinesCounter >= kLongLinesAllowedBeforeTruncate;
+
+            final int maxChars = isTruncating? kMaxCharsOfTruncatedLine : kMaxCharsOfLongerLines;
             if (s.length() > maxChars && !AppGlobals.NO_TRUNCATE_FLAG.equals(s.charAt(0))) {
                 // 1/3 of max length, ellipse, then last 2/3 of max length
                 s = s.substring(0, maxChars / 3) + " ... " + s.substring(s.length() - 1 - maxChars * 2/3);

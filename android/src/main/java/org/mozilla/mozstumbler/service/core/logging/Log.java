@@ -3,6 +3,10 @@ package org.mozilla.mozstumbler.service.core.logging;
 import org.mozilla.mozstumbler.BuildConfig;
 import org.mozilla.mozstumbler.service.AppGlobals;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.io.Writer;
+
 /*
  This is a proxy around the android logger so that we can see what the heck
  is happening when we run under test.
@@ -23,7 +27,18 @@ public class Log {
         if (e == null) {
             msg = "";
         } else {
-            msg = e.toString();
+            if (e instanceof Error) {
+                // These are usually going to be OutOfMemoryErrors
+                // We want the full stacktrace for full errors, but
+                // not regular exception types.
+                System.gc();
+                Writer result = new StringWriter();
+                PrintWriter printWriter = new PrintWriter(result);
+                e.printStackTrace(printWriter);
+                msg = result.toString();
+            } else {
+                msg = e.toString();
+            }
         }
 
         if (BuildConfig.BUILD_TYPE.equals("unittest")) {

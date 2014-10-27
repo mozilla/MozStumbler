@@ -107,7 +107,7 @@ public abstract class BitmapTileSourceBase
             // a BitmapDrawable from it
             BitmapFactory.Options bitmapOptions = new BitmapFactory.Options();
             BitmapPool.getInstance().applyReusableOptions(bitmapOptions);
-            System.gc();
+            //System.gc();
             final Bitmap bitmap = BitmapFactory.decodeFile(aFilePath, bitmapOptions);
             if (bitmap != null) {
                 if (BuildConfig.LABEL_MAP_TILES) {

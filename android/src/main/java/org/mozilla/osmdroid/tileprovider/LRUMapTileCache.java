@@ -9,7 +9,11 @@ import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.core.logging.Log;
 import org.mozilla.osmdroid.tileprovider.constants.OpenStreetMapTileProviderConstants;
 
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Set;
 
 /*
  * @TODO vng: This class should probably just go away.  It's incorrect in so many
@@ -24,21 +28,16 @@ import java.util.LinkedHashMap;
  * pattern.
  *
  */
-public class LRUMapTileCache extends LinkedHashMap<MapTile, Drawable>
-        implements OpenStreetMapTileProviderConstants {
-
+public class LRUMapTileCache {
+    private int mCapacity = 0;
+    private InnerLRUMapTileCache innerCache;
     private static final String LOG_TAG = AppGlobals.LOG_PREFIX + LRUMapTileCache.class.getSimpleName();
 
-    private static final long serialVersionUID = -541142277575493335L;
-
-    private int mCapacity;
-
-    public LRUMapTileCache(final int aCapacity) {
-        super(aCapacity + 2, 0.1f, true);
-        mCapacity = aCapacity;
+    public LRUMapTileCache(int capacity) {
+        ensureCapacity(capacity);
     }
 
-    public void ensureCapacity(final int aCapacity) {
+    public synchronized void ensureCapacity(final int aCapacity) {
         /*
          * @TODO vng: this method is just wrong.
          * mCapacity is unknown to the base LinkedHashmap so the LRU properties
@@ -55,8 +54,37 @@ public class LRUMapTileCache extends LinkedHashMap<MapTile, Drawable>
         if (aCapacity > mCapacity) {
             Log.d(LOG_TAG, "Tile cache increased from " + mCapacity + " to " + aCapacity);
             mCapacity = aCapacity;
-    }
+            innerCache  = new InnerLRUMapTileCache(mCapacity);
+            System.gc();
         }
+    }
+
+    public void clear() {
+        innerCache.clear();
+    }
+
+    public boolean containsKey(MapTile key) {
+        return innerCache.containsKey(key);
+    }
+
+    public Drawable get(MapTile key) {
+        return innerCache.get(key);
+    }
+
+    public void put(MapTile key, Drawable value) {
+        innerCache.put(key, value);
+    }
+
+    private class InnerLRUMapTileCache extends LinkedHashMap<MapTile, Drawable> {
+
+
+        private static final long serialVersionUID = -541142277575493335L;
+
+
+        public InnerLRUMapTileCache(final int aCapacity) {
+            super(aCapacity * 2);
+        }
+
 
         @Override
         public Drawable remove(final Object aKey) {
@@ -92,7 +120,7 @@ public class LRUMapTileCache extends LinkedHashMap<MapTile, Drawable>
          */
             if (size() > mCapacity) {
                 final MapTile eldest = aEldest.getKey();
-            if (DEBUGMODE) {
+                if (AppGlobals.isDebug) {
                     Log.d(LOG_TAG, "Remove old tile: " + eldest);
                 }
                 remove(eldest);
@@ -102,3 +130,4 @@ public class LRUMapTileCache extends LinkedHashMap<MapTile, Drawable>
         }
 
     }
+}

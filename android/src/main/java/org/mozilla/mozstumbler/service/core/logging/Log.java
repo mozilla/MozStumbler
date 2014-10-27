@@ -23,15 +23,18 @@ public class Log {
     }
 
     public static void e(String logTag, String s, Throwable e) {
+        if (e instanceof Throwable) {
+            // These are usually going to be OutOfMemoryErrors
+            // We want the full stacktrace for full errors, but
+            // not regular exception types.
+            System.gc();
+        }
+
         String msg;
         if (e == null) {
             msg = "";
         } else {
-            if (e instanceof Error) {
-                // These are usually going to be OutOfMemoryErrors
-                // We want the full stacktrace for full errors, but
-                // not regular exception types.
-                System.gc();
+            if (AppGlobals.isDebug) {
                 Writer result = new StringWriter();
                 PrintWriter printWriter = new PrintWriter(result);
                 e.printStackTrace(printWriter);

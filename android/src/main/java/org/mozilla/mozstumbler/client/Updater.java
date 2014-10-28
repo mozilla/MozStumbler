@@ -62,6 +62,9 @@ public class Updater {
 
             @Override
             public void onPostExecute(IResponse response) {
+                if (response == null) {
+                    return;
+                }
                 Map<String, List<String>> headers = response.getHeaders();
                 Log.i(LOG_TAG, "Got headers: "+ headers.toString());
                 String locationUrl = headers.get("Location").get(0);

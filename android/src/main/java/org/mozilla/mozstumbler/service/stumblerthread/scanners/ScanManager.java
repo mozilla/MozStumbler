@@ -10,6 +10,7 @@ import android.content.IntentFilter;
 import android.location.Location;
 import android.os.BatteryManager;
 import android.support.v4.content.LocalBroadcastManager;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 
 import org.mozilla.mozstumbler.service.AppGlobals;
@@ -45,7 +46,7 @@ public class ScanManager {
         int scale = intent.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
         int status = intent.getIntExtra(BatteryManager.EXTRA_STATUS, -1);
         boolean isCharging = (status == BatteryManager.BATTERY_STATUS_CHARGING);
-        int level = Math.round(rawLevel * scale/100.0f);
+        int level = Math.round(rawLevel * scale / 100.0f);
 
         final int kMinBatteryPct = 15;
         return !isCharging && level < kMinBatteryPct;
@@ -61,7 +62,10 @@ public class ScanManager {
         }
 
         mWifiScanner.start(ActiveOrPassiveStumbling.PASSIVE_STUMBLING);
-        mCellScanner.start(ActiveOrPassiveStumbling.PASSIVE_STUMBLING);
+
+        if (mCellScanner != null) {
+            mCellScanner.start(ActiveOrPassiveStumbling.PASSIVE_STUMBLING);
+        }
 
         // how often to flush a leftover bundle to the reports table
         // If there is a bundle, and nothing happens for 10sec, then flush it
@@ -75,21 +79,21 @@ public class ScanManager {
         when.setTime(when.getTime() + flushRate_ms);
         mPassiveModeFlushTimer = new Timer();
         mPassiveModeFlushTimer.schedule(new TimerTask() {
-          @Override
-          public void run() {
-              Intent flush = new Intent(Reporter.ACTION_FLUSH_TO_BUNDLE);
-              LocalBroadcastManager.getInstance(mContext).sendBroadcastSync(flush);
-          }
+            @Override
+            public void run() {
+                Intent flush = new Intent(Reporter.ACTION_FLUSH_TO_BUNDLE);
+                LocalBroadcastManager.getInstance(mContext).sendBroadcastSync(flush);
+            }
         }, when);
-    }
-
-    public synchronized void setPassiveMode(boolean on) {
-        mStumblingMode = (on)? ActiveOrPassiveStumbling.PASSIVE_STUMBLING :
-               ActiveOrPassiveStumbling.ACTIVE_STUMBLING;
     }
 
     public synchronized boolean isPassiveMode() {
         return ActiveOrPassiveStumbling.PASSIVE_STUMBLING == mStumblingMode;
+    }
+
+    public synchronized void setPassiveMode(boolean on) {
+        mStumblingMode = (on) ? ActiveOrPassiveStumbling.PASSIVE_STUMBLING :
+                ActiveOrPassiveStumbling.ACTIVE_STUMBLING;
     }
 
     public synchronized void startScanning(Context context) {
@@ -101,7 +105,13 @@ public class ScanManager {
         if (mGPSScanner == null) {
             mGPSScanner = new GPSScanner(context, this);
             mWifiScanner = new WifiScanner(context);
-            mCellScanner = new CellScanner(context);
+
+            TelephonyManager telephonyManager = (TelephonyManager) mContext.getSystemService(Context.TELEPHONY_SERVICE);
+            if (telephonyManager != null &&
+                    (telephonyManager.getPhoneType() == TelephonyManager.PHONE_TYPE_CDMA ||
+                            telephonyManager.getPhoneType() == TelephonyManager.PHONE_TYPE_GSM)) {
+                mCellScanner = new CellScanner(context);
+            }
         }
 
         if (AppGlobals.isDebug) {
@@ -111,7 +121,11 @@ public class ScanManager {
         mGPSScanner.start(mStumblingMode);
         if (mStumblingMode == ActiveOrPassiveStumbling.ACTIVE_STUMBLING) {
             mWifiScanner.start(mStumblingMode);
-            mCellScanner.start(mStumblingMode);
+
+            if (mCellScanner != null) {
+                mCellScanner.start(mStumblingMode);
+            }
+
             // in passive mode, these scans are started by passive gps notifications
         }
         mIsScanning = true;
@@ -128,7 +142,9 @@ public class ScanManager {
 
         mGPSScanner.stop();
         mWifiScanner.stop();
-        mCellScanner.stop();
+        if (mCellScanner != null) {
+            mCellScanner.stop();
+        }
 
         mIsScanning = false;
         return true;
@@ -143,27 +159,27 @@ public class ScanManager {
     }
 
     public int getAPCount() {
-        return (mWifiScanner == null)? 0 : mWifiScanner.getAPCount();
+        return (mWifiScanner == null) ? 0 : mWifiScanner.getAPCount();
     }
 
     public int getVisibleAPCount() {
-        return (mWifiScanner == null)? 0 :mWifiScanner.getVisibleAPCount();
+        return (mWifiScanner == null) ? 0 : mWifiScanner.getVisibleAPCount();
     }
 
     public int getWifiStatus() {
-        return (mWifiScanner == null)? 0 : mWifiScanner.getStatus();
+        return (mWifiScanner == null) ? 0 : mWifiScanner.getStatus();
     }
 
     public int getCellInfoCount() {
-        return (mCellScanner == null)? 0 :mCellScanner.getCellInfoCount();
+        return (mCellScanner == null) ? 0 : mCellScanner.getCellInfoCount();
     }
 
     public int getLocationCount() {
-        return (mGPSScanner == null)? 0 : mGPSScanner.getLocationCount();
+        return (mGPSScanner == null) ? 0 : mGPSScanner.getLocationCount();
     }
 
     public Location getLocation() {
-        return (mGPSScanner == null)? new Location("null") : mGPSScanner.getLocation();
+        return (mGPSScanner == null) ? new Location("null") : mGPSScanner.getLocation();
     }
 
 }

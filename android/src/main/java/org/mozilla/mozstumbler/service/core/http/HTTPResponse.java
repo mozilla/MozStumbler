@@ -28,17 +28,25 @@ public class HTTPResponse implements IResponse {
         }
     }
 
-    public boolean isErrorCode400BadRequest(){
+    public boolean isErrorCode400BadRequest() {
         return 400 == statusCode;
     }
 
-    public boolean isErrorCode4xx(){
+    public boolean isErrorCode4xx() {
         return statusCode / 100 == 4;
     }
 
     @Override
+    public Map<String, List<String>> getHeaders() {
+        return headers;
+    }
+    @Override
     public String getFirstHeader(String key) {
-        return headers.get(key).get(0);
+        List<String> matches = headers.get(key);
+        if (matches != null) {
+            return matches.get(0);
+        }
+        return null;
     }
 
     public boolean isSuccessCode2XX() {

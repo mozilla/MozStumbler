@@ -6,6 +6,8 @@
 
 package org.mozilla.mozstumbler.service.core.http;
 
+import java.util.List;
+import java.util.Map;
 
 public interface IResponse {
     public int httpResponse();
@@ -17,6 +19,8 @@ public interface IResponse {
 
     public boolean isSuccessCode2XX();
     public boolean isErrorCode4xx();
+
+    Map<String, List<String>> getHeaders();
 
     public String getFirstHeader(String key);
     public boolean isErrorCode400BadRequest();

@@ -6,6 +6,7 @@ package org.mozilla.mozstumbler.service.core.http;
 
 import android.os.Build;
 
+import org.apache.http.protocol.HTTP;
 import org.mozilla.mozstumbler.client.ClientPrefs;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.core.logging.Log;
@@ -130,6 +131,12 @@ public class HttpUtil implements IHttpUtil {
 
     public IResponse get(String urlString, Map<String, String> headers) {
 
+        String HTTP_METHOD = "GET";
+
+        return getHttpResponse(urlString, headers, HTTP_METHOD);
+    }
+
+    private IResponse getHttpResponse(String urlString, Map<String, String> headers, String HTTP_METHOD) {
         URL url = null;
         HttpURLConnection httpURLConnection = null;
 
@@ -146,14 +153,17 @@ public class HttpUtil implements IHttpUtil {
 
         try {
             httpURLConnection = (HttpURLConnection) url.openConnection();
+            if (HTTP_METHOD.toUpperCase().equals("HEAD")) {
+                httpURLConnection.setInstanceFollowRedirects(false);
+            }
             httpURLConnection.setConnectTimeout(5000); // set timeout to 5 seconds
-            httpURLConnection.setRequestMethod("GET");
+
+            httpURLConnection.setRequestMethod(HTTP_METHOD);
             httpURLConnection.setRequestProperty(USER_AGENT_HEADER, userAgent);
         } catch (IOException e) {
             Log.e(LOG_TAG, "Couldn't open a connection: ", e);
             return null;
         }
-
 
         // Workaround for a bug in Android mHttpURLConnection. When the library
         // reuses a stale connection, the connection may fail with an EOFException
@@ -178,6 +188,12 @@ public class HttpUtil implements IHttpUtil {
             httpURLConnection.disconnect();
         }
         return null;
+    }
+
+    @Override
+    public IResponse head(String urlString, Map<String, String> headers) {
+        String HTTP_METHOD = "HEAD";
+        return getHttpResponse(urlString, headers, HTTP_METHOD);
     }
 
     @Override

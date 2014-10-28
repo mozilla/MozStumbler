@@ -201,7 +201,7 @@ public final class MapFragment extends android.support.v4.app.Fragment
         mAccuracyOverlay = new AccuracyCircleOverlay(mRootView.getContext(), sGPSColor);
         mMap.getOverlays().add(mAccuracyOverlay);
 
-        mObservationPointsOverlay = new ObservationPointsOverlay(mRootView.getContext(), mMap);
+        mObservationPointsOverlay = new ObservationPointsOverlay(mRootView.getContext());
         mMap.getOverlays().add(mObservationPointsOverlay);
 
         ObservedLocationsReceiver observer = ObservedLocationsReceiver.getInstance();

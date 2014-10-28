@@ -30,4 +30,6 @@ public interface IHttpUtil {
     IResponse post(String urlString, byte[] data, Map<String, String> headers, boolean precompressed);
 
     IResponse get(String urlString, Map<String, String> headers);
+
+    IResponse head(String latestUrl,  Map<String, String> headers);
 }

@@ -612,6 +612,7 @@ public final class MapFragment extends android.support.v4.app.Fragment
         setShowMLS(prefs.getOnMapShowMLS());
 
         mObservationPointsOverlay.zoomChanged(mMap);
+        mMap.postInvalidate();
     }
 
     private void saveStateToPrefs() {

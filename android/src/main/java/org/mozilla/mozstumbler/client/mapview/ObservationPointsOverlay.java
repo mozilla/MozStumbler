@@ -88,15 +88,13 @@ class ObservationPointsOverlay extends Overlay {
             return;
         }
         final Point point = pj.toPixels(geoPoint, null);
-        final int size = mSize3px * 2; // update a rectangle 2x large as the point radius
-        final Rect dirty = new Rect(point.x - size, point.y - size, point.x + size, point.y + size);
-        dirty.offset(mapView.getScrollX(), mapView.getScrollY());
-        mapView.postInvalidate(dirty.left, dirty.top, dirty.right, dirty.bottom);
 
         if (!isMlsPointUpdate) {
             // add to hashed grid
             addToGridHash(obsPoint, point);
         }
+        
+        mapView.postInvalidate();
     }
 
     private void drawDot(Canvas c, Point p, float radiusInnerRing, Paint fillPaint, Paint strokePaint) {

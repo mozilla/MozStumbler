@@ -3,6 +3,7 @@ package org.mozilla.mozstumbler.client;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import org.mozilla.mozstumbler.BuildConfig;
 import org.mozilla.mozstumbler.service.Prefs;
 import org.mozilla.osmdroid.api.IGeoPoint;
 import org.mozilla.osmdroid.util.GeoPoint;
@@ -96,7 +97,8 @@ public class ClientPrefs extends Prefs {
     }
 
     public boolean isCrashReportingEnabled() {
-        return getBoolPrefWithDefault(CRASH_REPORTING, false);
+        // default to true for GITHUB build
+        return getBoolPrefWithDefault(CRASH_REPORTING, BuildConfig.GITHUB);
     }
 
     public void setMapTileResolutionType(int mapTileResolutionType) {

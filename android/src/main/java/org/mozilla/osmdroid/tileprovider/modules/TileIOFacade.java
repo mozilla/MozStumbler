@@ -109,7 +109,7 @@ public class TileIOFacade  {
         parent = sTileFile.getParentFile();
 
         if (!parent.exists() && !createFolderAndCheckIfExists(parent)) {
-            Log.w(LOG_TAG, "Can't create parent folder for actual PNG. parent [" + parent + "]");
+            Log.w(LOG_TAG, "Can't create parent folder for actual serializable tile. parent [" + parent + "]");
             return false;
         }
 

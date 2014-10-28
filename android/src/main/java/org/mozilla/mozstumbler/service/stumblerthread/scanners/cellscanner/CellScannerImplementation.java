@@ -41,8 +41,10 @@ public class CellScannerImplementation implements CellScanner.CellScannerImpl {
     protected boolean mIsStarted;
     protected int mPhoneType;
     protected final Context mContext;
-    protected volatile int mSignalStrength;
-    protected volatile int mCdmaDbm;
+
+    protected volatile int mSignalStrength = CellInfo.UNKNOWN_SIGNAL;
+    protected volatile int mCdmaDbm = CellInfo.UNKNOWN_SIGNAL;
+
 
     private PhoneStateListener mPhoneStateListener;
 
@@ -86,17 +88,17 @@ public class CellScannerImplementation implements CellScanner.CellScannerImpl {
             }
 
             mPhoneType = mTelephonyManager.getPhoneType();
+            if (mPhoneType == TelephonyManager.PHONE_TYPE_NONE) {
+                // This is almost certainly a tablet or some other wifi only device.
+                return;
+            }
 
             if (mPhoneType != TelephonyManager.PHONE_TYPE_GSM
                 && mPhoneType != TelephonyManager.PHONE_TYPE_CDMA) {
                 throw new UnsupportedOperationException("Unexpected Phone Type: " + mPhoneType);
             }
-            mSignalStrength = CellInfo.UNKNOWN_SIGNAL;
-            mCdmaDbm = CellInfo.UNKNOWN_SIGNAL;
-        }
 
-        mSignalStrength = CellInfo.UNKNOWN_SIGNAL;
-        mCdmaDbm = CellInfo.UNKNOWN_SIGNAL;
+        }
 
         mPhoneStateListener = new PhoneStateListener() {
             @Override
@@ -114,7 +116,10 @@ public class CellScannerImplementation implements CellScanner.CellScannerImpl {
     @Override
     public synchronized void stop() {
         mIsStarted = false;
-        if (mTelephonyManager != null) {
+        if (mTelephonyManager != null &&
+                (mPhoneType == TelephonyManager.PHONE_TYPE_GSM ||
+                  mPhoneType == TelephonyManager.PHONE_TYPE_CDMA) &&
+                mPhoneStateListener != null) {
             mTelephonyManager.listen(mPhoneStateListener, PhoneStateListener.LISTEN_NONE);
         }
         mSignalStrength = CellInfo.UNKNOWN_SIGNAL;

@@ -176,10 +176,15 @@ if (signFile.exists()) {
     Properties p = new Properties()
     p.load(new FileInputStream(signFile))
 
-    android.signingConfigs.release.storeFile = rootProject.file(p.StoreFile)
-    android.signingConfigs.release.storePassword = p.StorePassword
-    android.signingConfigs.release.keyAlias = p.KeyAlias
-    android.signingConfigs.release.keyPassword = p.KeyPassword
+    if (p.StoreFile) {
+        android.signingConfigs.release.storeFile = rootProject.file(p.StoreFile)
+        android.signingConfigs.release.storePassword = p.StorePassword
+        android.signingConfigs.release.keyAlias = p.KeyAlias
+        android.signingConfigs.release.keyPassword = p.KeyPassword
+    } else {
+        println "No StoreFile config was found in private.properties.";
+        android.buildTypes.release.signingConfig = null
+    }
 } else {
     println "No private.properties file was found.";
     android.buildTypes.release.signingConfig = null

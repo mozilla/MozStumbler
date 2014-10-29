@@ -17,16 +17,19 @@ import android.util.Log;
 import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.core.http.IHttpUtil;
+import org.mozilla.mozstumbler.service.core.http.IResponse;
 import org.mozilla.mozstumbler.service.utils.NetworkInfo;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.List;
+import java.util.Map;
 
 public class Updater {
     private static final String LOG_TAG = AppGlobals.LOG_PREFIX + Updater.class.getSimpleName();
-    private static final String VERSION_URL = "https://raw.github.com/mozilla/MozStumbler/master/VERSION";
+    private static final String LATEST_URL = "https://github.com/mozilla/MozStumbler/releases/latest";
     private static final String APK_URL_FORMAT = "https://github.com/mozilla/MozStumbler/releases/download/v%s/MozStumbler-v%s.apk";
     private final IHttpUtil httpClient;
 
@@ -51,20 +54,39 @@ public class Updater {
             return false;
         }
 
-        new AsyncTask<Void, Void, String>() {
+        new AsyncTask<Void, Void, IResponse>() {
             @Override
-            public String doInBackground(Void... params) {
-                try {
-                    return  httpClient.getUrlAsString(VERSION_URL);
-                } catch (IOException ioEx) {
-                    Log.e(LOG_TAG, "", ioEx);
-                    return null;
-                }
-
+            public IResponse doInBackground(Void... params) {
+                return httpClient.head(LATEST_URL, null);
             }
 
             @Override
-            public void onPostExecute(String latestVersion) {
+            public void onPostExecute(IResponse response) {
+                if (response == null) {
+                    return;
+                }
+                Map<String, List<String>> headers = response.getHeaders();
+                if (headers == null) {
+                    return;
+                }
+                Log.i(LOG_TAG, "Got headers: "+ headers.toString());
+                if (headers.get("Location") == null) {
+                    return;
+                }
+                String locationUrl = headers.get("Location").get(0);
+                if (locationUrl == null || locationUrl.length() < 1) {
+                    return;
+                }
+                String[] parts = locationUrl.split("/");
+                if (parts.length < 2) {
+                    return;
+                }
+                String tag = parts[parts.length-1];
+                if (tag.length() < 2) {
+                    return;
+                }
+                String latestVersion = tag.substring(1); // strip the 'v' from the beginning
+
                 String installedVersion = PackageUtils.getAppVersion(activity);
 
                 Log.d(LOG_TAG, "Installed version: " + installedVersion);
@@ -122,7 +144,7 @@ public class Updater {
         msg = String.format(msg, installedVersion, latestVersion);
 
         if (installedVersion.startsWith("0.") &&
-                latestVersion.startsWith("1.")) {
+           latestVersion.startsWith("1.")) {
             // From 0.x to 1.0 and higher, the keystore changed
             msg += " " + context.getString(R.string.must_uninstall_to_update);
         }

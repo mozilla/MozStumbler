@@ -47,8 +47,9 @@ class ObservationPointsOverlay extends Overlay {
     private final int mSize3px;
 
     LinkedHashMap<Integer, ObservationPoint> mHashedGrid;
+    private Point mHashedGridAnchorPoint = new Point(0,0);
 
-    ObservationPointsOverlay(Context ctx, MapView mapView) {
+    ObservationPointsOverlay(Context ctx) {
         super(ctx);
         mConvertPx = new DevicePixelConverter(ctx);
 
@@ -88,15 +89,13 @@ class ObservationPointsOverlay extends Overlay {
             return;
         }
         final Point point = pj.toPixels(geoPoint, null);
-        final int size = mSize3px * 2; // update a rectangle 2x large as the point radius
-        final Rect dirty = new Rect(point.x - size, point.y - size, point.x + size, point.y + size);
-        dirty.offset(mapView.getScrollX(), mapView.getScrollY());
-        mapView.postInvalidate(dirty.left, dirty.top, dirty.right, dirty.bottom);
 
         if (!isMlsPointUpdate) {
             // add to hashed grid
-            addToGridHash(obsPoint, point);
+            addToGridHash(obsPoint, point, new Point(mapView.getScrollX(), mapView.getScrollY()));
         }
+        
+        mapView.postInvalidate();
     }
 
     private void drawDot(Canvas c, Point p, float radiusInnerRing, Paint fillPaint, Paint strokePaint) {
@@ -115,8 +114,8 @@ class ObservationPointsOverlay extends Overlay {
         c.drawCircle(p.x, p.y, size, mWifiPaint);
     }
 
-    private void addToGridHash(ObservationPoint obsPoint, Point screenPoint) {
-        int hash = toGridPoint(screenPoint.x, screenPoint.y);
+    private void addToGridHash(ObservationPoint obsPoint, Point screenPoint, Point currentScroll) {
+        int hash = hashedGridPoint(screenPoint.x, screenPoint.y, currentScroll.x, currentScroll.y);
         ObservationPoint gp = mHashedGrid.get(hash);
         if (gp == null || toTypeBitField(obsPoint) > toTypeBitField(gp)) {
             mHashedGrid.put(hash, obsPoint);
@@ -125,21 +124,23 @@ class ObservationPointsOverlay extends Overlay {
 
     public void zoomChanged(MapView mapView) {
         mHashedGrid = new LinkedHashMap<Integer, ObservationPoint>();
+        mHashedGridAnchorPoint = new Point(mapView.getScrollX(), mapView.getScrollY());
         final Projection pj = mapView.getProjection();
         LinkedList<ObservationPoint> points = ObservedLocationsReceiver.getInstance().getObservationPoints();
         final Iterator<ObservationPoint> i = points.iterator();
         final Point gps = new Point();
         ObservationPoint point;
+        Point zero = new Point(0, 0);
         while (i.hasNext()) {
             point = i.next();
             pj.toPixels(point.pointGPS, gps);
-            addToGridHash(point, gps);
+            addToGridHash(point, gps, zero);
         }
     }
 
-    private int toGridPoint(int x, int y) {
-        x = (int) Math.round(x / (mSize3px * 2.0));
-        y = (int) Math.round(y / (mSize3px * 2.0));
+    private int hashedGridPoint(int x, int y, int scrollX, int scrollY) {
+        x = (int) Math.round((x - mHashedGridAnchorPoint.x + scrollX) / (mSize3px * 2.0));
+        y = (int) Math.round((y - mHashedGridAnchorPoint.y + scrollY) / (mSize3px * 2.0));
         return x * 10000 + y;
     }
 

@@ -97,8 +97,7 @@ public class TileDownloaderDelegate {
         }
 
         if (resp.httpResponse() == 304) {
-            // Update the cache control layer if the etag is still current
-            serializableTile.setHeader("cache-control", Long.toString(System.currentTimeMillis()+(300*1000)));
+            // Resave the file - this will automatically update the cache-control value
             serializableTile.saveFile();
             return true;
         }

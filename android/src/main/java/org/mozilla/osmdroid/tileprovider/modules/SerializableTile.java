@@ -26,6 +26,11 @@ import java.util.Map;
  */
 public class SerializableTile {
 
+    // Cache tiles locally for 12 hours. Ichanea doesn't update tiles
+    // more than once a day anyway and this should be good enough to 
+    // enable offline stumbles.
+    public static final long CACHE_TILE_MS = 60 * 60 * 12 * 1000;
+
     private static final String LOG_TAG =
             AppGlobals.LOG_PREFIX + SerializableTile.class.getSimpleName();
 
@@ -120,7 +125,7 @@ public class SerializableTile {
             myFile = aFile;
             // Always update cache-control on save
             setHeader("cache-control",
-                    Long.toString((300 * 1000) + System.currentTimeMillis()));
+                    Long.toString(CACHE_TILE_MS + System.currentTimeMillis()));
             FileOutputStream fos = new FileOutputStream(aFile);
             fos.write(this.asBytes());
             fos.flush();

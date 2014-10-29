@@ -24,16 +24,16 @@
     <string name="about_mapbox">Erfahren Sie mehr auf http://www.mapbox.com</string>
     <string name="about_legal_aosp">Einige Symbole in dieser Anwendung wurden Werken nachempfunden, welche vom Android Open Source Project erstellt und verteilt werden. Sie werden in Übereinstimmung mit der Creative Commons - Attribution 2.5 Lizenz verwendet.</string>
     <string name="about_legal_flaticons">Die GPS-, Funkturm-, Wi-Fi- und Fernglas-Symbole wurden von Freepik erstellt und auf http://www.flaticon.com unter folgender Lizenz veröffentlicht: https://creativecommons.org/licenses/by-nd/3.0</string>
-    <string name="upload_observations_sent_title">Gesendet (insgesamt)</string>
+    <string name="upload_observations_sent_title">Vorherige Sitzungen</string>
     <string name="metrics_observations_last_upload_time_title">Letzter Upload:</string>
     <string name="metrics_observations_title">Berichte:</string>
     <string name="metrics_observations_wifis_title">Wi-Fi-Netzwerke:</string>
     <string name="metrics_observations_cell_towers_title">Mobilfunk-Netzwerke:</string>
     <string name="upload_observations_in_queue_title">Bereit zum Senden</string>
-    <string name="upload_wifi_only_title">Auto-Hochladen nur über Wi-Fi</string>
+    <string name="upload_wifi_only_title">Nur über Wi-Fi automatisch hochladen</string>
     <string name="upload_wifi_only_summary">Diese Option reduziert den Datenverbrauch im Mobilfunknetz. Das manuelle Betätigen des Hochladenbuttons in den Metriken funktioniert aber weiterhin.</string>
     <string name="metrics_activity_title">Metriken</string>
-    <string name="metrics_this_session">Diese Sitzung</string>
+    <string name="metrics_this_session">Aktuelle Sitzung</string>
     <string name="drawer_map_option_show_mls_locations">MLS Ortungen anzeigen</string>
     <string name="title_activity_log">Protokoll</string>
     <string name="action_view_log">Protokoll anzeigen</string>
@@ -79,6 +79,8 @@
     <string name="map_tile_resolution_options_label">Kartenkacheloptionen:</string>
     <string name="enable_crash_reporting">Absturzberichte einschalten</string>
     <string name="privacy_policy">Datenschutzerklärung:</string>
+    <string name="satellites_separator">/</string>
+    <string name="must_uninstall_to_update">Sie müssen zuerst eine Deinstallation ausführen, um auf die neueste Version zu aktualisieren.</string>
     <string-array name="map_tile_resolution_options">
         <item>Standard</item>
         <item>Nur hohe Auflösung</item>

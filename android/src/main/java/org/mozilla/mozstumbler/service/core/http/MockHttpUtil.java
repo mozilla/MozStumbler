@@ -42,6 +42,11 @@ public class MockHttpUtil implements IHttpUtil {
     }
 
     @Override
+    public IResponse head(String latestUrl, Map<String, String> headers) {
+        return null;
+    }
+
+    @Override
     public IResponse post(String urlString, byte[] data, Map<String, String> headers, boolean precompressed) {
         return null;
     }

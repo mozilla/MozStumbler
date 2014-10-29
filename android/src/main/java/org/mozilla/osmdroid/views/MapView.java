@@ -345,8 +345,7 @@ public class MapView extends ViewGroup implements IMapView, MapViewConstants,
                 IGeoPoint geoPoint = pj.fromPixels(snapPoint.x, snapPoint.y, null);
                 getController().animateTo(geoPoint);
             }
-
-            mTileProvider.rescaleCache(pj, newZoomLevel, curZoomLevel, getScreenRect(null));
+            invalidate();
         }
 
         // do callback on listener

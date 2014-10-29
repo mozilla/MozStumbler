@@ -1,8 +1,16 @@
 // each of the version numbers must be 0-99
-def versionMajor = 0
-def versionMinor = 42
-def versionPatch = 0
-def versionBuild = 2 // this is non-zero for any dev build
+def versionMajor = 1
+def versionMinor = 2 // minor feature releases
+def versionPatch = 0 // This should be bumped for hot fixes
+def versionBuild = 0 // This is used to denote which release 
+                     // flavor is used (github/playstore/fdroid)
+
+// Double check the versioning
+for (versionPart in [versionBuild, versionPatch, versionMinor, versionMajor]) {
+    assert 0 <= versionPart
+    assert versionPart <= 99
+}
+
 
 buildscript {
     repositories {
@@ -273,9 +281,6 @@ void writeVersionName(String versionName) {
     def matcherVersionNumber = patternVersionNumber.matcher(manifestText)
     def manifestContent = matcherVersionNumber.replaceAll("versionName=\"" + versionName + "\"")
     manifestFile.write(manifestContent)
-
-    def versionFile = file("../VERSION")
-    versionFile.write(versionName)
 }
 
 // Yay for apk basenames that you can only figure out by reading the

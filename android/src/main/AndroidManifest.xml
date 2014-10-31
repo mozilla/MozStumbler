@@ -16,7 +16,7 @@
 
     <uses-feature android:name="android.hardware.location" />
     <uses-feature android:name="android.hardware.location.gps" />
-    <uses-feature android:name="android.hardware.telephony" />
+    <uses-feature android:name="android.hardware.telephony" android:required="false" />
     <uses-feature android:name="android.hardware.wifi" />
 
     <application

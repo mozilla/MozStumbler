@@ -31,10 +31,8 @@ apply plugin: 'robolectric'
 
 repositories {
     mavenCentral()
+    jcenter()
     maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
-    ivy {
-        url 'http://mozilla-services.github.io/ivy-repo' 
-    }
 }
 
 import de.undercouch.gradle.tasks.download.Download

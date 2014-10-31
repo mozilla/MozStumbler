@@ -1,5 +1,5 @@
 test: unittest
-	./gradlew testUnittest --info
+	./gradlew testGithubUnittest --info
 
 
 unittest:

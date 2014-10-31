@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Mozilla Stumbler</string>
+    <string name="action_about">关于 Mozilla Stumbler</string>
+    <string name="action_preferences">设置</string>
+    <string name="start_scanning">开始扫描</string>
+    <string name="stop_scanning">停止扫描</string>
+    <string name="view_leaderboard">查看积分榜</string>
+    <string name="service_name">Mozilla Stumbler</string>
+    <string name="service_scanning">扫描 Wi-Fi 和移动基站</string>
+    <string name="enter_nickname">输入昵称 (可选)</string>
+    <string name="enter_nickname_title">昵称: </string>
+    <string name="enter_nickname_longtext">你的昵称将被显示在积分榜中</string>
+    <string name="update_title">下载 Mozilla Stumbler 更新？</string>
+    <string name="update_message">当前版本: %1$s\n最新版本: %2$s</string>
+    <string name="update_now">现在更新</string>
+    <string name="update_later">稍后更新</string>
+    <string name="yes">是</string>
+    <string name="no">否</string>
+    <string name="about_version">版本 %1$s</string>
+    <string name="about_openstreetmap">地图图层 © OpenStreetMap 贡献者\nhttp://www.openstreetmap.org</string>
+    <string name="about_mapbox_title">MapBox</string>
+    <string name="about_mapbox">了解我们的地图提供商…</string>
+    <string name="about_legal_aosp">本应用中的部分图标是 Android 开源项目创作并以知识共享 2.5 署名许可协议分享的作品</string>
+    <string name="upload_observations_sent_title">已发送</string>
+    <string name="metrics_observations_last_upload_time_title">最近一次上传时间：</string>
+    <string name="metrics_observations_title">报告：</string>
+    <string name="metrics_observations_wifis_title">Wi-Fi 接入点：</string>
+    <string name="metrics_observations_cell_towers_title">移动基站：</string>
+    <string name="upload_observations_in_queue_title">排队中</string>
+
+
+
+    <string name="upload_wifi_only_title">仅通过 Wi-Fi 网络上传</string>
+    <string name="upload_wifi_only_summary">这一选项有助于减少您的移动数据流量</string>
+
+
+
+    <string name="title_activity_log">日志</string>
+    <string name="action_view_log">查看日志</string>
+    <string name="scroll_to_start">向前滚动</string>
+    <string name="scroll_to_end">向后滚动</string>
+</resources>

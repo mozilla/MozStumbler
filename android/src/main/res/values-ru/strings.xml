@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Mozilla Stumbler</string>
+    <string name="action_about">О программе</string>
+    <string name="action_preferences">Настройки</string>
+    <string name="start_scanning">Начать сканирование</string>
+    <string name="stop_scanning">Остановить сканирование</string>
+    <string name="view_leaderboard">Открыть таблицу лидеров</string>
+    <string name="service_name">Mozilla Stumbler</string>
+    <!--<string name="wifi_disabled">0 (Wi-Fi disabled)</string> translation missing-->
+    <string name="service_scanning">Сканирование Wi-Fi и сотовых сетей</string>
+    <string name="enter_nickname">Укажите свой псевдоним (не обязательно)</string>
+    <string name="enter_nickname_title">Псевдоним: </string>
+    <string name="enter_nickname_longtext">Ваш псевдоним появится в таблице лидеров.</string>
+    <string name="update_title">Загрузить обновление Mozilla Stumbler?</string>
+    <string name="update_message">Установленная версия: %1$s\nПоследняя версия: %2$s</string>
+    <string name="update_now">Обновить сейчас</string>
+    <string name="update_later">Обновить позже</string>
+    <string name="yes">Да</string>
+    <string name="no">Нет</string>
+    <string name="about_version">Версия %1$s</string>
+	<!--translations missing
+	<string name="about_openstreetmap">Map view tiles © OpenStreetMap contributors\nhttp://www.openstreetmap.org</string>
+    <string name="about_mapbox_title">MapBox</string>-->
+    <string name="about_mapbox">Информация о картографическом провайдере…</string>
+    <string name="about_legal_aosp">Некоторые изображения в этом приложении созданы и опубликованы под лицензией AOSP (Android Open Source Project) и используются в соответствии с условиями, описанными в лицензии Creative Commons 2.5</string>
+    <string name="upload_observations_sent_title">Уже оправлено</string>
+    <string name="metrics_observations_last_upload_time_title">Время отправки:</string>
+    <string name="metrics_observations_title">Измерений:</string>
+    <string name="metrics_observations_wifis_title">Wi-Fi точки:</string>
+    <string name="metrics_observations_cell_towers_title">GSM соты:</string>
+    <string name="upload_observations_in_queue_title">В очереди</string>
+
+
+
+    <string name="upload_wifi_only_title">Передача данных только через Wi-Fi</string>
+    <string name="upload_wifi_only_summary">Эта опция позволяет экономить мобильный трафик.</string>
+    <!--translations missing
+
+
+
+	
+	<string name="title_activity_log">Log</string>
+    <string name="action_view_log">View Log</string>
+    <string name="scroll_to_start">Scroll to Top</string>
+    <string name="scroll_to_end">Scroll to End</string>-->
+</resources>

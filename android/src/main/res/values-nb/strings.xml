@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Mozilla Stumbler</string>
+    <string name="action_about">Om Mozilla Stumbler</string>
+    <string name="action_preferences">Innstillinger</string>
+    <string name="start_scanning">Start innsamling</string>
+    <string name="stop_scanning">Stopp innsamling</string>
+    <string name="view_leaderboard">Vis resultatliste</string>
+    <string name="service_name">Mozilla Stumbler</string>
+    <!--<string name="wifi_disabled">0 (Wi-Fi disabled)</string> translation missing-->
+    <string name="service_scanning">Samler inn trådløspunkt og mobilnettverk</string>
+    <string name="enter_nickname">Skriv inn kallenavn (valgfri)</string>
+    <string name="enter_nickname_title">Kallenavn: </string>
+    <string name="enter_nickname_longtext">Kallenavnet vil vises på resultatlisten.</string>
+    <string name="update_title">Last ned oppdatering?</string>
+    <string name="update_message">Installert versjon: %1$s\nSiste versjon: %2$s</string>
+    <string name="update_now">Oppdater nå</string>
+    <string name="update_later">Oppdater senere</string>
+    <string name="yes">Ja</string>
+    <string name="no">Nei</string>
+    <string name="about_version">Versjon %1$s</string>
+	<!--translations missing
+	<string name="about_openstreetmap">Map view tiles © OpenStreetMap contributors\nhttp://www.openstreetmap.org</string>
+    <string name="about_mapbox_title">MapBox</string>-->
+    <string name="about_mapbox">Lær mer om vår kartleverandør…</string>
+    <string name="about_legal_aosp">Noen av ikonene i denne appen er gjenbruk av arbeid laget og delt av Androids åpen kildekode-prosjekt og blir brukt i henhold til Creative Commons 2.5-navngivelseslisensen.</string>
+    <string name="upload_observations_sent_title">Sendt</string>
+    <string name="metrics_observations_last_upload_time_title">Siste opplastingstidspunkt:</string>
+    <string name="metrics_observations_title">Observasjoner:</string>
+    <string name="metrics_observations_wifis_title">Trådløspunkt:</string>
+    <string name="metrics_observations_cell_towers_title">Mobilnettverk:</string>
+    <string name="upload_observations_in_queue_title">I kø</string>
+
+
+
+    <string name="upload_wifi_only_title">Last bare opp via trådløsnett</string>
+    <string name="upload_wifi_only_summary">Dette valget reduserer databruk via mobilnettverk.</string>
+    <!--translations missing
+
+
+
+	
+	<string name="title_activity_log">Log</string>
+    <string name="action_view_log">View Log</string>
+    <string name="scroll_to_start">Scroll to Top</string>
+    <string name="scroll_to_end">Scroll to End</string>-->
+</resources>

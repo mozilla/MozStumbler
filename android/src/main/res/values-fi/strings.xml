@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Mozilla Stumbler</string>
+    <string name="action_about">Tietoja</string>
+    <string name="action_preferences">Asetukset</string>
+    <string name="start_scanning">Aloita skannaus</string>
+    <string name="stop_scanning">Lopeta skannaus</string>
+    <string name="view_leaderboard">Näytä pistetilasto</string>
+    <string name="service_name">Mozilla Stumbler</string>
+    <string name="service_scanning">Skannataan Wi-Fi-tukiasemia ja verkkomastoja</string>
+    <string name="enter_nickname">Valitse nimimerkki (ei pakollinen)</string>
+    <string name="enter_nickname_title">Nimimerkki: </string>
+    <string name="enter_nickname_longtext">Nimimerkkisi näytetään pistetilastossa.</string>
+    <string name="update_title">Lataa Mozilla Stumblerin päivitys?</string>
+    <string name="update_message">Asennettu versio: %1$s\nUusin versio: %2$s</string>
+    <string name="update_now">Päivitä nyt</string>
+    <string name="update_later">Päivitä myöhemmin</string>
+    <string name="yes">Kyllä</string>
+    <string name="no">Ei</string>
+    <string name="about_version">Versio %1$s</string>
+    <string name="about_openstreetmap">Karttanäkymä © OpenStreetMapin osallistujat\nhttp://www.openstreetmap.org</string>
+    <string name="about_mapbox_title">Kartta</string>
+    <string name="about_mapbox">Lisätietoja karttapalvelusta…</string>
+    <string name="about_legal_aosp">Tämä sovellus sisältää ikoneita Android Open Source -projektista. Käytössä olevat ikonit on lisensoitu Creative Commons 2.5 Attribution -lisenssillä.</string>
+    <string name="upload_observations_sent_title">Lähetetty</string>
+    <string name="metrics_observations_last_upload_time_title">Edellisen lähetyksen aika:</string>
+    <string name="metrics_observations_title">Tietoja:</string>
+    <string name="metrics_observations_wifis_title">Wi-Fi:</string>
+    <string name="metrics_observations_cell_towers_title">Mastoja:</string>
+    <string name="upload_observations_in_queue_title">Jonossa</string>
+
+
+
+    <string name="upload_wifi_only_title">Lähetä vain Wi-Fi:n yli</string>
+    <string name="upload_wifi_only_summary">Tämä asetus vähentää datan käyttöä matkapuhelinverkon yli</string>
+
+    <string name="title_activity_log">Loki</string>
+    <string name="action_view_log">Näytä loki</string>
+    <string name="scroll_to_start">Siirry alkuun</string>
+    <string name="scroll_to_end">Siirry loppuun</string>
+</resources>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">मोझस्टंबलर</string>
+    <string name="action_about">मोझस्टंबलर बद्दल</string>
+    <string name="action_preferences">मांडणी पर्याय</string>
+    <string name="start_scanning">सर्वेक्षण सुरु करा</string>
+    <string name="stop_scanning">सर्वेक्षण बंद करा</string>
+    <string name="view_leaderboard">अग्रेसर वापरकर्ता फलक बघा</string>
+    <string name="service_name">मोझिला स्टंबलर</string>
+    <string name="service_scanning">Wi-Fi आणि भ्रमणध्वनी जाळे शोधत आहे</string>
+    <string name="enter_nickname">टोपणनाव टाका (ऐच्छिक)</string>
+    <string name="enter_nickname_title">टोपणनाव: </string>
+    <string name="enter_nickname_longtext">तुमचे टोपणनाव अग्रेसर वापरकर्ता फलकावर दिसेल.</string>
+    <string name="update_title">मोझस्टंबलर आवृत्ती अद्ययावत करायची का?</string>
+    <string name="update_message">प्रतिष्ठापित आवृत्ती: %1$s\nनवीनतम आवृत्ती: %2$s</string>
+    <string name="update_now">आता अद्ययावत करा</string>
+    <string name="update_later">नंतर अद्ययावत करा</string>
+    <string name="yes">हो</string>
+    <string name="no">नाही</string>
+    <string name="about_version">आवृत्ती %1$s</string>
+    <string name="about_openstreetmap">नकाशा दर्शक टाईल्स © OpenStreetMap सदस्य\nhttp://www.openstreetmap.org</string>
+    <string name="about_mapbox_title">मॅपबॉक्स</string>
+    <string name="about_mapbox">आमच्या नकाशा पुरवठादाराविषयी अधिक जाणून घ्या…</string>
+    <string name="about_legal_aosp">या अनुप्रयोगामधे वापरण्यात आलेल्या काही प्रतिमा अँड्रॉइड मुक्त स्रोत प्रकल्पाने तयार करून विभागून दिलेल्या आहेत व त्या क्रिएटीव कॉमन्स २.५ विशेष परवाना अटींनुसार वापरल्या आहेत.</string>
+    
+    <string name="upload_observations_sent_title">पाठवलेली निरीक्षणे</string>
+    <string name="metrics_observations_last_upload_time_title">शेवटची निरीक्षणे पाठवण्याची वेळ:</string>
+    <string name="metrics_observations_title">निरीक्षणे:</string>
+    <string name="metrics_observations_wifis_title">Wi-Fi प्रवेश बिंदू:</string>
+    <string name="metrics_observations_cell_towers_title">भ्रमणध्वनी जाळे :</string>
+    <string name="upload_observations_in_queue_title">पाठवण्याच्या प्रतीक्षेत असलेली निरीक्षणे</string>
+
+
+
+    <string name="upload_wifi_only_title">फक्त Wi-Fi वर निरीक्षणे पाठवा</string>
+    <string name="upload_wifi_only_summary">हा पर्याय आपला भ्रमणध्वनी जाळ्यावरील डेटा वापर कमी करेल.</string>
+
+
+
+    <string name="title_activity_log">नोंदवही</string>
+    <string name="action_view_log">नोंदी बघा</string>
+    <string name="scroll_to_start">सुरुवात बघा</string>
+    <string name="scroll_to_end">शेवट बघा</string>
+</resources>

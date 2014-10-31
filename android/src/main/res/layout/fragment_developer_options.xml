@@ -1,0 +1,54 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin">
+
+
+    <View
+        android:id="@+id/line1"
+        android:layout_height="1dp"
+        android:layout_width="fill_parent"
+        android:background="#55ffffff"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        />
+
+    <CheckBox
+        android:id="@+id/toggleCrashReports"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/enable_crash_reporting"
+        android:layout_below="@id/line1"/>
+
+    <View
+        android:id="@+id/line2"
+        android:layout_below="@id/toggleCrashReports"
+        android:layout_height="1dp"
+        android:layout_width="fill_parent"
+        android:background="#55ffffff"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/map_tile_resolution_options_label"
+        android:id="@+id/textView"
+        android:layout_below="@id/line2"/>
+    <Spinner
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/spinnerMapResolutionOptions"
+        android:drawSelectorOnTop="true"
+        android:entries="@array/map_tile_resolution_options"
+        android:layout_toRightOf="@+id/textView"
+        android:layout_toEndOf="@+id/textView"
+        android:layout_alignTop="@id/textView"/>
+
+
+</RelativeLayout>

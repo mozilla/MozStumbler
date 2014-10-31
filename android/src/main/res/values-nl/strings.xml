@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Mozilla Stumbler</string>
+    <string name="action_about">Over Mozilla Stumbler</string>
+    <string name="action_preferences">Instellingen</string>
+    <!--<string name="action_upload_observations">Upload observations</string> translation missing-->
+    <string name="start_scanning">Begin met scannen</string>
+    <string name="stop_scanning">Stop met scannen</string>
+    <string name="view_leaderboard">Bekijk scorebord</string>
+    <string name="service_name">Mozilla Stumbler</string>
+    <!--<string name="wifi_disabled">0 (Wi-Fi disabled)</string> translation missing-->
+    <!--<string name="coordinate">%1$.4f, %2$.4f</string> translation missing-->
+    <string name="service_scanning">Bezig met scannen van Wi-Fi en mobiele netwerken</string>
+    <string name="enter_nickname">Alias (niet verplicht)</string>
+    <string name="enter_nickname_title">Alias: </string>
+    <string name="enter_nickname_longtext">Alias wordt gepubliceerd op het scorebord.</string>
+    <string name="update_title">Download Mozilla Stumbler-update?</string>
+    <string name="update_message">Geïnstalleerde versie: %1$s\nMeeste recente versie: %2$s</string>
+    <string name="update_now">Nu updaten</string>
+    <string name="update_later">Later updaten</string>
+    <string name="yes">Ja</string>
+    <string name="no">Nee</string>
+    <string name="about_version">Versie %1$s</string>
+	<!--translations missing
+	<string name="about_openstreetmap">Map view tiles © OpenStreetMap contributors\nhttp://www.openstreetmap.org</string>
+    <string name="about_mapbox_title">MapBox</string>-->
+    <string name="about_mapbox">Ontdek meer over mapbox…</string>
+    <string name="about_legal_aosp">Sommige iconografie in deze app is overgenomen uit het werk gemaakt en gedeeld door het Android Open Source Project en gebruikt volgens de voorwaarden zoals beschreven in de Creative Commons Attribution 2.5 License.</string>
+    <!-- translations missing
+    <string name="upload_observations_sent_title">Inviati</string>
+    <string name="metrics_observations_last_upload_time_title">Ultimo invio dati:</string>
+    <string name="metrics_observations_title">Osservazioni:</string>
+    <string name="metrics_observations_wifis_title">Access point Wi-Fi:</string>
+    <string name="metrics_observations_cell_towers_title">Celle:</string>
+    <string name="upload_observations_in_queue_title">In coda</string>
+
+
+
+    <string name="upload_observations_button">Invia</string>
+    <string name="upload_observations_dialog_title">Invia osservazioni</string>-->
+    <string name="upload_wifi_only_title">Upload alleen over een wifiverbinding</string>
+    <string name="upload_wifi_only_summary">Deze optie zal uw mobiel dataverbruik verminderen.</string>
+    <!--translations missing
+
+
+
+	
+	<string name="title_activity_log">Log</string>
+    <string name="action_view_log">View Log</string>
+    <string name="scroll_to_start">Scroll to Top</string>
+    <string name="scroll_to_end">Scroll to End</string>-->
+</resources>

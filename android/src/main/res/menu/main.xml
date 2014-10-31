@@ -1,0 +1,15 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/action_view_leaderboard"
+        android:icon="@drawable/ic_action_podium"
+        android:menuCategory="system"
+        android:title="@string/view_leaderboard"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_preferences"
+        android:icon="@drawable/ic_action_settings"
+        android:menuCategory="system"
+        android:title="@string/action_preferences"
+        app:showAsAction="never" />
+</menu>

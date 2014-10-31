@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Mozilla Stumbler</string>
+    <string name="action_about">เกี่ยวกับ Mozilla Stumbler</string>
+    <string name="action_preferences">ตั้งค่า</string>
+    <string name="start_scanning">เริ่มการแสกน</string>
+    <string name="stop_scanning">หยุดการแสกน</string>
+    <string name="view_leaderboard">ดูตารางคะแนน</string>
+    <string name="service_name">Mozilla Stumbler</string>
+    <string name="service_scanning">กำลังแสกนหาเครือข่าย Wi-Fi และมือถือ</string>
+    <string name="enter_nickname">ใส่ชื่อเล่น (ไม่จำเป็น)</string>
+    <string name="enter_nickname_title">ชื่อเล่น: </string>
+    <string name="enter_nickname_longtext">ชื่อเล่นของคุณจะถูกแสดงในตารางคะแนน</string>
+    <string name="update_title">ดาวน์โหลดอัพเดท Mozilla Stumbler?</string>
+    <string name="update_message">รุ่นที่ลง: %1$s\nรุ่นล่าสุด: %2$s</string>
+    <string name="update_now">ปรับปรุงตอนนี้</string>
+    <string name="update_later">ปรับปรุงภายหลัง</string>
+    <string name="yes">ใช่</string>
+    <string name="no">ไม่ใช่</string>
+    <string name="about_version">รุ่น %1$s</string>
+    <string name="about_openstreetmap">Map view tiles © OpenStreetMap contributors\nhttp://www.openstreetmap.org</string>
+    <string name="about_mapbox_title">MapBox</string>
+    <string name="about_mapbox">เรียนรู้เกี่ยวกับผู้ให้บริการแผนที่…</string>
+    <string name="about_legal_aosp">Some iconography in this app is reproduced from work created and shared by the Android Open Source Project and used according to terms described in the Creative Commons 2.5 Attribution License.</string>
+    <string name="upload_observations_sent_title">ส่งแล้ว</string>
+    <string name="metrics_observations_last_upload_time_title">ส่งครั้งล่าสุด:</string>
+    <string name="metrics_observations_title">จำนวนค่าที่ส่ง:</string>
+    <string name="metrics_observations_wifis_title">Wi-Fi แอคเซสพอยต์:</string>
+    <string name="metrics_observations_cell_towers_title">เสาสัญญานมือถือ:</string>
+    <string name="upload_observations_in_queue_title">ในคิว</string>
+
+
+
+    <string name="upload_wifi_only_title">อัพโหลดเฉพาะเวลาต่อ Wi-Fi</string>
+    <string name="upload_wifi_only_summary">ค่านี้จะช่วยลดการใช้ข้อมูลผ่านเครือข่ายมือถือ</string>
+
+
+
+    <string name="title_activity_log">บันทึก</string>
+    <string name="action_view_log">ดูค่าบันทึก</string>
+    <string name="scroll_to_start">Scroll to Top</string>
+    <string name="scroll_to_end">Scroll to End</string>
+</resources>

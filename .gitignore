@@ -7,9 +7,23 @@ assets
 bin
 gen
 build
-gradle.properties
-*.keystore
 local.properties
 
 # ignore vim swap files
 *.sw?
+
+# JAR releases
+android/libs/*.jar
+
+# ctags
+tags
+
+gradle.properties
+
+# Mozilla Special Sauce
+# Never commit your private.properties file or your keystore
+private.properties
+*.keystore
+
+# Ignore final release APK builds
+outputs/*

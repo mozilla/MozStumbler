@@ -1,91 +1,17 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:0.12.+'
-    }
+	repositories {
+		mavenCentral()
+	}
+
+	dependencies {
+		classpath 'com.android.tools.build:gradle:0.12.2'
+	}
 }
 
-apply plugin: 'android'
-apply plugin: 'eclipse'
-
-repositories {
-    mavenCentral()
-}
-
-android {
-    compileSdkVersion 19
-    buildToolsVersion '19.1.0'
-
-    dependencies {
-        compile "org.osmdroid:osmdroid-android:4.2"
-        compile 'org.slf4j:slf4j-android:1.7.7'
-        compile "com.android.support:support-v4:19.1.+"
-    }
-
-    sourceSets {
-        main {
-            manifest.srcFile 'AndroidManifest.xml'
-            java.srcDirs = ['src']
-            aidl.srcDirs = ['src']
-            renderscript.srcDirs = ['src']
-            resources.srcDirs = ['src']
-            res.srcDirs = ['res']
-            assets.srcDirs = ['assets']
-        }
-    }
-
-    defaultConfig {
-        buildConfigField "String", "MOZILLA_API_KEY", getMozillaApiKey()
-        buildConfigField "String", "TILE_SERVER_URL", getTileServerUrl()
-    }
-
-    signingConfigs {
-        release
-    }
-
-    buildTypes {
-        debug {
-            jniDebugBuild true
-        }
-
-        release {
-            runProguard true
-            proguardFile 'proguard.cfg'
-            signingConfig signingConfigs.release
-        }
-    }
-
-    lintOptions {
-        abortOnError true
-        disable 'MissingTranslation'
-    }
-}
-
-tasks.withType(JavaCompile) {
-    options.compilerArgs = ['-Xlint:all', '-Werror', '-Xlint:-deprecation']
-}
-
-if (hasProperty('StoreFile')) {
-    android.signingConfigs.release.storeFile = file(StoreFile)
-    android.signingConfigs.release.storePassword = StorePassword
-    android.signingConfigs.release.keyAlias = KeyAlias
-    android.signingConfigs.release.keyPassword = KeyPassword
-} else {
-    android.buildTypes.release.signingConfig = null
-}
-
-String getMozillaApiKey() {
-    return project.hasProperty('MozAPIKey') ? '"' +  project['MozAPIKey'] + '"' : "null";
-}
-
-String getTileServerUrl() {
-    if (project.hasProperty('TileServerURL')) {
-        return '"' + project['TileServerURL'] + '"';
-    } else if (project.hasProperty('MapAPIKey')) {
-        return "\"http://api.tiles.mapbox.com/v3/${project['MapAPIKey']}/\"";
-    }
-    return "null";
+allprojects {
+	repositories {
+		mavenCentral()
+	}
 }

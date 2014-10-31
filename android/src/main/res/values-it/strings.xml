@@ -1,0 +1,53 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Mozilla Stumbler</string>
+    <string name="action_about">Informazioni su Mozilla Stumbler</string>
+    <string name="action_preferences">Impostazioni</string>
+    <string name="start_scanning">Inizia l\'analisi</string>
+    <string name="stop_scanning">Interrompi l\'analisi</string>
+    <string name="view_leaderboard">Guarda la classifica</string>
+    <string name="service_name">Mozilla Stumbler</string>
+    <!--<string name="wifi_disabled">0 (Wi-Fi disabled)</string> translation missing-->
+    <string name="service_scanning">Analisi delle reti Wi-Fi e cellulari in corso</string>
+    
+    <string name="enter_nickname">Inserisci il soprannome (opzionale)</string>
+    <string name="enter_nickname_title">Soprannome:</string>
+    <string name="enter_nickname_longtext">Il tuo soprannome comparirà sulla classifica.</string>
+    
+    <string name="update_title">Scaricare l\'aggiornamento di Mozilla Stumbler?</string>
+    <string name="update_message">Versione installata: %1$s\nVersione più recente: %2$s</string>
+    <string name="update_now">Aggiorna ora</string>
+    <string name="update_later">Aggiorna più tardi</string>
+    
+    <string name="yes">Sì</string>
+    <string name="no">No</string>
+    
+    <string name="about_version">Versione %1$s</string>
+	<!--translations missing
+	<string name="about_openstreetmap">Map view tiles © OpenStreetMap contributors\nhttp://www.openstreetmap.org</string>
+    <string name="about_mapbox_title">MapBox</string>-->
+    <string name="about_mapbox">Per maggiori informazioni sul nostro fornitore di mappe…</string>
+    <string name="about_legal_aosp">Alcune icone in questa applicazione sono riprodotte da opere create e condivise dall\'Android Open Source Project e sono usate secondo i termini descritti dalla licenza Creative Commons 2.5 Attribution.</string>
+    
+    <string name="upload_observations_sent_title">Inviati</string>
+    <string name="metrics_observations_last_upload_time_title">Ultimo invio dati:</string>
+    <string name="metrics_observations_title">Osservazioni:</string>
+    <string name="metrics_observations_wifis_title">Access point Wi-Fi:</string>
+    <string name="metrics_observations_cell_towers_title">Celle:</string>
+    <string name="upload_observations_in_queue_title">In coda</string>
+
+
+
+    <string name="upload_wifi_only_title">Invia solo in Wi-Fi</string>
+    <string name="upload_wifi_only_summary">Questa opzione ridurrà il traffico dati sulla rete cellulare.</string>
+    
+    <!--translations missing
+
+
+
+	
+	<string name="title_activity_log">Log</string>
+    <string name="action_view_log">View Log</string>
+    <string name="scroll_to_start">Scroll to Top</string>
+    <string name="scroll_to_end">Scroll to End</string>-->
+</resources>

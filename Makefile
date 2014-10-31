@@ -1,8 +1,6 @@
 test: unittest
-	./gradlew testUnittest --info
+	./gradlew testGithubUnittest --info
 
-release_check:
-	./release_check.py
 
 unittest:
 	./gradlew assembleUnittest
@@ -10,16 +8,22 @@ unittest:
 debug:
 	./gradlew assembleDebug
 
-github: release_check
-	./gradlew assembleGithub
-	sh rename_release.sh github
+github:
+	./release_check.py github
+	./gradlew assembleGithubRelease
+	sh rename_release.sh github-release
 
-playstore: release_check
-	./gradlew assemblePlaystore
-	sh rename_release.sh playstore
+playstore:
+	./release_check.py playstore
+	./gradlew assemblePlaystoreRelease
+	sh rename_release.sh playstore-release
+
+fdroid:
+	./gradlew assembleFdroidRelease
+	sh rename_release.sh fdroid-release
 
 clean:
-	rm -rf android/libs/*.jar
+	rm -rf outputs/*
 	./gradlew clean
 
 install_debug:

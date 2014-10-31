@@ -8,6 +8,7 @@ bin
 gen
 build
 local.properties
+gradle.properties
 
 # ignore vim swap files
 *.sw?
@@ -18,11 +19,11 @@ android/libs/*.jar
 # ctags
 tags
 
-gradle.properties
 
 # Mozilla Special Sauce
 # Never commit your private.properties file or your keystore
-private.properties
+android/properties/**
+
 *.keystore
 
 # Ignore final release APK builds

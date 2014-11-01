@@ -55,7 +55,7 @@ public class MetricsView {
 
     private ImageButton mUploadButton;
     private final View mView;
-    private long mTotalBytesUploadedThisSession_lastDisplayed;
+    private long mTotalBytesUploaded_lastDisplayed = -1;
     private final String mObservationAndSize = "%1$d  %2$s";
 
     private boolean mHasQueuedObservations;
@@ -190,28 +190,10 @@ public class MetricsView {
     }
 
     private void updateSentStats(DataStorageManager dataStorageManager) {
-        final long bytesUploadedThisSession = AsyncUploader.sTotalBytesUploadedThisSession.get();
-
-        if (mTotalBytesUploadedThisSession_lastDisplayed > 0 &&
-            mTotalBytesUploadedThisSession_lastDisplayed == bytesUploadedThisSession) {
-            // no need to update
-            return;
-        }
-        mTotalBytesUploadedThisSession_lastDisplayed = bytesUploadedThisSession;
-
         try {
             Properties props = dataStorageManager.readSyncStats();
-            String value;
-            value = props.getProperty(DataStorageContract.Stats.KEY_CELLS_SENT, "0");
-            mAllTimeCellsSentView.setText(String.valueOf(value));
-            value = props.getProperty(DataStorageContract.Stats.KEY_WIFIS_SENT, "0");
-            mAllTimeWifisSentView.setText(String.valueOf(value));
-            value = props.getProperty(DataStorageContract.Stats.KEY_OBSERVATIONS_SENT, "0");
-            String bytes = props.getProperty(DataStorageContract.Stats.KEY_BYTES_SENT, "0");
-            value = String.format(mObservationAndSize, Integer.parseInt(value), formatKb(Long.parseLong(bytes)));
-            mAllTimeObservationsSentView.setText(value);
 
-            value = "never";
+            String value = (String) mView.getContext().getText(R.string.metrics_observations_last_upload_time_never);
             final long lastUploadTime = Long.parseLong(props.getProperty(DataStorageContract.Stats.KEY_LAST_UPLOAD_TIME, "0"));
             if (lastUploadTime > 0) {
                 if (Locale.getDefault().getLanguage().equals("en")) {
@@ -221,9 +203,24 @@ public class MetricsView {
                 }
             }
             mLastUpdateTimeView.setText(value);
-        }
-        catch (IOException ex) {
-            Log.e(LOG_TAG, "Exception in updateSyncedStats()", ex);
+
+            final long bytes = Long.parseLong(props.getProperty(DataStorageContract.Stats.KEY_BYTES_SENT, "0"));
+            if (mTotalBytesUploaded_lastDisplayed != -1 &&
+                    mTotalBytesUploaded_lastDisplayed == bytes) {
+                // no need to update
+                return;
+            }
+            mTotalBytesUploaded_lastDisplayed = bytes;
+
+            value = props.getProperty(DataStorageContract.Stats.KEY_CELLS_SENT, "0");
+            mAllTimeCellsSentView.setText(String.valueOf(value));
+            value = props.getProperty(DataStorageContract.Stats.KEY_WIFIS_SENT, "0");
+            mAllTimeWifisSentView.setText(String.valueOf(value));
+            value = props.getProperty(DataStorageContract.Stats.KEY_OBSERVATIONS_SENT, "0");
+            value = String.format(mObservationAndSize, Integer.parseInt(value), formatKb(bytes));
+            mAllTimeObservationsSentView.setText(value);
+        } catch (IOException ex) {
+            Log.e(LOG_TAG, "Exception in updateSentStats()", ex);
         }
     }
 

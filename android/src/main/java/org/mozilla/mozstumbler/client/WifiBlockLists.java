@@ -164,9 +164,9 @@ public class WifiBlockLists implements WifiBlockListInterface {
 
             // Adelaide Metro WiFi Network OUIs:
             "a854b2",
-				
-			// Sierra Wireless AirCard W802S:
-			"84Db2f",
+
+            // Sierra Wireless AirCard W802S:
+            "84Db2f",
     };
 
 }

@@ -166,7 +166,7 @@ public class WifiBlockLists implements WifiBlockListInterface {
             "a854b2",
 
             // Sierra Wireless AirCard W802S:
-            "84Db2f",
+            "84db2f",
     };
 
 }

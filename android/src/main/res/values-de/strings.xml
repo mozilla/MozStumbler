@@ -26,6 +26,7 @@
     <string name="about_legal_flaticons">Die GPS-, Funkturm-, Wi-Fi- und Fernglas-Symbole wurden von Freepik erstellt und auf http://www.flaticon.com unter folgender Lizenz veröffentlicht: https://creativecommons.org/licenses/by-nd/3.0</string>
     <string name="upload_observations_sent_title">Vorherige Sitzungen</string>
     <string name="metrics_observations_last_upload_time_title">Letzter Upload:</string>
+    <string name="metrics_observations_last_upload_time_never">nie</string>
     <string name="metrics_observations_title">Berichte:</string>
     <string name="metrics_observations_wifis_title">Wi-Fi-Netzwerke:</string>
     <string name="metrics_observations_cell_towers_title">Mobilfunk-Netzwerke:</string>

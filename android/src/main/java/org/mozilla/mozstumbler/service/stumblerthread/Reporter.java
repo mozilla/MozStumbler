@@ -61,6 +61,10 @@ public final class Reporter extends BroadcastReceiver implements IReporter {
 
         mContext = context.getApplicationContext();
         TelephonyManager tm = (TelephonyManager) mContext.getSystemService(Context.TELEPHONY_SERVICE);
+        if (tm == null) {
+            Log.d(LOG_TAG, "No telephony manager.");
+            return;
+        }
         mPhoneType = tm.getPhoneType();
 
         mIsStarted = true;

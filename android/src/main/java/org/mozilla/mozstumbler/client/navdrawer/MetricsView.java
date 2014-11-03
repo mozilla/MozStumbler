@@ -53,9 +53,13 @@ public class MetricsView {
 
     private WeakReference<IMapLayerToggleListener> mMapLayerToggleListener = new WeakReference<IMapLayerToggleListener>(null);
 
+    private final Handler mHandler = new Handler(Looper.getMainLooper());
+    private final long FREQ_UPDATE_UPLOADTIME = 10 * 1000;
+
     private ImageButton mUploadButton;
     private final View mView;
-    private long mTotalBytesUploadedThisSession_lastDisplayed;
+    private long mTotalBytesUploadedThisSession_lastDisplayed = -1;
+    private long mLastUploadTime = 0;
     private final String mObservationAndSize = "%1$d  %2$s";
 
     private boolean mHasQueuedObservations;
@@ -94,7 +98,7 @@ public class MetricsView {
                 if (!mHasQueuedObservations) {
                     return;
                 }
-                
+
                 // @TODO: Emit a signal here to initiate an upload
                 // and have it handled by MainApp
                 AsyncUploader uploader = new AsyncUploader();
@@ -106,6 +110,8 @@ public class MetricsView {
                 setUploadButtonToSyncing(true);
             }
         });
+
+        mHandler.postDelayed(mUpdateLastUploadedLabel, FREQ_UPDATE_UPLOADTIME);
     }
 
     public void setMapLayerToggleListener(IMapLayerToggleListener listener) {
@@ -139,8 +145,7 @@ public class MetricsView {
     }
 
     private void updateUiThread() {
-        Handler h = new Handler(Looper.getMainLooper());
-        h.post(new Runnable() {
+        mHandler.post(new Runnable() {
             @Override
             public void run() {
                 update();
@@ -189,11 +194,31 @@ public class MetricsView {
         return "(" + (Math.round(kb * 10.0f) / 10.0f) + " KB)";
     }
 
+    private final Runnable mUpdateLastUploadedLabel = new Runnable() {
+        @Override
+        public void run() {
+            updateLastUploadedLabel();
+            mHandler.postDelayed(mUpdateLastUploadedLabel, FREQ_UPDATE_UPLOADTIME);
+        }
+    };
+
+    private void updateLastUploadedLabel() {
+        String value = (String) mView.getContext().getText(R.string.metrics_observations_last_upload_time_never);
+        if (mLastUploadTime > 0) {
+            if (Locale.getDefault().getLanguage().equals("en")) {
+                value = new PrettyTime().format(new Date(mLastUploadTime));
+            } else {
+                value = DateTimeUtils.formatTimeForLocale(mLastUploadTime);
+            }
+        }
+        mLastUpdateTimeView.setText(value);
+    }
+
     private void updateSentStats(DataStorageManager dataStorageManager) {
+
         final long bytesUploadedThisSession = AsyncUploader.sTotalBytesUploadedThisSession.get();
 
-        if (mTotalBytesUploadedThisSession_lastDisplayed > 0 &&
-            mTotalBytesUploadedThisSession_lastDisplayed == bytesUploadedThisSession) {
+        if (mTotalBytesUploadedThisSession_lastDisplayed == bytesUploadedThisSession) {
             // no need to update
             return;
         }
@@ -211,19 +236,10 @@ public class MetricsView {
             value = String.format(mObservationAndSize, Integer.parseInt(value), formatKb(Long.parseLong(bytes)));
             mAllTimeObservationsSentView.setText(value);
 
-            value = "never";
-            final long lastUploadTime = Long.parseLong(props.getProperty(DataStorageContract.Stats.KEY_LAST_UPLOAD_TIME, "0"));
-            if (lastUploadTime > 0) {
-                if (Locale.getDefault().getLanguage().equals("en")) {
-                    value = new PrettyTime().format(new Date(lastUploadTime));
-                } else {
-                    value = DateTimeUtils.formatTimeForLocale(lastUploadTime);
-                }
-            }
-            mLastUpdateTimeView.setText(value);
-        }
-        catch (IOException ex) {
-            Log.e(LOG_TAG, "Exception in updateSyncedStats()", ex);
+            mLastUploadTime = Long.parseLong(props.getProperty(DataStorageContract.Stats.KEY_LAST_UPLOAD_TIME, "0"));
+            updateLastUploadedLabel();
+        } catch (IOException ex) {
+            Log.e(LOG_TAG, "Exception in updateSentStats()", ex);
         }
     }
 

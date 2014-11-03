@@ -26,6 +26,7 @@
     <string name="about_legal_flaticons">GPS, cell tower, Wi-Fi, and binoculars icons made by Freepik from http://www.flaticon.com. under license: https://creativecommons.org/licenses/by-nd/3.0</string>
     <string name="upload_observations_sent_title">Previous sessions</string>
     <string name="metrics_observations_last_upload_time_title">Last upload:</string>
+    <string name="metrics_observations_last_upload_time_never">never</string>
     <string name="metrics_observations_title">Reports:</string>
     <string name="metrics_observations_wifis_title">Wi-Fi networks:</string>
     <string name="metrics_observations_cell_towers_title">Cell networks:</string>

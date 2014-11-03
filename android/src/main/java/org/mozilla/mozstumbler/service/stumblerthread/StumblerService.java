@@ -60,7 +60,12 @@ public class StumblerService extends PersistentIntentService
     }
 
     public synchronized void startScanning() {
-        mScanManager.startScanning(this);
+        try {
+            mScanManager.startScanning(this);
+        } catch (IllegalArgumentException ex) {
+            // If a provider is unsupported on this device, it will be reported as this exception
+            Log.w(LOG_TAG, "Stumbling is not supported on this device:" + ex.toString());
+        }
     }
 
     // This is optional, not used in Fennec, and is for clients to specify a (potentially long) list

@@ -4,6 +4,7 @@
 
 package org.mozilla.mozstumbler.client.navdrawer;
 
+import android.content.Intent;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
@@ -11,6 +12,7 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageButton;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.ocpsoft.pretty.time.PrettyTime;
@@ -18,6 +20,7 @@ import com.ocpsoft.pretty.time.PrettyTime;
 import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.client.ClientPrefs;
 import org.mozilla.mozstumbler.client.DateTimeUtils;
+import org.mozilla.mozstumbler.client.subactivities.PreferencesScreen;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.Prefs;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageContract;
@@ -56,7 +59,9 @@ public class MetricsView {
     private final Handler mHandler = new Handler(Looper.getMainLooper());
     private final long FREQ_UPDATE_UPLOADTIME = 10 * 1000;
 
-    private ImageButton mUploadButton;
+    private final ImageButton mUploadButton;
+    private final ImageButton mSettingsdButton;
+    private final RelativeLayout mButtonsContainer;
     private final View mView;
     private long mTotalBytesUploadedThisSession_lastDisplayed = -1;
     private long mLastUploadTime = 0;
@@ -110,6 +115,18 @@ public class MetricsView {
                 setUploadButtonToSyncing(true);
             }
         });
+
+        mSettingsdButton = (ImageButton) mView.findViewById(R.id.metrics_settings_button);
+        mSettingsdButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                view.getContext().startActivity(new Intent(view.getContext(), PreferencesScreen.class));
+            }
+        });
+
+        // Remove listener of the Drawer buttons container to avoid to get it triggered on the Map view
+        mButtonsContainer = (RelativeLayout) mView.findViewById(R.id.metrics_buttons_container);
+        mButtonsContainer.setOnClickListener(null);
 
         mHandler.postDelayed(mUpdateLastUploadedLabel, FREQ_UPDATE_UPLOADTIME);
     }

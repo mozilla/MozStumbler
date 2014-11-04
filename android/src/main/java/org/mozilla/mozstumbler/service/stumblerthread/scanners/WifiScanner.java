@@ -76,6 +76,7 @@ public class WifiScanner extends BroadcastReceiver {
             activatePeriodicScan(stumblingMode);
         }
 
+        // TODO: #1191 vng - replace this with a mock location manager
         IntentFilter i = new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
         mContext.registerReceiver(this, i);
     }
@@ -147,6 +148,7 @@ public class WifiScanner extends BroadcastReceiver {
             Log.d(LOG_TAG, "Activate Periodic Scan");
         }
 
+        // TODO: #1191 vng - replace this with a mock Wifi Manager
         mWifiLock = getWifiManager().createWifiLock(WifiManager.WIFI_MODE_SCAN_ONLY, "MozStumbler");
         mWifiLock.acquire();
 

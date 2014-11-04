@@ -50,6 +50,7 @@ class GPSListener implements LocationListener {
             }
         };
 
+        // TODO: #1191 vng - replace this with a mock location manager
         mLocationManager.addGpsStatusListener(mStatusListener);
         Location lastGpsLoc = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         Location lastNetworkLoc = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);

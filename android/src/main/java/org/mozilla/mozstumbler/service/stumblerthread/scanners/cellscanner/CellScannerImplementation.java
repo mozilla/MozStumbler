@@ -110,6 +110,8 @@ public class CellScannerImplementation implements CellScanner.CellScannerImpl {
                 }
             }
         };
+
+        // TODO: #1191 vng - replace this with a mock location manager
         mTelephonyManager.listen(mPhoneStateListener, PhoneStateListener.LISTEN_SIGNAL_STRENGTHS);
     }
 

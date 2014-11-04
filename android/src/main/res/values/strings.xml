@@ -27,6 +27,13 @@
     <string name="upload_observations_sent_title">Previous sessions</string>
     <string name="metrics_observations_last_upload_time_title">Last upload:</string>
     <string name="metrics_observations_last_upload_time_never">never</string>
+    <string name="time_diff_seconds">moments ago</string>
+    <string name="time_diff_one_minute">one minute ago</string>
+    <string name="time_diff_minutes">%d minutes ago</string>
+    <string name="time_diff_one_hour">one hour ago</string>
+    <string name="time_diff_hours">%d hours ago</string>
+    <string name="time_diff_one_day">one day ago</string>
+    <string name="time_diff_days">%d days ago</string>
     <string name="metrics_observations_title">Reports:</string>
     <string name="metrics_observations_wifis_title">Wi-Fi networks:</string>
     <string name="metrics_observations_cell_towers_title">Cell networks:</string>

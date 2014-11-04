@@ -35,9 +35,6 @@ repositories {
     maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
 }
 
-import de.undercouch.gradle.tasks.download.Download
-import java.util.regex.Pattern
-
 android {
     compileSdkVersion 19
     buildToolsVersion "19.1.0"
@@ -175,8 +172,6 @@ dependencies {
     compile 'com.crankycoder:SimpleKML:1.0'
 
     compile 'org.slf4j:slf4j-android:1.7.7'
-
-    compile 'com.ocpsoft:ocpsoft-pretty-time:1.0.7'
 
     // https://developer.android.com/tools/support-library/features.html
     // In general, we recommend including the v4 support and v7 appcompat

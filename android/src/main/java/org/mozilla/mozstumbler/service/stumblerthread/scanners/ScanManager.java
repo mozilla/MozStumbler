@@ -5,6 +5,7 @@
 package org.mozilla.mozstumbler.service.stumblerthread.scanners;
 
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.location.Location;
@@ -13,6 +14,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 
+import org.mozilla.mozstumbler.client.ClientPrefs;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.AppGlobals.ActiveOrPassiveStumbling;
 import org.mozilla.mozstumbler.service.stumblerthread.Reporter;
@@ -107,13 +109,26 @@ public class ScanManager {
             return;
         }
         if (mGPSScanner == null) {
+
+            // TODO: #1191 vng - Check the preference to use mock scanners
+            // and wrap the context with a dynamic proxy which replaces
+            // context.getSystemService(Context.LOCATION_SERVICE);
+            // with a mock Location Service
+
+            ClientPrefs prefs = ClientPrefs.getInstance();
+
+            if (prefs != null) {
+                if (prefs.isSimulateStumble()) {
+                    context = new SimulateStumbleContextWrapper(context);
+                }
+            }
             mGPSScanner = new GPSScanner(context, this);
             mWifiScanner = new WifiScanner(context);
 
             TelephonyManager telephonyManager = (TelephonyManager) mContext.getSystemService(Context.TELEPHONY_SERVICE);
             if (telephonyManager != null &&
                     (telephonyManager.getPhoneType() == TelephonyManager.PHONE_TYPE_CDMA ||
-                            telephonyManager.getPhoneType() == TelephonyManager.PHONE_TYPE_GSM)) {
+                     telephonyManager.getPhoneType() == TelephonyManager.PHONE_TYPE_GSM)) {
                 mCellScanner = new CellScanner(context);
             }
         }

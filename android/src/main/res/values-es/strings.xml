@@ -10,7 +10,7 @@
     <string name="service_name">Mozilla Stumbler</string>
     <string name="service_scanning">Escaneando redes Wi-Fi y móviles</string>
     <string name="enter_nickname">Ingresa tu apodo (opcional)</string>
-    <string name="enter_nickname_title">Apodo: </string>
+    <string name="enter_nickname_title">Apodo: %1$s</string>
     <string name="enter_nickname_longtext">Tu apodo aparecerá en la tabla de posiciones.</string>
     <string name="update_title">¿Descargar la actualización de Mozilla Stumbler?</string>
     <string name="update_message">Versión instalada: %1$s\nÚltima versión: %2$s</string>
@@ -56,7 +56,7 @@
     <string name="kml_file_saved">KML guardado</string>
     <string name="share_after_kml_saved">El archivo fue guardado en el dispositivo, ¿Te gustaría compartir el archivo?</string>
     <string name="enter_email">Ingresa tu dirección de correo (opcional)</string>
-    <string name="enter_email_title">Correo: </string>
+    <string name="enter_email_title">Correo: %1$s</string>
     <string name="enter_email_longtext">Tu dirección de correo jamas es mostrada a las personas y sólo es usada para tus reportes</string>
     <string name="drawer_open">Mostrar barra lateral</string>
     <string name="drawer_close">Cerrar barra lateral</string>
@@ -67,7 +67,7 @@
     <string name="first_run_start_stumbling">Inicia escaneando</string>
     <string name="first_run_welcome_to_mozstumbler">Bienvenido a Mozilla Stumbler</string>
     <string name="map_unavailable">El mapa no está disponible para mostrarse, ya que no hay una tarjeta SD.\nAún puedes recolectar datos.</string>
-    <string name="map_offline_mode">"El mapa no se actualizará sin una conexión a Internet,\nsin embargo todavía eres capaz de recolectar datos."</string>
+    <string name="map_offline_mode">El mapa no se actualizará sin una conexión a Internet,\nsin embargo todavía eres capaz de recolectar datos.</string>
     <string name="action_developer">Desarrollador</string>
     <string name="developer_title">Desarrollador</string>
     <string name="enable_option_show_mls_on_map">Habilitar switch de la capa MLS</string>

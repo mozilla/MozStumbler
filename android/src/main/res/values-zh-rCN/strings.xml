@@ -9,7 +9,7 @@
     <string name="service_name">Mozilla Stumbler</string>
     <string name="service_scanning">扫描 Wi-Fi 和移动基站</string>
     <string name="enter_nickname">输入昵称 (可选)</string>
-    <string name="enter_nickname_title">昵称: </string>
+    <string name="enter_nickname_title">昵称: %1$s</string>
     <string name="enter_nickname_longtext">你的昵称将被显示在积分榜中</string>
     <string name="update_title">下载 Mozilla Stumbler 更新？</string>
     <string name="update_message">当前版本: %1$s\n最新版本: %2$s</string>

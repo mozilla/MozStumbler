@@ -146,7 +146,8 @@ public class PreferencesScreen extends PreferenceActivity {
 
     private void setNicknamePreferenceTitle(String nickname) {
         if (!TextUtils.isEmpty(nickname)) {
-            mNicknamePreference.setTitle(getString(R.string.enter_nickname_title) + " " + nickname);
+            String title = String.format(getString(R.string.enter_nickname_title), nickname);
+            mNicknamePreference.setTitle(title);
         } else {
             mNicknamePreference.setTitle(R.string.enter_nickname);
         }
@@ -154,7 +155,8 @@ public class PreferencesScreen extends PreferenceActivity {
 
     private void setEmailPreferenceTitle(String email) {
         if (!TextUtils.isEmpty(email)) {
-            mEmailPreference.setTitle(getString(R.string.enter_email_title) + " " + email);
+            String title = String.format(getString(R.string.enter_email_title), email);
+            mEmailPreference.setTitle(title);
         } else {
             mEmailPreference.setTitle(R.string.enter_email);
         }

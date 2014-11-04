@@ -9,7 +9,7 @@
     <string name="service_name">Mozilla Stumbler</string>
     <string name="service_scanning">Skannataan Wi-Fi-tukiasemia ja verkkomastoja</string>
     <string name="enter_nickname">Valitse nimimerkki (ei pakollinen)</string>
-    <string name="enter_nickname_title">Nimimerkki: </string>
+    <string name="enter_nickname_title">Nimimerkki: %1$s</string>
     <string name="enter_nickname_longtext">Nimimerkkisi näytetään pistetilastossa.</string>
     <string name="update_title">Lataa Mozilla Stumblerin päivitys?</string>
     <string name="update_message">Asennettu versio: %1$s\nUusin versio: %2$s</string>

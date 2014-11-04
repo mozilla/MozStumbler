@@ -9,7 +9,7 @@
 	<string name="service_name">מאתר מוזילה</string>
 	<string name="service_scanning">מתבצעת סריקה לאיתור רשתות סלולריות ו־Wi-Fi</string>
 	<string name="enter_nickname">הזנת שם המשתמש (רשות)</string>
-	<string name="enter_nickname_title">כינוי: </string>
+	<string name="enter_nickname_title">כינוי: %1$s</string>
 	<string name="enter_nickname_longtext">הכינוי שלך יופיע בלוח המובילים.</string>
 	<string name="update_title">האם להוריד עדכון ל־Mozilla Stumbler?</string>
 	<string name="update_message">הגרסה המותקנת: %1$s\nהגרסה העדכנית: %2$s</string>

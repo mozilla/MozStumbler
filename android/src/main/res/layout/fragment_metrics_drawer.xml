@@ -346,6 +346,7 @@
             android:layout_height="42dp"
             android:layout_alignParentRight="true"
             android:enabled="false"
+            android:contentDescription="@string/action_preferences"
             android:src="@drawable/ic_action_settings" />
     </RelativeLayout>
 </LinearLayout>

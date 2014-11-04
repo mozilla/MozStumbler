@@ -124,7 +124,7 @@ public class MetricsView {
             }
         });
 
-        // Remove listener of the Drawer buttons container to avoid to get it triggered on the Map view
+        // Remove click listener of the Drawer buttons container to avoid to get it triggered on the Map view
         mButtonsContainer = (RelativeLayout) mView.findViewById(R.id.metrics_buttons_container);
         mButtonsContainer.setOnClickListener(null);
 

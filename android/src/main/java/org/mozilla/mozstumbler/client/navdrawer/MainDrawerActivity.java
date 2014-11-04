@@ -131,8 +131,6 @@ public class MainDrawerActivity
         }
         else {
             MenuItemCompat.setShowAsAction(mMenuItemStartStop, MenuItemCompat.SHOW_AS_ACTION_ALWAYS);
-            MenuItem item = menu.findItem(R.id.action_preferences);
-            MenuItemCompat.setShowAsAction(item, MenuItemCompat.SHOW_AS_ACTION_ALWAYS);
         }
 
         updateStartStopMenuItemState();
@@ -231,9 +229,6 @@ public class MainDrawerActivity
         switch (item.getItemId()) {
             case MENU_START_STOP:
                 mMapFragment.toggleScanning(item);
-                return true;
-            case R.id.action_preferences:
-                startActivity(new Intent(getApplication(), PreferencesScreen.class));
                 return true;
             case R.id.action_view_leaderboard:
                 startActivity(new Intent(getApplication(), LeaderboardActivity.class));

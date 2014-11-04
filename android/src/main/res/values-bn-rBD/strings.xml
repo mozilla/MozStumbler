@@ -9,7 +9,7 @@
     <string name="service_name">Mozilla Stumbler</string>
     <string name="service_scanning">ওয়াই-ফাই এবং মোবাইল নেটওয়ার্ক এর জন্য স্ক্যান করা হচ্ছে</string>
     <string name="enter_nickname">নাম প্রবেশ করুন (ঐচ্ছিক)</string>
-    <string name="enter_nickname_title">নাম: </string>
+    <string name="enter_nickname_title">নাম: %1$s</string>
     <string name="enter_nickname_longtext">আপনার নাম লীডারবোর্ডে দেখানো হবে</string>
     <string name="update_title">Mozilla Stumbler আপডেট ডাউনলোড করবেন?</string>
     <string name="update_message">ইন্সটলকৃত সংস্করণ: %1$s\nসর্বশেষ সংস্করণ: %2$s</string>

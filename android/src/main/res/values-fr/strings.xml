@@ -9,7 +9,7 @@
     <string name="service_name">Mozilla Stumbler</string>
     <string name="service_scanning">Détection des réseaux Wi-Fi et cellulaires</string>
     <string name="enter_nickname">Saisir un pseudo (optionnel)</string>
-    <string name="enter_nickname_title">Pseudo : </string>
+    <string name="enter_nickname_title">Pseudo : %1$s</string>
     <string name="enter_nickname_longtext">Votre pseudo apparaîtra dans le classement.</string>
     <string name="update_title">Télécharger la mise à jour de Mozilla Stumbler ?</string>
     <string name="update_message">Version installée : %1$s\nDernière version : %2$s</string>

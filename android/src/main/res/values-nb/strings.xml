@@ -10,7 +10,7 @@
     <!--<string name="wifi_disabled">0 (Wi-Fi disabled)</string> translation missing-->
     <string name="service_scanning">Samler inn trådløspunkt og mobilnettverk</string>
     <string name="enter_nickname">Skriv inn kallenavn (valgfri)</string>
-    <string name="enter_nickname_title">Kallenavn: </string>
+    <string name="enter_nickname_title">Kallenavn: %1$s</string>
     <string name="enter_nickname_longtext">Kallenavnet vil vises på resultatlisten.</string>
     <string name="update_title">Last ned oppdatering?</string>
     <string name="update_message">Installert versjon: %1$s\nSiste versjon: %2$s</string>

@@ -9,7 +9,7 @@
     <string name="service_name">Mozilla Stumbler</string>
     <string name="service_scanning">اسکن‌کردن برای وای‌فای و شبکه‌های گوشی همراه</string>
     <string name="enter_nickname">ورود نام اختصاری (اختیاری)</string>
-    <string name="enter_nickname_title">نام اختصاری: </string>
+    <string name="enter_nickname_title">%1$s :نام اختصاری</string>
     <string name="enter_nickname_longtext">نام اختصاری شما در برد بالاترین‌های ظاهر خواهد شد.</string>
     <string name="update_title">دریافت Mozilla Stumbler به‌روزشده؟</string>
     <string name="update_message">نسخهٔ نصب‌شده: %1$s\nآخرین نسخه: %2$s</string>

@@ -10,7 +10,7 @@
     <string name="service_name">Mozilla Stumbler</string>
     <string name="service_scanning">Scanning for Wi-Fi and Cellular networks</string>
     <string name="enter_nickname">Enter Nickname (optional)</string>
-    <string name="enter_nickname_title">Nickname: </string>
+    <string name="enter_nickname_title">Nickname: %1$s</string>
     <string name="enter_nickname_longtext">Your nickname will appear on the leaderboard.</string>
     <string name="update_title">Download Mozilla Stumbler Update?</string>
     <string name="update_message">Installed version: %1$s\nLatest version: %2$s</string>
@@ -23,7 +23,7 @@
     <string name="about_mapbox_title">MapBox</string>
     <string name="about_mapbox">Learn more at http://www.mapbox.com</string>
     <string name="about_legal_aosp">Some iconography in this app is reproduced from work created and shared by the Android Open Source Project and used according to terms described in the Creative Commons 2.5 Attribution License.</string>
-    <string name="about_legal_flaticons">GPS, cell tower, Wi-Fi, and binoculars icons made by Freepik from http://www.flaticon.com. under license: https://creativecommons.org/licenses/by-nd/3.0</string>
+    <string name="about_legal_flaticons">GPS, cell tower, Wi-Fi, and binoculars icons made by Freepik from http://www.flaticon.com under license: https://creativecommons.org/licenses/by-nd/3.0</string>
     <string name="upload_observations_sent_title">Previous sessions</string>
     <string name="metrics_observations_last_upload_time_title">Last upload:</string>
     <string name="metrics_observations_last_upload_time_never">never</string>
@@ -43,9 +43,10 @@
     <string name="kml_file_title">KML Reports File</string>
     <string name="kml_file_load">Load KML File</string>
     <string name="kml_file_save">Save KML File</string>
-    <string name="kml_file_description">Save/Load the reports (location, wi-fi+cell counts) for debugging. </string>
+    <string name="kml_file_description">Save/Load the reports (location, Wi-Fi + cell counts) for debugging.</string>
     <string name="kml_file_saved_name">Saved File:</string>
     <string name="keep_screen_on_title">Keep screen on while scanning</string>
+    <string name="keep_screen_on_summary">Keep the screen on while scanning is active and the app is in the foreground.</string>
     <string name="delete_all">Delete all</string>
     <string name="are_you_sure">Are you sure?</string>
     <string name="loading_kml">Loading KML</string>
@@ -57,7 +58,7 @@
     <string name="kml_file_saved">KML Saved</string>
     <string name="share_after_kml_saved">The file is saved on device, would you like to share the file?</string>
     <string name="enter_email">Enter e-mail address (optional)</string>
-    <string name="enter_email_title">Email: </string>
+    <string name="enter_email_title">Email: %1$s</string>
     <string name="enter_email_longtext">Your email address is never displayed to people and is only used for your own reports.</string>
     <string name="drawer_open">Show drawer</string>
     <string name="drawer_close">Close drawer</string>
@@ -68,10 +69,10 @@
     <string name="first_run_start_stumbling">Start Stumbling</string>
     <string name="first_run_welcome_to_mozstumbler">Welcome to Mozilla Stumbler</string>
     <string name="map_unavailable">The map is not available for display, as there is no SD card storage.\nYou can still collect data.</string>
-    <string name="map_offline_mode">"The map will not update without an Internet connection,\nhowever you are still able to collect data."</string>
+    <string name="map_offline_mode">The map will not update without an Internet connection,\nhowever you are still able to collect data.</string>
     <string name="action_developer">Developer</string>
     <string name="developer_title">Developer</string>
-    <string name="enable_option_show_mls_on_map">Enable MLS layer toggle</string>
+    <string name="enable_option_show_mls_on_map">Enable MLS location queries</string>
     <string name="enable_option_show_mls_on_map_summary">At the cost of a bit more memory and network usage, the map can show MLS location queries for your scans.</string>
     <string name="cell_only_observation">Cell only report</string>
     <string name="wifi_only_observation">Wi-Fi only report</string>

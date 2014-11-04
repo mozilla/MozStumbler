@@ -62,7 +62,8 @@ public class GPSScanner implements LocationListener {
     }
 
     private boolean isGpsAvailable(LocationManager locationManager) {
-        if (locationManager.getProvider(LocationManager.GPS_PROVIDER) == null) {
+        if (locationManager == null ||
+            locationManager.getProvider(LocationManager.GPS_PROVIDER) == null) {
             String msg = "No GPS available, scanning not started.";
             Log.d(LOG_TAG, msg);
             AppGlobals.guiLogError(msg);

@@ -102,6 +102,10 @@ public class ScanManager {
         }
 
         mContext = context.getApplicationContext();
+        if (mContext == null) {
+            Log.w(LOG_TAG, "No app context available.");
+            return;
+        }
         if (mGPSScanner == null) {
             mGPSScanner = new GPSScanner(context, this);
             mWifiScanner = new WifiScanner(context);

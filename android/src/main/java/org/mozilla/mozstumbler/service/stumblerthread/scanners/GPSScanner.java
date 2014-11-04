@@ -61,8 +61,21 @@ public class GPSScanner implements LocationListener {
         }
     }
 
+    private boolean isGpsAvailable(LocationManager locationManager) {
+        if (locationManager.getProvider(LocationManager.GPS_PROVIDER) == null) {
+            String msg = "No GPS available, scanning not started.";
+            Log.d(LOG_TAG, msg);
+            AppGlobals.guiLogError(msg);
+            return false;
+        }
+        return true;
+    }
+
     private void startPassiveMode() {
         LocationManager locationManager = (LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
+        if (!isGpsAvailable(locationManager)) {
+            return;
+        }
         locationManager.requestLocationUpdates(LocationManager.PASSIVE_PROVIDER,
                 0,
                 0, this);
@@ -70,6 +83,10 @@ public class GPSScanner implements LocationListener {
 
     private void startActiveMode() {
         LocationManager lm = getLocationManager();
+        if (!isGpsAvailable(lm)) {
+            return;
+        }
+
         lm.requestLocationUpdates(LocationManager.GPS_PROVIDER,
                 ACTIVE_MODE_GPS_MIN_UPDATE_TIME_MS,
                 ACTIVE_MODE_GPS_MIN_UPDATE_DISTANCE_M,

@@ -5,7 +5,7 @@
 package org.mozilla.mozstumbler.client;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
+import android.content.res.Resources;
 
 import org.mozilla.mozstumbler.R;
 
@@ -48,33 +48,27 @@ public final class DateTimeUtils {
         return sLocaleFormatDateTime.format(time);
     }
 
-    public static String prettyPrintTimeDiff(long time, Context context) {
+    public static String prettyPrintTimeDiff(long time, Resources res) {
         final long seconds = (System.currentTimeMillis() - time) / 1000;
         if (seconds < 0) {
             return DateTimeUtils.formatTimeForLocale(time);
         } else if (seconds < 60) {
-            return context.getString(R.string.time_diff_seconds);
+            return res.getQuantityString(R.plurals.time_diff_seconds, (int) seconds, seconds);
         }
 
         final long minutes = (long) Math.floor(seconds / 60.0);
-        if (minutes == 1) {
-            return context.getString(R.string.time_diff_one_minute);
-        } else if (minutes <= 60) {
-            return String.format(context.getString(R.string.time_diff_minutes), minutes);
+        if (minutes <= 60) {
+            return String.format(res.getQuantityString(R.plurals.time_diff_minutes, (int) minutes, minutes));
         }
 
         final long hours = (long) Math.floor(minutes / 60.0);
-        if (hours == 1) {
-            return context.getString(R.string.time_diff_one_hour);
-        } else if (hours <= 24) {
-            return String.format(context.getString(R.string.time_diff_hours), hours);
+        if (hours <= 24) {
+            return String.format(res.getQuantityString(R.plurals.time_diff_hours, (int) hours, hours));
         }
 
         final long days = (long) Math.floor(hours / 24.0);
-        if (days == 1) {
-            return context.getString(R.string.time_diff_one_day);
-        } else if (days <= 7) {
-            return String.format(context.getString(R.string.time_diff_days), days);
+        if (days <= 7) {
+            return String.format(res.getQuantityString(R.plurals.time_diff_days, (int) days, days));
         }
 
         return sLocaleFormatDate.format(time);

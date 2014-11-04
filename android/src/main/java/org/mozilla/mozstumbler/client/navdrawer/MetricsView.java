@@ -206,7 +206,7 @@ public class MetricsView {
         String value = (String) context.getText(R.string.metrics_observations_last_upload_time_never);
         if (mLastUploadTime > 0) {
             if (Locale.getDefault().getLanguage().equals("en")) {
-                value = DateTimeUtils.prettyPrintTimeDiff(mLastUploadTime, context);
+                value = DateTimeUtils.prettyPrintTimeDiff(mLastUploadTime, context.getResources());
             } else {
                 // TODO remove when there are enough translations available
                 value = DateTimeUtils.formatTimeForLocale(mLastUploadTime);

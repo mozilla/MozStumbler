@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import org.mozilla.mozstumbler.BuildConfig;
+import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.Prefs;
 import org.mozilla.osmdroid.api.IGeoPoint;
 import org.mozilla.osmdroid.util.GeoPoint;
@@ -19,6 +20,7 @@ public class ClientPrefs extends Prefs {
     private static final String ON_MAP_MLS_DRAW_IS_ON = "actually_draw_mls_dots_on_map";
     private static final String CRASH_REPORTING = "crash_reporting";
 
+    private static final String SIMULATE_STUMBLE = "simulate_stumble";
     public enum MapTileResolutionOptions { Default, HighRes, LowRes, NoMap}
 
     protected ClientPrefs(Context context) {
@@ -99,6 +101,14 @@ public class ClientPrefs extends Prefs {
     public boolean isCrashReportingEnabled() {
         // default to true for GITHUB build
         return getBoolPrefWithDefault(CRASH_REPORTING, BuildConfig.GITHUB);
+    }
+
+    public void setSimulateStumble(boolean b) {
+        setBoolPref(SIMULATE_STUMBLE, b);
+    }
+
+    public boolean isSimulateStumble() {
+        return getBoolPrefWithDefault(SIMULATE_STUMBLE, false);
     }
 
     public void setMapTileResolutionType(int mapTileResolutionType) {

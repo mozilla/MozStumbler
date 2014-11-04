@@ -9,6 +9,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.location.Location;
+import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
@@ -239,6 +240,11 @@ public final class MapFragment extends android.support.v4.app.Fragment
         return (MainApp) getActivity().getApplication();
     }
 
+    public LocationManager getLocationManager() {
+        return (LocationManager) getActivity().getApplicationContext().
+                getSystemService(Context.LOCATION_SERVICE);
+
+    }
     private static String sCoverageUrl; // Only used by CoverageSetup
 
     private class CoverageSetup {

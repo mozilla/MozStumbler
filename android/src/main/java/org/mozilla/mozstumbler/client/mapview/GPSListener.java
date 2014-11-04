@@ -23,8 +23,8 @@ class GPSListener implements LocationListener {
 
     GPSListener(MapFragment mapFragment) {
         mMapActivity = new WeakReference<MapFragment>(mapFragment);
-        mLocationManager = (LocationManager) mapFragment.getActivity().getApplicationContext().
-                getSystemService(Context.LOCATION_SERVICE);
+
+        mLocationManager = mapFragment.getLocationManager();
         mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 1, this);
         mStatusListener = new GpsStatus.Listener() {
             public void onGpsStatusChanged(int event) {

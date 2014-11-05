@@ -55,14 +55,15 @@ public class SimulateStumbleContextWrapper extends ContextWrapper {
                     return;
                 }
 
-                Location mockLocation = new Location(LocationManager.GPS_PROVIDER); // a string
+                Location mockLocation;
+                mockLocation = new Location(LocationManager.GPS_PROVIDER); // a string
                 mockLocation.setLatitude(location.getLatitude());  // double
                 mockLocation.setLongitude(location.getLongitude());
                 mockLocation.setAltitude(location.getAltitude());
                 mockLocation.setTime(System.currentTimeMillis());
                 locationManager.setTestProviderLocation(LocationManager.GPS_PROVIDER, mockLocation);
 
-                Location mockLocation = new Location(LocationManager.NETWORK_PROVIDER); // a string
+                mockLocation = new Location(LocationManager.NETWORK_PROVIDER); // a string
                 mockLocation.setLatitude(location.getLatitude());  // double
                 mockLocation.setLongitude(location.getLongitude());
                 mockLocation.setAltitude(location.getAltitude());
@@ -86,6 +87,7 @@ public class SimulateStumbleContextWrapper extends ContextWrapper {
         if (name.equals(Context.LOCATION_SERVICE)){
             return locationManager;
         }
+        return super.getSystemService(name);
     }
 
 

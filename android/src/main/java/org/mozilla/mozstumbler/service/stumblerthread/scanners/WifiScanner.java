@@ -29,7 +29,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class WifiScanner extends BroadcastReceiver {
+public class WifiScanner  {
     public static final String ACTION_BASE = AppGlobals.ACTION_NAMESPACE + ".WifiScanner.";
     public static final String ACTION_WIFIS_SCANNED = ACTION_BASE + "WIFIS_SCANNED";
     public static final String ACTION_WIFIS_SCANNED_ARG_RESULTS = "scan_results";
@@ -49,20 +49,20 @@ public class WifiScanner extends BroadcastReceiver {
     private final Set<String> mAPs = Collections.synchronizedSet(new HashSet<String>());
     private AtomicInteger mVisibleAPs = new AtomicInteger();
 
+    private final WifiManagerProxy wifiManagerProxy;
+
     public WifiScanner(Context c) {
         mContext = c;
+        wifiManagerProxy = new WifiManagerProxy(mContext);
+
     }
 
     private boolean isWifiEnabled() {
-        return getWifiManager().isWifiEnabled();
+        return wifiManagerProxy.isWifiEnabled();
     }
 
     private List<ScanResult> getScanResults() {
-        WifiManager manager = getWifiManager();
-        if (manager == null) {
-            return null;
-        }
-        return getWifiManager().getScanResults();
+        return wifiManagerProxy.getScanResults();
     }
 
 
@@ -76,44 +76,18 @@ public class WifiScanner extends BroadcastReceiver {
             activatePeriodicScan(stumblingMode);
         }
 
-        // TODO: #1191 vng - replace this with a mock location manager
-        IntentFilter i = new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
-        mContext.registerReceiver(this, i);
+        wifiManagerProxy.registerReceiver(this);
+
+
+
     }
 
     public synchronized void stop() {
         if (mStarted) {
-            mContext.unregisterReceiver(this);
+            wifiManagerProxy.unregisterReceiver();
         }
         deactivatePeriodicScan();
         mStarted = false;
-    }
-
-    public void onReceive(Context c, Intent intent) {
-        String action = intent.getAction();
-
-        if (WifiManager.WIFI_STATE_CHANGED_ACTION.equals(action)) {
-            if (isWifiEnabled()) {
-                activatePeriodicScan(ActiveOrPassiveStumbling.ACTIVE_STUMBLING);
-            } else {
-                deactivatePeriodicScan();
-            }
-        } else if (WifiManager.SCAN_RESULTS_AVAILABLE_ACTION.equals(action)) {
-            final List<ScanResult> scanResultList = getScanResults();
-            if (scanResultList == null) {
-                return;
-            }
-            final ArrayList<ScanResult> scanResults = new ArrayList<ScanResult>();
-            for (ScanResult scanResult : scanResultList) {
-                scanResult.BSSID = BSSIDBlockList.canonicalizeBSSID(scanResult.BSSID);
-                if (shouldLog(scanResult)) {
-                    scanResults.add(scanResult);
-                    mAPs.add(scanResult.BSSID);
-                }
-            }
-            mVisibleAPs.set(scanResults.size());
-            reportScanResults(scanResults);
-        }
     }
 
     public static void setWifiBlockList(WifiBlockListInterface blockList) {
@@ -139,7 +113,7 @@ public class WifiScanner extends BroadcastReceiver {
         return STATUS_ACTIVE;
     }
 
-    private synchronized void activatePeriodicScan(final ActiveOrPassiveStumbling stumblingMode) {
+    synchronized void activatePeriodicScan(final ActiveOrPassiveStumbling stumblingMode) {
         if (mWifiScanTimer != null) {
             return;
         }
@@ -149,7 +123,7 @@ public class WifiScanner extends BroadcastReceiver {
         }
 
         // TODO: #1191 vng - replace this with a mock Wifi Manager
-        mWifiLock = getWifiManager().createWifiLock(WifiManager.WIFI_MODE_SCAN_ONLY, "MozStumbler");
+        mWifiLock = wifiManagerProxy.createWifiLock();
         mWifiLock.acquire();
 
         // Ensure that we are constantly scanning for new access points.
@@ -168,12 +142,12 @@ public class WifiScanner extends BroadcastReceiver {
                 if (AppGlobals.isDebug) {
                     Log.d(LOG_TAG, "WiFi Scanning Timer fired");
                 }
-                getWifiManager().startScan();
+                wifiManagerProxy.startScan();
             }
         }, 0, WIFI_MIN_UPDATE_TIME);
     }
 
-    private synchronized void deactivatePeriodicScan() {
+    synchronized void deactivatePeriodicScan() {
         if (mWifiScanTimer == null) {
             return;
         }
@@ -203,10 +177,6 @@ public class WifiScanner extends BroadcastReceiver {
         return true;
     }
 
-    private WifiManager getWifiManager() {
-        return (WifiManager) mContext.getSystemService(Context.WIFI_SERVICE);
-    }
-
     private void reportScanResults(ArrayList<ScanResult> scanResults) {
         if (scanResults.isEmpty()) {
             return;
@@ -217,4 +187,32 @@ public class WifiScanner extends BroadcastReceiver {
         i.putExtra(ACTION_WIFIS_SCANNED_ARG_TIME, System.currentTimeMillis());
         LocalBroadcastManager.getInstance(mContext).sendBroadcastSync(i);
     }
+
+    public void onProxyReceive(Context c, Intent intent) {
+        String action = intent.getAction();
+
+        if (WifiManager.WIFI_STATE_CHANGED_ACTION.equals(action)) {
+            if (isWifiEnabled()) {
+                activatePeriodicScan(ActiveOrPassiveStumbling.ACTIVE_STUMBLING);
+            } else {
+                deactivatePeriodicScan();
+            }
+        } else if (WifiManager.SCAN_RESULTS_AVAILABLE_ACTION.equals(action)) {
+            final List<ScanResult> scanResultList = getScanResults();
+            if (scanResultList == null) {
+                return;
+            }
+            final ArrayList<ScanResult> scanResults = new ArrayList<ScanResult>();
+            for (ScanResult scanResult : scanResultList) {
+                scanResult.BSSID = BSSIDBlockList.canonicalizeBSSID(scanResult.BSSID);
+                if (shouldLog(scanResult)) {
+                    scanResults.add(scanResult);
+                    mAPs.add(scanResult.BSSID);
+                }
+            }
+            mVisibleAPs.set(scanResults.size());
+            reportScanResults(scanResults);
+        }
+    }
+
 }

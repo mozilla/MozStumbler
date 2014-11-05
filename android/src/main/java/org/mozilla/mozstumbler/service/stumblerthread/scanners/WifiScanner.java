@@ -82,7 +82,9 @@ public class WifiScanner extends BroadcastReceiver {
             activatePeriodicScan(stumblingMode);
         }
 
-        IntentFilter i = new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
+        IntentFilter i = new IntentFilter();
+        i.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION);
+        i.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
         mContext.registerReceiver(this, i);
     }
 

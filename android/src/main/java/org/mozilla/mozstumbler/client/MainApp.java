@@ -59,15 +59,13 @@ import java.util.concurrent.atomic.AtomicBoolean;
     formUriBasicAuthLogin = BuildConfig.ACRA_USER,
     formUriBasicAuthPassword = BuildConfig.ACRA_PASS)
 public class MainApp extends Application
-        implements ObservedLocationsReceiver.ICountObserver,
-        AsyncUploader.AsyncUploaderListener {
+        implements AsyncUploader.AsyncUploaderListener {
     public static final AtomicBoolean isUploading = new AtomicBoolean();
     private final String LOG_TAG = AppGlobals.LOG_PREFIX + MainApp.class.getSimpleName();
     private ClientStumblerService mStumblerService;
     private ServiceConnection mConnection;
     private ServiceBroadcastReceiver mReceiver;
     private WeakReference<IMainActivity> mMainActivity = new WeakReference<IMainActivity>(null);
-    private int mObservationCount = 0;
     private final long MAX_BYTES_DISK_STORAGE = 1000 * 1000 * 20; // 20MB for Mozilla Stumbler by default, is ok?
     private final int MAX_WEEKS_OLD_STORED = 4;
     public static final String INTENT_TURN_OFF = "org.mozilla.mozstumbler.turnMeOff";
@@ -140,7 +138,7 @@ public class MainApp extends Application
         NetworkInfo.createGlobalInstance(this);
         LogActivity.LogMessageReceiver.createGlobalInstance(this);
         // This will create, and register the receiver
-        ObservedLocationsReceiver.createGlobalInstance(this.getApplicationContext(), this);
+        ObservedLocationsReceiver.createGlobalInstance(this.getApplicationContext());
 
         enableStrictMode();
 
@@ -376,14 +374,6 @@ public class MainApp extends Application
             }
             dbFile.delete();
         }
-    }
-
-    public void observedLocationCountIncrement() {
-        mObservationCount++;
-    }
-
-    public int getObservedLocationCount() {
-        return mObservationCount;
     }
 
     public void showDeveloperDialog(Activity activity) {

@@ -80,6 +80,10 @@ public class StumblerService extends PersistentIntentService
         return mScanManager.getLocation();
     }
 
+    public synchronized int getObservationCount() {
+        return mReporter.getObservationCount();
+    }
+
     public synchronized int getWifiStatus() {
         return mScanManager.getWifiStatus();
     }

@@ -46,6 +46,7 @@ public final class Reporter extends BroadcastReceiver implements IReporter {
     private int mPhoneType;
 
     private StumblerBundle mBundle;
+    private int mObservationCount = 0;
 
     public Reporter() {}
 
@@ -232,10 +233,16 @@ public final class Reporter extends BroadcastReceiver implements IReporter {
             i.putExtra(NEW_BUNDLE_ARG_BUNDLE, mBundle);
             i.putExtra(AppGlobals.ACTION_ARG_TIME, System.currentTimeMillis());
             LocalBroadcastManager.getInstance(mContext).sendBroadcastSync(i);
+
+            mObservationCount++;
         } catch (IOException e) {
             Log.w(LOG_TAG, e.toString());
         }
 
         mBundle = null;
+    }
+
+    public int getObservationCount() {
+        return mObservationCount;
     }
 }

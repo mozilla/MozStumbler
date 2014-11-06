@@ -12,7 +12,7 @@
     <!--<string name="coordinate">%1$.4f, %2$.4f</string> translation missing-->
     <string name="service_scanning">Bezig met scannen van Wi-Fi en mobiele netwerken</string>
     <string name="enter_nickname">Alias (niet verplicht)</string>
-    <string name="enter_nickname_title">Alias: </string>
+    <string name="enter_nickname_title">Alias: %1$s</string>
     <string name="enter_nickname_longtext">Alias wordt gepubliceerd op het scorebord.</string>
     <string name="update_title">Download Mozilla Stumbler-update?</string>
     <string name="update_message">Geïnstalleerde versie: %1$s\nMeeste recente versie: %2$s</string>

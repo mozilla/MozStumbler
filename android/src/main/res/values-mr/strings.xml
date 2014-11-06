@@ -9,7 +9,7 @@
     <string name="service_name">मोझिला स्टंबलर</string>
     <string name="service_scanning">Wi-Fi आणि भ्रमणध्वनी जाळे शोधत आहे</string>
     <string name="enter_nickname">टोपणनाव टाका (ऐच्छिक)</string>
-    <string name="enter_nickname_title">टोपणनाव: </string>
+    <string name="enter_nickname_title">टोपणनाव: %1$s</string>
     <string name="enter_nickname_longtext">तुमचे टोपणनाव अग्रेसर वापरकर्ता फलकावर दिसेल.</string>
     <string name="update_title">मोझस्टंबलर आवृत्ती अद्ययावत करायची का?</string>
     <string name="update_message">प्रतिष्ठापित आवृत्ती: %1$s\nनवीनतम आवृत्ती: %2$s</string>

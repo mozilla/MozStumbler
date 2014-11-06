@@ -9,7 +9,7 @@
     <string name="service_name">Mozilla Stumbler</string>
     <string name="service_scanning">กำลังแสกนหาเครือข่าย Wi-Fi และมือถือ</string>
     <string name="enter_nickname">ใส่ชื่อเล่น (ไม่จำเป็น)</string>
-    <string name="enter_nickname_title">ชื่อเล่น: </string>
+    <string name="enter_nickname_title">ชื่อเล่น: %1$s</string>
     <string name="enter_nickname_longtext">ชื่อเล่นของคุณจะถูกแสดงในตารางคะแนน</string>
     <string name="update_title">ดาวน์โหลดอัพเดท Mozilla Stumbler?</string>
     <string name="update_message">รุ่นที่ลง: %1$s\nรุ่นล่าสุด: %2$s</string>

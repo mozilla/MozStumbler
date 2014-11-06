@@ -11,6 +11,7 @@ import android.content.IntentFilter;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.net.wifi.WifiManager.WifiLock;
+import android.os.Build;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
@@ -53,11 +54,20 @@ public class WifiScanner extends BroadcastReceiver {
         mContext = c;
     }
 
-    private boolean isWifiEnabled() {
-        return getWifiManager().isWifiEnabled();
+    private boolean isScanEnabled() {
+        WifiManager manager = getWifiManager();
+        boolean scanEnabled = manager.isWifiEnabled();
+        if (Build.VERSION.SDK_INT >= 18) {
+            scanEnabled |= manager.isScanAlwaysAvailable();
+        }
+        return scanEnabled;
     }
 
     private List<ScanResult> getScanResults() {
+        WifiManager manager = getWifiManager();
+        if (manager == null) {
+            return null;
+        }
         return getWifiManager().getScanResults();
     }
 
@@ -68,11 +78,13 @@ public class WifiScanner extends BroadcastReceiver {
         }
         mStarted = true;
 
-        if (isWifiEnabled()) {
+        if (isScanEnabled()) {
             activatePeriodicScan(stumblingMode);
         }
 
-        IntentFilter i = new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
+        IntentFilter i = new IntentFilter();
+        i.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION);
+        i.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
         mContext.registerReceiver(this, i);
     }
 
@@ -88,14 +100,18 @@ public class WifiScanner extends BroadcastReceiver {
         String action = intent.getAction();
 
         if (WifiManager.WIFI_STATE_CHANGED_ACTION.equals(action)) {
-            if (isWifiEnabled()) {
+            if (isScanEnabled()) {
                 activatePeriodicScan(ActiveOrPassiveStumbling.ACTIVE_STUMBLING);
             } else {
                 deactivatePeriodicScan();
             }
         } else if (WifiManager.SCAN_RESULTS_AVAILABLE_ACTION.equals(action)) {
-            ArrayList<ScanResult> scanResults = new ArrayList<ScanResult>();
-            for (ScanResult scanResult : getScanResults()) {
+            final List<ScanResult> scanResultList = getScanResults();
+            if (scanResultList == null) {
+                return;
+            }
+            final ArrayList<ScanResult> scanResults = new ArrayList<ScanResult>();
+            for (ScanResult scanResult : scanResultList) {
                 scanResult.BSSID = BSSIDBlockList.canonicalizeBSSID(scanResult.BSSID);
                 if (shouldLog(scanResult)) {
                     scanResults.add(scanResult);

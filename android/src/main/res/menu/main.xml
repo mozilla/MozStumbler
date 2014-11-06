@@ -6,10 +6,4 @@
         android:menuCategory="system"
         android:title="@string/view_leaderboard"
         app:showAsAction="never" />
-    <item
-        android:id="@+id/action_preferences"
-        android:icon="@drawable/ic_action_settings"
-        android:menuCategory="system"
-        android:title="@string/action_preferences"
-        app:showAsAction="never" />
 </menu>

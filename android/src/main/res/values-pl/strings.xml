@@ -10,7 +10,7 @@
     <string name="service_name">Mozilla Stumbler</string>
     <string name="service_scanning">Skanowanie w poszukiwaniu sieci Wi-Fi i komórkowych</string>
     <string name="enter_nickname">Wpisz pseudonim (opcjonalnie)</string>
-    <string name="enter_nickname_title">Pseudonim: </string>
+    <string name="enter_nickname_title">Pseudonim: %1$s</string>
     <string name="enter_nickname_longtext">Twój pseudonim pojawi się w rankingu.</string>
     <string name="update_title">Pobrać aktualizację Mozilla Stumblera?</string>
     <string name="update_message">Zainstalowana wersja: %1$s\nNajnowsza wersja: %2$s</string>
@@ -56,7 +56,7 @@
     <string name="kml_file_saved">Zapisano plik KML</string>
     <string name="share_after_kml_saved">Plik został zapisany na urządzeniu, wysłać go?</string>
     <string name="enter_email">Wpisz adres e-mail (opcjonalnie)</string>
-    <string name="enter_email_title">E-mail: </string>
+    <string name="enter_email_title">E-mail: %1$s</string>
     <string name="enter_email_longtext">Adres e-mail nie jest nikomu pokazywany i jest używany tylko do zgłoszeń użytkownika</string>
     <string name="drawer_open">Wysuń szufladę</string>
     <string name="drawer_close">Zamknij szufladę</string>
@@ -67,7 +67,7 @@
     <string name="first_run_start_stumbling">Rozpocznij skanowanie</string>
     <string name="first_run_welcome_to_mozstumbler">Witaj w Mozilla Stumblerze</string>
     <string name="map_unavailable">Nie można wyświetlić mapy, ponieważ urządzenie nie posiada karty pamięci SD.\nNadal można zbierać dane.</string>
-    <string name="map_offline_mode">"Mapa nie będzie aktualizowana bez połączenie z Internetem,\nale nadal można zbierać dane."</string>
+    <string name="map_offline_mode">Mapa nie będzie aktualizowana bez połączenie z Internetem,\nale nadal można zbierać dane.</string>
     <string name="action_developer">Opcje programistyczne</string>
     <string name="developer_title">Opcje programistyczne</string>
     <string name="enable_option_show_mls_on_map">Włączenie przełącznika warstw MLS</string>

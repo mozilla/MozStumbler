@@ -8,9 +8,9 @@
     <string name="stop_scanning">Scanvorgang stoppen</string>
     <string name="view_leaderboard">Bestenliste ansehen</string>
     <string name="service_name">Mozilla Stumbler</string>
-    <string name="service_scanning">Scanne Wi-Fi und Mobilfunknetze</string>
+    <string name="service_scanning">Scanne WLAN und Mobilfunknetze</string>
     <string name="enter_nickname">Namen eingeben (optional)</string>
-    <string name="enter_nickname_title">Name: </string>
+    <string name="enter_nickname_title">Name: %1$s</string>
     <string name="enter_nickname_longtext">Dieser Name wird in der Bestenliste erscheinen.</string>
     <string name="update_title">Mozilla Stumbler Aktualisierung herunterladen?</string>
     <string name="update_message">Installierte Version: %1$s\nAktuellste Version: %2$s</string>
@@ -44,11 +44,11 @@
         <item quantity="other">vor %d Tagen</item>
     </plurals>
     <string name="metrics_observations_title">Berichte:</string>
-    <string name="metrics_observations_wifis_title">Wi-Fi-Netzwerke:</string>
-    <string name="metrics_observations_cell_towers_title">Mobilfunk-Netzwerke:</string>
+    <string name="metrics_observations_wifis_title">WLAN-Netzwerke:</string>
+    <string name="metrics_observations_cell_towers_title">Funkzellen:</string>
     <string name="upload_observations_in_queue_title">Bereit zum Senden</string>
-    <string name="upload_wifi_only_title">Nur über Wi-Fi automatisch hochladen</string>
-    <string name="upload_wifi_only_summary">Diese Option reduziert den Datenverbrauch im Mobilfunknetz. Das manuelle Betätigen des Hochladenbuttons in den Metriken funktioniert aber weiterhin.</string>
+    <string name="upload_wifi_only_title">Nur über WLAN autom. hochladen</string>
+    <string name="upload_wifi_only_summary">Diese Option reduziert den Datenverbrauch im Mobilfunknetz. Das manuelle Betätigen der Hochladen-Schaltfläche in den Metriken funktioniert aber weiterhin.</string>
     <string name="metrics_activity_title">Metriken</string>
     <string name="metrics_this_session">Aktuelle Sitzung</string>
     <string name="drawer_map_option_show_mls_locations">MLS Ortungen anzeigen</string>
@@ -56,12 +56,13 @@
     <string name="action_view_log">Protokoll anzeigen</string>
     <string name="scroll_to_start">Nach Oben scrollen</string>
     <string name="scroll_to_end">Ans Ende scrollen</string>
-    <string name="kml_file_title">KML Berichtedatei</string>
+    <string name="kml_file_title">KML Berichtsdatei</string>
     <string name="kml_file_load">KML Datei laden</string>
     <string name="kml_file_save">KML Datei speichern</string>
-    <string name="kml_file_description">Berichte zu Debugzwecken speichern/laden (Standort, Wi-Fi+Funk Zählungen). </string>
+    <string name="kml_file_description">Berichte zu Debugzwecken speichern/laden (Standort, WLAN + Funkzellen Beobachtungen).</string>
     <string name="kml_file_saved_name">Gespeicherte Datei:</string>
-    <string name="keep_screen_on_title">Bildschirm in der Karte anlassen</string>
+    <string name="keep_screen_on_title">Bildschirm anlassen wenn aktiv</string>
+    <string name="keep_screen_on_summary">Den Bildschirm eingeschaltet lassen, wenn das Scannen aktiviert ist und sich die Anwendung im Vordergrund befindet.</string>
     <string name="delete_all">Alle löschen</string>
     <string name="are_you_sure">Sind Sie sicher?</string>
     <string name="loading_kml">KML wird geladen</string>
@@ -70,34 +71,34 @@
     <string name="share_file">Datei teilen</string>
     <string name="load_file">Datei laden</string>
     <string name="delete_file">Datei löschen</string>
-    <string name="kml_file_saved">KML Gespeichert</string>
+    <string name="kml_file_saved">KML gespeichert</string>
     <string name="share_after_kml_saved">Die Datei wurde auf dem Gerät gespeichert, möchten Sie sie teilen?</string>
-    <string name="enter_email">E-Mail Adresse eingeben (optional)</string>
-    <string name="enter_email_title">Email: </string>
-    <string name="enter_email_longtext">Ihre E-Mail Adresse wird niemals anderen Leuten gezeigt und wird nur für Ihre eigenen Berichte verwendet.</string>
+    <string name="enter_email">E-Mail-Adresse eingeben (optional)</string>
+    <string name="enter_email_title">E-Mail: %1$s</string>
+    <string name="enter_email_longtext">Ihre E-Mail Adresse wird niemals anderen Leuten angezeigt und wird nur für Ihre eigenen Berichte verwendet.</string>
     <string name="drawer_open">Leiste einblenden</string>
     <string name="drawer_close">Leiste ausblenden</string>
     <string name="title_activity_leaderboard">Bestenliste</string>
     <string name="drawer_map_layers_title">Kartenlegende</string>
-    <string name="first_run_message_part1">Der Mozilla Ortungsdienst ist ein offener Dienst zur Ortung von Geräten unter der Verwendung von Wi-Fi- und Mobilfunk-Netzwerken.</string>
-    <string name="first_run_message_part2">Lesen Sie unsere <a href="https://location.services.mozilla.com/privacy">Datenschutzerklärung</a> und fangen Sie dann an zu Scannen, um anzufangen Ihren jetzigen Standort beizusteuern.</string>
+    <string name="first_run_message_part1">Der Mozilla Ortungsdienst ist ein offener Dienst zur Ortung von Geräten unter der Verwendung von WLAN-Netzwerken und Funkzellen.</string>
+    <string name="first_run_message_part2">Lesen Sie unsere <a href="https://location.services.mozilla.com/privacy">Datenschutzerklärung</a> und fangen Sie dann an zu Scannen, um Ihren aktuellen Standort beizusteuern.</string>
     <string name="first_run_start_stumbling">Scannen starten</string>
     <string name="first_run_welcome_to_mozstumbler">Willkommen bei Mozilla Stumbler</string>
-    <string name="map_unavailable">Die Karte kann nicht angezeigt werden, da es keinen SD-Kartenspeicher gibt.\nSie können aber immer noch Daten sammeln.</string>
-    <string name="map_offline_mode">"Die Karte kann ohne eine verfügbare Internetverbindung nicht aktualisiert werden,\nSie können aber immer noch Daten sammeln."</string>
+    <string name="map_unavailable">Die Karte kann nicht angezeigt werden, da kein SD-Kartenspeicher vorhanden ist.\nSie können aber immer noch Daten sammeln.</string>
+    <string name="map_offline_mode">Die Karte kann ohne eine verfügbare Internetverbindung nicht aktualisiert werden.\nSie können aber immer noch Daten sammeln.</string>
     <string name="action_developer">Entwickler</string>
     <string name="developer_title">Entwickler</string>
-    <string name="enable_option_show_mls_on_map">MLS-Ebenen-Schalter freischalten</string>
-    <string name="enable_option_show_mls_on_map_summary">Die Karte kann auf Kosten von ein wenig mehr Speicher und einem leicht erhöhten Datenverbrauch MLS Ortungsabfragen für Ihre getätigten Scans anzeigen.</string>
-    <string name="cell_only_observation">Nur Funk Bericht</string>
-    <string name="wifi_only_observation">Nur Wi-Fi Bericht</string>
-    <string name="low_resolution_map">Karte (geringe Auflösung)</string>
-    <string name="map_turned_off">Karte (Anzeige aus)</string>
+    <string name="enable_option_show_mls_on_map">MLS Ortungsabfragen aktivieren</string>
+    <string name="enable_option_show_mls_on_map_summary">Die Karte kann, auf Kosten von ein wenig mehr Speicher und einem leicht erhöhten Datenverbrauch, MLS Ortungsabfragen für Ihre getätigten Scans anzeigen.</string>
+    <string name="cell_only_observation">Nur Funkzellen Bericht</string>
+    <string name="wifi_only_observation">Nur WLAN Bericht</string>
+    <string name="low_resolution_map">Karte mit geringer Auflösung</string>
+    <string name="map_turned_off">Karte deaktiviert</string>
     <string name="map_tile_resolution_options_label">Kartenkacheloptionen:</string>
     <string name="enable_crash_reporting">Absturzberichte einschalten</string>
     <string name="privacy_policy">Datenschutzerklärung:</string>
     <string name="satellites_separator">/</string>
-    <string name="must_uninstall_to_update">Sie müssen zuerst eine Deinstallation ausführen, um auf die neueste Version zu aktualisieren.</string>
+    <string name="must_uninstall_to_update">Sie müssen zuerst eine Deinstallation durchführen, um auf die neueste Version zu aktualisieren.</string>
     <string-array name="map_tile_resolution_options">
         <item>Standard</item>
         <item>Nur hohe Auflösung</item>

@@ -12,24 +12,44 @@ make
 [![Add new run configuration](https://raw.githubusercontent.com/mozilla/MozStumbler/dev/docs/screencaps/add_new_config.png)](https://raw.githubusercontent.com/mozilla/MozStumbler/dev/docs/screencaps/add_new_config.png)
 
 Setup the Android Application to use two gradle aware make targets.
-Make sure you run updateJars first, then assembleDebug.
+You must set Package to be installed to "Do not deploy anything".
+Make sure you run assembleGithubDebug, then installGithubDebug.
 
 [![Setup new run configuration](https://raw.githubusercontent.com/mozilla/MozStumbler/dev/docs/screencaps/setup_android_config.png)](https://raw.githubusercontent.com/mozilla/MozStumbler/dev/docs/screencaps/setup_android_config.png)
 
 # Signing #
 
-In order to sign the APK, you will want to create a 'gradle.properties' file.  The content should look like the following except it should contain your key signing
-information:
+In order to sign the APK, you will want to create a
+'signing.properties' file under `android/properties`.  The content
+should look like the following except it should contain your key
+signing information:
 
 ```
 StoreFile=<path to file>
 StorePassword=<password>
 KeyAlias=<key alias>
 KeyPassword=<password>
-MozAPIKey=<mozilla location service api key>
-MapAPIKey=<osm tile server key>
-TileServerURL=<osm tile server>  # optional
 ```
+
+To submit data using your own Mozilla API key to the Mozilla Location
+Service, you will need a private-<productFlavor>.properties file in
+`android/properties`. An example properties file is available in
+`android/properties/example.properties`.
+
+The gradle build will pick up private-<productFlavor>.properties
+automatically.
+
+So with :
+
+```
+./gradlew assembleGithubDebug
+```
+
+The build system will pick up
+`android/properties/private-github.properties` as well as
+`android/properties/signing.properties`.  If either of these property
+files do not exist, then empty strings will be used.
+
 For the OSM (OpenStreetMap) Tile Server, you have several options:
 
 * *[MapBox](https://www.mapbox.com/)* (easy, secure) is a hosted OSM
@@ -81,25 +101,17 @@ You will probably find only the `android-release-unsigned.apk` file.
 
 # Releasing #
 
-The release process is largely automated.
-
 1. Bump the version numbers at the top of android/build.gradle
-2. Make sure you've got a private.properties file at the top level of
-   the project.
-3. You should have your keystore file at the top level of the project.
-4. Run `make release`
-5. You should end up with a signed apk MozStumbler-v<whatever_the_version_is>.apk in the rootProject/outputs directory.
-6. Browse to https://github.com/mozilla/MozStumbler/releases.
-7. "Draft a new release" with the release title "MozStumbler v$MOZSTUMBLER_VERSION" and tag version "v$MOZSTUMBLER_VERSION".
-8. Add some release notes and give @credit to contributors!
-9. Drag and drop the new MozStumbler-v$MOZSTUMBLER_VERSION.apk to the "Attach binaries for this release by dropping them here." box.
-10. Check "This is a pre-release" because perpetual beta.
-11. Save the changes.
-12. Tag this release in github with the release version number so that
-    we can reproduce the build (eg: v0.9.0.0).
-13. Push the changes and tag to GitHub and file a PR to merge to
-    master.
-14. Merge the new version pull request. When the new VERSION file is
-    merged in, clients will be able to download the new release.
-15. Email a release announcment to the dev-geolocation mailing list with release notes giving @credit to contributors and a link to the release's page https://github.com/mozilla/MozStumbler/releases/tag/v$MOZSTUMBLER_VERSION.
-14. Good work!  Pat yourself on your back.
+2. Make sure you have your signing keys,
+   private-<productFlavor>.properties and signing.properties file configured.
+3. You should have your keystore file in the `android/properties`
+   directory.
+4. Ensure all code is commited.  Tag the release with v<majorVersion>.<Minor>.<Patch> versions.
+   You *must* prefix the version with a 'v'.
+5. Push tags to wherever you need to.
+6. There are now Github and Google Play Store releases.  Execute
+   them with `make github` or `make playstore`.
+7. You should end up with a signed apk MozStumbler-v<whatever_the_version_is>.apk in the `outputs` directory.
+8. Browse to https://github.com/mozilla/MozStumbler/releases.
+9. Update the release tag with the apk file.
+10. Add some release notes and give @credit to contributors!

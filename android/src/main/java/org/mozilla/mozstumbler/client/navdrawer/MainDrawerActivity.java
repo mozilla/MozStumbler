@@ -261,7 +261,7 @@ public class MainDrawerActivity
 
         int observationCount = service.getObservationCount();
         mMapFragment.formatTextView(R.id.text_observation_count, "%d", observationCount);
-        mMetricsView.setObservationCount(observationCount);
+        mMetricsView.setObservationCount(observationCount, service.getUniqueCellCount(), service.getUniqueAPCount());
 
         mMetricsView.update();
     }

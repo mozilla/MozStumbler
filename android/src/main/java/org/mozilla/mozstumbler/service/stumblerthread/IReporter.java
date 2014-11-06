@@ -35,4 +35,8 @@ public interface IReporter {
     public void flush();
 
     public int getObservationCount();
+
+    public int getUniqueAPCount();
+
+    public int getUniqueCellCount();
 }

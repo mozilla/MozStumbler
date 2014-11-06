@@ -68,6 +68,8 @@ public class MetricsView {
     private boolean mHasQueuedObservations;
 
     private static int sThisSessionObservationsCount;
+    private static int sThisSessionUniqueWifiCount;
+    private static int sThisSessionUniqueCellCount;
 
     public MetricsView(View view) {
         mView = view;
@@ -272,7 +274,9 @@ public class MetricsView {
         updateUploadButtonEnabled();
     }
 
-    public void setObservationCount(int observations) {
+    public void setObservationCount(int observations, int cells, int wifis) {
         sThisSessionObservationsCount = observations;
+        sThisSessionUniqueCellCount = cells;
+        sThisSessionUniqueWifiCount = wifis;
     }
 }

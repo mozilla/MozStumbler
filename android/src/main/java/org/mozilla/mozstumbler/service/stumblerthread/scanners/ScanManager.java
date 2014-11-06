@@ -162,10 +162,6 @@ public class ScanManager {
         return mIsScanning;
     }
 
-    public int getAPCount() {
-        return (mWifiScanner == null) ? 0 : mWifiScanner.getAPCount();
-    }
-
     public int getVisibleAPCount() {
         return (mWifiScanner == null) ? 0 : mWifiScanner.getVisibleAPCount();
     }

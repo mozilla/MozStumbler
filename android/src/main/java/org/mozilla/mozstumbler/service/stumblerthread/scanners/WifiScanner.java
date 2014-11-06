@@ -22,10 +22,7 @@ import org.mozilla.mozstumbler.service.stumblerthread.blocklist.SSIDBlockList;
 import org.mozilla.mozstumbler.service.stumblerthread.blocklist.WifiBlockListInterface;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -47,7 +44,6 @@ public class WifiScanner extends BroadcastReceiver {
     private final Context mContext;
     private WifiLock mWifiLock;
     private Timer mWifiScanTimer;
-    private final Set<String> mAPs = Collections.synchronizedSet(new HashSet<String>());
     private AtomicInteger mVisibleAPs = new AtomicInteger();
 
     public WifiScanner(Context c) {
@@ -115,7 +111,6 @@ public class WifiScanner extends BroadcastReceiver {
                 scanResult.BSSID = BSSIDBlockList.canonicalizeBSSID(scanResult.BSSID);
                 if (shouldLog(scanResult)) {
                     scanResults.add(scanResult);
-                    mAPs.add(scanResult.BSSID);
                 }
             }
             mVisibleAPs.set(scanResults.size());
@@ -126,10 +121,6 @@ public class WifiScanner extends BroadcastReceiver {
     public static void setWifiBlockList(WifiBlockListInterface blockList) {
         BSSIDBlockList.setFilterList(blockList.getBssidOuiList());
         SSIDBlockList.setFilterLists(blockList.getSsidPrefixList(), blockList.getSsidSuffixList());
-    }
-
-    public int getAPCount() {
-        return mAPs.size();
     }
 
     public int getVisibleAPCount() {

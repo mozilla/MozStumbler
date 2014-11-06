@@ -37,8 +37,8 @@ public class ObservedLocationsReceiver extends BroadcastReceiver {
     private WeakReference<MapFragment> mMapActivity = new WeakReference<MapFragment>(null);
     private final LinkedList<ObservationPoint> mCollectionPoints = new LinkedList<ObservationPoint>();
     private final LinkedList<ObservationPoint> mQueuedForMLS = new LinkedList<ObservationPoint>();
-    private final int MAX_QUEUED_MLS_POINTS_TO_FETCH = 10;
-    private final long FREQ_FETCH_MLS_MS = 5 * 1000;
+    private static final int MAX_QUEUED_MLS_POINTS_TO_FETCH = 10;
+    private static final long FREQ_FETCH_MLS_MS = 5 * 1000;
     private WeakReference<ICountObserver> mCountObserver = new WeakReference<ICountObserver>(null);
     private final Handler mHandler = new Handler(Looper.getMainLooper());
 

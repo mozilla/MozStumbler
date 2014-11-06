@@ -11,10 +11,10 @@ import android.content.IntentFilter;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.AppGlobals.ActiveOrPassiveStumbling;
+import org.mozilla.mozstumbler.service.stumblerthread.Reporter;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -23,8 +23,6 @@ import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicBoolean;
-import org.mozilla.mozstumbler.service.AppGlobals.ActiveOrPassiveStumbling;
-import org.mozilla.mozstumbler.service.stumblerthread.Reporter;
 
 public class CellScanner {
     public static final String ACTION_BASE = AppGlobals.ACTION_NAMESPACE + ".CellScanner.";
@@ -37,7 +35,7 @@ public class CellScanner {
 
     private final Context mContext;
     private Timer mCellScanTimer;
-    private final Set<String> mCells = new HashSet<String>();
+    private final Set<String> mVisibleCells = new HashSet<String>();
     private final ReportFlushedReceiver mReportFlushedReceiver = new ReportFlushedReceiver();
     private final AtomicBoolean mReportWasFlushed = new AtomicBoolean();
     private Handler mBroadcastScannedHandler;
@@ -124,11 +122,11 @@ public class CellScanner {
     }
 
     private synchronized void clearCells() {
-        mCells.clear();
+        mVisibleCells.clear();
     }
 
     private synchronized void addToCells(String cell) {
-        mCells.add(cell);
+        mVisibleCells.add(cell);
     }
 
     public synchronized void stop() {
@@ -143,8 +141,8 @@ public class CellScanner {
         mCellScannerImplementation.stop();
     }
 
-    public synchronized int getCellInfoCount() {
-        return mCells.size();
+    public synchronized int getVisibleCellInfoCount() {
+        return mVisibleCells.size();
     }
 
     private class ReportFlushedReceiver extends BroadcastReceiver {

@@ -58,7 +58,7 @@ public class MetricsView {
     private final long FREQ_UPDATE_UPLOADTIME = 10 * 1000;
 
     private final ImageButton mUploadButton;
-    private final ImageButton mSettingsdButton;
+    private final ImageButton mSettingsButton;
     private final RelativeLayout mButtonsContainer;
     private final View mView;
     private long mTotalBytesUploadedThisSession_lastDisplayed = -1;
@@ -67,7 +67,7 @@ public class MetricsView {
 
     private boolean mHasQueuedObservations;
 
-    private static int mThisSessionObservationsCount;
+    private static int sThisSessionObservationsCount;
 
     public MetricsView(View view) {
         mView = view;
@@ -114,8 +114,8 @@ public class MetricsView {
             }
         });
 
-        mSettingsdButton = (ImageButton) mView.findViewById(R.id.metrics_settings_button);
-        mSettingsdButton.setOnClickListener(new View.OnClickListener() {
+        mSettingsButton = (ImageButton) mView.findViewById(R.id.metrics_settings_button);
+        mSettingsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 view.getContext().startActivity(new Intent(view.getContext(), PreferencesScreen.class));
@@ -191,13 +191,13 @@ public class MetricsView {
     }
 
     private void updateThisSessionStats() {
-        if (mThisSessionObservationsCount < 1) {
+        if (sThisSessionObservationsCount < 1) {
             mThisSessionObservationsView.setText("0");
             return;
         }
 
         long bytesUploadedThisSession = AsyncUploader.sTotalBytesUploadedThisSession.get();
-        String val = String.format(mObservationAndSize, mThisSessionObservationsCount, formatKb(bytesUploadedThisSession));
+        String val = String.format(mObservationAndSize, sThisSessionObservationsCount, formatKb(bytesUploadedThisSession));
         mThisSessionObservationsView.setText(val);
     }
 
@@ -245,9 +245,9 @@ public class MetricsView {
             Properties props = dataStorageManager.readSyncStats();
             String value;
             value = props.getProperty(DataStorageContract.Stats.KEY_CELLS_SENT, "0");
-            mAllTimeCellsSentView.setText(String.valueOf(value));
+            mAllTimeCellsSentView.setText(value);
             value = props.getProperty(DataStorageContract.Stats.KEY_WIFIS_SENT, "0");
-            mAllTimeWifisSentView.setText(String.valueOf(value));
+            mAllTimeWifisSentView.setText(value);
             value = props.getProperty(DataStorageContract.Stats.KEY_OBSERVATIONS_SENT, "0");
             String bytes = props.getProperty(DataStorageContract.Stats.KEY_BYTES_SENT, "0");
             value = String.format(mObservationAndSize, Integer.parseInt(value), formatKb(Long.parseLong(bytes)));
@@ -272,8 +272,7 @@ public class MetricsView {
         updateUploadButtonEnabled();
     }
 
-    public void setObservationCount(int count) {
-        mThisSessionObservationsCount = count;
-        updateThisSessionStats();
+    public void setObservationCount(int observations) {
+        sThisSessionObservationsCount = observations;
     }
 }

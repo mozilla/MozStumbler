@@ -160,8 +160,8 @@ public class ScanManager {
         return (mWifiScanner == null) ? 0 : mWifiScanner.getStatus();
     }
 
-    public int getCellInfoCount() {
-        return (mCellScanner == null) ? 0 : mCellScanner.getCellInfoCount();
+    public int getVisibleCellInfoCount() {
+        return (mCellScanner == null) ? 0 : mCellScanner.getVisibleCellInfoCount();
     }
 
     public int getLocationCount() {

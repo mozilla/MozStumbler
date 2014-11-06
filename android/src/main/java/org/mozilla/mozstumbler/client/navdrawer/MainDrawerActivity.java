@@ -256,12 +256,12 @@ public class MainDrawerActivity
             return;
         }
 
-        mMapFragment.formatTextView(R.id.text_cells_visible, "%d", service.getCellInfoCount());
+        mMapFragment.formatTextView(R.id.text_cells_visible, "%d", service.getVisibleCellInfoCount());
         mMapFragment.formatTextView(R.id.text_wifis_visible, "%d", service.getVisibleAPCount());
 
-        int count = getApp().getObservedLocationCount();
-        mMapFragment.formatTextView(R.id.text_observation_count, "%d", count);
-        mMetricsView.setObservationCount(count);
+        int observationCount = getApp().getObservedLocationCount();
+        mMapFragment.formatTextView(R.id.text_observation_count, "%d", observationCount);
+        mMetricsView.setObservationCount(observationCount);
 
         mMetricsView.update();
     }

@@ -46,13 +46,8 @@ public final class Reporter extends BroadcastReceiver implements IReporter {
     private int mPhoneType;
 
     private StumblerBundle mBundle;
-    private JSONObject mPreviousBundleJSON;
 
     public Reporter() {}
-
-    public synchronized JSONObject getPreviousBundleJSON() {
-        return mPreviousBundleJSON;
-    }
 
     public synchronized void startup(Context context) {
         if (mIsStarted) {
@@ -230,17 +225,15 @@ public final class Reporter extends BroadcastReceiver implements IReporter {
             return;
         }
 
-        mPreviousBundleJSON = mlsObj;
-
         AppGlobals.guiLogInfo("MLS record: " + mlsObj.toString());
-
-        Intent i = new Intent(ACTION_NEW_BUNDLE);
-        i.putExtra(NEW_BUNDLE_ARG_BUNDLE, mBundle);
-        i.putExtra(AppGlobals.ACTION_ARG_TIME, System.currentTimeMillis());
-        LocalBroadcastManager.getInstance(mContext).sendBroadcastSync(i);
 
         try {
             DataStorageManager.getInstance().insert(mlsObj.toString(), wifiCount, cellCount);
+
+            Intent i = new Intent(ACTION_NEW_BUNDLE);
+            i.putExtra(NEW_BUNDLE_ARG_BUNDLE, mBundle);
+            i.putExtra(AppGlobals.ACTION_ARG_TIME, System.currentTimeMillis());
+            LocalBroadcastManager.getInstance(mContext).sendBroadcastSync(i);
         } catch (IOException e) {
             Log.w(LOG_TAG, e.toString());
         }

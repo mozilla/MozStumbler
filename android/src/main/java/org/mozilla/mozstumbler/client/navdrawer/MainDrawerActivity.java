@@ -32,7 +32,6 @@ import org.mozilla.mozstumbler.client.Updater;
 import org.mozilla.mozstumbler.client.mapview.MapFragment;
 import org.mozilla.mozstumbler.client.subactivities.FirstRunFragment;
 import org.mozilla.mozstumbler.client.subactivities.LeaderboardActivity;
-import org.mozilla.mozstumbler.client.subactivities.PreferencesScreen;
 import org.mozilla.mozstumbler.service.core.http.HttpUtil;
 import org.mozilla.mozstumbler.service.core.http.IHttpUtil;
 
@@ -122,7 +121,7 @@ public class MainDrawerActivity
         getMenuInflater().inflate(R.menu.main, menu);
 
         mMenuItemStartStop = menu.add(Menu.NONE, MENU_START_STOP, Menu.NONE, R.string.start_scanning);
-        if (Build.VERSION.SDK_INT >= 11) {
+        if (Build.VERSION.SDK_INT >= 14) {
             Switch s = new Switch(this);
             s.setChecked(false);
             s.setOnCheckedChangeListener(mStartStopButtonListener);
@@ -159,7 +158,7 @@ public class MainDrawerActivity
             keepScreenOn(false);
         }
 
-        if (Build.VERSION.SDK_INT >= 11) {
+        if (Build.VERSION.SDK_INT >= 14) {
             Switch s = (Switch) mMenuItemStartStop.getActionView();
             s.setOnCheckedChangeListener(null);
             if (isScanning && !s.isChecked()) {

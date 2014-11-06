@@ -26,8 +26,10 @@ import org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner.CellI
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner.CellScanner;
 
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public final class Reporter extends BroadcastReceiver implements IReporter {
     private static final String LOG_TAG = AppGlobals.LOG_PREFIX + Reporter.class.getSimpleName();
@@ -47,6 +49,8 @@ public final class Reporter extends BroadcastReceiver implements IReporter {
 
     private StumblerBundle mBundle;
     private int mObservationCount = 0;
+    private final Set<String> mUniqueAPs = new HashSet<String>();
+    private final Set<String> mUniqueCells = new HashSet<String>();
 
     public Reporter() {}
 
@@ -237,6 +241,8 @@ public final class Reporter extends BroadcastReceiver implements IReporter {
             LocalBroadcastManager.getInstance(mContext).sendBroadcastSync(i);
 
             mObservationCount++;
+            mUniqueAPs.addAll(mBundle.getWifiData().keySet());
+            mUniqueCells.addAll(mBundle.getCellData().keySet());
         } catch (IOException e) {
             Log.w(LOG_TAG, e.toString());
         }
@@ -246,5 +252,13 @@ public final class Reporter extends BroadcastReceiver implements IReporter {
 
     public int getObservationCount() {
         return mObservationCount;
+    }
+
+    public int getUniqueAPCount() {
+        return mUniqueAPs.size();
+    }
+
+    public int getUniqueCellCount() {
+        return mUniqueCells.size();
     }
 }

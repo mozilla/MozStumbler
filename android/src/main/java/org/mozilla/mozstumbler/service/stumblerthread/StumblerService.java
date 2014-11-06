@@ -89,7 +89,7 @@ public class StumblerService extends PersistentIntentService
     }
 
     public synchronized int getUniqueAPCount() {
-        return mScanManager.getAPCount();
+        return mReporter.getUniqueAPCount();
     }
 
     public synchronized int getVisibleAPCount() {
@@ -98,6 +98,10 @@ public class StumblerService extends PersistentIntentService
 
     public synchronized int getVisibleCellInfoCount() {
         return mScanManager.getVisibleCellInfoCount();
+    }
+
+    public synchronized int getUniqueCellCount() {
+        return mReporter.getUniqueCellCount();
     }
 
     // Previously this was done in onCreate(). Moved out of that so that in the passive standalone service

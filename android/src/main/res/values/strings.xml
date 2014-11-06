@@ -27,6 +27,23 @@
     <string name="upload_observations_sent_title">Previous sessions</string>
     <string name="metrics_observations_last_upload_time_title">Last upload:</string>
     <string name="metrics_observations_last_upload_time_never">never</string>
+    <!-- http://developer.android.com/guide/topics/resources/string-resource.html#Plurals -->
+    <plurals name="time_diff_seconds">
+        <item quantity="one">just now</item>
+        <item quantity="other">moments ago</item>
+    </plurals>
+    <plurals name="time_diff_minutes">
+        <item quantity="one">one minute ago</item>
+        <item quantity="other">%d minutes ago</item>
+    </plurals>
+    <plurals name="time_diff_hours">
+        <item quantity="one">one hour ago</item>
+        <item quantity="other">%d hours ago</item>
+    </plurals>
+    <plurals name="time_diff_days">
+        <item quantity="one">one day ago</item>
+        <item quantity="other">%d days ago</item>
+    </plurals>
     <string name="metrics_observations_title">Reports:</string>
     <string name="metrics_observations_wifis_title">Wi-Fi networks:</string>
     <string name="metrics_observations_cell_towers_title">Cell networks:</string>

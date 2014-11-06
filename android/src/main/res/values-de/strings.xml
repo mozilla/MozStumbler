@@ -27,6 +27,22 @@
     <string name="upload_observations_sent_title">Vorherige Sitzungen</string>
     <string name="metrics_observations_last_upload_time_title">Letzter Upload:</string>
     <string name="metrics_observations_last_upload_time_never">nie</string>
+    <plurals name="time_diff_seconds">
+        <item quantity="one">gerade</item>
+        <item quantity="other">gerade eben</item>
+    </plurals>
+    <plurals name="time_diff_minutes">
+        <item quantity="one">vor einer Minute</item>
+        <item quantity="other">vor %d Minuten</item>
+    </plurals>
+    <plurals name="time_diff_hours">
+        <item quantity="one">vor einer Stunde</item>
+        <item quantity="other">vor %d Stunden</item>
+    </plurals>
+    <plurals name="time_diff_days">
+        <item quantity="one">vor einem Tag</item>
+        <item quantity="other">vor %d Tagen</item>
+    </plurals>
     <string name="metrics_observations_title">Berichte:</string>
     <string name="metrics_observations_wifis_title">WLAN-Netzwerke:</string>
     <string name="metrics_observations_cell_towers_title">Funkzellen:</string>

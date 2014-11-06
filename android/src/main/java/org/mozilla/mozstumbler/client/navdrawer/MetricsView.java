@@ -4,6 +4,7 @@
 
 package org.mozilla.mozstumbler.client.navdrawer;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Looper;
@@ -14,8 +15,6 @@ import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
-import com.ocpsoft.pretty.time.PrettyTime;
 
 import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.client.ClientPrefs;
@@ -30,7 +29,6 @@ import org.mozilla.mozstumbler.service.uploadthread.AsyncUploader;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
-import java.util.Date;
 import java.util.Locale;
 import java.util.Properties;
 
@@ -220,11 +218,13 @@ public class MetricsView {
     };
 
     private void updateLastUploadedLabel() {
-        String value = (String) mView.getContext().getText(R.string.metrics_observations_last_upload_time_never);
+        Context context = mView.getContext();
+        String value = (String) context.getText(R.string.metrics_observations_last_upload_time_never);
         if (mLastUploadTime > 0) {
             if (Locale.getDefault().getLanguage().equals("en")) {
-                value = new PrettyTime().format(new Date(mLastUploadTime));
+                value = DateTimeUtils.prettyPrintTimeDiff(mLastUploadTime, context.getResources());
             } else {
+                // TODO remove when there are enough translations available
                 value = DateTimeUtils.formatTimeForLocale(mLastUploadTime);
             }
         }

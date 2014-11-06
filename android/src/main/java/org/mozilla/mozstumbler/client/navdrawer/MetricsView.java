@@ -48,7 +48,9 @@ public class MetricsView {
             mQueuedObservationsView,
             mQueuedCellsView,
             mQueuedWifisView,
-            mThisSessionObservationsView;
+            mThisSessionObservationsView,
+            mThisSessionUniqueCellsView,
+            mThisSessionUniqueAPsView;
 
     private final CheckBox mOnMapShowMLS;
 
@@ -94,6 +96,8 @@ public class MetricsView {
         mQueuedCellsView = (TextView) mView.findViewById(R.id.cells_queued_value);
         mQueuedWifisView = (TextView) mView.findViewById(R.id.wifis_queued_value);
         mThisSessionObservationsView = (TextView) mView.findViewById(R.id.this_session_observations_value);
+        mThisSessionUniqueCellsView = (TextView) mView.findViewById(R.id.cells_unique_value);
+        mThisSessionUniqueAPsView = (TextView) mView.findViewById(R.id.wifis_unique_value);
 
         mUploadButton = (ImageButton) mView.findViewById(R.id.upload_observations_button);
         mUploadButton.setEnabled(false);
@@ -193,6 +197,9 @@ public class MetricsView {
     }
 
     private void updateThisSessionStats() {
+        mThisSessionUniqueCellsView.setText(String.valueOf(sThisSessionUniqueCellCount));
+        mThisSessionUniqueAPsView.setText(String.valueOf(sThisSessionUniqueWifiCount));
+
         if (sThisSessionObservationsCount < 1) {
             mThisSessionObservationsView.setText("0");
             return;

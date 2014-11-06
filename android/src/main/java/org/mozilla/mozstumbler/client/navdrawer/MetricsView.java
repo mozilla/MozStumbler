@@ -43,11 +43,7 @@ public class MetricsView {
     private final TextView
             mLastUpdateTimeView,
             mAllTimeObservationsSentView,
-            mAllTimeCellsSentView,
-            mAllTimeWifisSentView,
             mQueuedObservationsView,
-            mQueuedCellsView,
-            mQueuedWifisView,
             mThisSessionObservationsView,
             mThisSessionUniqueCellsView,
             mThisSessionUniqueAPsView;
@@ -90,11 +86,7 @@ public class MetricsView {
 
         mLastUpdateTimeView = (TextView) mView.findViewById(R.id.last_upload_time_value);
         mAllTimeObservationsSentView = (TextView) mView.findViewById(R.id.observations_sent_value);
-        mAllTimeCellsSentView = (TextView) mView.findViewById(R.id.cells_sent_value);
-        mAllTimeWifisSentView = (TextView) mView.findViewById(R.id.wifis_sent_value);
         mQueuedObservationsView = (TextView) mView.findViewById(R.id.observations_queued_value);
-        mQueuedCellsView = (TextView) mView.findViewById(R.id.cells_queued_value);
-        mQueuedWifisView = (TextView) mView.findViewById(R.id.wifis_queued_value);
         mThisSessionObservationsView = (TextView) mView.findViewById(R.id.this_session_observations_value);
         mThisSessionUniqueCellsView = (TextView) mView.findViewById(R.id.cells_unique_value);
         mThisSessionUniqueAPsView = (TextView) mView.findViewById(R.id.wifis_unique_value);
@@ -254,9 +246,7 @@ public class MetricsView {
             Properties props = dataStorageManager.readSyncStats();
             String value;
             value = props.getProperty(DataStorageContract.Stats.KEY_CELLS_SENT, "0");
-            mAllTimeCellsSentView.setText(value);
             value = props.getProperty(DataStorageContract.Stats.KEY_WIFIS_SENT, "0");
-            mAllTimeWifisSentView.setText(value);
             value = props.getProperty(DataStorageContract.Stats.KEY_OBSERVATIONS_SENT, "0");
             String bytes = props.getProperty(DataStorageContract.Stats.KEY_BYTES_SENT, "0");
             value = String.format(mObservationAndSize, Integer.parseInt(value), formatKb(Long.parseLong(bytes)));
@@ -271,9 +261,6 @@ public class MetricsView {
 
     private void updateQueuedStats(DataStorageManager dataStorageManager) {
         DataStorageManager.QueuedCounts q = dataStorageManager.getQueuedCounts();
-        mQueuedCellsView.setText(String.valueOf(q.mCellCount));
-        mQueuedWifisView.setText(String.valueOf(q.mWifiCount));
-
         String val = String.format(mObservationAndSize, q.mReportCount, formatKb(q.mBytes));
         mQueuedObservationsView.setText(val);
 

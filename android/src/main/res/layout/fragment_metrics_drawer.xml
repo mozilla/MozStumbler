@@ -6,6 +6,7 @@
     android:orientation="vertical">
 
     <ScrollView
+        android:background="#FF1F201F"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="10">
@@ -324,10 +325,15 @@
 
     </ScrollView>
 
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:background="#FF515351"/>
     <RelativeLayout
         android:id="@+id/metrics_buttons_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="#FF151415"
         android:layout_weight="1"
         android:gravity="bottom"
         android:padding="5dp">

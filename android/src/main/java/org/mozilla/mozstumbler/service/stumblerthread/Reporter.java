@@ -113,6 +113,8 @@ public final class Reporter extends BroadcastReceiver implements IReporter {
                 flush();
                 mBundle = new StumblerBundle(newPosition, mPhoneType);
             }
+        } else if (subject.equals(GPSScanner.SUBJECT_LOCATION_LOST)) {
+            flush();
         }
     }
 

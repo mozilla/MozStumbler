@@ -96,6 +96,7 @@
                     <TextView
                         android:id="@+id/wifis_unqiue_title"
                         android:layout_gravity="start"
+                        android:paddingBottom="@dimen/padding_below_for_metrics_titles"
                         android:paddingEnd="3dp"
                         android:paddingRight="3dp"
                         android:text="@string/metrics_observations_wifis_title"
@@ -104,8 +105,9 @@
                     <TextView
                         android:id="@+id/wifis_unique_value"
                         android:layout_gravity="start"
+                        android:paddingBottom="@dimen/padding_below_for_metrics_titles"
                         android:textSize="@dimen/font_size_for_metrics"
-                        tools:text="50" />
+                        tools:text="100" />
                 </TableRow>
 
                 <TableRow

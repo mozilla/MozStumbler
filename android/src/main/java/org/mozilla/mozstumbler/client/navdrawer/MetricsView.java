@@ -244,12 +244,9 @@ public class MetricsView {
 
         try {
             Properties props = dataStorageManager.readSyncStats();
-            String value;
-            value = props.getProperty(DataStorageContract.Stats.KEY_CELLS_SENT, "0");
-            value = props.getProperty(DataStorageContract.Stats.KEY_WIFIS_SENT, "0");
-            value = props.getProperty(DataStorageContract.Stats.KEY_OBSERVATIONS_SENT, "0");
+            String sent = props.getProperty(DataStorageContract.Stats.KEY_OBSERVATIONS_SENT, "0");
             String bytes = props.getProperty(DataStorageContract.Stats.KEY_BYTES_SENT, "0");
-            value = String.format(mObservationAndSize, Integer.parseInt(value), formatKb(Long.parseLong(bytes)));
+            String value = String.format(mObservationAndSize, Integer.parseInt(sent), formatKb(Long.parseLong(bytes)));
             mAllTimeObservationsSentView.setText(value);
 
             mLastUploadTime = Long.parseLong(props.getProperty(DataStorageContract.Stats.KEY_LAST_UPLOAD_TIME, "0"));

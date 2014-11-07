@@ -11,9 +11,10 @@ import android.os.Handler;
  * Created by victorng on 14-11-04.
  */
 public class SimulateStumbleContextWrapper extends ContextWrapper {
+
+    public final static int SIMULATION_PING_INTERVAL = 1000 * 1; // Every second
+    Handler handler = new Handler();
     private final LocationManager locationManager;
-
-
     final boolean REQUIRED_NETWORK = false;
     final boolean REQUIRES_SATELLITE = false;
     final boolean REQUIRES_CELL = false;
@@ -43,9 +44,6 @@ public class SimulateStumbleContextWrapper extends ContextWrapper {
 
     }
 
-    private final static int INTERVAL = 1000 * 1; // Every second
-    Handler handler = new Handler();
-
     void startRepeatingTask()
     {
         handler.postDelayed(new Runnable() {
@@ -56,31 +54,22 @@ public class SimulateStumbleContextWrapper extends ContextWrapper {
                 }
 
                 Location mockLocation;
-                mockLocation = new Location(LocationManager.GPS_PROVIDER); // a string
-                mockLocation.setLatitude(location.getLatitude());  // double
-                mockLocation.setLongitude(location.getLongitude());
-                mockLocation.setAltitude(location.getAltitude());
-                mockLocation.setTime(System.currentTimeMillis());
+                mockLocation = getNextLocation();
                 locationManager.setTestProviderLocation(LocationManager.GPS_PROVIDER, mockLocation);
-
-                mockLocation = new Location(LocationManager.NETWORK_PROVIDER); // a string
-                mockLocation.setLatitude(location.getLatitude());  // double
-                mockLocation.setLongitude(location.getLongitude());
-                mockLocation.setAltitude(location.getAltitude());
-                mockLocation.setTime(System.currentTimeMillis());
-                locationManager.setTestProviderLocation(LocationManager.GPS_PROVIDER, mockLocation);
-
-
                 // Send another ping
-                handler.postDelayed(this, INTERVAL);
+                handler.postDelayed(this, SIMULATION_PING_INTERVAL);
             }
-        }, INTERVAL);
-
+        }, SIMULATION_PING_INTERVAL);
     }
 
     private Location getNextLocation() {
         // TODO: this should be a generator of some kind
-        return null;
+        Location mockLocation = new Location(LocationManager.GPS_PROVIDER); // a string
+        mockLocation.setLatitude(44.033562);
+        mockLocation.setLongitude(-79.490521);
+        mockLocation.setAltitude(281.0);  // meters above sea level
+        mockLocation.setTime(System.currentTimeMillis());
+        return mockLocation;
     }
 
     public Object getSystemService(String name) {

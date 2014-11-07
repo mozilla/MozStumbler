@@ -61,11 +61,6 @@ public class WifiScanner  {
         return wifiManagerProxy.isWifiEnabled();
     }
 
-    private List<ScanResult> getScanResults() {
-        return wifiManagerProxy.getScanResults();
-    }
-
-
     public synchronized void start(final ActiveOrPassiveStumbling stumblingMode) {
         if (mStarted) {
             return;
@@ -198,7 +193,7 @@ public class WifiScanner  {
                 deactivatePeriodicScan();
             }
         } else if (WifiManager.SCAN_RESULTS_AVAILABLE_ACTION.equals(action)) {
-            final List<ScanResult> scanResultList = getScanResults();
+            final List<ScanResult> scanResultList =  wifiManagerProxy.getScanResults();
             if (scanResultList == null) {
                 return;
             }

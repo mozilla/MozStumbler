@@ -167,10 +167,10 @@ android {
 
 dependencies {
     androidTestCompile 'junit:junit:4.10'
-    androidTestCompile 'org.robolectric:robolectric:2.3'
+    androidTestCompile 'org.robolectric:robolectric:2.4'
 
     testCompile 'junit:junit:4.10'
-    testCompile 'org.robolectric:robolectric:2.3'
+    testCompile 'org.robolectric:robolectric:2.4'
 
     compile 'com.crankycoder:SimpleKML:1.0'
 

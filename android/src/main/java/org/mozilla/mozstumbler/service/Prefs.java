@@ -159,6 +159,18 @@ public class Prefs {
         apply(editor);
     }
 
+    protected float getFloatPrefWithDefault(String key, float def) {
+        return getPrefs().getFloat(key, def);
+    }
+
+
+    protected void setFloatPref(String key, float value) {
+        SharedPreferences.Editor editor = getPrefs().edit();
+        editor.putFloat(key, value);
+        apply(editor);
+    }
+
+
     protected void setStringPref(String key, String value) {
         SharedPreferences.Editor editor = getPrefs().edit();
         editor.putString(key, value);

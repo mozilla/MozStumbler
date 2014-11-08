@@ -97,6 +97,10 @@ android {
 
     buildTypes {
         debug {
+            // We add this suffix to the pakage name to be able to have production and dev version
+            // at same time
+            applicationIdSuffix '.debug'
+
             jniDebugBuild true
 
             // set this to false if you want your debug builds to have

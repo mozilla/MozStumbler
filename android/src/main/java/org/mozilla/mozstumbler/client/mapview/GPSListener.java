@@ -12,6 +12,8 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 
+import org.mozilla.mozstumbler.client.ClientPrefs;
+
 import java.lang.ref.WeakReference;
 
 class GPSListener implements LocationListener {
@@ -50,7 +52,6 @@ class GPSListener implements LocationListener {
             }
         };
 
-        // TODO: #1191 vng - replace this with a mock location manager
         mLocationManager.addGpsStatusListener(mStatusListener);
         Location lastGpsLoc = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         Location lastNetworkLoc = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
@@ -70,8 +71,14 @@ class GPSListener implements LocationListener {
 
     @Override
     public void onLocationChanged(Location location) {
+        if (location == null) {
+            return;
+        }
+
         if (mMapActivity != null) {
             mMapActivity.get().setUserPositionAt(location);
+            ClientPrefs.getInstance().setSimulationLat((float) location.getLatitude());
+            ClientPrefs.getInstance().setSimulationLon((float) location.getLongitude());
         }
     }
 

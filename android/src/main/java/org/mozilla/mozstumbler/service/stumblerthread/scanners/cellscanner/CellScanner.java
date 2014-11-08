@@ -99,12 +99,12 @@ public class CellScanner {
                 ArrayList<CellInfo> cells = (sTestingModeCellInfoArray != null)? sTestingModeCellInfoArray :
                         new ArrayList<CellInfo>(mCellScannerImplementation.getCellInfo());
 
-                if (cells.isEmpty()) {
-                    return;
-                }
-
                 if (mReportWasFlushed.getAndSet(false)) {
                     clearCells();
+                }
+
+                if (cells.isEmpty()) {
+                    return;
                 }
 
                 for (CellInfo cell : cells) {

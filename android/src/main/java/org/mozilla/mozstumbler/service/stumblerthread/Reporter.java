@@ -248,15 +248,15 @@ public final class Reporter extends BroadcastReceiver implements IReporter {
         mBundle = null;
     }
 
-    public int getObservationCount() {
+    public synchronized int getObservationCount() {
         return mObservationCount;
     }
 
-    public int getUniqueAPCount() {
+    public synchronized int getUniqueAPCount() {
         return mUniqueAPs.size();
     }
 
-    public int getUniqueCellCount() {
+    public synchronized int getUniqueCellCount() {
         return mUniqueCells.size();
     }
 }

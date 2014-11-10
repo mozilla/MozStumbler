@@ -4,7 +4,6 @@
 
 package org.mozilla.mozstumbler.client.mapview;
 
-import android.content.Context;
 import android.location.GpsSatellite;
 import android.location.GpsStatus;
 import android.location.Location;

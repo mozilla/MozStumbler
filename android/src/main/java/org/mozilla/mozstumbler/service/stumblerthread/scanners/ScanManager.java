@@ -109,12 +109,6 @@ public class ScanManager {
             return;
         }
         if (mGPSScanner == null) {
-
-            // TODO: #1191 vng - Check the preference to use mock scanners
-            // and wrap the context with a dynamic proxy which replaces
-            // context.getSystemService(Context.LOCATION_SERVICE);
-            // with a mock Location Service
-
             ClientPrefs prefs = ClientPrefs.getInstance();
 
             if (prefs != null) {

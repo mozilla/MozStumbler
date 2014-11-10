@@ -38,10 +38,7 @@ public class ClientPrefs extends Prefs {
     }
 
     public static synchronized ClientPrefs getInstance() {
-        if (sInstance != null && sInstance.getClass().isInstance(ClientPrefs.class)) {
-            throw new IllegalArgumentException("sInstance is improperly initialized");
-        }
-        return (ClientPrefs)sInstance;
+        return (ClientPrefs) Prefs.getInstance();
     }
 
     // For Mozilla Stumbler to use for manual upgrade of old prefs.

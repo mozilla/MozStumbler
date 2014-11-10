@@ -91,6 +91,7 @@
     <string name="developer_title">Developer</string>
     <string name="enable_option_show_mls_on_map">Enable MLS location queries</string>
     <string name="enable_option_show_mls_on_map_summary">At the cost of a bit more memory and network usage, the map can show MLS location queries for your scans.</string>
+    <string name="cell_plus_wifi_observation">Wi-Fi + Cell report</string>
     <string name="cell_only_observation">Cell only report</string>
     <string name="wifi_only_observation">Wi-Fi only report</string>
     <string name="low_resolution_map">Low resolution map</string>

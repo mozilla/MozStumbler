@@ -38,7 +38,7 @@
     </plurals>
     <plurals name="time_diff_hours">
         <item quantity="one">hace una hora</item>
-        <item quantity="other">hace %d horas</item>
+        <item quantity="other">hace %d houras</item>
     </plurals>
     <plurals name="time_diff_days">
         <item quantity="one">hace un día</item>
@@ -91,6 +91,7 @@
     <string name="developer_title">Desarrollador</string>
     <string name="enable_option_show_mls_on_map">Habilitar switch de la capa MLS</string>
     <string name="enable_option_show_mls_on_map_summary">A costa de un uso de poco más de memoria y de red, el mapa puede mostrar consultas de ubicaciones MLS para tu escaneo.</string>
+    <string name="cell_plus_wifi_observation">Reportes de Wi-Fi + celdas móviles</string>
     <string name="cell_only_observation">Reportes de sólo celdas móviles</string>
     <string name="wifi_only_observation">Reportes de sólo Wi-Fi</string>
     <string name="low_resolution_map">Mapa de baja resolución</string>

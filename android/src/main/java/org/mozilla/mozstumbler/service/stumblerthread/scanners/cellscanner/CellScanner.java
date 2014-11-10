@@ -11,6 +11,7 @@ import android.content.IntentFilter;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.content.LocalBroadcastManager;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 
 import org.mozilla.mozstumbler.service.AppGlobals;
@@ -58,6 +59,13 @@ public class CellScanner {
     }
 
     public void start(final ActiveOrPassiveStumbling stumblingMode) {
+        TelephonyManager telephonyManager = (TelephonyManager) mContext.getSystemService(Context.TELEPHONY_SERVICE);
+        if (telephonyManager == null ||
+           (telephonyManager.getPhoneType() != TelephonyManager.PHONE_TYPE_CDMA &&
+            telephonyManager.getPhoneType() != TelephonyManager.PHONE_TYPE_GSM)) {
+            return;
+        }
+
         if (mCellScanTimer != null) {
             return;
         }
@@ -87,13 +95,13 @@ public class CellScanner {
                 }
 
                 if (stumblingMode == ActiveOrPassiveStumbling.PASSIVE_STUMBLING &&
-                        mPassiveScanCount++ > AppGlobals.PASSIVE_MODE_MAX_SCANS_PER_GPS)
+                    mPassiveScanCount++ > AppGlobals.PASSIVE_MODE_MAX_SCANS_PER_GPS)
                 {
                     mPassiveScanCount = 0;
                     stop();
                     return;
                 }
-                //if (SharedConstants.isDebug) Log.d(LOG_TAG, "Cell Scanning Timer fired");
+
                 final long curTime = System.currentTimeMillis();
 
                 ArrayList<CellInfo> cells = (sTestingModeCellInfoArray != null)? sTestingModeCellInfoArray :

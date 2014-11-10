@@ -62,10 +62,7 @@ public class ScanManager {
         }
 
         mWifiScanner.start(ActiveOrPassiveStumbling.PASSIVE_STUMBLING);
-
-        if (mCellScanner != null) {
-            mCellScanner.start(ActiveOrPassiveStumbling.PASSIVE_STUMBLING);
-        }
+        mCellScanner.start(ActiveOrPassiveStumbling.PASSIVE_STUMBLING);
 
         // how often to flush a leftover bundle to the reports table
         // If there is a bundle, and nothing happens for 10sec, then flush it
@@ -109,13 +106,7 @@ public class ScanManager {
         if (mGPSScanner == null) {
             mGPSScanner = new GPSScanner(context, this);
             mWifiScanner = new WifiScanner(context);
-
-            TelephonyManager telephonyManager = (TelephonyManager) mContext.getSystemService(Context.TELEPHONY_SERVICE);
-            if (telephonyManager != null &&
-                    (telephonyManager.getPhoneType() == TelephonyManager.PHONE_TYPE_CDMA ||
-                            telephonyManager.getPhoneType() == TelephonyManager.PHONE_TYPE_GSM)) {
-                mCellScanner = new CellScanner(context);
-            }
+            mCellScanner = new CellScanner(context);
         }
 
         if (AppGlobals.isDebug) {
@@ -125,10 +116,7 @@ public class ScanManager {
         mGPSScanner.start(mStumblingMode);
         if (mStumblingMode == ActiveOrPassiveStumbling.ACTIVE_STUMBLING) {
             mWifiScanner.start(mStumblingMode);
-
-            if (mCellScanner != null) {
-                mCellScanner.start(mStumblingMode);
-            }
+            mCellScanner.start(mStumblingMode);
 
             // in passive mode, these scans are started by passive gps notifications
         }
@@ -146,9 +134,7 @@ public class ScanManager {
 
         mGPSScanner.stop();
         mWifiScanner.stop();
-        if (mCellScanner != null) {
-            mCellScanner.stop();
-        }
+        mCellScanner.stop();
 
         mIsScanning = false;
         return true;

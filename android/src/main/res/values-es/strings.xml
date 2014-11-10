@@ -26,6 +26,24 @@
     <string name="about_legal_flaticons">Los iconos de GPS, torre celular, Wi-Fi, y binoculares están hechos por Freepik de http://flaticon.com bajo la licencia: https://creativecommons.org/licenses/by-nd/3.0</string>
     <string name="upload_observations_sent_title">Sesiones anteriores</string>
     <string name="metrics_observations_last_upload_time_title">Última fecha de envío:</string>
+    <string name="metrics_observations_last_upload_time_never">nunca</string>
+    <!-- http://developer.android.com/guide/topics/resources/string-resource.html#Plurals -->
+    <plurals name="time_diff_seconds">
+        <item quantity="one">justo ahora</item>
+        <item quantity="other">hace un momento</item>
+    </plurals>
+    <plurals name="time_diff_minutes">
+        <item quantity="one">hace un minuto</item>
+        <item quantity="other">hace %d minutos</item>
+    </plurals>
+    <plurals name="time_diff_hours">
+        <item quantity="one">hace una hora</item>
+        <item quantity="other">hace %d horas</item>
+    </plurals>
+    <plurals name="time_diff_days">
+        <item quantity="one">hace un día</item>
+        <item quantity="other">hace %d días</item>
+    </plurals>
     <string name="metrics_observations_title">Reportes:</string>
     <string name="metrics_observations_wifis_title">Redes Wi-Fi:</string>
     <string name="metrics_observations_cell_towers_title">Redes celulares:</string>
@@ -44,7 +62,8 @@
     <string name="kml_file_save">Guardar archivo KML</string>
     <string name="kml_file_description">Guardar/Cargar los reportes (ubicaciones, datos wi-fi+celulares) para debugear.</string>
     <string name="kml_file_saved_name">Archivo guardado:</string>
-    <string name="keep_screen_on_title">Mantener la pantalla encendida mientras se esta en el mapa</string>
+    <string name="keep_screen_on_title">Mantener la pantalla encendida mientras escaneas</string>
+    <string name="keep_screen_on_summary">Mantendrá la pantalla encendia mientras escaneas y la aplicación está en primer plano.</string>
     <string name="delete_all">Borrar todos</string>
     <string name="are_you_sure">¿Estás seguro?</string>
     <string name="loading_kml">Cargando el KML</string>

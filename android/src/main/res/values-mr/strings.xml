@@ -96,7 +96,7 @@
     <string name="low_resolution_map">कमी रीजोलुशन नकाशा</string>
     <string name="map_turned_off">नकाशा दर्शक बंद</string>
     <string name="map_tile_resolution_options_label">नकाशा टाईल्स पर्याय:</string>
-    <string name="enable_crash_reporting">Enable crash reporting</string>
+    <string name="enable_crash_reporting">क्रॅश अहवाल पाठवणे सुरु करा</string>
     <string name="privacy_policy">गुप्तता धोरण:</string>
     <string name="satellites_separator">/</string>
     <string name="must_uninstall_to_update">नवीन आवृत्ती टाकण्यासाठी तुम्ही आधी जुनी आवृत्ती काढली पाहिजे.</string>

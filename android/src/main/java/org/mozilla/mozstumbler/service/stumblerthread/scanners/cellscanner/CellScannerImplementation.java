@@ -87,6 +87,8 @@ public class CellScannerImplementation implements CellScanner.CellScannerImpl {
             } else {
                 mGetAllInfoCellScanner = new GetAllCellInfoScannerDummy();
             }
+
+            mTelephonyManager = (TelephonyManager) mContext.getSystemService(Context.TELEPHONY_SERVICE);
         }
 
         mPhoneStateListener = new PhoneStateListener() {
@@ -105,7 +107,7 @@ public class CellScannerImplementation implements CellScanner.CellScannerImpl {
     @Override
     public synchronized void stop() {
         mIsStarted = false;
-        if (isSupported() && mPhoneStateListener != null) {
+        if (mTelephonyManager != null && mPhoneStateListener != null) {
             mTelephonyManager.listen(mPhoneStateListener, PhoneStateListener.LISTEN_NONE);
         }
         mSignalStrength = CellInfo.UNKNOWN_SIGNAL;

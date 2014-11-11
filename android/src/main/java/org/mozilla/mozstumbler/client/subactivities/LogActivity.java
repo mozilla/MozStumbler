@@ -110,7 +110,7 @@ public class LogActivity extends ActionBarActivity {
             final boolean isTruncating = sLongLinesCounter >= kLongLinesAllowedBeforeTruncate;
 
             final int maxChars = isTruncating? kMaxCharsOfTruncatedLine : kMaxCharsOfLongerLines;
-            if (s.length() > maxChars && !AppGlobals.NO_TRUNCATE_FLAG.equals(s.charAt(0))) {
+            if (s.length() > maxChars && !s.startsWith(AppGlobals.NO_TRUNCATE_FLAG)) {
                 // 1/3 of max length, ellipse, then last 2/3 of max length
                 s = s.substring(0, maxChars / 3) + " ... " + s.substring(s.length() - 1 - maxChars * 2/3);
             }

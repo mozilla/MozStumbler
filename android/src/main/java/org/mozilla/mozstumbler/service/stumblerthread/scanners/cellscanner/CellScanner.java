@@ -47,6 +47,7 @@ public class CellScanner {
     public interface CellScannerImpl {
         void start();
         boolean isStarted();
+        boolean isSupported();
         void stop();
         List<CellInfo> getCellInfo();
     }
@@ -57,10 +58,7 @@ public class CellScanner {
     }
 
     public void start(final ActiveOrPassiveStumbling stumblingMode) {
-        TelephonyManager telephonyManager = (TelephonyManager) mContext.getSystemService(Context.TELEPHONY_SERVICE);
-        if (telephonyManager == null ||
-           (telephonyManager.getPhoneType() != TelephonyManager.PHONE_TYPE_CDMA &&
-            telephonyManager.getPhoneType() != TelephonyManager.PHONE_TYPE_GSM)) {
+        if (!mCellScannerImplementation.isSupported()) {
             return;
         }
 

@@ -40,7 +40,7 @@ import java.util.TimerTask;
  * when the service is destroyed.
  */
 public class DataStorageManager {
-    private static final String LOG_TAG = AppGlobals.LOG_PREFIX + DataStorageManager.class.getSimpleName();
+    private static final String LOG_TAG = AppGlobals.makeLogTag(DataStorageManager.class.getSimpleName());
 
     // The max number of reports stored in the mCurrentReports. Each report is a GPS location plus wifi and cell scan.
     // After this size is reached, data is persisted to disk, mCurrentReports is cleared.

@@ -66,7 +66,7 @@ public final class MapFragment extends android.support.v4.app.Fragment
 
     public enum NoMapAvailableMessage { eHideNoMapMessage, eNoMapDueToNoAccessibleStorage, eNoMapDueToNoInternet }
 
-    private static final String LOG_TAG = AppGlobals.LOG_PREFIX + MapFragment.class.getSimpleName();
+    private static final String LOG_TAG = AppGlobals.makeLogTag(MapFragment.class.getSimpleName());
 
     private static final String COVERAGE_REDIRECT_URL = "https://location.services.mozilla.com/map.json";
     private static int sGPSColor;

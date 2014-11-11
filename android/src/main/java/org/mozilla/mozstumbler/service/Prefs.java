@@ -13,7 +13,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 public class Prefs {
-    private static final String LOG_TAG = Prefs.class.getSimpleName();
+    private static final String LOG_TAG = AppGlobals.makeLogTag(Prefs.class.getSimpleName());
     private static final String NICKNAME_PREF = "nickname";
     private static final String EMAIL_PREF = "email";
     private static final String USER_AGENT_PREF = "user-agent";

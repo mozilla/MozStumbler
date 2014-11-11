@@ -14,7 +14,7 @@ public class MLS implements ILocationService {
     private static final String SEARCH_URL = "https://location.services.mozilla.com/v1/search";
     private static final String SUBMIT_URL = "https://location.services.mozilla.com/v1/submit";
 
-    private static final String LOG_TAG = AppGlobals.LOG_PREFIX + MLS.class.getSimpleName();
+    private static final String LOG_TAG = AppGlobals.makeLogTag(MLS.class.getSimpleName());
 
     public static final String NICKNAME_HEADER = "X-Nickname";
     public static final String EMAIL_HEADER = "X-Email";

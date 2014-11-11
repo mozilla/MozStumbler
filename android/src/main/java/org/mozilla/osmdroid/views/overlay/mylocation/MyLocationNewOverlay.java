@@ -39,7 +39,7 @@ import java.util.LinkedList;
  */
 public class MyLocationNewOverlay extends Overlay implements IMyLocationConsumer,
         IOverlayMenuProvider, Snappable {
-    private static final String LOG_TAG = AppGlobals.LOG_PREFIX + MyLocationNewOverlay.class.getSimpleName();
+    private static final String LOG_TAG = AppGlobals.makeLogTag(MyLocationNewOverlay.class.getSimpleName());
 
     // ===========================================================
     // Constants

@@ -11,7 +11,7 @@ import android.util.Log;
 import org.mozilla.mozstumbler.service.AppGlobals;
 
 public final class NetworkInfo {
-    private static final String LOG_TAG = AppGlobals.LOG_PREFIX + NetworkInfo.class.getSimpleName();
+    private static final String LOG_TAG = AppGlobals.makeLogTag(NetworkInfo.class.getSimpleName());
 
     ConnectivityManager mConnectivityManager;
     static NetworkInfo sInstance;

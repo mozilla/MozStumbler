@@ -40,7 +40,7 @@ public class SmartFSProvider extends MapTileModuleProviderBase {
     // Constants
     // ===========================================================
 
-    private static final String LOG_TAG = AppGlobals.LOG_PREFIX + SmartFSProvider.class.getSimpleName();
+    private static final String LOG_TAG = AppGlobals.makeLogTag(SmartFSProvider.class.getSimpleName());
 
     /**
      * whether the sdcard is mounted read/write

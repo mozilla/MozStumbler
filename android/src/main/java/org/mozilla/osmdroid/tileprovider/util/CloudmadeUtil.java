@@ -30,7 +30,7 @@ import java.io.InputStreamReader;
  */
 public class CloudmadeUtil implements OSMConstants {
 
-    private static final String LOG_TAG = AppGlobals.LOG_PREFIX + CloudmadeUtil.class.getSimpleName();
+    private static final String LOG_TAG = AppGlobals.makeLogTag(CloudmadeUtil.class.getSimpleName());
 
     /**
      * the meta data key in the manifest

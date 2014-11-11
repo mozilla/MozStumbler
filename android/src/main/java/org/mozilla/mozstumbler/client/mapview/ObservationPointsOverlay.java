@@ -14,6 +14,7 @@ import android.graphics.RectF;
 import android.os.SystemClock;
 
 import org.mozilla.mozstumbler.client.ObservedLocationsReceiver;
+import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.osmdroid.util.GeoPoint;
 import org.mozilla.osmdroid.views.MapView;
 import org.mozilla.osmdroid.views.Projection;
@@ -28,7 +29,7 @@ import java.util.LinkedList;
 import java.util.ListIterator;
 
 class ObservationPointsOverlay extends Overlay {
-    private static final String LOG_TAG = ObservationPointsOverlay.class.getSimpleName();
+    private static final String LOG_TAG = AppGlobals.makeLogTag(ObservationPointsOverlay.class.getSimpleName());
     private final Paint mRedPaint = new Paint();
     private final Paint mGreenPaint = new Paint();
     private final Paint mCellPaint = new Paint();

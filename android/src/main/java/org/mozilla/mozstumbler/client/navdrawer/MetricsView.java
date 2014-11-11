@@ -38,7 +38,7 @@ public class MetricsView {
         public void setShowMLS(boolean isOn);
     }
 
-    private static final String LOG_TAG = AppGlobals.LOG_PREFIX + MetricsView.class.getSimpleName();
+    private static final String LOG_TAG = AppGlobals.makeLogTag(MetricsView.class.getSimpleName());
 
     private final TextView
             mLastUpdateTimeView,

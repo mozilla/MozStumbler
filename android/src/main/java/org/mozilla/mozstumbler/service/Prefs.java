@@ -26,6 +26,12 @@ public class Prefs {
     private static final String LAST_ATTEMPTED_UPLOAD_TIME = "last_attempted_upload_time";
     protected static final String PREFS_FILE = Prefs.class.getSimpleName();
 
+    // Simulation prefs
+    private static final String SIMULATE_STUMBLE = "simulate_stumble";
+    private static final String SIMULATION_LAT = "simulate_lat";
+    private static final String SIMULATION_LON = "simulate_lon";
+
+
     private final SharedPreferences mSharedPrefs;
     protected static Prefs sInstance;
 
@@ -190,4 +196,33 @@ public class Prefs {
     protected SharedPreferences getPrefs() {
         return mSharedPrefs;
     }
+
+    private float getFloatPref(String name, float value) {
+        return getFloatPrefWithDefault(name, value);
+    }
+
+    public boolean isSimulateStumble() {
+        return getBoolPrefWithDefault(SIMULATE_STUMBLE, false);
+    }
+
+    public void setSimulateStumble(boolean b) {
+        setBoolPref(SIMULATE_STUMBLE, b);
+    }
+
+    public void setSimulationLat(float value) {
+        setFloatPref(SIMULATION_LAT, value);
+    }
+
+    public void setSimulationLon(float value) {
+        setFloatPref(SIMULATION_LON, value);
+    }
+
+    public float getSimulationLat() {
+        return getFloatPref(SIMULATION_LAT, (float) 43.6472969);
+    }
+
+    public float getSimulationLon() {
+        return getFloatPref(SIMULATION_LON, (float)-79.3943137);
+    }
+
 }

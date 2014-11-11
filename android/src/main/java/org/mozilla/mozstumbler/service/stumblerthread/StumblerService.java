@@ -126,6 +126,8 @@ public class StumblerService extends PersistentIntentService
     public void onDestroy() {
         super.onDestroy();
 
+        UploadAlarmReceiver.cancelAlarm(this, !mScanManager.isPassiveMode());
+
         if (!isScanning()) {
             return;
         }
@@ -180,7 +182,11 @@ public class StumblerService extends PersistentIntentService
             return;
         }
 
-        if (!DataStorageManager.getInstance().isDirEmpty()) {
+        boolean hasFilesWaiting = !DataStorageManager.getInstance().isDirEmpty();
+        if (AppGlobals.isDebug) {
+            Log.d(LOG_TAG, "Files waiting:" + hasFilesWaiting);
+        }
+        if (hasFilesWaiting) {
             // non-empty on startup, schedule an upload
             // This is the only upload trigger in Firefox mode
             // Firefox triggers this ~4 seconds after startup (after Gecko is loaded), add a small delay to avoid

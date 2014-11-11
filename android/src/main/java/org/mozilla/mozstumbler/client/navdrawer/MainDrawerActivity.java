@@ -78,6 +78,11 @@ public class MainDrawerActivity
         ) {
 
             @Override
+            public void onDrawerSlide(View drawerView, float slideOffset) {
+                mMapFragment.setZoomButtonsVisible(false);
+            }
+
+            @Override
             public void onDrawerClosed(View view) {}
 
             @Override

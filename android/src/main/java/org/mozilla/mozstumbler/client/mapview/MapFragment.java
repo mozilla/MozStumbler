@@ -499,6 +499,10 @@ public final class MapFragment extends android.support.v4.app.Fragment
         setHighBandwidthMap(hasWifi);
     }
 
+    public void setZoomButtonsVisible(boolean visible) {
+        mMap.setZoomButtonsVisible(visible);
+    }
+
     @SuppressLint("NewApi")
     public void dimToolbar() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {

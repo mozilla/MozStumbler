@@ -9,6 +9,7 @@ import android.util.Log;
 
 import org.mozilla.mozstumbler.client.ClientPrefs;
 import org.mozilla.mozstumbler.service.AppGlobals;
+import org.mozilla.mozstumbler.service.Prefs;
 import org.mozilla.mozstumbler.service.core.http.HTTPResponse;
 import org.mozilla.mozstumbler.service.core.http.HttpUtil;
 import org.mozilla.mozstumbler.service.core.http.IHttpUtil;
@@ -127,10 +128,10 @@ public class AsyncUploader extends AsyncTask<AsyncUploadParam, AsyncProgressList
             headers.put(MLS.EMAIL_HEADER, param.emailAddress);
             headers.put(MLS.NICKNAME_HEADER, param.nickname);
 
-            ClientPrefs clientPrefs = ClientPrefs.getInstance();
+            Prefs prefs = Prefs.getInstance();
             while (batch != null) {
                 IResponse result;
-                if (clientPrefs != null && clientPrefs.isSimulateStumble()) {
+                if (prefs != null && prefs.isSimulateStumble()) {
 
                    result = new HTTPResponse(200,
                                                        new HashMap<String, List<String>>(),

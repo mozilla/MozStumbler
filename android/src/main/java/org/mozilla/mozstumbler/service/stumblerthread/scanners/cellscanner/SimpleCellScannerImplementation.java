@@ -33,7 +33,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-public class SimpleCellScannerImplementation implements SimpleCellScanner {
+public class SimpleCellScannerImplementation implements ISimpleCellScanner {
 
     protected static String LOG_TAG = AppGlobals.LOG_PREFIX + SimpleCellScannerImplementation.class.getSimpleName();
     protected GetAllCellInfoScannerImpl mGetAllInfoCellScanner;
@@ -59,8 +59,8 @@ public class SimpleCellScannerImplementation implements SimpleCellScanner {
         List<CellInfo> getAllCellInfo(TelephonyManager tm);
     }
 
-    public SimpleCellScannerImplementation(Context context) {
-        mContext = context;
+    public SimpleCellScannerImplementation(Context appContext) {
+        mContext = appContext;
     }
 
     @Override

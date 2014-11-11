@@ -17,6 +17,7 @@ import android.util.Log;
 import org.mozilla.mozstumbler.client.ClientPrefs;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.AppGlobals.ActiveOrPassiveStumbling;
+import org.mozilla.mozstumbler.service.Prefs;
 import org.mozilla.mozstumbler.service.stumblerthread.Reporter;
 import org.mozilla.mozstumbler.service.stumblerthread.blocklist.WifiBlockListInterface;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner.CellScanner;
@@ -109,7 +110,7 @@ public class ScanManager {
             return;
         }
         if (mGPSScanner == null) {
-            ClientPrefs prefs = ClientPrefs.getInstance();
+            Prefs prefs = Prefs.getInstance();
 
             if (prefs != null) {
                 if (prefs.isSimulateStumble()) {

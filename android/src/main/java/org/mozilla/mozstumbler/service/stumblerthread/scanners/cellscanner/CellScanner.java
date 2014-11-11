@@ -12,6 +12,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v4.content.LocalBroadcastManager;
 
+import org.mozilla.mozstumbler.client.ClientPrefs;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.AppGlobals.ActiveOrPassiveStumbling;
 
@@ -22,6 +23,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.mozilla.mozstumbler.service.Prefs;
 import org.mozilla.mozstumbler.service.stumblerthread.Reporter;
 
 public class CellScanner {
@@ -40,11 +42,16 @@ public class CellScanner {
     private final AtomicBoolean mReportWasFlushed = new AtomicBoolean();
     private Handler mBroadcastScannedHandler;
 
-    private final SimpleCellScanner mSimpleCellScanner;
+    private final ISimpleCellScanner mSimpleCellScanner;
 
     public CellScanner(Context context) {
         mContext = context;
-        mSimpleCellScanner = new SimpleCellScannerImplementation(context);
+
+        if ((Prefs.getInstance() != null) && Prefs.getInstance().isSimulateStumble()) {
+            mSimpleCellScanner = new MockSimpleCellScanner(context.getApplicationContext());
+        } else {
+            mSimpleCellScanner = new SimpleCellScannerImplementation(context.getApplicationContext());
+        }
     }
 
     public void start(final ActiveOrPassiveStumbling stumblingMode) {

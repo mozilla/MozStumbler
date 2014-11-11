@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * Created by victorng on 14-11-10.
  */
-public interface SimpleCellScanner {
+public interface ISimpleCellScanner {
     void start();
     boolean isStarted();
     void stop();

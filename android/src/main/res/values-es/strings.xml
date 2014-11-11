@@ -38,7 +38,7 @@
     </plurals>
     <plurals name="time_diff_hours">
         <item quantity="one">hace una hora</item>
-        <item quantity="other">hace %d houras</item>
+        <item quantity="other">hace %d horas</item>
     </plurals>
     <plurals name="time_diff_days">
         <item quantity="one">hace un día</item>

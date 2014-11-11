@@ -47,7 +47,7 @@ public class CellScanner {
     public interface CellScannerImpl {
         void start();
         boolean isStarted();
-        boolean isSupported();
+        boolean isSupportedOnThisDevice();
         void stop();
         List<CellInfo> getCellInfo();
     }
@@ -58,7 +58,7 @@ public class CellScanner {
     }
 
     public void start(final ActiveOrPassiveStumbling stumblingMode) {
-        if (!mCellScannerImplementation.isSupported()) {
+        if (!mCellScannerImplementation.isSupportedOnThisDevice()) {
             return;
         }
 

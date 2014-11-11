@@ -62,8 +62,11 @@ public class CellScannerImplementation implements CellScanner.CellScannerImpl {
         mContext = context;
     }
 
-    public boolean isSupported() {
-        TelephonyManager telephonyManager = (TelephonyManager) mContext.getSystemService(Context.TELEPHONY_SERVICE);
+    public boolean isSupportedOnThisDevice() {
+        TelephonyManager telephonyManager = mTelephonyManager;
+        if (telephonyManager == null) {
+            telephonyManager = (TelephonyManager) mContext.getSystemService(Context.TELEPHONY_SERVICE);
+        }
         return telephonyManager != null &&
            (telephonyManager.getPhoneType() == TelephonyManager.PHONE_TYPE_CDMA ||
             telephonyManager.getPhoneType() == TelephonyManager.PHONE_TYPE_GSM);
@@ -76,7 +79,7 @@ public class CellScannerImplementation implements CellScanner.CellScannerImpl {
 
     @Override
     public synchronized void start() {
-        if (mIsStarted || !isSupported()) {
+        if (mIsStarted || !isSupportedOnThisDevice()) {
             return;
         }
         mIsStarted = true;

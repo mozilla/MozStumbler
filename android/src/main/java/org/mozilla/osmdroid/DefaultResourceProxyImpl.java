@@ -22,7 +22,7 @@ import java.lang.reflect.Field;
  */
 public class DefaultResourceProxyImpl implements ResourceProxy, MapViewConstants {
 
-    private static final String LOG_TAG = AppGlobals.LOG_PREFIX + DefaultResourceProxyImpl.class.getSimpleName();
+    private static final String LOG_TAG = AppGlobals.makeLogTag(DefaultResourceProxyImpl.class.getSimpleName());
 
     private Resources mResources;
     private DisplayMetrics mDisplayMetrics;

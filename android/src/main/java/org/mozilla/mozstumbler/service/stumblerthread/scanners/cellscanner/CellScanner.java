@@ -31,7 +31,7 @@ public class CellScanner {
     public static final String ACTION_CELLS_SCANNED_ARG_CELLS = "cells";
     public static final String ACTION_CELLS_SCANNED_ARG_TIME = AppGlobals.ACTION_ARG_TIME;
 
-    private static final String LOG_TAG = AppGlobals.LOG_PREFIX + CellScanner.class.getSimpleName();
+    private static final String LOG_TAG = AppGlobals.makeLogTag(CellScanner.class.getSimpleName());
     private static final long CELL_MIN_UPDATE_TIME = 1000; // milliseconds
 
     private final Context mContext;
@@ -47,7 +47,7 @@ public class CellScanner {
     public interface CellScannerImpl {
         void start();
         boolean isStarted();
-        boolean isSupported();
+        boolean isSupportedOnThisDevice();
         void stop();
         List<CellInfo> getCellInfo();
     }
@@ -58,7 +58,7 @@ public class CellScanner {
     }
 
     public void start(final ActiveOrPassiveStumbling stumblingMode) {
-        if (!mCellScannerImplementation.isSupported()) {
+        if (!mCellScannerImplementation.isSupportedOnThisDevice()) {
             return;
         }
 

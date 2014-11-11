@@ -61,7 +61,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class MainApp extends Application
         implements AsyncUploader.AsyncUploaderListener {
     public static final AtomicBoolean isUploading = new AtomicBoolean();
-    private final String LOG_TAG = AppGlobals.LOG_PREFIX + MainApp.class.getSimpleName();
+    private final String LOG_TAG = AppGlobals.makeLogTag(MainApp.class.getSimpleName());
     private ClientStumblerService mStumblerService;
     private ServiceConnection mConnection;
     private ServiceBroadcastReceiver mReceiver;

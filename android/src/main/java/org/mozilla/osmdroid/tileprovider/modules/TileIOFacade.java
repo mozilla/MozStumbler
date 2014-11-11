@@ -39,7 +39,7 @@ public class TileIOFacade  {
     // Constants
     // ===========================================================
 
-    private static final String LOG_TAG = AppGlobals.LOG_PREFIX + TileIOFacade.class.getSimpleName();
+    private static final String LOG_TAG = AppGlobals.makeLogTag(TileIOFacade.class.getSimpleName());
 
     // ===========================================================
     // Fields

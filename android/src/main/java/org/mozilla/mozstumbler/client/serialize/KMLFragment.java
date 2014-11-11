@@ -39,7 +39,7 @@ import java.util.LinkedList;
 public class KMLFragment extends Fragment
     implements ObservationPointSerializer.IListener {
 
-    private final String LOG_TAG = AppGlobals.LOG_PREFIX + KMLFragment.class.getSimpleName();
+    private final String LOG_TAG = AppGlobals.makeLogTag(KMLFragment.class.getSimpleName());
 
     private LinkedList<ObservationPoint> mPointsToWrite;
     private WeakReference<ProgressDialog> mProgressDialog;

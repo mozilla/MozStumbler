@@ -47,7 +47,7 @@ public class AsyncUploader extends AsyncTask<AsyncUploadParam, AsyncProgressList
     }
 
     private static AsyncUploaderListener sAsyncListener;
-    private static final String LOG_TAG = AppGlobals.LOG_PREFIX + AsyncUploader.class.getSimpleName();
+    private static final String LOG_TAG = AppGlobals.makeLogTag(AsyncUploader.class.getSimpleName());
     public static final AtomicLong sTotalBytesUploadedThisSession = new AtomicLong();
     public static final AtomicBoolean isUploading = new AtomicBoolean();
 

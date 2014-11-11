@@ -32,7 +32,7 @@ import java.util.Map;
 import java.util.Set;
 
 public final class Reporter extends BroadcastReceiver implements IReporter {
-    private static final String LOG_TAG = AppGlobals.LOG_PREFIX + Reporter.class.getSimpleName();
+    private static final String LOG_TAG = AppGlobals.makeLogTag(Reporter.class.getSimpleName());
     public static final String ACTION_FLUSH_TO_BUNDLE = AppGlobals.ACTION_NAMESPACE + ".FLUSH";
     public static final String ACTION_NEW_BUNDLE = AppGlobals.ACTION_NAMESPACE + ".NEW_BUNDLE";
     public static final String NEW_BUNDLE_ARG_BUNDLE = "bundle";

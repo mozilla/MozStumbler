@@ -20,7 +20,7 @@ import org.mozilla.osmdroid.tileprovider.util.SimpleRegisterReceiver;
  */
 public class BetterTileProvider extends BetterMapTileProviderArray implements IMapTileProviderCallback {
 
-    private static final String LOG_TAG = AppGlobals.LOG_PREFIX + BetterTileProvider.class.getSimpleName();
+    private static final String LOG_TAG = AppGlobals.makeLogTag(BetterTileProvider.class.getSimpleName());
 
     public BetterTileProvider(final Context pContext) {
         // @TODO vng - this needs to be deleted as we are getting the

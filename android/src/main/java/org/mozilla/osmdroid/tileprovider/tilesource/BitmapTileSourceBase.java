@@ -23,7 +23,7 @@ import java.util.Random;
 public abstract class BitmapTileSourceBase
         implements ITileSource, OSMConstants {
 
-    private static final String LOG_TAG = AppGlobals.LOG_PREFIX + BitmapTileSourceBase.class.getSimpleName();
+    private static final String LOG_TAG = AppGlobals.makeLogTag(BitmapTileSourceBase.class.getSimpleName());
 
     private static int globalOrdinal = 0;
 

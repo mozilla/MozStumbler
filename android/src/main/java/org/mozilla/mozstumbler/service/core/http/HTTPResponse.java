@@ -9,7 +9,7 @@ import java.util.Map;
 
 public class HTTPResponse implements IResponse {
 
-    private static final String LOG_TAG = AppGlobals.LOG_PREFIX + HTTPResponse.class.getSimpleName();
+    private static final String LOG_TAG = AppGlobals.makeLogTag(HTTPResponse.class.getSimpleName());
 
     private final int statusCode;
     private final byte[] bodyBytes;

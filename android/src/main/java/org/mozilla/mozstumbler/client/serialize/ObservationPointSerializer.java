@@ -26,6 +26,7 @@ import com.ekito.simpleKML.model.TimeStamp;
 
 import org.joda.time.DateTime;
 import org.mozilla.mozstumbler.client.mapview.ObservationPoint;
+import org.mozilla.mozstumbler.service.AppGlobals;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
@@ -46,7 +47,7 @@ public class ObservationPointSerializer extends AsyncTask<Void, Void, Boolean> {
         public void onError();
     }
 
-    private static final String LOG_TAG = ObservationPointSerializer.class.getSimpleName();
+    private static final String LOG_TAG = AppGlobals.makeLogTag(ObservationPointSerializer.class.getSimpleName());
     private static final String GPS_NAME = "GPS";
     private static final String MLS_NAME = "MLS";
     private static final String ICON_RED_CIRCLE = "http://maps.google.com/mapfiles/kml/shapes/placemark_circle_highlight.png";

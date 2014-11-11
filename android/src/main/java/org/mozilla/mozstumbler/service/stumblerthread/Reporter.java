@@ -26,8 +26,10 @@ import org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner.CellI
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner.CellScanner;
 
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public final class Reporter extends BroadcastReceiver implements IReporter {
     private static final String LOG_TAG = AppGlobals.LOG_PREFIX + Reporter.class.getSimpleName();
@@ -46,13 +48,11 @@ public final class Reporter extends BroadcastReceiver implements IReporter {
     private int mPhoneType;
 
     private StumblerBundle mBundle;
-    private JSONObject mPreviousBundleJSON;
+    private int mObservationCount = 0;
+    private final Set<String> mUniqueAPs = new HashSet<String>();
+    private final Set<String> mUniqueCells = new HashSet<String>();
 
     public Reporter() {}
-
-    public synchronized JSONObject getPreviousBundleJSON() {
-        return mPreviousBundleJSON;
-    }
 
     public synchronized void startup(Context context) {
         if (mIsStarted) {
@@ -230,21 +230,35 @@ public final class Reporter extends BroadcastReceiver implements IReporter {
             return;
         }
 
-        mPreviousBundleJSON = mlsObj;
-
         AppGlobals.guiLogInfo("MLS record: " + mlsObj.toString());
-
-        Intent i = new Intent(ACTION_NEW_BUNDLE);
-        i.putExtra(NEW_BUNDLE_ARG_BUNDLE, mBundle);
-        i.putExtra(AppGlobals.ACTION_ARG_TIME, System.currentTimeMillis());
-        LocalBroadcastManager.getInstance(mContext).sendBroadcastSync(i);
 
         try {
             DataStorageManager.getInstance().insert(mlsObj.toString(), wifiCount, cellCount);
+
+            Intent i = new Intent(ACTION_NEW_BUNDLE);
+            i.putExtra(NEW_BUNDLE_ARG_BUNDLE, mBundle);
+            i.putExtra(AppGlobals.ACTION_ARG_TIME, System.currentTimeMillis());
+            LocalBroadcastManager.getInstance(mContext).sendBroadcastSync(i);
+
+            mObservationCount++;
+            mUniqueAPs.addAll(mBundle.getWifiData().keySet());
+            mUniqueCells.addAll(mBundle.getCellData().keySet());
         } catch (IOException e) {
             Log.w(LOG_TAG, e.toString());
         }
 
         mBundle = null;
+    }
+
+    public synchronized int getObservationCount() {
+        return mObservationCount;
+    }
+
+    public synchronized int getUniqueAPCount() {
+        return mUniqueAPs.size();
+    }
+
+    public synchronized int getUniqueCellCount() {
+        return mUniqueCells.size();
     }
 }

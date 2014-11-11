@@ -9,7 +9,6 @@ import android.location.Location;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import org.json.JSONObject;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.Prefs;
 import org.mozilla.mozstumbler.service.stumblerthread.blocklist.WifiBlockListInterface;
@@ -81,20 +80,28 @@ public class StumblerService extends PersistentIntentService
         return mScanManager.getLocation();
     }
 
+    public synchronized int getObservationCount() {
+        return mReporter.getObservationCount();
+    }
+
     public synchronized int getWifiStatus() {
         return mScanManager.getWifiStatus();
     }
 
-    public synchronized int getAPCount() {
-        return mScanManager.getAPCount();
+    public synchronized int getUniqueAPCount() {
+        return mReporter.getUniqueAPCount();
     }
 
     public synchronized int getVisibleAPCount() {
         return mScanManager.getVisibleAPCount();
     }
 
-    public synchronized int getCellInfoCount() {
-        return mScanManager.getCellInfoCount();
+    public synchronized int getVisibleCellInfoCount() {
+        return mScanManager.getVisibleCellInfoCount();
+    }
+
+    public synchronized int getUniqueCellCount() {
+        return mReporter.getUniqueCellCount();
     }
 
     // Previously this was done in onCreate(). Moved out of that so that in the passive standalone service
@@ -217,9 +224,4 @@ public class StumblerService extends PersistentIntentService
             UploadAlarmReceiver.scheduleAlarm(this, FREQUENCY_IN_SEC_OF_UPLOAD_IN_ACTIVE_MODE, true /* repeating */);
         }
     }
-
-    public JSONObject getLastReportedBundle() {
-        return mReporter.getPreviousBundleJSON();
-    }
-
 }

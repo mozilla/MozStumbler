@@ -76,6 +76,52 @@
                 <TableRow>
 
                     <TextView
+                        android:id="@+id/cells_unique_title"
+                        android:layout_gravity="start"
+                        android:paddingBottom="@dimen/padding_below_for_metrics_titles"
+                        android:paddingEnd="3dp"
+                        android:paddingRight="3dp"
+                        android:text="@string/metrics_observations_cell_towers_title"
+                        android:textSize="@dimen/font_size_for_metrics" />
+
+                    <TextView
+                        android:id="@+id/cells_unique_value"
+                        android:layout_gravity="start"
+                        android:paddingBottom="@dimen/padding_below_for_metrics_titles"
+                        android:textSize="@dimen/font_size_for_metrics"
+                        tools:text="10" />
+                </TableRow>
+
+                <TableRow>
+
+                    <TextView
+                        android:id="@+id/wifis_unqiue_title"
+                        android:layout_gravity="start"
+                        android:paddingBottom="@dimen/padding_below_for_metrics_titles"
+                        android:paddingEnd="3dp"
+                        android:paddingRight="3dp"
+                        android:text="@string/metrics_observations_wifis_title"
+                        android:textSize="@dimen/font_size_for_metrics" />
+
+                    <TextView
+                        android:id="@+id/wifis_unique_value"
+                        android:layout_gravity="start"
+                        android:paddingBottom="@dimen/padding_below_for_metrics_titles"
+                        android:textSize="@dimen/font_size_for_metrics"
+                        tools:text="100" />
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_marginTop="5dp"
+                    android:background="@android:color/darker_gray">
+
+                    <View android:layout_height="1dp" />
+                </TableRow>
+
+                <TableRow>
+
+                    <TextView
                         android:id="@+id/sent_header"
                         android:layout_gravity="start"
                         android:layout_span="2"
@@ -127,52 +173,6 @@
                 <TableRow>
 
                     <TextView
-                        android:id="@+id/cells_sent_title"
-                        android:layout_gravity="start"
-                        android:paddingBottom="@dimen/padding_below_for_metrics_titles"
-                        android:paddingEnd="3dp"
-                        android:paddingRight="3dp"
-                        android:text="@string/metrics_observations_cell_towers_title"
-                        android:textSize="@dimen/font_size_for_metrics" />
-
-                    <TextView
-                        android:id="@+id/cells_sent_value"
-                        android:layout_gravity="start"
-                        android:paddingBottom="@dimen/padding_below_for_metrics_titles"
-                        android:textSize="@dimen/font_size_for_metrics"
-                        tools:text="50" />
-                </TableRow>
-
-                <TableRow>
-
-                    <TextView
-                        android:id="@+id/wifis_sent_title"
-                        android:layout_gravity="start"
-                        android:paddingBottom="@dimen/padding_below_for_metrics_titles"
-                        android:paddingEnd="3dp"
-                        android:paddingRight="3dp"
-                        android:text="@string/metrics_observations_wifis_title"
-                        android:textSize="@dimen/font_size_for_metrics" />
-
-                    <TextView
-                        android:id="@+id/wifis_sent_value"
-                        android:layout_gravity="start"
-                        android:paddingBottom="@dimen/padding_below_for_metrics_titles"
-                        android:textSize="@dimen/font_size_for_metrics"
-                        tools:text="500" />
-                </TableRow>
-
-                <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_marginTop="5dp"
-                    android:background="@android:color/darker_gray">
-
-                    <View android:layout_height="1dp" />
-                </TableRow>
-
-                <TableRow>
-
-                    <TextView
                         android:id="@+id/queued_header"
                         android:layout_gravity="start"
                         android:layout_span="2"
@@ -198,42 +198,6 @@
                         android:id="@+id/observations_queued_value"
                         android:layout_gravity="start"
                         android:paddingBottom="@dimen/padding_below_for_metrics_titles"
-                        android:textSize="@dimen/font_size_for_metrics"
-                        tools:text="50" />
-                </TableRow>
-
-                <TableRow>
-
-                    <TextView
-                        android:id="@+id/cells_queued_title"
-                        android:layout_gravity="start"
-                        android:paddingBottom="@dimen/padding_below_for_metrics_titles"
-                        android:paddingEnd="3dp"
-                        android:paddingRight="3dp"
-                        android:text="@string/metrics_observations_cell_towers_title"
-                        android:textSize="@dimen/font_size_for_metrics" />
-
-                    <TextView
-                        android:id="@+id/cells_queued_value"
-                        android:layout_gravity="start"
-                        android:paddingBottom="@dimen/padding_below_for_metrics_titles"
-                        android:textSize="@dimen/font_size_for_metrics"
-                        tools:text="10" />
-                </TableRow>
-
-                <TableRow>
-
-                    <TextView
-                        android:id="@+id/wifis_queued_title"
-                        android:layout_gravity="start"
-                        android:paddingEnd="3dp"
-                        android:paddingRight="3dp"
-                        android:text="@string/metrics_observations_wifis_title"
-                        android:textSize="@dimen/font_size_for_metrics" />
-
-                    <TextView
-                        android:id="@+id/wifis_queued_value"
-                        android:layout_gravity="start"
                         android:textSize="@dimen/font_size_for_metrics"
                         tools:text="50" />
                 </TableRow>

@@ -43,12 +43,10 @@ public class MetricsView {
     private final TextView
             mLastUpdateTimeView,
             mAllTimeObservationsSentView,
-            mAllTimeCellsSentView,
-            mAllTimeWifisSentView,
             mQueuedObservationsView,
-            mQueuedCellsView,
-            mQueuedWifisView,
-            mThisSessionObservationsView;
+            mThisSessionObservationsView,
+            mThisSessionUniqueCellsView,
+            mThisSessionUniqueAPsView;
 
     private final CheckBox mOnMapShowMLS;
 
@@ -58,7 +56,7 @@ public class MetricsView {
     private final long FREQ_UPDATE_UPLOADTIME = 10 * 1000;
 
     private final ImageButton mUploadButton;
-    private final ImageButton mSettingsdButton;
+    private final ImageButton mSettingsButton;
     private final RelativeLayout mButtonsContainer;
     private final View mView;
     private long mTotalBytesUploadedThisSession_lastDisplayed = -1;
@@ -67,7 +65,9 @@ public class MetricsView {
 
     private boolean mHasQueuedObservations;
 
-    private static int mThisSessionObservationsCount;
+    private static int sThisSessionObservationsCount;
+    private static int sThisSessionUniqueWifiCount;
+    private static int sThisSessionUniqueCellCount;
 
     public MetricsView(View view) {
         mView = view;
@@ -86,12 +86,10 @@ public class MetricsView {
 
         mLastUpdateTimeView = (TextView) mView.findViewById(R.id.last_upload_time_value);
         mAllTimeObservationsSentView = (TextView) mView.findViewById(R.id.observations_sent_value);
-        mAllTimeCellsSentView = (TextView) mView.findViewById(R.id.cells_sent_value);
-        mAllTimeWifisSentView = (TextView) mView.findViewById(R.id.wifis_sent_value);
         mQueuedObservationsView = (TextView) mView.findViewById(R.id.observations_queued_value);
-        mQueuedCellsView = (TextView) mView.findViewById(R.id.cells_queued_value);
-        mQueuedWifisView = (TextView) mView.findViewById(R.id.wifis_queued_value);
         mThisSessionObservationsView = (TextView) mView.findViewById(R.id.this_session_observations_value);
+        mThisSessionUniqueCellsView = (TextView) mView.findViewById(R.id.cells_unique_value);
+        mThisSessionUniqueAPsView = (TextView) mView.findViewById(R.id.wifis_unique_value);
 
         mUploadButton = (ImageButton) mView.findViewById(R.id.upload_observations_button);
         mUploadButton.setEnabled(false);
@@ -114,8 +112,8 @@ public class MetricsView {
             }
         });
 
-        mSettingsdButton = (ImageButton) mView.findViewById(R.id.metrics_settings_button);
-        mSettingsdButton.setOnClickListener(new View.OnClickListener() {
+        mSettingsButton = (ImageButton) mView.findViewById(R.id.metrics_settings_button);
+        mSettingsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 view.getContext().startActivity(new Intent(view.getContext(), PreferencesScreen.class));
@@ -191,13 +189,16 @@ public class MetricsView {
     }
 
     private void updateThisSessionStats() {
-        if (mThisSessionObservationsCount < 1) {
+        mThisSessionUniqueCellsView.setText(String.valueOf(sThisSessionUniqueCellCount));
+        mThisSessionUniqueAPsView.setText(String.valueOf(sThisSessionUniqueWifiCount));
+
+        if (sThisSessionObservationsCount < 1) {
             mThisSessionObservationsView.setText("0");
             return;
         }
 
         long bytesUploadedThisSession = AsyncUploader.sTotalBytesUploadedThisSession.get();
-        String val = String.format(mObservationAndSize, mThisSessionObservationsCount, formatKb(bytesUploadedThisSession));
+        String val = String.format(mObservationAndSize, sThisSessionObservationsCount, formatKb(bytesUploadedThisSession));
         mThisSessionObservationsView.setText(val);
     }
 
@@ -243,14 +244,9 @@ public class MetricsView {
 
         try {
             Properties props = dataStorageManager.readSyncStats();
-            String value;
-            value = props.getProperty(DataStorageContract.Stats.KEY_CELLS_SENT, "0");
-            mAllTimeCellsSentView.setText(String.valueOf(value));
-            value = props.getProperty(DataStorageContract.Stats.KEY_WIFIS_SENT, "0");
-            mAllTimeWifisSentView.setText(String.valueOf(value));
-            value = props.getProperty(DataStorageContract.Stats.KEY_OBSERVATIONS_SENT, "0");
+            String sent = props.getProperty(DataStorageContract.Stats.KEY_OBSERVATIONS_SENT, "0");
             String bytes = props.getProperty(DataStorageContract.Stats.KEY_BYTES_SENT, "0");
-            value = String.format(mObservationAndSize, Integer.parseInt(value), formatKb(Long.parseLong(bytes)));
+            String value = String.format(mObservationAndSize, Integer.parseInt(sent), formatKb(Long.parseLong(bytes)));
             mAllTimeObservationsSentView.setText(value);
 
             mLastUploadTime = Long.parseLong(props.getProperty(DataStorageContract.Stats.KEY_LAST_UPLOAD_TIME, "0"));
@@ -262,9 +258,6 @@ public class MetricsView {
 
     private void updateQueuedStats(DataStorageManager dataStorageManager) {
         DataStorageManager.QueuedCounts q = dataStorageManager.getQueuedCounts();
-        mQueuedCellsView.setText(String.valueOf(q.mCellCount));
-        mQueuedWifisView.setText(String.valueOf(q.mWifiCount));
-
         String val = String.format(mObservationAndSize, q.mReportCount, formatKb(q.mBytes));
         mQueuedObservationsView.setText(val);
 
@@ -272,8 +265,9 @@ public class MetricsView {
         updateUploadButtonEnabled();
     }
 
-    public void setObservationCount(int count) {
-        mThisSessionObservationsCount = count;
-        updateThisSessionStats();
+    public void setObservationCount(int observations, int cells, int wifis) {
+        sThisSessionObservationsCount = observations;
+        sThisSessionUniqueCellCount = cells;
+        sThisSessionUniqueWifiCount = wifis;
     }
 }

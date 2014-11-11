@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.Map;
 
 public class Updater {
-    private static final String LOG_TAG = AppGlobals.LOG_PREFIX + Updater.class.getSimpleName();
+    private static final String LOG_TAG = AppGlobals.makeLogTag(Updater.class.getSimpleName());
     private static final String LATEST_URL = "https://github.com/mozilla/MozStumbler/releases/latest";
     private static final String APK_URL_FORMAT = "https://github.com/mozilla/MozStumbler/releases/download/v%s/MozStumbler-v%s.apk";
     private final IHttpUtil httpClient;

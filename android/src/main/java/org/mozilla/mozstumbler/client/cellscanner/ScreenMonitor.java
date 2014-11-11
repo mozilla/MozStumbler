@@ -20,7 +20,7 @@ import org.mozilla.mozstumbler.service.AppGlobals;
  * https://code.google.com/p/android/issues/detail?id=10931
  */
 public class ScreenMonitor {
-    private static final String LOG_TAG = AppGlobals.LOG_PREFIX + "ScreenOffWorkaround";
+    private static final String LOG_TAG = AppGlobals.makeLogTag(ScreenMonitor.class.getName());
 
     private static final String PREFS_FILE = ScreenMonitor.class.getSimpleName();
     private static final String LOCATION_UPDATES_COUNT_PREF = "location_updates_count";

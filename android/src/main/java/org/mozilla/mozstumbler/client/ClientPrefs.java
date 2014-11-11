@@ -4,12 +4,13 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import org.mozilla.mozstumbler.BuildConfig;
+import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.Prefs;
 import org.mozilla.osmdroid.api.IGeoPoint;
 import org.mozilla.osmdroid.util.GeoPoint;
 
 public class ClientPrefs extends Prefs {
-    private static final String LOG_TAG = ClientPrefs.class.getSimpleName();
+    private static final String LOG_TAG = AppGlobals.makeLogTag(ClientPrefs.class.getSimpleName());
     private static final String LAT_PREF = "lat";
     private static final String LON_PREF = "lon";
     private static final String IS_FIRST_RUN = "is_first_run";

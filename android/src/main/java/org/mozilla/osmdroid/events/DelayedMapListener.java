@@ -15,7 +15,7 @@ import org.mozilla.mozstumbler.service.core.logging.Log;
  */
 public class DelayedMapListener implements MapListener {
 
-    private static final String LOG_TAG = AppGlobals.LOG_PREFIX + DelayedMapListener.class.getSimpleName();
+    private static final String LOG_TAG = AppGlobals.makeLogTag(DelayedMapListener.class.getSimpleName());
 
     /**
      * Default listening delay

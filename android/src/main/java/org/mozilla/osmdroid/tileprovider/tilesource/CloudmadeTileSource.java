@@ -8,7 +8,7 @@ import org.mozilla.osmdroid.tileprovider.util.CloudmadeUtil;
 
 public class CloudmadeTileSource extends OnlineTileSourceBase implements IStyledTileSource<Integer> {
 
-    private static final String LOG_TAG = AppGlobals.LOG_PREFIX + CloudmadeTileSource.class.getSimpleName();
+    private static final String LOG_TAG = AppGlobals.makeLogTag(CloudmadeTileSource.class.getSimpleName());
 
     private Integer mStyle = 1;
 

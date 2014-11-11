@@ -31,7 +31,7 @@ public class BetterMapTileProviderArray extends MapTileProviderBase {
 
     protected final Map<MapTile, MapTileRequestState> mWorking = Collections.synchronizedMap(new HashMap<MapTile, MapTileRequestState>());
 
-    private static final String LOG_TAG = AppGlobals.LOG_PREFIX + BetterMapTileProviderArray.class.getSimpleName();
+    private static final String LOG_TAG = AppGlobals.makeLogTag(BetterMapTileProviderArray.class.getSimpleName());
 
     protected final List<MapTileModuleProviderBase> mTileProviderList;
 

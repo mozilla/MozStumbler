@@ -34,7 +34,7 @@ import java.util.HashMap;
 public abstract class MapTileProviderBase implements IMapTileProviderCallback,
         OSMConstants {
 
-	private static final String LOG_TAG = AppGlobals.LOG_PREFIX + MapTileProviderBase.class.getSimpleName();
+	private static final String LOG_TAG = AppGlobals.makeLogTag(MapTileProviderBase.class.getSimpleName());
 
 	protected final MapTileCache mTileCache;
 	protected Handler mTileRequestCompleteHandler;

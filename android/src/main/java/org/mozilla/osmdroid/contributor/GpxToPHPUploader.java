@@ -22,7 +22,7 @@ import java.util.ArrayList;
 
 public class GpxToPHPUploader {
 
-	private static final String LOG_TAG = AppGlobals.LOG_PREFIX + GpxToPHPUploader.class.getSimpleName();
+	private static final String LOG_TAG = AppGlobals.makeLogTag(GpxToPHPUploader.class.getSimpleName());
 
 	protected static final String UPLOADSCRIPT_URL = "http://www.PLACEYOURDOMAINHERE.com/anyfolder/gpxuploader/upload.php";
 

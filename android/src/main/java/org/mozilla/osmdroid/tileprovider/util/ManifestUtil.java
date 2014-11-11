@@ -12,7 +12,7 @@ import org.mozilla.mozstumbler.service.core.logging.Log;
  */
 public class ManifestUtil {
 
-    private static final String LOG_TAG = AppGlobals.LOG_PREFIX + ManifestUtil.class.getSimpleName();
+    private static final String LOG_TAG = AppGlobals.makeLogTag(ManifestUtil.class.getSimpleName());
 
     /**
      * Retrieve a key from the manifest meta data, or empty string if not found.

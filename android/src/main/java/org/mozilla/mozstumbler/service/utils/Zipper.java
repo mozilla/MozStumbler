@@ -18,7 +18,7 @@ import java.util.zip.GZIPOutputStream;
 
 public class Zipper {
 
-    private static final String LOG_TAG = AppGlobals.LOG_PREFIX + Zipper.class.getSimpleName();
+    private static final String LOG_TAG = AppGlobals.makeLogTag(Zipper.class.getSimpleName());
 
     public enum ZippedState {
         eNotZipped,

@@ -19,7 +19,7 @@ import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageMa
 //    as possible on the Android process kill list.
 // -- Binding functions are commented in this class as being unused in the stand-alone service mode.
 public class ClientStumblerService extends StumblerService {
-    private static final String LOG_TAG = AppGlobals.LOG_PREFIX + StumblerService.class.getSimpleName();
+    private static final String LOG_TAG = AppGlobals.makeLogTag(StumblerService.class.getSimpleName());
     private final IBinder mBinder = new StumblerBinder();
 
     // Service binding is not used in stand-alone passive mode.

@@ -29,7 +29,7 @@ import org.mozilla.mozstumbler.service.core.logging.MockAcraLog;
 
 public class DeveloperActivity extends ActionBarActivity {
 
-    private final String LOG_TAG = AppGlobals.LOG_PREFIX + DeveloperActivity.class.getSimpleName();
+    private final String LOG_TAG = AppGlobals.makeLogTag(DeveloperActivity.class.getSimpleName());
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,7 +71,7 @@ public class DeveloperActivity extends ActionBarActivity {
 
     // For misc developer options
     public static class DeveloperOptions extends Fragment {
-        private final String LOG_TAG = AppGlobals.LOG_PREFIX + DeveloperOptions.class.getSimpleName();
+        private final String LOG_TAG = AppGlobals.makeLogTag(DeveloperOptions.class.getSimpleName());
 
         private View mRootView;
 

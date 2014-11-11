@@ -37,7 +37,7 @@ import java.util.Map;
 
 public class HttpUtil implements IHttpUtil {
 
-    private static final String LOG_TAG = AppGlobals.LOG_PREFIX + HttpUtil.class.getSimpleName();
+    private static final String LOG_TAG = AppGlobals.makeLogTag(HttpUtil.class.getSimpleName());
     private static final String USER_AGENT_HEADER = "User-Agent";
     private final String userAgent;
 

@@ -290,7 +290,11 @@ public final class MapFragment extends android.support.v4.app.Fragment
                                 isGetUrlAndInitCoverageRunning.set(false);
                                 return;
                             }
+                            if (!scanner.hasNext()) {
+                                return
+                            }
                             scanner.useDelimiter("\\A");
+
                             String result = scanner.next();
                             try {
                                 sCoverageUrl = new JSONObject(result).getString("tiles_url");

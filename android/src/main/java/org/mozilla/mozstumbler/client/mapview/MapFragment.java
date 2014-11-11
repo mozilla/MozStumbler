@@ -128,6 +128,7 @@ public final class MapFragment extends android.support.v4.app.Fragment
                     return;
                 mMap.getController().animateTo((mAccuracyOverlay.getLocation()));
                 mUserPanning = false;
+                v.setVisibility(View.INVISIBLE);
             }
         });
 
@@ -538,10 +539,14 @@ public final class MapFragment extends android.support.v4.app.Fragment
         }
     }
 
+    private void setCenterMeVisible(boolean visible) {
+        ImageButton centerMe = (ImageButton) mRootView.findViewById(R.id.my_location_button);
+        centerMe.setVisibility(visible ? View.VISIBLE : View.INVISIBLE);
+    }
+
     void setUserPositionAt(Location location) {
         if (mAccuracyOverlay.getLocation() == null) {
-            ImageButton centerMe = (ImageButton) mRootView.findViewById(R.id.my_location_button);
-            centerMe.setVisibility(View.VISIBLE);
+            setCenterMeVisible(true);
         }
 
         mAccuracyOverlay.setLocation(location);
@@ -669,6 +674,7 @@ public final class MapFragment extends android.support.v4.app.Fragment
             @Override
             public void onSwipe() {
                 mUserPanning = true;
+                setCenterMeVisible(true);
             }
         }));
     }

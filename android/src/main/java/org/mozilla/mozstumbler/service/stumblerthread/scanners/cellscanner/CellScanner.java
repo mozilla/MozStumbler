@@ -11,19 +11,17 @@ import android.content.IntentFilter;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.AppGlobals.ActiveOrPassiveStumbling;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicBoolean;
-import org.mozilla.mozstumbler.service.AppGlobals.ActiveOrPassiveStumbling;
+
 import org.mozilla.mozstumbler.service.stumblerthread.Reporter;
 
 public class CellScanner {
@@ -41,20 +39,12 @@ public class CellScanner {
     private final ReportFlushedReceiver mReportFlushedReceiver = new ReportFlushedReceiver();
     private final AtomicBoolean mReportWasFlushed = new AtomicBoolean();
     private Handler mBroadcastScannedHandler;
-    private final CellScannerImpl mCellScannerImplementation;
 
-    public ArrayList<CellInfo> sTestingModeCellInfoArray;
-
-    public interface CellScannerImpl {
-        void start();
-        boolean isStarted();
-        void stop();
-        List<CellInfo> getCellInfo();
-    }
+    private final SimpleCellScanner mSimpleCellScanner;
 
     public CellScanner(Context context) {
         mContext = context;
-        mCellScannerImplementation = new CellScannerImplementation(context);
+        mSimpleCellScanner = new SimpleCellScannerImplementation(context);
     }
 
     public void start(final ActiveOrPassiveStumbling stumblingMode) {
@@ -74,7 +64,7 @@ public class CellScanner {
             }
         };
 
-        mCellScannerImplementation.start();
+        mSimpleCellScanner.start();
 
         mCellScanTimer = new Timer();
 
@@ -82,7 +72,7 @@ public class CellScanner {
             int mPassiveScanCount;
             @Override
             public void run() {
-                if (!mCellScannerImplementation.isStarted()) {
+                if (!mSimpleCellScanner.isStarted()) {
                     return;
                 }
 
@@ -96,8 +86,7 @@ public class CellScanner {
                 //if (SharedConstants.isDebug) Log.d(LOG_TAG, "Cell Scanning Timer fired");
                 final long curTime = System.currentTimeMillis();
 
-                ArrayList<CellInfo> cells = (sTestingModeCellInfoArray != null)? sTestingModeCellInfoArray :
-                        new ArrayList<CellInfo>(mCellScannerImplementation.getCellInfo());
+                ArrayList<CellInfo> cells = new ArrayList<CellInfo>(mSimpleCellScanner.getCellInfo());
 
                 if (cells.isEmpty()) {
                     return;
@@ -140,7 +129,7 @@ public class CellScanner {
             mCellScanTimer.cancel();
             mCellScanTimer = null;
         }
-        mCellScannerImplementation.stop();
+        mSimpleCellScanner.stop();
     }
 
     public synchronized int getCellInfoCount() {

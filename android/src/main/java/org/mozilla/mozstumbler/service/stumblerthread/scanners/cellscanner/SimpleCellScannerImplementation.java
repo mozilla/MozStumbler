@@ -33,9 +33,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-public class CellScannerImplementation implements CellScanner.CellScannerImpl {
+public class SimpleCellScannerImplementation implements SimpleCellScanner {
 
-    protected static String LOG_TAG = AppGlobals.LOG_PREFIX + CellScannerImplementation.class.getSimpleName();
+    protected static String LOG_TAG = AppGlobals.LOG_PREFIX + SimpleCellScannerImplementation.class.getSimpleName();
     protected GetAllCellInfoScannerImpl mGetAllInfoCellScanner;
     protected TelephonyManager mTelephonyManager;
     protected boolean mIsStarted;
@@ -59,7 +59,7 @@ public class CellScannerImplementation implements CellScanner.CellScannerImpl {
         List<CellInfo> getAllCellInfo(TelephonyManager tm);
     }
 
-    public CellScannerImplementation(Context context) {
+    public SimpleCellScannerImplementation(Context context) {
         mContext = context;
     }
 
@@ -84,9 +84,9 @@ public class CellScannerImplementation implements CellScanner.CellScannerImpl {
 
             mTelephonyManager = (TelephonyManager) mContext.getSystemService(Context.TELEPHONY_SERVICE);
             if (mTelephonyManager == null) {
-                throw new UnsupportedOperationException("TelephonyManager service is not available");
+                // This is almost certainly a tablet or some other wifi only device.
+                return;
             }
-
             mPhoneType = mTelephonyManager.getPhoneType();
             if (mPhoneType == TelephonyManager.PHONE_TYPE_NONE) {
                 // This is almost certainly a tablet or some other wifi only device.

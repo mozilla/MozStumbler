@@ -7,7 +7,9 @@ package org.mozilla.mozstumbler.service.uploadthread;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import org.mozilla.mozstumbler.client.ClientPrefs;
 import org.mozilla.mozstumbler.service.AppGlobals;
+import org.mozilla.mozstumbler.service.core.http.HTTPResponse;
 import org.mozilla.mozstumbler.service.core.http.HttpUtil;
 import org.mozilla.mozstumbler.service.core.http.IHttpUtil;
 import org.mozilla.mozstumbler.service.core.http.ILocationService;
@@ -19,6 +21,7 @@ import org.mozilla.mozstumbler.service.utils.Zipper;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -70,7 +73,7 @@ public class AsyncUploader extends AsyncTask<AsyncUploadParam, AsyncProgressList
 
        AsyncProgressListenerStatusWrapper wrapper =
                new AsyncProgressListenerStatusWrapper(sAsyncListener, true);
-        sAsyncListener.onUploadProgress(true);
+       sAsyncListener.onUploadProgress(true);
 
        publishProgress(wrapper);
 
@@ -124,8 +127,19 @@ public class AsyncUploader extends AsyncTask<AsyncUploadParam, AsyncProgressList
             headers.put(MLS.EMAIL_HEADER, param.emailAddress);
             headers.put(MLS.NICKNAME_HEADER, param.nickname);
 
+            ClientPrefs clientPrefs = ClientPrefs.getInstance();
             while (batch != null) {
-               IResponse result = mls.submit(batch.data, headers, true);
+                IResponse result;
+                if (clientPrefs != null && clientPrefs.isSimulateStumble()) {
+
+                   result = new HTTPResponse(200,
+                                                       new HashMap<String, List<String>>(),
+                                                       new byte[]{},
+                                                       batch.data.length);
+
+               } else {
+                   result = mls.submit(batch.data, headers, true);
+               }
 
                 if (result != null && result.isSuccessCode2XX()) {
                     totalBytesSent += result.bytesSent();
@@ -152,7 +166,7 @@ public class AsyncUploader extends AsyncTask<AsyncUploadParam, AsyncProgressList
                         }
                         dm.delete(batch.filename);
                     } else {
-                        DataStorageManager.getInstance().saveCurrentReportsSendBufferToDisk();
+                        dm.saveCurrentReportsSendBufferToDisk();
                     }
                     AppGlobals.guiLogError(logMsg);
                 }

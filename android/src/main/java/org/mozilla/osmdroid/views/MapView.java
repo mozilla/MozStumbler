@@ -1094,6 +1094,10 @@ public class MapView extends ViewGroup implements IMapView, MapViewConstants,
         this.mZoomController.setZoomOutEnabled(canZoomOut());
     }
 
+    public void setZoomButtonsVisible(final boolean visible) {
+        this.mZoomController.setVisible(visible);
+    }
+
     public void setBuiltInZoomControls(final boolean on) {
         this.mEnableZoomController = on;
         this.checkZoomButtons();

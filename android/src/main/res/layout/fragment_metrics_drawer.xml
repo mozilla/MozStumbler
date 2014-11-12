@@ -246,12 +246,12 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/cell_plus_wifi_layout"
+                android:id="@+id/cell_only_layout"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
-                android:layout_below="@+id/map_info_title"
+                android:layout_below="@+id/cell_plus_wifi_layout"
                 android:orientation="horizontal">
 
                 <ImageView

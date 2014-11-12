@@ -4,9 +4,11 @@
 
 package org.mozilla.mozstumbler.service.stumblerthread;
 
+import android.annotation.TargetApi;
 import android.content.Intent;
 import android.location.Location;
 import android.os.AsyncTask;
+import android.provider.ContactsContract;
 import android.util.Log;
 
 import org.mozilla.mozstumbler.service.AppGlobals;
@@ -230,4 +232,30 @@ public class StumblerService extends PersistentIntentService
             UploadAlarmReceiver.scheduleAlarm(this, FREQUENCY_IN_SEC_OF_UPLOAD_IN_ACTIVE_MODE, true /* repeating */);
         }
     }
+
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        handleLowMemoryNotification();
+    }
+
+    @TargetApi(14)
+    @Override
+    public void onTrimMemory(int level) {
+        super.onTrimMemory(level);
+        handleLowMemoryNotification();
+    }
+
+    public void handleLowMemoryNotification() {
+        DataStorageManager manager = DataStorageManager.getInstance();
+        if (manager == null) {
+            return;
+        }
+        try {
+            manager.saveCurrentReportsToDisk();
+        } catch (IOException ioException) {
+            Log.e(LOG_TAG, ioException.toString());
+        }
+    }
+
 }

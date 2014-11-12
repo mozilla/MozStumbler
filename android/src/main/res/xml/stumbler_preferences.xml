@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     android:key="preferences">
+    <PreferenceCategory android:title="@string/category_leaderboard" >
     <EditTextPreference
         android:key="nickname"
         android:title="@string/enter_nickname"
@@ -10,25 +11,15 @@
         android:title="@string/enter_email"
         android:inputType="textEmailAddress"
         android:summary="@string/enter_email_longtext" />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/category_network_usage" >
+
     <CheckBoxPreference
         android:key="wifi_only"
         android:title="@string/upload_wifi_only_title"
         android:summary="@string/upload_wifi_only_summary"
         android:defaultValue="true" />
-    <CheckBoxPreference
-        android:key="keep_screen_on"
-        android:title="@string/keep_screen_on_title"
-        android:summary="@string/keep_screen_on_summary"
-        android:defaultValue="false" />
-    <CheckBoxPreference
-        android:key="enable_the_option_to_show_mls_on_map"
-        android:title="@string/enable_option_show_mls_on_map"
-        android:summary="@string/enable_option_show_mls_on_map_summary"
-        android:defaultValue="false" />
-    <CheckBoxPreference
-        android:key="crash_reporting"
-        android:title="@string/enable_crash_reporting"
-        android:defaultValue="false" />
     <ListPreference
         android:key="map_tile_res_options"
         android:title="@string/map_tile_resolution_options_label"
@@ -36,7 +27,28 @@
         android:entryValues="@array/map_tile_resolution_options_intvalues"
         android:summary="@string/map_tile_resolution_options_summary"
         />
+    </PreferenceCategory>
 
+    <PreferenceCategory android:title="@string/category_display" >
+
+    <CheckBoxPreference
+        android:key="enable_the_option_to_show_mls_on_map"
+        android:title="@string/enable_option_show_mls_on_map"
+        android:summary="@string/enable_option_show_mls_on_map_summary"
+        android:defaultValue="false" />
+    <CheckBoxPreference
+        android:key="keep_screen_on"
+        android:title="@string/keep_screen_on_title"
+        android:summary="@string/keep_screen_on_summary"
+        android:defaultValue="false" />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="" >
+    <CheckBoxPreference
+        android:key="crash_reporting"
+        android:title="@string/enable_crash_reporting"
+        android:defaultValue="false" />
+    </PreferenceCategory>
     <PreferenceCategory
         android:key="api_10_support">
     <Preference android:title="@string/view_leaderboard"

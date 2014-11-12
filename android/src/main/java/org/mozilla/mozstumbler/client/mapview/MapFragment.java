@@ -128,24 +128,7 @@ public final class MapFragment extends android.support.v4.app.Fragment
                     return;
                 mMap.getController().animateTo((mAccuracyOverlay.getLocation()));
                 mUserPanning = false;
-                v.setVisibility(View.INVISIBLE);
-            }
-        });
-
-        centerMe.setOnTouchListener(new View.OnTouchListener() {
-            public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    centerMe.setBackgroundResource(R.drawable.ic_mylocation_click_android_assets);
-
-                } else if (event.getAction() == MotionEvent.ACTION_UP) {
-                    v.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            centerMe.setBackgroundResource(R.drawable.ic_mylocation_android_assets);
-                        }
-                    }, 200);
-                }
-                return false;
+                centerMe.setBackgroundResource(R.drawable.ic_mylocation_android_assets);
             }
         });
 
@@ -543,14 +526,15 @@ public final class MapFragment extends android.support.v4.app.Fragment
         }
     }
 
-    private void setCenterMeVisible(boolean visible) {
+    private void setCenterButtonToNotCenteredIcon() {
         ImageButton centerMe = (ImageButton) mRootView.findViewById(R.id.my_location_button);
-        centerMe.setVisibility(visible ? View.VISIBLE : View.INVISIBLE);
+        centerMe.setVisibility(View.VISIBLE);
+        centerMe.setBackgroundResource(R.drawable.ic_mylocation_no_dot_android_assets);
     }
 
     void setUserPositionAt(Location location) {
         if (mAccuracyOverlay.getLocation() == null) {
-            setCenterMeVisible(true);
+            setCenterButtonToNotCenteredIcon();
         }
 
         mAccuracyOverlay.setLocation(location);
@@ -678,7 +662,7 @@ public final class MapFragment extends android.support.v4.app.Fragment
             @Override
             public void onSwipe() {
                 mUserPanning = true;
-                setCenterMeVisible(true);
+                setCenterButtonToNotCenteredIcon();
             }
         }));
     }

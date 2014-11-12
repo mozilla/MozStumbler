@@ -11,8 +11,9 @@ import android.support.v4.content.LocalBroadcastManager;
 
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.core.logging.Log;
+import org.mozilla.mozstumbler.service.stumblerthread.scanners.ScanManager;
 
-/* Test low power in adb with am broadcast -a android.intent.action.BATTERY_LOW
+/* Test low power in adb with am broadcast -a org.mozilla.mozstumbler.intent.action.BATTERY_LOW
  * Test cancel button in notification list by swiping down on the entry for the
  * stumbler, and [X] Stop Scanning will appear.
  */
@@ -21,9 +22,8 @@ public final class TurnOffReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        if (intent != null && intent.getAction() != null && intent.getAction().contains("BATTERY_LOW")) {
-            Log.d(LOG_TAG, "Battery Low Received");
-            context.sendBroadcast(new Intent(MainApp.INTENT_TURN_OFF));
+        if (intent != null && intent.getAction() != null && intent.getAction().equals(ScanManager.ACTION_BATTERY_LOW)) {
+            LocalBroadcastManager.getInstance(context).sendBroadcast(new Intent(ScanManager.ACTION_BATTERY_LOW));
         } else {
             LocalBroadcastManager.getInstance(context).sendBroadcast(new Intent(MainApp.ACTION_UI_PAUSE_SCANNING));
         }

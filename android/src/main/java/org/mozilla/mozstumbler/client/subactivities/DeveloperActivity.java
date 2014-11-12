@@ -57,16 +57,13 @@ public class DeveloperActivity extends ActionBarActivity {
                             }
                         })
                         .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-
-                            }
+                            public void onClick(DialogInterface dialog, int which) {}
                         })
                         .setIcon(android.R.drawable.ic_dialog_alert)
                         .show();
                 return true;
             }
         });
-
     }
 
     // For misc developer options
@@ -79,44 +76,10 @@ public class DeveloperActivity extends ActionBarActivity {
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             mRootView = inflater.inflate(R.layout.fragment_developer_options, container, false);
 
-            boolean crashEnabled = ClientPrefs.getInstance().isCrashReportingEnabled();
-            CheckBox button = (CheckBox) mRootView.findViewById(R.id.toggleCrashReports);
-            button.setChecked(crashEnabled);
-            button.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    onToggleCrashReportClicked(isChecked);
-                }
-            });
+            // Although no options are here currently, some will be added
 
-            final Spinner spinner = (Spinner) mRootView.findViewById(R.id.spinnerMapResolutionOptions);
-            spinner.setSelection(ClientPrefs.getInstance().getMapTileResolutionType().ordinal());
-            spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                @Override
-                public void onItemSelected(AdapterView<?> arg0, View arg1, int position, long id) {
-                    String item = spinner.getSelectedItem().toString();
-                    ClientPrefs prefs = ClientPrefs.createGlobalInstance(getActivity().getApplicationContext());
-                    prefs.setMapTileResolutionType(position);
-                }
-
-                @Override
-                public void onNothingSelected(AdapterView<?> arg0) {
-                }
-
-            });
             return mRootView;
         }
 
-        private void onToggleCrashReportClicked(boolean isOn) {
-            ClientPrefs.getInstance().setCrashReportingEnabled(isOn);
-
-            if (isOn) {
-                Log.d(LOG_TAG, "Enabled crash reporting");
-                ACRA.setLog(MockAcraLog.getOriginalLog());
-            } else {
-                Log.d(LOG_TAG, "Disabled crash reporting");
-                ACRA.setLog(new MockAcraLog());
-            }
-        }
     }
 }

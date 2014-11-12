@@ -25,6 +25,17 @@
         android:title="@string/enable_option_show_mls_on_map"
         android:summary="@string/enable_option_show_mls_on_map_summary"
         android:defaultValue="false" />
+    <CheckBoxPreference
+        android:key="crash_reporting"
+        android:title="@string/enable_crash_reporting"
+        android:defaultValue="false" />
+    <ListPreference
+        android:key="map_tile_res_options"
+        android:title="@string/map_tile_resolution_options_label"
+        android:entries="@array/map_tile_resolution_options"
+        android:entryValues="@array/map_tile_resolution_options_intvalues"
+        android:summary="@string/map_tile_resolution_options_summary"
+        />
 
     <PreferenceCategory
         android:key="api_10_support">

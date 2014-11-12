@@ -90,21 +90,29 @@
     <string name="action_developer">Developer</string>
     <string name="developer_title">Developer</string>
     <string name="enable_option_show_mls_on_map">Enable MLS location queries</string>
-    <string name="enable_option_show_mls_on_map_summary">At the cost of a bit more memory and network usage, the map can show MLS location queries for your scans.</string>
-    <string name="cell_plus_wifi_observation">Wi-Fi + Cell report</string>
+    <string name="enable_option_show_mls_on_map_summary">Show Mozilla Location Service (MLS) locations for your reports.</string>
+    <string name="enable_option_show_mls_on_map_detailed_info">At the cost of a bit more memory and network usage, the MLS location is shown for each report. This is shown on the map as a red dot for the MLS location, with a line to its report.</string>
+    <string name="cell_plus_wifi_observation">Wi-Fi + cell report</string>
     <string name="cell_only_observation">Cell only report</string>
     <string name="wifi_only_observation">Wi-Fi only report</string>
     <string name="low_resolution_map">Low resolution map</string>
     <string name="map_turned_off">Map display off</string>
-    <string name="map_tile_resolution_options_label">Map tile options:</string>
+    <string name="map_tile_resolution_options_label">Map detail:</string>
+    <string name="map_tile_resolution_options_summary">Low detail reduces network data usage.</string>
     <string name="enable_crash_reporting">Enable crash reporting</string>
     <string name="privacy_policy">Privacy policy:</string>
     <string name="satellites_separator">/</string>
     <string name="must_uninstall_to_update">You must uninstall first to update to the new version.</string>
     <string-array name="map_tile_resolution_options">
-        <item>Default</item>
-        <item>High resolution only</item>
-        <item>Low resolution only</item>
+        <item>High (Wi-Fi) / low (cell)</item>
+        <item>High detail only</item>
+        <item>Low detail only</item>
         <item>No map</item>
+    </string-array>
+    <string-array name="map_tile_resolution_options_intvalues">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
     </string-array>
 </resources>

@@ -4,20 +4,27 @@
 
 package org.mozilla.mozstumbler.client.subactivities;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
+import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceGroup;
 import android.text.TextUtils;
+import android.util.Log;
 
 import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.client.ClientPrefs;
 import org.mozilla.mozstumbler.client.MainApp;
+import org.mozilla.mozstumbler.service.Prefs;
 
 public class PreferencesScreen extends PreferenceActivity {
     private EditTextPreference mNicknamePreference;
@@ -26,6 +33,8 @@ public class PreferencesScreen extends PreferenceActivity {
     private CheckBoxPreference mWifiPreference;
     private CheckBoxPreference mKeepScreenOn;
     private CheckBoxPreference mEnableShowMLSLocations;
+    private CheckBoxPreference mCrashReportsOn;
+    private ListPreference mMapTileDetail;
 
     private ClientPrefs getPrefs() {
         ClientPrefs prefs = ClientPrefs.getInstance();
@@ -42,23 +51,24 @@ public class PreferencesScreen extends PreferenceActivity {
 
         addPreferencesFromResource(R.xml.stumbler_preferences);
 
-        mNicknamePreference = (EditTextPreference) getPreferenceManager().findPreference("nickname");
-        mEmailPreference = (EditTextPreference) getPreferenceManager().findPreference("email");
-
-        mWifiPreference = (CheckBoxPreference) getPreferenceManager().findPreference("wifi_only");
-        mKeepScreenOn = (CheckBoxPreference) getPreferenceManager().findPreference(ClientPrefs.KEEP_SCREEN_ON_PREF);
-
-        mEnableShowMLSLocations = (CheckBoxPreference) getPreferenceManager().findPreference(ClientPrefs.ENABLE_OPTION_TO_SHOW_MLS_ON_MAP);
-
-        mEnableShowMLSLocations.setChecked(getPrefs().isOptionEnabledToShowMLSOnMap());
-
+        mNicknamePreference = (EditTextPreference) getPreferenceManager().findPreference(Prefs.NICKNAME_PREF);
         setNicknamePreferenceTitle(getPrefs().getNickname());
+        mEmailPreference = (EditTextPreference) getPreferenceManager().findPreference(Prefs.EMAIL_PREF);
         setEmailPreferenceTitle(getPrefs().getEmail());
-        mWifiPreference.setChecked(getPrefs().getUseWifiOnly());
-
+        mWifiPreference = (CheckBoxPreference) getPreferenceManager().findPreference(Prefs.WIFI_ONLY);
+        mKeepScreenOn = (CheckBoxPreference) getPreferenceManager().findPreference(ClientPrefs.KEEP_SCREEN_ON_PREF);
+        mEnableShowMLSLocations = (CheckBoxPreference) getPreferenceManager().findPreference(ClientPrefs.ENABLE_OPTION_TO_SHOW_MLS_ON_MAP);
+        mCrashReportsOn = (CheckBoxPreference) getPreferenceManager().findPreference(ClientPrefs.CRASH_REPORTING);
+        mMapTileDetail = (ListPreference) getPreferenceManager().findPreference(ClientPrefs.MAP_TILE_RESOLUTION_TYPE);
+        int valueIndex = ClientPrefs.getInstance().getMapTileResolutionType().ordinal();
+        mMapTileDetail.setValueIndex(valueIndex);
+        updateMapDetailTitle(valueIndex);
 
         setPreferenceListener();
+        setButtonListeners();
+    }
 
+    private void setButtonListeners() {
         Preference button = findPreference("about_button");
         button.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
@@ -100,6 +110,12 @@ public class PreferencesScreen extends PreferenceActivity {
         });
     }
 
+    private void updateMapDetailTitle(int index) {
+        mMapTileDetail.setTitle(
+            getString(R.string.map_tile_resolution_options_label) + " " +
+            mMapTileDetail.getEntries()[index]);
+    }
+
     private void setPreferenceListener() {
         mNicknamePreference.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
             @Override
@@ -139,6 +155,29 @@ public class PreferencesScreen extends PreferenceActivity {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
                 getPrefs().setOptionEnabledToShowMLSOnMap(newValue.equals(true));
+                if (newValue.equals(true)) {
+                    Context c = PreferencesScreen.this;
+                    AlertDialog.Builder builder = new AlertDialog.Builder(c)
+                            .setTitle(preference.getTitle())
+                            .setMessage(R.string.enable_option_show_mls_on_map_detailed_info).setPositiveButton(android.R.string.ok, null);
+                    builder.create().show();
+                }
+                return true;
+            }
+        });
+        mCrashReportsOn.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                getPrefs().setCrashReportingEnabled(newValue.equals(true));
+                return true;
+            }
+        });
+        mMapTileDetail.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                int i = mMapTileDetail.findIndexOfValue(newValue.toString());
+                getPrefs().setMapTileResolutionType(i);
+                updateMapDetailTitle(i);
                 return true;
             }
         });

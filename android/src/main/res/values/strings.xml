@@ -24,10 +24,13 @@
     <string name="about_mapbox">Learn more at http://www.mapbox.com</string>
     <string name="about_legal_aosp">Some iconography in this app is reproduced from work created and shared by the Android Open Source Project and used according to terms described in the Creative Commons 2.5 Attribution License.</string>
     <string name="about_legal_flaticons">GPS, cell tower, Wi-Fi, and binoculars icons made by Freepik from http://www.flaticon.com under license: https://creativecommons.org/licenses/by-nd/3.0</string>
-    <string name="upload_observations_sent_title">Previous sessions</string>
+    <string name="upload_observations_sent_title">Already sent</string>
     <string name="metrics_observations_last_upload_time_title">Last upload:</string>
     <string name="metrics_observations_last_upload_time_never">never</string>
-    <!-- http://developer.android.com/guide/topics/resources/string-resource.html#Plurals -->
+    <!--
+    Do not just copy those plurals, please check what is needed for your language.
+    http://developer.android.com/guide/topics/resources/string-resource.html#Plurals
+    -->
     <plurals name="time_diff_seconds">
         <item quantity="one">just now</item>
         <item quantity="other">moments ago</item>

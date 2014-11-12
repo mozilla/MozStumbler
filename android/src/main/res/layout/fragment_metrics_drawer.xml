@@ -219,7 +219,34 @@
                 android:textStyle="bold" />
 
             <LinearLayout
-                android:id="@+id/cell_only_layout"
+                android:id="@+id/cell_plus_wifi_layout"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/map_info_title"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/cell_plus_wifi_imageview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:adjustViewBounds="true"
+                    android:maxHeight="14dp"
+                    android:maxWidth="14dp"
+                    android:src="@drawable/ic_greendot" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="5dp"
+                    android:paddingStart="5dp"
+                    android:text="@string/cell_plus_wifi_observation"
+                    android:textSize="@dimen/font_size_for_metrics" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/cell_plus_wifi_layout"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:layout_alignParentLeft="true"

@@ -3,6 +3,7 @@ def versionMajor = 1
 def versionMinor = 3 // minor feature releases
 def versionPatch = 0 // This should be bumped for hot fixes
 def buildHost = InetAddress.localHost.hostName
+buildHost =  buildHost.replaceAll("[^a-zA-Z0-9_-]","")
 
 // Double check the versioning
 for (versionPart in [versionPatch, versionMinor, versionMajor]) {
@@ -129,12 +130,12 @@ android {
                     into("${buildDir}/intermediates/filtered_manifests")
                 }
                 def manifestFile = new
-                    File("${buildDir}/intermediates/filtered_manifests/${variant.dirName}/AndroidManifest.xml")
+                        File("${buildDir}/intermediates/filtered_manifests/${variant.dirName}/AndroidManifest.xml")
                 def content = manifestFile.getText()
 
                 def updatedContent = content.replaceAll("ANDROID_VERSIONNAME",
-                                        defaultConfig.versionName).replaceAll("ANDROID_VERSIONCODE",
-                                        Long.toString(defaultConfig.versionCode))
+                        defaultConfig.versionName).replaceAll("ANDROID_VERSIONCODE",
+                        Long.toString(defaultConfig.versionCode))
 
                 manifestFile.write(updatedContent)
             }
@@ -144,7 +145,7 @@ android {
             // accidental commit of the mapbox key into source
             // control, so we actually modify the pointer in gradle.
             variant.processResources.manifestFile = new
-                File("${buildDir}/intermediates/filtered_manifests/${variant.dirName}/AndroidManifest.xml")
+                    File("${buildDir}/intermediates/filtered_manifests/${variant.dirName}/AndroidManifest.xml")
         }
 
 

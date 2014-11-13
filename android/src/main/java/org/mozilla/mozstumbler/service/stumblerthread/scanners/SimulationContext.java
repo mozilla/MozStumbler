@@ -1,6 +1,5 @@
 package org.mozilla.mozstumbler.service.stumblerthread.scanners;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.location.Location;
@@ -20,17 +19,16 @@ import org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner.CellI
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
 /**
  * Created by victorng on 14-11-04.
  */
-public class SimulateStumbleContextWrapper extends ContextWrapper {
+public class SimulationContext extends ContextWrapper {
 
     public final static int SIMULATION_PING_INTERVAL = 1000 * 1; // Every second
-    private static final String LOG_TAG = AppGlobals.makeLogTag(SimulateStumbleContextWrapper.class.getSimpleName());
+    private static final String LOG_TAG = AppGlobals.makeLogTag(SimulationContext.class.getSimpleName());
     private double mLon;
     private double mLat;
     Handler handler = new Handler();
@@ -49,7 +47,7 @@ public class SimulateStumbleContextWrapper extends ContextWrapper {
     private Object nextWifiBlock;
     private List<CellInfo> nextCellBlock;
 
-    public SimulateStumbleContextWrapper(Context context) {
+    public SimulationContext(Context context) {
         super(context);
 
         mLat = Prefs.getInstance().getSimulationLat();

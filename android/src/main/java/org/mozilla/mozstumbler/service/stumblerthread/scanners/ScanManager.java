@@ -10,7 +10,6 @@ import android.content.IntentFilter;
 import android.location.Location;
 import android.os.BatteryManager;
 import android.support.v4.content.LocalBroadcastManager;
-import android.telephony.TelephonyManager;
 import android.util.Log;
 
 import org.mozilla.mozstumbler.service.AppGlobals;
@@ -118,7 +117,7 @@ public class ScanManager {
         if (prefs != null) {
             Log.d(LOG_TAG, "Simulation is set to: " + prefs.isSimulateStumble());
             if (prefs.isSimulateStumble()) {
-                mAppContext = new SimulateStumbleContextWrapper(mAppContext);
+                mAppContext = new SimulationContext(mAppContext);
                 Log.d(LOG_TAG, "ScanManager using SimulateStumbleContextWrapper");
             }
         }
@@ -146,8 +145,8 @@ public class ScanManager {
             return false;
         }
 
-        if (mAppContext instanceof SimulateStumbleContextWrapper) {
-            ((SimulateStumbleContextWrapper)mAppContext).deactivateSimulation();
+        if (mAppContext instanceof SimulationContext) {
+            ((SimulationContext)mAppContext).deactivateSimulation();
         }
         // Reset the application context to the unwrapped version
         mAppContext = mAppContext.getApplicationContext();

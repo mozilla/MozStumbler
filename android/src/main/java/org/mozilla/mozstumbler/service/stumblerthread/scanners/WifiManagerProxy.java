@@ -54,11 +54,11 @@ public class WifiManagerProxy extends BroadcastReceiver {
    public List<ScanResult> getScanResults() {
        if (Prefs.getInstance().isSimulateStumble()) {
            LinkedList<ScanResult> result = new LinkedList<ScanResult>();
-           SimulateStumbleContextWrapper ctx;
+           SimulationContext ctx;
            try
            {
                // fetch scan results from the context
-               ctx = ((SimulateStumbleContextWrapper) mAppContext);
+               ctx = ((SimulationContext) mAppContext);
                result.addAll(ctx.getNextMockWifiBlock());
            } catch (ClassCastException ex) {
                Log.e(LOG_TAG, "Simulation was enabled, but invalid context was found", ex);

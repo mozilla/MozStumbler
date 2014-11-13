@@ -4,7 +4,7 @@ import android.content.Context;
 
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.core.logging.Log;
-import org.mozilla.mozstumbler.service.stumblerthread.scanners.SimulateStumbleContextWrapper;
+import org.mozilla.mozstumbler.service.stumblerthread.scanners.SimulationContext;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -43,10 +43,10 @@ public class MockSimpleCellScanner implements ISimpleCellScanner {
 
         LinkedList<CellInfo> result = new LinkedList<CellInfo>();
 
-        SimulateStumbleContextWrapper ctx;
+        SimulationContext ctx;
 
         try {
-            ctx = (SimulateStumbleContextWrapper)mAppContext;
+            ctx = (SimulationContext)mAppContext;
             result.addAll(ctx.getNextMockCellBlock());
         } catch (ClassCastException ex) {
             Log.e(LOG_TAG, "Error getting the proper context", ex);

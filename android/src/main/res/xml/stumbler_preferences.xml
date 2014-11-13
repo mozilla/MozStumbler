@@ -43,7 +43,7 @@
         android:defaultValue="false" />
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="" >
+    <PreferenceCategory android:title="@string/category_crashreport" >
     <CheckBoxPreference
         android:key="crash_reporting"
         android:title="@string/enable_crash_reporting"

@@ -24,6 +24,7 @@ import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.client.ClientPrefs;
 import org.mozilla.mozstumbler.client.serialize.KMLFragment;
 import org.mozilla.mozstumbler.service.AppGlobals;
+import org.mozilla.mozstumbler.service.Prefs;
 import org.mozilla.mozstumbler.service.core.logging.Log;
 import org.mozilla.mozstumbler.service.core.logging.MockAcraLog;
 
@@ -79,16 +80,14 @@ public class DeveloperActivity extends ActionBarActivity {
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             mRootView = inflater.inflate(R.layout.fragment_developer_options, container, false);
 
-            boolean crashEnabled = ClientPrefs.getInstance().isCrashReportingEnabled();
-            CheckBox button = (CheckBox) mRootView.findViewById(R.id.toggleCrashReports);
-            button.setChecked(crashEnabled);
-            button.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    onToggleCrashReportClicked(isChecked);
-                }
-            });
+            setupCrashPreference();
+            setupSimulationPreference();
+            setupMapResolutionPreference();
 
+            return mRootView;
+        }
+
+        private void setupMapResolutionPreference() {
             final Spinner spinner = (Spinner) mRootView.findViewById(R.id.spinnerMapResolutionOptions);
             spinner.setSelection(ClientPrefs.getInstance().getMapTileResolutionType().ordinal());
             spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -104,7 +103,35 @@ public class DeveloperActivity extends ActionBarActivity {
                 }
 
             });
-            return mRootView;
+        }
+
+        private void setupCrashPreference() {
+            boolean crashEnabled = ClientPrefs.getInstance().isCrashReportingEnabled();
+            CheckBox button = (CheckBox) mRootView.findViewById(R.id.toggleCrashReports);
+            button.setChecked(crashEnabled);
+            button.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    onToggleCrashReportClicked(isChecked);
+                }
+            });
+        }
+
+
+        private void setupSimulationPreference() {
+            boolean simulationEnabled = Prefs.getInstance().isSimulateStumble();
+            CheckBox button = (CheckBox) mRootView.findViewById(R.id.toggleSimulation);
+            button.setChecked(simulationEnabled);
+            button.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    onToggleSimulation(isChecked);
+                }
+            });
+        }
+
+        private void onToggleSimulation(boolean isChecked) {
+            Prefs.getInstance().setSimulateStumble(isChecked);
         }
 
         private void onToggleCrashReportClicked(boolean isOn) {

@@ -110,7 +110,7 @@ public class GPSScanner implements LocationListener {
                             fixes++;
                         }
                     }
- //                   reportNewGpsStatus(fixes, satellites);
+
                     if (fixes < MIN_SAT_USED_IN_FIX) {
                         reportLocationLost();
                     }
@@ -118,17 +118,9 @@ public class GPSScanner implements LocationListener {
                     reportLocationLost();
                 }
             }
-
-//            private void reportNewGpsStatus(int fixes, int sats) {
-//                Intent i = new Intent(ACTION_GPS_UPDATED);
-//                i.putExtra(Intent.EXTRA_SUBJECT, SUBJECT_NEW_STATUS);
-//                i.putExtra(NEW_STATUS_ARG_FIXES, fixes);
-//                i.putExtra(NEW_STATUS_ARG_SATS, sats);
-//                i.putExtra(ACTION_ARG_TIME, System.currentTimeMillis());
-//                LocalBroadcastManager.getInstance(mContext).sendBroadcastSync(i);
-//            }
         };
 
+        // TODO: #1191 vng - replace this with a mock location manager
         lm.addGpsStatusListener(mGPSListener);
     }
 

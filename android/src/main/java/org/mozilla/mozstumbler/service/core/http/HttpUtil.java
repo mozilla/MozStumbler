@@ -6,9 +6,8 @@ package org.mozilla.mozstumbler.service.core.http;
 
 import android.os.Build;
 
-import org.apache.http.protocol.HTTP;
-import org.mozilla.mozstumbler.client.ClientPrefs;
 import org.mozilla.mozstumbler.service.AppGlobals;
+import org.mozilla.mozstumbler.service.Prefs;
 import org.mozilla.mozstumbler.service.core.logging.Log;
 import org.mozilla.mozstumbler.service.utils.Zipper;
 import org.mozilla.osmdroid.tileprovider.util.StreamUtils;
@@ -42,7 +41,7 @@ public class HttpUtil implements IHttpUtil {
     private final String userAgent;
 
     public HttpUtil() {
-        this(ClientPrefs.getInstance().getUserAgent());
+        this(Prefs.getInstance().getUserAgent());
     }
     public HttpUtil(String ua){
         userAgent = ua;

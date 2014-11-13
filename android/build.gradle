@@ -1,7 +1,7 @@
 // each of the version numbers must be 0-99
 def versionMajor = 1
 def versionMinor = 3 // minor feature releases
-def versionPatch = 0 // This should be bumped for hot fixes
+def versionPatch = 1 // This should be bumped for hot fixes
 
 // Double check the versioning
 for (versionPart in [versionPatch, versionMinor, versionMajor]) {
@@ -164,10 +164,10 @@ android {
 
 dependencies {
     androidTestCompile 'junit:junit:4.10'
-    androidTestCompile 'org.robolectric:robolectric:2.3'
+    androidTestCompile 'org.robolectric:robolectric:2.4'
 
     testCompile 'junit:junit:4.10'
-    testCompile 'org.robolectric:robolectric:2.3'
+    testCompile 'org.robolectric:robolectric:2.4'
 
     compile 'com.crankycoder:SimpleKML:1.0'
 

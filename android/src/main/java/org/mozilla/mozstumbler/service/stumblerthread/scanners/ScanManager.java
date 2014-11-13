@@ -15,6 +15,7 @@ import android.util.Log;
 
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.AppGlobals.ActiveOrPassiveStumbling;
+import org.mozilla.mozstumbler.service.Prefs;
 import org.mozilla.mozstumbler.service.stumblerthread.Reporter;
 import org.mozilla.mozstumbler.service.stumblerthread.blocklist.WifiBlockListInterface;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner.CellScanner;
@@ -26,18 +27,21 @@ import java.util.TimerTask;
 public class ScanManager {
     private static final String LOG_TAG = AppGlobals.makeLogTag(ScanManager.class.getSimpleName());
     private Timer mPassiveModeFlushTimer;
-    private Context mContext;
+
+    private static Context mAppContext;
+
     private boolean mIsScanning;
     private GPSScanner mGPSScanner;
     private WifiScanner mWifiScanner;
     private CellScanner mCellScanner;
     private ActiveOrPassiveStumbling mStumblingMode = ActiveOrPassiveStumbling.ACTIVE_STUMBLING;
 
-    public ScanManager() {
-    }
-
     private boolean isBatteryLow() {
-        Intent intent = mContext.registerReceiver(null, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+        if (mAppContext == null) {
+            return false;
+        }
+
+        Intent intent = mAppContext.registerReceiver(null, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
         if (intent == null) {
             return false;
         }
@@ -79,7 +83,10 @@ public class ScanManager {
             @Override
             public void run() {
                 Intent flush = new Intent(Reporter.ACTION_FLUSH_TO_BUNDLE);
-                LocalBroadcastManager.getInstance(mContext).sendBroadcastSync(flush);
+                if (mAppContext == null) {
+                    return;
+                }
+                LocalBroadcastManager.getInstance(mAppContext).sendBroadcastSync(flush);
             }
         }, when);
     }
@@ -93,24 +100,35 @@ public class ScanManager {
                 ActiveOrPassiveStumbling.ACTIVE_STUMBLING;
     }
 
-    public synchronized void startScanning(Context context) {
+    public synchronized void startScanning(Context ctx) {
+
+        Log.d(LOG_TAG, "ScanManager::startScanning");
+
         if (this.isScanning()) {
             return;
         }
 
-        mContext = context.getApplicationContext();
-        if (mContext == null) {
+        mAppContext = ctx.getApplicationContext();
+        if (mAppContext == null) {
             Log.w(LOG_TAG, "No app context available.");
             return;
         }
-        if (mGPSScanner == null) {
-            mGPSScanner = new GPSScanner(context, this);
-            mWifiScanner = new WifiScanner(context);
-            mCellScanner = new CellScanner(context);
+
+        Prefs prefs = Prefs.getInstance();
+        if (prefs != null) {
+            Log.d(LOG_TAG, "Simulation is set to: " + prefs.isSimulateStumble());
+            if (prefs.isSimulateStumble()) {
+                mAppContext = new SimulateStumbleContextWrapper(mAppContext);
+                Log.d(LOG_TAG, "ScanManager using SimulateStumbleContextWrapper");
+            }
         }
 
-        if (AppGlobals.isDebug) {
-            Log.d(LOG_TAG, "Scanning started...");
+        mGPSScanner = new GPSScanner(mAppContext, this);
+        mWifiScanner = new WifiScanner(mAppContext);
+        mCellScanner = new CellScanner(mAppContext);
+
+        if (prefs != null) {
+            Log.d(LOG_TAG, "Simulation is set to: " + prefs.isSimulateStumble());
         }
 
         mGPSScanner.start(mStumblingMode);
@@ -128,6 +146,12 @@ public class ScanManager {
             return false;
         }
 
+        if (mAppContext instanceof SimulateStumbleContextWrapper) {
+            ((SimulateStumbleContextWrapper)mAppContext).deactivateSimulation();
+        }
+        // Reset the application context to the unwrapped version
+        mAppContext = mAppContext.getApplicationContext();
+
         if (AppGlobals.isDebug) {
             Log.d(LOG_TAG, "Scanning stopped");
         }
@@ -135,6 +159,10 @@ public class ScanManager {
         mGPSScanner.stop();
         mWifiScanner.stop();
         mCellScanner.stop();
+
+        mGPSScanner = null;
+        mWifiScanner = null;
+        mCellScanner = null;
 
         mIsScanning = false;
         return true;

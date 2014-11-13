@@ -129,7 +129,7 @@ public class MainApp extends Application
             oldPrefs.renameTo(new File(dir, ClientPrefs.getPrefsFileNameForUpgrade()));
         }
 
-        Prefs prefs = ClientPrefs.createGlobalInstance(this);
+        ClientPrefs prefs = ClientPrefs.createGlobalInstance(this);
         prefs.setMozApiKey(BuildConfig.MOZILLA_API_KEY);
         String userAgent = System.getProperty("http.agent") + " " +
                 AppGlobals.appName + "/" + AppGlobals.appVersionName;

@@ -25,6 +25,10 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.mozilla.mozstumbler.service.Prefs;
+import org.mozilla.mozstumbler.service.core.logging.Log;
+import org.mozilla.mozstumbler.service.stumblerthread.Reporter;
+
 public class CellScanner {
     public static final String ACTION_BASE = AppGlobals.ACTION_NAMESPACE + ".CellScanner.";
     public static final String ACTION_CELLS_SCANNED = ACTION_BASE + "CELLS_SCANNED";
@@ -34,27 +38,22 @@ public class CellScanner {
     private static final String LOG_TAG = AppGlobals.makeLogTag(CellScanner.class.getSimpleName());
     private static final long CELL_MIN_UPDATE_TIME = 1000; // milliseconds
 
-    private final Context mContext;
+    private final Context mAppContext;
     private Timer mCellScanTimer;
     private final Set<String> mVisibleCells = new HashSet<String>();
     private final ReportFlushedReceiver mReportFlushedReceiver = new ReportFlushedReceiver();
     private final AtomicBoolean mReportWasFlushed = new AtomicBoolean();
     private Handler mBroadcastScannedHandler;
-    private final CellScannerImpl mCellScannerImplementation;
 
-    public ArrayList<CellInfo> sTestingModeCellInfoArray;
+    private final ISimpleCellScanner mSimpleCellScanner;
 
-    public interface CellScannerImpl {
-        void start();
-        boolean isStarted();
-        boolean isSupportedOnThisDevice();
-        void stop();
-        List<CellInfo> getCellInfo();
-    }
-
-    public CellScanner(Context context) {
-        mContext = context;
-        mCellScannerImplementation = new CellScannerImplementation(context);
+    public CellScanner(Context appCtx) {
+        mAppContext = appCtx;
+        if ((Prefs.getInstance() != null) && Prefs.getInstance().isSimulateStumble()) {
+            mSimpleCellScanner = new MockSimpleCellScanner(mAppContext);
+        } else {
+            mSimpleCellScanner = new SimpleCellScannerImplementation(mAppContext);
+        }
     }
 
     public void start(final ActiveOrPassiveStumbling stumblingMode) {
@@ -66,7 +65,7 @@ public class CellScanner {
             return;
         }
 
-        LocalBroadcastManager.getInstance(mContext).registerReceiver(mReportFlushedReceiver,
+        LocalBroadcastManager.getInstance(mAppContext).registerReceiver(mReportFlushedReceiver,
                 new IntentFilter(Reporter.ACTION_NEW_BUNDLE));
 
         // This is to ensure the broadcast happens from the same thread the CellScanner start() is on
@@ -74,11 +73,11 @@ public class CellScanner {
             @Override
             public void handleMessage(Message msg) {
                 Intent intent = (Intent) msg.obj;
-                LocalBroadcastManager.getInstance(mContext).sendBroadcastSync(intent);
+                LocalBroadcastManager.getInstance(mAppContext).sendBroadcastSync(intent);
             }
         };
 
-        mCellScannerImplementation.start();
+        mSimpleCellScanner.start();
 
         mCellScanTimer = new Timer();
 
@@ -86,7 +85,7 @@ public class CellScanner {
             int mPassiveScanCount;
             @Override
             public void run() {
-                if (!mCellScannerImplementation.isStarted()) {
+                if (!mSimpleCellScanner.isStarted()) {
                     return;
                 }
 
@@ -99,9 +98,7 @@ public class CellScanner {
                 }
 
                 final long curTime = System.currentTimeMillis();
-
-                ArrayList<CellInfo> cells = (sTestingModeCellInfoArray != null)? sTestingModeCellInfoArray :
-                        new ArrayList<CellInfo>(mCellScannerImplementation.getCellInfo());
+                ArrayList<CellInfo> cells = new ArrayList<CellInfo>(mSimpleCellScanner.getCellInfo());
 
                 if (mReportWasFlushed.getAndSet(false)) {
                     clearCells();
@@ -138,13 +135,13 @@ public class CellScanner {
     public synchronized void stop() {
         mReportWasFlushed.set(false);
         clearCells();
-        LocalBroadcastManager.getInstance(mContext).unregisterReceiver(mReportFlushedReceiver);
+        LocalBroadcastManager.getInstance(mAppContext).unregisterReceiver(mReportFlushedReceiver);
 
         if (mCellScanTimer != null) {
             mCellScanTimer.cancel();
             mCellScanTimer = null;
         }
-        mCellScannerImplementation.stop();
+        mSimpleCellScanner.stop();
     }
 
     public synchronized int getVisibleCellInfoCount() {

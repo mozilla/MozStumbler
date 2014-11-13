@@ -10,4 +10,5 @@ public interface ISimpleCellScanner {
     boolean isStarted();
     void stop();
     List<CellInfo> getCellInfo();
+    public boolean isSupportedOnThisDevice();
 }

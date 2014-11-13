@@ -57,7 +57,7 @@ public class CellScanner {
     }
 
     public void start(final ActiveOrPassiveStumbling stumblingMode) {
-        if (!mCellScannerImplementation.isSupportedOnThisDevice()) {
+        if (!mSimpleCellScanner.isSupportedOnThisDevice()) {
             return;
         }
 

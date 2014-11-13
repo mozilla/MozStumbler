@@ -120,7 +120,6 @@ public class GPSScanner implements LocationListener {
             }
         };
 
-        // TODO: #1191 vng - replace this with a mock location manager
         lm.addGpsStatusListener(mGPSListener);
     }
 

@@ -30,7 +30,7 @@ import java.util.List;
 public class SimulateStumbleContextWrapper extends ContextWrapper {
 
     public final static int SIMULATION_PING_INTERVAL = 1000 * 1; // Every second
-    private static final String LOG_TAG = AppGlobals.LOG_PREFIX + SimulateStumbleContextWrapper.class.getSimpleName();
+    private static final String LOG_TAG = AppGlobals.makeLogTag(SimulateStumbleContextWrapper.class.getSimpleName());
     private double mLon;
     private double mLat;
     Handler handler = new Handler();
@@ -119,10 +119,10 @@ public class SimulateStumbleContextWrapper extends ContextWrapper {
             mockLocation.setElapsedRealtimeNanos(SystemClock.elapsedRealtimeNanos());
         }
 
+        // This is rougly ~5m-ish.
         mLat += 0.00003;
         mLon += 0.00003;
 
-        Log.d(LOG_TAG, "Emitted new mock GPS location");
         return mockLocation;
     }
 
@@ -148,9 +148,6 @@ public class SimulateStumbleContextWrapper extends ContextWrapper {
             scan = makeScanResult();
             scan.BSSID = "E0:3F:49:98:A6:A0";
             resultList.add(scan);
-
-            Log.i(LOG_TAG, "Emitted mock wifi data");
-
         } catch (Exception e) {
             Log.e(LOG_TAG, "Error creating a mock ScanResult", e);
         }
@@ -162,9 +159,7 @@ public class SimulateStumbleContextWrapper extends ContextWrapper {
         LinkedList<CellInfo> result = new LinkedList<CellInfo>();
 
         try {
-            // TODO: spool fake cell data here
             result.add(makeCellInfo(1, 1, 60330, 1660199, 19));
-            Log.i(LOG_TAG, "Emitted mock cell data: "+ result.size());
         } catch (Exception e) {
             Log.e(LOG_TAG, "Error creating a mock CellInfo block", e);
         }

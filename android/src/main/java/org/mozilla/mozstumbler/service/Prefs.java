@@ -14,11 +14,11 @@ import android.util.Log;
 
 public class Prefs {
     private static final String LOG_TAG = AppGlobals.makeLogTag(Prefs.class.getSimpleName());
-    private static final String NICKNAME_PREF = "nickname";
-    private static final String EMAIL_PREF = "email";
+    public static final String NICKNAME_PREF = "nickname";
+    public static final String EMAIL_PREF = "email";
+    public static final String WIFI_ONLY = "wifi_only";
     private static final String USER_AGENT_PREF = "user-agent";
     private static final String VALUES_VERSION_PREF = "values_version";
-    private static final String WIFI_ONLY = "wifi_only";
     private static final String LAT_PREF = "lat_pref";
     private static final String LON_PREF = "lon_pref";
     private static final String FIREFOX_SCAN_ENABLED = "firefox_scan_on";

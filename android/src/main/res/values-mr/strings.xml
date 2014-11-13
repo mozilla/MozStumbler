@@ -24,7 +24,7 @@
     <string name="about_mapbox">http://www.mapbox.com वर अधिक जाणून घ्या</string>
     <string name="about_legal_aosp"> या अॅपमधे वापरण्यात आलेल्या काही प्रतिमा अँड्रॉइड मुक्त स्रोत प्रकल्पाने तयार करून विभागून दिलेल्या आहेत व त्या क्रिएटीव कॉमन्स २.५ विशेष परवाना अटींनुसार वापरल्या आहेत..</string>
     <string name="about_legal_flaticons">GPS, भ्रमणध्वनी मनोरा, Wi-Fi, आणि दुर्बीण यांची चिन्हे Freepik यांनी बनवलेली http://www.flaticon.com वरून घेतली पुढील अटींच्या अधीन: https://creativecommons.org/licenses/by-nd/3.0</string>
-    <string name="upload_observations_sent_title">मागील सत्र</string>
+    <string name="upload_observations_sent_title">अगोदर पाठवलेले अहवाल</string>
     <string name="metrics_observations_last_upload_time_title">शेवटची निरीक्षणे पाठवण्याची वेळ:</string>
     <string name="metrics_observations_last_upload_time_never">कधीच नाही</string>
     <!-- http://developer.android.com/guide/topics/resources/string-resource.html#Plurals -->

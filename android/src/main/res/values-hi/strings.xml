@@ -24,7 +24,7 @@
 <string name="about_mapbox">http://www.mapbox.com पर अधिक जानें</string>
 <string name="about_legal_aosp">इस अनुप्रयोगमें इस्तेमाल की गयी कुछ आकृतियाँ अँड्रॉइड मुक्त स्रोत परियोजना द्वारा बनाई गयी और विभाजित की गयी है तथा क्रिएटीव कॉमन्स २.५ विशेष प्रयोग शर्त अनुसार इस्तेमाल कि गयी है.</string>
 <string name="about_legal_flaticons">GPS, cell मीनार, Wi-Fi, और दूरबीन के चित्र Freepik द्वारा बनाये गए http://www.flaticon.com से लिए गए  इस अनुज्ञापत्र द्वारा: https://creativecommons.org/licenses/by-nd/3.0</string>
-<string name="upload_observations_sent_title">पिछले सत्र</string>
+<string name="upload_observations_sent_title">पहलेसे भेजे गये विवरण</string>
 <string name="metrics_observations_last_upload_time_title">अंतिम अवलोकन भेजने का समय:</string>
 <string name="metrics_observations_last_upload_time_never">कभी नहीं</string>
 <!-- http://developer.android.com/guide/topics/resources/string-resource.html#Plurals -->

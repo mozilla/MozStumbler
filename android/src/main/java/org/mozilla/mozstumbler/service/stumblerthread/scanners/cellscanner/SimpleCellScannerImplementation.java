@@ -35,7 +35,7 @@ import java.util.List;
 
 public class SimpleCellScannerImplementation implements ISimpleCellScanner {
 
-    protected static String LOG_TAG = AppGlobals.makeLogTag(CellScannerImplementation.class.getSimpleName());
+    protected static String LOG_TAG = AppGlobals.makeLogTag(SimpleCellScannerImplementation.class.getSimpleName());
     protected GetAllCellInfoScannerImpl mGetAllInfoCellScanner;
     protected TelephonyManager mTelephonyManager;
     protected boolean mIsStarted;
@@ -120,7 +120,6 @@ public class SimpleCellScannerImplementation implements ISimpleCellScanner {
             }
         };
 
-        // TODO: #1191 vng - replace this with a mock location manager
         mTelephonyManager.listen(mPhoneStateListener, PhoneStateListener.LISTEN_SIGNAL_STRENGTHS);
     }
 

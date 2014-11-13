@@ -46,15 +46,6 @@ public class WifiScanner  {
 
     private final WifiManagerProxy wifiManagerProxy;
 
-    private boolean isScanEnabled() {
-        WifiManager manager = getWifiManager();
-        boolean scanEnabled = manager.isWifiEnabled();
-        if (Build.VERSION.SDK_INT >= 18) {
-            scanEnabled |= manager.isScanAlwaysAvailable();
-        }
-        return scanEnabled;
-    }
-
     public WifiScanner(Context appContext) {
         mAppContext = appContext;
         wifiManagerProxy = new WifiManagerProxy(mAppContext);
@@ -70,7 +61,7 @@ public class WifiScanner  {
         }
         mStarted = true;
 
-        if (isScanEnabled()) {
+        if (wifiManagerProxy.isScanEnabled()) {
             activatePeriodicScan(stumblingMode);
         }
 

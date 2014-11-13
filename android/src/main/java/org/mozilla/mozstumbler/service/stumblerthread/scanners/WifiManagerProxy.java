@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
+import android.os.Build;
 
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.Prefs;
@@ -26,6 +27,15 @@ public class WifiManagerProxy extends BroadcastReceiver {
 
     public WifiManagerProxy(Context appContext) {
         mAppContext = appContext;
+    }
+
+    public boolean isScanEnabled() {
+        WifiManager manager = getWifiManager();
+        boolean scanEnabled = manager.isWifiEnabled();
+        if (Build.VERSION.SDK_INT >= 18) {
+            scanEnabled |= manager.isScanAlwaysAvailable();
+        }
+        return scanEnabled;
     }
 
    public boolean runWifiScan() {

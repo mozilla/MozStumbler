@@ -29,19 +29,15 @@
     <string name="metrics_observations_last_upload_time_never">尚未上传</string>
     <!-- http://developer.android.com/guide/topics/resources/string-resource.html#Plurals -->
     <plurals name="time_diff_seconds">
-        <item quantity="one">刚刚</item>
         <item quantity="other">不久前</item>
     </plurals>
     <plurals name="time_diff_minutes">
-        <item quantity="one">1 分钟前</item>
         <item quantity="other">%d 分钟前</item>
     </plurals>
     <plurals name="time_diff_hours">
-        <item quantity="one">1 小时前</item>
         <item quantity="other">%d 小时前</item>
     </plurals>
     <plurals name="time_diff_days">
-        <item quantity="one">1 天前</item>
         <item quantity="other">%d 天前</item>
     </plurals>
     <string name="metrics_observations_title">报告：</string>
@@ -59,7 +55,7 @@
     <string name="scroll_to_end">向后滚动</string>
     <string name="kml_file_title">KML 报告文件</string>
     <string name="kml_file_load">加载 KML 文件</string>
-    <string name="klm_file_save">保存 KML 文件</string>
+    <string name="kml_file_save">保存 KML 文件</string>
     <string name="kml_file_description">为调试保存/加载报告 (位置，Wi-Fi 和移动基站计数)</string>
     <string name="kml_file_saved_name">保存的文件：</string>
     <string name="keep_screen_on_title">扫描时保持屏幕开启</string>

@@ -53,4 +53,9 @@ public class MockSimpleCellScanner implements ISimpleCellScanner {
         }
         return result;
     }
+
+    public boolean isSupportedOnThisDevice() {
+        return true;
+    }
+
 }

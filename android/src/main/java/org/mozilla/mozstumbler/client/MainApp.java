@@ -399,4 +399,23 @@ public class MainApp extends Application
         sHasBootedOnce = true;
         return b;
     }
+
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+
+        if (mStumblerService != null) {
+            mStumblerService.handleLowMemoryNotification();
+        }
+    }
+
+    @TargetApi(14)
+    @Override
+    public void onTrimMemory(int level) {
+        super.onTrimMemory(level);
+
+        if (mStumblerService != null) {
+            mStumblerService.handleLowMemoryNotification();
+        }
+    }
 }

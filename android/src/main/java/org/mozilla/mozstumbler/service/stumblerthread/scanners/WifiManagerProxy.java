@@ -7,6 +7,11 @@ import android.content.IntentFilter;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 
+import org.mozilla.mozstumbler.service.AppGlobals;
+import org.mozilla.mozstumbler.service.Prefs;
+import org.mozilla.mozstumbler.service.core.logging.Log;
+
+import java.util.LinkedList;
 import java.util.List;
 
 /*
@@ -14,29 +19,50 @@ import java.util.List;
  so that we can properly mock it out and simulate inbound intents.
  */
 public class WifiManagerProxy extends BroadcastReceiver {
+    private static final String LOG_TAG = AppGlobals.LOG_PREFIX + WifiManagerProxy.class.getSimpleName();
 
-    private final Context mContext;
+    private final Context mAppContext;
     private WifiScanner mWifiScanner;
 
-    public WifiManagerProxy(Context ctx) {
-        mContext = ctx;
+    public WifiManagerProxy(Context appContext) {
+        mAppContext = appContext;
     }
 
-   public boolean startScan() {
-       // TODO: If the client pref for simulated stumbling is on, we should expect that
-       // mContext is of type SimulateStumbleContextWrapper.
+   public boolean runWifiScan() {
+       if (Prefs.getInstance().isSimulateStumble()) {
 
-       // Additionally, we can use SimulateStumbleContextWrapper.SIMULATION_PING_INTERVAL as the default interval to
-       // generate new WifiData
-       return getWifiManager().startScan();
+           // This intent will signal the WifiScanner class to ask for new scan results
+           // by invoking getScanResults
+           Intent i = new Intent(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
+           onReceive(mAppContext, i);
+           return true;
+       } else {
+           return getWifiManager().startScan();
+       }
    }
 
    public List<ScanResult> getScanResults() {
-        WifiManager manager = getWifiManager();
-        if (manager == null) {
-            return null;
-        }
-        return getWifiManager().getScanResults();
+       if (Prefs.getInstance().isSimulateStumble()) {
+           LinkedList<ScanResult> result = new LinkedList<ScanResult>();
+           SimulateStumbleContextWrapper ctx;
+           try
+           {
+               // fetch scan results from the context
+               ctx = ((SimulateStumbleContextWrapper) mAppContext);
+               result.addAll(ctx.getNextMockWifiBlock());
+           } catch (ClassCastException ex) {
+               Log.e(LOG_TAG, "Simulation was enabled, but invalid context was found", ex);
+           }
+           return result;
+       } else {
+           WifiManager manager = getWifiManager();
+           if (manager == null) {
+               return null;
+           }
+           return getWifiManager().getScanResults();
+       }
+
+
    }
 
         public boolean isWifiEnabled() {
@@ -44,23 +70,31 @@ public class WifiManagerProxy extends BroadcastReceiver {
    }
 
     private WifiManager getWifiManager() {
-        return (WifiManager) mContext.getSystemService(Context.WIFI_SERVICE);
+        return (WifiManager) mAppContext.getSystemService(Context.WIFI_SERVICE);
     }
 
+
     public synchronized void registerReceiver(WifiScanner wifiScanner) {
-        //
         mWifiScanner = wifiScanner;
 
-        mContext.registerReceiver(this,
-                new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
+        if (!Prefs.getInstance().isSimulateStumble()) {
+            mAppContext.registerReceiver(this,
+                    new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
+
+        }
     }
 
     public void unregisterReceiver() {
-        mContext.unregisterReceiver(this);
+        try
+        {
+            mAppContext.unregisterReceiver(this);
+         } catch (IllegalArgumentException ex) {
+            // doesn't matter - this is safe to ignore as it just means that
+            // we've just been running in simulation mode.
+        }
     }
 
     public void onReceive(Context c, Intent intent) {
-
         // TODO: this is the hook we need to call to send in fake
         // Wifi signals.
         // WifiScanner will expect and intent with

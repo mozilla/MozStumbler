@@ -41,7 +41,7 @@ public class WifiScanner  {
     private static final long WIFI_MIN_UPDATE_TIME = 5000; // milliseconds
 
     private boolean mStarted;
-    private final Context mContext;
+    private final Context mAppContext;
     private WifiLock mWifiLock;
     private Timer mWifiScanTimer;
     private final Set<String> mAPs = Collections.synchronizedSet(new HashSet<String>());
@@ -49,10 +49,10 @@ public class WifiScanner  {
 
     private final WifiManagerProxy wifiManagerProxy;
 
-    public WifiScanner(Context c) {
-        mContext = c;
-        wifiManagerProxy = new WifiManagerProxy(mContext);
+    public WifiScanner(Context appContext) {
+        mAppContext = appContext;
 
+        wifiManagerProxy = new WifiManagerProxy(mAppContext);
     }
 
     private boolean isWifiEnabled() {
@@ -70,9 +70,6 @@ public class WifiScanner  {
         }
 
         wifiManagerProxy.registerReceiver(this);
-
-
-
     }
 
     public synchronized void stop() {
@@ -115,7 +112,6 @@ public class WifiScanner  {
             Log.d(LOG_TAG, "Activate Periodic Scan");
         }
 
-        // TODO: #1191 vng - replace this with a mock Wifi Manager
         mWifiLock = wifiManagerProxy.createWifiLock();
         mWifiLock.acquire();
 
@@ -123,19 +119,19 @@ public class WifiScanner  {
         mWifiScanTimer = new Timer();
         mWifiScanTimer.schedule(new TimerTask() {
             int mPassiveScanCount;
+
             @Override
             public void run() {
                 if (stumblingMode == ActiveOrPassiveStumbling.PASSIVE_STUMBLING &&
-                    mPassiveScanCount++ > AppGlobals.PASSIVE_MODE_MAX_SCANS_PER_GPS)
-                {
+                        mPassiveScanCount++ > AppGlobals.PASSIVE_MODE_MAX_SCANS_PER_GPS) {
                     mPassiveScanCount = 0;
                     stop(); // set mWifiScanTimer to null
                     return;
                 }
-                if (AppGlobals.isDebug) {
+                 if (AppGlobals.isDebug) {
                     Log.d(LOG_TAG, "WiFi Scanning Timer fired");
                 }
-                wifiManagerProxy.startScan();
+                wifiManagerProxy.runWifiScan();
             }
         }, 0, WIFI_MIN_UPDATE_TIME);
     }
@@ -178,7 +174,7 @@ public class WifiScanner  {
         Intent i = new Intent(ACTION_WIFIS_SCANNED);
         i.putParcelableArrayListExtra(ACTION_WIFIS_SCANNED_ARG_RESULTS, scanResults);
         i.putExtra(ACTION_WIFIS_SCANNED_ARG_TIME, System.currentTimeMillis());
-        LocalBroadcastManager.getInstance(mContext).sendBroadcastSync(i);
+        LocalBroadcastManager.getInstance(mAppContext).sendBroadcastSync(i);
     }
 
     public void onProxyReceive(Context c, Intent intent) {
@@ -195,7 +191,9 @@ public class WifiScanner  {
             if (scanResultList == null) {
                 return;
             }
+
             final ArrayList<ScanResult> scanResults = new ArrayList<ScanResult>();
+
             for (ScanResult scanResult : scanResultList) {
                 scanResult.BSSID = BSSIDBlockList.canonicalizeBSSID(scanResult.BSSID);
                 if (shouldLog(scanResult)) {

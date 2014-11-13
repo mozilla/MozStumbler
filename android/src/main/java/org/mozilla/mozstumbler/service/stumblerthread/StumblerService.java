@@ -128,8 +128,6 @@ public class StumblerService extends PersistentIntentService
     public void onDestroy() {
         super.onDestroy();
 
-        UploadAlarmReceiver.cancelAlarm(this, !mScanManager.isPassiveMode());
-
         if (!isScanning()) {
             return;
         }

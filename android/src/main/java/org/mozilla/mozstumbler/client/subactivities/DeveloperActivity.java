@@ -24,6 +24,7 @@ import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.client.ClientPrefs;
 import org.mozilla.mozstumbler.client.serialize.KMLFragment;
 import org.mozilla.mozstumbler.service.AppGlobals;
+import org.mozilla.mozstumbler.service.Prefs;
 import org.mozilla.mozstumbler.service.core.logging.Log;
 import org.mozilla.mozstumbler.service.core.logging.MockAcraLog;
 
@@ -118,7 +119,7 @@ public class DeveloperActivity extends ActionBarActivity {
 
 
         private void setupSimulationPreference() {
-            boolean simulationEnabled = ClientPrefs.getInstance().isSimulateStumble();
+            boolean simulationEnabled = Prefs.getInstance().isSimulateStumble();
             CheckBox button = (CheckBox) mRootView.findViewById(R.id.toggleSimulation);
             button.setChecked(simulationEnabled);
             button.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -130,7 +131,7 @@ public class DeveloperActivity extends ActionBarActivity {
         }
 
         private void onToggleSimulation(boolean isChecked) {
-            ClientPrefs.getInstance().setSimulateStumble(isChecked);
+            Prefs.getInstance().setSimulateStumble(isChecked);
         }
 
         private void onToggleCrashReportClicked(boolean isOn) {

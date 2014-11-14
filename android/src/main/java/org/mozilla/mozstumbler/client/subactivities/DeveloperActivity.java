@@ -13,19 +13,14 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.Spinner;
 import android.widget.TextView;
 
-import org.acra.ACRA;
 import org.mozilla.mozstumbler.R;
-import org.mozilla.mozstumbler.client.ClientPrefs;
 import org.mozilla.mozstumbler.client.serialize.KMLFragment;
 import org.mozilla.mozstumbler.service.AppGlobals;
-import org.mozilla.mozstumbler.service.core.logging.Log;
-import org.mozilla.mozstumbler.service.core.logging.MockAcraLog;
+import org.mozilla.mozstumbler.service.Prefs;
 
 public class DeveloperActivity extends ActionBarActivity {
 
@@ -75,11 +70,26 @@ public class DeveloperActivity extends ActionBarActivity {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             mRootView = inflater.inflate(R.layout.fragment_developer_options, container, false);
-
-            // Although no options are here currently, some will be added
-
+            setupSaveJSONLogs();
             return mRootView;
         }
 
+        private void setupSaveJSONLogs() {
+            boolean saveStumbleLogs = Prefs.getInstance().isSaveStumbleLogs();
+            CheckBox button = (CheckBox) mRootView.findViewById(R.id.toggleSaveStumbleLogs);
+            button.setChecked(saveStumbleLogs);
+            button.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    onToggleSaveStumbleLogs(isChecked);
+                }
+            });
+        }
+        private void onToggleSaveStumbleLogs(boolean isChecked) {
+            Prefs.getInstance().setSaveStumbleLogs(isChecked);
+        }
+
     }
+
+
 }

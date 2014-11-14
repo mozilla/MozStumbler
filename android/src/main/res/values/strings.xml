@@ -121,4 +121,5 @@
         <item>2</item>
         <item>3</item>
     </string-array>
+    <string name="save_stumble_logs">Save Stumble Logs</string>
 </resources>

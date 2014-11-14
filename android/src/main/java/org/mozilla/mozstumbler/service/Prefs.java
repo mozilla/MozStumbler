@@ -24,6 +24,8 @@ public class Prefs {
     private static final String FIREFOX_SCAN_ENABLED = "firefox_scan_on";
     private static final String MOZ_API_KEY = "moz_api_key";
     private static final String LAST_ATTEMPTED_UPLOAD_TIME = "last_attempted_upload_time";
+    private static final String SAVE_STUMBLE_LOGS = "save_stumble_logs";
+
     protected static final String PREFS_FILE = Prefs.class.getSimpleName();
 
     private final SharedPreferences mSharedPrefs;
@@ -139,6 +141,14 @@ public class Prefs {
 
     public synchronized boolean getUseWifiOnly() {
         return getBoolPrefWithDefault(WIFI_ONLY, true);
+    }
+
+    public synchronized void setSaveStumbleLogs(boolean state) {
+        setBoolPref(SAVE_STUMBLE_LOGS, state);
+    }
+
+    public synchronized boolean isSaveStumbleLogs() {
+        return getBoolPrefWithDefault(SAVE_STUMBLE_LOGS, false);
     }
 
     ///

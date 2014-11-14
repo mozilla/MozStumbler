@@ -98,7 +98,6 @@
     <string name="map_turned_off">Pantalla del mapa apagada</string>
     <string name="map_tile_resolution_options_label">Detalles del mapa:</string>
     <string name="map_tile_resolution_options_summary">Bajos detalles reducirán tu uso de datos móviles.</string>
-    <string name="map_tile_resolution_options_label">Opciones del mosaico del mapa:</string>
     <string name="enable_crash_reporting">Habilitar informador de fallos</string>
     <string name="privacy_policy">Política de privacidad:</string>
     <string name="satellites_separator">/</string>

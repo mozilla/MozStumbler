@@ -65,6 +65,10 @@ public class AppGlobals {
         }
     }
 
+    public static String makeLogTag(Class<?> cls) {
+        return makeLogTag(cls.getSimpleName());
+    }
+
     public static String makeLogTag(String name) {
         final int maxLen = 23 - LOG_PREFIX.length();
         if (name.length() > maxLen) {

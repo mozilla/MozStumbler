@@ -24,7 +24,7 @@ import org.mozilla.mozstumbler.service.Prefs;
 
 public class DeveloperActivity extends ActionBarActivity {
 
-    private final String LOG_TAG = AppGlobals.makeLogTag(DeveloperActivity.class.getSimpleName());
+    private final String LOG_TAG = AppGlobals.makeLogTag(DeveloperActivity.class);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

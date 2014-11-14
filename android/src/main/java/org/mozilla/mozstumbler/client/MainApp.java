@@ -71,9 +71,7 @@ public class MainApp extends Application
     public static final String INTENT_TURN_OFF = "org.mozilla.mozstumbler.turnMeOff";
     private static final int NOTIFICATION_ID = 1;
     public static final String ACTION_BASE = AppGlobals.ACTION_NAMESPACE + ".MainApp.";
-    public static final String ACTION_UI_UNPAUSE_SCANNING = ACTION_BASE + "UNPAUSE_SCANNING";
-    public static final String ACTION_UI_PAUSE_SCANNING = ACTION_BASE + "PAUSE_SCANNING";
-
+   
     public ClientPrefs getPrefs() {
         return ClientPrefs.getInstance();
     }
@@ -184,30 +182,7 @@ public class MainApp extends Application
 
         Intent intent = new Intent(this, ClientStumblerService.class);
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
-
-        // Register a listener for a toggle event in the notification pulldown
-        LocalBroadcastManager bManager = LocalBroadcastManager.getInstance(this);
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(ACTION_UI_UNPAUSE_SCANNING);
-        intentFilter.addAction(ACTION_UI_PAUSE_SCANNING);
-        bManager.registerReceiver(notificationDrawerEventReceiver, intentFilter);
     }
-
-    private final BroadcastReceiver notificationDrawerEventReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            StumblerService service = getService();
-            if (service == null) {
-                return;
-            }
-
-            if (intent.getAction().equals(ACTION_UI_PAUSE_SCANNING) && service.isScanning()) {
-                stopScanning();
-            } else if (intent.getAction().equals(ACTION_UI_UNPAUSE_SCANNING) && !service.isScanning()) {
-                startScanning();
-            }
-        }
-    };
 
     @Override
     public void onTerminate() {

@@ -24,10 +24,9 @@
     <string name="about_mapbox">Aprenda más en http://www.mapbox.com</string>
     <string name="about_legal_aosp">Algunos iconos en esta aplicación son reproducidos de trabajo creado y compartido por el Proyecto de código abierto de Android y se usa de acuerdo a los términos descritos en la Licencia 2.5 de Creative Commons.</string>
     <string name="about_legal_flaticons">Los iconos de GPS, torre celular, Wi-Fi, y binoculares están hechos por Freepik de http://flaticon.com bajo la licencia: https://creativecommons.org/licenses/by-nd/3.0</string>
-    <string name="upload_observations_sent_title">Sesiones anteriores</string>
+    <string name="upload_observations_sent_title">Enviado</string>
     <string name="metrics_observations_last_upload_time_title">Última fecha de envío:</string>
     <string name="metrics_observations_last_upload_time_never">nunca</string>
-    <!-- http://developer.android.com/guide/topics/resources/string-resource.html#Plurals -->
     <plurals name="time_diff_seconds">
         <item quantity="one">justo ahora</item>
         <item quantity="other">hace un momento</item>
@@ -85,26 +84,33 @@
     <string name="first_run_message_part2">Lee nuestra <a href="https://location.services.mozilla.com/privacy">política de privacidad</a> y luego inicia escaneando para comenzar a colaborar en tu ubicación actual.</string>
     <string name="first_run_start_stumbling">Inicia escaneando</string>
     <string name="first_run_welcome_to_mozstumbler">Bienvenido a Mozilla Stumbler</string>
-    <string name="map_unavailable">El mapa no está disponible para mostrarse, ya que no hay una tarjeta SD.\nAún puedes recolectar datos.</string>
+    <string name="map_unavailable">El mapa no está disponible para mostrarse, ya que no hay una tarjeta SD.\nAún así puedes recolectar datos.</string>
     <string name="map_offline_mode">El mapa no se actualizará sin una conexión a Internet,\nsin embargo todavía eres capaz de recolectar datos.</string>
     <string name="action_developer">Desarrollador</string>
     <string name="developer_title">Desarrollador</string>
-    <string name="enable_option_show_mls_on_map">Habilitar switch de la capa MLS</string>
-    <string name="enable_option_show_mls_on_map_summary">A costa de un uso de poco más de memoria y de red, el mapa puede mostrar consultas de ubicaciones MLS para tu escaneo.</string>
+    <string name="enable_option_show_mls_on_map">Habilitar consultas a ubicaciones MLS</string>
+    <string name="enable_option_show_mls_on_map_summary">Muestra las ubicaciones del Servicio de Ubicación de Mozilla (MLS) para tus reportes.</string>
+    <string name="enable_option_show_mls_on_map_detailed_info">A costa de más uso de energía, memoria y red, se mostrará la ubicación de MLS. Esto mostrará un punto rojo en el mapa por cada ubicación de MLS, con una línea hacia su reporte. Sin embargo, no consultará las ubicaciones con tus datos móviles sí \"%1$s" está habilitado.</string>
     <string name="cell_plus_wifi_observation">Reportes de Wi-Fi + celdas móviles</string>
     <string name="cell_only_observation">Reportes de sólo celdas móviles</string>
     <string name="wifi_only_observation">Reportes de sólo Wi-Fi</string>
-    <string name="low_resolution_map">Mapa de baja resolución</string>
+    <string name="low_resolution_map">Mapa de bajos detalles</string>
     <string name="map_turned_off">Pantalla del mapa apagada</string>
+    <string name="map_tile_resolution_options_label">Detalles del mapa:</string>
+    <string name="map_tile_resolution_options_summary">Bajos detalles reducirán tu uso de datos móviles.</string>
     <string name="map_tile_resolution_options_label">Opciones del mosaico del mapa:</string>
     <string name="enable_crash_reporting">Habilitar informador de fallos</string>
     <string name="privacy_policy">Política de privacidad:</string>
     <string name="satellites_separator">/</string>
     <string name="must_uninstall_to_update">Deberías desinstalar primero para actualizar a la nueva versión.</string>
+    <string name="category_leaderboard">Tabla de posiciones</string>
+    <string name="category_network_usage">Uso de la red</string>
+    <string name="category_display">Visualización</string>
+    <string name="category_crashreport">Reporte de fallos</string>
     <string-array name="map_tile_resolution_options">
-        <item>Por fefecto</item>
-        <item>Sólo alta resolución</item>
-        <item>Sólo baja resolución</item>
+        <item>Alto (Wi-Fi) / Bajo (datos móviles)</item>
+        <item>Sólo alto detalle</item>
+        <item>Sólo bajo detalle</item>
         <item>Sin mapa</item>
     </string-array>
 </resources>

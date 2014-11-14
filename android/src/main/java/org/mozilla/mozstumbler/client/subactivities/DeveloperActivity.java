@@ -84,6 +84,10 @@ public class DeveloperActivity extends ActionBarActivity {
         private void setupSimulationPreference() {
             boolean simulationEnabled = Prefs.getInstance().isSimulateStumble();
             CheckBox button = (CheckBox) mRootView.findViewById(R.id.toggleSimulation);
+            if (!AppGlobals.isDebug) {
+                button.setEnabled(false);
+                return;
+            }
             button.setChecked(simulationEnabled);
             button.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override

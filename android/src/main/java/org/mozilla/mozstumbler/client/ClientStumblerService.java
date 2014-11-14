@@ -6,6 +6,7 @@ package org.mozilla.mozstumbler.client;
 
 import android.content.Intent;
 import android.os.Binder;
+import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 import android.util.Log;
@@ -13,6 +14,7 @@ import android.util.Log;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.stumblerthread.StumblerService;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageManager;
+import org.mozilla.mozstumbler.service.utils.BatteryCheck;
 
 // Used as a bound service (with foreground priority) in Mozilla Stumbler, a.k.a. active scanning mode.
 // -- In accordance with Android service docs -and experimental findings- this puts the service as low
@@ -73,6 +75,28 @@ public class ClientStumblerService extends StumblerService {
     public void stopScanning() {
         if (mScanManager.stopScanning()) {
             mReporter.flush();
+        }
+    }
+
+    Handler mHandler = new Handler(Looper.getMainLooper());
+    Runnable mBatteryChecker;
+
+    @Override
+    public synchronized void startScanning() {
+        super.startScanning();
+
+        if (mBatteryChecker == null) {
+            final int oneMinute = 1000 * 60;
+            mBatteryChecker = new Runnable() {
+                @Override
+                public void run() {
+                    mHandler.postDelayed(mBatteryChecker, oneMinute);
+                    int minBattery = ClientPrefs.getInstance().getMinBatteryPercent();
+                    boolean isLow = BatteryCheck.isBatteryLessThan(minBattery, ClientStumblerService.this);
+                    //TODO set to a low battery scanning mode
+                }
+            };
+            mHandler.postDelayed(mBatteryChecker, oneMinute);
         }
     }
 }

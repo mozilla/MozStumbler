@@ -8,7 +8,6 @@ import android.annotation.TargetApi;
 import android.content.Intent;
 import android.location.Location;
 import android.os.AsyncTask;
-import android.provider.ContactsContract;
 import android.util.Log;
 
 import org.mozilla.mozstumbler.service.AppGlobals;

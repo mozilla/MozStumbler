@@ -18,6 +18,7 @@ import org.mozilla.mozstumbler.service.AppGlobals.ActiveOrPassiveStumbling;
 import org.mozilla.mozstumbler.service.stumblerthread.Reporter;
 import org.mozilla.mozstumbler.service.stumblerthread.blocklist.WifiBlockListInterface;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner.CellScanner;
+import org.mozilla.mozstumbler.service.utils.BatteryCheck;
 
 import java.util.Date;
 import java.util.Timer;
@@ -32,28 +33,20 @@ public class ScanManager {
     private WifiScanner mWifiScanner;
     private CellScanner mCellScanner;
     private ActiveOrPassiveStumbling mStumblingMode = ActiveOrPassiveStumbling.ACTIVE_STUMBLING;
+    private boolean mShouldStopPassiveScanningOnBatteryLow = true;
 
-    public ScanManager() {
-    }
+    public ScanManager() {}
 
-    private boolean isBatteryLow() {
-        Intent intent = mContext.registerReceiver(null, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
-        if (intent == null) {
-            return false;
-        }
-
-        int rawLevel = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
-        int scale = intent.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
-        int status = intent.getIntExtra(BatteryManager.EXTRA_STATUS, -1);
-        boolean isCharging = (status == BatteryManager.BATTERY_STATUS_CHARGING);
-        int level = Math.round(rawLevel * scale / 100.0f);
-
-        final int kMinBatteryPct = 15;
-        return !isCharging && level < kMinBatteryPct;
+    // By default, if the battery level is low, then the service stops scanning, however the client
+    // can disable this and perform more complex logic
+    public void setShouldStopPassiveScanningOnBatteryLow(boolean shouldStop) {
+        mShouldStopPassiveScanningOnBatteryLow = shouldStop;
     }
 
     public void newPassiveGpsLocation() {
-        if (isBatteryLow()) {
+        final int kMinBatteryPct = 15;
+
+        if (mShouldStopPassiveScanningOnBatteryLow && BatteryCheck.isBatteryLessThan(kMinBatteryPct, mContext)) {
             return;
         }
 

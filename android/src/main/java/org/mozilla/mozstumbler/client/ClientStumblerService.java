@@ -9,6 +9,7 @@ import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import org.mozilla.mozstumbler.service.AppGlobals;
@@ -93,7 +94,9 @@ public class ClientStumblerService extends StumblerService {
                     mHandler.postDelayed(mBatteryChecker, oneMinute);
                     int minBattery = ClientPrefs.getInstance().getMinBatteryPercent();
                     boolean isLow = BatteryCheck.isBatteryLessThan(minBattery, ClientStumblerService.this);
-                    //TODO set to a low battery scanning mode
+                    if (isLow) {
+                        ClientStumblerService.this.sendBroadcast(new Intent(MainApp.INTENT_TURN_OFF));
+                    }
                 }
             };
             mHandler.postDelayed(mBatteryChecker, oneMinute);

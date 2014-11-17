@@ -5,6 +5,7 @@
 package org.mozilla.mozstumbler.service.stumblerthread.datahandling;
 
 import android.content.Context;
+import android.os.Environment;
 
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.Prefs;
@@ -55,7 +56,6 @@ public class DataStorageManager {
     // Used as a safeguard to ensure stumbling data is not persisted. The intended use case of the stumbler lib is not
     // for long-term storage, and so if ANY data on disk is this old, ALL data is wiped as a privacy mechanism.
     private static final int DEFAULT_MAX_WEEKS_DATA_ON_DISK = 2;
-    public static final String SDCARD_ARCHIVE_PATH = "/sdcard/MozStumbler";
 
     // Set to the default value specified above.
     private final long mMaxBytesDiskStorage;
@@ -81,6 +81,10 @@ public class DataStorageManager {
     static final String SEP_TIME_MS = "-t";
     static final String FILENAME_PREFIX = "reports";
     static final String MEMORY_BUFFER_NAME = "in memory send buffer";
+
+    public static String sdcard_archive_path() {
+        return Environment.getExternalStorageDirectory()+ File.separator + "MozStumbler";
+    }
 
     public static class QueuedCounts {
         public final int mReportCount;
@@ -512,9 +516,7 @@ public class DataStorageManager {
         boolean ok = true;
 
         if (Prefs.getInstance().isSaveStumbleLogs()) {
-
-
-            File newFile = new File(SDCARD_ARCHIVE_PATH + File.separator+ filename);
+            File newFile = new File(sdcard_archive_path() + File.separator+ filename);
 
             ok = copyFile(file, newFile);
             if (!ok) {

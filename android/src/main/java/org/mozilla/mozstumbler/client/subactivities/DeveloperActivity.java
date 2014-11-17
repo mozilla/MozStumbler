@@ -6,6 +6,7 @@ package org.mozilla.mozstumbler.client.subactivities;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -22,12 +23,11 @@ import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.client.serialize.KMLFragment;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.Prefs;
-import org.mozilla.mozstumbler.service.core.logging.Log;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageManager;
 
 import java.io.File;
 
-import static org.mozilla.mozstumbler.R.string.save_stumble_logs_failure;
+import static org.mozilla.mozstumbler.R.string.create_log_archive_failure;
 
 public class DeveloperActivity extends ActionBarActivity {
 
@@ -93,21 +93,39 @@ public class DeveloperActivity extends ActionBarActivity {
             });
         }
         private void onToggleSaveStumbleLogs(boolean isChecked) {
-            File saveDir = new File(DataStorageManager.SDCARD_ARCHIVE_PATH);
-            if (isChecked && !saveDir.exists()) {
-                saveDir.mkdirs();
-                if (!saveDir.exists()) {
-                    Log.w(LOG_TAG, "Error creating " + saveDir.getAbsolutePath());
+            File saveDir = new File(DataStorageManager.sdcard_archive_path());
+            if (isChecked) {
+                if (!archiveDirCreatedAndMounted(saveDir)) {
                     isChecked = false;
-                    Toast.makeText(this.getActivity(),
-                            save_stumble_logs_failure,
-                            Toast.LENGTH_LONG).show();
                     CheckBox button = (CheckBox) mRootView.findViewById(R.id.toggleSaveStumbleLogs);
                     button.setChecked(isChecked);
                 }
             }
             Prefs.getInstance().setSaveStumbleLogs(isChecked);
         }
+
+        private boolean archiveDirCreatedAndMounted(File saveDir) {
+            String storageState = Environment.getExternalStorageState();
+
+            // You have to check the mount state of the external storage.
+            // Using the mkdirs() result isn't good enough.
+            if(!storageState.equals(Environment.MEDIA_MOUNTED)) {
+                Toast.makeText(this.getActivity(),
+                        R.string.no_sdcard_is_mounted,
+                        Toast.LENGTH_LONG).show();
+                return false;
+            }
+
+            saveDir.mkdirs();
+            if (!saveDir.exists()) {
+                Toast.makeText(this.getActivity(),
+                        create_log_archive_failure,
+                        Toast.LENGTH_LONG).show();
+                return false;
+            }
+            return true;
+        }
+
 
     }
 

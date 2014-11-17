@@ -7,11 +7,13 @@ package org.mozilla.mozstumbler.service.stumblerthread.datahandling;
 import android.content.Context;
 
 import org.mozilla.mozstumbler.service.AppGlobals;
+import org.mozilla.mozstumbler.service.Prefs;
 import org.mozilla.mozstumbler.service.core.logging.Log;
 import org.mozilla.mozstumbler.service.utils.Zipper;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -40,7 +42,7 @@ import java.util.TimerTask;
  * when the service is destroyed.
  */
 public class DataStorageManager {
-    private static final String LOG_TAG = AppGlobals.makeLogTag(DataStorageManager.class.getSimpleName());
+    private static final String LOG_TAG = AppGlobals.makeLogTag(DataStorageManager.class);
 
     // The max number of reports stored in the mCurrentReports. Each report is a GPS location plus wifi and cell scan.
     // After this size is reached, data is persisted to disk, mCurrentReports is cleared.
@@ -53,6 +55,7 @@ public class DataStorageManager {
     // Used as a safeguard to ensure stumbling data is not persisted. The intended use case of the stumbler lib is not
     // for long-term storage, and so if ANY data on disk is this old, ALL data is wiped as a privacy mechanism.
     private static final int DEFAULT_MAX_WEEKS_DATA_ON_DISK = 2;
+    public static final String SDCARD_ARCHIVE_PATH = "/sdcard/MozStumbler";
 
     // Set to the default value specified above.
     private final long mMaxBytesDiskStorage;
@@ -278,19 +281,6 @@ public class DataStorageManager {
         return (mFileList.mFiles == null || mFileList.mFiles.length < 1);
     }
 
-    /* Pass filename returned from dataToSend() */
-    public synchronized boolean delete(String filename) {
-        if (filename.equals(MEMORY_BUFFER_NAME)) {
-            mCurrentReportsSendBuffer = null;
-            return true;
-        }
-
-        final File file = new File(mReportsDir, filename);
-        final boolean ok = file.delete();
-        mFileList.update(mReportsDir);
-        return ok;
-    }
-
     private static long getLongFromFilename(String name, String separator) {
         final int s = name.indexOf(separator) + separator.length();
         int e = name.indexOf('-', s);
@@ -511,14 +501,119 @@ public class DataStorageManager {
         }
     }
 
+    /* Pass filename returned from dataToSend() */
+    public synchronized boolean delete(String filename) {
+        if (filename.equals(MEMORY_BUFFER_NAME)) {
+            mCurrentReportsSendBuffer = null;
+            return true;
+        }
+
+        final File file = new File(mReportsDir, filename);
+        boolean ok = true;
+
+        if (Prefs.getInstance().isSaveStumbleLogs()) {
+
+
+            File newFile = new File(SDCARD_ARCHIVE_PATH + File.separator+ filename);
+
+            ok = copyFile(file, newFile);
+            if (!ok) {
+                // The copy failed.  Try removing the original file.
+                ok = file.delete();
+            }
+        } else {
+            ok = file.delete();
+        }
+        mFileList.update(mReportsDir);
+        return ok;
+    }
+
+    private boolean copyFile(File aFile, File bFile) {
+        boolean ok = true;
+
+        FileInputStream inStream = null;
+        FileOutputStream outStream = null;
+
+        try {
+            inStream = new FileInputStream(aFile);
+            outStream = new FileOutputStream(bFile);
+        } catch (FileNotFoundException e) {
+            if (inStream != null) {
+                try {
+                    inStream.close();
+                }catch (IOException ioEx) {
+                    Log.e(LOG_TAG, "error shutting down streams during a failed copy", ioEx);
+                }
+             }
+            if (outStream != null) {
+                try {
+                    outStream.close();
+                } catch (IOException ioEx) {
+                    Log.e(LOG_TAG, "error shutting down streams during a failed copy", ioEx);
+                }
+            }
+            return false;
+        }
+
+        byte[] buffer = new byte[1024];
+        int length;
+        //copy the file content in bytes
+        try {
+            while ((length = inStream.read(buffer)) > 0){
+                outStream.write(buffer, 0, length);
+            }
+        } catch (IOException e) {
+            Log.e(LOG_TAG, "Error copying bytes over", e);
+
+            if (inStream != null) {
+                try {
+                    inStream.close();
+                }catch (IOException ioEx) {
+                    Log.e(LOG_TAG, "error shutting down streams during a failed copy", ioEx);
+                }
+            }
+            if (outStream != null) {
+                try {
+                    outStream.close();
+                } catch (IOException ioEx) {
+                    Log.e(LOG_TAG, "error shutting down streams during a failed copy", ioEx);
+                }
+            }
+            return false;
+        }
+
+        if (inStream != null) {
+            try {
+                inStream.close();
+            }catch (IOException ioEx) {
+                Log.e(LOG_TAG, "error shutting down streams during a failed copy", ioEx);
+                ok = false;
+            }
+        }
+
+        if (outStream != null) {
+            try {
+                outStream.close();
+            } catch (IOException ioEx) {
+                Log.e(LOG_TAG, "error shutting down streams during a failed copy", ioEx);
+                ok = false;
+            }
+        }
+
+        // delete the original file
+        ok = ok & aFile.delete();
+        return ok;
+    }
+
     public synchronized void deleteAll() {
         if (mFileList.mFiles == null) {
             return;
         }
 
         for (File f : mFileList.mFiles) {
-            f.delete();
+            delete(f.getName());
         }
+
         mFileList.update(mReportsDir);
     }
 

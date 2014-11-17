@@ -16,11 +16,18 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.client.serialize.KMLFragment;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.Prefs;
+import org.mozilla.mozstumbler.service.core.logging.Log;
+import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageManager;
+
+import java.io.File;
+
+import static org.mozilla.mozstumbler.R.string.save_stumble_logs_failure;
 
 public class DeveloperActivity extends ActionBarActivity {
 
@@ -86,6 +93,19 @@ public class DeveloperActivity extends ActionBarActivity {
             });
         }
         private void onToggleSaveStumbleLogs(boolean isChecked) {
+            File saveDir = new File(DataStorageManager.SDCARD_ARCHIVE_PATH);
+            if (isChecked && !saveDir.exists()) {
+                saveDir.mkdirs();
+                if (!saveDir.exists()) {
+                    Log.w(LOG_TAG, "Error creating " + saveDir.getAbsolutePath());
+                    isChecked = false;
+                    Toast.makeText(this.getActivity(),
+                            save_stumble_logs_failure,
+                            Toast.LENGTH_LONG).show();
+                    CheckBox button = (CheckBox) mRootView.findViewById(R.id.toggleSaveStumbleLogs);
+                    button.setChecked(isChecked);
+                }
+            }
             Prefs.getInstance().setSaveStumbleLogs(isChecked);
         }
 

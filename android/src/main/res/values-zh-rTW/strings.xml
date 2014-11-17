@@ -39,6 +39,11 @@
     <string name="action_view_log">檢視紀錄</string>
     <string name="scroll_to_start">滾動到頂端</string>
     <string name="scroll_to_end">滾動到底端</string>
+    <string name="kml_file_title">KML 回報檔案</string>
+    <string name="kml_file_load">載入 KML 檔案</string>
+    <string name="kml_file_save">儲存 KML 檔案</string>
+    <string name="kml_file_description">儲存/載入測量報告（位置、Wi-Fi+行動基地台計數）用以除錯。</string>
+    <string name="kml_file_saved_name">已存檔案:</string>
     <string name="keep_screen_on_title">開啟地圖時，保持螢幕開啟</string>
     <string name="delete_all">刪除全部</string>
     <string name="are_you_sure">您確定嗎？</string>
@@ -53,17 +58,18 @@
     <string name="enter_email">輸入電子郵件地址（非必填）</string>
     <string name="enter_email_title">電子郵件地址: </string>
     <string name="enter_email_longtext">您的電子郵件地址不會顯示給其他人知道，而只會用於您自己上傳的報告當中</string>
-    <string name="drawer_open">Show drawer</string>
-    <string name="drawer_close">Close drawer</string>
+    <string name="drawer_open">顯示抽屜</string>
+    <string name="drawer_close">關閉抽屜</string>
     <string name="title_activity_leaderboard">排行榜</string>
     <string name="drawer_map_layers_title">圖例</string>
     <string name="first_run_message_part1">Mozilla Location Service 是一套透過 Wi-Fi 與行動網路來定位裝置的開放服務。</string>
-    <string name="first_run_message_part2">請閱讀我們的 <a href="https://location.services.mozilla.com/privacy">隱私權保護政策</a>，再開始進行掃描，以貢獻您目前所在地點的位置資料。</string>
+    <string name="first_run_message_part2">請閱讀我們的 <a href="https://location.services.mozilla.com/privacy">隱私權保護政策</a>，再開始進行掃描，提供您目前所在地點的位置資料。</string>
     <string name="first_run_start_stumbling">開始掃描</string>
     <string name="first_run_welcome_to_mozstumbler">歡迎使用 Mozilla Stumbler</string>
     <string name="map_unavailable">因為沒有 SD 卡儲存空間，無法顯示地圖。\n您還是可以收集地理資料。</string>
     <string name="map_offline_mode">"沒有網際網路連線時將無法顯示地圖，\n但您還是可以收集地理資料。"</string>
     <string name="action_developer">開發者</string>
+    <string name="developer_title">開發者</string>
     <string name="enable_option_show_mls_on_map">顯示 MLS 圖層開關</string>
     <string name="enable_option_show_mls_on_map_summary">多用一些記憶體與網路用量，就可在地圖上顯示您掃到的 MLS 位置查詢。</string>
     <string name="cell_only_observation">僅觀測行動網路基地台</string>
@@ -72,6 +78,9 @@
     <string name="map_turned_off">關閉地圖顯示</string>
     <string name="map_tile_resolution_options_label">圖資選項:</string>
     <string name="enable_crash_reporting">開啟錯誤回報</string>
+    <string name="privacy_policy">隱私權保護政策:</string>
+    <string name="satellites_separator">/</string>
+    <string name="must_uninstall_to_update">您必須先移除本程式才能更新至新版本。</string>
     <string-array name="map_tile_resolution_options">
         <item>預設</item>
         <item>僅顯示高解析度圖資</item>

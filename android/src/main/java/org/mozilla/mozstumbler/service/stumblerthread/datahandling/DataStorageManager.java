@@ -6,7 +6,9 @@ package org.mozilla.mozstumbler.service.stumblerthread.datahandling;
 
 import android.content.Context;
 import android.os.Environment;
+import android.widget.Toast;
 
+import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.Prefs;
 import org.mozilla.mozstumbler.service.core.logging.Log;
@@ -22,6 +24,8 @@ import java.util.ArrayList;
 import java.util.Properties;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import static org.mozilla.mozstumbler.R.string.create_log_archive_failure;
 
 /* Stores reports in memory (mCurrentReports) until MAX_REPORTS_IN_MEMORY,
  * then writes them to disk as a .gz file. The name of the file has
@@ -56,6 +60,7 @@ public class DataStorageManager {
     // Used as a safeguard to ensure stumbling data is not persisted. The intended use case of the stumbler lib is not
     // for long-term storage, and so if ANY data on disk is this old, ALL data is wiped as a privacy mechanism.
     private static final int DEFAULT_MAX_WEEKS_DATA_ON_DISK = 2;
+    public static final String MOZ_STUMBLER_RELPATH = "mozstumbler";
 
     // Set to the default value specified above.
     private final long mMaxBytesDiskStorage;
@@ -216,7 +221,7 @@ public class DataStorageManager {
             // in debug, put files in public location
             dir = c.getExternalFilesDir(null);
             if (dir != null) {
-                dir = new File(dir.getAbsolutePath() + "/mozstumbler");
+                dir = new File(dir.getAbsolutePath() + File.separator + MOZ_STUMBLER_RELPATH);
             }
         }
 
@@ -232,6 +237,34 @@ public class DataStorageManager {
         }
 
         return dir.getPath();
+    }
+
+
+    public static boolean archiveDirCreatedAndMounted(Context ctx) {
+        File saveDir = new File(sdcard_archive_path());
+        String storageState = Environment.getExternalStorageState();
+
+        // You have to check the mount state of the external storage.
+        // Using the mkdirs() result isn't good enough.
+        if(!storageState.equals(Environment.MEDIA_MOUNTED)) {
+            if (ctx != null) {
+                Toast.makeText(ctx,
+                        R.string.no_sdcard_is_mounted,
+                        Toast.LENGTH_LONG).show();
+            }
+            return false;
+        }
+
+        saveDir.mkdirs();
+        if (!saveDir.exists()) {
+            if (ctx != null) {
+                Toast.makeText(ctx,
+                        create_log_archive_failure,
+                        Toast.LENGTH_LONG).show();
+            }
+            return false;
+        }
+        return true;
     }
 
     public static synchronized void createGlobalInstance(Context context, StorageIsEmptyTracker tracker) {
@@ -516,21 +549,21 @@ public class DataStorageManager {
         boolean ok = true;
 
         if (Prefs.getInstance().isSaveStumbleLogs()) {
-            File newFile = new File(sdcard_archive_path() + File.separator+ filename);
+            File newFile = new File(sdcard_archive_path() + File.separator + filename);
+            ok = copyAndDelete(file, newFile);
 
-            ok = copyFile(file, newFile);
             if (!ok) {
-                // The copy failed.  Try removing the original file.
                 ok = file.delete();
             }
         } else {
             ok = file.delete();
         }
+
         mFileList.update(mReportsDir);
         return ok;
     }
 
-    private boolean copyFile(File aFile, File bFile) {
+    private boolean copyAndDelete(File aFile, File bFile) {
         boolean ok = true;
 
         FileInputStream inStream = null;

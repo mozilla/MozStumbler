@@ -93,37 +93,14 @@ public class DeveloperActivity extends ActionBarActivity {
             });
         }
         private void onToggleSaveStumbleLogs(boolean isChecked) {
-            File saveDir = new File(DataStorageManager.sdcard_archive_path());
             if (isChecked) {
-                if (!archiveDirCreatedAndMounted(saveDir)) {
+                if (!DataStorageManager.archiveDirCreatedAndMounted(this.getActivity())) {
                     isChecked = false;
                     CheckBox button = (CheckBox) mRootView.findViewById(R.id.toggleSaveStumbleLogs);
                     button.setChecked(isChecked);
                 }
             }
             Prefs.getInstance().setSaveStumbleLogs(isChecked);
-        }
-
-        private boolean archiveDirCreatedAndMounted(File saveDir) {
-            String storageState = Environment.getExternalStorageState();
-
-            // You have to check the mount state of the external storage.
-            // Using the mkdirs() result isn't good enough.
-            if(!storageState.equals(Environment.MEDIA_MOUNTED)) {
-                Toast.makeText(this.getActivity(),
-                        R.string.no_sdcard_is_mounted,
-                        Toast.LENGTH_LONG).show();
-                return false;
-            }
-
-            saveDir.mkdirs();
-            if (!saveDir.exists()) {
-                Toast.makeText(this.getActivity(),
-                        create_log_archive_failure,
-                        Toast.LENGTH_LONG).show();
-                return false;
-            }
-            return true;
         }
 
 

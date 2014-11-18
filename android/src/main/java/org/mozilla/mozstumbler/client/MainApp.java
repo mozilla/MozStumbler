@@ -20,6 +20,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.os.IBinder;
 import android.os.StrictMode;
+import android.os.Vibrator;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
@@ -37,6 +38,7 @@ import org.mozilla.mozstumbler.service.Prefs;
 import org.mozilla.mozstumbler.service.core.logging.MockAcraLog;
 import org.mozilla.mozstumbler.service.stumblerthread.StumblerService;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageManager;
+import org.mozilla.mozstumbler.service.stumblerthread.scanners.ScanManager;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.WifiScanner;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner.CellScanner;
 import org.mozilla.mozstumbler.service.uploadthread.AsyncUploadParam;
@@ -190,10 +192,11 @@ public class MainApp extends Application
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ACTION_UI_UNPAUSE_SCANNING);
         intentFilter.addAction(ACTION_UI_PAUSE_SCANNING);
-        bManager.registerReceiver(notificationDrawerEventReceiver, intentFilter);
+        intentFilter.addAction(ScanManager.ACTION_BATTERY_LOW);
+        bManager.registerReceiver(notificationEventReceiver, intentFilter);
     }
 
-    private final BroadcastReceiver notificationDrawerEventReceiver = new BroadcastReceiver() {
+    private final BroadcastReceiver notificationEventReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             StumblerService service = getService();
@@ -205,6 +208,16 @@ public class MainApp extends Application
                 stopScanning();
             } else if (intent.getAction().equals(ACTION_UI_UNPAUSE_SCANNING) && !service.isScanning()) {
                 startScanning();
+            } else if (intent.getAction().equals(ScanManager.ACTION_BATTERY_LOW) && service.isScanning()) {
+                Log.d(LOG_TAG, "Battery is low");
+                stopScanning();
+                Vibrator vibrator = (Vibrator) getApplicationContext().getSystemService(VIBRATOR_SERVICE);
+                if (Build.VERSION.SDK_INT >= 11) {
+                    if (!vibrator.hasVibrator()) {
+                        return;
+                    }
+                }
+                vibrator.vibrate(1000);
             }
         }
     };

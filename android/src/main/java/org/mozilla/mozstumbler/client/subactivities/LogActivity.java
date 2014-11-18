@@ -200,6 +200,14 @@ public class LogActivity extends ActionBarActivity {
             tv.setText("");
             this.scrollTo(0, 0);
         }
+
+        @Override
+        protected void onScrollChanged(int x, int y, int oldx, int oldy) {
+            super.onScrollChanged(x, y, oldx, oldy);
+            int diff = tv.getHeight() - (y + getHeight());
+            boolean isAtBottom = diff <= 0;
+            enableScroll(isAtBottom);
+        }
     }
 
     @Override

@@ -88,6 +88,7 @@ public class Updater {
                 String latestVersion = tag.substring(1); // strip the 'v' from the beginning
 
                 String installedVersion = PackageUtils.getAppVersion(activity);
+                installedVersion = stripBuildHostName(installedVersion);
 
                 Log.d(LOG_TAG, "Installed version: " + installedVersion);
                 Log.d(LOG_TAG, "Latest version: " + latestVersion);
@@ -99,6 +100,10 @@ public class Updater {
         }.execute();
 
         return true;
+    }
+
+    private String stripBuildHostName(String installedVersion) {
+        return installedVersion.substring(0,installedVersion.lastIndexOf("."));
     }
 
 

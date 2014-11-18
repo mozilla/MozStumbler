@@ -86,6 +86,8 @@
     <string name="first_run_welcome_to_mozstumbler">Willkommen bei Mozilla Stumbler</string>
     <string name="map_unavailable">Die Karte kann nicht angezeigt werden, da kein SD-Kartenspeicher vorhanden ist.\nSie können aber immer noch Daten sammeln.</string>
     <string name="map_offline_mode">Die Karte kann ohne eine verfügbare Internetverbindung nicht aktualisiert werden.\nSie können aber immer noch Daten sammeln.</string>
+	<string name="map_copyright_fdroid">Kacheln bereitgestellt durch MapQuest\n© OpenStreetMap-Mitwirkende</string>
+	<string name="map_copyright_moz">© MapBox © OpenStreetMap-Mitwirkende</string>
     <string name="action_developer">Entwickler</string>
     <string name="developer_title">Entwickler</string>
     <string name="enable_option_show_mls_on_map">MLS Ortungsabfragen aktivieren</string>

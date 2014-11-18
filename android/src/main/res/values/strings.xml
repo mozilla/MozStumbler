@@ -90,6 +90,8 @@
     <string name="first_run_welcome_to_mozstumbler">Welcome to Mozilla Stumbler</string>
     <string name="map_unavailable">The map is not available for display, as there is no SD card storage.\nYou can still collect data.</string>
     <string name="map_offline_mode">The map will not update without an Internet connection,\nhowever you are still able to collect data.</string>
+	<string name="map_copyright_fdroid">Tiles Courtesy of MapQuest\n© OpenStreetMap contributors</string>
+	<string name="map_copyright_moz">© MapBox © OpenStreetMap contributors</string>
     <string name="action_developer">Developer</string>
     <string name="developer_title">Developer</string>
     <string name="enable_option_show_mls_on_map">Enable MLS location queries</string>

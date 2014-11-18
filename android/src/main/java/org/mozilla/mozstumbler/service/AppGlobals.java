@@ -4,6 +4,8 @@
 
 package org.mozilla.mozstumbler.service;
 
+import org.mozilla.mozstumbler.client.subactivities.LogActivity;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -26,6 +28,10 @@ public class AppGlobals {
 
     /* Location constructor requires a named origin, these are created in the app. */
     public static final String LOCATION_ORIGIN_INTERNAL = "internal";
+
+    public static String makeLogTag(Class<?> cls) {
+        return makeLogTag(cls.getSimpleName());
+    }
 
     public enum ActiveOrPassiveStumbling { ACTIVE_STUMBLING, PASSIVE_STUMBLING }
 

@@ -64,7 +64,8 @@ public class WifiScanner extends BroadcastReceiver {
         if (manager == null) {
             return null;
         }
-        return getWifiManager().getScanResults();
+
+        return manager.getScanResults();
     }
 
 

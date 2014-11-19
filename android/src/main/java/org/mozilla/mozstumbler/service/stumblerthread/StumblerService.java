@@ -254,5 +254,4 @@ public class StumblerService extends PersistentIntentService
             Log.e(LOG_TAG, ioException.toString());
         }
     }
-
 }

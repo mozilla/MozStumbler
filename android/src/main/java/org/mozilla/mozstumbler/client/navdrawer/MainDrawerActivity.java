@@ -155,9 +155,7 @@ public class MainDrawerActivity
         if (svc == null) {
             return;
         }
-        boolean isScanning = svc.isScanning();
-
-        if (isScanning) {
+        if (svc.isScanning()) {
             keepScreenOn(ClientPrefs.getInstance().getKeepScreenOn());
         } else {
             keepScreenOn(false);
@@ -166,18 +164,18 @@ public class MainDrawerActivity
         if (Build.VERSION.SDK_INT >= 14) {
             Switch s = (Switch) mMenuItemStartStop.getActionView();
             s.setOnCheckedChangeListener(null);
-            if (isScanning && !s.isChecked()) {
+            if (app.isScanningOrPaused() && !s.isChecked()) {
                 s.setChecked(true);
-            } else if (!isScanning && s.isChecked()) {
+            } else if (!app.isScanningOrPaused() && s.isChecked()) {
                 s.setChecked(false);
             }
             s.setOnCheckedChangeListener(mStartStopButtonListener);
         } else {
             boolean buttonStateIsScanning = mMenuItemStartStop.getTitle().equals(getString(R.string.stop_scanning));
-            if (isScanning && !buttonStateIsScanning) {
+            if (app.isScanningOrPaused() && !buttonStateIsScanning) {
                 mMenuItemStartStop.setIcon(android.R.drawable.ic_media_pause);
                 mMenuItemStartStop.setTitle(R.string.stop_scanning);
-            } else if (!isScanning && buttonStateIsScanning) {
+            } else if (!app.isScanningOrPaused() && buttonStateIsScanning) {
                 mMenuItemStartStop.setIcon(android.R.drawable.ic_media_play);
                 mMenuItemStartStop.setTitle(R.string.start_scanning);
             }
@@ -283,5 +281,10 @@ public class MainDrawerActivity
         } else {
             getWindow().clearFlags(flag);
         }
+    }
+
+    @Override
+    public void isPausedDueToNoMotion(boolean isPaused) {
+        mMapFragment.showPausedDueToNoMotionMessage(isPaused);
     }
 }

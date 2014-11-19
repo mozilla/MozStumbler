@@ -23,11 +23,8 @@ public class GPSScanner implements LocationListener {
     public static final String ACTION_BASE = AppGlobals.ACTION_NAMESPACE + ".GPSScanner.";
     public static final String ACTION_GPS_UPDATED = ACTION_BASE + "GPS_UPDATED";
     public static final String ACTION_ARG_TIME = AppGlobals.ACTION_ARG_TIME;
-    public static final String SUBJECT_NEW_STATUS = "new_status";
     public static final String SUBJECT_LOCATION_LOST = "location_lost";
     public static final String SUBJECT_NEW_LOCATION = "new_location";
-    public static final String NEW_STATUS_ARG_FIXES = "fixes";
-    public static final String NEW_STATUS_ARG_SATS = "sats";
     public static final String NEW_LOCATION_ARG_LOCATION = "location";
     public static final int MIN_SAT_USED_IN_FIX = 3;
 
@@ -77,9 +74,7 @@ public class GPSScanner implements LocationListener {
         if (!isGpsAvailable(locationManager)) {
             return;
         }
-        locationManager.requestLocationUpdates(LocationManager.PASSIVE_PROVIDER,
-                0,
-                0, this);
+        locationManager.requestLocationUpdates(LocationManager.PASSIVE_PROVIDER, 0, 0, this);
     }
 
     private void startActiveMode() {

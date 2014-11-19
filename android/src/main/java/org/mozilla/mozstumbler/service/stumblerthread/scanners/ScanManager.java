@@ -4,6 +4,7 @@
 
 package org.mozilla.mozstumbler.service.stumblerthread.scanners;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
@@ -12,6 +13,8 @@ import android.util.Log;
 
 import org.mozilla.mozstumbler.client.ClientPrefs;
 import org.mozilla.mozstumbler.client.MainApp;
+import org.mozilla.mozstumbler.service.stumblerthread.motiondetection.DetectUnchangingLocation;
+import org.mozilla.mozstumbler.service.stumblerthread.motiondetection.MotionSensor;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.AppGlobals.ActiveOrPassiveStumbling;
 import org.mozilla.mozstumbler.service.stumblerthread.Reporter;
@@ -24,6 +27,8 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class ScanManager {
+    public static final String ACTION_SCAN_PAUSED_USER_MOTIONLESS = AppGlobals.ACTION_NAMESPACE + ".NOTIFY_USER_MOTIONLESS";
+    public static final String ACTION_EXTRA_IS_PAUSED = "IS_PAUSED";
     private static final String LOG_TAG = AppGlobals.makeLogTag(ScanManager.class.getSimpleName());
     private Timer mPassiveModeFlushTimer;
     private Context mContext;
@@ -102,7 +107,7 @@ public class ScanManager {
     }
 
     public synchronized void startScanning(Context context) {
-        if (this.isScanning()) {
+        if (isScanning()) {
             return;
         }
 
@@ -111,6 +116,18 @@ public class ScanManager {
             Log.w(LOG_TAG, "No app context available.");
             return;
         }
+
+        mIsMotionlessPausedState = false;
+
+        if (mDetectUnchangingLocation == null) {
+            mDetectUnchangingLocation = new DetectUnchangingLocation(mContext, mDetectUserIdleReceiver);
+        }
+        mDetectUnchangingLocation.start();
+
+        if (mMotionSensor == null) {
+            mMotionSensor = new MotionSensor(mContext, mDetectMotionReceiver);
+        }
+
         if (mGPSScanner == null) {
             mGPSScanner = new GPSScanner(context, this);
             mWifiScanner = new WifiScanner(context);
@@ -139,6 +156,9 @@ public class ScanManager {
         if (AppGlobals.isDebug) {
             Log.d(LOG_TAG, "Scanning stopped");
         }
+
+        mIsMotionlessPausedState = false;
+        mDetectUnchangingLocation.stop();
 
         mGPSScanner.stop();
         mWifiScanner.stop();
@@ -175,5 +195,47 @@ public class ScanManager {
     public Location getLocation() {
         return (mGPSScanner == null) ? new Location("null") : mGPSScanner.getLocation();
     }
+
+
+    private DetectUnchangingLocation mDetectUnchangingLocation;
+    private MotionSensor mMotionSensor;
+    private boolean mIsMotionlessPausedState;
+
+
+    // After DetectUnchangingLocation reports the user is not moving, and the scanning pauses,
+    // then use MotionSensor to determine when to wake up and start scanning again.
+    private final BroadcastReceiver mDetectUserIdleReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (!isScanning()) {
+                return;
+            }
+            stopScanning();
+            mIsMotionlessPausedState = true;
+            mMotionSensor.start();
+
+            Intent sendIntent = new Intent(ACTION_SCAN_PAUSED_USER_MOTIONLESS);
+            sendIntent.putExtra(ACTION_EXTRA_IS_PAUSED, mIsMotionlessPausedState);
+            LocalBroadcastManager.getInstance(mContext).sendBroadcastSync(sendIntent);
+        }
+    };
+
+    private final BroadcastReceiver mDetectMotionReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (isScanning() || !mIsMotionlessPausedState) {
+                return;
+            }
+            startScanning(context);
+            mMotionSensor.stop();
+
+            mDetectUnchangingLocation.quickCheckAfterMotionSensorMovement();
+
+            Intent sendIntent = new Intent(ACTION_SCAN_PAUSED_USER_MOTIONLESS);
+            sendIntent.putExtra(ACTION_EXTRA_IS_PAUSED, mIsMotionlessPausedState);
+            LocalBroadcastManager.getInstance(mContext).sendBroadcastSync(sendIntent);
+        }
+    };
+
 
 }

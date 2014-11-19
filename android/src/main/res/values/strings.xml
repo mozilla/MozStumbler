@@ -124,6 +124,7 @@
 
     <string name="battery_percent_options_label">Stop when battery is:</string>
     <string-array name="battery_percent_options">
+        <item>0%</item>
         <item>5%</item>
         <item>15%</item>
         <item>30%</item>

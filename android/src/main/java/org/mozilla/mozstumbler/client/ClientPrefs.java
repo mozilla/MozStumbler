@@ -22,8 +22,10 @@ public class ClientPrefs extends Prefs {
     public static final String ENABLE_OPTION_TO_SHOW_MLS_ON_MAP = "enable_the_option_to_show_mls_on_map";
     private static final String ON_MAP_MLS_DRAW_IS_ON = "actually_draw_mls_dots_on_map";
     public static final String CRASH_REPORTING = "crash_reporting";
+    private static final String MIN_BATTERY_PCT = "min_battery_pct";
+    public static final int MIN_BATTERY_DEFAULT = 15;
 
-    public enum MapTileResolutionOptions { Default, HighRes, LowRes, NoMap}
+    public enum MapTileResolutionOptions {Default, HighRes, LowRes, NoMap}
 
     protected ClientPrefs(Context context) {
         super(context);
@@ -33,14 +35,14 @@ public class ClientPrefs extends Prefs {
         if (sInstance == null) {
             sInstance = new ClientPrefs(c);
         }
-        return (ClientPrefs)sInstance;
+        return (ClientPrefs) sInstance;
     }
 
     public static synchronized ClientPrefs getInstance() {
         if (sInstance != null && sInstance.getClass().isInstance(ClientPrefs.class)) {
             throw new IllegalArgumentException("sInstance is improperly initialized");
         }
-        return (ClientPrefs)sInstance;
+        return (ClientPrefs) sInstance;
     }
 
     // For Mozilla Stumbler to use for manual upgrade of old prefs.
@@ -131,5 +133,15 @@ public class ClientPrefs extends Prefs {
             i = 0;
         }
         return MapTileResolutionOptions.values()[i];
+    }
+
+    public int getMinBatteryPercent() {
+        return getPrefs().getInt(MIN_BATTERY_PCT, MIN_BATTERY_DEFAULT);
+    }
+
+    public void setMinBatteryPercent(int percent) {
+        SharedPreferences.Editor editor = getPrefs().edit();
+        editor.putInt(MIN_BATTERY_PCT, percent);
+        apply(editor);
     }
 }

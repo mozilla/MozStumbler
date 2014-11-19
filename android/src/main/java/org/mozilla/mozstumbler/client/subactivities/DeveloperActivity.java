@@ -14,9 +14,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.Spinner;
+import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 
 import org.acra.ACRA;
@@ -76,7 +78,27 @@ public class DeveloperActivity extends ActionBarActivity {
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             mRootView = inflater.inflate(R.layout.fragment_developer_options, container, false);
 
-            // Although no options are here currently, some will be added
+            final Spinner batterySpinner = (Spinner) mRootView.findViewById(R.id.spinnerBatteryPercent);
+            final SpinnerAdapter spinnerAdapter = batterySpinner.getAdapter();
+            assert(spinnerAdapter instanceof ArrayAdapter);
+            @SuppressWarnings("unchecked")
+            final ArrayAdapter<String> adapter = (ArrayAdapter<String>)spinnerAdapter;
+            final int percent = ClientPrefs.getInstance().getMinBatteryPercent();
+            final int spinnerPosition = adapter.getPosition(percent + "%");
+            batterySpinner.setSelection(spinnerPosition);
+
+            batterySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View arg1, int position, long id) {
+                    String item = parent.getItemAtPosition(position).toString().replace("%", "");
+                    int percent = Integer.valueOf(item);
+                    ClientPrefs prefs = ClientPrefs.createGlobalInstance(getActivity().getApplicationContext());
+                    prefs.setMinBatteryPercent(percent);
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> arg0) {}
+            });
 
             return mRootView;
         }

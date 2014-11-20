@@ -6,6 +6,7 @@ package org.mozilla.mozstumbler.client.mapview;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.res.Configuration;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.location.Location;
@@ -191,6 +192,14 @@ public final class MapFragment extends android.support.v4.app.Fragment
         ObservedLocationsReceiver observer = ObservedLocationsReceiver.getInstance();
         observer.setMapActivity(this);
 
+        Configuration c = getResources().getConfiguration();
+        if (c.fontScale > 1) {
+            Log.d(LOG_TAG, "Large text is enabled: " + c.fontScale);
+            mRootView.findViewById(R.id.text_satellites_sep).setVisibility(View.GONE);
+            mRootView.findViewById(R.id.text_satellites_avail).setVisibility(View.GONE);
+        } else {
+            initTextView(R.id.text_satellites_avail, "00");
+        }
         initTextView(R.id.text_cells_visible, "000");
         initTextView(R.id.text_wifis_visible, "000");
         initTextView(R.id.text_observation_count, "00000");
@@ -687,9 +696,7 @@ public final class MapFragment extends android.support.v4.app.Fragment
         Paint textPaint = textView.getPaint();
         int width = (int) Math.ceil(textPaint.measureText(bound));
         textView.setWidth(width);
-        android.widget.LinearLayout.LayoutParams params =
-                new android.widget.LinearLayout.LayoutParams(width, android.widget.LinearLayout.LayoutParams.MATCH_PARENT);
-        textView.setLayoutParams(params);
+        textView.getLayoutParams().width = width;
         textView.setText("0");
     }
 

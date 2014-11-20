@@ -3,9 +3,6 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package org.mozilla.mozstumbler.service.uploadthread;
 
-/**
- * Created by victorng on 2014-09-29.
- */
 public class AsyncProgressListenerStatusWrapper {
     public final AsyncUploader.AsyncUploaderListener listener;
     public final boolean uploading_flag;

@@ -1,3 +1,7 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 package org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner;
 
 import android.content.Context;
@@ -9,9 +13,7 @@ import org.mozilla.mozstumbler.service.stumblerthread.scanners.SimulationContext
 import java.util.LinkedList;
 import java.util.List;
 
-/**
- * Created by victorng on 14-11-11.
- */
+
 public class MockSimpleCellScanner implements ISimpleCellScanner {
 
     private static final String LOG_TAG = AppGlobals.LOG_PREFIX + MockSimpleCellScanner.class.getSimpleName();

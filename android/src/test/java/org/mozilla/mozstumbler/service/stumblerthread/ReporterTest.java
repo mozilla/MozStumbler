@@ -1,4 +1,4 @@
-package org.mozilla.mozstumbler.service.stumblerthread.datahandling;
+package org.mozilla.mozstumbler.service.stumblerthread;
 
 import android.app.Application;
 import android.content.Context;
@@ -8,11 +8,14 @@ import android.net.wifi.ScanResult;
 import android.telephony.TelephonyManager;
 
 import junit.framework.Assert;
+import junit.framework.AssertionFailedError;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mozilla.mozstumbler.service.stumblerthread.Reporter;
+import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageManager;
+import org.mozilla.mozstumbler.service.stumblerthread.datahandling.StumblerBundle;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.GPSScanner;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.WifiScanner;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner.CellInfo;
@@ -25,15 +28,16 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Map;
 
-
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
 
 @RunWith(RobolectricTestRunner.class)
-public class DataStorageManagerTest {
+public class ReporterTest {
 
     private Context ctx;
-    private DataStorageManager dm;
     private Reporter rp;
+    private DataStorageManager dm;
 
     public class StorageTracker implements DataStorageManager.StorageIsEmptyTracker {
         public void notifyStorageStateEmpty(boolean isEmpty) {
@@ -49,7 +53,9 @@ public class DataStorageManagerTest {
         long maxBytes = 20000;
         int maxWeeks = 10;
 
+        // The DM is required to handle the flush() operation in the Reporter.
         dm = DataStorageManager.createGlobalInstance(ctx, tracker, maxBytes, maxWeeks);
+
         rp = new Reporter();
 
         // The Reporter class needs a reference to a context
@@ -65,44 +71,49 @@ public class DataStorageManagerTest {
         // Spam the Reporter with wifi data
         ArrayList<String> bssidList = new ArrayList<String>();
 
-        for (int offset = 0; offset< 40000; offset++) {
+        for (int offset = 0; offset< StumblerBundle.MAX_WIFIS_PER_LOCATION-1; offset++) {
             String bssid = Long.toHexString(offset | 0xabcd00000000L);
             bssidList.add(bssid);
         }
         String[] bssidArray  = bssidList.toArray(new String[bssidList.size()]);
-        Intent wifiIntent = getWifiIntent(bssidArray);
 
-        Map<String, ScanResult> wifiData = rp.getWifiData();
-        Assert.assertTrue("Max wifi limit is exceeded", wifiData.size() <= Reporter.MAX_WIFIS_PER_LOCATION);
 
         // This should push the reporter into a state that forces a
-        // flush
+        // flush on the next wifi record.
+        Intent wifiIntent = getWifiIntent(bssidArray);
         rp.onReceive(ctx, wifiIntent);
+        assertEquals(StumblerBundle.MAX_WIFIS_PER_LOCATION-1,
+                rp.mBundle.getUnmodifiableWifiData().size());
 
-        wifiData = rp.getWifiData();
-        Assert.assertTrue("Max wifi limit exceeded", wifiData == null);
+        bssidArray = new String[] { Long.toHexString(0xabcd99999999L) };
+        wifiIntent = getWifiIntent(bssidArray);
+        // This will force a flush and the bundle should go to null
+        rp.onReceive(ctx, wifiIntent);
+        assertNull(rp.mBundle);
     }
 
-    @Test
     public void testReporterCellLimits() {
         // Spam the Reporter with cell data
         ArrayList<CellInfo> cellIdList = new ArrayList<CellInfo>();
 
-        for (int offset = 100; offset< 40000; offset++) {
+        for (int offset = 0; offset< StumblerBundle.MAX_CELLS_PER_LOCATION-1; offset++) {
             CellInfo cell = makeCellInfo(1, 1, 2000+offset, 1600199+offset, 19);
             cellIdList.add(cell);
         }
 
         Intent cellIntent = getCellIntent(cellIdList);
-        Map<String, CellInfo> cellData = rp.getCellData();
-        Assert.assertTrue("Max cell limit exceeded", cellData.size() < Reporter.MAX_CELLS_PER_LOCATION);
-
-        // Accepting the extra content into the Report should force
-        // the Reporter to flush content
         rp.onReceive(ctx, cellIntent);
+        assertEquals(StumblerBundle.MAX_CELLS_PER_LOCATION-1,
+                rp.mBundle.getUnmodifiableCellData().size());
 
-        cellData = rp.getCellData();
-        Assert.assertTrue("Cell data was not flushed properly", cellData == null);
+        cellIdList.clear();
+        CellInfo cell  = makeCellInfo(1, 1, 2000+StumblerBundle.MAX_CELLS_PER_LOCATION+1,
+                1600199+StumblerBundle.MAX_CELLS_PER_LOCATION+1, 19);
+        cellIdList.add(cell);
+        cellIntent = getCellIntent(cellIdList);
+        // This will force a flush and the bundle should go to null
+        rp.onReceive(ctx, cellIntent);
+        assertEquals(null, rp.mBundle);
     }
 
     private Intent getCellIntent(ArrayList<CellInfo> cells) {

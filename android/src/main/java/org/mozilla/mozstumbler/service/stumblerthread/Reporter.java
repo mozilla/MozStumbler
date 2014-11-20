@@ -38,16 +38,10 @@ public final class Reporter extends BroadcastReceiver implements IReporter {
     public static final String NEW_BUNDLE_ARG_BUNDLE = "bundle";
     private boolean mIsStarted;
 
-    /* The maximum number of Wi-Fi access points in a single observation. */
-    public static final int MAX_WIFIS_PER_LOCATION = 200;
-
-    /* The maximum number of cells in a single observation */
-    public static final int MAX_CELLS_PER_LOCATION  = 50;
-
     private Context mContext;
     private int mPhoneType;
 
-    private StumblerBundle mBundle;
+    StumblerBundle mBundle;
     private int mObservationCount = 0;
     private final Set<String> mUniqueAPs = new HashSet<String>();
     private final Set<String> mUniqueCells = new HashSet<String>();
@@ -135,26 +129,11 @@ public final class Reporter extends BroadcastReceiver implements IReporter {
         }
 
         if (mBundle != null &&
-                (mBundle.getWifiData().size() > MAX_WIFIS_PER_LOCATION ||
-                 mBundle.getCellData().size() > MAX_CELLS_PER_LOCATION))
+                (mBundle.hasMaxWifisPerLocation() || mBundle.hasMaxCellsPerLocation()))
         {
             // no gps for a while, have too much data, just bundle it
             flush();
         }
-    }
-
-    public synchronized Map<String, ScanResult> getWifiData() {
-        if (mBundle == null){
-            return null;
-        }
-        return mBundle.getWifiData();
-    }
-
-    public synchronized Map<String, CellInfo> getCellData() {
-        if (mBundle == null){
-            return null;
-        }
-        return mBundle.getCellData();
     }
 
     public synchronized Location getGPSLocation() {
@@ -168,19 +147,9 @@ public final class Reporter extends BroadcastReceiver implements IReporter {
         if (mBundle == null) {
             return;
         }
-
-        Map<String, ScanResult> currentWifiData = mBundle.getWifiData();
         for (ScanResult result : results) {
-            if (currentWifiData.size() > MAX_WIFIS_PER_LOCATION) {
-                AppGlobals.guiLogInfo("Max wifi limit exceeded for this location, ignoring data.");
-                return;
-            }
-
             String key = result.BSSID;
-            if (!currentWifiData.containsKey(key)) {
-                currentWifiData.put(key, result);
-            }
-
+            mBundle.addWifiData(key, result);
         }
     }
 
@@ -188,17 +157,9 @@ public final class Reporter extends BroadcastReceiver implements IReporter {
         if (mBundle == null) {
             return;
         }
-
-        Map<String, CellInfo> currentCellData = mBundle.getCellData();
         for (CellInfo result : cells) {
-            if (currentCellData.size() > MAX_CELLS_PER_LOCATION) {
-                AppGlobals.guiLogInfo("Max cell limit exceeded for this location, ignoring data.");
-                return;
-            }
             String key = result.getCellIdentity();
-            if (!currentCellData.containsKey(key)) {
-                currentCellData.put(key, result);
-            }
+            mBundle.addCellData(key, result);
         }
     }
 
@@ -241,8 +202,8 @@ public final class Reporter extends BroadcastReceiver implements IReporter {
             LocalBroadcastManager.getInstance(mContext).sendBroadcastSync(i);
 
             mObservationCount++;
-            mUniqueAPs.addAll(mBundle.getWifiData().keySet());
-            mUniqueCells.addAll(mBundle.getCellData().keySet());
+            mUniqueAPs.addAll(mBundle.getUnmodifiableWifiData().keySet());
+            mUniqueCells.addAll(mBundle.getUnmodifiableCellData().keySet());
         } catch (IOException e) {
             Log.w(LOG_TAG, e.toString());
         }
@@ -261,4 +222,5 @@ public final class Reporter extends BroadcastReceiver implements IReporter {
     public synchronized int getUniqueCellCount() {
         return mUniqueCells.size();
     }
+
 }

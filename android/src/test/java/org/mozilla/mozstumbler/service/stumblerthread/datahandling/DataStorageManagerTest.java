@@ -152,7 +152,7 @@ public class DataStorageManagerTest {
                 Log.e(LOG_TAG, "Bombed out on " + (locCount + 1) + " adding after " + dm.mCurrentReports.reports.size() + " records", ioEx);
             }
 
-            Log.d(LOG_TAG, "Total number of reports: " + dm.mCurrentReports.reports.size());
+            assertTrue(dm.mCurrentReports.reports.size() < DataStorageManager.MAX_REPORTS_IN_MEMORY);
 
             // I think we can basically reproduce this if DataStorageManager.mBundle is set
             // then we call flush() and eat the FileNotFoundException

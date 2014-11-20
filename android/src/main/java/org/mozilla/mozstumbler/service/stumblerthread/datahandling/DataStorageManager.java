@@ -43,7 +43,7 @@ public class DataStorageManager {
     private static final String LOG_TAG = AppGlobals.makeLogTag(DataStorageManager.class.getSimpleName());
 
     // The max number of reports stored in the mCurrentReports. Each report is a GPS location plus wifi and cell scan.
-    // After this size is reached, data is persisted to disk, mCurrentReports is cleared.
+    // Once this size is reached, data is persisted to disk, mCurrentReports is cleared.
     public static final int MAX_REPORTS_IN_MEMORY = 50;
 
     // Used to cap the amount of data stored. When this limit is hit, no more data is saved to disk
@@ -181,12 +181,6 @@ public class DataStorageManager {
             this.wifiCount = wifiCount;
             this.cellCount = cellCount;
         }
-    }
-
-    static class ReportBatchBuilder {
-        public final ArrayList<String> reports = new ArrayList<String>();
-        public int wifiCount;
-        public int cellCount;
     }
 
     private static class ReportBatchIterator {

@@ -15,7 +15,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.util.ArrayList;
 import java.util.Properties;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -41,10 +40,6 @@ import java.util.TimerTask;
  */
 public class DataStorageManager {
     private static final String LOG_TAG = AppGlobals.makeLogTag(DataStorageManager.class.getSimpleName());
-
-    // The max number of reports stored in the mCurrentReports. Each report is a GPS location plus wifi and cell scan.
-    // Once this size is reached, data is persisted to disk, mCurrentReports is cleared.
-    public static final int MAX_REPORTS_IN_MEMORY = 50;
 
     // Used to cap the amount of data stored. When this limit is hit, no more data is saved to disk
     // until the data is uploaded, or and data exceeds DEFAULT_MAX_WEEKS_DATA_ON_DISK.
@@ -95,14 +90,14 @@ public class DataStorageManager {
 
     /* Some data is calculated on-demand, don't abuse this function */
     public synchronized QueuedCounts getQueuedCounts() {
-        int reportCount = mFileList.mReportCount + mCurrentReports.reports.size();
+        int reportCount = mFileList.mReportCount + mCurrentReports.reportsCount();
         int wifiCount = mFileList.mWifiCount + mCurrentReports.wifiCount;
         int cellCount = mFileList.mCellCount + mCurrentReports.cellCount;
         long byteLength = 0;
 
-        if (mCurrentReports.reports.size() > 0) {
+        if (mCurrentReports.reportsCount() > 0) {
             byte[] bytes;
-            bytes = Zipper.zipData(finalizeReports(mCurrentReports.reports).getBytes());
+            bytes = Zipper.zipData(mCurrentReports.finalizeReports().getBytes());
             if (bytes == null) {
                 Log.e(LOG_TAG, "Error compressing current reports queued", new RuntimeException("GZip Failure"));
             } else {
@@ -300,7 +295,7 @@ public class DataStorageManager {
      * The return value is used to delete the file/buffer later. */
     public synchronized ReportBatch getFirstBatch() throws IOException {
         final boolean dirEmpty = isDirEmpty();
-        final int currentReportsCount = mCurrentReports.reports.size();
+        final int currentReportsCount = mCurrentReports.reportsCount();
 
         if (dirEmpty && currentReportsCount < 1) {
             return null;
@@ -310,7 +305,7 @@ public class DataStorageManager {
 
         if (currentReportsCount > 0) {
             final String filename = MEMORY_BUFFER_NAME;
-            final byte[] data = Zipper.zipData(finalizeReports(mCurrentReports.reports).getBytes());
+            final byte[] data = Zipper.zipData(mCurrentReports.finalizeReports().getBytes());
             final int wifiCount = mCurrentReports.wifiCount;
             final int cellCount = mCurrentReports.cellCount;
             clearCurrentReports();
@@ -323,8 +318,8 @@ public class DataStorageManager {
     }
 
     private void clearCurrentReports() {
-        mCurrentReports.reports.clear();
-        mCurrentReports.wifiCount = mCurrentReports.cellCount = 0;
+        mCurrentReports.clearReports();
+         mCurrentReports.wifiCount = mCurrentReports.cellCount = 0;
     }
 
     public synchronized ReportBatch getNextBatch() throws IOException {
@@ -399,33 +394,13 @@ public class DataStorageManager {
         mFileList.update(mReportsDir);
     }
 
-    private String finalizeReports(ArrayList<String> reports) {
-        final String kPrefix = "{\"items\":[";
-        final String kSuffix = "]}";
-        final StringBuilder sb = new StringBuilder(kPrefix);
-        String sep = "";
-        final String separator = ",";
-        if (reports != null) {
-            for(String s: reports) {
-                sb.append(sep).append(s);
-                sep = separator;
-            }
-        }
-
-        final String result = sb.append(kSuffix).toString();
-        if (AppGlobals.isDebug) {
-            Log.d(LOG_TAG, result);
-        }
-        return result;
-    }
-
     public synchronized void saveCurrentReportsToDisk() throws IOException {
         saveCurrentReportsSendBufferToDisk();
-        if (mCurrentReports.reports.size() < 1) {
+        if (mCurrentReports.reportsCount() < 1) {
             return;
         }
-        final byte[] bytes = Zipper.zipData(finalizeReports(mCurrentReports.reports).getBytes());
-        saveToDisk(bytes, mCurrentReports.reports.size(), mCurrentReports.wifiCount, mCurrentReports.cellCount);
+        final byte[] bytes = Zipper.zipData(mCurrentReports.finalizeReports().getBytes());
+        saveToDisk(bytes, mCurrentReports.reportsCount(), mCurrentReports.wifiCount, mCurrentReports.cellCount);
         clearCurrentReports();
     }
 
@@ -437,11 +412,11 @@ public class DataStorageManager {
             mFlushMemoryBuffersToDiskTimer = null;
         }
 
-        mCurrentReports.reports.add(report);
+        mCurrentReports.addReport(report);
         mCurrentReports.wifiCount += wifiCount;
         mCurrentReports.cellCount += cellCount;
 
-        if (mCurrentReports.reports.size() == MAX_REPORTS_IN_MEMORY) {
+        if (mCurrentReports.maxReportsReached()) {
             // save to disk
             saveCurrentReportsToDisk();
         } else {

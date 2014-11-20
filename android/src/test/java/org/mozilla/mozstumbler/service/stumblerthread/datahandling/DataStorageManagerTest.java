@@ -13,9 +13,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mozilla.mozstumbler.service.AppGlobals;
-import org.mozilla.mozstumbler.service.core.logging.Log;
 import org.mozilla.mozstumbler.service.stumblerthread.Reporter;
-import org.mozilla.mozstumbler.service.stumblerthread.ReporterTest;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.GPSScanner;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner.CellInfo;
 import org.robolectric.Robolectric;
@@ -24,7 +22,6 @@ import org.robolectric.annotation.Config;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
@@ -34,8 +31,6 @@ import static org.mozilla.mozstumbler.service.stumblerthread.ReporterTest.create
 @Config(emulateSdk = 18)
 @RunWith(RobolectricTestRunner.class)
 public class DataStorageManagerTest {
-
-    private String LOG_TAG = AppGlobals.makeLogTag(DataStorageManagerTest.class);
 
     public class StorageTracker implements DataStorageManager.StorageIsEmptyTracker {
         public void notifyStorageStateEmpty(boolean isEmpty) {
@@ -47,17 +42,6 @@ public class DataStorageManagerTest {
 
     private Application getApplicationContext() {
         return Robolectric.application;
-    }
-
-    private Intent getLocationIntent() {
-        Location location = new Location("mock");
-        location.setLongitude(20);
-        location.setLatitude(30);
-        Intent i = new Intent(GPSScanner.ACTION_GPS_UPDATED);
-        i.putExtra(Intent.EXTRA_SUBJECT, GPSScanner.SUBJECT_NEW_LOCATION);
-        i.putExtra(GPSScanner.NEW_LOCATION_ARG_LOCATION, location);
-        i.putExtra(GPSScanner.ACTION_ARG_TIME, System.currentTimeMillis());
-        return i;
     }
 
     @Before
@@ -72,24 +56,22 @@ public class DataStorageManagerTest {
         // The DM is required to handle the flush() operation in the Reporter.
         dm = DataStorageManager.createGlobalInstance(ctx, tracker, maxBytes, maxWeeks);
 
-        // Reports are muddled because of the ReporterTest cases for some reason.
-        while (dm.mCurrentReports.reports.size() > 0) {
-            dm.mCurrentReports.reports.remove(0);
-        }
+        // Force the current reports to clear out between test runs.
+        dm.mCurrentReports.clearReports();
 
         rp = new Reporter();
 
         // The Reporter class needs a reference to a context
         rp.startup(ctx);
-        assertEquals(0, dm.mCurrentReports.reports.size());
+        assertEquals(0, dm.mCurrentReports.reportsCount());
     }
 
     @Test
     public void testMaxReportsLength() throws JSONException {
         StumblerBundle bundle;
 
-        assertEquals(0, dm.mCurrentReports.reports.size());
-        for (int locCount = 0; locCount < DataStorageManager.MAX_REPORTS_IN_MEMORY-1; locCount++) {
+        assertEquals(0, dm.mCurrentReports.reportsCount());
+        for (int locCount = 0; locCount < ReportBatchBuilder.MAX_REPORTS_IN_MEMORY-1; locCount++) {
             Location loc = new Location("mock");
             loc.setLatitude(42+(locCount*0.1));
             loc.setLongitude(45+(locCount*0.1));
@@ -116,11 +98,12 @@ public class DataStorageManagerTest {
             } catch (IOException ioEx) {
             }
         }
-        assertEquals(DataStorageManager.MAX_REPORTS_IN_MEMORY-1, dm.mCurrentReports.reports.size());
+        assertEquals(ReportBatchBuilder.MAX_REPORTS_IN_MEMORY-1,
+                dm.mCurrentReports.reportsCount());
 
 
-        for (int locCount = DataStorageManager.MAX_REPORTS_IN_MEMORY;
-             locCount < DataStorageManager.MAX_REPORTS_IN_MEMORY+100;
+        for (int locCount = ReportBatchBuilder.MAX_REPORTS_IN_MEMORY;
+             locCount < ReportBatchBuilder.MAX_REPORTS_IN_MEMORY+100;
              locCount++) {
             Location loc = new Location("mock");
             loc.setLatitude(42+(locCount*0.1));
@@ -150,10 +133,7 @@ public class DataStorageManagerTest {
             } catch (IOException ioEx) {
             }
 
-            assertTrue(dm.mCurrentReports.reports.size() < DataStorageManager.MAX_REPORTS_IN_MEMORY);
-
-            // I think we can basically reproduce this if DataStorageManager.mBundle is set
-            // then we call flush() and eat the FileNotFoundException
+            assertTrue(dm.mCurrentReports.reportsCount() == ReportBatchBuilder.MAX_REPORTS_IN_MEMORY);
         }
     }
 

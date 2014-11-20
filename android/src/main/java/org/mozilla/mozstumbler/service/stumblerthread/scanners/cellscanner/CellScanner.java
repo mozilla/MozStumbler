@@ -39,17 +39,16 @@ public class CellScanner {
     private static final long CELL_MIN_UPDATE_TIME = 1000; // milliseconds
 
     private final Context mAppContext;
-    private Timer mCellScanTimer;
     private final Set<String> mVisibleCells = new HashSet<String>();
     private final ReportFlushedReceiver mReportFlushedReceiver = new ReportFlushedReceiver();
     private final AtomicBoolean mReportWasFlushed = new AtomicBoolean();
-    private Handler mBroadcastScannedHandler;
-
     private final ISimpleCellScanner mSimpleCellScanner;
+    private Timer mCellScanTimer;
+    private Handler mBroadcastScannedHandler;
 
     public CellScanner(Context appCtx) {
         mAppContext = appCtx;
-        if ((Prefs.getInstance() != null) && Prefs.getInstance().isSimulateStumble()) {
+        if (AppGlobals.isDebug && Prefs.getInstance().isSimulateStumble()) {
             mSimpleCellScanner = new MockSimpleCellScanner(mAppContext);
         } else {
             mSimpleCellScanner = new SimpleCellScannerImplementation(mAppContext);
@@ -83,6 +82,7 @@ public class CellScanner {
 
         mCellScanTimer.schedule(new TimerTask() {
             int mPassiveScanCount;
+
             @Override
             public void run() {
                 if (!mSimpleCellScanner.isStarted()) {
@@ -90,8 +90,7 @@ public class CellScanner {
                 }
 
                 if (stumblingMode == ActiveOrPassiveStumbling.PASSIVE_STUMBLING &&
-                    mPassiveScanCount++ > AppGlobals.PASSIVE_MODE_MAX_SCANS_PER_GPS)
-                {
+                        mPassiveScanCount++ > AppGlobals.PASSIVE_MODE_MAX_SCANS_PER_GPS) {
                     mPassiveScanCount = 0;
                     stop();
                     return;

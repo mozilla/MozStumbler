@@ -4,6 +4,7 @@
 package org.mozilla.mozstumbler.client.subactivities;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -13,20 +14,19 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import org.acra.ACRA;
 import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.client.ClientPrefs;
 import org.mozilla.mozstumbler.client.serialize.KMLFragment;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.Prefs;
-import org.mozilla.mozstumbler.service.core.logging.Log;
-import org.mozilla.mozstumbler.service.core.logging.MockAcraLog;
+
+import static org.mozilla.mozstumbler.R.string;
 
 public class DeveloperActivity extends ActionBarActivity {
 
@@ -83,18 +83,35 @@ public class DeveloperActivity extends ActionBarActivity {
 
         private void setupSimulationPreference() {
             boolean simulationEnabled = Prefs.getInstance().isSimulateStumble();
-            CheckBox button = (CheckBox) mRootView.findViewById(R.id.toggleSimulation);
+            final CheckBox simCheckBox = (CheckBox) mRootView.findViewById(R.id.toggleSimulation);
+            final Button simResetBtn = (Button) mRootView.findViewById(R.id.buttonClearSimulationDefault);
+
             if (!AppGlobals.isDebug) {
-                button.setEnabled(false);
+                simCheckBox.setEnabled(false);
+                simResetBtn.setEnabled(false);
                 return;
             }
-            button.setChecked(simulationEnabled);
-            button.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
+            simCheckBox.setChecked(simulationEnabled);
+            simCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                     onToggleSimulation(isChecked);
                 }
             });
+
+            simResetBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(android.view.View view) {
+                    ClientPrefs cPrefs = ClientPrefs.getInstance();
+                    cPrefs.clearSimulationStart();
+                    Context btnCtx = simResetBtn.getContext();
+                    Toast.makeText(btnCtx,
+                            btnCtx.getText(R.string.reset_simulation_start),
+                            Toast.LENGTH_SHORT).show();
+                }
+            });
+
         }
 
         private void onToggleSimulation(boolean isChecked) {

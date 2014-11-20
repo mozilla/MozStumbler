@@ -24,4 +24,13 @@
         android:text="@string/enable_simulation"
         android:layout_below="@id/line1"/>
 
+    <Button
+        android:id="@+id/buttonClearSimulationDefault"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/clear_simulation_start_location"
+        android:layout_below="@+id/toggleSimulation"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"/>
+
 </RelativeLayout>

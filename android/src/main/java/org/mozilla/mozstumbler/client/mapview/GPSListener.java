@@ -76,8 +76,13 @@ class GPSListener implements LocationListener {
 
         if (mMapActivity != null) {
             mMapActivity.get().setUserPositionAt(location);
-            ClientPrefs.getInstance().setSimulationLat((float) location.getLatitude());
-            ClientPrefs.getInstance().setSimulationLon((float) location.getLongitude());
+
+            ClientPrefs cPrefs = ClientPrefs.getInstance();
+            if (cPrefs.isDefaultSimulationLatLon()) {
+                cPrefs.setSimulationLat((float) location.getLatitude());
+                cPrefs.setSimulationLon((float) location.getLongitude());
+                cPrefs.wroteSimulationLatLon();
+            }
         }
     }
 

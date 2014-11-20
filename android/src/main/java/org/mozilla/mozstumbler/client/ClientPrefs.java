@@ -2,6 +2,7 @@ package org.mozilla.mozstumbler.client;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.widget.Toast;
 
 import org.acra.ACRA;
 import org.mozilla.mozstumbler.BuildConfig;
@@ -22,6 +23,7 @@ public class ClientPrefs extends Prefs {
     public static final String ENABLE_OPTION_TO_SHOW_MLS_ON_MAP = "enable_the_option_to_show_mls_on_map";
     private static final String ON_MAP_MLS_DRAW_IS_ON = "actually_draw_mls_dots_on_map";
     public static final String CRASH_REPORTING = "crash_reporting";
+    private static final String DEFAULT_SIMULATION_LAT_LONG = "default_simulation_lat_lon";
 
     public enum MapTileResolutionOptions { Default, HighRes, LowRes, NoMap}
 
@@ -49,6 +51,13 @@ public class ClientPrefs extends Prefs {
         SharedPreferences.Editor editor = getPrefs().edit();
         editor.putFloat(LAT_PREF, (float) center.getLatitude());
         editor.putFloat(LON_PREF, (float) center.getLongitude());
+        apply(editor);
+    }
+
+    public void clearSimulationStart() {
+        SharedPreferences.Editor editor = getPrefs().edit();
+        editor.remove(LAT_PREF);
+        editor.remove(LON_PREF);
         apply(editor);
     }
 
@@ -107,6 +116,13 @@ public class ClientPrefs extends Prefs {
     public boolean isCrashReportingEnabled() {
         // default to true for GITHUB build
         return getBoolPrefWithDefault(CRASH_REPORTING, BuildConfig.GITHUB);
+    }
+    public boolean isDefaultSimulationLatLon() {
+        return getBoolPrefWithDefault(DEFAULT_SIMULATION_LAT_LONG, true);
+    }
+
+    public void wroteSimulationLatLon() {
+        setBoolPref(DEFAULT_SIMULATION_LAT_LONG, false);
     }
 
     public void setMapTileResolutionType(int mapTileResolutionType) {

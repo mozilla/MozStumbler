@@ -113,22 +113,20 @@ public class ScanManager {
             return;
         }
 
-        Prefs prefs = Prefs.getInstance();
-        if (prefs != null) {
-            Log.d(LOG_TAG, "Simulation is set to: " + prefs.isSimulateStumble());
-            if (prefs.isSimulateStumble()) {
-                mAppContext = new SimulationContext(mAppContext);
-                Log.d(LOG_TAG, "ScanManager using SimulateStumbleContextWrapper");
+        if (AppGlobals.isDebug) {
+            // Simulation contexts are only allowed for debug builds.
+            Prefs prefs = Prefs.getInstance();
+            if (prefs != null) {
+                if (prefs.isSimulateStumble()) {
+                    mAppContext = new SimulationContext(mAppContext);
+                    Log.d(LOG_TAG, "ScanManager using SimulateStumbleContextWrapper");
+                }
             }
         }
 
         mGPSScanner = new GPSScanner(mAppContext, this);
         mWifiScanner = new WifiScanner(mAppContext);
         mCellScanner = new CellScanner(mAppContext);
-
-        if (prefs != null) {
-            Log.d(LOG_TAG, "Simulation is set to: " + prefs.isSimulateStumble());
-        }
 
         mGPSScanner.start(mStumblingMode);
         if (mStumblingMode == ActiveOrPassiveStumbling.ACTIVE_STUMBLING) {

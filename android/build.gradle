@@ -1,8 +1,15 @@
 // each of the version numbers must be 0-99
 def versionMajor = 1
 def versionMinor = 3 // minor feature releases
-def versionPatch = 1 // This should be bumped for hot fixes
-def buildHost = InetAddress.localHost.hostName
+def versionPatch = 0 // This should be bumped for hot fixes
+def buildHost = ""
+try
+{
+    buildHost = InetAddress.localHost.hostName
+} catch (Exception ex) {
+    // Some machines are ridiculous.
+    buildHost = "localhost"
+}
 buildHost =  buildHost.replaceAll("[^a-zA-Z0-9_-]","")
 
 // Double check the versioning
@@ -32,9 +39,9 @@ apply plugin: 'com.android.application'
 apply plugin: 'robolectric'
 
 repositories {
-    mavenCentral()
     jcenter()
     maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
+    mavenCentral()
 }
 
 android {

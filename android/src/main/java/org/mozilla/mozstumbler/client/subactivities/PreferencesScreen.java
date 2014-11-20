@@ -5,9 +5,7 @@
 package org.mozilla.mozstumbler.client.subactivities;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -19,7 +17,6 @@ import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceGroup;
 import android.text.TextUtils;
-import android.util.Log;
 
 import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.client.ClientPrefs;
@@ -157,9 +154,11 @@ public class PreferencesScreen extends PreferenceActivity {
                 getPrefs().setOptionEnabledToShowMLSOnMap(newValue.equals(true));
                 if (newValue.equals(true)) {
                     Context c = PreferencesScreen.this;
+                    String message = String.format(getString(R.string.enable_option_show_mls_on_map_detailed_info),
+                            getString(R.string.upload_wifi_only_title));
                     AlertDialog.Builder builder = new AlertDialog.Builder(c)
                             .setTitle(preference.getTitle())
-                            .setMessage(R.string.enable_option_show_mls_on_map_detailed_info).setPositiveButton(android.R.string.ok, null);
+                            .setMessage(message).setPositiveButton(android.R.string.ok, null);
                     builder.create().show();
                 }
                 return true;

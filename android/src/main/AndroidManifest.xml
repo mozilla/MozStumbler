@@ -87,13 +87,6 @@
                 android:value=".client.navdrawer.MainDrawerActivity" />
         </activity>
 
-        <receiver android:name=".client.TurnOffReceiver" >
-            <intent-filter>
-                <action android:name="android.intent.action.BATTERY_LOW" />
-                <action android:name="org.mozilla.mozstumbler.turnMeOff" />
-            </intent-filter>
-        </receiver>
-
         <service
             android:name=".client.ClientStumblerService"
             android:icon="@drawable/ic_launcher"

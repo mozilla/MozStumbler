@@ -32,5 +32,45 @@
         android:layout_below="@+id/toggleSimulation"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"/>
+    <View
+        android:id="@+id/line2"
+        android:layout_height="1dp"
+        android:layout_width="fill_parent"
+        android:background="#55ffffff"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_below="@id/buttonClearSimulationDefault"
+        />
+
+    <TextView
+        android:id="@+id/batteryTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/line2"
+        android:paddingBottom="10dp"
+        android:paddingTop="20dp"
+        android:text="Battery Saver"
+        android:textColor="#ff33b5e5"
+        android:textSize="@dimen/font_size_for_metrics_top_title"
+        android:textStyle="bold" />
+    <TextView
+        android:id="@+id/batteryLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/batteryTitle"
+        android:paddingRight="10dp"
+        android:text="Save power at"
+        android:textSize="@dimen/font_size_for_metrics" />
+    <Spinner
+        android:id="@+id/spinnerBatteryPercent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@+id/batteryLabel"
+        android:layout_alignBaseline="@+id/batteryLabel"
+        android:layout_toRightOf="@+id/batteryLabel"
+        android:entries="@array/battery_percent_options"
+        />
 
 </RelativeLayout>

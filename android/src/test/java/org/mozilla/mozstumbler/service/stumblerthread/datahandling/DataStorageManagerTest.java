@@ -114,7 +114,6 @@ public class DataStorageManagerTest {
             try {
                 dm.insert(mlsObj.toString(), wifiCount, cellCount);
             } catch (IOException ioEx) {
-                Log.e(LOG_TAG, "Bombed out on " +(locCount+1)+" adding after "+ dm.mCurrentReports.reports.size()+ " records", ioEx);
             }
         }
         assertEquals(DataStorageManager.MAX_REPORTS_IN_MEMORY-1, dm.mCurrentReports.reports.size());
@@ -149,7 +148,6 @@ public class DataStorageManagerTest {
             } catch (FileNotFoundException fex) {
                 // This is ok
             } catch (IOException ioEx) {
-                Log.e(LOG_TAG, "Bombed out on " + (locCount + 1) + " adding after " + dm.mCurrentReports.reports.size() + " records", ioEx);
             }
 
             assertTrue(dm.mCurrentReports.reports.size() < DataStorageManager.MAX_REPORTS_IN_MEMORY);

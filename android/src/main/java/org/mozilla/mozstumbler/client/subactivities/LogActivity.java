@@ -16,6 +16,7 @@ import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.text.Html;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -32,9 +33,10 @@ import java.util.TimerTask;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class LogActivity extends ActionBarActivity {
-    static LinkedList<String> buffer = new LinkedList<String>();
-    static int sLongLinesCounter;
-    static final int MAX_SIZE = 200;
+    private static String LOG_TAG = AppGlobals.makeLogTag(LogActivity.class.getSimpleName());
+    private static LinkedList<String> buffer = new LinkedList<String>();
+    private static int sLongLinesCounter;
+    private static final int MAX_SIZE = 200;
     private static LogMessageReceiver sInstance;
 
     public static class LogMessageReceiver extends BroadcastReceiver {
@@ -115,6 +117,13 @@ public class LogActivity extends ActionBarActivity {
                 s = s.substring(0, maxChars / 3) + " ... " + s.substring(s.length() - 1 - maxChars * 2/3);
             }
 
+            String prev = (buffer.size() > 0) ? buffer.getLast() : null;
+            if (prev != null && prev.length() > 10 && s.length() > 10) {
+                if (prev.substring(10).equals(s.substring(10))) {
+                    Log.d(LOG_TAG, "Message is repeated: " + s);
+                    return;
+                }
+            }
             buffer.add(s);
             if (sConsoleView != null) {
                 sConsoleView.println(s);

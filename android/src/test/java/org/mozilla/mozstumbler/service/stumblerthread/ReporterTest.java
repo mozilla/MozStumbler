@@ -7,13 +7,9 @@ import android.location.Location;
 import android.net.wifi.ScanResult;
 import android.telephony.TelephonyManager;
 
-import junit.framework.Assert;
-import junit.framework.AssertionFailedError;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mozilla.mozstumbler.service.stumblerthread.Reporter;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageManager;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.StumblerBundle;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.GPSScanner;
@@ -26,7 +22,6 @@ import org.robolectric.RobolectricTestRunner;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Map;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNull;
@@ -97,7 +92,7 @@ public class ReporterTest {
         ArrayList<CellInfo> cellIdList = new ArrayList<CellInfo>();
 
         for (int offset = 0; offset< StumblerBundle.MAX_CELLS_PER_LOCATION-1; offset++) {
-            CellInfo cell = makeCellInfo(1, 1, 2000+offset, 1600199+offset, 19);
+            CellInfo cell = createCellInfo(1, 1, 2000 + offset, 1600199 + offset, 19);
             cellIdList.add(cell);
         }
 
@@ -107,8 +102,8 @@ public class ReporterTest {
                 rp.mBundle.getUnmodifiableCellData().size());
 
         cellIdList.clear();
-        CellInfo cell  = makeCellInfo(1, 1, 2000+StumblerBundle.MAX_CELLS_PER_LOCATION+1,
-                1600199+StumblerBundle.MAX_CELLS_PER_LOCATION+1, 19);
+        CellInfo cell  = createCellInfo(1, 1, 2000 + StumblerBundle.MAX_CELLS_PER_LOCATION + 1,
+                1600199 + StumblerBundle.MAX_CELLS_PER_LOCATION + 1, 19);
         cellIdList.add(cell);
         cellIntent = getCellIntent(cellIdList);
         // This will force a flush and the bundle should go to null
@@ -140,7 +135,7 @@ public class ReporterTest {
         return i;
     }
 
-    CellInfo makeCellInfo(int mcc, int mnc, int lac, int cid, int asu) {
+    public static CellInfo createCellInfo(int mcc, int mnc, int lac, int cid, int asu) {
         CellInfo cell = new CellInfo(TelephonyManager.PHONE_TYPE_GSM);
         Method method = getMethod(CellInfo.class, "setGsmCellInfo");
         assert (method != null);
@@ -152,7 +147,7 @@ public class ReporterTest {
         return cell;
     }
 
-    Method getMethod(Class<?> c, String name) {
+    static Method getMethod(Class<?> c, String name) {
         Method[] methods = c.getDeclaredMethods();
         for (Method m : methods) {
             if (m.getName().contains(name)) {
@@ -163,7 +158,7 @@ public class ReporterTest {
         return null;
     }
 
-    ScanResult createScanResult(String BSSID, String caps, int level, int frequency,
+    public static ScanResult createScanResult(String BSSID, String caps, int level, int frequency,
                                         long tsf) {
         Class<?> c = null;
         try {

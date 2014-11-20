@@ -44,7 +44,7 @@ public class DataStorageManager {
 
     // The max number of reports stored in the mCurrentReports. Each report is a GPS location plus wifi and cell scan.
     // After this size is reached, data is persisted to disk, mCurrentReports is cleared.
-    private static final int MAX_REPORTS_IN_MEMORY = 50;
+    public static final int MAX_REPORTS_IN_MEMORY = 50;
 
     // Used to cap the amount of data stored. When this limit is hit, no more data is saved to disk
     // until the data is uploaded, or and data exceeds DEFAULT_MAX_WEEKS_DATA_ON_DISK.
@@ -60,7 +60,7 @@ public class DataStorageManager {
     // Set to the default value specified above.
     private final int mMaxWeeksStored;
 
-    private final ReportBatchBuilder mCurrentReports = new ReportBatchBuilder();
+    final ReportBatchBuilder mCurrentReports = new ReportBatchBuilder();
     private final File mReportsDir;
     private final File mStatsFile;
     private final StorageIsEmptyTracker mTracker;
@@ -183,7 +183,7 @@ public class DataStorageManager {
         }
     }
 
-    private static class ReportBatchBuilder {
+    static class ReportBatchBuilder {
         public final ArrayList<String> reports = new ArrayList<String>();
         public int wifiCount;
         public int cellCount;
@@ -447,7 +447,7 @@ public class DataStorageManager {
         mCurrentReports.wifiCount += wifiCount;
         mCurrentReports.cellCount += cellCount;
 
-        if (mCurrentReports.reports.size() >= MAX_REPORTS_IN_MEMORY) {
+        if (mCurrentReports.reports.size() == MAX_REPORTS_IN_MEMORY) {
             // save to disk
             saveCurrentReportsToDisk();
         } else {

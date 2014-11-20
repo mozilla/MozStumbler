@@ -98,14 +98,10 @@ public class SimpleCellScannerImplementation implements ISimpleCellScanner {
                 return;
             }
             mPhoneType = mTelephonyManager.getPhoneType();
-            if (mPhoneType == TelephonyManager.PHONE_TYPE_NONE) {
+            if (mPhoneType == TelephonyManager.PHONE_TYPE_NONE ||
+                mPhoneType == TelephonyManager.PHONE_TYPE_SIP) {
                 // This is almost certainly a tablet or some other wifi only device.
                 return;
-            }
-
-            if (mPhoneType != TelephonyManager.PHONE_TYPE_GSM
-                && mPhoneType != TelephonyManager.PHONE_TYPE_CDMA) {
-                throw new UnsupportedOperationException("Unexpected Phone Type: " + mPhoneType);
             }
         }
 

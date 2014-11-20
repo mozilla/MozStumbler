@@ -38,51 +38,47 @@ public class WifiManagerProxy extends BroadcastReceiver {
         return scanEnabled;
     }
 
-   public boolean runWifiScan() {
-       if (Prefs.getInstance().isSimulateStumble()) {
+    public boolean runWifiScan() {
+        if (Prefs.getInstance().isSimulateStumble()) {
 
-           // This intent will signal the WifiScanner class to ask for new scan results
-           // by invoking getScanResults
-           Intent i = new Intent(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
-           onReceive(mAppContext, i);
-           return true;
-       } else {
-           return getWifiManager().startScan();
-       }
-   }
+            // This intent will signal the WifiScanner class to ask for new scan results
+            // by invoking getScanResults
+            Intent i = new Intent(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
+            onReceive(mAppContext, i);
+            return true;
+        } else {
+            return getWifiManager().startScan();
+        }
+    }
 
-   public List<ScanResult> getScanResults() {
-       if (Prefs.getInstance().isSimulateStumble()) {
-           LinkedList<ScanResult> result = new LinkedList<ScanResult>();
-           SimulationContext ctx;
-           try
-           {
-               // fetch scan results from the context
-               ctx = ((SimulationContext) mAppContext);
-               result.addAll(ctx.getNextMockWifiBlock());
-           } catch (ClassCastException ex) {
-               Log.e(LOG_TAG, "Simulation was enabled, but invalid context was found", ex);
-           }
-           return result;
-       } else {
-           WifiManager manager = getWifiManager();
-           if (manager == null) {
-               return null;
-           }
-           return getWifiManager().getScanResults();
-       }
+    public List<ScanResult> getScanResults() {
+        if (Prefs.getInstance().isSimulateStumble()) {
+            LinkedList<ScanResult> result = new LinkedList<ScanResult>();
+            SimulationContext ctx;
+            try {
+                // fetch scan results from the context
+                ctx = ((SimulationContext) mAppContext);
+                result.addAll(ctx.getNextMockWifiBlock());
+            } catch (ClassCastException ex) {
+                Log.e(LOG_TAG, "Simulation was enabled, but invalid context was found", ex);
+            }
+            return result;
+        } else {
+            WifiManager manager = getWifiManager();
+            if (manager == null) {
+                return null;
+            }
+            return getWifiManager().getScanResults();
+        }
+    }
 
-
-   }
-
-        public boolean isWifiEnabled() {
-       return getWifiManager().isWifiEnabled();
-   }
+    public boolean isWifiEnabled() {
+        return getWifiManager().isWifiEnabled();
+    }
 
     private WifiManager getWifiManager() {
         return (WifiManager) mAppContext.getSystemService(Context.WIFI_SERVICE);
     }
-
 
     public synchronized void registerReceiver(WifiScanner wifiScanner) {
         mWifiScanner = wifiScanner;
@@ -96,10 +92,9 @@ public class WifiManagerProxy extends BroadcastReceiver {
     }
 
     public void unregisterReceiver() {
-        try
-        {
+        try {
             mAppContext.unregisterReceiver(this);
-         } catch (IllegalArgumentException ex) {
+        } catch (IllegalArgumentException ex) {
             // doesn't matter - this is safe to ignore as it just means that
             // we've just been running in simulation mode.
         }

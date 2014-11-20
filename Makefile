@@ -3,7 +3,7 @@ test: unittest
 
 
 unittest:
-	./gradlew assembleUnittest
+	./gradlew assembleGithubUnittest
 
 debug:
 	./gradlew assembleGithubDebug

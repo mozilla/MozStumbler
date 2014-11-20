@@ -25,6 +25,7 @@ import android.widget.TextView;
 
 import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.service.AppGlobals;
+import org.mozilla.mozstumbler.service.core.logging.Log;
 
 import java.lang.ref.WeakReference;
 import java.util.LinkedList;
@@ -163,6 +164,7 @@ public class LogActivity extends ActionBarActivity {
     }
 
     public static class ConsoleView extends ScrollView {
+        private static final String LOG_TAG = AppGlobals.makeLogTag(ConsoleView.class);
         public TextView tv;
         boolean enable_scroll = true;
 
@@ -197,7 +199,7 @@ public class LogActivity extends ActionBarActivity {
             tv.append(Html.fromHtml(str + "<br />"));
 
             if (enable_scroll) {
-                scrollTo(0,tv.getBottom());
+                scrollTo(0, tv.getBottom());
             }
         }
 

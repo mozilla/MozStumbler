@@ -43,6 +43,8 @@
         <item quantity="one">vor einem Tag</item>
         <item quantity="other">vor %d Tagen</item>
     </plurals>
+    <string name="metrics_notification_subtext">Metriken (Berichte, Funkzellen, WLAN): %1$d, %2$d, %3$d</string>
+    <string name="metrics_notification_bigtext">Berichte: %1$d\nFunkzellen: %2$d\nWLAN-Netzwerke: %3$d\nLetzter Upload: %4$s</string>
     <string name="metrics_observations_title">Berichte:</string>
     <string name="metrics_observations_wifis_title">WLAN-Netzwerke:</string>
     <string name="metrics_observations_cell_towers_title">Funkzellen:</string>

@@ -47,6 +47,8 @@
         <item quantity="one">one day ago</item>
         <item quantity="other">%d days ago</item>
     </plurals>
+    <string name="metrics_notification_subtext">Metrics (reports, cells, Wi-Fi): %1$d, %2$d, %3$d</string>
+    <string name="metrics_notification_bigtext">Reports: %1$d\nCell networks: %2$d\nWi-Fi networks: %3$d\nLast upload: %4$s</string>
     <string name="metrics_observations_title">Reports:</string>
     <string name="metrics_observations_wifis_title">Wi-Fi networks:</string>
     <string name="metrics_observations_cell_towers_title">Cell networks:</string>

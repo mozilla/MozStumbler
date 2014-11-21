@@ -187,7 +187,7 @@ dependencies {
     // libraries, because they support a wide range of Android versions and
     // provide APIs for recommended user interface patterns.
 
-    compile "com.android.support:support-v4:19.1.+"
+    compile "com.android.support:support-v4:21.0.+"
     compile 'com.android.support:appcompat-v7:19.1.0'
 
     compile('org.simpleframework:simple-xml:2.7.1') {

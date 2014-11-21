@@ -49,7 +49,7 @@ public class DataStorageManagerTest {
         long maxBytes = 20000;
         int maxWeeks = 10;
 
-        dm = DataStorageManager.createGlobalInstance(ctx, tracker, maxBytes, maxWeeks);
+        dm = ClientDataStorageManager.createGlobalInstance(ctx, tracker, maxBytes, maxWeeks);
         rp = new Reporter();
 
         // The Reporter class needs a reference to a context

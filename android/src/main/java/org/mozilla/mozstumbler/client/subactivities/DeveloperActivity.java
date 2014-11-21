@@ -24,35 +24,16 @@ import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.client.serialize.KMLFragment;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.Prefs;
+import org.mozilla.mozstumbler.service.core.logging.Log;
 
 import java.io.File;
 
-import static org.mozilla.mozstumbler.R.string.create_log_archive_failure;
+import org.mozilla.mozstumbler.R;
+import static org.mozilla.mozstumbler.service.stumblerthread.datahandling.ClientDataStorageManager.sdcardArchivePath;
 
 public class DeveloperActivity extends ActionBarActivity {
 
     private final String LOG_TAG = AppGlobals.makeLogTag(DeveloperActivity.class);
-
-    public static boolean archiveDirCreatedAndMounted(Context ctx) {
-        File saveDir = new File(sdcardArchivePath());
-        String storageState = Environment.getExternalStorageState();
-
-        // You have to check the mount state of the external storage.
-        // Using the mkdirs() result isn't good enough.
-        if(!storageState.equals(Environment.MEDIA_MOUNTED)) {
-            return false;
-        }
-
-        saveDir.mkdirs();
-        if (!saveDir.exists()) {
-            return false;
-        }
-        return true;
-    }
-
-    public static String sdcardArchivePath() {
-        return Environment.getExternalStorageDirectory()+ File.separator + "MozStumbler";
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,18 +98,45 @@ public class DeveloperActivity extends ActionBarActivity {
 
         private void onToggleSaveStumbleLogs(boolean isChecked) {
             if (isChecked) {
+                Context viewCtx = mRootView.getContext();
                 if (!archiveDirCreatedAndMounted(this.getActivity())) {
-                    Toast.makeText(mRootView.getContext(),
-                            create_log_archive_failure,
-                            Toast.LENGTH_LONG).show();
+
+                    Toast.makeText(viewCtx,
+                            viewCtx.getString(R.string.create_log_archive_failure),
+                            Toast.LENGTH_SHORT).show();
                     isChecked = false;
                     CheckBox button = (CheckBox) mRootView.findViewById(R.id.toggleSaveStumbleLogs);
                     button.setChecked(isChecked);
+                } else {
+                    Toast.makeText(viewCtx,
+                            viewCtx.getString(R.string.create_log_archive_success) +
+                                    sdcardArchivePath(),
+                            Toast.LENGTH_LONG).show();
                 }
             }
             Prefs.getInstance().setSaveStumbleLogs(isChecked);
         }
 
+        public boolean archiveDirCreatedAndMounted(Context ctx) {
+            File saveDir = new File(sdcardArchivePath());
+            String storageState = Environment.getExternalStorageState();
+
+            // You have to check the mount state of the external storage.
+            // Using the mkdirs() result isn't good enough.
+            if(!storageState.equals(Environment.MEDIA_MOUNTED)) {
+                return false;
+            }
+
+            saveDir.mkdirs();
+            if (!saveDir.exists()) {
+                return false;
+            }
+            Log.d(LOG_TAG, "Created: [" + saveDir.getAbsolutePath() + "]");
+            return true;
+        }
+
+
     }
+
 
 }

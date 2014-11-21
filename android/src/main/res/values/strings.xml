@@ -124,6 +124,6 @@
 
     <string name="save_stumble_logs">Save Stumble Logs</string>
     <string name="create_log_archive_failure">Unable to create archive directory for logs</string>
-    <string name="no_sdcard_is_mounted">No sdcard is mounted</string>
+    <string name="create_log_archive_success">Logs will be save to:</string>
 
 </resources>

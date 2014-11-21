@@ -12,7 +12,7 @@ import android.util.Log;
 
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.stumblerthread.StumblerService;
-import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageManager;
+import org.mozilla.mozstumbler.service.stumblerthread.datahandling.ClientDataStorageManager;
 
 // Used as a bound service (with foreground priority) in Mozilla Stumbler, a.k.a. active scanning mode.
 // -- In accordance with Android service docs -and experimental findings- this puts the service as low
@@ -33,7 +33,7 @@ public class ClientStumblerService extends StumblerService {
             if (Looper.getMainLooper().getThread() != callingThread) {
                 throw new RuntimeException("Only call from main thread");
             }
-            DataStorageManager.createGlobalInstance(ClientStumblerService.this,
+            ClientDataStorageManager.createGlobalInstance(ClientStumblerService.this,
                     ClientStumblerService.this, maxBytesOnDisk, maxWeeksOld);
             init();
             return ClientStumblerService.this;

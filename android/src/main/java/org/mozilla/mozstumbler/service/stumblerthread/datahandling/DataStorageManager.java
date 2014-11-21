@@ -6,15 +6,12 @@ package org.mozilla.mozstumbler.service.stumblerthread.datahandling;
 
 import android.content.Context;
 
-import org.mozilla.mozstumbler.client.subactivities.DeveloperActivity;
 import org.mozilla.mozstumbler.service.AppGlobals;
-import org.mozilla.mozstumbler.service.Prefs;
 import org.mozilla.mozstumbler.service.core.logging.Log;
 import org.mozilla.mozstumbler.service.utils.Zipper;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -66,15 +63,15 @@ public class DataStorageManager {
     private final int mMaxWeeksStored;
 
     private final ReportBatchBuilder mCurrentReports = new ReportBatchBuilder();
-    private final File mReportsDir;
+    protected final File mReportsDir;
     private final File mStatsFile;
     private final StorageIsEmptyTracker mTracker;
 
-    private static DataStorageManager sInstance;
+    protected static DataStorageManager sInstance;
 
-    private ReportBatch mCurrentReportsSendBuffer;
+    protected ReportBatch mCurrentReportsSendBuffer;
     private ReportBatchIterator mReportBatchIterator;
-    private ReportFileList mFileList;
+    protected ReportFileList mFileList;
     private Timer mFlushMemoryBuffersToDiskTimer;
 
     static final String SEP_REPORT_COUNT = "-r";
@@ -127,14 +124,16 @@ public class DataStorageManager {
         return new QueuedCounts(reportCount, wifiCount, cellCount, byteLength);
     }
 
-    private static class ReportFileList {
+    protected static class ReportFileList {
         File[] mFiles;
         int mReportCount;
         int mWifiCount;
         int mCellCount;
         long mFilesOnDiskBytes;
 
-        public ReportFileList() {}
+        public ReportFileList() {
+        }
+
         public ReportFileList(ReportFileList other) {
             if (other == null) {
                 return;
@@ -150,7 +149,7 @@ public class DataStorageManager {
             mFilesOnDiskBytes = other.mFilesOnDiskBytes;
         }
 
-        void update(File directory) {
+        protected void update(File directory) {
             mFiles = directory.listFiles();
             if (mFiles == null) {
                 return;
@@ -208,7 +207,7 @@ public class DataStorageManager {
         public void notifyStorageStateEmpty(boolean isEmpty);
     }
 
-    private String getStorageDir(Context c) {
+    public static String getStorageDir(Context c) {
         File dir = null;
         if (AppGlobals.isDebug) {
             // in debug, put files in public location
@@ -238,18 +237,25 @@ public class DataStorageManager {
     }
 
     public static synchronized DataStorageManager createGlobalInstance(Context context, StorageIsEmptyTracker tracker,
-                                                         long maxBytesStoredOnDisk, int maxWeeksDataStored) {
+                                                                       long maxBytesStoredOnDisk, int maxWeeksDataStored) {
         if (sInstance == null) {
             sInstance = new DataStorageManager(context, tracker, maxBytesStoredOnDisk, maxWeeksDataStored);
         }
         return sInstance;
     }
 
+
+    // This method only exists to help with unit testing when we need
+    // to switch the singleton version of the DataStorageManager.
+    public static void removeInstance() {
+        sInstance = null;
+    }
+
     public static synchronized DataStorageManager getInstance() {
         return sInstance;
     }
 
-    private DataStorageManager(Context c, StorageIsEmptyTracker tracker,
+    DataStorageManager(Context c, StorageIsEmptyTracker tracker,
                                long maxBytesStoredOnDisk, int maxWeeksDataStored) {
         mMaxBytesDiskStorage = maxBytesStoredOnDisk;
         mMaxWeeksStored = maxWeeksDataStored;
@@ -503,6 +509,7 @@ public class DataStorageManager {
         }
     }
 
+
     /* Pass filename returned from dataToSend() */
     public synchronized boolean delete(String filename) {
         if (filename.equals(MEMORY_BUFFER_NAME)) {
@@ -511,98 +518,11 @@ public class DataStorageManager {
         }
 
         final File file = new File(mReportsDir, filename);
-        boolean ok = true;
-
-        if (Prefs.getInstance().isSaveStumbleLogs()) {
-            File newFile = new File(DeveloperActivity.sdcardArchivePath() + File.separator + filename);
-            ok = copyAndDelete(file, newFile);
-
-            if (!ok) {
-                ok = file.delete();
-            }
-        } else {
-            ok = file.delete();
-        }
-
+        boolean ok = file.delete();
         mFileList.update(mReportsDir);
         return ok;
     }
 
-    private boolean copyAndDelete(File aFile, File bFile) {
-        boolean ok = true;
-
-        FileInputStream inStream = null;
-        FileOutputStream outStream = null;
-
-        try {
-            inStream = new FileInputStream(aFile);
-            outStream = new FileOutputStream(bFile);
-        } catch (FileNotFoundException e) {
-            if (inStream != null) {
-                try {
-                    inStream.close();
-                }catch (IOException ioEx) {
-                    Log.e(LOG_TAG, "error shutting down streams during a failed copy", ioEx);
-                }
-             }
-            if (outStream != null) {
-                try {
-                    outStream.close();
-                } catch (IOException ioEx) {
-                    Log.e(LOG_TAG, "error shutting down streams during a failed copy", ioEx);
-                }
-            }
-            return false;
-        }
-
-        byte[] buffer = new byte[1024];
-        int length;
-        //copy the file content in bytes
-        try {
-            while ((length = inStream.read(buffer)) > 0){
-                outStream.write(buffer, 0, length);
-            }
-        } catch (IOException e) {
-            Log.e(LOG_TAG, "Error copying bytes over", e);
-
-            if (inStream != null) {
-                try {
-                    inStream.close();
-                }catch (IOException ioEx) {
-                    Log.e(LOG_TAG, "error shutting down streams during a failed copy", ioEx);
-                }
-            }
-            if (outStream != null) {
-                try {
-                    outStream.close();
-                } catch (IOException ioEx) {
-                    Log.e(LOG_TAG, "error shutting down streams during a failed copy", ioEx);
-                }
-            }
-            return false;
-        }
-
-        if (inStream != null) {
-            try {
-                inStream.close();
-            }catch (IOException ioEx) {
-                Log.e(LOG_TAG, "error shutting down streams during a failed copy", ioEx);
-                ok = false;
-            }
-        }
-
-        if (outStream != null) {
-            try {
-                outStream.close();
-            } catch (IOException ioEx) {
-                Log.e(LOG_TAG, "error shutting down streams during a failed copy", ioEx);
-                ok = false;
-            }
-        }
-
-        // delete the original file
-        return ok && aFile.delete();
-    }
 
     public synchronized void deleteAll() {
         if (mFileList.mFiles == null) {

@@ -8,17 +8,20 @@ import android.location.Location;
 import android.os.Build;
 import android.os.Handler;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
+
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.Prefs;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.GPSScanner;
 
 public class DetectUnchangingLocation extends BroadcastReceiver {
+    private static final String LOG_TAG = AppGlobals.makeLogTag(BroadcastReceiver.class.getSimpleName());
     private final Context mContext;
     private Location mLastLocation;
     private final Handler mHandler = new Handler();
     private final long INITIAL_DELAY_TO_WAIT_FOR_GPS_FIX_MS = 1000 * 60 * 5; // 5 mins
     private int mPrefMotionChangeDistanceMeters;
-    private int mPrefMotionChangeTimeWindowSeconds;
+    private long mPrefMotionChangeTimeWindowMs;
     private long mStartTimeMs;
     private boolean mDoSingleLocationCheck;
     private static String ACTION_LOCATION_NOT_CHANGING = AppGlobals.ACTION_NAMESPACE + ".LOCATION_UNCHANGING";
@@ -26,8 +29,10 @@ public class DetectUnchangingLocation extends BroadcastReceiver {
     private final Runnable mCheckTimeout = new Runnable() {
         public void run() {
             if (!isTimeWindowForMovementExceeded()) {
+                scheduleTimeoutCheck();
                 return;
             }
+            AppGlobals.guiLogInfo("No GPS in time window.");
             LocalBroadcastManager.getInstance(mContext).sendBroadcastSync(new Intent(ACTION_LOCATION_NOT_CHANGING));
         }
     };
@@ -39,18 +44,18 @@ public class DetectUnchangingLocation extends BroadcastReceiver {
     }
 
     boolean isTimeWindowForMovementExceeded() {
-        if (mLastLocation == null ||
-            System.currentTimeMillis() - mStartTimeMs < INITIAL_DELAY_TO_WAIT_FOR_GPS_FIX_MS) {
-            return false;
+        if (mLastLocation == null) {
+            return System.currentTimeMillis() - mStartTimeMs < INITIAL_DELAY_TO_WAIT_FOR_GPS_FIX_MS;
         }
-        return System.currentTimeMillis() - mPrefMotionChangeTimeWindowSeconds > mLastLocation.getTime();
+
+        return System.currentTimeMillis() - mPrefMotionChangeTimeWindowMs > mLastLocation.getTime();
     }
 
     public void start() {
         mLastLocation = null;
         mStartTimeMs = System.currentTimeMillis();
         mPrefMotionChangeDistanceMeters = Prefs.getInstance().getMotionChangeDistanceMeters();
-        mPrefMotionChangeTimeWindowSeconds = Prefs.getInstance().getMotionChangeTimeWindowSeconds();
+        mPrefMotionChangeTimeWindowMs = 1000 * Prefs.getInstance().getMotionChangeTimeWindowSeconds();
 
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(GPSScanner.ACTION_GPS_UPDATED);
@@ -87,6 +92,7 @@ public class DetectUnchangingLocation extends BroadcastReceiver {
             if (dist > mPrefMotionChangeDistanceMeters) {
                 mLastLocation = newPosition;
             } else if (isTimeWindowForMovementExceeded() || mDoSingleLocationCheck) {
+                AppGlobals.guiLogInfo("Insufficient movement:" + dist + " m, " + mPrefMotionChangeDistanceMeters + " m needed.");
                 mDoSingleLocationCheck = false;
                 LocalBroadcastManager.getInstance(mContext).sendBroadcastSync(new Intent(ACTION_LOCATION_NOT_CHANGING));
                 return;
@@ -94,11 +100,17 @@ public class DetectUnchangingLocation extends BroadcastReceiver {
         }
 
         mDoSingleLocationCheck = false;
+        scheduleTimeoutCheck();
+    }
 
+    private void scheduleTimeoutCheck() {
         try {
             mHandler.removeCallbacks(mCheckTimeout);
         } catch (Exception e) {}
-        mHandler.postDelayed(mCheckTimeout, mPrefMotionChangeTimeWindowSeconds);
+
+        // Don't schedule it for exactly mPrefMotionChangeTimeWindowMs, we want it slightly after this timeout
+        final long addedDelay = 2 * 1000;
+        mHandler.postDelayed(mCheckTimeout, mPrefMotionChangeTimeWindowMs + addedDelay);
     }
 
     public void quickCheckAfterMotionSensorMovement() {

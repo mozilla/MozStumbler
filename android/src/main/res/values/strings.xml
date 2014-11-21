@@ -127,6 +127,7 @@
     </string-array>
 
     <string name="battery_percent_options_label">Stop when battery is:</string>
+    <string name="map_scanning_paused_no_motion">Location not changing, scanning paused.</string>
     <string-array name="battery_percent_options">
         <item>0%</item>
         <item>5%</item>

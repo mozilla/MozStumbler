@@ -26,27 +26,85 @@
         android:layout_below="@+id/checkBox_show_mls"
         android:paddingBottom="10dp"
         android:paddingTop="20dp"
-        android:text="Battery Saver"
+        android:text="Stop stumbling on low battery"
         android:textColor="#ff33b5e5"
         android:textSize="@dimen/font_size_for_metrics_top_title"
         android:textStyle="bold" />
+    <LinearLayout
+        android:id="@+id/layout1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/batteryTitle">
     <TextView
         android:id="@+id/batteryLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/batteryTitle"
         android:paddingRight="10dp"
-        android:text="Save power at"
+        android:text="When battery drops to:"
         android:textSize="@dimen/font_size_for_metrics" />
     <Spinner
         android:id="@+id/spinnerBatteryPercent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toEndOf="@+id/batteryLabel"
-        android:layout_alignBaseline="@+id/batteryLabel"
-        android:layout_toRightOf="@+id/batteryLabel"
         android:entries="@array/battery_percent_options"
         />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/motionDetectionHeading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/layout1"
+        android:paddingBottom="10dp"
+        android:paddingTop="20dp"
+        android:text="Motion Detection"
+        android:textColor="#ff33b5e5"
+        android:textSize="@dimen/font_size_for_metrics_top_title"
+        android:textStyle="bold" />
+    <LinearLayout
+        android:id="@+id/layout2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/motionDetectionHeading"
+        >
+    <TextView
+        android:id="@+id/motionDetectionDistanceLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingRight="10dp"
+        android:text="Pause scanning if you don't move"
+        android:textSize="@dimen/font_size_for_metrics" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/layout3"
+        android:layout_below="@id/layout2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <Spinner
+            android:id="@+id/spinnerMotionDetectionDistanceMeters"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            />
+        <TextView
+            android:id="@+id/motionDetectionTimeLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingRight="10dp"
+            android:paddingLeft="10dp"
+            android:text="in"
+            android:textSize="22sp"
+           />
+        <Spinner
+            android:id="@+id/spinnerMotionDetectionTimeSeconds"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            />
+    </LinearLayout>
 
 
 </RelativeLayout>

@@ -84,7 +84,7 @@ public final class MapFragment extends android.support.v4.app.Fragment
     private boolean mUserPanning = false;
     private final Timer mGetUrl = new Timer();
     private ObservationPointsOverlay mObservationPointsOverlay;
-    private GPSListener mGPSListener;
+    private MapLocationListener mMapLocationListener;
     private LowResMapOverlay mLowResMapOverlayHighZoom;
     private LowResMapOverlay mLowResMapOverlayLowZoom;
     private Overlay mCoverageTilesOverlayLowZoom;
@@ -224,6 +224,8 @@ public final class MapFragment extends android.support.v4.app.Fragment
                 return true;
             }
         }, 0));
+
+        showPausedDueToNoMotionMessage(getApplication().isIsScanningPausedDueToNoMotion());
 
         return mRootView;
     }
@@ -520,7 +522,7 @@ public final class MapFragment extends android.support.v4.app.Fragment
             return;
         }
 
-        boolean isScanning = app.getService().isScanning();
+        boolean isScanning = app.isScanningOrPaused();
         if (isScanning) {
             app.stopScanning();
         } else {
@@ -603,7 +605,7 @@ public final class MapFragment extends android.support.v4.app.Fragment
         super.onResume();
         Log.d(LOG_TAG, "onResume");
 
-        mGPSListener = new GPSListener(this);
+        mMapLocationListener = new MapLocationListener(this);
 
         ObservedLocationsReceiver observer = ObservedLocationsReceiver.getInstance();
         observer.setMapActivity(this);
@@ -642,7 +644,7 @@ public final class MapFragment extends android.support.v4.app.Fragment
         Log.d(LOG_TAG, "onPause");
         saveStateToPrefs();
 
-        mGPSListener.removeListener();
+        mMapLocationListener.removeListener();
         ObservedLocationsReceiver observer = ObservedLocationsReceiver.getInstance();
         observer.removeMapActivity();
         mHighLowBandwidthChecker.unregister(this.getApplication());
@@ -726,4 +728,11 @@ public final class MapFragment extends android.support.v4.app.Fragment
         }
     }
 
+
+    public void showPausedDueToNoMotionMessage(boolean show) {
+        mRootView.findViewById(R.id.scanning_paused_message).setVisibility(show? View.VISIBLE : View.INVISIBLE);
+        if (mMapLocationListener != null ) {
+            mMapLocationListener.pauseGpsUpdates(show);
+        }
+    }
 }

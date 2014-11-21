@@ -33,7 +33,9 @@ public class BatteryCheckReceiver extends BroadcastReceiver {
     }
 
     public void stop() {
-        mContext.unregisterReceiver(this);
+        try {
+            mContext.unregisterReceiver(this);
+        } catch (Exception ex) {}
     }
 
     @Override

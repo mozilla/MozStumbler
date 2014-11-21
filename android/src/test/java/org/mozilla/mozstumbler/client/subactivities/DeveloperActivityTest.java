@@ -1,29 +1,19 @@
 package org.mozilla.mozstumbler.client.subactivities;
 
-import android.annotation.TargetApi;
-import android.app.Fragment;
 import android.content.Context;
-import android.content.res.Resources;
-import android.os.Build;
 import android.os.Environment;
 import android.widget.CheckBox;
 
-import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.mozilla.mozstumbler.client.subactivities.DeveloperActivity.DeveloperOptions;
 import static org.robolectric.util.FragmentTestUtil.startFragment;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mozilla.mozstumbler.R;
-import org.mozilla.mozstumbler.client.Updater;
-import org.mozilla.mozstumbler.client.navdrawer.MainDrawerActivity;
 import org.mozilla.mozstumbler.service.Prefs;
-import org.mozilla.mozstumbler.service.core.http.IHttpUtil;
-import org.mozilla.mozstumbler.service.core.http.MockHttpUtil;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageManager;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
@@ -110,10 +100,10 @@ public class DeveloperActivityTest {
         fw.close();
         assertTrue(fakeReport.exists());
 
-        File movedFile = new File(DataStorageManager.sdcard_archive_path() + File.separator + "foo.txt");
+        File movedFile = new File(DeveloperActivity.sdcardArchivePath() + File.separator + "foo.txt");
 
         // Make sure we have created the archive directory
-        assertTrue(DataStorageManager.archiveDirCreatedAndMounted(ctx));
+        assertTrue(DeveloperActivity.archiveDirCreatedAndMounted(ctx));
 
         assertFalse(movedFile.exists());
         assertTrue(movedFile.exists());

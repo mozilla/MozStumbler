@@ -5,10 +5,8 @@
 package org.mozilla.mozstumbler.service.stumblerthread.datahandling;
 
 import android.content.Context;
-import android.os.Environment;
-import android.widget.Toast;
 
-import org.mozilla.mozstumbler.R;
+import org.mozilla.mozstumbler.client.subactivities.DeveloperActivity;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.Prefs;
 import org.mozilla.mozstumbler.service.core.logging.Log;
@@ -25,7 +23,6 @@ import java.util.Properties;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import static org.mozilla.mozstumbler.R.string.create_log_archive_failure;
 
 /* Stores reports in memory (mCurrentReports) until MAX_REPORTS_IN_MEMORY,
  * then writes them to disk as a .gz file. The name of the file has
@@ -86,10 +83,6 @@ public class DataStorageManager {
     static final String SEP_TIME_MS = "-t";
     static final String FILENAME_PREFIX = "reports";
     static final String MEMORY_BUFFER_NAME = "in memory send buffer";
-
-    public static String sdcard_archive_path() {
-        return Environment.getExternalStorageDirectory()+ File.separator + "MozStumbler";
-    }
 
     public static class QueuedCounts {
         public final int mReportCount;
@@ -237,34 +230,6 @@ public class DataStorageManager {
         }
 
         return dir.getPath();
-    }
-
-
-    public static boolean archiveDirCreatedAndMounted(Context ctx) {
-        File saveDir = new File(sdcard_archive_path());
-        String storageState = Environment.getExternalStorageState();
-
-        // You have to check the mount state of the external storage.
-        // Using the mkdirs() result isn't good enough.
-        if(!storageState.equals(Environment.MEDIA_MOUNTED)) {
-            if (ctx != null) {
-                Toast.makeText(ctx,
-                        R.string.no_sdcard_is_mounted,
-                        Toast.LENGTH_LONG).show();
-            }
-            return false;
-        }
-
-        saveDir.mkdirs();
-        if (!saveDir.exists()) {
-            if (ctx != null) {
-                Toast.makeText(ctx,
-                        create_log_archive_failure,
-                        Toast.LENGTH_LONG).show();
-            }
-            return false;
-        }
-        return true;
     }
 
     public static synchronized void createGlobalInstance(Context context, StorageIsEmptyTracker tracker) {
@@ -549,7 +514,7 @@ public class DataStorageManager {
         boolean ok = true;
 
         if (Prefs.getInstance().isSaveStumbleLogs()) {
-            File newFile = new File(sdcard_archive_path() + File.separator + filename);
+            File newFile = new File(DeveloperActivity.sdcardArchivePath() + File.separator + filename);
             ok = copyAndDelete(file, newFile);
 
             if (!ok) {

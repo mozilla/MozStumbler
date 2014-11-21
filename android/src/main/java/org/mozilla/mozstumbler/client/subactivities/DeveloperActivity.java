@@ -4,8 +4,10 @@
 package org.mozilla.mozstumbler.client.subactivities;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -16,16 +18,41 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.client.serialize.KMLFragment;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.Prefs;
-import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageManager;
+
+import java.io.File;
+
+import static org.mozilla.mozstumbler.R.string.create_log_archive_failure;
 
 public class DeveloperActivity extends ActionBarActivity {
 
     private final String LOG_TAG = AppGlobals.makeLogTag(DeveloperActivity.class);
+
+    public static boolean archiveDirCreatedAndMounted(Context ctx) {
+        File saveDir = new File(sdcardArchivePath());
+        String storageState = Environment.getExternalStorageState();
+
+        // You have to check the mount state of the external storage.
+        // Using the mkdirs() result isn't good enough.
+        if(!storageState.equals(Environment.MEDIA_MOUNTED)) {
+            return false;
+        }
+
+        saveDir.mkdirs();
+        if (!saveDir.exists()) {
+            return false;
+        }
+        return true;
+    }
+
+    public static String sdcardArchivePath() {
+        return Environment.getExternalStorageDirectory()+ File.separator + "MozStumbler";
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,7 +60,7 @@ public class DeveloperActivity extends ActionBarActivity {
         setContentView(R.layout.activity_developer);
         if (savedInstanceState == null) {
             FragmentManager fm = getSupportFragmentManager();
-            FragmentTransaction ft =fm.beginTransaction();
+            FragmentTransaction ft = fm.beginTransaction();
             ft.add(R.id.frame1, new KMLFragment());
             ft.add(R.id.frame2, new DeveloperOptions());
             ft.commit();
@@ -53,7 +80,8 @@ public class DeveloperActivity extends ActionBarActivity {
                             }
                         })
                         .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {}
+                            public void onClick(DialogInterface dialog, int which) {
+                            }
                         })
                         .setIcon(android.R.drawable.ic_dialog_alert)
                         .show();
@@ -86,9 +114,13 @@ public class DeveloperActivity extends ActionBarActivity {
                 }
             });
         }
+
         private void onToggleSaveStumbleLogs(boolean isChecked) {
             if (isChecked) {
-                if (!DataStorageManager.archiveDirCreatedAndMounted(this.getActivity())) {
+                if (!archiveDirCreatedAndMounted(this.getActivity())) {
+                    Toast.makeText(mRootView.getContext(),
+                            create_log_archive_failure,
+                            Toast.LENGTH_LONG).show();
                     isChecked = false;
                     CheckBox button = (CheckBox) mRootView.findViewById(R.id.toggleSaveStumbleLogs);
                     button.setChecked(isChecked);
@@ -97,8 +129,6 @@ public class DeveloperActivity extends ActionBarActivity {
             Prefs.getInstance().setSaveStumbleLogs(isChecked);
         }
 
-
     }
-
 
 }

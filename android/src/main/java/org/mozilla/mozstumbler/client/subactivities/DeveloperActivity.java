@@ -113,7 +113,7 @@ public class DeveloperActivity extends ActionBarActivity {
                 public void onNothingSelected(AdapterView<?> arg0) {}
             });
 
-            final String[] timeArray = {"30 s", "60 s", "90 s", "120 s", "180 s", "210 s", "240 s", "270 s", "300 s"};
+            final String[] timeArray = {"5 s", "30 s", "60 s", "90 s", "120 s", "180 s", "210 s", "240 s", "270 s", "300 s"};
             final ArrayAdapter<String> timeAdapter =
                     new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_spinner_item, timeArray);
             final Spinner timeSpinner = (Spinner) mRootView.findViewById(R.id.spinnerMotionDetectionTimeSeconds);

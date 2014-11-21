@@ -7,37 +7,41 @@ import android.location.Location;
 import android.net.wifi.ScanResult;
 import android.telephony.TelephonyManager;
 
-import junit.framework.Assert;
-
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.stumblerthread.Reporter;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.GPSScanner;
-import org.mozilla.mozstumbler.service.stumblerthread.scanners.WifiScanner;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner.CellInfo;
-import org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner.CellScanner;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
+import org.robolectric.annotation.Config;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Map;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
-
+import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
+import static org.mozilla.mozstumbler.service.stumblerthread.ReporterTest.createCellInfo;
+import static org.mozilla.mozstumbler.service.stumblerthread.ReporterTest.createScanResult;
 
+@Config(emulateSdk = 18)
 @RunWith(RobolectricTestRunner.class)
 public class DataStorageManagerTest {
-
-    private Context ctx;
-    private DataStorageManager dm;
-    private Reporter rp;
 
     public class StorageTracker implements DataStorageManager.StorageIsEmptyTracker {
         public void notifyStorageStateEmpty(boolean isEmpty) {
         }
+    }
+    private DataStorageManager dm;
+    private Reporter rp;
+    private Context ctx;
+
+    private Application getApplicationContext() {
+        return Robolectric.application;
     }
 
     @Before
@@ -49,152 +53,88 @@ public class DataStorageManagerTest {
         long maxBytes = 20000;
         int maxWeeks = 10;
 
+        // The DM is required to handle the flush() operation in the Reporter.
         dm = DataStorageManager.createGlobalInstance(ctx, tracker, maxBytes, maxWeeks);
+
+        // Force the current reports to clear out between test runs.
+        dm.mCurrentReports.clearReports();
+
         rp = new Reporter();
 
         // The Reporter class needs a reference to a context
         rp.startup(ctx);
-
-        Intent gpsUpdated = getLocationIntent();
-        rp.onReceive(ctx, gpsUpdated);
-        assertTrue(null != rp.getGPSLocation());
+        assertEquals(0, dm.mCurrentReports.reportsCount());
     }
 
     @Test
-    public void testReporterWifiLimits() {
-        // Spam the Reporter with wifi data
-        ArrayList<String> bssidList = new ArrayList<String>();
+    public void testMaxReportsLength() throws JSONException {
+        StumblerBundle bundle;
 
-        for (int offset = 0; offset< 40000; offset++) {
-            String bssid = Long.toHexString(offset | 0xabcd00000000L);
-            bssidList.add(bssid);
-        }
-        String[] bssidArray  = bssidList.toArray(new String[bssidList.size()]);
-        Intent wifiIntent = getWifiIntent(bssidArray);
+        assertEquals(0, dm.mCurrentReports.reportsCount());
+        for (int locCount = 0; locCount < ReportBatchBuilder.MAX_REPORTS_IN_MEMORY-1; locCount++) {
+            Location loc = new Location("mock");
+            loc.setLatitude(42+(locCount*0.1));
+            loc.setLongitude(45+(locCount*0.1));
 
-        Map<String, ScanResult> wifiData = rp.getWifiData();
-        Assert.assertTrue("Max wifi limit is exceeded", wifiData.size() <= Reporter.MAX_WIFIS_PER_LOCATION);
+            bundle = new StumblerBundle(loc, TelephonyManager.PHONE_TYPE_GSM);
 
-        // This should push the reporter into a state that forces a
-        // flush
-        rp.onReceive(ctx, wifiIntent);
+            for (int offset = 0; offset< StumblerBundle.MAX_WIFIS_PER_LOCATION*20; offset++) {
+                String bssid = Long.toHexString(offset | 0xabcd00000000L);
+                ScanResult scan = createScanResult(bssid, "caps", 3, 11, 10);
+                bundle.addWifiData(bssid, scan);
+            }
 
-        wifiData = rp.getWifiData();
-        Assert.assertTrue("Max wifi limit exceeded", wifiData == null);
-    }
+            for (int offset = 0; offset< StumblerBundle.MAX_CELLS_PER_LOCATION*20; offset++) {
+                CellInfo cell = createCellInfo(1, 1, 2000 + offset, 1600199 + offset, 19);
+                String key = cell.getCellIdentity();
+                bundle.addCellData(key, cell);
+            }
 
-    @Test
-    public void testReporterCellLimits() {
-        // Spam the Reporter with cell data
-        ArrayList<CellInfo> cellIdList = new ArrayList<CellInfo>();
-
-        for (int offset = 100; offset< 40000; offset++) {
-            CellInfo cell = makeCellInfo(1, 1, 2000+offset, 1600199+offset, 19);
-            cellIdList.add(cell);
-        }
-
-        Intent cellIntent = getCellIntent(cellIdList);
-        Map<String, CellInfo> cellData = rp.getCellData();
-        Assert.assertTrue("Max cell limit exceeded", cellData.size() < Reporter.MAX_CELLS_PER_LOCATION);
-
-        // Accepting the extra content into the Report should force
-        // the Reporter to flush content
-        rp.onReceive(ctx, cellIntent);
-
-        cellData = rp.getCellData();
-        Assert.assertTrue("Cell data was not flushed properly", cellData == null);
-    }
-
-    private Intent getCellIntent(ArrayList<CellInfo> cells) {
-        long curTime = System.currentTimeMillis();
-        Intent intent = new Intent(CellScanner.ACTION_CELLS_SCANNED);
-        intent.putParcelableArrayListExtra(CellScanner.ACTION_CELLS_SCANNED_ARG_CELLS, cells);
-        intent.putExtra(CellScanner.ACTION_CELLS_SCANNED_ARG_TIME, curTime);
-        return intent;
-
-    }
-
-    private Intent getWifiIntent(String[] bssids) {
-        ArrayList<ScanResult> scanResults = new ArrayList<ScanResult>();
-
-        ScanResult scan;
-        for (String bssid: bssids) {
-            scan = createScanResult(bssid, "caps", 3, 11, 10);
-            scanResults.add(scan);
-        }
-
-        Intent i = new Intent(WifiScanner.ACTION_WIFIS_SCANNED);
-        i.putParcelableArrayListExtra(WifiScanner.ACTION_WIFIS_SCANNED_ARG_RESULTS, scanResults);
-        i.putExtra(WifiScanner.ACTION_WIFIS_SCANNED_ARG_TIME, System.currentTimeMillis());
-        return i;
-    }
-
-    CellInfo makeCellInfo(int mcc, int mnc, int lac, int cid, int asu) {
-        CellInfo cell = new CellInfo(TelephonyManager.PHONE_TYPE_GSM);
-        Method method = getMethod(CellInfo.class, "setGsmCellInfo");
-        assert (method != null);
-        try {
-            method.invoke(cell, mcc, mnc, lac, cid, asu);
-        } catch (Exception e) {
-            throw new RuntimeException(e.toString());
-        }
-        return cell;
-    }
-
-    Method getMethod(Class<?> c, String name) {
-        Method[] methods = c.getDeclaredMethods();
-        for (Method m : methods) {
-            if (m.getName().contains(name)) {
-                m.setAccessible(true);
-                return m;
+            JSONObject mlsObj = bundle.toMLSJSON();
+            int wifiCount = mlsObj.getInt(DataStorageContract.ReportsColumns.WIFI_COUNT);
+            int cellCount = mlsObj.getInt(DataStorageContract.ReportsColumns.CELL_COUNT);
+            try {
+                dm.insert(mlsObj.toString(), wifiCount, cellCount);
+            } catch (IOException ioEx) {
             }
         }
-        return null;
-    }
+        assertEquals(ReportBatchBuilder.MAX_REPORTS_IN_MEMORY-1,
+                dm.mCurrentReports.reportsCount());
 
-    ScanResult createScanResult(String BSSID, String caps, int level, int frequency,
-                                        long tsf) {
-        Class<?> c = null;
-        try {
-            c = Class.forName("android.net.wifi.ScanResult");
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException("Error loading ScanResult class");
-        }
-        Constructor[] constructors = c.getConstructors();
 
-        Constructor<?> myConstructor= null;
-        for (Constructor<?> construct: constructors) {
-            if (construct.getParameterTypes().length == 6) {
-                myConstructor = construct;
-                break;
+        for (int locCount = ReportBatchBuilder.MAX_REPORTS_IN_MEMORY;
+             locCount < ReportBatchBuilder.MAX_REPORTS_IN_MEMORY+100;
+             locCount++) {
+            Location loc = new Location("mock");
+            loc.setLatitude(42+(locCount*0.1));
+            loc.setLongitude(45+(locCount*0.1));
+
+            bundle = new StumblerBundle(loc, TelephonyManager.PHONE_TYPE_GSM);
+
+            for (int offset = 0; offset < StumblerBundle.MAX_WIFIS_PER_LOCATION * 20; offset++) {
+                String bssid = Long.toHexString(offset | 0xabcd00000000L);
+                ScanResult scan = createScanResult(bssid, "caps", 3, 11, 10);
+                bundle.addWifiData(bssid, scan);
             }
-        }
 
-        if (myConstructor == null) {
-            throw new RuntimeException("No constructor found");
-        }
-        ScanResult scan = null;
-        try {
-            scan = (ScanResult) myConstructor.newInstance(null, BSSID, caps, level, frequency, tsf);
-        } catch (Exception e) {
-            throw new RuntimeException(e.toString());
-        }
-        return scan;
-    }
+            for (int offset = 0; offset < StumblerBundle.MAX_CELLS_PER_LOCATION * 20; offset++) {
+                CellInfo cell = createCellInfo(1, 1, 2000 + offset, 1600199 + offset, 19);
+                String key = cell.getCellIdentity();
+                bundle.addCellData(key, cell);
+            }
 
-    private Intent getLocationIntent() {
-        Location location = new Location("mock");
-        location.setLongitude(20);
-        location.setLatitude(30);
-        Intent i = new Intent(GPSScanner.ACTION_GPS_UPDATED);
-        i.putExtra(Intent.EXTRA_SUBJECT, GPSScanner.SUBJECT_NEW_LOCATION);
-        i.putExtra(GPSScanner.NEW_LOCATION_ARG_LOCATION, location);
-        i.putExtra(GPSScanner.ACTION_ARG_TIME, System.currentTimeMillis());
-        return i;
-    }
+            JSONObject mlsObj = bundle.toMLSJSON();
+            int wifiCount = mlsObj.getInt(DataStorageContract.ReportsColumns.WIFI_COUNT);
+            int cellCount = mlsObj.getInt(DataStorageContract.ReportsColumns.CELL_COUNT);
+            try {
+                dm.insert(mlsObj.toString(), wifiCount, cellCount);
+            } catch (FileNotFoundException fex) {
+                // This is ok
+            } catch (IOException ioEx) {
+            }
 
-    private Application getApplicationContext() {
-        return Robolectric.application;
+            assertTrue(dm.mCurrentReports.reportsCount() == ReportBatchBuilder.MAX_REPORTS_IN_MEMORY);
+        }
     }
 
 }

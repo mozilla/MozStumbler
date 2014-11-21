@@ -14,9 +14,11 @@ import android.telephony.TelephonyManager;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner.CellInfo;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,8 +28,15 @@ import java.util.Map;
 public final class StumblerBundle implements Parcelable {
     private final int mPhoneType;
     private final Location mGpsPosition;
+
     private final Map<String, ScanResult> mWifiData;
     private final Map<String, CellInfo> mCellData;
+
+    /* The maximum number of Wi-Fi access points in a single observation. */
+    public static final int MAX_WIFIS_PER_LOCATION = 200;
+
+    /* The maximum number of cells in a single observation */
+    public static final int MAX_CELLS_PER_LOCATION  = 50;
 
     @Override
     public int describeContents() {
@@ -54,27 +63,6 @@ public final class StumblerBundle implements Parcelable {
         out.writeInt(mPhoneType);
     }
 
-    private StumblerBundle(Parcel in) {
-        mWifiData = new HashMap<String, ScanResult>();
-        mCellData = new HashMap<String, CellInfo>();
-
-        Bundle wifiBundle = in.readBundle(ScanResult.class.getClassLoader());
-        Bundle cellBundle = in.readBundle(CellInfo.class.getClassLoader());
-
-        Collection<String> scans = wifiBundle.keySet();
-        for (String s : scans) {
-            mWifiData.put(s, (ScanResult) wifiBundle.get(s));
-        }
-
-        Collection<String> cells = cellBundle.keySet();
-        for (String c : cells) {
-            mCellData.put(c, (CellInfo) cellBundle.get(c));
-        }
-
-        mGpsPosition = in.readParcelable(Location.class.getClassLoader());
-        mPhoneType = in.readInt();
-    }
-
     public StumblerBundle(Location position, int phoneType) {
         mGpsPosition = position;
         mPhoneType = phoneType;
@@ -86,17 +74,22 @@ public final class StumblerBundle implements Parcelable {
         return mGpsPosition;
     }
 
-    public Map<String, ScanResult> getWifiData() {
-        return mWifiData;
+    public Map<String, ScanResult> getUnmodifiableWifiData() {
+        if (mWifiData == null) {
+            return null;
+        }
+        return Collections.unmodifiableMap(mWifiData);
     }
 
-    public Map<String, CellInfo> getCellData() {
-        return mCellData;
+    public Map<String, CellInfo> getUnmodifiableCellData() {
+        if (mCellData == null) {
+            return null;
+        }
+        return Collections.unmodifiableMap(mCellData);
     }
 
     public JSONObject toMLSJSON() throws JSONException {
         JSONObject item = new JSONObject();
-
         item.put(DataStorageContract.ReportsColumns.TIME, mGpsPosition.getTime());
         item.put(DataStorageContract.ReportsColumns.LAT, Math.floor(mGpsPosition.getLatitude() * 1.0E6) / 1.0E6);
         item.put(DataStorageContract.ReportsColumns.LON, Math.floor(mGpsPosition.getLongitude() * 1.0E6) / 1.0E6);
@@ -139,5 +132,33 @@ public final class StumblerBundle implements Parcelable {
         item.put(DataStorageContract.ReportsColumns.WIFI_COUNT, wifis.length());
 
         return item;
+    }
+
+    public boolean hasMaxWifisPerLocation() {
+        return mWifiData.size() == MAX_WIFIS_PER_LOCATION;
+    }
+
+    public boolean hasMaxCellsPerLocation() {
+        return mCellData.size() == MAX_CELLS_PER_LOCATION;
+    }
+
+    public void addWifiData(String key, ScanResult result) {
+        if (mWifiData.size() == MAX_WIFIS_PER_LOCATION) {
+            AppGlobals.guiLogInfo("Max wifi limit reached for this location, ignoring data.");
+            return;
+        }
+        if (!mWifiData.containsKey(key)) {
+            mWifiData.put(key, result);
+        }
+    }
+
+    public void addCellData(String key, CellInfo result) {
+        if (mCellData.size() > MAX_CELLS_PER_LOCATION) {
+            AppGlobals.guiLogInfo("Max cell limit reached for this location, ignoring data.");
+            return;
+        }
+        if (!mCellData.containsKey(key)) {
+            mCellData.put(key, result);
+        }
     }
 }

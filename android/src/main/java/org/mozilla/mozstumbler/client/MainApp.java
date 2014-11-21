@@ -232,10 +232,14 @@ public class MainApp extends Application
         if (mStumblerService == null) {
             return;
         }
+
+        mIsScanningPausedDueToNoMotion = false;
+
         mStumblerService.stopForeground(true);
         mStumblerService.stopScanning();
         if (mMainActivity.get() != null) {
             mMainActivity.get().updateUiOnMainThread();
+            mMainActivity.get().isPausedDueToNoMotion(false);
         }
 
         AsyncUploader uploader = new AsyncUploader();

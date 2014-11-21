@@ -9,26 +9,25 @@ import android.os.Build;
 import android.os.Handler;
 import android.support.v4.content.LocalBroadcastManager;
 import org.mozilla.mozstumbler.service.AppGlobals;
+import org.mozilla.mozstumbler.service.Prefs;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.GPSScanner;
 
 public class DetectUnchangingLocation extends BroadcastReceiver {
     private final Context mContext;
     private Location mLastLocation;
-    private double mLocationChangeMeters;
     private final Handler mHandler = new Handler();
-    // If no location change in this time window, then the user is not moving
-    private final long TIME_WINDOW_FOR_LOCATION_CHANGE_MS = 1000 * 120;
-
+    private final long INITIAL_DELAY_TO_WAIT_FOR_GPS_FIX_MS = 1000 * 60 * 5; // 5 mins
+    private int mPrefMotionChangeDistanceMeters;
+    private int mPrefMotionChangeTimeWindowSeconds;
+    private long mStartTimeMs;
+    private boolean mDoSingleLocationCheck;
     private static String ACTION_LOCATION_NOT_CHANGING = AppGlobals.ACTION_NAMESPACE + ".LOCATION_UNCHANGING";
-    
-    private final Runnable mCheckGps = new Runnable() {
-        public void run() {
-            mHandler.postDelayed(mCheckGps, TIME_WINDOW_FOR_LOCATION_CHANGE_MS);
 
-            if (!isLocationTooOld() && !isLocationTheSame()) {
+    private final Runnable mCheckTimeout = new Runnable() {
+        public void run() {
+            if (!isTimeWindowForMovementExceeded()) {
                 return;
             }
-
             LocalBroadcastManager.getInstance(mContext).sendBroadcastSync(new Intent(ACTION_LOCATION_NOT_CHANGING));
         }
     };
@@ -39,27 +38,31 @@ public class DetectUnchangingLocation extends BroadcastReceiver {
                 new IntentFilter(ACTION_LOCATION_NOT_CHANGING));
     }
 
-    boolean isLocationTooOld() {
-        if (mLastLocation == null) {
+    boolean isTimeWindowForMovementExceeded() {
+        if (mLastLocation == null ||
+            System.currentTimeMillis() - mStartTimeMs < INITIAL_DELAY_TO_WAIT_FOR_GPS_FIX_MS) {
             return false;
         }
-        return System.currentTimeMillis() - TIME_WINDOW_FOR_LOCATION_CHANGE_MS > mLastLocation.getTime();
-    }
-
-    boolean isLocationTheSame() {
-        return mLocationChangeMeters < 50;
+        return System.currentTimeMillis() - mPrefMotionChangeTimeWindowSeconds > mLastLocation.getTime();
     }
 
     public void start() {
+        mLastLocation = null;
+        mStartTimeMs = System.currentTimeMillis();
+        mPrefMotionChangeDistanceMeters = Prefs.getInstance().getMotionChangeDistanceMeters();
+        mPrefMotionChangeTimeWindowSeconds = Prefs.getInstance().getMotionChangeTimeWindowSeconds();
+
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(GPSScanner.ACTION_GPS_UPDATED);
         LocalBroadcastManager.getInstance(mContext).registerReceiver(this,  intentFilter);
-        mHandler.postDelayed(mCheckGps, TIME_WINDOW_FOR_LOCATION_CHANGE_MS);
+        mHandler.postDelayed(mCheckTimeout, INITIAL_DELAY_TO_WAIT_FOR_GPS_FIX_MS);
     }
 
     public void stop() {
-        mHandler.removeCallbacks(mCheckGps);
-        LocalBroadcastManager.getInstance(mContext).unregisterReceiver(this);
+        mHandler.removeCallbacks(mCheckTimeout);
+        try {
+            LocalBroadcastManager.getInstance(mContext).unregisterReceiver(this);
+        } catch (Exception e) {}
     }
 
     public void onReceive(Context context, Intent intent) {
@@ -77,25 +80,34 @@ public class DetectUnchangingLocation extends BroadcastReceiver {
             return;
         }
 
-        if (mLastLocation!= null) {
-            mLocationChangeMeters = newPosition.distanceTo(mLastLocation);
+        if (mLastLocation == null) {
+            mLastLocation = newPosition;
+        } else {
+            double dist = mLastLocation.distanceTo(newPosition);
+            if (dist > mPrefMotionChangeDistanceMeters) {
+                mLastLocation = newPosition;
+            } else if (isTimeWindowForMovementExceeded() || mDoSingleLocationCheck) {
+                mDoSingleLocationCheck = false;
+                LocalBroadcastManager.getInstance(mContext).sendBroadcastSync(new Intent(ACTION_LOCATION_NOT_CHANGING));
+                return;
+            }
         }
-        mLastLocation = newPosition;
 
-        mHandler.removeCallbacks(mCheckGps);
-        mHandler.postDelayed(mCheckGps, TIME_WINDOW_FOR_LOCATION_CHANGE_MS);
+        mDoSingleLocationCheck = false;
+
+        try {
+            mHandler.removeCallbacks(mCheckTimeout);
+        } catch (Exception e) {}
+        mHandler.postDelayed(mCheckTimeout, mPrefMotionChangeTimeWindowSeconds);
     }
 
     public void quickCheckAfterMotionSensorMovement() {
-        if (Build.VERSION.SDK_INT >= 18) {
-            return;
-        }
-
-        // Without significant motion detection (less than Android 4.3), false positives for movement are common.
-        // In this case, do a quick check, there is a significant possibility that the movement after idle
+        // False positives for movement are common.
+        // In this case, do a quick check, there is a significant possibility that the movement detected
         // is not enough to change the GPS position.
         // Don't need to wait the full time window before concluding the user has not moved.
         final int kWaitTimeMs = 1000 * 20;
-        mHandler.postDelayed(mCheckGps, kWaitTimeMs);
+        mDoSingleLocationCheck = true;
+        mHandler.postDelayed(mCheckTimeout, kWaitTimeMs);
     }
 }

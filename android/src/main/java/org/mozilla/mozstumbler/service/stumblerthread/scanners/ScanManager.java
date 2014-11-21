@@ -11,8 +11,6 @@ import android.location.Location;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
-import org.mozilla.mozstumbler.client.ClientPrefs;
-import org.mozilla.mozstumbler.client.MainApp;
 import org.mozilla.mozstumbler.service.stumblerthread.motiondetection.DetectUnchangingLocation;
 import org.mozilla.mozstumbler.service.stumblerthread.motiondetection.MotionSensor;
 import org.mozilla.mozstumbler.service.AppGlobals;
@@ -40,6 +38,9 @@ public class ScanManager {
     private BatteryCheckReceiver mPassiveModeBatteryChecker;
     private enum PassiveModeBatteryState { OK, LOW, IGNORE_BATTERY_STATE }
     private PassiveModeBatteryState mPassiveModeBatteryState;
+    private DetectUnchangingLocation mDetectUnchangingLocation;
+    private MotionSensor mMotionSensor;
+    private boolean mIsMotionlessPausedState;
 
     private BatteryCheckReceiver.BatteryCheckCallback mBatteryCheckCallback = new BatteryCheckReceiver.BatteryCheckCallback() {
         @Override
@@ -195,12 +196,6 @@ public class ScanManager {
     public Location getLocation() {
         return (mGPSScanner == null) ? new Location("null") : mGPSScanner.getLocation();
     }
-
-
-    private DetectUnchangingLocation mDetectUnchangingLocation;
-    private MotionSensor mMotionSensor;
-    private boolean mIsMotionlessPausedState;
-
 
     // After DetectUnchangingLocation reports the user is not moving, and the scanning pauses,
     // then use MotionSensor to determine when to wake up and start scanning again.

@@ -601,8 +601,7 @@ public class DataStorageManager {
         }
 
         // delete the original file
-        ok = ok & aFile.delete();
-        return ok;
+        return ok && aFile.delete();
     }
 
     public synchronized void deleteAll() {

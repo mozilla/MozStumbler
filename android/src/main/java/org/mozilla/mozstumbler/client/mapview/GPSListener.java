@@ -4,13 +4,14 @@
 
 package org.mozilla.mozstumbler.client.mapview;
 
-import android.content.Context;
 import android.location.GpsSatellite;
 import android.location.GpsStatus;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+
+import org.mozilla.mozstumbler.client.ClientPrefs;
 
 import java.lang.ref.WeakReference;
 
@@ -23,8 +24,8 @@ class GPSListener implements LocationListener {
 
     GPSListener(MapFragment mapFragment) {
         mMapActivity = new WeakReference<MapFragment>(mapFragment);
-        mLocationManager = (LocationManager) mapFragment.getActivity().getApplicationContext().
-                getSystemService(Context.LOCATION_SERVICE);
+
+        mLocationManager = mapFragment.getLocationManager();
         mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 1, this);
         mStatusListener = new GpsStatus.Listener() {
             public void onGpsStatusChanged(int event) {
@@ -69,8 +70,19 @@ class GPSListener implements LocationListener {
 
     @Override
     public void onLocationChanged(Location location) {
+        if (location == null) {
+            return;
+        }
+
         if (mMapActivity != null) {
             mMapActivity.get().setUserPositionAt(location);
+
+            ClientPrefs cPrefs = ClientPrefs.getInstance();
+            if (cPrefs.isDefaultSimulationLatLon()) {
+                cPrefs.setSimulationLat((float) location.getLatitude());
+                cPrefs.setSimulationLon((float) location.getLongitude());
+                cPrefs.wroteSimulationLatLon();
+            }
         }
     }
 

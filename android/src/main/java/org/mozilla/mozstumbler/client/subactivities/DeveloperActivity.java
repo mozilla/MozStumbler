@@ -4,6 +4,7 @@
 package org.mozilla.mozstumbler.client.subactivities;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -15,19 +16,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import org.acra.ACRA;
 import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.client.ClientPrefs;
 import org.mozilla.mozstumbler.client.serialize.KMLFragment;
 import org.mozilla.mozstumbler.service.AppGlobals;
-import org.mozilla.mozstumbler.service.core.logging.Log;
-import org.mozilla.mozstumbler.service.core.logging.MockAcraLog;
+import org.mozilla.mozstumbler.service.Prefs;
+
+import static org.mozilla.mozstumbler.R.string;
 
 public class DeveloperActivity extends ActionBarActivity {
 
@@ -78,6 +81,16 @@ public class DeveloperActivity extends ActionBarActivity {
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             mRootView = inflater.inflate(R.layout.fragment_developer_options, container, false);
 
+            // Setup for any logical group of config options should self contained in their
+            // own methods.  This is mostly to help with merges in the event that multiple
+            // source branches update the developer options.
+            setupSimulationPreference();
+            setupLowBatterySpinner();
+
+            return mRootView;
+        }
+
+        private void setupLowBatterySpinner() {
             final Spinner batterySpinner = (Spinner) mRootView.findViewById(R.id.spinnerBatteryPercent);
             final SpinnerAdapter spinnerAdapter = batterySpinner.getAdapter();
             assert(spinnerAdapter instanceof ArrayAdapter);
@@ -99,8 +112,43 @@ public class DeveloperActivity extends ActionBarActivity {
                 @Override
                 public void onNothingSelected(AdapterView<?> arg0) {}
             });
+        }
 
-            return mRootView;
+        private void setupSimulationPreference() {
+            boolean simulationEnabled = Prefs.getInstance().isSimulateStumble();
+            final CheckBox simCheckBox = (CheckBox) mRootView.findViewById(R.id.toggleSimulation);
+            final Button simResetBtn = (Button) mRootView.findViewById(R.id.buttonClearSimulationDefault);
+
+            if (!AppGlobals.isDebug) {
+                simCheckBox.setEnabled(false);
+                simResetBtn.setEnabled(false);
+                return;
+            }
+
+            simCheckBox.setChecked(simulationEnabled);
+            simCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    onToggleSimulation(isChecked);
+                }
+            });
+
+            simResetBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(android.view.View view) {
+                    ClientPrefs cPrefs = ClientPrefs.getInstance();
+                    cPrefs.clearSimulationStart();
+                    Context btnCtx = simResetBtn.getContext();
+                    Toast.makeText(btnCtx,
+                            btnCtx.getText(R.string.reset_simulation_start),
+                            Toast.LENGTH_SHORT).show();
+                }
+            });
+
+        }
+
+        private void onToggleSimulation(boolean isChecked) {
+            Prefs.getInstance().setSimulateStumble(isChecked);
         }
 
     }

@@ -144,6 +144,12 @@ android {
                         defaultConfig.versionName).replaceAll("ANDROID_VERSIONCODE",
                         Long.toString(defaultConfig.versionCode))
 
+                println("Variant buildType: [" + variant.buildType.name + "]");
+                if (variant.buildType.name == 'debug') {
+                    updatedContent = updatedContent.replaceAll("<!-- ANDROID_MOCK_LOCATION -->", 
+                                  '<uses-permission android:name="android.permission.ACCESS_MOCK_LOCATION" />')
+                }
+
                 manifestFile.write(updatedContent)
             }
             // This is a bit confusing, we want to swap in the

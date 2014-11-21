@@ -17,13 +17,38 @@
         android:layout_marginBottom="10dp"
         />
 
+    <CheckBox
+        android:id="@+id/toggleSimulation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/enable_simulation"
+        android:layout_below="@id/line1"/>
+
+    <Button
+        android:id="@+id/buttonClearSimulationDefault"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/clear_simulation_start_location"
+        android:layout_below="@+id/toggleSimulation"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"/>
+    <View
+        android:id="@+id/line2"
+        android:layout_height="1dp"
+        android:layout_width="fill_parent"
+        android:background="#55ffffff"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_below="@id/buttonClearSimulationDefault"
+        />
+
     <TextView
         android:id="@+id/batteryTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/checkBox_show_mls"
+        android:layout_below="@+id/line2"
         android:paddingBottom="10dp"
         android:paddingTop="20dp"
         android:text="Battery Saver"
@@ -47,6 +72,5 @@
         android:layout_toRightOf="@+id/batteryLabel"
         android:entries="@array/battery_percent_options"
         />
-
 
 </RelativeLayout>

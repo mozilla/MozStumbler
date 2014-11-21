@@ -1,6 +1,6 @@
 // each of the version numbers must be 0-99
 def versionMajor = 1
-def versionMinor = 3 // minor feature releases
+def versionMinor = 4 // minor feature releases
 def versionPatch = 0 // This should be bumped for hot fixes
 def buildHost = ""
 try

@@ -81,6 +81,9 @@ public class DeveloperActivity extends ActionBarActivity {
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             mRootView = inflater.inflate(R.layout.fragment_developer_options, container, false);
 
+            // Setup for any logical group of config options should self contained in their
+            // own methods.  This is mostly to help with merges in the event that multiple
+            // source branches update the developer options.
             setupSimulationPreference();
             setupLowBatterySpinner();
 

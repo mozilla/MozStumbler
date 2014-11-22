@@ -728,7 +728,6 @@ public final class MapFragment extends android.support.v4.app.Fragment
         }
     }
 
-
     public void showPausedDueToNoMotionMessage(boolean show) {
         mRootView.findViewById(R.id.scanning_paused_message).setVisibility(show? View.VISIBLE : View.INVISIBLE);
         if (mMapLocationListener != null ) {

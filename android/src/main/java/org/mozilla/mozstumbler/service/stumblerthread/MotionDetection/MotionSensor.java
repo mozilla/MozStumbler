@@ -16,8 +16,12 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.FloatMath;
 
 import org.mozilla.mozstumbler.service.AppGlobals;
+import org.mozilla.mozstumbler.service.core.logging.Log;
 
 public class MotionSensor {
+
+    private static final String LOG_TAG = AppGlobals.makeLogTag(MotionSensor.class);
+
     private final SensorManager mSensorManager;
     private final String ACTION_USER_MOTION_DETECTED = AppGlobals.ACTION_NAMESPACE + ".USER_MOVE";
     private LegacyMotionSensor mLegacyMotionSensor;
@@ -39,7 +43,9 @@ public class MotionSensor {
         mStopSignificantMotionSensor = false;
         if (Build.VERSION.SDK_INT >= 18) {
            mSignificantMotionSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_SIGNIFICANT_MOTION);
-           AppGlobals.guiLogInfo("Device has significant motion sensor.");
+           if (mSignificantMotionSensor != null) {
+               AppGlobals.guiLogInfo("Device has significant motion sensor.");
+           }
         }
 
         // If no TYPE_SIGNIFICANT_MOTION is available, use alternate means to sense motion
@@ -124,6 +130,14 @@ public class MotionSensor {
         void start() {
             mSensorManager.registerListener(mSensorEventListener,
                     mSensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION),
+                    SensorManager.SENSOR_DELAY_NORMAL);
+
+            // Some devices are really terrible. The Moto G XT1032 should respond to the
+            // TYPE_LINEAR_ACCELERATION, but will only respond to the TYPE_ACCELEROMETER (API 3).
+            // Luckily, both event types emit the same struct.  Who knows why there are two
+            // different constants.
+            mSensorManager.registerListener(mSensorEventListener,
+                    mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
                     SensorManager.SENSOR_DELAY_NORMAL);
         }
 

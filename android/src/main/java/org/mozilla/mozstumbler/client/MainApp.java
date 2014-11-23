@@ -238,7 +238,7 @@ public class MainApp extends Application
         mStumblerService.stopScanning();
         if (mMainActivity.get() != null) {
             mMainActivity.get().updateUiOnMainThread();
-            mMainActivity.get().isPausedDueToNoMotion(false);
+            mMainActivity.get().stop();
         }
 
         AsyncUploader uploader = new AsyncUploader();

@@ -16,5 +16,8 @@ public interface IMainActivity {
 
     // Call from main thread only
     public void isPausedDueToNoMotion(boolean isPaused);
+
+    // Call from main thread only
+    public void stop();
 }
 

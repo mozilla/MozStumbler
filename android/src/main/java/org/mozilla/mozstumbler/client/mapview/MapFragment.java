@@ -734,4 +734,11 @@ public final class MapFragment extends android.support.v4.app.Fragment
             mMapLocationListener.pauseGpsUpdates(show);
         }
     }
+
+    public void stop() {
+        mRootView.findViewById(R.id.scanning_paused_message).setVisibility(View.INVISIBLE);
+        if (mMapLocationListener != null ) {
+            mMapLocationListener.removeListener();
+        }
+    }
 }

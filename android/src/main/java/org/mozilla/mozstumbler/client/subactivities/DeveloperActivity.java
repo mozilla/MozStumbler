@@ -145,8 +145,10 @@ public class DeveloperActivity extends ActionBarActivity {
                 prefs.setMotionChangeTimeWindowSeconds(val);
             }
             MainApp mainApp = ((MainApp)getActivity().getApplication());
-            mainApp.stopScanning();
-            mainApp.startScanning();
+            if (mainApp.isScanningOrPaused()) {
+                mainApp.stopScanning();
+                mainApp.startScanning();
+            }
         }
 
         private int findIndexOf(int needle, String[] haystack) {

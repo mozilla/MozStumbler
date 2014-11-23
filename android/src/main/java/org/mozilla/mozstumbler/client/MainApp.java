@@ -412,9 +412,11 @@ public class MainApp extends Application
 
         AppGlobals.guiLogInfo("Is motionless: " + mIsScanningPausedDueToNoMotion);
 
+        NotificationUtil util = new NotificationUtil(this.getApplicationContext());
         if (mIsScanningPausedDueToNoMotion) {
-            NotificationUtil util = new NotificationUtil(this.getApplicationContext());
             util.updateSubtitle(getString(R.string.map_scanning_paused_no_motion));
+        } else {
+            util.updateSubtitle(getString(R.string.service_scanning));
         }
 
         if (mMainActivity.get() != null) {

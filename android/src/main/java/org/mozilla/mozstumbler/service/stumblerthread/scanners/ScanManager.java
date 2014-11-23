@@ -150,7 +150,7 @@ public class ScanManager {
     }
 
     public synchronized boolean stopScanning() {
-        if (!this.isScanning()) {
+        if (!this.isScanning() && !mIsMotionlessPausedState) {
             return false;
         }
 
@@ -160,6 +160,7 @@ public class ScanManager {
 
         mIsMotionlessPausedState = false;
         mDetectUnchangingLocation.stop();
+        mMotionSensor.stop();
 
         mGPSScanner.stop();
         mWifiScanner.stop();
@@ -207,6 +208,9 @@ public class ScanManager {
             }
             stopScanning();
             mIsMotionlessPausedState = true;
+            if (AppGlobals.isDebug) {
+                Log.d(LOG_TAG, "MotionSensor started");
+            }
             mMotionSensor.start();
 
             Intent sendIntent = new Intent(ACTION_SCAN_PAUSED_USER_MOTIONLESS);

@@ -1,4 +1,4 @@
-package org.mozilla.mozstumbler.service.stumblerthread.MotionDetection;
+package org.mozilla.mozstumbler.service.stumblerthread.motiondetection;
 
 import android.annotation.TargetApi;
 import android.content.BroadcastReceiver;

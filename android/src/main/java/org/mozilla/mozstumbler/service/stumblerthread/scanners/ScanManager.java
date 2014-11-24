@@ -13,8 +13,8 @@ import android.util.Log;
 
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.AppGlobals.ActiveOrPassiveStumbling;
-import org.mozilla.mozstumbler.service.stumblerthread.MotionDetection.DetectUnchangingLocation;
-import org.mozilla.mozstumbler.service.stumblerthread.MotionDetection.MotionSensor;
+import org.mozilla.mozstumbler.service.stumblerthread.motiondetection.DetectUnchangingLocation;
+import org.mozilla.mozstumbler.service.stumblerthread.motiondetection.MotionSensor;
 import org.mozilla.mozstumbler.service.stumblerthread.Reporter;
 import org.mozilla.mozstumbler.service.stumblerthread.blocklist.WifiBlockListInterface;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner.CellScanner;

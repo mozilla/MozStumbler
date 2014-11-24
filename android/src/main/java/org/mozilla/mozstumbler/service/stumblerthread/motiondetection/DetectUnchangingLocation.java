@@ -1,4 +1,4 @@
-package org.mozilla.mozstumbler.service.stumblerthread.MotionDetection;
+package org.mozilla.mozstumbler.service.stumblerthread.motiondetection;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

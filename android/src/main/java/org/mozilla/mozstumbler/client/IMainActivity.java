@@ -6,7 +6,7 @@ package org.mozilla.mozstumbler.client;
 
 public interface IMainActivity {
     // Thread-safe way to update the main UI.
-    public void updateUiOnMainThread();
+    public void updateUiOnMainThread(boolean updateMetrics);
 
     // Call from main thread only
     public void setUploadState(boolean isUploadingObservations);

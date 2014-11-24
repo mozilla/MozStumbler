@@ -62,35 +62,35 @@ class MapLocationListener  {
     private final LocationUpdateListener mNetworkLocationListener =
             new LocationUpdateListener(LocationManager.NETWORK_PROVIDER, 1000, null);
 
+    private final GpsStatus.Listener mSatelliteListener = new GpsStatus.Listener() {
+        public void onGpsStatusChanged(int event) {
+            if (event == GpsStatus.GPS_EVENT_SATELLITE_STATUS && mLocationManager != null) {
+                GpsStatus gpsStatus = mLocationManager.getGpsStatus(null);
+                Iterable<GpsSatellite> sats = gpsStatus.getSatellites();
+                int satellites = 0;
+                int fixes = 0;
+                for (GpsSatellite sat : sats) {
+                    satellites++;
+                    if (sat.usedInFix()) {
+                        fixes++;
+                    }
+                }
+                if (mMapActivity.get() != null) {
+                    mMapActivity.get().updateGPSInfo(satellites, fixes);
+                }
+                if (fixes < GPSScanner.MIN_SAT_USED_IN_FIX) {
+                    enableLocationListener(true, mNetworkLocationListener);
+                }
+            }
+        }
+    };
+
     MapLocationListener(MapFragment mapFragment) {
         mMapActivity = new WeakReference<MapFragment>(mapFragment);
         mLocationManager = (LocationManager) mapFragment.getActivity().getApplicationContext().
                 getSystemService(Context.LOCATION_SERVICE);
 
-        final GpsStatus.Listener satelliteListener = new GpsStatus.Listener() {
-            public void onGpsStatusChanged(int event) {
-                if (event == GpsStatus.GPS_EVENT_SATELLITE_STATUS && mLocationManager != null) {
-                    GpsStatus gpsStatus = mLocationManager.getGpsStatus(null);
-                    Iterable<GpsSatellite> sats = gpsStatus.getSatellites();
-                    int satellites = 0;
-                    int fixes = 0;
-                    for (GpsSatellite sat : sats) {
-                        satellites++;
-                        if (sat.usedInFix()) {
-                            fixes++;
-                        }
-                    }
-                    if (mMapActivity.get() != null) {
-                        mMapActivity.get().updateGPSInfo(satellites, fixes);
-                    }
-                    if (fixes < GPSScanner.MIN_SAT_USED_IN_FIX) {
-                        enableLocationListener(true, mNetworkLocationListener);
-                    }
-                }
-            }
-        };
-
-        mLocationManager.addGpsStatusListener(satelliteListener);
+        mLocationManager.addGpsStatusListener(mSatelliteListener);
 
         Location lastLoc = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         if (lastLoc == null) {
@@ -117,7 +117,8 @@ class MapLocationListener  {
         listener.mIsActive = isEnabled;
     }
 
-    void removeListener() {
+    public void removeListener() {
+        mLocationManager.removeGpsStatusListener(mSatelliteListener);
         enableLocationListener(false, mGpsLocationListener);
         enableLocationListener(false, mNetworkLocationListener);
     }

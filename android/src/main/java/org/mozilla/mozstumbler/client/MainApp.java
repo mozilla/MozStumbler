@@ -68,7 +68,6 @@ public class MainApp extends Application
     private final long MAX_BYTES_DISK_STORAGE = 1000 * 1000 * 20; // 20MB for Mozilla Stumbler by default, is ok?
     private final int MAX_WEEKS_OLD_STORED = 4;
     public static final String INTENT_TURN_OFF = "org.mozilla.mozstumbler.turnMeOff";
-    private static final int NOTIFICATION_ID = 1;
     public static final String ACTION_BASE = AppGlobals.ACTION_NAMESPACE + ".MainApp.";
     public static final String ACTION_LOW_BATTERY = ACTION_BASE + ".LOW_BATTERY";
     private boolean mIsScanningPausedDueToNoMotion;
@@ -239,7 +238,7 @@ public class MainApp extends Application
         mStumblerService.stopScanning();
         if (mMainActivity.get() != null) {
             mMainActivity.get().updateUiOnMainThread();
-            mMainActivity.get().isPausedDueToNoMotion(false);
+            mMainActivity.get().stop();
         }
 
         AsyncUploader uploader = new AsyncUploader();
@@ -411,11 +410,13 @@ public class MainApp extends Application
             return;
         }
 
-        AppGlobals.guiLogInfo("Is motionless:" + mIsScanningPausedDueToNoMotion);
+        AppGlobals.guiLogInfo("Is motionless: " + mIsScanningPausedDueToNoMotion);
 
+        NotificationUtil util = new NotificationUtil(this.getApplicationContext());
         if (mIsScanningPausedDueToNoMotion) {
-            NotificationUtil util = new NotificationUtil(this.getApplicationContext());
             util.updateSubtitle(getString(R.string.map_scanning_paused_no_motion));
+        } else {
+            util.updateSubtitle(getString(R.string.service_scanning));
         }
 
         if (mMainActivity.get() != null) {

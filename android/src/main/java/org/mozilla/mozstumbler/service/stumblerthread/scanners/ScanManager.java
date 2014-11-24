@@ -11,10 +11,10 @@ import android.location.Location;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
-import org.mozilla.mozstumbler.service.stumblerthread.motiondetection.DetectUnchangingLocation;
-import org.mozilla.mozstumbler.service.stumblerthread.motiondetection.MotionSensor;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.AppGlobals.ActiveOrPassiveStumbling;
+import org.mozilla.mozstumbler.service.stumblerthread.motiondetection.DetectUnchangingLocation;
+import org.mozilla.mozstumbler.service.stumblerthread.motiondetection.MotionSensor;
 import org.mozilla.mozstumbler.service.stumblerthread.Reporter;
 import org.mozilla.mozstumbler.service.stumblerthread.blocklist.WifiBlockListInterface;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner.CellScanner;
@@ -150,7 +150,7 @@ public class ScanManager {
     }
 
     public synchronized boolean stopScanning() {
-        if (!this.isScanning()) {
+        if (!this.isScanning() && !mIsMotionlessPausedState) {
             return false;
         }
 
@@ -160,6 +160,7 @@ public class ScanManager {
 
         mIsMotionlessPausedState = false;
         mDetectUnchangingLocation.stop();
+        mMotionSensor.stop();
 
         mGPSScanner.stop();
         mWifiScanner.stop();
@@ -207,6 +208,9 @@ public class ScanManager {
             }
             stopScanning();
             mIsMotionlessPausedState = true;
+            if (AppGlobals.isDebug) {
+                Log.d(LOG_TAG, "MotionSensor started");
+            }
             mMotionSensor.start();
 
             Intent sendIntent = new Intent(ACTION_SCAN_PAUSED_USER_MOTIONLESS);

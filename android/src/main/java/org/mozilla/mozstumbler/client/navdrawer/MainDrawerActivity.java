@@ -287,4 +287,9 @@ public class MainDrawerActivity
     public void isPausedDueToNoMotion(boolean isPaused) {
         mMapFragment.showPausedDueToNoMotionMessage(isPaused);
     }
+
+    @Override
+    public void stop() {
+        mMapFragment.stop();
+    }
 }

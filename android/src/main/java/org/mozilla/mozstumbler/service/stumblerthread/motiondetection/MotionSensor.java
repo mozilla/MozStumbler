@@ -16,7 +16,6 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.FloatMath;
 
 import org.mozilla.mozstumbler.service.AppGlobals;
-import org.mozilla.mozstumbler.service.core.logging.Log;
 
 public class MotionSensor {
 

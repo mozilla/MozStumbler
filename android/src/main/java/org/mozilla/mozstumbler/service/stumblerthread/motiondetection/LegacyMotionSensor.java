@@ -18,7 +18,7 @@ import org.mozilla.mozstumbler.service.core.logging.Log;
 public class LegacyMotionSensor {
     private static final String LOG_TAG = AppGlobals.makeLogTag(LegacyMotionSensor.class);
     private final Context mAppContext;
-    private final SensorManager mSensorManager;
+    final SensorManager mSensorManager;
     private long mLastTimeThereWasMovementMs;
     private int mMovementCountWithinTimeWindow;
 
@@ -31,7 +31,7 @@ public class LegacyMotionSensor {
 
     // I'm assuming 30 iterations is good enough to get convergence.
     private static int iterations_for_convergence = 30;
-    final float alpha = (float) 0.8;
+    private final float alpha = (float) 0.8;
     private static final float converged_accel_epsilon = (float) 0.3;
 
     public LegacyMotionSensor(Context ctx)
@@ -40,64 +40,74 @@ public class LegacyMotionSensor {
         mSensorManager = (SensorManager) mAppContext.getSystemService(Context.SENSOR_SERVICE);
     }
 
-    private float computed_gravity = 0;
+    public float computed_gravity = 0;
 
-    private final SensorEventListener mSensorEventListener = new SensorEventListener() {
-        public void onSensorChanged(SensorEvent event) {
+    /*
+     This function is called by the SensorEventListener so that we have something to test.
+     Real SensorEvent instances cannot be constructed on a test platform.
+     */
+    public void sensorChanged(int sensorType, float[] event_values) {
+        if (sensorType == Sensor.TYPE_ACCELEROMETER) {
+            gravity[0] = alpha * gravity[0] + (1 - alpha) * event_values[0];
+            gravity[1] = alpha * gravity[1] + (1 - alpha) * event_values[1];
+            gravity[2] = alpha * gravity[2] + (1 - alpha) * event_values[2];
 
-            if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
-                gravity[0] = alpha * gravity[0] + (1 - alpha) * event.values[0];
-                gravity[1] = alpha * gravity[1] + (1 - alpha) * event.values[1];
-                gravity[2] = alpha * gravity[2] + (1 - alpha) * event.values[2];
+            linear_acceleration[0] = event_values[0] - gravity[0];
+            linear_acceleration[1] = event_values[1] - gravity[1];
+            linear_acceleration[2] = event_values[2] - gravity[2];
 
-                linear_acceleration[0] = event.values[0] - gravity[0];
-                linear_acceleration[1] = event.values[1] - gravity[1];
-                linear_acceleration[2] = event.values[2] - gravity[2];
+            computed_gravity = FloatMath.sqrt(gravity[0] * gravity[0] +
+                    gravity[1] * gravity[1] +
+                    gravity[2] * gravity[2]);
 
-                computed_gravity = FloatMath.sqrt(gravity[0] * gravity[0] +
-                        gravity[1]* gravity[1] +
-                        gravity[2]*gravity[2]);
+            if (iterations_for_convergence > 0) {
+                iterations_for_convergence--;
+                return;
+            }
+        } else {
+            linear_acceleration[0] = event_values[0];
+            linear_acceleration[1] = event_values[1];
+            linear_acceleration[2] = event_values[2];
+        }
 
-                Log.d(LOG_TAG, "Gravity is : " + computed_gravity);
-                if (iterations_for_convergence > 0) {
-                    iterations_for_convergence --;
-                    Log.d(LOG_TAG, "Raw event values:  "+event.values[0] +", " + event.values[1] + ", " + event.values[2]);
-                    return;
+        float x = linear_acceleration[0];
+        float y = linear_acceleration[1];
+        float z = linear_acceleration[2];
+
+        final float accel = FloatMath.sqrt(x * x + y * y + z * z);
+        Log.d(LOG_TAG, "Got acceleration of " + accel);
+
+        // I found this to be a very low threshold, slight movements of the device are greater than 1.0.
+        // False positives are fine, what we don't want is devices that can't be woken up easily.
+        final float arbitraryThresholdForMovement = 1.0f;
+
+        if (accel > arbitraryThresholdForMovement) {
+            final long prevTime = mLastTimeThereWasMovementMs;
+            mLastTimeThereWasMovementMs = System.currentTimeMillis();
+
+            if (mLastTimeThereWasMovementMs - prevTime < TIME_WINDOW_MS) {
+                mMovementCountWithinTimeWindow++;
+                if (mMovementCountWithinTimeWindow >= MOVEMENTS_REQUIRED_IN_TIME_WINDOW) {
+                    mMovementCountWithinTimeWindow = 0;
+                    LocalBroadcastManager.getInstance(mAppContext).
+                            sendBroadcastSync(new Intent(MotionSensor.ACTION_USER_MOTION_DETECTED));
                 }
             } else {
-                linear_acceleration[0] = event.values[0];
-                linear_acceleration[1] = event.values[1];
-                linear_acceleration[2] = event.values[2];
-            }
-
-            float x = linear_acceleration[0];
-            float y = linear_acceleration[1];
-            float z = linear_acceleration[2];
-
-            final float accel = FloatMath.sqrt(x * x + y * y + z * z);
-            Log.d(LOG_TAG, "Got acceleration of " + accel);
-
-            // I found this to be a very low threshold, slight movements of the device are greater than 1.0.
-            // False positives are fine, what we don't want is devices that can't be woken up easily.
-            final float arbitraryThresholdForMovement = 1.0f;
-
-            if (accel > arbitraryThresholdForMovement) {
-                final long prevTime = mLastTimeThereWasMovementMs;
-                mLastTimeThereWasMovementMs = System.currentTimeMillis();
-
-                if (mLastTimeThereWasMovementMs - prevTime < TIME_WINDOW_MS) {
-                    mMovementCountWithinTimeWindow++;
-                    if (mMovementCountWithinTimeWindow >= MOVEMENTS_REQUIRED_IN_TIME_WINDOW) {
-                        mMovementCountWithinTimeWindow = 0;
-                        LocalBroadcastManager.getInstance(mAppContext).
-                                sendBroadcastSync(new Intent(MotionSensor.ACTION_USER_MOTION_DETECTED));
-                    }
-                } else {
-                    mMovementCountWithinTimeWindow = 0;
-                }
+                mMovementCountWithinTimeWindow = 0;
             }
         }
 
+    }
+
+    final SensorEventListener mSensorEventListener = new SensorEventListener() {
+        @Override
+        public void onSensorChanged(SensorEvent event) {
+            // This must call a method in the LegacyMotionSensor
+            // or else we have no way of instrumenting the class with tests.
+            sensorChanged(event.sensor.getType(), event.values);
+        }
+
+        @Override
         public void onAccuracyChanged(Sensor sensor, int accuracy) {
         }
     };

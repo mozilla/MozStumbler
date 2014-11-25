@@ -48,8 +48,8 @@
     <string name="metrics_observations_cell_towers_title">Redes celulares:</string>
     <string name="upload_observations_in_queue_title">Listo para subir</string>
     <string name="upload_wifi_only_title">Auto-Subir sólo por Wi-Fi</string>
-    <string name="upload_wifi_only_summary">Está opción reducirá tu consumo de datos de tu operador móvil. Presionando el botón subir en las Metricas siempre subirá los reportes.</string>
-    <string name="metrics_activity_title">Metricas</string>
+    <string name="upload_wifi_only_summary">Está opción reducirá tu consumo de datos de tu operador móvil. Presionando el botón subir en las Métricas siempre subirá los reportes.</string>
+    <string name="metrics_activity_title">Métricas</string>
     <string name="metrics_this_session">Sesión actual</string>
     <string name="drawer_map_option_show_mls_locations">Mostrar ubicaciones de MLS</string>
     <string name="title_activity_log">Log</string>
@@ -75,7 +75,7 @@
     <string name="share_after_kml_saved">El archivo fue guardado en el dispositivo, ¿Te gustaría compartir el archivo?</string>
     <string name="enter_email">Ingresa tu dirección de correo (opcional)</string>
     <string name="enter_email_title">Correo: %1$s</string>
-    <string name="enter_email_longtext">Tu dirección de correo jamas es mostrada a las personas y sólo es usada para tus reportes</string>
+    <string name="enter_email_longtext">Tu dirección de correo jamás es mostrada a las personas y sólo es usada para tus reportes</string>
     <string name="drawer_open">Mostrar barra lateral</string>
     <string name="drawer_close">Cerrar barra lateral</string>
     <string name="title_activity_leaderboard">Tabla de posiciones</string>

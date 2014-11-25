@@ -35,10 +35,22 @@ public class DetectUnchangingLocation extends BroadcastReceiver {
         }
     };
 
+    /// Testing code
+    static DetectUnchangingLocation sTestInstance;
+    public static void testSendLocationUnchanging() {
+        sTestInstance.mDoSingleLocationCheck = true;
+        Intent intent = new Intent(GPSScanner.ACTION_GPS_UPDATED);
+        intent.putExtra(Intent.EXTRA_SUBJECT, GPSScanner.SUBJECT_NEW_LOCATION);
+        intent.putExtra(GPSScanner.NEW_LOCATION_ARG_LOCATION, sTestInstance.mLastLocation);
+        sTestInstance.onReceive(sTestInstance.mContext, intent);
+    }
+    /// ---
+
     public DetectUnchangingLocation(Context context, BroadcastReceiver callbackReceiver) {
         mContext = context;
         LocalBroadcastManager.getInstance(context).registerReceiver(callbackReceiver,
                 new IntentFilter(ACTION_LOCATION_NOT_CHANGING));
+        sTestInstance = this;
     }
 
     boolean isTimeWindowForMovementExceeded() {
@@ -57,7 +69,7 @@ public class DetectUnchangingLocation extends BroadcastReceiver {
 
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(GPSScanner.ACTION_GPS_UPDATED);
-        LocalBroadcastManager.getInstance(mContext).registerReceiver(this,  intentFilter);
+        LocalBroadcastManager.getInstance(mContext).registerReceiver(this, intentFilter);
         mHandler.postDelayed(mCheckTimeout, INITIAL_DELAY_TO_WAIT_FOR_GPS_FIX_MS);
     }
 

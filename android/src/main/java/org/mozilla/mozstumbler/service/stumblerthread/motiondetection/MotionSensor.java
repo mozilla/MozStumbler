@@ -28,7 +28,19 @@ public class MotionSensor {
     private final Context mContext;
     private boolean mStopSignificantMotionSensor;
 
+    /// Testing code
+    private static MotionSensor sTestInstance;
+    public static void testMotionDetected() {
+        if (sTestInstance.mStopSignificantMotionSensor) {
+            return;
+        }
+        AppGlobals.guiLogInfo("TEST: Major motion detected.");
+        LocalBroadcastManager.getInstance(sTestInstance.mContext).sendBroadcastSync(new Intent(ACTION_USER_MOTION_DETECTED));
+    }
+    /// ---
+
     public MotionSensor(Context context, BroadcastReceiver callbackReceiver) {
+        sTestInstance = this;
         mContext = context;
         LocalBroadcastManager.getInstance(context).registerReceiver(callbackReceiver,
                 new IntentFilter(ACTION_USER_MOTION_DETECTED));

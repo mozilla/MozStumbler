@@ -24,6 +24,9 @@ import org.mozilla.mozstumbler.client.ClientPrefs;
 import org.mozilla.mozstumbler.client.MainApp;
 import org.mozilla.mozstumbler.client.serialize.KMLFragment;
 import org.mozilla.mozstumbler.service.AppGlobals;
+import org.mozilla.mozstumbler.service.stumblerthread.motiondetection.DetectUnchangingLocation;
+import org.mozilla.mozstumbler.service.stumblerthread.motiondetection.MotionSensor;
+
 public class DeveloperActivity extends ActionBarActivity {
 
     private final String LOG_TAG = AppGlobals.makeLogTag(DeveloperActivity.class.getSimpleName());
@@ -44,20 +47,26 @@ public class DeveloperActivity extends ActionBarActivity {
         tv.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                new AlertDialog.Builder(DeveloperActivity.this)
-                        .setTitle("ACRA test")
-                        .setMessage("Force a crash?")
-                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                Object empty = null;
-                                empty.hashCode();
-                            }
-                        })
-                        .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {}
-                        })
-                        .setIcon(android.R.drawable.ic_dialog_alert)
-                        .show();
+                final AlertDialog.Builder b = new AlertDialog.Builder(DeveloperActivity.this);
+                final String[] menuList = { "ACRA Crash Test", "Fake no motion", "Fake motion"};
+                b.setTitle("Secret testing.. shhh.");
+                b.setItems(menuList,new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int item) {
+                    switch (item) {
+                        case 0:
+                            Object a = null;
+                            a.hashCode();
+                            break;
+                        case 1:
+                            DetectUnchangingLocation.testSendLocationUnchanging();
+                            break;
+                        case 2:
+                            MotionSensor.testMotionDetected();
+                            break;
+                    }
+                    }
+                });
+                b.create().show();
                 return true;
             }
         });

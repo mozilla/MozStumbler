@@ -58,11 +58,12 @@ public class DeveloperActivity extends ActionBarActivity {
                             a.hashCode();
                             break;
                         case 1:
-                            DetectUnchangingLocation.testSendLocationUnchanging();
+                            DetectUnchangingLocation.debugSendLocationUnchanging();
                             break;
                         case 2:
-                            MotionSensor.testMotionDetected();
+                            MotionSensor.debugMotionDetected();
                             break;
+                        case 3:
                     }
                     }
                 });

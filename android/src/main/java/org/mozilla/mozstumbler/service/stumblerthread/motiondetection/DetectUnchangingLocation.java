@@ -12,6 +12,17 @@ import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.Prefs;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.GPSScanner;
 
+// This class is a bit confusing because of 2 checks that need to take place.
+// 1) One check happens when a gps event arrives, to see if the user moved x meters in t seconds.
+// 2) The other is a timeout in case no gps event arrives during time t.
+//
+// Both cases broadcast the same intent that the user is not moving.
+//
+// This class never broadcasts the user _is_ moving. That case is handled like this:
+//  - scanning starts, user is assumed moving
+//  - DetectUnchangingLocation says movement stopped, scanning paused
+//  - Motion detector waits for motion, if motion detected, scanning starts (user assumed to be moving)
+//
 public class DetectUnchangingLocation extends BroadcastReceiver {
     private static final String LOG_TAG = AppGlobals.makeLogTag(BroadcastReceiver.class.getSimpleName());
     private final Context mContext;
@@ -35,22 +46,22 @@ public class DetectUnchangingLocation extends BroadcastReceiver {
         }
     };
 
-    /// Testing code
-    static DetectUnchangingLocation sTestInstance;
-    public static void testSendLocationUnchanging() {
-        sTestInstance.mDoSingleLocationCheck = true;
+    /// Debugging code
+    static DetectUnchangingLocation sDebugInstance;
+    public static void debugSendLocationUnchanging() {
+        sDebugInstance.mDoSingleLocationCheck = true;
         Intent intent = new Intent(GPSScanner.ACTION_GPS_UPDATED);
         intent.putExtra(Intent.EXTRA_SUBJECT, GPSScanner.SUBJECT_NEW_LOCATION);
-        intent.putExtra(GPSScanner.NEW_LOCATION_ARG_LOCATION, sTestInstance.mLastLocation);
-        sTestInstance.onReceive(sTestInstance.mContext, intent);
+        intent.putExtra(GPSScanner.NEW_LOCATION_ARG_LOCATION, sDebugInstance.mLastLocation);
+        LocalBroadcastManager.getInstance(sDebugInstance.mContext).sendBroadcastSync(intent);
     }
     /// ---
 
     public DetectUnchangingLocation(Context context, BroadcastReceiver callbackReceiver) {
+        sDebugInstance = this;
         mContext = context;
         LocalBroadcastManager.getInstance(context).registerReceiver(callbackReceiver,
                 new IntentFilter(ACTION_LOCATION_NOT_CHANGING));
-        sTestInstance = this;
     }
 
     boolean isTimeWindowForMovementExceeded() {
@@ -123,11 +134,11 @@ public class DetectUnchangingLocation extends BroadcastReceiver {
         mHandler.postDelayed(mCheckTimeout, mPrefMotionChangeTimeWindowMs + addedDelay);
     }
 
-    public void quickCheckAfterMotionSensorMovement() {
-        // False positives for movement are common.
-        // In this case, do a quick check, there is a significant possibility that the movement detected
-        // is not enough to change the GPS position.
-        // Don't need to wait the full time window before concluding the user has not moved.
+    public void quickCheckForFalsePositiveAfterMotionSensorMovement() {
+        // False positives for movement are common, particularly for the legacy sensor.
+        // Without this check, a false positive cause scanning to run for mPrefMotionChangeTimeWindowMs (2 mins default).
+        // We don't need to wait the full time window before concluding the user has not moved.
+        // This check waits 20 seconds for location change, if not, go back to paused.
         final int kWaitTimeMs = 1000 * 20;
         mDoSingleLocationCheck = true;
         mHandler.postDelayed(mCheckTimeout, kWaitTimeMs);

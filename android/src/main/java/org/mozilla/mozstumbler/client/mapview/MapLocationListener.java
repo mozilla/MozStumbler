@@ -11,6 +11,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.GPSScanner;
 
@@ -87,8 +88,14 @@ class MapLocationListener  {
 
     MapLocationListener(MapFragment mapFragment) {
         mMapActivity = new WeakReference<MapFragment>(mapFragment);
-        mLocationManager = (LocationManager) mapFragment.getActivity().getApplicationContext().
-                getSystemService(Context.LOCATION_SERVICE);
+        Context context = mapFragment.getActivity().getApplicationContext();
+
+        mLocationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+        if (mLocationManager == null) {
+            // Ugly non-localized message, which is fine, the app is not usable on any device that shows this toast.
+            Toast.makeText(context, "Error: no LOCATION_SERVICE", Toast.LENGTH_LONG);
+            return;
+        }
 
         mLocationManager.addGpsStatusListener(mSatelliteListener);
 
@@ -109,6 +116,10 @@ class MapLocationListener  {
     }
 
     private void enableLocationListener(boolean isEnabled, LocationUpdateListener listener) {
+        if (mLocationManager == null) {
+            return;
+        }
+
         if (isEnabled && !listener.mIsActive) {
             mLocationManager.requestLocationUpdates(listener.mType, listener.mFreqMs, 0, listener);
         } else if (!isEnabled && listener.mIsActive) {
@@ -118,6 +129,10 @@ class MapLocationListener  {
     }
 
     public void removeListener() {
+        if (mLocationManager == null) {
+            return;
+        }
+
         mLocationManager.removeGpsStatusListener(mSatelliteListener);
         enableLocationListener(false, mGpsLocationListener);
         enableLocationListener(false, mNetworkLocationListener);

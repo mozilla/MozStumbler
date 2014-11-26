@@ -26,6 +26,7 @@ import org.mozilla.mozstumbler.client.serialize.KMLFragment;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.stumblerthread.motiondetection.DetectUnchangingLocation;
 import org.mozilla.mozstumbler.service.stumblerthread.motiondetection.MotionSensor;
+import org.mozilla.mozstumbler.service.utils.BatteryCheckReceiver;
 
 public class DeveloperActivity extends ActionBarActivity {
 
@@ -48,7 +49,8 @@ public class DeveloperActivity extends ActionBarActivity {
             @Override
             public boolean onLongClick(View v) {
                 final AlertDialog.Builder b = new AlertDialog.Builder(DeveloperActivity.this);
-                final String[] menuList = { "ACRA Crash Test", "Fake no motion", "Fake motion"};
+                final String[] menuList = { "ACRA Crash Test",
+                        "Fake no motion", "Fake motion", "Battery Low", "Battery OK"};
                 b.setTitle("Secret testing.. shhh.");
                 b.setItems(menuList,new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int item) {
@@ -64,6 +66,13 @@ public class DeveloperActivity extends ActionBarActivity {
                             MotionSensor.debugMotionDetected();
                             break;
                         case 3:
+                            int pct = ClientPrefs.getInstance().getMinBatteryPercent();
+                            BatteryCheckReceiver.debugSendBattery(pct - 1);
+                            break;
+                        case 4:
+                            BatteryCheckReceiver.debugSendBattery(99);
+                            break;
+
                     }
                     }
                 });

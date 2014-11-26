@@ -86,6 +86,8 @@
     <string name="first_run_welcome_to_mozstumbler">Bienvenido a Mozilla Stumbler</string>
     <string name="map_unavailable">El mapa no está disponible para mostrarse, ya que no hay una tarjeta SD.\nAún así puedes recolectar datos.</string>
     <string name="map_offline_mode">El mapa no se actualizará sin una conexión a Internet,\nsin embargo todavía eres capaz de recolectar datos.</string>
+    <string name="map_copyright_fdroid">Mosaico cortesía de los colaboradores de MapQuest\n© OpenStreetMap</string>
+    <string name="map_copyright_moz">Colaboradores de © MapBox © OpenStreetMap</string>
     <string name="action_developer">Desarrollador</string>
     <string name="developer_title">Desarrollador</string>
     <string name="enable_option_show_mls_on_map">Habilitar consultas a ubicaciones MLS</string>
@@ -105,11 +107,16 @@
     <string name="category_leaderboard">Tabla de posiciones</string>
     <string name="category_network_usage">Uso de la red</string>
     <string name="category_display">Visualización</string>
-    <string name="category_crashreport">Reporte de fallos</string>
     <string-array name="map_tile_resolution_options">
         <item>Alto (Wi-Fi) / Bajo (datos móviles)</item>
         <item>Sólo alto detalle</item>
         <item>Sólo bajo detalle</item>
         <item>Sin mapa</item>
+    </string-array>
+    <string-array name="map_tile_resolution_options_intvalues">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
     </string-array>
 </resources>

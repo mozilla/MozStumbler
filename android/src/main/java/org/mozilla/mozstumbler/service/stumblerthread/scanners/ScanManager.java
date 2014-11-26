@@ -228,7 +228,7 @@ public class ScanManager {
             startScanning(context);
             mMotionSensor.stop();
 
-            mDetectUnchangingLocation.quickCheckAfterMotionSensorMovement();
+            mDetectUnchangingLocation.quickCheckForFalsePositiveAfterMotionSensorMovement();
 
             Intent sendIntent = new Intent(ACTION_SCAN_PAUSED_USER_MOTIONLESS);
             sendIntent.putExtra(ACTION_EXTRA_IS_PAUSED, mIsMotionlessPausedState);

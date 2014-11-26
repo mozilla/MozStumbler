@@ -67,8 +67,8 @@ android {
 
         // Crash report settings
         buildConfigField "String", "ACRA_URI", "\"http://ec2-54-172-135-65.compute-1.amazonaws.com/acra-stumbler/_design/acra-storage/_update/report\""
-        buildConfigField "String", "ACRA_USER", "\"mozstumbler\""
-        buildConfigField "String", "ACRA_PASS", "\"attielintabl\""
+        buildConfigField "String", "ACRA_USER", "\"nospam\""
+        buildConfigField "String", "ACRA_PASS", "\"4ok3bsWs509i\""
     }
 
     signingConfigs {

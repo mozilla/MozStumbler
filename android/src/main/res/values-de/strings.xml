@@ -19,7 +19,7 @@
     <string name="yes">Ja</string>
     <string name="no">Nein</string>
     <string name="about_version">Version %1$s</string>
-	<string name="about_openstreetmap">Kacheln der Kartenansicht\n© OpenStreetMap-Mitwirkende\nhttp://www.openstreetmap.org</string>
+    <string name="about_openstreetmap">Kacheln der Kartenansicht\n© OpenStreetMap-Mitwirkende\nhttp://www.openstreetmap.org</string>
     <string name="about_mapbox_title">MapBox</string>
     <string name="about_mapbox">Erfahren Sie mehr auf http://www.mapbox.com</string>
     <string name="about_legal_aosp">Einige Symbole in dieser Anwendung wurden Werken nachempfunden, welche vom Android Open Source Project erstellt und verteilt werden. Sie werden in Übereinstimmung mit der Creative Commons - Attribution 2.5 Lizenz verwendet.</string>
@@ -86,8 +86,8 @@
     <string name="first_run_welcome_to_mozstumbler">Willkommen bei Mozilla Stumbler</string>
     <string name="map_unavailable">Die Karte kann nicht angezeigt werden, da kein SD-Kartenspeicher vorhanden ist.\nSie können aber immer noch Daten sammeln.</string>
     <string name="map_offline_mode">Die Karte kann ohne eine verfügbare Internetverbindung nicht aktualisiert werden.\nSie können aber immer noch Daten sammeln.</string>
-	<string name="map_copyright_fdroid">Kacheln bereitgestellt durch MapQuest\n© OpenStreetMap-Mitwirkende</string>
-	<string name="map_copyright_moz">© MapBox © OpenStreetMap-Mitwirkende</string>
+    <string name="map_copyright_fdroid">Kacheln bereitgestellt durch MapQuest\n© OpenStreetMap-Mitwirkende</string>
+    <string name="map_copyright_moz">© MapBox © OpenStreetMap-Mitwirkende</string>
     <string name="action_developer">Entwickler</string>
     <string name="developer_title">Entwickler</string>
     <string name="enable_option_show_mls_on_map">MLS Ortungsabfragen aktivieren</string>
@@ -114,4 +114,10 @@
         <item>Immer niedrige Auflösung</item>
         <item>Keine Karte</item>
     </string-array>
+    <string name="low_battery_title">Scannen bei niedrigem Akkustand stoppen</string>
+    <string name="battery_percent_options_label">Stoppen ab Akkustand:</string>
+    <string name="motion_detection_title">Bewegungserkennung</string>
+    <string name="motion_detection_options_label">Scannen pausieren, wenn keine Bewegung um</string>
+    <string name="motion_detection_options_conjunction">in</string>
+    <string name="map_scanning_paused_no_motion">Keine Positionsänderung, Scannen pausiert.</string>
 </resources>

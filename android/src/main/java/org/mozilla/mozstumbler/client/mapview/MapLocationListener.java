@@ -13,6 +13,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.widget.Toast;
 
+import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.GPSScanner;
 
 import java.lang.ref.WeakReference;
@@ -120,11 +121,16 @@ class MapLocationListener  {
             return;
         }
 
-        if (isEnabled && !listener.mIsActive) {
-            mLocationManager.requestLocationUpdates(listener.mType, listener.mFreqMs, 0, listener);
-        } else if (!isEnabled && listener.mIsActive) {
-            mLocationManager.removeUpdates(listener);
+        try {
+            if (isEnabled && !listener.mIsActive) {
+                mLocationManager.requestLocationUpdates(listener.mType, listener.mFreqMs, 0, listener);
+            } else if (!isEnabled && listener.mIsActive) {
+                mLocationManager.removeUpdates(listener);
+            }
+        } catch (IllegalArgumentException ex) {
+            AppGlobals.guiLogError("enableLocationListener failed");
         }
+
         listener.mIsActive = isEnabled;
     }
 

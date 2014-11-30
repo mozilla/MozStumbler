@@ -147,10 +147,7 @@ android {
         }
 
 
-<<<<<<< HEAD
-=======
 
->>>>>>> 266d5b4b95eea337c8952ce68380650d85a8fd2b
     }
 
     sourceSets {
@@ -172,40 +169,33 @@ dependencies {
     testCompile 'junit:junit:4.10'
     testCompile 'org.robolectric:robolectric:2.4'
 
-<<<<<<< HEAD
-=======
     compile 'com.crankycoder:SimpleKML:1.0'
 
     compile 'org.slf4j:slf4j-android:1.7.7'
 
->>>>>>> 266d5b4b95eea337c8952ce68380650d85a8fd2b
     // https://developer.android.com/tools/support-library/features.html
     // In general, we recommend including the v4 support and v7 appcompat
     // libraries, because they support a wide range of Android versions and
     // provide APIs for recommended user interface patterns.
 
-    
-
+    compile "com.android.support:support-v4:19.1.+"
+    compile 'com.android.support:appcompat-v7:19.1.0'
 
     compile('org.simpleframework:simple-xml:2.7.1') {
         exclude group: 'stax', module: 'stax-api'
         exclude group: 'xpp3', module: 'xpp3'
     }
 
-    
+    compile "joda-time:joda-time:2.2"
+
     // Acralyzer crash reports
     compile('ch.acra:acra:4.5.0') {
         exclude group: 'org.json'
     }
 
     // osmdroid stuff
-    compile
-    'com.crankycoder:SimpleKML:1.0'compile
-    'org.slf4j:slf4j-android:1.7.7'compile
-    'com.android.support:support-v4:21.0.0'compile
-    'com.android.support:appcompat-v7:21.0.0'compile
-    'joda-time:joda-time:2.2'compile
-    'org.apache.httpcomponents:httpmime:4.0.1'compile 'org.apache.james:apache-mime4j:0.6'
+    compile "org.apache.httpcomponents:httpmime:4.0.1"
+    compile "org.apache.james:apache-mime4j:0.6"
 }
 
 tasks.withType(JavaCompile) {
@@ -230,59 +220,40 @@ if (signFile.exists()) {
 
 String getMozillaApiKey(String scope) {
     // Yeah, this is lame, opening the file again.  Sosume.
-<<<<<<< HEAD
-    File signFile = rootProject.file("android/properties/private-" + scope + ".properties")
-=======
     File signFile = rootProject.file("android/properties/private-"+scope+".properties")
->>>>>>> 266d5b4b95eea337c8952ce68380650d85a8fd2b
     if (signFile.exists()) {
         Properties p = new Properties()
         p.load(new FileInputStream(signFile))
         def result = '"' + p['MozAPIKey'] + '"';
-        println "Writing custom MozAPIKey: [" + result + "]";
+        println "Writing custom MozAPIKey: ["+result+"]";
         return result;
     }
-<<<<<<< HEAD
-    println "No " + signFile.getAbsolutePath() + " for Mozilla API Key configuration."
-=======
     println "No "+signFile.getAbsolutePath()+" for Mozilla API Key configuration."
->>>>>>> 266d5b4b95eea337c8952ce68380650d85a8fd2b
     return "null";
 }
 
 String getTileServerUrl(String scope) {
     // Yeah, this is lame, opening the file again.  Sosume.
-<<<<<<< HEAD
-    File signFile = rootProject.file("android/properties/private-" + scope + ".properties")
-=======
     File signFile = rootProject.file("android/properties/private-"+scope+".properties")
->>>>>>> 266d5b4b95eea337c8952ce68380650d85a8fd2b
     if (signFile.exists()) {
         Properties p = new Properties()
         p.load(new FileInputStream(signFile))
 
         if (p['TileServerURL']) {
             def result = '"' + p['TileServerURL'] + '"';
-            println "Using custom TileServerURL: [" + result + "]";
+            println "Using custom TileServerURL: ["+result+"]";
             return result;
         } else if (p['MapAPIKey']) {
             def result = "\"http://api.tiles.mapbox.com/v3/${p['MapAPIKey']}/\"";
-            println "Using MapAPIKey: [" + result + "]";
+            println "Using MapAPIKey: ["+result+"]";
             return result;
         }
     }
-<<<<<<< HEAD
-    println "No " + signFile.getAbsolutePath() + " for TileServer configuration."
-    return "null";
-}
-
-=======
     println "No "+signFile.getAbsolutePath()+" for TileServer configuration."
     return "null";
 }
 
 
->>>>>>> 266d5b4b95eea337c8952ce68380650d85a8fd2b
 // Yay for apk basenames that you can only figure out by reading the
 // gradle source.
 project.archivesBaseName = "MozStumbler";

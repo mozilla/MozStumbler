@@ -301,7 +301,6 @@ public class MainDrawerActivity
     public void stop() {
         mMapFragment.stop();
     }
-}
 
     private void updateWidget(ClientStumblerService service) {
         boolean isScanning = service.isScanning();
@@ -316,3 +315,4 @@ public class MainDrawerActivity
         }
         (AppWidgetManager.getInstance(getApplicationContext())).updateAppWidget(new ComponentName(getApplicationContext(), ToggleWidgetProvider.class), remoteViews);
     }
+}

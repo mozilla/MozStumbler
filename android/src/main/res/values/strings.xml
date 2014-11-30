@@ -47,7 +47,6 @@
         <item quantity="one">one day ago</item>
         <item quantity="other">%d days ago</item>
     </plurals>
-
     <string name="metrics_observations_title">Reports:</string>
     <string name="metrics_observations_wifis_title">Wi-Fi networks:</string>
     <string name="metrics_observations_cell_towers_title">Cell networks:</string>
@@ -114,22 +113,16 @@
     <string name="category_network_usage">Network usage</string>
     <string name="category_display">Display</string>
     <string name="category_crashreport">Crash reporting</string>
-
     <string-array name="map_tile_resolution_options">
         <item>High (Wi-Fi) / low (cell)</item>
         <item>High detail only</item>
         <item>Low detail only</item>
         <item>No map</item>
     </string-array>
-
     <string name="low_battery_title">Stop stumbling on low battery</string>
     <string name="battery_percent_options_label">Stop when battery drops to:</string>
     <string name="motion_detection_title">Motion Detection</string>
     <string name="motion_detection_options_label">Pause scanning if you don\'t move</string>
     <string name="motion_detection_options_conjunction">in</string>
     <string name="map_scanning_paused_no_motion">Location not changing, scanning paused.</string>
-    <string name="title_activity_toggle_widget_helper">ToggleWidgetHelper</string>
-    <string name="hello_world">Hello world!</string>
-    <string name="action_settings">Settings</string>
-
 </resources>

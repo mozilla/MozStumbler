@@ -1,89 +1,53 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-  <string name="app_name">Mozilla Stumbler</string>
-  <string name="action_about">Informazioni su Mozilla Stumbler</string>
-  <string name="action_preferences">Impostazioni</string>
-  <string name="start_scanning">Inizia l\'analisi</string>
-  <string name="stop_scanning">Interrompi l\'analisi</string>
-  <string name="view_leaderboard">Guarda la classifica</string>
-  <string name="service_name">Mozilla Stumbler</string>
-  <string name="service_scanning">Analisi delle reti Wi-Fi e di telefonia mobile in corso</string>
-  <string name="enter_nickname">Inserisci il soprannome (facoltativo)</string>
-  <string name="enter_nickname_title">Soprannome:</string>
-  <string name="enter_nickname_longtext">Il tuo soprannome comparirà sulla classifica.</string>
-  <string name="update_title">Scaricare l\'aggiornamento di Mozilla Stumbler?</string>
-  <string name="update_message">Versione installata: %1$s\nVersione più recente: %2$s</string>
-  <string name="update_now">Aggiorna ora</string>
-  <string name="update_later">Aggiorna più tardi</string>
-  <string name="yes">Sì</string>
-  <string name="no">No</string>
-  <string name="about_version">Versione %1$s</string>
-  <string name="about_openstreetmap">Tavole della mappa\n© OpenStreetMap contributors\nhttp://www.openstreetmap.org</string>
-  <string name="about_mapbox_title">MapBox</string>
-  <string name="about_mapbox">Maggiori informazioni su http://www.mapbox.com</string>
-  <string name="about_legal_aosp">Alcune icone in questa applicazione sono riprodotte da opere create e condivise dall\'Android Open Source Project e sono usate secondo i termini descritti dalla licenza Creative Commons 2.5 Attribution.</string>
-  <string name="about_legal_flaticons">Le icone GPS, antenna di telefonia mobile, Wi-Fi e binocolo sono realizzate da Freepik su http://www.flaticon.com sotto licenza: https://creativecommons.org/licenses/by-nd/3.0</string>
-  <string name="upload_observations_sent_title">Sessioni precedenti</string>
-  <string name="metrics_observations_last_upload_time_title">Ultimo invio dati:</string>
-  <string name="metrics_observations_title">Osservazioni:</string>
-  <string name="metrics_observations_wifis_title">Reti Wi-Fi:</string>
-  <string name="metrics_observations_cell_towers_title">Reti di telefonia mobile:</string>
-  <string name="upload_observations_in_queue_title">Pronto per inviare</string>
-  <string name="upload_wifi_only_title">Invia automaticamente solo in Wi-Fi</string>
-  <string name="upload_wifi_only_summary">Questa opzione ridurrà il traffico dati sulla rete di telefonia mobile. Premendo il bottone di invio in Metriche le osservazioni saranno comunque inviate.</string>
-  <string name="metrics_activity_title">Metriche</string>
-  <string name="metrics_this_session">Sessione attuale</string>
-  <string name="drawer_map_option_show_mls_locations">Mostra posizioni MLS</string>
-  <string name="title_activity_log">Log</string>
-  <string name="action_view_log">Mostra log</string>
-  <string name="scroll_to_start">Vai in cima</string>
-  <string name="scroll_to_end">Vai alla fine</string>
-  <string name="kml_file_title">File osservazioni KML</string>
-  <string name="kml_file_load">Carica file KML</string>
-  <string name="kml_file_save">Salva file KML</string>
-  <string name="kml_file_description">Salva/carica le osservazioni (posizione, conteggio wi-fi+celle) per debugging.</string>
-  <string name="kml_file_saved_name">File salvato:</string>
-  <string name="keep_screen_on_title">Tieni acceso lo schermo durante l\'analisi</string>
-  <string name="delete_all">Elimina tutto</string>
-  <string name="are_you_sure">Sei sicuro?</string>
-  <string name="loading_kml">Caricamento KML in corso</string>
-  <string name="saving_kml">Salvataggio KML in corso</string>
-  <string name="mozstumbler_kml_file">File KML di Mozilla Stumbler</string>
-  <string name="share_file">Condividi file</string>
-  <string name="load_file">Carica file</string>
-  <string name="delete_file">Cancella file</string>
-  <string name="kml_file_saved">KML salvato</string>
-  <string name="share_after_kml_saved">Il file è salvato sul dispositivo, vuoi condividere il file?</string>
-  <string name="enter_email">Inserire l\'indirizzo e-mail (facoltativo)</string>
-  <string name="enter_email_title">Email:</string>
-  <string name="enter_email_longtext">Il tuo indirizzo email non verrà mai visualizzato pubblicamente ed è usato esclusivamente per le tue osservazioni.</string>
-  <string name="drawer_open">Mostra cassetto</string>
-  <string name="drawer_close">Chiudi cassetto</string>
-  <string name="title_activity_leaderboard">Classifica</string>
-  <string name="drawer_map_layers_title">Legenda mappa</string>
-  <string name="first_run_message_part1">Mozilla Location Service è un servizio aperto per la localizzazione di dispositivi che utilizzano reti Wi-Fi e di telefonia mobile.</string>
-  <string name="first_run_message_part2">"Leggi la nostra "<a href="https://location.services.mozilla.com/privacy">informativa sulla privacy</a>" e poi inizia l\'analisi per contribuire la posizione attuale."</string>
-  <string name="first_run_start_stumbling">Inizia analisi</string>
-  <string name="first_run_welcome_to_mozstumbler">Benvenuto in Mozilla Stumbler</string>
-  <string name="map_unavailable">La mappa non può essere visualizzata perché non c\'è nessuna scheda di memoria SD.\nSi possono ancora raccogliere dati.</string>
-  <string name="map_offline_mode">La mappa non si aggiornerà senza una connessione a Internet,\ncomunque si possono ancora raccogliere dati.</string>
-  <string name="action_developer">Sviluppatore</string>
-  <string name="developer_title">Sviluppatore</string>
-  <string name="enable_option_show_mls_on_map">Attiva selettore livello MLS</string>
-  <string name="enable_option_show_mls_on_map_summary">Al costo di un po\' più di memoria e uso della rete, la mappa può mostrare le query di posizione MLS per le analisi.</string>
-  <string name="cell_only_observation">Solo osservazioni rete mobile</string>
-  <string name="wifi_only_observation">Solo osservazioni Wi-Fi</string>
-  <string name="low_resolution_map">Mappa a bassa risoluzione</string>
-  <string name="map_turned_off">Visualizzazione mappa disattiva</string>
-  <string name="map_tile_resolution_options_label">Opzioni tavole mappa:</string>
-  <string name="enable_crash_reporting">Attiva segnalazione crash</string>
-  <string name="privacy_policy">Informativa sulla privacy:</string>
-  <string name="satellites_separator">/</string>
-  <string name="must_uninstall_to_update">Devi disinstallare prima di aggiornare alla nuova versione.</string>
-  <string-array name="map_tile_resolution_options">
-    <item>Predefinito</item>
-    <item>Solo alta risoluzione</item>
-    <item>Solo bassa risoluzione</item>
-    <item>Nessuna mappa</item>
-  </string-array>
+    <string name="app_name">Mozilla Stumbler</string>
+    <string name="action_about">Informazioni su Mozilla Stumbler</string>
+    <string name="action_preferences">Impostazioni</string>
+    <string name="start_scanning">Inizia l\'analisi</string>
+    <string name="stop_scanning">Interrompi l\'analisi</string>
+    <string name="view_leaderboard">Guarda la classifica</string>
+    <string name="service_name">Mozilla Stumbler</string>
+    <!--<string name="wifi_disabled">0 (Wi-Fi disabled)</string> translation missing-->
+    <string name="service_scanning">Analisi delle reti Wi-Fi e cellulari in corso</string>
+    
+    <string name="enter_nickname">Inserisci il soprannome (opzionale)</string>
+    <string name="enter_nickname_title">Soprannome: %1$s</string>
+    <string name="enter_nickname_longtext">Il tuo soprannome comparirà sulla classifica.</string>
+    
+    <string name="update_title">Scaricare l\'aggiornamento di Mozilla Stumbler?</string>
+    <string name="update_message">Versione installata: %1$s\nVersione più recente: %2$s</string>
+    <string name="update_now">Aggiorna ora</string>
+    <string name="update_later">Aggiorna più tardi</string>
+    
+    <string name="yes">Sì</string>
+    <string name="no">No</string>
+    
+    <string name="about_version">Versione %1$s</string>
+	<!--translations missing
+	<string name="about_openstreetmap">Map view tiles © OpenStreetMap contributors\nhttp://www.openstreetmap.org</string>
+    <string name="about_mapbox_title">MapBox</string>-->
+    <string name="about_mapbox">Per maggiori informazioni sul nostro fornitore di mappe…</string>
+    <string name="about_legal_aosp">Alcune icone in questa applicazione sono riprodotte da opere create e condivise dall\'Android Open Source Project e sono usate secondo i termini descritti dalla licenza Creative Commons 2.5 Attribution.</string>
+    
+    <string name="upload_observations_sent_title">Inviati</string>
+    <string name="metrics_observations_last_upload_time_title">Ultimo invio dati:</string>
+    <string name="metrics_observations_title">Osservazioni:</string>
+    <string name="metrics_observations_wifis_title">Access point Wi-Fi:</string>
+    <string name="metrics_observations_cell_towers_title">Celle:</string>
+    <string name="upload_observations_in_queue_title">In coda</string>
+
+
+
+    <string name="upload_wifi_only_title">Invia solo in Wi-Fi</string>
+    <string name="upload_wifi_only_summary">Questa opzione ridurrà il traffico dati sulla rete cellulare.</string>
+    
+    <!--translations missing
+
+
+
+	
+	<string name="title_activity_log">Log</string>
+    <string name="action_view_log">View Log</string>
+    <string name="scroll_to_start">Scroll to Top</string>
+    <string name="scroll_to_end">Scroll to End</string>-->
 </resources>

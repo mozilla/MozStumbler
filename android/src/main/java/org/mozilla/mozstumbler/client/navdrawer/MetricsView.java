@@ -260,12 +260,12 @@ public class MetricsView {
         updateUploadButtonEnabled();
     }
 
-    public void setObservationCount(int observations, int cells, int wifis, boolean scanning) {
+    public void setObservationCount(int observations, int cells, int wifis, boolean isActive) {
         sThisSessionObservationsCount = observations;
         sThisSessionUniqueCellCount = cells;
         sThisSessionUniqueWifiCount = wifis;
 
         NotificationUtil util = new NotificationUtil(mView.getContext().getApplicationContext());
-        util.updateMetrics(observations, cells, wifis, mLastUploadTime, scanning);
+        util.updateMetrics(observations, cells, wifis, mLastUploadTime, isActive);
     }
 }

@@ -5,23 +5,12 @@ import android.appwidget.AppWidgetProvider;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.widget.RemoteViews;
-import android.widget.TextView;
-import android.widget.Toast;
-
 import org.mozilla.mozstumbler.R;
-import org.mozilla.mozstumbler.client.MainApp;
-import org.mozilla.mozstumbler.client.navdrawer.MainDrawerActivity;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
 
 public class ToggleWidgetProvider extends AppWidgetProvider{
 
-    private static boolean status = true;
     private RemoteViews remoteViews;
     private ComponentName watchWidget;
     @Override
@@ -45,7 +34,6 @@ public class ToggleWidgetProvider extends AppWidgetProvider{
         if (intent.getAction() == null) {
             Bundle extras = intent.getExtras();
             if (extras != null) {
-                Toast.makeText(context, "Clicked " + status,Toast.LENGTH_SHORT).show();
                 remoteViews = new RemoteViews(context.getPackageName(), R.layout.toggle_widget);
 
                 watchWidget = new ComponentName(context, ToggleWidgetProvider.class);

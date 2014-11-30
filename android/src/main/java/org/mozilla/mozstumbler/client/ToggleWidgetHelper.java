@@ -6,8 +6,6 @@ import android.os.Bundle;
 import android.widget.RemoteViews;
 
 import org.mozilla.mozstumbler.R;
-import org.mozilla.mozstumbler.client.MainApp;
-
 public class ToggleWidgetHelper extends Activity {
 
     @Override

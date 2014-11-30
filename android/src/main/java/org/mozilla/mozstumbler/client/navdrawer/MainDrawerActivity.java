@@ -89,8 +89,8 @@ public class MainDrawerActivity
             }
 
             @Override
-            public void onDrawerClosed(View view) {
-            }
+
+            public void onDrawerClosed(View view) {}
 
             @Override
             public void onDrawerOpened(View drawerView) {

@@ -147,6 +147,10 @@ android {
         }
 
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 266d5b4b95eea337c8952ce68380650d85a8fd2b
     }
 
     sourceSets {
@@ -168,6 +172,13 @@ dependencies {
     testCompile 'junit:junit:4.10'
     testCompile 'org.robolectric:robolectric:2.4'
 
+<<<<<<< HEAD
+=======
+    compile 'com.crankycoder:SimpleKML:1.0'
+
+    compile 'org.slf4j:slf4j-android:1.7.7'
+
+>>>>>>> 266d5b4b95eea337c8952ce68380650d85a8fd2b
     // https://developer.android.com/tools/support-library/features.html
     // In general, we recommend including the v4 support and v7 appcompat
     // libraries, because they support a wide range of Android versions and
@@ -219,7 +230,11 @@ if (signFile.exists()) {
 
 String getMozillaApiKey(String scope) {
     // Yeah, this is lame, opening the file again.  Sosume.
+<<<<<<< HEAD
     File signFile = rootProject.file("android/properties/private-" + scope + ".properties")
+=======
+    File signFile = rootProject.file("android/properties/private-"+scope+".properties")
+>>>>>>> 266d5b4b95eea337c8952ce68380650d85a8fd2b
     if (signFile.exists()) {
         Properties p = new Properties()
         p.load(new FileInputStream(signFile))
@@ -227,13 +242,21 @@ String getMozillaApiKey(String scope) {
         println "Writing custom MozAPIKey: [" + result + "]";
         return result;
     }
+<<<<<<< HEAD
     println "No " + signFile.getAbsolutePath() + " for Mozilla API Key configuration."
+=======
+    println "No "+signFile.getAbsolutePath()+" for Mozilla API Key configuration."
+>>>>>>> 266d5b4b95eea337c8952ce68380650d85a8fd2b
     return "null";
 }
 
 String getTileServerUrl(String scope) {
     // Yeah, this is lame, opening the file again.  Sosume.
+<<<<<<< HEAD
     File signFile = rootProject.file("android/properties/private-" + scope + ".properties")
+=======
+    File signFile = rootProject.file("android/properties/private-"+scope+".properties")
+>>>>>>> 266d5b4b95eea337c8952ce68380650d85a8fd2b
     if (signFile.exists()) {
         Properties p = new Properties()
         p.load(new FileInputStream(signFile))
@@ -248,10 +271,18 @@ String getTileServerUrl(String scope) {
             return result;
         }
     }
+<<<<<<< HEAD
     println "No " + signFile.getAbsolutePath() + " for TileServer configuration."
     return "null";
 }
 
+=======
+    println "No "+signFile.getAbsolutePath()+" for TileServer configuration."
+    return "null";
+}
+
+
+>>>>>>> 266d5b4b95eea337c8952ce68380650d85a8fd2b
 // Yay for apk basenames that you can only figure out by reading the
 // gradle source.
 project.archivesBaseName = "MozStumbler";

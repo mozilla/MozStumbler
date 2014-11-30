@@ -30,7 +30,6 @@ import org.mozilla.mozstumbler.service.uploadthread.AsyncUploader;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
-import java.util.Locale;
 import java.util.Properties;
 
 public class MetricsView {
@@ -223,12 +222,7 @@ public class MetricsView {
         Context context = mView.getContext();
         String value = context.getString(R.string.metrics_observations_last_upload_time_never);
         if (mLastUploadTime > 0) {
-            if (Locale.getDefault().getLanguage().equals("en")) {
-                value = DateTimeUtils.prettyPrintTimeDiff(mLastUploadTime, context.getResources());
-            } else {
-                // TODO remove when there are enough translations available
-                value = DateTimeUtils.formatTimeForLocale(mLastUploadTime);
-            }
+            value = DateTimeUtils.prettyPrintTimeDiff(mLastUploadTime, context.getResources());
         }
         mLastUpdateTimeView.setText(value);
     }

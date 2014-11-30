@@ -169,6 +169,7 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
 
+	<!-- The copyright text is set at java\org\mozilla\mozstumbler\client\mapview\MapFragment.java showCopyright() -->
     <TextView
         android:id="@+id/copyright_area"
         android:textColor="@android:color/black"

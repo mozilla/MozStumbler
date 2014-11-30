@@ -11,7 +11,9 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.widget.Toast;
 
+import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.GPSScanner;
 
 import java.lang.ref.WeakReference;
@@ -62,35 +64,41 @@ class MapLocationListener  {
     private final LocationUpdateListener mNetworkLocationListener =
             new LocationUpdateListener(LocationManager.NETWORK_PROVIDER, 1000, null);
 
-    MapLocationListener(MapFragment mapFragment) {
-        mMapActivity = new WeakReference<MapFragment>(mapFragment);
-        mLocationManager = (LocationManager) mapFragment.getActivity().getApplicationContext().
-                getSystemService(Context.LOCATION_SERVICE);
-
-        final GpsStatus.Listener satelliteListener = new GpsStatus.Listener() {
-            public void onGpsStatusChanged(int event) {
-                if (event == GpsStatus.GPS_EVENT_SATELLITE_STATUS && mLocationManager != null) {
-                    GpsStatus gpsStatus = mLocationManager.getGpsStatus(null);
-                    Iterable<GpsSatellite> sats = gpsStatus.getSatellites();
-                    int satellites = 0;
-                    int fixes = 0;
-                    for (GpsSatellite sat : sats) {
-                        satellites++;
-                        if (sat.usedInFix()) {
-                            fixes++;
-                        }
-                    }
-                    if (mMapActivity.get() != null) {
-                        mMapActivity.get().updateGPSInfo(satellites, fixes);
-                    }
-                    if (fixes < GPSScanner.MIN_SAT_USED_IN_FIX) {
-                        enableLocationListener(true, mNetworkLocationListener);
+    private final GpsStatus.Listener mSatelliteListener = new GpsStatus.Listener() {
+        public void onGpsStatusChanged(int event) {
+            if (event == GpsStatus.GPS_EVENT_SATELLITE_STATUS && mLocationManager != null) {
+                GpsStatus gpsStatus = mLocationManager.getGpsStatus(null);
+                Iterable<GpsSatellite> sats = gpsStatus.getSatellites();
+                int satellites = 0;
+                int fixes = 0;
+                for (GpsSatellite sat : sats) {
+                    satellites++;
+                    if (sat.usedInFix()) {
+                        fixes++;
                     }
                 }
+                if (mMapActivity.get() != null) {
+                    mMapActivity.get().updateGPSInfo(satellites, fixes);
+                }
+                if (fixes < GPSScanner.MIN_SAT_USED_IN_FIX) {
+                    enableLocationListener(true, mNetworkLocationListener);
+                }
             }
-        };
+        }
+    };
 
-        mLocationManager.addGpsStatusListener(satelliteListener);
+    MapLocationListener(MapFragment mapFragment) {
+        mMapActivity = new WeakReference<MapFragment>(mapFragment);
+        Context context = mapFragment.getActivity().getApplicationContext();
+
+        mLocationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+        if (mLocationManager == null) {
+            // Ugly non-localized message, which is fine, the app is not usable on any device that shows this toast.
+            Toast.makeText(context, "Error: no LOCATION_SERVICE", Toast.LENGTH_LONG);
+            return;
+        }
+
+        mLocationManager.addGpsStatusListener(mSatelliteListener);
 
         Location lastLoc = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         if (lastLoc == null) {
@@ -109,15 +117,29 @@ class MapLocationListener  {
     }
 
     private void enableLocationListener(boolean isEnabled, LocationUpdateListener listener) {
-        if (isEnabled && !listener.mIsActive) {
-            mLocationManager.requestLocationUpdates(listener.mType, listener.mFreqMs, 0, listener);
-        } else if (!isEnabled && listener.mIsActive) {
-            mLocationManager.removeUpdates(listener);
+        if (mLocationManager == null) {
+            return;
         }
+
+        try {
+            if (isEnabled && !listener.mIsActive) {
+                mLocationManager.requestLocationUpdates(listener.mType, listener.mFreqMs, 0, listener);
+            } else if (!isEnabled && listener.mIsActive) {
+                mLocationManager.removeUpdates(listener);
+            }
+        } catch (IllegalArgumentException ex) {
+            AppGlobals.guiLogError("enableLocationListener failed");
+        }
+
         listener.mIsActive = isEnabled;
     }
 
-    void removeListener() {
+    public void removeListener() {
+        if (mLocationManager == null) {
+            return;
+        }
+
+        mLocationManager.removeGpsStatusListener(mSatelliteListener);
         enableLocationListener(false, mGpsLocationListener);
         enableLocationListener(false, mNetworkLocationListener);
     }

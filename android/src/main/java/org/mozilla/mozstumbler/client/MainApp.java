@@ -34,6 +34,7 @@ import org.mozilla.mozstumbler.client.util.NotificationUtil;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.Prefs;
 import org.mozilla.mozstumbler.service.core.logging.MockAcraLog;
+import org.mozilla.mozstumbler.service.stumblerthread.Reporter;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageManager;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.ScanManager;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.WifiScanner;
@@ -68,7 +69,6 @@ public class MainApp extends Application
     private final long MAX_BYTES_DISK_STORAGE = 1000 * 1000 * 20; // 20MB for Mozilla Stumbler by default, is ok?
     private final int MAX_WEEKS_OLD_STORED = 4;
     public static final String INTENT_TURN_OFF = "org.mozilla.mozstumbler.turnMeOff";
-    private static final int NOTIFICATION_ID = 1;
     public static final String ACTION_BASE = AppGlobals.ACTION_NAMESPACE + ".MainApp.";
     public static final String ACTION_LOW_BATTERY = ACTION_BASE + ".LOW_BATTERY";
     private boolean mIsScanningPausedDueToNoMotion;
@@ -182,7 +182,7 @@ public class MainApp extends Application
 
                 Log.d(LOG_TAG, "Service connected");
                 if (mMainActivity.get() != null) {
-                    mMainActivity.get().updateUiOnMainThread();
+                    mMainActivity.get().updateUiOnMainThread(true);
                 }
             }
 
@@ -224,7 +224,7 @@ public class MainApp extends Application
         mStumblerService.startForeground(NotificationUtil.NOTIFICATION_ID, notification);
         mStumblerService.startScanning();
         if (mMainActivity.get() != null) {
-            mMainActivity.get().updateUiOnMainThread();
+            mMainActivity.get().updateUiOnMainThread(false);
         }
     }
 
@@ -238,8 +238,8 @@ public class MainApp extends Application
         mStumblerService.stopForeground(true);
         mStumblerService.stopScanning();
         if (mMainActivity.get() != null) {
-            mMainActivity.get().updateUiOnMainThread();
-            mMainActivity.get().isPausedDueToNoMotion(false);
+            mMainActivity.get().updateUiOnMainThread(false);
+            mMainActivity.get().stop();
         }
 
         AsyncUploader uploader = new AsyncUploader();
@@ -294,6 +294,7 @@ public class MainApp extends Application
                 IntentFilter intentFilter = new IntentFilter();
                 intentFilter.addAction(WifiScanner.ACTION_WIFIS_SCANNED);
                 intentFilter.addAction(CellScanner.ACTION_CELLS_SCANNED);
+                intentFilter.addAction(Reporter.ACTION_NEW_BUNDLE);
                 intentFilter.addAction(ACTION_LOW_BATTERY);
                 LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(this, intentFilter);
 
@@ -311,18 +312,18 @@ public class MainApp extends Application
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (intent.getAction().equals(INTENT_TURN_OFF)) {
+            String action = intent.getAction();
+            if (action.equals(INTENT_TURN_OFF)) {
                 Log.d(LOG_TAG, "INTENT_TURN_OFF");
                 stopScanning();
-            }
-
-            if (intent.getAction().equals(ACTION_LOW_BATTERY)) {
+            } else if (action.equals(ACTION_LOW_BATTERY)) {
                 AppGlobals.guiLogInfo("Stop, low battery detected.");
                 stopScanning();
             }
 
             if (mMainActivity.get() != null) {
-                mMainActivity.get().updateUiOnMainThread();
+                boolean updateMetrics = action.equals(Reporter.ACTION_NEW_BUNDLE);
+                mMainActivity.get().updateUiOnMainThread(updateMetrics);
             }
         }
     }
@@ -411,11 +412,13 @@ public class MainApp extends Application
             return;
         }
 
-        AppGlobals.guiLogInfo("Is motionless:" + mIsScanningPausedDueToNoMotion);
+        AppGlobals.guiLogInfo("Is motionless: " + mIsScanningPausedDueToNoMotion);
 
+        NotificationUtil util = new NotificationUtil(this.getApplicationContext());
         if (mIsScanningPausedDueToNoMotion) {
-            NotificationUtil util = new NotificationUtil(this.getApplicationContext());
             util.updateSubtitle(getString(R.string.map_scanning_paused_no_motion));
+        } else {
+            util.updateSubtitle(getString(R.string.service_scanning));
         }
 
         if (mMainActivity.get() != null) {

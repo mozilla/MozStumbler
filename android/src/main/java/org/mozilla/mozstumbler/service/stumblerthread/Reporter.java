@@ -28,7 +28,6 @@ import org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner.CellS
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 public final class Reporter extends BroadcastReceiver implements IReporter {
@@ -192,14 +191,14 @@ public final class Reporter extends BroadcastReceiver implements IReporter {
         try {
             DataStorageManager.getInstance().insert(mlsObj.toString(), wifiCount, cellCount);
 
+            mObservationCount++;
+            mUniqueAPs.addAll(mBundle.getUnmodifiableWifiData().keySet());
+            mUniqueCells.addAll(mBundle.getUnmodifiableCellData().keySet());
+
             Intent i = new Intent(ACTION_NEW_BUNDLE);
             i.putExtra(NEW_BUNDLE_ARG_BUNDLE, mBundle);
             i.putExtra(AppGlobals.ACTION_ARG_TIME, System.currentTimeMillis());
             LocalBroadcastManager.getInstance(mContext).sendBroadcastSync(i);
-
-            mObservationCount++;
-            mUniqueAPs.addAll(mBundle.getUnmodifiableWifiData().keySet());
-            mUniqueCells.addAll(mBundle.getUnmodifiableCellData().keySet());
         } catch (IOException e) {
             Log.w(LOG_TAG, e.toString());
         }

@@ -239,7 +239,8 @@ public class MainDrawerActivity
                 return super.onOptionsItemSelected(item);
         }
     }
-    public void updateUiOnMainThread() {
+
+    public void updateUiOnMainThread(final boolean updateMetrics) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -248,12 +249,12 @@ public class MainDrawerActivity
                 }
 
                 updateStartStopMenuItemState();
-                updateNumberDisplay();
+                updateNumberDisplay(updateMetrics);
             }
         });
     }
 
-    private void updateNumberDisplay() {
+    private void updateNumberDisplay(boolean updateMetrics) {
         ClientStumblerService service = getApp().getService();
         if (service == null) {
             return;
@@ -264,10 +265,12 @@ public class MainDrawerActivity
 
         int observationCount = service.getObservationCount();
         mMapFragment.formatTextView(R.id.text_observation_count, "%d", observationCount);
-        mMetricsView.setObservationCount(observationCount, service.getUniqueCellCount(),
-                service.getUniqueAPCount(), getApp().isScanningOrPaused());
 
-        mMetricsView.update();
+        if (updateMetrics) {
+            mMetricsView.setObservationCount(observationCount, service.getUniqueCellCount(),
+                    service.getUniqueAPCount(), getApp().isScanningOrPaused());
+            mMetricsView.update();
+        }
     }
 
     @Override
@@ -287,5 +290,10 @@ public class MainDrawerActivity
     @Override
     public void isPausedDueToNoMotion(boolean isPaused) {
         mMapFragment.showPausedDueToNoMotionMessage(isPaused);
+    }
+
+    @Override
+    public void stop() {
+        mMapFragment.stop();
     }
 }

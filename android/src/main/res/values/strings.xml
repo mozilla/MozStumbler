@@ -92,6 +92,8 @@
     <string name="first_run_welcome_to_mozstumbler">Welcome to Mozilla Stumbler</string>
     <string name="map_unavailable">The map is not available for display, as there is no SD card storage.\nYou can still collect data.</string>
     <string name="map_offline_mode">The map will not update without an Internet connection,\nhowever you are still able to collect data.</string>
+    <string name="map_copyright_fdroid">Tiles Courtesy of MapQuest\n© OpenStreetMap contributors</string>
+    <string name="map_copyright_moz">© MapBox © OpenStreetMap contributors</string>
     <string name="action_developer">Developer</string>
     <string name="developer_title">Developer</string>
     <string name="enable_option_show_mls_on_map">Enable MLS location queries</string>
@@ -119,24 +121,10 @@
         <item>Low detail only</item>
         <item>No map</item>
     </string-array>
-
-    <!-- map_tile_resolution_options_intvalues: no need to translate / copy this part -->
-    <string-array name="map_tile_resolution_options_intvalues">
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
-    </string-array>
-
-    <string name="battery_percent_options_label">Stop when battery is:</string>
+    <string name="low_battery_title">Stop stumbling on low battery</string>
+    <string name="battery_percent_options_label">Stop when battery drops to:</string>
+    <string name="motion_detection_title">Motion Detection</string>
+    <string name="motion_detection_options_label">Pause scanning if you don\'t move</string>
+    <string name="motion_detection_options_conjunction">in</string>
     <string name="map_scanning_paused_no_motion">Location not changing, scanning paused.</string>
-    <string-array name="battery_percent_options">
-        <item>0%</item>
-        <item>5%</item>
-        <item>15%</item>
-        <item>30%</item>
-        <item>45%</item>
-        <item>60%</item>
-        <item>75%</item>
-    </string-array>
 </resources>

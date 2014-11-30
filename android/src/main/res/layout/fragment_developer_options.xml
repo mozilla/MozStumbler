@@ -23,10 +23,10 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/checkBox_show_mls"
+        android:layout_below="@+id/line1"
         android:paddingBottom="10dp"
         android:paddingTop="20dp"
-        android:text="Stop stumbling on low battery"
+        android:text="@+string/low_battery_title"
         android:textColor="#ff33b5e5"
         android:textSize="@dimen/font_size_for_metrics_top_title"
         android:textStyle="bold" />
@@ -34,14 +34,14 @@
         android:id="@+id/layout1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/batteryTitle">
+        android:layout_below="@+id/batteryTitle">
     <TextView
         android:id="@+id/batteryLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/batteryTitle"
         android:paddingRight="10dp"
-        android:text="When battery drops to:"
+        android:paddingEnd="10dp"
+        android:text="@+string/battery_percent_options_label"
         android:textSize="@dimen/font_size_for_metrics" />
     <Spinner
         android:id="@+id/spinnerBatteryPercent"
@@ -60,7 +60,7 @@
         android:layout_below="@+id/layout1"
         android:paddingBottom="10dp"
         android:paddingTop="20dp"
-        android:text="Motion Detection"
+        android:text="@+string/motion_detection_title"
         android:textColor="#ff33b5e5"
         android:textSize="@dimen/font_size_for_metrics_top_title"
         android:textStyle="bold" />
@@ -74,8 +74,7 @@
         android:id="@+id/motionDetectionDistanceLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingRight="10dp"
-        android:text="Pause scanning if you don't move"
+        android:text="@+string/motion_detection_options_label"
         android:textSize="@dimen/font_size_for_metrics" />
     </LinearLayout>
 
@@ -96,7 +95,7 @@
             android:layout_height="wrap_content"
             android:paddingRight="10dp"
             android:paddingLeft="10dp"
-            android:text="in"
+            android:text="@+string/motion_detection_options_conjunction"
             android:textSize="22sp"
            />
         <Spinner

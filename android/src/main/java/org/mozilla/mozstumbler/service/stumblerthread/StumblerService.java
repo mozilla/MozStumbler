@@ -4,12 +4,12 @@
 
 package org.mozilla.mozstumbler.service.stumblerthread;
 
+import android.annotation.TargetApi;
 import android.content.Intent;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import org.json.JSONObject;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.Prefs;
 import org.mozilla.mozstumbler.service.stumblerthread.blocklist.WifiBlockListInterface;
@@ -27,7 +27,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 //
 public class StumblerService extends PersistentIntentService
         implements DataStorageManager.StorageIsEmptyTracker {
-    private static final String LOG_TAG = AppGlobals.LOG_PREFIX + StumblerService.class.getSimpleName();
+    private static final String LOG_TAG = AppGlobals.makeLogTag(StumblerService.class.getSimpleName());
     public static final String ACTION_BASE = AppGlobals.ACTION_NAMESPACE;
     public static final String ACTION_START_PASSIVE = ACTION_BASE + ".START_PASSIVE";
     public static final String ACTION_EXTRA_MOZ_API_KEY = ACTION_BASE + ".MOZKEY";
@@ -81,20 +81,28 @@ public class StumblerService extends PersistentIntentService
         return mScanManager.getLocation();
     }
 
+    public synchronized int getObservationCount() {
+        return mReporter.getObservationCount();
+    }
+
     public synchronized int getWifiStatus() {
         return mScanManager.getWifiStatus();
     }
 
-    public synchronized int getAPCount() {
-        return mScanManager.getAPCount();
+    public synchronized int getUniqueAPCount() {
+        return mReporter.getUniqueAPCount();
     }
 
     public synchronized int getVisibleAPCount() {
         return mScanManager.getVisibleAPCount();
     }
 
-    public synchronized int getCellInfoCount() {
-        return mScanManager.getCellInfoCount();
+    public synchronized int getVisibleCellInfoCount() {
+        return mScanManager.getVisibleCellInfoCount();
+    }
+
+    public synchronized int getUniqueCellCount() {
+        return mReporter.getUniqueCellCount();
     }
 
     // Previously this was done in onCreate(). Moved out of that so that in the passive standalone service
@@ -173,7 +181,11 @@ public class StumblerService extends PersistentIntentService
             return;
         }
 
-        if (!DataStorageManager.getInstance().isDirEmpty()) {
+        boolean hasFilesWaiting = !DataStorageManager.getInstance().isDirEmpty();
+        if (AppGlobals.isDebug) {
+            Log.d(LOG_TAG, "Files waiting:" + hasFilesWaiting);
+        }
+        if (hasFilesWaiting) {
             // non-empty on startup, schedule an upload
             // This is the only upload trigger in Firefox mode
             // Firefox triggers this ~4 seconds after startup (after Gecko is loaded), add a small delay to avoid
@@ -218,8 +230,28 @@ public class StumblerService extends PersistentIntentService
         }
     }
 
-    public JSONObject getLastReportedBundle() {
-        return mReporter.getPreviousBundleJSON();
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        handleLowMemoryNotification();
     }
 
+    @TargetApi(14)
+    @Override
+    public void onTrimMemory(int level) {
+        super.onTrimMemory(level);
+        handleLowMemoryNotification();
+    }
+
+    public void handleLowMemoryNotification() {
+        DataStorageManager manager = DataStorageManager.getInstance();
+        if (manager == null) {
+            return;
+        }
+        try {
+            manager.saveCurrentReportsToDisk();
+        } catch (IOException ioException) {
+            Log.e(LOG_TAG, ioException.toString());
+        }
+    }
 }

@@ -14,7 +14,7 @@
     <string name="cells_visible">Cells Visible: %1$d</string>-->
     <string name="service_scanning">Vyhledávám Wi-Fi a mobilní sítě</string>
     <string name="enter_nickname">Vložte jméno (nepovinné)</string>
-    <string name="enter_nickname_title">Jméno: </string>
+    <string name="enter_nickname_title">Jméno: %1$s</string>
     <string name="enter_nickname_longtext">Vaše jméno se zobrazí v žebříčku.</string>
     
     <!--translations missing

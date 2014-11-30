@@ -4,6 +4,8 @@
 
 package org.mozilla.mozstumbler.client.navdrawer;
 
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Build;
@@ -21,6 +23,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.CompoundButton;
 import android.widget.Switch;
+import android.widget.RemoteViews;
 
 import org.mozilla.mozstumbler.BuildConfig;
 import org.mozilla.mozstumbler.R;
@@ -28,11 +31,11 @@ import org.mozilla.mozstumbler.client.ClientPrefs;
 import org.mozilla.mozstumbler.client.ClientStumblerService;
 import org.mozilla.mozstumbler.client.IMainActivity;
 import org.mozilla.mozstumbler.client.MainApp;
+import org.mozilla.mozstumbler.client.ToggleWidgetProvider;
 import org.mozilla.mozstumbler.client.Updater;
 import org.mozilla.mozstumbler.client.mapview.MapFragment;
 import org.mozilla.mozstumbler.client.subactivities.FirstRunFragment;
 import org.mozilla.mozstumbler.client.subactivities.LeaderboardActivity;
-import org.mozilla.mozstumbler.client.subactivities.PreferencesScreen;
 import org.mozilla.mozstumbler.service.core.http.HttpUtil;
 import org.mozilla.mozstumbler.service.core.http.IHttpUtil;
 
@@ -45,6 +48,7 @@ public class MainDrawerActivity
     private MetricsView mMetricsView;
     private MapFragment mMapFragment;
     private MenuItem mMenuItemStartStop;
+    private RemoteViews remoteViews;
 
     final CompoundButton.OnCheckedChangeListener mStartStopButtonListener =
             new CompoundButton.OnCheckedChangeListener() {
@@ -59,7 +63,7 @@ public class MainDrawerActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_drawer);
 
-        assert(findViewById(android.R.id.content) != null);
+        assert (findViewById(android.R.id.content) != null);
 
         if (Build.VERSION.SDK_INT > 10) {
             getWindow().setFlags(
@@ -70,7 +74,8 @@ public class MainDrawerActivity
         getSupportActionBar().setTitle(getString(R.string.app_name));
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        mDrawerToggle = new ActionBarDrawerToggle (
+        remoteViews = new RemoteViews(getApplicationContext().getPackageName(), R.layout.toggle_widget);
+        mDrawerToggle = new ActionBarDrawerToggle(
                 this,                  /* host Activity */
                 mDrawerLayout,         /* DrawerLayout object */
                 R.drawable.ic_drawer,  /* nav drawer icon to replace 'Up' caret */
@@ -79,7 +84,13 @@ public class MainDrawerActivity
         ) {
 
             @Override
-            public void onDrawerClosed(View view) {}
+            public void onDrawerSlide(View drawerView, float slideOffset) {
+                mMapFragment.setZoomButtonsVisible(false);
+            }
+
+            @Override
+            public void onDrawerClosed(View view) {
+            }
 
             @Override
             public void onDrawerOpened(View drawerView) {
@@ -122,17 +133,14 @@ public class MainDrawerActivity
         getMenuInflater().inflate(R.menu.main, menu);
 
         mMenuItemStartStop = menu.add(Menu.NONE, MENU_START_STOP, Menu.NONE, R.string.start_scanning);
-        if (Build.VERSION.SDK_INT >= 11) {
+        if (Build.VERSION.SDK_INT >= 14) {
             Switch s = new Switch(this);
             s.setChecked(false);
             s.setOnCheckedChangeListener(mStartStopButtonListener);
             mMenuItemStartStop.setActionView(s);
             mMenuItemStartStop.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-        }
-        else {
+        } else {
             MenuItemCompat.setShowAsAction(mMenuItemStartStop, MenuItemCompat.SHOW_AS_ACTION_ALWAYS);
-            MenuItem item = menu.findItem(R.id.action_preferences);
-            MenuItemCompat.setShowAsAction(item, MenuItemCompat.SHOW_AS_ACTION_ALWAYS);
         }
 
         updateStartStopMenuItemState();
@@ -153,34 +161,32 @@ public class MainDrawerActivity
         if (svc == null) {
             return;
         }
-        boolean isScanning = svc.isScanning();
-
-        if (isScanning) {
+        if (svc.isScanning()) {
             keepScreenOn(ClientPrefs.getInstance().getKeepScreenOn());
         } else {
             keepScreenOn(false);
         }
 
-        if (Build.VERSION.SDK_INT >= 11) {
+        if (Build.VERSION.SDK_INT >= 14) {
             Switch s = (Switch) mMenuItemStartStop.getActionView();
             s.setOnCheckedChangeListener(null);
-            if (isScanning && !s.isChecked()) {
+            if (app.isScanningOrPaused() && !s.isChecked()) {
                 s.setChecked(true);
-            } else if (!isScanning && s.isChecked()) {
+            } else if (!app.isScanningOrPaused() && s.isChecked()) {
                 s.setChecked(false);
             }
             s.setOnCheckedChangeListener(mStartStopButtonListener);
         } else {
             boolean buttonStateIsScanning = mMenuItemStartStop.getTitle().equals(getString(R.string.stop_scanning));
-            if (isScanning && !buttonStateIsScanning) {
+            if (app.isScanningOrPaused() && !buttonStateIsScanning) {
                 mMenuItemStartStop.setIcon(android.R.drawable.ic_media_pause);
                 mMenuItemStartStop.setTitle(R.string.stop_scanning);
-            } else if (!isScanning && buttonStateIsScanning) {
+            } else if (!app.isScanningOrPaused() && buttonStateIsScanning) {
                 mMenuItemStartStop.setIcon(android.R.drawable.ic_media_play);
                 mMenuItemStartStop.setTitle(R.string.start_scanning);
             }
         }
-
+        updateWidget(svc);
         mMapFragment.dimToolbar();
     }
 
@@ -232,9 +238,6 @@ public class MainDrawerActivity
             case MENU_START_STOP:
                 mMapFragment.toggleScanning(item);
                 return true;
-            case R.id.action_preferences:
-                startActivity(new Intent(getApplication(), PreferencesScreen.class));
-                return true;
             case R.id.action_view_leaderboard:
                 startActivity(new Intent(getApplication(), LeaderboardActivity.class));
                 return true;
@@ -242,7 +245,8 @@ public class MainDrawerActivity
                 return super.onOptionsItemSelected(item);
         }
     }
-    public void updateUiOnMainThread() {
+
+    public void updateUiOnMainThread(final boolean updateMetrics) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -251,25 +255,27 @@ public class MainDrawerActivity
                 }
 
                 updateStartStopMenuItemState();
-                updateNumberDisplay();
+                updateNumberDisplay(updateMetrics);
             }
         });
     }
 
-    private void updateNumberDisplay() {
+    private void updateNumberDisplay(boolean updateMetrics) {
         ClientStumblerService service = getApp().getService();
         if (service == null) {
             return;
         }
-
-        mMapFragment.formatTextView(R.id.text_cells_visible, "%d", service.getCellInfoCount());
+        updateWidget(service);
+        mMapFragment.formatTextView(R.id.text_cells_visible, "%d", service.getVisibleCellInfoCount());
         mMapFragment.formatTextView(R.id.text_wifis_visible, "%d", service.getVisibleAPCount());
 
-        int count = getApp().getObservedLocationCount();
-        mMapFragment.formatTextView(R.id.text_observation_count, "%d", count);
-        mMetricsView.setObservationCount(count);
+        int observationCount = service.getObservationCount();
+        mMapFragment.formatTextView(R.id.text_observation_count, "%d", observationCount);
 
-        mMetricsView.update();
+        if (updateMetrics) {
+            mMetricsView.setObservationCount(observationCount, service.getUniqueCellCount(), service.getUniqueAPCount());
+            mMetricsView.update();
+        }
     }
 
     @Override
@@ -285,4 +291,28 @@ public class MainDrawerActivity
             getWindow().clearFlags(flag);
         }
     }
+
+    @Override
+    public void isPausedDueToNoMotion(boolean isPaused) {
+        mMapFragment.showPausedDueToNoMotionMessage(isPaused);
+    }
+
+    @Override
+    public void stop() {
+        mMapFragment.stop();
+    }
 }
+
+    private void updateWidget(ClientStumblerService service) {
+        boolean isScanning = service.isScanning();
+        if (isScanning) {
+            remoteViews.setImageViewResource(R.id.toggleServiceButton, R.drawable.ic_launcher);
+            remoteViews.setTextViewText(R.id.stumbler_info1, Integer.toString(service.getVisibleAPCount()));
+            remoteViews.setTextViewText(R.id.stumbler_info2, Integer.toString(service.getVisibleCellInfoCount()));
+        } else {
+            remoteViews.setImageViewResource(R.id.toggleServiceButton, R.drawable.ic_status_scanning);
+            remoteViews.setTextViewText(R.id.stumbler_info1, "Disabled");
+            remoteViews.setTextViewText(R.id.stumbler_info2, "Disabled");
+        }
+        (AppWidgetManager.getInstance(getApplicationContext())).updateAppWidget(new ComponentName(getApplicationContext(), ToggleWidgetProvider.class), remoteViews);
+    }

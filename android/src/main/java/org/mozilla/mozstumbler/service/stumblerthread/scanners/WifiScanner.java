@@ -11,6 +11,7 @@ import android.content.IntentFilter;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.net.wifi.WifiManager.WifiLock;
+import android.os.Build;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
@@ -21,10 +22,7 @@ import org.mozilla.mozstumbler.service.stumblerthread.blocklist.SSIDBlockList;
 import org.mozilla.mozstumbler.service.stumblerthread.blocklist.WifiBlockListInterface;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -39,26 +37,35 @@ public class WifiScanner extends BroadcastReceiver {
     public static final int STATUS_ACTIVE = 1;
     public static final int STATUS_WIFI_DISABLED = -1;
 
-    private static final String LOG_TAG = AppGlobals.LOG_PREFIX + WifiScanner.class.getSimpleName();
+    private static final String LOG_TAG = AppGlobals.makeLogTag(WifiScanner.class.getSimpleName());
     private static final long WIFI_MIN_UPDATE_TIME = 5000; // milliseconds
 
     private boolean mStarted;
     private final Context mContext;
     private WifiLock mWifiLock;
     private Timer mWifiScanTimer;
-    private final Set<String> mAPs = Collections.synchronizedSet(new HashSet<String>());
     private AtomicInteger mVisibleAPs = new AtomicInteger();
 
     public WifiScanner(Context c) {
         mContext = c;
     }
 
-    private boolean isWifiEnabled() {
-        return getWifiManager().isWifiEnabled();
+    private boolean isScanEnabled() {
+        WifiManager manager = getWifiManager();
+        boolean scanEnabled = manager.isWifiEnabled();
+        if (Build.VERSION.SDK_INT >= 18) {
+            scanEnabled |= manager.isScanAlwaysAvailable();
+        }
+        return scanEnabled;
     }
 
     private List<ScanResult> getScanResults() {
-        return getWifiManager().getScanResults();
+        WifiManager manager = getWifiManager();
+        if (manager == null) {
+            return null;
+        }
+
+        return manager.getScanResults();
     }
 
 
@@ -68,11 +75,13 @@ public class WifiScanner extends BroadcastReceiver {
         }
         mStarted = true;
 
-        if (isWifiEnabled()) {
+        if (isScanEnabled()) {
             activatePeriodicScan(stumblingMode);
         }
 
-        IntentFilter i = new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
+        IntentFilter i = new IntentFilter();
+        i.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION);
+        i.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
         mContext.registerReceiver(this, i);
     }
 
@@ -88,18 +97,26 @@ public class WifiScanner extends BroadcastReceiver {
         String action = intent.getAction();
 
         if (WifiManager.WIFI_STATE_CHANGED_ACTION.equals(action)) {
-            if (isWifiEnabled()) {
+            if (isScanEnabled()) {
                 activatePeriodicScan(ActiveOrPassiveStumbling.ACTIVE_STUMBLING);
             } else {
                 deactivatePeriodicScan();
             }
         } else if (WifiManager.SCAN_RESULTS_AVAILABLE_ACTION.equals(action)) {
-            ArrayList<ScanResult> scanResults = new ArrayList<ScanResult>();
-            for (ScanResult scanResult : getScanResults()) {
+            final List<ScanResult> scanResultList = getScanResults();
+            if (scanResultList == null) {
+                return;
+            }
+            final ArrayList<ScanResult> scanResults = new ArrayList<ScanResult>();
+            for (ScanResult scanResult : scanResultList) {
                 scanResult.BSSID = BSSIDBlockList.canonicalizeBSSID(scanResult.BSSID);
+
                 if (shouldLog(scanResult)) {
+                    // Once we've checked that we want this scan result, we can safely discard
+                    // the SSID and capabilities.
+                    scanResult.SSID = "";
+                    scanResult.capabilities = "";
                     scanResults.add(scanResult);
-                    mAPs.add(scanResult.BSSID);
                 }
             }
             mVisibleAPs.set(scanResults.size());
@@ -110,10 +127,6 @@ public class WifiScanner extends BroadcastReceiver {
     public static void setWifiBlockList(WifiBlockListInterface blockList) {
         BSSIDBlockList.setFilterList(blockList.getBssidOuiList());
         SSIDBlockList.setFilterLists(blockList.getSsidPrefixList(), blockList.getSsidSuffixList());
-    }
-
-    public int getAPCount() {
-        return mAPs.size();
     }
 
     public int getVisibleAPCount() {

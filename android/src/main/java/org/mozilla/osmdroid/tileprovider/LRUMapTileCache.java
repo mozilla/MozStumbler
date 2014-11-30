@@ -28,7 +28,7 @@ import java.util.LinkedHashMap;
 public class LRUMapTileCache {
     private int mCapacity = 0;
     private InnerLRUMapTileCache innerCache;
-    private static final String LOG_TAG = AppGlobals.LOG_PREFIX + LRUMapTileCache.class.getSimpleName();
+    private static final String LOG_TAG = AppGlobals.makeLogTag(LRUMapTileCache.class.getSimpleName());
 
     public LRUMapTileCache(int capacity) {
         ensureCapacity(capacity);

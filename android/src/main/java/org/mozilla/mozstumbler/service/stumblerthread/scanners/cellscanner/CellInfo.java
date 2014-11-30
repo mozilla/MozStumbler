@@ -19,12 +19,12 @@ import org.json.JSONObject;
 import org.mozilla.mozstumbler.service.AppGlobals;
 
 public class CellInfo implements Parcelable {
-    private static final String LOG_TAG = AppGlobals.LOG_PREFIX + CellInfo.class.getSimpleName();
+    private static final String LOG_TAG = AppGlobals.makeLogTag(CellInfo.class.getSimpleName());
 
     public static final String RADIO_GSM = "gsm";
     public static final String RADIO_CDMA = "cdma";
-    public static final String RADIO_WCDMA = "wcdma";
 
+    public static final String CELL_RADIO_UNKNOWN = "";
     public static final String CELL_RADIO_GSM = "gsm";
     public static final String CELL_RADIO_UMTS = "umts";
     public static final String CELL_RADIO_CDMA = "cdma";
@@ -48,19 +48,6 @@ public class CellInfo implements Parcelable {
     public CellInfo(int phoneType) {
         reset();
         setRadio(phoneType);
-    }
-
-    private CellInfo(Parcel in) {
-        mRadio = in.readString();
-        mCellRadio = in.readString();
-        mMcc = in.readInt();
-        mMnc = in.readInt();
-        mCid = in.readInt();
-        mLac = in.readInt();
-        mSignal = in.readInt();
-        mAsu = in.readInt();
-        mTa = in.readInt();
-        mPsc = in.readInt();
     }
 
     public boolean isCellRadioValid() {
@@ -161,6 +148,24 @@ public class CellInfo implements Parcelable {
         mRadio = getRadioTypeName(phoneType);
     }
 
+    void setNeighboringCellInfo(NeighboringCellInfo nci, String networkOperator) {
+        final int lac, cid, psc, rssi;
+
+        reset();
+        mCellRadio = getCellRadioTypeName(nci.getNetworkType());
+        setNetworkOperator(networkOperator);
+
+        lac = nci.getLac();
+        cid = nci.getCid();
+        psc = nci.getPsc();
+        rssi = nci.getRssi();
+
+        if (lac >= 0) mLac = lac;
+        if (cid >= 0) mCid = cid;
+        if (psc >= 0) mPsc = psc;
+        if (rssi != NeighboringCellInfo.UNKNOWN_RSSI) mAsu = rssi;
+    }
+
     void setCellLocation(CellLocation cl,
                          int networkType,
                          String networkOperator,
@@ -206,24 +211,6 @@ public class CellInfo implements Parcelable {
         } else {
             throw new IllegalArgumentException("Unexpected CellLocation type: " + cl.getClass().getName());
         }
-    }
-
-    void setNeighboringCellInfo(NeighboringCellInfo nci, String networkOperator) {
-        final int lac, cid, psc, rssi;
-
-        reset();
-        mCellRadio = getCellRadioTypeName(nci.getNetworkType());
-        setNetworkOperator(networkOperator);
-
-        lac = nci.getLac();
-        cid = nci.getCid();
-        psc = nci.getPsc();
-        rssi = nci.getRssi();
-
-        if (lac >= 0) mLac = lac;
-        if (cid >= 0) mCid = cid;
-        if (psc >= 0) mPsc = psc;
-        if (rssi != NeighboringCellInfo.UNKNOWN_RSSI) mAsu = rssi;
     }
 
     void setGsmCellInfo(int mcc, int mnc, int lac, int cid, int asu) {
@@ -282,6 +269,7 @@ public class CellInfo implements Parcelable {
     }
 
     static String getCellRadioTypeName(int networkType) {
+        Log.d(LOG_TAG, "getCellRadioTypeName("+networkType+")");
         switch (networkType) {
             // If the network is either GSM or any high-data-rate variant of it, the radio
             // field should be specified as `gsm`. This includes `GSM`, `EDGE` and `GPRS`.
@@ -315,7 +303,7 @@ public class CellInfo implements Parcelable {
 
             default:
                 Log.e(LOG_TAG, "", new IllegalArgumentException("Unexpected network type: " + networkType));
-                return String.valueOf(networkType);
+                return CELL_RADIO_UNKNOWN;
         }
     }
 

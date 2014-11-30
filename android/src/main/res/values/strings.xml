@@ -10,7 +10,7 @@
     <string name="service_name">Mozilla Stumbler</string>
     <string name="service_scanning">Scanning for Wi-Fi and Cellular networks</string>
     <string name="enter_nickname">Enter Nickname (optional)</string>
-    <string name="enter_nickname_title">Nickname: </string>
+    <string name="enter_nickname_title">Nickname: %1$s</string>
     <string name="enter_nickname_longtext">Your nickname will appear on the leaderboard.</string>
     <string name="update_title">Download Mozilla Stumbler Update?</string>
     <string name="update_message">Installed version: %1$s\nLatest version: %2$s</string>
@@ -23,9 +23,31 @@
     <string name="about_mapbox_title">MapBox</string>
     <string name="about_mapbox">Learn more at http://www.mapbox.com</string>
     <string name="about_legal_aosp">Some iconography in this app is reproduced from work created and shared by the Android Open Source Project and used according to terms described in the Creative Commons 2.5 Attribution License.</string>
-    <string name="about_legal_flaticons">GPS, cell tower, Wi-Fi, and binoculars icons made by Freepik from http://www.flaticon.com. under license: https://creativecommons.org/licenses/by-nd/3.0</string>
-    <string name="upload_observations_sent_title">Previous sessions</string>
+    <string name="about_legal_flaticons">GPS, cell tower, Wi-Fi, and binoculars icons made by Freepik from http://www.flaticon.com under license: https://creativecommons.org/licenses/by-nd/3.0</string>
+    <string name="upload_observations_sent_title">Already sent</string>
     <string name="metrics_observations_last_upload_time_title">Last upload:</string>
+    <string name="metrics_observations_last_upload_time_never">never</string>
+    <!--
+    Do not just copy those plurals, please check what is needed for your language.
+    http://developer.android.com/guide/topics/resources/string-resource.html#Plurals
+    -->
+    <plurals name="time_diff_seconds">
+        <item quantity="one">just now</item>
+        <item quantity="other">moments ago</item>
+    </plurals>
+    <plurals name="time_diff_minutes">
+        <item quantity="one">one minute ago</item>
+        <item quantity="other">%d minutes ago</item>
+    </plurals>
+    <plurals name="time_diff_hours">
+        <item quantity="one">one hour ago</item>
+        <item quantity="other">%d hours ago</item>
+    </plurals>
+    <plurals name="time_diff_days">
+        <item quantity="one">one day ago</item>
+        <item quantity="other">%d days ago</item>
+    </plurals>
+
     <string name="metrics_observations_title">Reports:</string>
     <string name="metrics_observations_wifis_title">Wi-Fi networks:</string>
     <string name="metrics_observations_cell_towers_title">Cell networks:</string>
@@ -42,9 +64,10 @@
     <string name="kml_file_title">KML Reports File</string>
     <string name="kml_file_load">Load KML File</string>
     <string name="kml_file_save">Save KML File</string>
-    <string name="kml_file_description">Save/Load the reports (location, wi-fi+cell counts) for debugging. </string>
+    <string name="kml_file_description">Save/Load the reports (location, Wi-Fi + cell counts) for debugging.</string>
     <string name="kml_file_saved_name">Saved File:</string>
     <string name="keep_screen_on_title">Keep screen on while scanning</string>
+    <string name="keep_screen_on_summary">Keep the screen on while scanning is active and the app is in the foreground.</string>
     <string name="delete_all">Delete all</string>
     <string name="are_you_sure">Are you sure?</string>
     <string name="loading_kml">Loading KML</string>
@@ -56,7 +79,7 @@
     <string name="kml_file_saved">KML Saved</string>
     <string name="share_after_kml_saved">The file is saved on device, would you like to share the file?</string>
     <string name="enter_email">Enter e-mail address (optional)</string>
-    <string name="enter_email_title">Email: </string>
+    <string name="enter_email_title">Email: %1$s</string>
     <string name="enter_email_longtext">Your email address is never displayed to people and is only used for your own reports.</string>
     <string name="drawer_open">Show drawer</string>
     <string name="drawer_close">Close drawer</string>
@@ -67,24 +90,46 @@
     <string name="first_run_start_stumbling">Start Stumbling</string>
     <string name="first_run_welcome_to_mozstumbler">Welcome to Mozilla Stumbler</string>
     <string name="map_unavailable">The map is not available for display, as there is no SD card storage.\nYou can still collect data.</string>
-    <string name="map_offline_mode">"The map will not update without an Internet connection,\nhowever you are still able to collect data."</string>
+    <string name="map_offline_mode">The map will not update without an Internet connection,\nhowever you are still able to collect data.</string>
+    <string name="map_copyright_fdroid">Tiles Courtesy of MapQuest\n© OpenStreetMap contributors</string>
+    <string name="map_copyright_moz">© MapBox © OpenStreetMap contributors</string>
     <string name="action_developer">Developer</string>
     <string name="developer_title">Developer</string>
-    <string name="enable_option_show_mls_on_map">Enable MLS layer toggle</string>
-    <string name="enable_option_show_mls_on_map_summary">At the cost of a bit more memory and network usage, the map can show MLS location queries for your scans.</string>
+    <string name="enable_option_show_mls_on_map">Enable MLS location queries</string>
+    <string name="enable_option_show_mls_on_map_summary">Show Mozilla Location Service (MLS) locations for your reports.</string>
+    <!-- enable_option_show_mls_on_map_detailed_info: %1$s refers to upload_wifi_only_title -->
+    <string name="enable_option_show_mls_on_map_detailed_info">At the cost of a bit more energy, memory and network usage, the MLS location is shown for each report. This is shown on the map as a red dot for the MLS location, with a line to its report. However, it will not query locations over mobile data connections if \"%1$s\" is enabled.</string>
+    <string name="cell_plus_wifi_observation">Wi-Fi + cell report</string>
     <string name="cell_only_observation">Cell only report</string>
     <string name="wifi_only_observation">Wi-Fi only report</string>
-    <string name="low_resolution_map">Low resolution map</string>
+    <string name="low_resolution_map">Low detail map</string>
     <string name="map_turned_off">Map display off</string>
-    <string name="map_tile_resolution_options_label">Map tile options:</string>
+    <string name="map_tile_resolution_options_label">Map detail:</string>
+    <string name="map_tile_resolution_options_summary">Low detail reduces network data usage.</string>
     <string name="enable_crash_reporting">Enable crash reporting</string>
     <string name="privacy_policy">Privacy policy:</string>
     <string name="satellites_separator">/</string>
     <string name="must_uninstall_to_update">You must uninstall first to update to the new version.</string>
+    <string name="category_leaderboard">Leaderboard</string>
+    <string name="category_network_usage">Network usage</string>
+    <string name="category_display">Display</string>
+    <string name="category_crashreport">Crash reporting</string>
+
     <string-array name="map_tile_resolution_options">
-        <item>Default</item>
-        <item>High resolution only</item>
-        <item>Low resolution only</item>
+        <item>High (Wi-Fi) / low (cell)</item>
+        <item>High detail only</item>
+        <item>Low detail only</item>
         <item>No map</item>
     </string-array>
+
+    <string name="low_battery_title">Stop stumbling on low battery</string>
+    <string name="battery_percent_options_label">Stop when battery drops to:</string>
+    <string name="motion_detection_title">Motion Detection</string>
+    <string name="motion_detection_options_label">Pause scanning if you don\'t move</string>
+    <string name="motion_detection_options_conjunction">in</string>
+    <string name="map_scanning_paused_no_motion">Location not changing, scanning paused.</string>
+    <string name="title_activity_toggle_widget_helper">ToggleWidgetHelper</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+
 </resources>

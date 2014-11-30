@@ -23,15 +23,12 @@ public class GPSScanner implements LocationListener {
     public static final String ACTION_BASE = AppGlobals.ACTION_NAMESPACE + ".GPSScanner.";
     public static final String ACTION_GPS_UPDATED = ACTION_BASE + "GPS_UPDATED";
     public static final String ACTION_ARG_TIME = AppGlobals.ACTION_ARG_TIME;
-    public static final String SUBJECT_NEW_STATUS = "new_status";
     public static final String SUBJECT_LOCATION_LOST = "location_lost";
     public static final String SUBJECT_NEW_LOCATION = "new_location";
-    public static final String NEW_STATUS_ARG_FIXES = "fixes";
-    public static final String NEW_STATUS_ARG_SATS = "sats";
     public static final String NEW_LOCATION_ARG_LOCATION = "location";
     public static final int MIN_SAT_USED_IN_FIX = 3;
 
-    private static final String LOG_TAG = AppGlobals.LOG_PREFIX + GPSScanner.class.getSimpleName();
+    private static final String LOG_TAG = AppGlobals.makeLogTag(GPSScanner.class.getSimpleName());
     private static final long ACTIVE_MODE_GPS_MIN_UPDATE_TIME_MS = 2000;
     private static final float ACTIVE_MODE_GPS_MIN_UPDATE_DISTANCE_M = 30;
     private static final long PASSIVE_GPS_MIN_UPDATE_FREQ_MS = 3000;
@@ -61,15 +58,31 @@ public class GPSScanner implements LocationListener {
         }
     }
 
+    private boolean isGpsAvailable(LocationManager locationManager) {
+        if (locationManager == null ||
+            locationManager.getProvider(LocationManager.GPS_PROVIDER) == null) {
+            String msg = "No GPS available, scanning not started.";
+            Log.d(LOG_TAG, msg);
+            AppGlobals.guiLogError(msg);
+            return false;
+        }
+        return true;
+    }
+
     private void startPassiveMode() {
         LocationManager locationManager = (LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
-        locationManager.requestLocationUpdates(LocationManager.PASSIVE_PROVIDER,
-                0,
-                0, this);
+        if (!isGpsAvailable(locationManager)) {
+            return;
+        }
+        locationManager.requestLocationUpdates(LocationManager.PASSIVE_PROVIDER, 0, 0, this);
     }
 
     private void startActiveMode() {
         LocationManager lm = getLocationManager();
+        if (!isGpsAvailable(lm)) {
+            return;
+        }
+
         lm.requestLocationUpdates(LocationManager.GPS_PROVIDER,
                 ACTIVE_MODE_GPS_MIN_UPDATE_TIME_MS,
                 ACTIVE_MODE_GPS_MIN_UPDATE_DISTANCE_M,

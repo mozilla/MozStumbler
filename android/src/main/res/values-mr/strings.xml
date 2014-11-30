@@ -1,44 +1,109 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">मोझस्टंबलर</string>
-    <string name="action_about">मोझस्टंबलर बद्दल</string>
-    <string name="action_preferences">मांडणी पर्याय</string>
+    
+    <string name="app_name">मोझिला स्टंबलर</string>
+    <string name="action_about">मोझिला स्टंबलर बद्दल</string>
+    <string name="action_preferences">सेटिंग्ज</string>
     <string name="start_scanning">सर्वेक्षण सुरु करा</string>
     <string name="stop_scanning">सर्वेक्षण बंद करा</string>
     <string name="view_leaderboard">अग्रेसर वापरकर्ता फलक बघा</string>
     <string name="service_name">मोझिला स्टंबलर</string>
     <string name="service_scanning">Wi-Fi आणि भ्रमणध्वनी जाळे शोधत आहे</string>
     <string name="enter_nickname">टोपणनाव टाका (ऐच्छिक)</string>
-    <string name="enter_nickname_title">टोपणनाव: </string>
+    <string name="enter_nickname_title">टोपणनाव: %1$s</string>
     <string name="enter_nickname_longtext">तुमचे टोपणनाव अग्रेसर वापरकर्ता फलकावर दिसेल.</string>
-    <string name="update_title">मोझस्टंबलर आवृत्ती अद्ययावत करायची का?</string>
-    <string name="update_message">प्रतिष्ठापित आवृत्ती: %1$s\nनवीनतम आवृत्ती: %2$s</string>
+    <string name="update_title">मोझिला स्टंबलर आवृत्ती अद्ययावत करायची का?</string>
+    <string name="update_message">सध्याची आवृत्ती: %1$s\nनवीन आवृत्ती: %2$s</string>
     <string name="update_now">आता अद्ययावत करा</string>
     <string name="update_later">नंतर अद्ययावत करा</string>
     <string name="yes">हो</string>
     <string name="no">नाही</string>
     <string name="about_version">आवृत्ती %1$s</string>
-    <string name="about_openstreetmap">नकाशा दर्शक टाईल्स © OpenStreetMap सदस्य\nhttp://www.openstreetmap.org</string>
+    <string name="about_openstreetmap">नकाशा दर्शक टाईल्स\n© OpenStreetMap सहयोगी\nhttp://www.openstreetmap.org</string>
     <string name="about_mapbox_title">मॅपबॉक्स</string>
-    <string name="about_mapbox">आमच्या नकाशा पुरवठादाराविषयी अधिक जाणून घ्या…</string>
-    <string name="about_legal_aosp">या अनुप्रयोगामधे वापरण्यात आलेल्या काही प्रतिमा अँड्रॉइड मुक्त स्रोत प्रकल्पाने तयार करून विभागून दिलेल्या आहेत व त्या क्रिएटीव कॉमन्स २.५ विशेष परवाना अटींनुसार वापरल्या आहेत.</string>
-    
-    <string name="upload_observations_sent_title">पाठवलेली निरीक्षणे</string>
+    <string name="about_mapbox">http://www.mapbox.com वर अधिक जाणून घ्या</string>
+    <string name="about_legal_aosp"> या अॅपमधे वापरण्यात आलेल्या काही प्रतिमा अँड्रॉइड मुक्त स्रोत प्रकल्पाने तयार करून विभागून दिलेल्या आहेत व त्या क्रिएटीव कॉमन्स २.५ विशेष परवाना अटींनुसार वापरल्या आहेत..</string>
+    <string name="about_legal_flaticons">GPS, भ्रमणध्वनी मनोरा, Wi-Fi, आणि दुर्बीण यांची चिन्हे Freepik यांनी बनवलेली http://www.flaticon.com वरून घेतली पुढील अटींच्या अधीन: https://creativecommons.org/licenses/by-nd/3.0</string>
+    <string name="upload_observations_sent_title">अगोदर पाठवलेले अहवाल</string>
     <string name="metrics_observations_last_upload_time_title">शेवटची निरीक्षणे पाठवण्याची वेळ:</string>
-    <string name="metrics_observations_title">निरीक्षणे:</string>
-    <string name="metrics_observations_wifis_title">Wi-Fi प्रवेश बिंदू:</string>
-    <string name="metrics_observations_cell_towers_title">भ्रमणध्वनी जाळे :</string>
-    <string name="upload_observations_in_queue_title">पाठवण्याच्या प्रतीक्षेत असलेली निरीक्षणे</string>
-
-
-
+    <string name="metrics_observations_last_upload_time_never">कधीच नाही</string>
+    <!-- http://developer.android.com/guide/topics/resources/string-resource.html#Plurals -->
+    <plurals name="time_diff_seconds">
+        <item quantity="one">आता</item>
+        <item quantity="other">काही क्षणांपूर्वी</item>
+    </plurals>
+    <plurals name="time_diff_minutes">
+        <item quantity="one">एका मिनिटापूर्वी</item>
+        <item quantity="other">%d मिनिटांपूर्वी</item>
+    </plurals>
+    <plurals name="time_diff_hours">
+        <item quantity="one">एका तासापूर्वी</item>
+        <item quantity="other">%d तासांपूर्वी</item>
+    </plurals>
+    <plurals name="time_diff_days">
+        <item quantity="one">एका दिवसापूर्वी</item>
+        <item quantity="other">%d दिवसांपूर्वी</item>
+    </plurals>
+    <string name="metrics_observations_title">अहवाल:</string>
+    <string name="metrics_observations_wifis_title">Wi-Fi जाळे:</string>
+    <string name="metrics_observations_cell_towers_title">भ्रमणध्वनी जाळे:</string>
+    <string name="upload_observations_in_queue_title">पाठवण्यासाठी तयार निरीक्षणे</string>
     <string name="upload_wifi_only_title">फक्त Wi-Fi वर निरीक्षणे पाठवा</string>
-    <string name="upload_wifi_only_summary">हा पर्याय आपला भ्रमणध्वनी जाळ्यावरील डेटा वापर कमी करेल.</string>
-
-
-
+    <string name="upload_wifi_only_summary">हा पर्याय आपला भ्रमणध्वनी जाळ्यावरील डेटा वापर कमी करेल. सांख्यिकी मधिल पाठवा दाबल्यास हा नेहमी अहवाल पाठवेल.</string>
+    <string name="metrics_activity_title">सांख्यिकी</string>
+    <string name="metrics_this_session">सध्याचे सत्र</string>
+    <string name="drawer_map_option_show_mls_locations">MLS स्थळे दाखवा</string>
     <string name="title_activity_log">नोंदवही</string>
     <string name="action_view_log">नोंदी बघा</string>
     <string name="scroll_to_start">सुरुवात बघा</string>
     <string name="scroll_to_end">शेवट बघा</string>
+    <string name="kml_file_title">KML अहवाल फाईल</string>
+    <string name="kml_file_load">KML फाईल लोड करा</string>
+    <string name="kml_file_save"> KML फाईल सुरक्षित करा</string>
+    <string name="kml_file_description">डीबगींगसाठी अहवाल सुरक्षित/लोड करा (स्थळे, Wi-Fi + जाळे गणना).</string>
+    <string name="kml_file_saved_name">सुरक्षित फाईल:</string>
+    <string name="keep_screen_on_title">सर्वेक्षण करताना पटल चालू ठेवा</string>
+    <string name="keep_screen_on_summary">पटल चालू ठेवा जेंव्हा सर्वेक्षण सुरु असेल आणि अॅप समोर असेल.</string>
+    <string name="delete_all">सर्व नष्ट करा</string>
+    <string name="are_you_sure">आपल्याला खात्री आहे?</string>
+    <string name="loading_kml">KML लोड करत आहे</string>
+    <string name="saving_kml">KML सुरक्षित करत आहे</string>
+    <string name="mozstumbler_kml_file">मोझिला स्टंबलर KML फाईल</string>
+    <string name="share_file">फाईल वाटा</string>
+    <string name="load_file">फाईल लोड करा</string>
+    <string name="delete_file">फाईल नष्ट करा</string>
+    <string name="kml_file_saved">KML  सुरक्षित करण्यात आली आहे</string>
+    <string name="share_after_kml_saved">हि फाईल यंत्रावर सुरक्षित आहे, तुम्हाला ती वाटायला आवडेल का?</string>
+    <string name="enter_email">इमेल पत्ता टाका (ऐच्छिक)</string>
+    <string name="enter_email_title">इमेल: %1$s</string>
+    <string name="enter_email_longtext">तुमचा इमेल पत्ता कधीच लोकांना दाखवला जात नाही आणि फक्त तुमच्या अहवालाकरिता वापरला जातो.</string>
+    <string name="drawer_open">कप्पा दाखवा</string>
+    <string name="drawer_close">कप्पा बंद करा</string>
+    <string name="title_activity_leaderboard">अग्रेसर वापरकर्ता फलक</string>
+    <string name="drawer_map_layers_title">नकाशा आख्यायिका</string>
+    <string name="first_run_message_part1">मोझिला स्थळदर्शकसेवा हि Wi-Fi आणि भ्रमणध्वनी जाळे वापरून स्थळ दाखवण्यासाठीची एक मुक्त सेवा आहे.</string>
+    <string name="first_run_message_part2">आमचे <a href="https://location.services.mozilla.com/privacy">गुप्तता धोरण</a> वाचा आणि तुमचे सध्याचे स्थळ सहयोगी करण्यासाठी स्थळे गोळा करणे सुरु करा.</string>
+    <string name="first_run_start_stumbling">स्थळे गोळा करणे सुरु करा</string>
+    <string name="first_run_welcome_to_mozstumbler">मोझिला स्टंबलर मध्ये तुमचे स्वागत आहे</string>
+    <string name="map_unavailable">हा नकाशा दिसणार नाही, कारण बाह्य साठवण साधन उपलब्ध नाही.\तुम्ही तरीही माहिती गोळा करू शकता.</string>
+    <string name="map_offline_mode">हा नकाशा आंतरजालाशिवाय अद्यत होणार नाही,\तरीही तुम्ही माहिती गोळा करू शकता.</string>
+    <string name="action_developer">विकासक</string>
+    <string name="developer_title">विकासक</string>
+    <string name="enable_option_show_mls_on_map">MLS स्थळ चौकशी सुरु करा</string>
+    <string name="enable_option_show_mls_on_map_summary">थोडी अधिकची मेमरी आणि नेटवर्क वापराच्या सहाय्याने, हा नकाशा तुमच्या सर्वेक्षणांकरिता MLS स्थळ चौकशी दाखवू शकतो.</string>
+    <string name="cell_only_observation">फक्त भ्रमणध्वनी जाळे अहवाल</string>
+    <string name="wifi_only_observation">फक्त Wi-Fi अहवाल</string>
+    <string name="low_resolution_map">कमी रीजोलुशन नकाशा</string>
+    <string name="map_turned_off">नकाशा दर्शक बंद</string>
+    <string name="map_tile_resolution_options_label">नकाशा टाईल्स पर्याय:</string>
+    <string name="enable_crash_reporting">क्रॅश अहवाल पाठवणे सुरु करा</string>
+    <string name="privacy_policy">गुप्तता धोरण:</string>
+    <string name="satellites_separator">/</string>
+    <string name="must_uninstall_to_update">नवीन आवृत्ती टाकण्यासाठी तुम्ही आधी जुनी आवृत्ती काढली पाहिजे.</string>
+    <string-array name="map_tile_resolution_options">
+        <item>मूळ</item>
+        <item>फक्त जास्त रीजोलुशन</item>
+        <item>फक्त कमी रीजोलुशन</item>
+        <item>नकाशा नाही</item>
+    </string-array>
 </resources>

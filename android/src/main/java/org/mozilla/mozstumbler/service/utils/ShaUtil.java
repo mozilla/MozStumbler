@@ -12,7 +12,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 public class ShaUtil {
-    private static final String LOG_TAG = AppGlobals.LOG_PREFIX + ShaUtil.class.getSimpleName();
+    private static final String LOG_TAG = AppGlobals.makeLogTag(ShaUtil.class.getSimpleName());
 
     public static String sha1_hex_digest(String email) {
         String result = "";

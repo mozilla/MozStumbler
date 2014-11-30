@@ -12,7 +12,7 @@
     <!--translation missing <string name="coordinate">%1$.4f, %2$.4f</string>-->
     <string name="service_scanning">Escaneat en cerca de xarxes Wi-Fi i cel·lulars</string>
     <string name="enter_nickname">Introdueixi sobrenom (opcional)</string>
-    <string name="enter_nickname_title">Sobrenom: </string>
+    <string name="enter_nickname_title">Sobrenom: %1$s</string>
     <string name="enter_nickname_longtext">El vostre sobrenom apareixerà en la taula de classificacions.</string>
     <string name="update_title">Descarregar actual·lització del Mozilla Stumbler?</string>
     <string name="update_message">Versió instal·lada: %1$s\nÚltima versió: %2$s</string>

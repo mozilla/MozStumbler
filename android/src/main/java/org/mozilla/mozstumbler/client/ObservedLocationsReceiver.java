@@ -18,6 +18,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.mozilla.mozstumbler.client.mapview.MapFragment;
 import org.mozilla.mozstumbler.client.mapview.ObservationPoint;
+import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.core.logging.Log;
 import org.mozilla.mozstumbler.service.stumblerthread.Reporter;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.StumblerBundle;
@@ -29,17 +30,12 @@ import java.util.LinkedList;
 
 public class ObservedLocationsReceiver extends BroadcastReceiver {
 
-    public interface ICountObserver {
-        public void observedLocationCountIncrement();
-    }
-
-    private static final String LOG_TAG = ObservedLocationsReceiver.class.getSimpleName();
+    private static final String LOG_TAG = AppGlobals.makeLogTag(ObservedLocationsReceiver.class.getSimpleName());
     private WeakReference<MapFragment> mMapActivity = new WeakReference<MapFragment>(null);
     private final LinkedList<ObservationPoint> mCollectionPoints = new LinkedList<ObservationPoint>();
     private final LinkedList<ObservationPoint> mQueuedForMLS = new LinkedList<ObservationPoint>();
-    private final int MAX_QUEUED_MLS_POINTS_TO_FETCH = 10;
-    private final long FREQ_FETCH_MLS_MS = 5 * 1000;
-    private WeakReference<ICountObserver> mCountObserver = new WeakReference<ICountObserver>(null);
+    private static final int MAX_QUEUED_MLS_POINTS_TO_FETCH = 10;
+    private static final long FREQ_FETCH_MLS_MS = 5 * 1000;
     private final Handler mHandler = new Handler(Looper.getMainLooper());
 
     // Upper bound on the size of the linked lists of points, for memory and performance safety.
@@ -53,9 +49,8 @@ public class ObservedLocationsReceiver extends BroadcastReceiver {
 
     private static ObservedLocationsReceiver sInstance;
 
-    public static void createGlobalInstance(Context context, ICountObserver countObserver) {
+    public static void createGlobalInstance(Context context) {
         sInstance = new ObservedLocationsReceiver();
-        sInstance.mCountObserver = new WeakReference<ICountObserver>(countObserver);
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(Reporter.ACTION_NEW_BUNDLE);
         LocalBroadcastManager.getInstance(context).registerReceiver(sInstance, intentFilter);
@@ -141,11 +136,6 @@ public class ObservedLocationsReceiver extends BroadcastReceiver {
             }
         } catch (JSONException e) {
             Log.w(LOG_TAG, "Failed to convert bundle to JSON: " + e);
-        }
-
-        // Notify main app of observation
-        if (mCountObserver.get() != null) {
-            mCountObserver.get().observedLocationCountIncrement();
         }
 
         while (mCollectionPoints.size() > MAX_SIZE_OF_POINT_LISTS) {

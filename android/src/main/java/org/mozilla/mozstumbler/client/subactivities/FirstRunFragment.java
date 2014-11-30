@@ -4,6 +4,7 @@
 
 package org.mozilla.mozstumbler.client.subactivities;
 
+import android.app.Dialog;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
@@ -47,7 +48,12 @@ public class FirstRunFragment extends DialogFragment {
             public void onClick(View v) {
                 ((MainApp) getActivity().getApplication()).startScanning();
                 ClientPrefs.getInstance().setFirstRun(false);
-                getDialog().dismiss();
+
+                Dialog d = getDialog();
+                if (d != null) {
+                    dismiss();
+                }
+
             }
         });
 

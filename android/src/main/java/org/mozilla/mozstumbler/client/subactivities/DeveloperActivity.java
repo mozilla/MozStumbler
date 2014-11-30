@@ -14,22 +14,23 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
+import android.widget.ArrayAdapter;
 import android.widget.Spinner;
+import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 
-import org.acra.ACRA;
 import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.client.ClientPrefs;
+import org.mozilla.mozstumbler.client.MainApp;
 import org.mozilla.mozstumbler.client.serialize.KMLFragment;
 import org.mozilla.mozstumbler.service.AppGlobals;
-import org.mozilla.mozstumbler.service.core.logging.Log;
-import org.mozilla.mozstumbler.service.core.logging.MockAcraLog;
+import org.mozilla.mozstumbler.service.stumblerthread.motiondetection.DetectUnchangingLocation;
+import org.mozilla.mozstumbler.service.stumblerthread.motiondetection.MotionSensor;
+import org.mozilla.mozstumbler.service.utils.BatteryCheckReceiver;
 
 public class DeveloperActivity extends ActionBarActivity {
 
-    private final String LOG_TAG = AppGlobals.LOG_PREFIX + DeveloperActivity.class.getSimpleName();
+    private final String LOG_TAG = AppGlobals.makeLogTag(DeveloperActivity.class.getSimpleName());
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,31 +48,43 @@ public class DeveloperActivity extends ActionBarActivity {
         tv.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                new AlertDialog.Builder(DeveloperActivity.this)
-                        .setTitle("ACRA test")
-                        .setMessage("Force a crash?")
-                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                Object empty = null;
-                                empty.hashCode();
-                            }
-                        })
-                        .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
+                final AlertDialog.Builder b = new AlertDialog.Builder(DeveloperActivity.this);
+                final String[] menuList = { "ACRA Crash Test",
+                        "Fake no motion", "Fake motion", "Battery Low", "Battery OK"};
+                b.setTitle("Secret testing.. shhh.");
+                b.setItems(menuList,new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int item) {
+                    switch (item) {
+                        case 0:
+                            Object a = null;
+                            a.hashCode();
+                            break;
+                        case 1:
+                            DetectUnchangingLocation.debugSendLocationUnchanging();
+                            break;
+                        case 2:
+                            MotionSensor.debugMotionDetected();
+                            break;
+                        case 3:
+                            int pct = ClientPrefs.getInstance().getMinBatteryPercent();
+                            BatteryCheckReceiver.debugSendBattery(pct - 1);
+                            break;
+                        case 4:
+                            BatteryCheckReceiver.debugSendBattery(99);
+                            break;
 
-                            }
-                        })
-                        .setIcon(android.R.drawable.ic_dialog_alert)
-                        .show();
+                    }
+                    }
+                });
+                b.create().show();
                 return true;
             }
         });
-
     }
 
     // For misc developer options
     public static class DeveloperOptions extends Fragment {
-        private final String LOG_TAG = AppGlobals.LOG_PREFIX + DeveloperOptions.class.getSimpleName();
+        private final String LOG_TAG = AppGlobals.makeLogTag(DeveloperOptions.class.getSimpleName());
 
         private View mRootView;
 
@@ -79,44 +92,95 @@ public class DeveloperActivity extends ActionBarActivity {
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             mRootView = inflater.inflate(R.layout.fragment_developer_options, container, false);
 
-            boolean crashEnabled = ClientPrefs.getInstance().isCrashReportingEnabled();
-            CheckBox button = (CheckBox) mRootView.findViewById(R.id.toggleCrashReports);
-            button.setChecked(crashEnabled);
-            button.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    onToggleCrashReportClicked(isChecked);
-                }
-            });
+            final Spinner batterySpinner = (Spinner) mRootView.findViewById(R.id.spinnerBatteryPercent);
+            final SpinnerAdapter spinnerAdapter = batterySpinner.getAdapter();
+            assert(spinnerAdapter instanceof ArrayAdapter);
+            @SuppressWarnings("unchecked")
+            final ArrayAdapter<String> adapter = (ArrayAdapter<String>)spinnerAdapter;
+            final int percent = ClientPrefs.getInstance().getMinBatteryPercent();
+            final int spinnerPosition = adapter.getPosition(percent + "%");
+            batterySpinner.setSelection(spinnerPosition);
 
-            final Spinner spinner = (Spinner) mRootView.findViewById(R.id.spinnerMapResolutionOptions);
-            spinner.setSelection(ClientPrefs.getInstance().getMapTileResolutionType().ordinal());
-            spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            batterySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
-                public void onItemSelected(AdapterView<?> arg0, View arg1, int position, long id) {
-                    String item = spinner.getSelectedItem().toString();
+                public void onItemSelected(AdapterView<?> parent, View arg1, int position, long id) {
+                    String item = parent.getItemAtPosition(position).toString().replace("%", "");
+                    int percent = Integer.valueOf(item);
                     ClientPrefs prefs = ClientPrefs.createGlobalInstance(getActivity().getApplicationContext());
-                    prefs.setMapTileResolutionType(position);
+                    prefs.setMinBatteryPercent(percent);
                 }
 
                 @Override
-                public void onNothingSelected(AdapterView<?> arg0) {
+                public void onNothingSelected(AdapterView<?> arg0) {}
+            });
+
+            final String[] distanceArray = {"30 m", "50 m", "75 m", "100 m", "125 m", "150 m", "175 m", "200 m"};
+            final ArrayAdapter<String> distanceAdapter =
+                    new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_spinner_item, distanceArray);
+            final Spinner distanceSpinner = (Spinner) mRootView.findViewById(R.id.spinnerMotionDetectionDistanceMeters);
+            distanceSpinner.setAdapter(distanceAdapter);
+            final int dist = ClientPrefs.getInstance().getMotionChangeDistanceMeters();
+            distanceSpinner.setSelection(findIndexOf(dist, distanceArray));
+
+            distanceSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View arg1, int position, long id) {
+                    changeOfMotionDetectionDistanceOrTime(parent, position, IsDistanceOrTime.DISTANCE);
                 }
 
+                @Override
+                public void onNothingSelected(AdapterView<?> arg0) {}
             });
+
+            final String[] timeArray = {"5 s", "30 s", "60 s", "90 s", "120 s", "180 s", "210 s", "240 s", "270 s", "300 s"};
+            final ArrayAdapter<String> timeAdapter =
+                    new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_spinner_item, timeArray);
+            final Spinner timeSpinner = (Spinner) mRootView.findViewById(R.id.spinnerMotionDetectionTimeSeconds);
+            timeSpinner.setAdapter(timeAdapter);
+            final int time = ClientPrefs.getInstance().getMotionChangeTimeWindowSeconds();
+            timeSpinner.setSelection(findIndexOf(time, timeArray));
+
+            timeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View arg1, int position, long id) {
+                    changeOfMotionDetectionDistanceOrTime(parent, position, IsDistanceOrTime.TIME);
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> arg0) {}
+            });
+
             return mRootView;
         }
 
-        private void onToggleCrashReportClicked(boolean isOn) {
-            ClientPrefs.getInstance().setCrashReportingEnabled(isOn);
-
-            if (isOn) {
-                Log.d(LOG_TAG, "Enabled crash reporting");
-                ACRA.setLog(MockAcraLog.getOriginalLog());
+        private enum IsDistanceOrTime { DISTANCE, TIME }
+        private void changeOfMotionDetectionDistanceOrTime(AdapterView<?> parent, int position, IsDistanceOrTime isDistanceOrTime) {
+            String item = parent.getItemAtPosition(position).toString();
+            int val = Integer.valueOf(item.substring(0, item.indexOf(" ")));
+            ClientPrefs prefs = ClientPrefs.createGlobalInstance(getActivity().getApplicationContext());
+            if (isDistanceOrTime == IsDistanceOrTime.DISTANCE) {
+                prefs.setMotionChangeDistanceMeters(val);
             } else {
-                Log.d(LOG_TAG, "Disabled crash reporting");
-                ACRA.setLog(new MockAcraLog());
+                prefs.setMotionChangeTimeWindowSeconds(val);
+            }
+            MainApp mainApp = ((MainApp)getActivity().getApplication());
+            if (mainApp.isScanningOrPaused()) {
+                mainApp.stopScanning();
+                mainApp.startScanning();
             }
         }
+
+        private int findIndexOf(int needle, String[] haystack) {
+            int i = 0;
+            for (String item : haystack) {
+                int val = Integer.valueOf(item.substring(0, item.indexOf(" ")));
+                if (val == needle) {
+                    return i;
+                }
+                i++;
+            }
+            return 0;
+        }
     }
+
 }

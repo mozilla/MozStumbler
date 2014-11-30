@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/toggleService"
+    android:background="@xml/rounded_border">
+    <ImageView
+        android:id="@+id/toggleServiceButton"
+        android:layout_width="72dp"
+        android:layout_height="72dp"
+        android:layout_gravity="center_vertical"
+        android:checked="false"
+        android:scaleType="center"
+        android:src="@drawable/ic_status_scanning"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="72dp"
+        android:layout_gravity="center"
+        android:orientation="vertical">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+            <ImageView
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:src="@drawable/ic_wifi_flaticondotcom"/>
+            <TextView
+                android:id="@+id/stumbler_info1"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:paddingLeft="4dp"
+                android:textSize="20sp"
+                android:textColor="@android:color/black"
+                android:text="Press" />
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+            <ImageView
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:src="@drawable/ic_cell_flaticondotcom"/>
+            <TextView
+                android:id="@+id/stumbler_info2"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:paddingLeft="4dp"
+                android:textSize="20sp"
+                android:textColor="@android:color/black"
+                android:text="to sync" />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

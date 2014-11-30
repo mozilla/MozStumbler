@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+  
     <string name="app_name">Mozilla Stumbler</string>
     <string name="action_about">关于 Mozilla Stumbler</string>
     <string name="action_preferences">设置</string>
@@ -9,7 +10,7 @@
     <string name="service_name">Mozilla Stumbler</string>
     <string name="service_scanning">扫描 Wi-Fi 和移动基站</string>
     <string name="enter_nickname">输入昵称 (可选)</string>
-    <string name="enter_nickname_title">昵称: </string>
+    <string name="enter_nickname_title">昵称: %1$s</string>
     <string name="enter_nickname_longtext">你的昵称将被显示在积分榜中</string>
     <string name="update_title">下载 Mozilla Stumbler 更新？</string>
     <string name="update_message">当前版本: %1$s\n最新版本: %2$s</string>
@@ -22,22 +23,83 @@
     <string name="about_mapbox_title">MapBox</string>
     <string name="about_mapbox">了解我们的地图提供商…</string>
     <string name="about_legal_aosp">本应用中的部分图标是 Android 开源项目创作并以知识共享 2.5 署名许可协议分享的作品</string>
+    <string name="about_legal_flaticons">GPS，移动基站，Wi-Fi 和望远镜图标是来自 http://www.flaticon.com 的 Freepik 创作并以知识共享 3.0 署名-禁止演绎许可协议分享的作品</string>
     <string name="upload_observations_sent_title">已发送</string>
     <string name="metrics_observations_last_upload_time_title">最近一次上传时间：</string>
+    <string name="metrics_observations_last_upload_time_never">尚未上传</string>
+    <!-- http://developer.android.com/guide/topics/resources/string-resource.html#Plurals -->
+    <plurals name="time_diff_seconds">
+        <item quantity="other">不久前</item>
+    </plurals>
+    <plurals name="time_diff_minutes">
+        <item quantity="other">%d 分钟前</item>
+    </plurals>
+    <plurals name="time_diff_hours">
+        <item quantity="other">%d 小时前</item>
+    </plurals>
+    <plurals name="time_diff_days">
+        <item quantity="other">%d 天前</item>
+    </plurals>
     <string name="metrics_observations_title">报告：</string>
     <string name="metrics_observations_wifis_title">Wi-Fi 接入点：</string>
     <string name="metrics_observations_cell_towers_title">移动基站：</string>
     <string name="upload_observations_in_queue_title">排队中</string>
-
-
-
     <string name="upload_wifi_only_title">仅通过 Wi-Fi 网络上传</string>
     <string name="upload_wifi_only_summary">这一选项有助于减少您的移动数据流量</string>
-
-
-
+    <string name="metrics_activity_title">统计</string>
+    <string name="metrics_this_session">本次会话</string>
+    <string name="drawer_map_option_show_mls_locations">显示查询 MLS 得到的位置</string>
     <string name="title_activity_log">日志</string>
     <string name="action_view_log">查看日志</string>
     <string name="scroll_to_start">向前滚动</string>
     <string name="scroll_to_end">向后滚动</string>
+    <string name="kml_file_title">KML 报告文件</string>
+    <string name="kml_file_load">加载 KML 文件</string>
+    <string name="kml_file_save">保存 KML 文件</string>
+    <string name="kml_file_description">为调试保存/加载报告 (位置，Wi-Fi 和移动基站计数)</string>
+    <string name="kml_file_saved_name">保存的文件：</string>
+    <string name="keep_screen_on_title">扫描时保持屏幕开启</string>
+    <string name="keep_screen_on_summary">当扫描正在进行并且应用运行在前台时，保持屏幕开启</string>
+    <string name="delete_all">全部删除</string>
+    <string name="are_you_sure">你确定吗？</string>
+    <string name="loading_kml">正在加载 KML</string>
+    <string name="saving_kml">正在保存 KML</string>
+    <string name="mozstumbler_kml_file">Mozilla Stumbler KML 文件</string>
+    <string name="share_file">分享文件</string>
+    <string name="load_file">加载文件</string>
+    <string name="delete_file">删除文件</string>
+    <string name="kml_file_saved">KML 已保存</string>
+    <string name="share_after_kml_saved">文件已保存到设备，是否分享文件？</string>
+    <string name="enter_email">输入 e-mail 地址 (可选)</string>
+    <string name="enter_email_title">Email：</string>
+    <string name="enter_email_longtext">你的 email 地址不会被展示给其他人，只会用于你自己的报告</string>
+    <string name="drawer_open">显示抽屉</string>
+    <string name="drawer_close">关闭抽屉</string>
+    <string name="title_activity_leaderboard">积分榜</string>
+    <string name="drawer_map_layers_title">图例</string>
+    <string name="first_run_message_part1">Mozilla Location Service 是基于 Wi-Fi 和移动基站进行定位的开放服务</string>
+    <string name="first_run_message_part2">阅读我们的 <a href="https://location.services.mozilla.com/privacy">隐私政策</a> 并按“开始收集”来贡献您所在位置的信息</string>
+    <string name="first_run_start_stumbling">开始收集</string>
+    <string name="first_run_welcome_to_mozstumbler">欢迎使用 Mozilla Stumbler</string>
+    <string name="map_unavailable">缺少 SD 存储卡，地图无法显示\n但你仍然可以收集数据</string>
+    <string name="map_offline_mode">无法连接到互联网，地图无法更新\n但你仍然可以收集数据</string>
+    <string name="action_developer">开发者</string>
+    <string name="developer_title">开发者</string>
+    <string name="enable_option_show_mls_on_map">启用 MLS 位置查询</string>
+    <string name="enable_option_show_mls_on_map_summary">在 MLS 中查询扫描到的 Wi-Fi 和移动基站，并将结果显示在地图上，会使用稍高的内存和网络流量</string>
+    <string name="cell_only_observation">此报告仅含移动基站</string>
+    <string name="wifi_only_observation">此报告仅含 Wi-Fi</string>
+    <string name="low_resolution_map">低分辨率地图</string>
+    <string name="map_turned_off">不显示地图</string>
+    <string name="map_tile_resolution_options_label">地图图层选项：</string>
+    <string name="enable_crash_reporting">启用崩溃报告</string>
+    <string name="privacy_policy">隐私政策：</string>
+    <string name="satellites_separator">/</string>
+    <string name="must_uninstall_to_update">您必须卸载旧版本才能升级到新版本</string>
+    <string-array name="map_tile_resolution_options">
+        <item>默认</item>
+        <item>仅高分辨率</item>
+        <item>仅低分辨率</item>
+        <item>不显示地图</item>
+    </string-array>
 </resources>

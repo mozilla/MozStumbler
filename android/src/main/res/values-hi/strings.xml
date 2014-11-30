@@ -1,43 +1,109 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">मोज़स्टम्बलर</string>
-    <string name="action_about">मोज़स्टम्बलर के बारे में</string>
-    <string name="action_preferences">व्यवस्था पर्याय</string>
-    <string name="start_scanning">क्रमवीक्षण शुरू करें</string>
-    <string name="stop_scanning">क्रमवीक्षण बंद करें</string>
-    <string name="view_leaderboard">अग्रणी उपयोगकर्ता फलक देखें</string>
-    <string name="service_name">मोज़िला स्टम्बलर</string>
-    <string name="service_scanning">Wi -Fi एवं Cellular जाल खोज रहा है</string>
-    <string name="enter_nickname">उपनाम डालें (वैकल्पिक)</string>
-    <string name="enter_nickname_title">उपनाम: </string>
-    <string name="enter_nickname_longtext">आपका उपनाम अग्रणी उपयोगकर्ता फलक पर दिखाया जायेगा</string>
-    <string name="update_title">मोज़स्टम्बलर संस्करण अद्यतन करें?</string>
-    <string name="update_message">स्थापित संस्करण: %1$s\nनवीनतम संस्करण: %2$s</string>
-    <string name="update_now">अभी अद्यतन करें</string>
-    <string name="update_later">बादमें अद्यतन करें</string>
-    <string name="yes">हाँ</string>
-    <string name="no">नहीं</string>
-    <string name="about_version">संस्करण %1$s</string>
-    <string name="about_openstreetmap">नक्शा दर्शक टाइल्स © OpenStreetMap योगदानकर्ता\nhttp://www.openstreetmap.org</string>
-    <string name="about_mapbox_title">मैपबॉक्स</string>
-    <string name="about_mapbox">हमारे नक्शा प्रदाता के बारेमे अधिक जानें…</string>
-    <string name="about_legal_aosp">इस अनुप्रयोगमें इस्तेमाल की गयी कुछ आकृतियाँ अँड्रॉइड मुक्त स्रोत परियोजना द्वारा बनाई गयी और विभाजित की गयी है तथा क्रिएटीव कॉमन्स २.५ विशेष प्रयोग शर्त अनुसार इस्तेमाल कि गयी है.</string>
-    <string name="upload_observations_sent_title">भेजें</string>
-    <string name="metrics_observations_last_upload_time_title">अंतिम अवलोकन भेजने का समय:</string>
-    <string name="metrics_observations_title">अवलोकन:</string>
-    <string name="metrics_observations_wifis_title">Wi-Fi प्रवेश बिंदु:</string>
-    <string name="metrics_observations_cell_towers_title">भ्रमणध्वनि कोशिकाएं:</string>
-    <string name="upload_observations_in_queue_title">भेजने की प्रतीक्षा कर रहे अवलोकन</string>
 
-
-
-    <string name="upload_wifi_only_title">केवल Wi-Fi पर अवलोकन भेजें</string>
-    <string name="upload_wifi_only_summary">यह पर्याय आपका भ्रमणध्वनि जाल पर डेटा उपयोग काम करेगा.</string>
-
-
-
-    <string name="title_activity_log">पंजी</string>
-    <string name="action_view_log">पंजी देखें </string>
-    <string name="scroll_to_start">शुरुआत में जाएं</string>
-    <string name="scroll_to_end">अंत में जाएं</string>
+<string name="app_name">मोज़िला स्टम्बलर</string>
+<string name="action_about">मोज़िला स्टम्बलरके बारे में</string>
+<string name="action_preferences">सेटिंग्स</string>
+<string name="start_scanning">क्रमवीक्षण शुरू करें</string>
+<string name="stop_scanning">क्रमवीक्षण बंद करें</string>
+<string name="view_leaderboard">अग्रणी उपयोगकर्ता फलक देखें</string>
+<string name="service_name">मोज़िला स्टम्बलर</string>
+<string name="service_scanning">Wi -Fi एवं Cellular जाल खोज रहा है</string>
+<string name="enter_nickname">उपनाम डालें (वैकल्पिक)</string>
+<string name="enter_nickname_title">उपनाम: %1$s</string>
+<string name="enter_nickname_longtext">आपका उपनाम अग्रणी उपयोगकर्ता फलक पर दिखाया जाएगा.</string>
+<string name="update_title">मोज़िला स्टम्बलर संस्करण अद्यतन करें??</string>
+<string name="update_message">स्थापित संस्करण: %1$s\nनवीनतम संस्करण: %2$s</string>
+<string name="update_now">अभी अद्यतन करें</string>
+<string name="update_later">बादमें अद्यतन करें</string>
+<string name="yes">हाँ</string>
+<string name="no">नहीं</string>
+<string name="about_version">संस्करण %1$s</string>
+<string name="about_openstreetmap">नक्शा दर्शक टाइल्स © OpenStreetMap योगदानकर्ता\nhttp://www.openstreetmap.org</string>
+<string name="about_mapbox_title">मैपबॉक्स</string>
+<string name="about_mapbox">http://www.mapbox.com पर अधिक जानें</string>
+<string name="about_legal_aosp">इस अनुप्रयोगमें इस्तेमाल की गयी कुछ आकृतियाँ अँड्रॉइड मुक्त स्रोत परियोजना द्वारा बनाई गयी और विभाजित की गयी है तथा क्रिएटीव कॉमन्स २.५ विशेष प्रयोग शर्त अनुसार इस्तेमाल कि गयी है.</string>
+<string name="about_legal_flaticons">GPS, cell मीनार, Wi-Fi, और दूरबीन के चित्र Freepik द्वारा बनाये गए http://www.flaticon.com से लिए गए  इस अनुज्ञापत्र द्वारा: https://creativecommons.org/licenses/by-nd/3.0</string>
+<string name="upload_observations_sent_title">पहलेसे भेजे गये विवरण</string>
+<string name="metrics_observations_last_upload_time_title">अंतिम अवलोकन भेजने का समय:</string>
+<string name="metrics_observations_last_upload_time_never">कभी नहीं</string>
+<!-- http://developer.android.com/guide/topics/resources/string-resource.html#Plurals -->
+<plurals name="time_diff_seconds">
+<item quantity="one">अभी</item>
+<item quantity="other">कुछ क्षण पहले</item>
+</plurals>
+<plurals name="time_diff_minutes">
+<item quantity="one">एक मिनट पहले</item>
+<item quantity="other">%d मिनट पहले</item>
+</plurals>
+<plurals name="time_diff_hours">
+<item quantity="one">एक घंटे पहले</item>
+<item quantity="other">%d घंटे पहले</item>
+</plurals>
+<plurals name="time_diff_days">
+<item quantity="one">एक दिन पहले</item>
+<item quantity="other">%d दिन पहले</item>
+</plurals>
+<string name="metrics_observations_title">विवरण:</string>
+<string name="metrics_observations_wifis_title">Wi-Fi जाल:</string>
+<string name="metrics_observations_cell_towers_title">भ्रमणध्वनी कोशिकाएं:</string>
+<string name="upload_observations_in_queue_title">भेजनेके लिए तैयार</string>
+<string name="upload_wifi_only_title">केवल Wi-Fi पर अवलोकन भेजें</string>
+<string name="upload_wifi_only_summary">यह पर्याय आपका भ्रमणध्वनि जाल पर डेटा उपयोग कम करेगा. सांख्यिकीमें भेजे दबाने पर यह हमेशा विवरणी भेजेगा.</string>
+<string name="metrics_activity_title">सांख्यिकी</string>
+<string name="metrics_this_session">चालू सत्र</string>
+<string name="drawer_map_option_show_mls_locations">MLS स्थान दिखाएं</string>
+<string name="title_activity_log">पंजी</string>
+<string name="action_view_log">पंजी देखें</string>
+<string name="scroll_to_start">शुरुआत में जाएं</string>
+<string name="scroll_to_end">अंत में जाएं</string>
+<string name="kml_file_title">KML विवरणी फ़ाइल</string>
+<string name="kml_file_load">KML फ़ाइल लोड करे</string>
+<string name="kml_file_save">KML फ़ाइल सुरक्षित करे</string>
+<string name="kml_file_description">डीबगिंग हेतु विवरणी सुरक्षित/लोड करे (स्थल, Wi-Fi + cell संख्या).</string>
+<string name="kml_file_saved_name">फ़ाइल सुरक्षित:</string>
+<string name="keep_screen_on_title">सर्वेक्षणके समय पटल शुरू रखे</string>
+<string name="keep_screen_on_summary">पटल शुरू रखे जब सर्वेक्षण शुरू हो और एप सामने हो.</string>
+<string name="delete_all">सभी नष्ट करे</string>
+<string name="are_you_sure">क्या आपको यकीन है?</string>
+<string name="loading_kml">KML लोड की जा रही है</string>
+<string name="saving_kml">KML सुरक्षित की जा रही है</string>
+<string name="mozstumbler_kml_file">मोज़िला स्टम्बलर KML फ़ाइल</string>
+<string name="share_file">फ़ाइल भेजे</string>
+<string name="load_file">फ़ाइल लोड करे</string>
+<string name="delete_file">फ़ाइल नष्ट करे</string>
+<string name="kml_file_saved">KML सुरक्षित</string>
+<string name="share_after_kml_saved">यह फ़ाइल आपके डिवाइस पर सुरक्षित है, आप इसे भेजना पसंद करेंगे?</string>
+<string name="enter_email">इमेल पता डाले (वैकल्पिक)</string>
+<string name="enter_email_title">इमेल: %1$s</string>
+<string name="enter_email_longtext">आपका इमेल पता लोगोंको कभी नहीं दिखाया जायेगा और यह सिर्फ आपके विवरणोंके लिए इस्तेमाल किया जाएगा.</string>
+<string name="drawer_open">दराज दिखाए</string>
+<string name="drawer_close">दराज बंद करे</string>
+<string name="title_activity_leaderboard">अग्रणी उपयोगकर्ता फलक</string>
+<string name="drawer_map_layers_title">नक्शा उपदंती</string>
+<string name="first_run_message_part1">मोज़िला स्थल सेवा Wi-Fi एवं cell जालोंका उपयोग करके स्थान दर्शानेवाली एक मुक्त सेवा है.</string>
+<string name="first_run_message_part2">हमारी <a href="https://location.services.mozilla.com/privacy">गोपनीयता नीति</a> पढ़ें और आपके स्थान योगदानसे स्थल संग्रह शुरू करे.</string>
+<string name="first_run_start_stumbling">स्थल संग्रह शुरू करे</string>
+<string name="first_run_welcome_to_mozstumbler">मोज़िला स्टम्बलरमें आपका स्वागत है</string>
+<string name="map_unavailable">यह नक्शा नहीं दिख सकता, कोई बाह्य भंडार साधन उपलब्ध नहीं.\nआप फिरभी विवरण जमा कर सकते है.</string>
+<string name="map_offline_mode">यह नक्शा बिना इंटरनेटके अद्यत नहीं होगा,\बावजूद इसके आप विवरण जमा कर पाएँगे.</string>
+<string name="action_developer">विकासक</string>
+<string name="developer_title">विकासक</string>
+<string name="enable_option_show_mls_on_map">MLS स्थल जाँच शुरू करे</string>
+<string name="enable_option_show_mls_on_map_summary">थोड़ी जादा मेमरी तथा नेटवर्क के इस्तेमाल से, यह नक्शा आपके सर्वेक्षणके लिए MLS स्थल जाँच कर सकता है.</string>
+<string name="cell_only_observation">केवल Cell विवरणी</string>
+<string name="wifi_only_observation">केवल Wi-Fi विवरणी</string>
+<string name="low_resolution_map">कम रीजोलुशन नक्शा</string>
+<string name="map_turned_off">नक्शा दिखाना बंद</string>
+<string name="map_tile_resolution_options_label">नक्शा टाइल्स विकल्प:</string>
+<string name="enable_crash_reporting">क्रैश विवरणी भेजना शुरू करे</string>
+<string name="privacy_policy">गोपनीयता नीति:</string>
+<string name="satellites_separator">/</string>
+<string name="must_uninstall_to_update">नया संस्करण डालनेसे पहले आपको पुराना संस्करण हटाना होगा..</string>
+<string-array name="map_tile_resolution_options">
+<item>मूल</item>
+<item>केवल जादा रीजोलुशन</item>
+<item>केवल कम रीजोलुशन</item>
+<item>मैप नहीं</item>
+</string-array>
 </resources>

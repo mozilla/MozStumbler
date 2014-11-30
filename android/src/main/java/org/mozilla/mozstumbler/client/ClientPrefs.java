@@ -3,23 +3,29 @@ package org.mozilla.mozstumbler.client;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import org.acra.ACRA;
 import org.mozilla.mozstumbler.BuildConfig;
+import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.Prefs;
+import org.mozilla.mozstumbler.service.core.logging.Log;
+import org.mozilla.mozstumbler.service.core.logging.MockAcraLog;
 import org.mozilla.osmdroid.api.IGeoPoint;
 import org.mozilla.osmdroid.util.GeoPoint;
 
 public class ClientPrefs extends Prefs {
-    private static final String LOG_TAG = ClientPrefs.class.getSimpleName();
+    private static final String LOG_TAG = AppGlobals.makeLogTag(ClientPrefs.class.getSimpleName());
     private static final String LAT_PREF = "lat";
     private static final String LON_PREF = "lon";
     private static final String IS_FIRST_RUN = "is_first_run";
-    private static final String MAP_TILE_RESOLUTION_TYPE = "map_tile_res_options";
+    public static final String MAP_TILE_RESOLUTION_TYPE = "map_tile_res_options";
     public static final String KEEP_SCREEN_ON_PREF = "keep_screen_on";
     public static final String ENABLE_OPTION_TO_SHOW_MLS_ON_MAP = "enable_the_option_to_show_mls_on_map";
     private static final String ON_MAP_MLS_DRAW_IS_ON = "actually_draw_mls_dots_on_map";
-    private static final String CRASH_REPORTING = "crash_reporting";
+    public static final String CRASH_REPORTING = "crash_reporting";
+    private static final String MIN_BATTERY_PCT = "min_battery_pct";
+    public static final int MIN_BATTERY_DEFAULT = 15;
 
-    public enum MapTileResolutionOptions { Default, HighRes, LowRes, NoMap}
+    public enum MapTileResolutionOptions {Default, HighRes, LowRes, NoMap}
 
     protected ClientPrefs(Context context) {
         super(context);
@@ -29,14 +35,14 @@ public class ClientPrefs extends Prefs {
         if (sInstance == null) {
             sInstance = new ClientPrefs(c);
         }
-        return (ClientPrefs)sInstance;
+        return (ClientPrefs) sInstance;
     }
 
     public static synchronized ClientPrefs getInstance() {
         if (sInstance != null && sInstance.getClass().isInstance(ClientPrefs.class)) {
             throw new IllegalArgumentException("sInstance is improperly initialized");
         }
-        return (ClientPrefs)sInstance;
+        return (ClientPrefs) sInstance;
     }
 
     // For Mozilla Stumbler to use for manual upgrade of old prefs.
@@ -92,8 +98,15 @@ public class ClientPrefs extends Prefs {
         setOnMapShowMLS(isEnabled);
     }
 
-    public void setCrashReportingEnabled(boolean b) {
-        setBoolPref(CRASH_REPORTING, b);
+    public void setCrashReportingEnabled(boolean isOn) {
+        setBoolPref(CRASH_REPORTING, isOn);
+        if (isOn) {
+            Log.d(LOG_TAG, "Enabled crash reporting");
+            ACRA.setLog(MockAcraLog.getOriginalLog());
+        } else {
+            Log.d(LOG_TAG, "Disabled crash reporting");
+            ACRA.setLog(new MockAcraLog());
+        }
     }
 
     public boolean isCrashReportingEnabled() {
@@ -120,5 +133,15 @@ public class ClientPrefs extends Prefs {
             i = 0;
         }
         return MapTileResolutionOptions.values()[i];
+    }
+
+    public int getMinBatteryPercent() {
+        return getPrefs().getInt(MIN_BATTERY_PCT, MIN_BATTERY_DEFAULT);
+    }
+
+    public void setMinBatteryPercent(int percent) {
+        SharedPreferences.Editor editor = getPrefs().edit();
+        editor.putInt(MIN_BATTERY_PCT, percent);
+        apply(editor);
     }
 }

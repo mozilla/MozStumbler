@@ -16,7 +16,7 @@ import org.mozilla.mozstumbler.service.AppGlobals;
  */
 public class LocationAdapter {
 
-    private static final String LOG_TAG = AppGlobals.LOG_PREFIX + LocationAdapter.class.getSimpleName();
+    private static final String LOG_TAG = AppGlobals.makeLogTag(LocationAdapter.class.getSimpleName());
 
     private static final String JSON_LATITUDE = "lat";
     private static final String JSON_LONGITUDE = "lon";

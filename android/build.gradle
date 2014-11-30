@@ -1,8 +1,14 @@
 // each of the version numbers must be 0-99
-def versionMajor = 0
-def versionMinor = 102
-def versionPatch = 0
-def versionBuild = 0 // this is non-zero for any dev build
+def versionMajor = 1
+def versionMinor = 5 // minor feature releases
+def versionPatch = 2 // This should be bumped for hot fixes
+
+// Double check the versioning
+for (versionPart in [versionPatch, versionMinor, versionMajor]) {
+    assert 0 <= versionPart
+    assert versionPart <= 99
+}
+
 
 buildscript {
     repositories {
@@ -24,15 +30,10 @@ apply plugin: 'com.android.application'
 apply plugin: 'robolectric'
 
 repositories {
-    mavenCentral()
+    jcenter()
     maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
-    ivy {
-        url 'http://mozilla-services.github.io/ivy-repo' 
-    }
+    mavenCentral()
 }
-
-import de.undercouch.gradle.tasks.download.Download
-import java.util.regex.Pattern
 
 android {
     compileSdkVersion 19
@@ -51,32 +52,47 @@ android {
         minSdkVersion 10
         targetSdkVersion 18
 
-        versionCode versionMajor * 1000000 + versionMinor * 10000 + versionPatch * 100 + versionBuild
-        versionName "${versionMajor}.${versionMinor}.${versionPatch}.${versionBuild}"
-
-        // I'm so happy I have to compute the versionCode, versionName
-        // and then duplicate it in the manifest.  yay android.
-        writeVersionCode(versionCode)
-        writeVersionName(versionName)
+        versionCode versionMajor * 1000000 + versionMinor * 10000 + versionPatch * 100
+        versionName "${versionMajor}.${versionMinor}.${versionPatch}"
 
         buildConfigField "boolean", "ROBOLECTRIC", "false"
-        buildConfigField "String", "MOZILLA_API_KEY", getMozillaApiKey()
-        buildConfigField "String", "TILE_SERVER_URL", getTileServerUrl()
+        buildConfigField "String", "MOZILLA_API_KEY", "\"\""
+        buildConfigField "String", "TILE_SERVER_URL", "\"\""
 
         buildConfigField "boolean", "LABEL_MAP_TILES", "false"
 
         buildConfigField "boolean", "GITHUB", "false"
         buildConfigField "boolean", "PLAYSTORE", "false"
+        buildConfigField "boolean", "FDROID", "false"
 
         // Crash report settings
-        buildConfigField "String", "ACRA_URI", getAcraURI()
-        buildConfigField "String", "ACRA_USER", getAcraUser()
-        buildConfigField "String", "ACRA_PASS", getAcraPass()
-
+        buildConfigField "String", "ACRA_URI", "\"http://ec2-54-172-135-65.compute-1.amazonaws.com/acra-stumbler/_design/acra-storage/_update/report\""
+        buildConfigField "String", "ACRA_USER", "\"nospam\""
+        buildConfigField "String", "ACRA_PASS", "\"4ok3bsWs509i\""
     }
 
     signingConfigs {
         release
+    }
+
+    productFlavors {
+        github {
+            buildConfigField "String", "MOZILLA_API_KEY", getMozillaApiKey('github')
+            buildConfigField "String", "TILE_SERVER_URL", getTileServerUrl('github')
+            buildConfigField "boolean", "GITHUB", "true"
+        }
+
+        playstore {
+            buildConfigField "String", "MOZILLA_API_KEY", getMozillaApiKey('playstore')
+            buildConfigField "String", "TILE_SERVER_URL", getTileServerUrl('playstore')
+            buildConfigField "boolean", "PLAYSTORE", "true"
+        }
+
+        fdroid {
+            buildConfigField "String", "MOZILLA_API_KEY", getMozillaApiKey('fdroid')
+            buildConfigField "String", "TILE_SERVER_URL", getTileServerUrl('fdroid')
+            buildConfigField "boolean", "FDROID", "true"
+        }
     }
 
     buildTypes {
@@ -95,20 +111,42 @@ android {
             signingConfig signingConfigs.release
         }
 
-        github.initWith(buildTypes.release)
-        github {
-            buildConfigField "boolean", "GITHUB", "true"
-        }
-
-        playstore.initWith(buildTypes.release)
-        playstore {
-            buildConfigField "boolean", "PLAYSTORE", "true"
-        }
 
         unittest.initWith(buildTypes.debug)
         unittest {
             buildConfigField "boolean", "ROBOLECTRIC", "true"
         }
+
+
+        applicationVariants.all { variant ->
+            variant.processManifest.doLast {
+                println("configuring AndroidManifest.xml");
+                copy {
+                    from("${buildDir}/intermediates/manifests") {
+                        include "${variant.dirName}/AndroidManifest.xml"
+                    }
+                    into("${buildDir}/intermediates/filtered_manifests")
+                }
+                def manifestFile = new
+                        File("${buildDir}/intermediates/filtered_manifests/${variant.dirName}/AndroidManifest.xml")
+                def content = manifestFile.getText()
+
+                def updatedContent = content.replaceAll("ANDROID_VERSIONNAME",
+                        defaultConfig.versionName).replaceAll("ANDROID_VERSIONCODE",
+                        Long.toString(defaultConfig.versionCode))
+
+                manifestFile.write(updatedContent)
+            }
+            // This is a bit confusing, we want to swap in the
+            // filtered AndroidManifest.xml file so that we don't
+            // modify the original AndroidManifest.xml. This prevents
+            // accidental commit of the mapbox key into source
+            // control, so we actually modify the pointer in gradle.
+            variant.processResources.manifestFile = new
+                    File("${buildDir}/intermediates/filtered_manifests/${variant.dirName}/AndroidManifest.xml")
+        }
+
+
     }
 
     sourceSets {
@@ -122,48 +160,49 @@ android {
 
 }
 
+
 dependencies {
     androidTestCompile 'junit:junit:4.10'
-    androidTestCompile 'org.robolectric:robolectric:2.3'
+    androidTestCompile 'org.robolectric:robolectric:2.4'
 
     testCompile 'junit:junit:4.10'
-    testCompile 'org.robolectric:robolectric:2.3'
-
-    compile 'com.crankycoder:SimpleKML:1.0'
-
-    compile 'org.slf4j:slf4j-android:1.7.7'
-
-    compile 'com.ocpsoft:ocpsoft-pretty-time:1.0.7'
+    testCompile 'org.robolectric:robolectric:2.4'
 
     // https://developer.android.com/tools/support-library/features.html
     // In general, we recommend including the v4 support and v7 appcompat
     // libraries, because they support a wide range of Android versions and
     // provide APIs for recommended user interface patterns.
 
-    compile "com.android.support:support-v4:19.1.+"
-    compile 'com.android.support:appcompat-v7:19.1.0'
+    
+
 
     compile('org.simpleframework:simple-xml:2.7.1') {
         exclude group: 'stax', module: 'stax-api'
         exclude group: 'xpp3', module: 'xpp3'
     }
 
-    compile "joda-time:joda-time:2.2"
-
+    
     // Acralyzer crash reports
-    compile 'ch.acra:acra:4.5.0'
+    compile('ch.acra:acra:4.5.0') {
+        exclude group: 'org.json'
+    }
 
     // osmdroid stuff
-    compile "org.apache.httpcomponents:httpmime:4.0.1"
-    compile "org.apache.james:apache-mime4j:0.6"
+    compile
+    'com.crankycoder:SimpleKML:1.0'compile
+    'org.slf4j:slf4j-android:1.7.7'compile
+    'com.android.support:support-v4:21.0.0'compile
+    'com.android.support:appcompat-v7:21.0.0'compile
+    'joda-time:joda-time:2.2'compile
+    'org.apache.httpcomponents:httpmime:4.0.1'compile 'org.apache.james:apache-mime4j:0.6'
 }
 
 tasks.withType(JavaCompile) {
     options.compilerArgs = ['-Xlint:all', '-Werror', '-Xlint:-deprecation']
 }
 
-
-File signFile = rootProject.file('private.properties')
+File signFile = rootProject.file('android/properties/signing.properties')
+println "Signing file: " + signFile.getAbsolutePath()
 if (signFile.exists()) {
     Properties p = new Properties()
     p.load(new FileInputStream(signFile))
@@ -177,105 +216,40 @@ if (signFile.exists()) {
     android.buildTypes.release.signingConfig = null
 }
 
-String getAcraURI() {
-    // Yeah, this is lame, opening the file again.  Sosume.
-    File signFile = rootProject.file('private.properties')
-    if (signFile.exists()) {
-        Properties p = new Properties()
-        p.load(new FileInputStream(signFile))
-        if (p['ACRA_URI'] == null) {
-            return '""';
-        }
-        return '"' + p['ACRA_URI'] + '"'
-    }
-    return '""';
-}
 
-String getAcraUser() {
+String getMozillaApiKey(String scope) {
     // Yeah, this is lame, opening the file again.  Sosume.
-    File signFile = rootProject.file('private.properties')
-    if (signFile.exists()) {
-        Properties p = new Properties()
-        p.load(new FileInputStream(signFile))
-        if (p['ACRA_USER'] == null) {
-            return '""';
-        }
-        return '"' + p['ACRA_USER'] + '"'
-    }
-    return '""';
-}
-
-String getAcraPass() {
-    // Yeah, this is lame, opening the file again.  Sosume.
-    File signFile = rootProject.file('private.properties')
-    if (signFile.exists()) {
-        Properties p = new Properties()
-        p.load(new FileInputStream(signFile))
-        if (p['ACRA_PASS'] == null) {
-            return '""';
-        }
-        return '"' + p['ACRA_PASS'] + '"'
-    }
-    return '""';
-}
-
-
-String getMozillaApiKey() {
-    // Yeah, this is lame, opening the file again.  Sosume.
-    File signFile = rootProject.file('private.properties')
+    File signFile = rootProject.file("android/properties/private-" + scope + ".properties")
     if (signFile.exists()) {
         Properties p = new Properties()
         p.load(new FileInputStream(signFile))
         def result = '"' + p['MozAPIKey'] + '"';
-        println "Writing custom MozAPIKey: ["+result+"]";
+        println "Writing custom MozAPIKey: [" + result + "]";
         return result;
     }
-    println "No private.properties for Mozilla API Key configuration.."
+    println "No " + signFile.getAbsolutePath() + " for Mozilla API Key configuration."
     return "null";
 }
 
-String getTileServerUrl() {
+String getTileServerUrl(String scope) {
     // Yeah, this is lame, opening the file again.  Sosume.
-    File signFile = rootProject.file('private.properties')
+    File signFile = rootProject.file("android/properties/private-" + scope + ".properties")
     if (signFile.exists()) {
         Properties p = new Properties()
         p.load(new FileInputStream(signFile))
 
         if (p['TileServerURL']) {
             def result = '"' + p['TileServerURL'] + '"';
-            println "Using custom TileServerURL: ["+result+"]";
+            println "Using custom TileServerURL: [" + result + "]";
             return result;
         } else if (p['MapAPIKey']) {
             def result = "\"http://api.tiles.mapbox.com/v3/${p['MapAPIKey']}/\"";
-            println "Using MapAPIKey: ["+result+"]";
+            println "Using MapAPIKey: [" + result + "]";
             return result;
         }
     }
-    println "No private.properties for TileServer configuration."
+    println "No " + signFile.getAbsolutePath() + " for TileServer configuration."
     return "null";
-}
-
-
-void writeVersionCode(int versionCode) {
-    def manifestFile = file("src/main/AndroidManifest.xml")
-    def pattern = Pattern.compile("versionCode=\"(\\d+)\"")
-    def manifestText = manifestFile.getText()
-    def matcher = pattern.matcher(manifestText)
-    matcher.find()
-    def manifestContent = matcher.replaceAll("versionCode=\"" + versionCode + "\"")
-    manifestFile.write(manifestContent)
-}
-
-void writeVersionName(String versionName) {
-    def manifestFile = file("src/main/AndroidManifest.xml")
-    def patternVersionNumber = Pattern.compile("versionName=\"[^\"]*\"")
-    def manifestText = manifestFile.getText()
-    def matcherVersionNumber = patternVersionNumber.matcher(manifestText)
-    def manifestContent = matcherVersionNumber.replaceAll("versionName=\"" + versionName + "\"")
-    manifestFile.write(manifestContent)
-
-    def versionFile = file("../VERSION")
-    versionFile.write(versionName)
 }
 
 // Yay for apk basenames that you can only figure out by reading the

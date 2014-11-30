@@ -65,7 +65,7 @@ public class MapView extends ViewGroup implements IMapView, MapViewConstants,
     // Constants
     // ===========================================================
 
-    private static final String LOG_TAG = AppGlobals.LOG_PREFIX + MapView.class.getSimpleName();
+    private static final String LOG_TAG = AppGlobals.makeLogTag(MapView.class.getSimpleName());
 
     private static final double ZOOM_SENSITIVITY = 1.0;
     private static final double ZOOM_LOG_BASE_INV = 1.0 / Math.log(2.0 / ZOOM_SENSITIVITY);
@@ -1092,6 +1092,10 @@ public class MapView extends ViewGroup implements IMapView, MapViewConstants,
     private void checkZoomButtons() {
         this.mZoomController.setZoomInEnabled(canZoomIn());
         this.mZoomController.setZoomOutEnabled(canZoomOut());
+    }
+
+    public void setZoomButtonsVisible(final boolean visible) {
+        this.mZoomController.setVisible(visible);
     }
 
     public void setBuiltInZoomControls(final boolean on) {

@@ -81,7 +81,7 @@ public abstract class MapTileModuleProviderBase implements OSMConstants {
 
 	private final ExecutorService mExecutor;
 
-	private static final String LOG_TAG = AppGlobals.LOG_PREFIX + MapTileModuleProviderBase.class.getSimpleName();
+	private static final String LOG_TAG = AppGlobals.makeLogTag(MapTileModuleProviderBase.class.getSimpleName());
 
 	protected final Object mQueueLockObject = new Object();
 	protected final HashMap<MapTile, MapTileRequestState> mWorking;

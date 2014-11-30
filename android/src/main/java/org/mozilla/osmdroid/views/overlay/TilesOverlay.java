@@ -34,7 +34,7 @@ import org.mozilla.osmdroid.views.Projection;
 
 public class TilesOverlay extends Overlay implements IOverlayMenuProvider {
 
-    private static final String LOG_TAG = AppGlobals.LOG_PREFIX + TilesOverlay.class.getSimpleName();
+    private static final String LOG_TAG = AppGlobals.makeLogTag(TilesOverlay.class.getSimpleName());
 
     public static final int MENU_MAP_MODE = getSafeMenuId();
     public static final int MENU_TILE_SOURCE_STARTING_ID = getSafeMenuIdSequence(TileSourceFactory

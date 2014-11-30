@@ -15,7 +15,7 @@ public class StreamUtils {
     // Constants
     // ===========================================================
 
-    private static final String LOG_TAG = AppGlobals.LOG_PREFIX + StreamUtils.class.getSimpleName();
+    private static final String LOG_TAG = AppGlobals.makeLogTag(StreamUtils.class.getSimpleName());
 
     public static final int IO_BUFFER_SIZE = 8 * 1024;
 

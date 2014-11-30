@@ -26,33 +26,26 @@ import org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner.CellI
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner.CellScanner;
 
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
 public final class Reporter extends BroadcastReceiver implements IReporter {
-    private static final String LOG_TAG = AppGlobals.LOG_PREFIX + Reporter.class.getSimpleName();
+    private static final String LOG_TAG = AppGlobals.makeLogTag(Reporter.class.getSimpleName());
     public static final String ACTION_FLUSH_TO_BUNDLE = AppGlobals.ACTION_NAMESPACE + ".FLUSH";
     public static final String ACTION_NEW_BUNDLE = AppGlobals.ACTION_NAMESPACE + ".NEW_BUNDLE";
     public static final String NEW_BUNDLE_ARG_BUNDLE = "bundle";
     private boolean mIsStarted;
 
-    /* The maximum number of Wi-Fi access points in a single observation. */
-    public static final int MAX_WIFIS_PER_LOCATION = 200;
-
-    /* The maximum number of cells in a single observation */
-    public static final int MAX_CELLS_PER_LOCATION  = 50;
-
     private Context mContext;
     private int mPhoneType;
 
-    private StumblerBundle mBundle;
-    private JSONObject mPreviousBundleJSON;
+    StumblerBundle mBundle;
+    private int mObservationCount = 0;
+    private final Set<String> mUniqueAPs = new HashSet<String>();
+    private final Set<String> mUniqueCells = new HashSet<String>();
 
     public Reporter() {}
-
-    public synchronized JSONObject getPreviousBundleJSON() {
-        return mPreviousBundleJSON;
-    }
 
     public synchronized void startup(Context context) {
         if (mIsStarted) {
@@ -61,7 +54,12 @@ public final class Reporter extends BroadcastReceiver implements IReporter {
 
         mContext = context.getApplicationContext();
         TelephonyManager tm = (TelephonyManager) mContext.getSystemService(Context.TELEPHONY_SERVICE);
-        mPhoneType = tm.getPhoneType();
+        if (tm != null) {
+            mPhoneType = tm.getPhoneType();
+        } else {
+            Log.d(LOG_TAG, "No telephony manager.");
+            mPhoneType = TelephonyManager.PHONE_TYPE_NONE;
+        }
 
         mIsStarted = true;
 
@@ -108,6 +106,8 @@ public final class Reporter extends BroadcastReceiver implements IReporter {
                 flush();
                 mBundle = new StumblerBundle(newPosition, mPhoneType);
             }
+        } else if (subject.equals(GPSScanner.SUBJECT_LOCATION_LOST)) {
+            flush();
         }
     }
 
@@ -128,26 +128,11 @@ public final class Reporter extends BroadcastReceiver implements IReporter {
         }
 
         if (mBundle != null &&
-                (mBundle.getWifiData().size() > MAX_WIFIS_PER_LOCATION ||
-                 mBundle.getCellData().size() > MAX_CELLS_PER_LOCATION))
+                (mBundle.hasMaxWifisPerLocation() || mBundle.hasMaxCellsPerLocation()))
         {
             // no gps for a while, have too much data, just bundle it
             flush();
         }
-    }
-
-    public synchronized Map<String, ScanResult> getWifiData() {
-        if (mBundle == null){
-            return null;
-        }
-        return mBundle.getWifiData();
-    }
-
-    public synchronized Map<String, CellInfo> getCellData() {
-        if (mBundle == null){
-            return null;
-        }
-        return mBundle.getCellData();
     }
 
     public synchronized Location getGPSLocation() {
@@ -161,19 +146,9 @@ public final class Reporter extends BroadcastReceiver implements IReporter {
         if (mBundle == null) {
             return;
         }
-
-        Map<String, ScanResult> currentWifiData = mBundle.getWifiData();
         for (ScanResult result : results) {
-            if (currentWifiData.size() > MAX_WIFIS_PER_LOCATION) {
-                AppGlobals.guiLogInfo("Max wifi limit exceeded for this location, ignoring data.");
-                return;
-            }
-
             String key = result.BSSID;
-            if (!currentWifiData.containsKey(key)) {
-                currentWifiData.put(key, result);
-            }
-
+            mBundle.addWifiData(key, result);
         }
     }
 
@@ -181,17 +156,9 @@ public final class Reporter extends BroadcastReceiver implements IReporter {
         if (mBundle == null) {
             return;
         }
-
-        Map<String, CellInfo> currentCellData = mBundle.getCellData();
         for (CellInfo result : cells) {
-            if (currentCellData.size() > MAX_CELLS_PER_LOCATION) {
-                AppGlobals.guiLogInfo("Max cell limit exceeded for this location, ignoring data.");
-                return;
-            }
             String key = result.getCellIdentity();
-            if (!currentCellData.containsKey(key)) {
-                currentCellData.put(key, result);
-            }
+            mBundle.addCellData(key, result);
         }
     }
 
@@ -214,30 +181,41 @@ public final class Reporter extends BroadcastReceiver implements IReporter {
             return;
         }
 
-        if (AppGlobals.isDebug) {
-            Log.d(LOG_TAG, "Received a MLS bundle" + mlsObj.toString());
-        }
-
         if (wifiCount + cellCount < 1) {
             mBundle = null;
             return;
         }
 
-        mPreviousBundleJSON = mlsObj;
-
         AppGlobals.guiLogInfo("MLS record: " + mlsObj.toString());
-
-        Intent i = new Intent(ACTION_NEW_BUNDLE);
-        i.putExtra(NEW_BUNDLE_ARG_BUNDLE, mBundle);
-        i.putExtra(AppGlobals.ACTION_ARG_TIME, System.currentTimeMillis());
-        LocalBroadcastManager.getInstance(mContext).sendBroadcastSync(i);
 
         try {
             DataStorageManager.getInstance().insert(mlsObj.toString(), wifiCount, cellCount);
+
+            mObservationCount++;
+            mUniqueAPs.addAll(mBundle.getUnmodifiableWifiData().keySet());
+            mUniqueCells.addAll(mBundle.getUnmodifiableCellData().keySet());
+
+            Intent i = new Intent(ACTION_NEW_BUNDLE);
+            i.putExtra(NEW_BUNDLE_ARG_BUNDLE, mBundle);
+            i.putExtra(AppGlobals.ACTION_ARG_TIME, System.currentTimeMillis());
+            LocalBroadcastManager.getInstance(mContext).sendBroadcastSync(i);
         } catch (IOException e) {
             Log.w(LOG_TAG, e.toString());
         }
 
         mBundle = null;
     }
+
+    public synchronized int getObservationCount() {
+        return mObservationCount;
+    }
+
+    public synchronized int getUniqueAPCount() {
+        return mUniqueAPs.size();
+    }
+
+    public synchronized int getUniqueCellCount() {
+        return mUniqueCells.size();
+    }
+
 }

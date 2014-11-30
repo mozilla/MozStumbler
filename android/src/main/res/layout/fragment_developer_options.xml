@@ -17,38 +17,93 @@
         android:layout_marginBottom="10dp"
         />
 
-    <CheckBox
-        android:id="@+id/toggleCrashReports"
+    <TextView
+        android:id="@+id/batteryTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/enable_crash_reporting"
-        android:layout_below="@id/line1"/>
-
-    <View
-        android:id="@+id/line2"
-        android:layout_below="@id/toggleCrashReports"
-        android:layout_height="1dp"
-        android:layout_width="fill_parent"
-        android:background="#55ffffff"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/line1"
+        android:paddingBottom="10dp"
+        android:paddingTop="20dp"
+        android:text="@+string/low_battery_title"
+        android:textColor="#ff33b5e5"
+        android:textSize="@dimen/font_size_for_metrics_top_title"
+        android:textStyle="bold" />
+    <LinearLayout
+        android:id="@+id/layout1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/batteryTitle">
+    <TextView
+        android:id="@+id/batteryLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingRight="10dp"
+        android:paddingEnd="10dp"
+        android:text="@+string/battery_percent_options_label"
+        android:textSize="@dimen/font_size_for_metrics" />
+    <Spinner
+        android:id="@+id/spinnerBatteryPercent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:entries="@array/battery_percent_options"
         />
+    </LinearLayout>
 
     <TextView
+        android:id="@+id/motionDetectionHeading"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/map_tile_resolution_options_label"
-        android:id="@+id/textView"
-        android:layout_below="@id/line2"/>
-    <Spinner
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/layout1"
+        android:paddingBottom="10dp"
+        android:paddingTop="20dp"
+        android:text="@+string/motion_detection_title"
+        android:textColor="#ff33b5e5"
+        android:textSize="@dimen/font_size_for_metrics_top_title"
+        android:textStyle="bold" />
+    <LinearLayout
+        android:id="@+id/layout2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/motionDetectionHeading"
+        >
+    <TextView
+        android:id="@+id/motionDetectionDistanceLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/spinnerMapResolutionOptions"
-        android:drawSelectorOnTop="true"
-        android:entries="@array/map_tile_resolution_options"
-        android:layout_toRightOf="@+id/textView"
-        android:layout_toEndOf="@+id/textView"
-        android:layout_alignTop="@id/textView"/>
+        android:text="@+string/motion_detection_options_label"
+        android:textSize="@dimen/font_size_for_metrics" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/layout3"
+        android:layout_below="@id/layout2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <Spinner
+            android:id="@+id/spinnerMotionDetectionDistanceMeters"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            />
+        <TextView
+            android:id="@+id/motionDetectionTimeLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingRight="10dp"
+            android:paddingLeft="10dp"
+            android:text="@+string/motion_detection_options_conjunction"
+            android:textSize="22sp"
+           />
+        <Spinner
+            android:id="@+id/spinnerMotionDetectionTimeSeconds"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            />
+    </LinearLayout>
 
 
 </RelativeLayout>

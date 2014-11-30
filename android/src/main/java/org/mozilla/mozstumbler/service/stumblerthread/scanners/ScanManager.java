@@ -4,27 +4,30 @@
 
 package org.mozilla.mozstumbler.service.stumblerthread.scanners;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.location.Location;
-import android.os.BatteryManager;
 import android.support.v4.content.LocalBroadcastManager;
-import android.telephony.TelephonyManager;
 import android.util.Log;
 
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.AppGlobals.ActiveOrPassiveStumbling;
+import org.mozilla.mozstumbler.service.stumblerthread.motiondetection.DetectUnchangingLocation;
+import org.mozilla.mozstumbler.service.stumblerthread.motiondetection.MotionSensor;
 import org.mozilla.mozstumbler.service.stumblerthread.Reporter;
 import org.mozilla.mozstumbler.service.stumblerthread.blocklist.WifiBlockListInterface;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner.CellScanner;
+import org.mozilla.mozstumbler.service.utils.BatteryCheckReceiver;
 
 import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class ScanManager {
-    private static final String LOG_TAG = AppGlobals.LOG_PREFIX + ScanManager.class.getSimpleName();
+    public static final String ACTION_SCAN_PAUSED_USER_MOTIONLESS = AppGlobals.ACTION_NAMESPACE + ".NOTIFY_USER_MOTIONLESS";
+    public static final String ACTION_EXTRA_IS_PAUSED = "IS_PAUSED";
+    private static final String LOG_TAG = AppGlobals.makeLogTag(ScanManager.class.getSimpleName());
     private Timer mPassiveModeFlushTimer;
     private Context mContext;
     private boolean mIsScanning;
@@ -32,28 +35,36 @@ public class ScanManager {
     private WifiScanner mWifiScanner;
     private CellScanner mCellScanner;
     private ActiveOrPassiveStumbling mStumblingMode = ActiveOrPassiveStumbling.ACTIVE_STUMBLING;
+    private BatteryCheckReceiver mPassiveModeBatteryChecker;
+    private enum PassiveModeBatteryState { OK, LOW, IGNORE_BATTERY_STATE }
+    private PassiveModeBatteryState mPassiveModeBatteryState;
+    private DetectUnchangingLocation mDetectUnchangingLocation;
+    private MotionSensor mMotionSensor;
+    private boolean mIsMotionlessPausedState;
 
-    public ScanManager() {
-    }
-
-    private boolean isBatteryLow() {
-        Intent intent = mContext.registerReceiver(null, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
-        if (intent == null) {
-            return false;
+    private BatteryCheckReceiver.BatteryCheckCallback mBatteryCheckCallback = new BatteryCheckReceiver.BatteryCheckCallback() {
+        @Override
+        public void batteryCheckCallback(BatteryCheckReceiver receiver) {
+            if (mPassiveModeBatteryState == PassiveModeBatteryState.IGNORE_BATTERY_STATE) {
+                return;
+            }
+            final int kMinBatteryPct = 15;
+            boolean isLow = receiver.isBatteryNotChargingAndLessThan(kMinBatteryPct);
+            mPassiveModeBatteryState = isLow? PassiveModeBatteryState.LOW : PassiveModeBatteryState.OK;
         }
+    };
 
-        int rawLevel = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
-        int scale = intent.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
-        int status = intent.getIntExtra(BatteryManager.EXTRA_STATUS, -1);
-        boolean isCharging = (status == BatteryManager.BATTERY_STATUS_CHARGING);
-        int level = Math.round(rawLevel * scale / 100.0f);
+    public ScanManager() {}
 
-        final int kMinBatteryPct = 15;
-        return !isCharging && level < kMinBatteryPct;
+    // By default, if the battery level is low, then the service stops scanning, however the client
+    // can disable this and perform more complex logic
+    public void setShouldStopPassiveScanningOnBatteryLow(boolean shouldStop) {
+        mPassiveModeBatteryState = shouldStop? PassiveModeBatteryState.OK :
+                                               PassiveModeBatteryState.IGNORE_BATTERY_STATE;
     }
 
     public void newPassiveGpsLocation() {
-        if (isBatteryLow()) {
+        if (mPassiveModeBatteryState == PassiveModeBatteryState.LOW) {
             return;
         }
 
@@ -62,10 +73,7 @@ public class ScanManager {
         }
 
         mWifiScanner.start(ActiveOrPassiveStumbling.PASSIVE_STUMBLING);
-
-        if (mCellScanner != null) {
-            mCellScanner.start(ActiveOrPassiveStumbling.PASSIVE_STUMBLING);
-        }
+        mCellScanner.start(ActiveOrPassiveStumbling.PASSIVE_STUMBLING);
 
         // how often to flush a leftover bundle to the reports table
         // If there is a bundle, and nothing happens for 10sec, then flush it
@@ -92,26 +100,39 @@ public class ScanManager {
     }
 
     public synchronized void setPassiveMode(boolean on) {
+        if (on && mPassiveModeBatteryChecker == null) {
+            mPassiveModeBatteryChecker = new BatteryCheckReceiver(mContext, mBatteryCheckCallback);
+        }
         mStumblingMode = (on) ? ActiveOrPassiveStumbling.PASSIVE_STUMBLING :
                 ActiveOrPassiveStumbling.ACTIVE_STUMBLING;
     }
 
     public synchronized void startScanning(Context context) {
-        if (this.isScanning()) {
+        if (isScanning()) {
             return;
         }
 
         mContext = context.getApplicationContext();
+        if (mContext == null) {
+            Log.w(LOG_TAG, "No app context available.");
+            return;
+        }
+
+        mIsMotionlessPausedState = false;
+
+        if (mDetectUnchangingLocation == null) {
+            mDetectUnchangingLocation = new DetectUnchangingLocation(mContext, mDetectUserIdleReceiver);
+        }
+        mDetectUnchangingLocation.start();
+
+        if (mMotionSensor == null) {
+            mMotionSensor = new MotionSensor(mContext, mDetectMotionReceiver);
+        }
+
         if (mGPSScanner == null) {
             mGPSScanner = new GPSScanner(context, this);
             mWifiScanner = new WifiScanner(context);
-
-            TelephonyManager telephonyManager = (TelephonyManager) mContext.getSystemService(Context.TELEPHONY_SERVICE);
-            if (telephonyManager != null &&
-                    (telephonyManager.getPhoneType() == TelephonyManager.PHONE_TYPE_CDMA ||
-                            telephonyManager.getPhoneType() == TelephonyManager.PHONE_TYPE_GSM)) {
-                mCellScanner = new CellScanner(context);
-            }
+            mCellScanner = new CellScanner(context);
         }
 
         if (AppGlobals.isDebug) {
@@ -121,10 +142,7 @@ public class ScanManager {
         mGPSScanner.start(mStumblingMode);
         if (mStumblingMode == ActiveOrPassiveStumbling.ACTIVE_STUMBLING) {
             mWifiScanner.start(mStumblingMode);
-
-            if (mCellScanner != null) {
-                mCellScanner.start(mStumblingMode);
-            }
+            mCellScanner.start(mStumblingMode);
 
             // in passive mode, these scans are started by passive gps notifications
         }
@@ -132,7 +150,7 @@ public class ScanManager {
     }
 
     public synchronized boolean stopScanning() {
-        if (!this.isScanning()) {
+        if (!this.isScanning() && !mIsMotionlessPausedState) {
             return false;
         }
 
@@ -140,11 +158,13 @@ public class ScanManager {
             Log.d(LOG_TAG, "Scanning stopped");
         }
 
+        mIsMotionlessPausedState = false;
+        mDetectUnchangingLocation.stop();
+        mMotionSensor.stop();
+
         mGPSScanner.stop();
         mWifiScanner.stop();
-        if (mCellScanner != null) {
-            mCellScanner.stop();
-        }
+        mCellScanner.stop();
 
         mIsScanning = false;
         return true;
@@ -158,10 +178,6 @@ public class ScanManager {
         return mIsScanning;
     }
 
-    public int getAPCount() {
-        return (mWifiScanner == null) ? 0 : mWifiScanner.getAPCount();
-    }
-
     public int getVisibleAPCount() {
         return (mWifiScanner == null) ? 0 : mWifiScanner.getVisibleAPCount();
     }
@@ -170,8 +186,8 @@ public class ScanManager {
         return (mWifiScanner == null) ? 0 : mWifiScanner.getStatus();
     }
 
-    public int getCellInfoCount() {
-        return (mCellScanner == null) ? 0 : mCellScanner.getCellInfoCount();
+    public int getVisibleCellInfoCount() {
+        return (mCellScanner == null) ? 0 : mCellScanner.getVisibleCellInfoCount();
     }
 
     public int getLocationCount() {
@@ -181,5 +197,44 @@ public class ScanManager {
     public Location getLocation() {
         return (mGPSScanner == null) ? new Location("null") : mGPSScanner.getLocation();
     }
+
+    // After DetectUnchangingLocation reports the user is not moving, and the scanning pauses,
+    // then use MotionSensor to determine when to wake up and start scanning again.
+    private final BroadcastReceiver mDetectUserIdleReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (!isScanning()) {
+                return;
+            }
+            stopScanning();
+            mIsMotionlessPausedState = true;
+            if (AppGlobals.isDebug) {
+                Log.d(LOG_TAG, "MotionSensor started");
+            }
+            mMotionSensor.start();
+
+            Intent sendIntent = new Intent(ACTION_SCAN_PAUSED_USER_MOTIONLESS);
+            sendIntent.putExtra(ACTION_EXTRA_IS_PAUSED, mIsMotionlessPausedState);
+            LocalBroadcastManager.getInstance(mContext).sendBroadcastSync(sendIntent);
+        }
+    };
+
+    private final BroadcastReceiver mDetectMotionReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (isScanning() || !mIsMotionlessPausedState) {
+                return;
+            }
+            startScanning(context);
+            mMotionSensor.stop();
+
+            mDetectUnchangingLocation.quickCheckForFalsePositiveAfterMotionSensorMovement();
+
+            Intent sendIntent = new Intent(ACTION_SCAN_PAUSED_USER_MOTIONLESS);
+            sendIntent.putExtra(ACTION_EXTRA_IS_PAUSED, mIsMotionlessPausedState);
+            LocalBroadcastManager.getInstance(mContext).sendBroadcastSync(sendIntent);
+        }
+    };
+
 
 }

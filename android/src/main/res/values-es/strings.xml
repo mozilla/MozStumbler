@@ -10,7 +10,7 @@
     <string name="service_name">Mozilla Stumbler</string>
     <string name="service_scanning">Escaneando redes Wi-Fi y móviles</string>
     <string name="enter_nickname">Ingresa tu apodo (opcional)</string>
-    <string name="enter_nickname_title">Apodo: </string>
+    <string name="enter_nickname_title">Apodo: %1$s</string>
     <string name="enter_nickname_longtext">Tu apodo aparecerá en la tabla de posiciones.</string>
     <string name="update_title">¿Descargar la actualización de Mozilla Stumbler?</string>
     <string name="update_message">Versión instalada: %1$s\nÚltima versión: %2$s</string>
@@ -19,27 +19,50 @@
     <string name="yes">Si</string>
     <string name="no">No</string>
     <string name="about_version">Versión %1$s</string>
-    <string name="about_openstreetmap">Mosaico para construir los mapas © colaboradores de OpenStreetMap \nhttp://www.openstreetmap.org</string>
+    <string name="about_openstreetmap">Mosaico para construir los mapas \n© colaboradores de OpenStreetMap \nhttp://www.openstreetmap.org</string>
     <string name="about_mapbox_title">MapBox</string>
     <string name="about_mapbox">Aprenda más en http://www.mapbox.com</string>
     <string name="about_legal_aosp">Algunos iconos en esta aplicación son reproducidos de trabajo creado y compartido por el Proyecto de código abierto de Android y se usa de acuerdo a los términos descritos en la Licencia 2.5 de Creative Commons.</string>
     <string name="about_legal_flaticons">Los iconos de GPS, torre celular, Wi-Fi, y binoculares están hechos por Freepik de http://flaticon.com bajo la licencia: https://creativecommons.org/licenses/by-nd/3.0</string>
-    <string name="upload_observations_sent_title">Todas las sesiones</string>
+    <string name="upload_observations_sent_title">Enviado</string>
     <string name="metrics_observations_last_upload_time_title">Última fecha de envío:</string>
+    <string name="metrics_observations_last_upload_time_never">nunca</string>
+    <plurals name="time_diff_seconds">
+        <item quantity="one">justo ahora</item>
+        <item quantity="other">hace un momento</item>
+    </plurals>
+    <plurals name="time_diff_minutes">
+        <item quantity="one">hace un minuto</item>
+        <item quantity="other">hace %d minutos</item>
+    </plurals>
+    <plurals name="time_diff_hours">
+        <item quantity="one">hace una hora</item>
+        <item quantity="other">hace %d horas</item>
+    </plurals>
+    <plurals name="time_diff_days">
+        <item quantity="one">hace un día</item>
+        <item quantity="other">hace %d días</item>
+    </plurals>
     <string name="metrics_observations_title">Reportes:</string>
     <string name="metrics_observations_wifis_title">Redes Wi-Fi:</string>
     <string name="metrics_observations_cell_towers_title">Redes celulares:</string>
     <string name="upload_observations_in_queue_title">Listo para subir</string>
     <string name="upload_wifi_only_title">Auto-Subir sólo por Wi-Fi</string>
-    <string name="upload_wifi_only_summary">Está opción reducirá tu consumo de datos de tu operador móvil. Presionando el botón subir en las Metricas siempre subirá los reportes.</string>
-    <string name="metrics_activity_title">Metricas</string>
-    <string name="metrics_this_session">Esta sesión</string>
+    <string name="upload_wifi_only_summary">Está opción reducirá tu consumo de datos de tu operador móvil. Presionando el botón subir en las Métricas siempre subirá los reportes.</string>
+    <string name="metrics_activity_title">Métricas</string>
+    <string name="metrics_this_session">Sesión actual</string>
     <string name="drawer_map_option_show_mls_locations">Mostrar ubicaciones de MLS</string>
     <string name="title_activity_log">Log</string>
     <string name="action_view_log">Ver log</string>
     <string name="scroll_to_start">Ir al principio</string>
     <string name="scroll_to_end">Ir al final</string>
-    <string name="keep_screen_on_title">Mantener la pantalla encendida mientras se esta en el mapa</string>
+    <string name="kml_file_title">Archivo KML de reportes</string>
+    <string name="kml_file_load">Cargar archivo KML</string>
+    <string name="kml_file_save">Guardar archivo KML</string>
+    <string name="kml_file_description">Guardar/Cargar los reportes (ubicaciones, datos wi-fi+celulares) para debugear.</string>
+    <string name="kml_file_saved_name">Archivo guardado:</string>
+    <string name="keep_screen_on_title">Mantener la pantalla encendida mientras escaneas</string>
+    <string name="keep_screen_on_summary">Mantendrá la pantalla encendia mientras escaneas y la aplicación está en primer plano.</string>
     <string name="delete_all">Borrar todos</string>
     <string name="are_you_sure">¿Estás seguro?</string>
     <string name="loading_kml">Cargando el KML</string>
@@ -51,31 +74,49 @@
     <string name="kml_file_saved">KML guardado</string>
     <string name="share_after_kml_saved">El archivo fue guardado en el dispositivo, ¿Te gustaría compartir el archivo?</string>
     <string name="enter_email">Ingresa tu dirección de correo (opcional)</string>
-    <string name="enter_email_title">Correo: </string>
-    <string name="enter_email_longtext">Tu dirección de correo jamas es mostrada a las personas y sólo es usada para tus reportes</string>
+    <string name="enter_email_title">Correo: %1$s</string>
+    <string name="enter_email_longtext">Tu dirección de correo jamás es mostrada a las personas y sólo es usada para tus reportes</string>
     <string name="drawer_open">Mostrar barra lateral</string>
     <string name="drawer_close">Cerrar barra lateral</string>
     <string name="title_activity_leaderboard">Tabla de posiciones</string>
-    <string name="drawer_map_layers_title">Capas del mapa (para nerds)</string>
+    <string name="drawer_map_layers_title">Leyenda del mapa</string>
     <string name="first_run_message_part1">El Servicio de Ubicación de Mozilla es un servicio abierto para localizar dispositivos usando puntos de acceso Wi-Fi y torres celulares.</string>
     <string name="first_run_message_part2">Lee nuestra <a href="https://location.services.mozilla.com/privacy">política de privacidad</a> y luego inicia escaneando para comenzar a colaborar en tu ubicación actual.</string>
     <string name="first_run_start_stumbling">Inicia escaneando</string>
     <string name="first_run_welcome_to_mozstumbler">Bienvenido a Mozilla Stumbler</string>
-    <string name="map_unavailable">El mapa no está disponible para mostrarse, ya que no hay una tarjeta SD.\nAún puedes recolectar datos.</string>
-    <string name="map_offline_mode">"El mapa no se actualizará sin una conexión a Internet,\nsin embargo todavía eres capaz de recolectar datos."</string>
+    <string name="map_unavailable">El mapa no está disponible para mostrarse, ya que no hay una tarjeta SD.\nAún así puedes recolectar datos.</string>
+    <string name="map_offline_mode">El mapa no se actualizará sin una conexión a Internet,\nsin embargo todavía eres capaz de recolectar datos.</string>
+    <string name="map_copyright_fdroid">Mosaico cortesía de los colaboradores de MapQuest\n© OpenStreetMap</string>
+    <string name="map_copyright_moz">Colaboradores de © MapBox © OpenStreetMap</string>
     <string name="action_developer">Desarrollador</string>
-    <string name="enable_option_show_mls_on_map">Habilitar switch de la capa MLS</string>
-    <string name="enable_option_show_mls_on_map_summary">A costa de un uso de poco más de memoria y de red, el mapa puede mostrar consultas de ubicaciones MLS para tu escaneo.</string>
+    <string name="developer_title">Desarrollador</string>
+    <string name="enable_option_show_mls_on_map">Habilitar consultas a ubicaciones MLS</string>
+    <string name="enable_option_show_mls_on_map_summary">Muestra las ubicaciones del Servicio de Ubicación de Mozilla (MLS) para tus reportes.</string>
+    <string name="enable_option_show_mls_on_map_detailed_info">A costa de más uso de energía, memoria y red, se mostrará la ubicación de MLS. Esto mostrará un punto rojo en el mapa por cada ubicación de MLS, con una línea hacia su reporte. Sin embargo, no consultará las ubicaciones con tus datos móviles sí \"%1$s" está habilitado.</string>
+    <string name="cell_plus_wifi_observation">Reportes de Wi-Fi + celdas móviles</string>
     <string name="cell_only_observation">Reportes de sólo celdas móviles</string>
     <string name="wifi_only_observation">Reportes de sólo Wi-Fi</string>
-    <string name="low_resolution_map">Mapa de baja resolución</string>
+    <string name="low_resolution_map">Mapa de bajos detalles</string>
     <string name="map_turned_off">Pantalla del mapa apagada</string>
-    <string name="map_tile_resolution_options_label">Opciones del mosaico del mapa:</string>
+    <string name="map_tile_resolution_options_label">Detalles del mapa:</string>
+    <string name="map_tile_resolution_options_summary">Bajos detalles reducirán tu uso de datos móviles.</string>
     <string name="enable_crash_reporting">Habilitar informador de fallos</string>
+    <string name="privacy_policy">Política de privacidad:</string>
+    <string name="satellites_separator">/</string>
+    <string name="must_uninstall_to_update">Deberías desinstalar primero para actualizar a la nueva versión.</string>
+    <string name="category_leaderboard">Tabla de posiciones</string>
+    <string name="category_network_usage">Uso de la red</string>
+    <string name="category_display">Visualización</string>
     <string-array name="map_tile_resolution_options">
-        <item>Por fefecto</item>
-        <item>Sólo alta resolución</item>
-        <item>Sólo baja resolución</item>
+        <item>Alto (Wi-Fi) / Bajo (datos móviles)</item>
+        <item>Sólo alto detalle</item>
+        <item>Sólo bajo detalle</item>
         <item>Sin mapa</item>
+    </string-array>
+    <string-array name="map_tile_resolution_options_intvalues">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
     </string-array>
 </resources>

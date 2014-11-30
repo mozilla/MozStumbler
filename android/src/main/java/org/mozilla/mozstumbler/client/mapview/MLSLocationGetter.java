@@ -24,7 +24,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 This class provides MLS locations by calling HTTP methods against the MLS.
  */
 public class MLSLocationGetter extends AsyncTask<String, Void, Location> {
-    private static final String LOG_TAG = AppGlobals.LOG_PREFIX + MLSLocationGetter.class.getSimpleName();
+    private static final String LOG_TAG = AppGlobals.makeLogTag(MLSLocationGetter.class.getSimpleName());
     private static final String RESPONSE_OK_TEXT = "ok";
     private ILocationService mls;
     private MLSLocationGetterCallback mCallback;

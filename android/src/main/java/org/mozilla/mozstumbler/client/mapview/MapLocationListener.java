@@ -108,11 +108,11 @@ class MapLocationListener  {
             mMapActivity.get().setUserPositionAt(lastLoc);
         }
 
-        enableLocationListener(true, mNetworkLocationListener);
-        enableLocationListener(true, mGpsLocationListener);
-
         if (mapFragment.getApplication().isIsScanningPausedDueToNoMotion()) {
             pauseGpsUpdates(true);
+        } else {
+            enableLocationListener(true, mNetworkLocationListener);
+            enableLocationListener(true, mGpsLocationListener);
         }
     }
 

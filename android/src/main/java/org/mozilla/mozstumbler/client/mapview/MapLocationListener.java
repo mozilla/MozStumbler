@@ -142,7 +142,6 @@ class MapLocationListener  {
         mLocationManager.removeGpsStatusListener(mSatelliteListener);
         enableLocationListener(false, mGpsLocationListener);
         enableLocationListener(false, mNetworkLocationListener);
-        mLocationManager = null;
     }
 
     public void pauseGpsUpdates(boolean isGpsOff) {

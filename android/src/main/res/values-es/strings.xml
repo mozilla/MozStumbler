@@ -27,6 +27,10 @@
     <string name="upload_observations_sent_title">Enviado</string>
     <string name="metrics_observations_last_upload_time_title">Última fecha de envío:</string>
     <string name="metrics_observations_last_upload_time_never">nunca</string>
+    <!--
+    Do not just copy those plurals, please check what is needed for your language.
+    http://developer.android.com/guide/topics/resources/string-resource.html#Plurals
+    -->
     <plurals name="time_diff_seconds">
         <item quantity="one">justo ahora</item>
         <item quantity="other">hace un momento</item>
@@ -92,6 +96,7 @@
     <string name="developer_title">Desarrollador</string>
     <string name="enable_option_show_mls_on_map">Habilitar consultas a ubicaciones MLS</string>
     <string name="enable_option_show_mls_on_map_summary">Muestra las ubicaciones del Servicio de Ubicación de Mozilla (MLS) para tus reportes.</string>
+    <!-- enable_option_show_mls_on_map_detailed_info: %1$s refers to upload_wifi_only_title -->
     <string name="enable_option_show_mls_on_map_detailed_info">A costa de más uso de energía, memoria y red, se mostrará la ubicación de MLS. Esto mostrará un punto rojo en el mapa por cada ubicación de MLS, con una línea hacia su reporte. Sin embargo, no consultará las ubicaciones con tus datos móviles sí \"%1$s" está habilitado.</string>
     <string name="cell_plus_wifi_observation">Reportes de Wi-Fi + celdas móviles</string>
     <string name="cell_only_observation">Reportes de sólo celdas móviles</string>
@@ -107,16 +112,17 @@
     <string name="category_leaderboard">Tabla de posiciones</string>
     <string name="category_network_usage">Uso de la red</string>
     <string name="category_display">Visualización</string>
+    <string name="category_crashreport">Informe de fallos</string>
     <string-array name="map_tile_resolution_options">
         <item>Alto (Wi-Fi) / Bajo (datos móviles)</item>
         <item>Sólo alto detalle</item>
         <item>Sólo bajo detalle</item>
         <item>Sin mapa</item>
     </string-array>
-    <string-array name="map_tile_resolution_options_intvalues">
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
-    </string-array>
+    <string name="low_battery_title">Dejar de escanear con poca batería</string>
+    <string name="battery_percent_options_label">Dejar de escanear cuando la batería alcance el:</string>
+    <string name="motion_detection_title">Detección de movimiento</string>
+    <string name="motion_detection_options_label">Pausar el escaneo si no te mueves</string>
+    <string name="motion_detection_options_conjunction">en</string>
+    <string name="map_scanning_paused_no_motion">La ubicación no cambia, escaneo en pausa.</string>
 </resources>

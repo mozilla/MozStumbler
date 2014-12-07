@@ -7,6 +7,7 @@ import android.content.IntentFilter;
 import android.location.Location;
 import android.os.Handler;
 import android.support.v4.content.LocalBroadcastManager;
+import android.widget.Toast;
 
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.Prefs;
@@ -49,6 +50,10 @@ public class DetectUnchangingLocation extends BroadcastReceiver {
     /// Debugging code
     static DetectUnchangingLocation sDebugInstance;
     public static void debugSendLocationUnchanging() {
+        if (sDebugInstance.mLastLocation == null) {
+            Toast.makeText(sDebugInstance.mContext, "No location yet", Toast.LENGTH_SHORT).show();
+            return;
+        }
         sDebugInstance.mDoSingleLocationCheck = true;
         Intent intent = new Intent(GPSScanner.ACTION_GPS_UPDATED);
         intent.putExtra(Intent.EXTRA_SUBJECT, GPSScanner.SUBJECT_NEW_LOCATION);
@@ -64,12 +69,18 @@ public class DetectUnchangingLocation extends BroadcastReceiver {
                 new IntentFilter(ACTION_LOCATION_NOT_CHANGING));
     }
 
+    // When the time window to wait for movement is exceeded, then pause scanning
     boolean isTimeWindowForMovementExceeded() {
         if (mLastLocation == null) {
-            return System.currentTimeMillis() - mStartTimeMs > INITIAL_DELAY_TO_WAIT_FOR_GPS_FIX_MS;
+            final long timeWaited = System.currentTimeMillis() - mStartTimeMs;
+            final boolean expired = timeWaited > INITIAL_DELAY_TO_WAIT_FOR_GPS_FIX_MS;
+            AppGlobals.guiLogInfo("No loc., stop waiting for gps:" + expired + " (" + timeWaited/1000.0 + "s)");
         }
 
-        return System.currentTimeMillis() - mPrefMotionChangeTimeWindowMs > mLastLocation.getTime();
+        final long ageLastLocation = System.currentTimeMillis() - mLastLocation.getTime();
+        AppGlobals.guiLogInfo("Last loc. age: " + ageLastLocation / 1000.0 + " ms, (max age: " +
+                mPrefMotionChangeTimeWindowMs/1000.0 + ")");
+        return ageLastLocation > mPrefMotionChangeTimeWindowMs;
     }
 
     public void start() {

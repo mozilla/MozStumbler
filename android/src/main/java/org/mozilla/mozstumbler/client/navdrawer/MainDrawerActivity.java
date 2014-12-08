@@ -4,6 +4,8 @@
 
 package org.mozilla.mozstumbler.client.navdrawer;
 
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Build;
@@ -21,6 +23,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.CompoundButton;
 import android.widget.Switch;
+import android.widget.RemoteViews;
 
 import org.mozilla.mozstumbler.BuildConfig;
 import org.mozilla.mozstumbler.R;
@@ -28,6 +31,7 @@ import org.mozilla.mozstumbler.client.ClientPrefs;
 import org.mozilla.mozstumbler.client.ClientStumblerService;
 import org.mozilla.mozstumbler.client.IMainActivity;
 import org.mozilla.mozstumbler.client.MainApp;
+import org.mozilla.mozstumbler.client.ToggleWidgetProvider;
 import org.mozilla.mozstumbler.client.Updater;
 import org.mozilla.mozstumbler.client.mapview.MapFragment;
 import org.mozilla.mozstumbler.client.subactivities.FirstRunFragment;
@@ -44,6 +48,7 @@ public class MainDrawerActivity
     private MetricsView mMetricsView;
     private MapFragment mMapFragment;
     private MenuItem mMenuItemStartStop;
+    private RemoteViews remoteViews;
 
     final CompoundButton.OnCheckedChangeListener mStartStopButtonListener =
             new CompoundButton.OnCheckedChangeListener() {
@@ -58,7 +63,7 @@ public class MainDrawerActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_drawer);
 
-        assert(findViewById(android.R.id.content) != null);
+        assert (findViewById(android.R.id.content) != null);
 
         if (Build.VERSION.SDK_INT > 10) {
             getWindow().setFlags(
@@ -69,7 +74,8 @@ public class MainDrawerActivity
         getSupportActionBar().setTitle(getString(R.string.app_name));
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        mDrawerToggle = new ActionBarDrawerToggle (
+        remoteViews = new RemoteViews(getApplicationContext().getPackageName(), R.layout.toggle_widget);
+        mDrawerToggle = new ActionBarDrawerToggle(
                 this,                  /* host Activity */
                 mDrawerLayout,         /* DrawerLayout object */
                 R.drawable.ic_drawer,  /* nav drawer icon to replace 'Up' caret */
@@ -83,6 +89,7 @@ public class MainDrawerActivity
             }
 
             @Override
+
             public void onDrawerClosed(View view) {}
 
             @Override
@@ -132,8 +139,7 @@ public class MainDrawerActivity
             s.setOnCheckedChangeListener(mStartStopButtonListener);
             mMenuItemStartStop.setActionView(s);
             mMenuItemStartStop.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-        }
-        else {
+        } else {
             MenuItemCompat.setShowAsAction(mMenuItemStartStop, MenuItemCompat.SHOW_AS_ACTION_ALWAYS);
         }
 
@@ -180,7 +186,7 @@ public class MainDrawerActivity
                 mMenuItemStartStop.setTitle(R.string.start_scanning);
             }
         }
-
+        updateWidget(svc);
         mMapFragment.dimToolbar();
     }
 
@@ -259,7 +265,7 @@ public class MainDrawerActivity
         if (service == null) {
             return;
         }
-
+        updateWidget(service);
         mMapFragment.formatTextView(R.id.text_cells_visible, "%d", service.getVisibleCellInfoCount());
         mMapFragment.formatTextView(R.id.text_wifis_visible, "%d", service.getVisibleAPCount());
 
@@ -294,5 +300,19 @@ public class MainDrawerActivity
     @Override
     public void stop() {
         mMapFragment.stop();
+    }
+
+    private void updateWidget(ClientStumblerService service) {
+        boolean isScanning = service.isScanning();
+        if (isScanning) {
+            remoteViews.setImageViewResource(R.id.toggleServiceButton, R.drawable.ic_launcher);
+            remoteViews.setTextViewText(R.id.stumbler_info1, Integer.toString(service.getVisibleAPCount()));
+            remoteViews.setTextViewText(R.id.stumbler_info2, Integer.toString(service.getVisibleCellInfoCount()));
+        } else {
+            remoteViews.setImageViewResource(R.id.toggleServiceButton, R.drawable.ic_status_scanning);
+            remoteViews.setTextViewText(R.id.stumbler_info1, "Disabled");
+            remoteViews.setTextViewText(R.id.stumbler_info2, "Disabled");
+        }
+        (AppWidgetManager.getInstance(getApplicationContext())).updateAppWidget(new ComponentName(getApplicationContext(), ToggleWidgetProvider.class), remoteViews);
     }
 }

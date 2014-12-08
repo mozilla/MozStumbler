@@ -89,7 +89,6 @@ public class MainDrawerActivity
             }
 
             @Override
-
             public void onDrawerClosed(View view) {}
 
             @Override
@@ -139,7 +138,8 @@ public class MainDrawerActivity
             s.setOnCheckedChangeListener(mStartStopButtonListener);
             mMenuItemStartStop.setActionView(s);
             mMenuItemStartStop.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-        } else {
+        }
+        else {
             MenuItemCompat.setShowAsAction(mMenuItemStartStop, MenuItemCompat.SHOW_AS_ACTION_ALWAYS);
         }
 
@@ -186,6 +186,7 @@ public class MainDrawerActivity
                 mMenuItemStartStop.setTitle(R.string.start_scanning);
             }
         }
+
         updateWidget(svc);
         mMapFragment.dimToolbar();
     }
@@ -265,6 +266,7 @@ public class MainDrawerActivity
         if (service == null) {
             return;
         }
+
         updateWidget(service);
         mMapFragment.formatTextView(R.id.text_cells_visible, "%d", service.getVisibleCellInfoCount());
         mMapFragment.formatTextView(R.id.text_wifis_visible, "%d", service.getVisibleAPCount());

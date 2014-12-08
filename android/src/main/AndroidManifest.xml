@@ -13,6 +13,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
     <uses-feature android:name="android.hardware.sensor.accelerometer" android:required="true" />
     <uses-feature android:name="android.hardware.location" />
     <uses-feature android:name="android.hardware.location.gps" />
@@ -22,18 +23,18 @@
     <application
         android:name=".client.MainApp"
         android:allowBackup="true"
-        android:hardwareAccelerated="false"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
+        android:theme="@style/Theme.AppCompat"
         android:supportsRtl="true"
-        android:theme="@style/Theme.AppCompat">
+        android:hardwareAccelerated="false" >
         <activity
             android:name=".client.navdrawer.MainDrawerActivity"
             android:label="@string/app_name"
-            android:launchMode="singleTask">
+            android:launchMode="singleTask"
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -41,7 +42,6 @@
             android:name=".client.subactivities.PreferencesScreen"
             android:label="@string/action_preferences"
             android:parentActivityName=".client.navdrawer.MainDrawerActivity">
-
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -51,28 +51,27 @@
             android:name=".client.subactivities.AboutActivity"
             android:label="@string/action_about"
             android:parentActivityName=".client.subactivities.PreferencesScreen">
-
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".client.subactivities.PreferencesScreen" />
         </activity>
+
         <activity
             android:name=".client.subactivities.LogActivity"
             android:label="@string/title_activity_log"
             android:parentActivityName=".client.subactivities.PreferencesScreen">
-
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".client.subactivities.PreferencesScreen" />
         </activity>
+
         <activity
             android:name=".client.subactivities.LeaderboardActivity"
-            android:configChanges="orientation|screenSize|keyboard"
             android:label="@string/title_activity_leaderboard"
+            android:configChanges="orientation|screenSize|keyboard"
             android:parentActivityName=".client.navdrawer.MainDrawerActivity">
-
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -82,7 +81,6 @@
             android:name=".client.subactivities.DeveloperActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:parentActivityName=".client.navdrawer.MainDrawerActivity">
-
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -96,10 +94,10 @@
         <service
             android:name=".client.ClientStumblerService"
             android:icon="@drawable/ic_launcher"
-            android:label="@string/service_name"></service>
+            android:label="@string/service_name" >
+        </service>
 
         <receiver android:name=".service.uploadthread.UploadAlarmReceiver" />
-
         <service android:name=".service.uploadthread.UploadAlarmReceiver$UploadAlarmService" />
 
         <receiver
@@ -120,13 +118,11 @@
         adb shell am broadcast -a android.intent.action.BOOT_COMPLETED -c android.intent.category.HOME -n org.mozilla.mozstumbler/.service.mainthread.PassiveServiceReceiver
         adb shell am broadcast -a android.intent.action.BOOT_COMPLETED -c android.intent.category.HOME -n org.mozilla.fennec/org.mozilla.mozstumbler.service.mainthread.PassiveServiceReceiver
         -->
-        <!--
-        service
+        <!--service
             android:name=".service.stumblerthread.StumblerService"
             android:icon="@drawable/ic_launcher"
             android:label="@string/service_name" >
-        </service
-        -->
+        </service-->
         <!-- meta-data android:name="org.mozilla.mozstumbler.intent.action.MOZ_KEY" android:value="aValue" / -->
         <!--
         receiver android:name=".service.mainthread.PassiveServiceReceiver">

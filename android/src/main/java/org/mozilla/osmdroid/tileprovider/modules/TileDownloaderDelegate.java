@@ -135,7 +135,6 @@ public class TileDownloaderDelegate {
         IResponse resp = httpClient.get(tileURLString, null);
 
         if (resp == null) {
-            Log.w(LOG_TAG, "tileURLString is empty or null");
             return false;
         }
 

@@ -24,6 +24,7 @@ import android.widget.TextView;
 
 import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.service.AppGlobals;
+import org.mozilla.mozstumbler.service.core.logging.Log;
 
 import java.lang.ref.WeakReference;
 import java.util.LinkedList;
@@ -32,9 +33,10 @@ import java.util.TimerTask;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class LogActivity extends ActionBarActivity {
-    static LinkedList<String> buffer = new LinkedList<String>();
-    static int sLongLinesCounter;
-    static final int MAX_SIZE = 200;
+    private static String LOG_TAG = AppGlobals.makeLogTag(LogActivity.class.getSimpleName());
+    private static LinkedList<String> buffer = new LinkedList<String>();
+    private static int sLongLinesCounter;
+    private static final int MAX_SIZE = 200;
     private static LogMessageReceiver sInstance;
 
     public static class LogMessageReceiver extends BroadcastReceiver {
@@ -115,6 +117,13 @@ public class LogActivity extends ActionBarActivity {
                 s = s.substring(0, maxChars / 3) + " ... " + s.substring(s.length() - 1 - maxChars * 2/3);
             }
 
+            String prev = (buffer.size() > 0) ? buffer.getLast() : null;
+            if (prev != null && prev.length() > 10 && s.length() > 10) {
+                if (prev.substring(10).equals(s.substring(10))) {
+                    Log.d(LOG_TAG, "Message is repeated: " + s);
+                    return;
+                }
+            }
             buffer.add(s);
             if (sConsoleView != null) {
                 sConsoleView.println(s);
@@ -154,6 +163,7 @@ public class LogActivity extends ActionBarActivity {
     }
 
     public static class ConsoleView extends ScrollView {
+        private static final String LOG_TAG = AppGlobals.makeLogTag(ConsoleView.class);
         public TextView tv;
         boolean enable_scroll = true;
 
@@ -188,7 +198,7 @@ public class LogActivity extends ActionBarActivity {
             tv.append(Html.fromHtml(str + "<br />"));
 
             if (enable_scroll) {
-                scrollTo(0,tv.getBottom());
+                scrollTo(0, tv.getBottom());
             }
         }
 
@@ -199,6 +209,14 @@ public class LogActivity extends ActionBarActivity {
         public void clear() {
             tv.setText("");
             this.scrollTo(0, 0);
+        }
+
+        @Override
+        protected void onScrollChanged(int x, int y, int oldx, int oldy) {
+            super.onScrollChanged(x, y, oldx, oldy);
+            int diff = tv.getHeight() - (y + getHeight());
+            boolean isAtBottom = diff <= 0;
+            enableScroll(isAtBottom);
         }
     }
 

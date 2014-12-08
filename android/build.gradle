@@ -1,7 +1,7 @@
 // each of the version numbers must be 0-99
 def versionMajor = 1
-def versionMinor = 3 // minor feature releases
-def versionPatch = 1 // This should be bumped for hot fixes
+def versionMinor = 5 // minor feature releases
+def versionPatch = 2 // This should be bumped for hot fixes
 
 // Double check the versioning
 for (versionPart in [versionPatch, versionMinor, versionMajor]) {
@@ -30,9 +30,9 @@ apply plugin: 'com.android.application'
 apply plugin: 'robolectric'
 
 repositories {
-    mavenCentral()
     jcenter()
     maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
+    mavenCentral()
 }
 
 android {
@@ -67,8 +67,8 @@ android {
 
         // Crash report settings
         buildConfigField "String", "ACRA_URI", "\"http://ec2-54-172-135-65.compute-1.amazonaws.com/acra-stumbler/_design/acra-storage/_update/report\""
-        buildConfigField "String", "ACRA_USER", "\"mozstumbler\""
-        buildConfigField "String", "ACRA_PASS", "\"attielintabl\""
+        buildConfigField "String", "ACRA_USER", "\"nospam\""
+        buildConfigField "String", "ACRA_PASS", "\"4ok3bsWs509i\""
     }
 
     signingConfigs {
@@ -128,12 +128,12 @@ android {
                     into("${buildDir}/intermediates/filtered_manifests")
                 }
                 def manifestFile = new
-                    File("${buildDir}/intermediates/filtered_manifests/${variant.dirName}/AndroidManifest.xml")
+                        File("${buildDir}/intermediates/filtered_manifests/${variant.dirName}/AndroidManifest.xml")
                 def content = manifestFile.getText()
 
                 def updatedContent = content.replaceAll("ANDROID_VERSIONNAME",
-                                        defaultConfig.versionName).replaceAll("ANDROID_VERSIONCODE",
-                                        Long.toString(defaultConfig.versionCode))
+                        defaultConfig.versionName).replaceAll("ANDROID_VERSIONCODE",
+                        Long.toString(defaultConfig.versionCode))
 
                 manifestFile.write(updatedContent)
             }
@@ -143,7 +143,7 @@ android {
             // accidental commit of the mapbox key into source
             // control, so we actually modify the pointer in gradle.
             variant.processResources.manifestFile = new
-                File("${buildDir}/intermediates/filtered_manifests/${variant.dirName}/AndroidManifest.xml")
+                    File("${buildDir}/intermediates/filtered_manifests/${variant.dirName}/AndroidManifest.xml")
         }
 
 
@@ -167,7 +167,7 @@ dependencies {
     androidTestCompile 'org.robolectric:robolectric:2.4'
 
     testCompile 'junit:junit:4.10'
-    testCompile 'org.robolectric:robolectric:2.3'
+    testCompile 'org.robolectric:robolectric:2.4'
 
     compile 'com.crankycoder:SimpleKML:1.0'
 

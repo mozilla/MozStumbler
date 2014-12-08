@@ -19,7 +19,7 @@
     <string name="yes">Ja</string>
     <string name="no">Nein</string>
     <string name="about_version">Version %1$s</string>
-	<string name="about_openstreetmap">Kacheln der Kartenansicht\n© OpenStreetMap-Mitwirkende\nhttp://www.openstreetmap.org</string>
+    <string name="about_openstreetmap">Kacheln der Kartenansicht\n© OpenStreetMap-Mitwirkende\nhttp://www.openstreetmap.org</string>
     <string name="about_mapbox_title">MapBox</string>
     <string name="about_mapbox">Erfahren Sie mehr auf http://www.mapbox.com</string>
     <string name="about_legal_aosp">Einige Symbole in dieser Anwendung wurden Werken nachempfunden, welche vom Android Open Source Project erstellt und verteilt werden. Sie werden in Übereinstimmung mit der Creative Commons - Attribution 2.5 Lizenz verwendet.</string>
@@ -75,7 +75,7 @@
     <string name="share_after_kml_saved">Die Datei wurde auf dem Gerät gespeichert, möchten Sie sie teilen?</string>
     <string name="enter_email">E-Mail-Adresse eingeben (optional)</string>
     <string name="enter_email_title">E-Mail: %1$s</string>
-    <string name="enter_email_longtext">Ihre E-Mail Adresse wird niemals anderen Leuten angezeigt und wird nur für Ihre eigenen Berichte verwendet.</string>
+    <string name="enter_email_longtext">Ihre E-Mail-Adresse wird niemals anderen Leuten angezeigt und wird nur für Ihre eigenen Berichte verwendet.</string>
     <string name="drawer_open">Leiste einblenden</string>
     <string name="drawer_close">Leiste ausblenden</string>
     <string name="title_activity_leaderboard">Bestenliste</string>
@@ -86,24 +86,38 @@
     <string name="first_run_welcome_to_mozstumbler">Willkommen bei Mozilla Stumbler</string>
     <string name="map_unavailable">Die Karte kann nicht angezeigt werden, da kein SD-Kartenspeicher vorhanden ist.\nSie können aber immer noch Daten sammeln.</string>
     <string name="map_offline_mode">Die Karte kann ohne eine verfügbare Internetverbindung nicht aktualisiert werden.\nSie können aber immer noch Daten sammeln.</string>
+    <string name="map_copyright_fdroid">Kacheln bereitgestellt durch MapQuest\n© OpenStreetMap-Mitwirkende</string>
+    <string name="map_copyright_moz">© MapBox © OpenStreetMap-Mitwirkende</string>
     <string name="action_developer">Entwickler</string>
     <string name="developer_title">Entwickler</string>
     <string name="enable_option_show_mls_on_map">MLS Ortungsabfragen aktivieren</string>
-    <string name="enable_option_show_mls_on_map_summary">Die Karte kann, auf Kosten von ein wenig mehr Speicher und einem leicht erhöhten Datenverbrauch, MLS Ortungsabfragen für Ihre getätigten Scans anzeigen.</string>
+    <string name="enable_option_show_mls_on_map_summary">Mozilla Location Service (MLS) Standorte für Ihre Berichte anzeigen.</string>
+    <string name="enable_option_show_mls_on_map_detailed_info">Auf Kosten von ein wenig mehr Energie-, Speicher- und Datenverbrauch wird für jeden Bericht der MLS Standort angezeigt. Dieser wird auf der Karte als roter Punkt, mit einer Verbindungslinie zum zugehörigen Bericht, angezeigt. Es werden jedoch keine Standorte über mobile Datenverbindungen abgefragt, wenn \"%1$s\" aktiviert ist.</string>
     <string name="cell_plus_wifi_observation">WLAN + Funkzellen Bericht</string>
     <string name="cell_only_observation">Nur Funkzellen Bericht</string>
     <string name="wifi_only_observation">Nur WLAN Bericht</string>
     <string name="low_resolution_map">Karte mit geringer Auflösung</string>
     <string name="map_turned_off">Karte deaktiviert</string>
-    <string name="map_tile_resolution_options_label">Kartenkacheloptionen:</string>
-    <string name="enable_crash_reporting">Absturzberichte einschalten</string>
+    <string name="map_tile_resolution_options_label">Kartenauflösung:</string>
+    <string name="map_tile_resolution_options_summary">Niedrige Auflösung reduziert den Datenverbrauch.</string>
+    <string name="enable_crash_reporting">Absturzberichte senden</string>
     <string name="privacy_policy">Datenschutzerklärung:</string>
     <string name="satellites_separator">/</string>
     <string name="must_uninstall_to_update">Sie müssen zuerst eine Deinstallation durchführen, um auf die neueste Version zu aktualisieren.</string>
+    <string name="category_leaderboard">Bestenliste</string>
+    <string name="category_network_usage">Datenverbrauch</string>
+    <string name="category_display">Anzeige</string>
+    <string name="category_crashreport">Absturzberichte</string>
     <string-array name="map_tile_resolution_options">
-        <item>Standard</item>
-        <item>Nur hohe Auflösung</item>
-        <item>Nur geringe Auflösung</item>
+        <item>Hoch (WLAN) / niedrig (Mobil)</item>
+        <item>Immer hohe Auflösung</item>
+        <item>Immer niedrige Auflösung</item>
         <item>Keine Karte</item>
     </string-array>
+    <string name="low_battery_title">Scannen bei niedrigem Akkustand stoppen</string>
+    <string name="battery_percent_options_label">Stoppen ab Akkustand:</string>
+    <string name="motion_detection_title">Bewegungserkennung</string>
+    <string name="motion_detection_options_label">Scannen pausieren, wenn keine Bewegung um</string>
+    <string name="motion_detection_options_conjunction">in</string>
+    <string name="map_scanning_paused_no_motion">Keine Positionsänderung, Scannen pausiert.</string>
 </resources>

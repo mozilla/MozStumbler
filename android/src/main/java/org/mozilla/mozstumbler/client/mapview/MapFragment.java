@@ -6,6 +6,7 @@ package org.mozilla.mozstumbler.client.mapview;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.res.Configuration;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.location.Location;
@@ -83,7 +84,7 @@ public final class MapFragment extends android.support.v4.app.Fragment
     private boolean mUserPanning = false;
     private final Timer mGetUrl = new Timer();
     private ObservationPointsOverlay mObservationPointsOverlay;
-    private GPSListener mGPSListener;
+    private MapLocationListener mMapLocationListener;
     private LowResMapOverlay mLowResMapOverlayHighZoom;
     private LowResMapOverlay mLowResMapOverlayLowZoom;
     private Overlay mCoverageTilesOverlayLowZoom;
@@ -191,6 +192,14 @@ public final class MapFragment extends android.support.v4.app.Fragment
         ObservedLocationsReceiver observer = ObservedLocationsReceiver.getInstance();
         observer.setMapActivity(this);
 
+        Configuration c = getResources().getConfiguration();
+        if (c.fontScale > 1) {
+            Log.d(LOG_TAG, "Large text is enabled: " + c.fontScale);
+            mRootView.findViewById(R.id.text_satellites_sep).setVisibility(View.GONE);
+            mRootView.findViewById(R.id.text_satellites_avail).setVisibility(View.GONE);
+        } else {
+            initTextView(R.id.text_satellites_avail, "00");
+        }
         initTextView(R.id.text_cells_visible, "000");
         initTextView(R.id.text_wifis_visible, "000");
         initTextView(R.id.text_observation_count, "00000");
@@ -215,6 +224,8 @@ public final class MapFragment extends android.support.v4.app.Fragment
                 return true;
             }
         }, 0));
+
+        showPausedDueToNoMotionMessage(getApplication().isIsScanningPausedDueToNoMotion());
 
         return mRootView;
     }
@@ -511,7 +522,7 @@ public final class MapFragment extends android.support.v4.app.Fragment
             return;
         }
 
-        boolean isScanning = app.getService().isScanning();
+        boolean isScanning = app.isScanningOrPaused();
         if (isScanning) {
             app.stopScanning();
         } else {
@@ -524,9 +535,9 @@ public final class MapFragment extends android.support.v4.app.Fragment
     private void showCopyright() {
         TextView copyrightArea = (TextView) mRootView.findViewById(R.id.copyright_area);
         if (BuildConfig.TILE_SERVER_URL == null) {
-            copyrightArea.setText("Tiles Courtesy of MapQuest\n© OpenStreetMap contributors");
+            copyrightArea.setText(getActivity().getString(R.string.map_copyright_fdroid));
         } else {
-            copyrightArea.setText("© MapBox © OpenStreetMap contributors");
+            copyrightArea.setText(getActivity().getString(R.string.map_copyright_moz));
         }
     }
 
@@ -594,7 +605,7 @@ public final class MapFragment extends android.support.v4.app.Fragment
         super.onResume();
         Log.d(LOG_TAG, "onResume");
 
-        mGPSListener = new GPSListener(this);
+        mMapLocationListener = new MapLocationListener(this);
 
         ObservedLocationsReceiver observer = ObservedLocationsReceiver.getInstance();
         observer.setMapActivity(this);
@@ -633,7 +644,10 @@ public final class MapFragment extends android.support.v4.app.Fragment
         Log.d(LOG_TAG, "onPause");
         saveStateToPrefs();
 
-        mGPSListener.removeListener();
+        if (mMapLocationListener != null) {
+            mMapLocationListener.removeListener();
+            mMapLocationListener = null;
+        }
         ObservedLocationsReceiver observer = ObservedLocationsReceiver.getInstance();
         observer.removeMapActivity();
         mHighLowBandwidthChecker.unregister(this.getApplication());
@@ -687,9 +701,7 @@ public final class MapFragment extends android.support.v4.app.Fragment
         Paint textPaint = textView.getPaint();
         int width = (int) Math.ceil(textPaint.measureText(bound));
         textView.setWidth(width);
-        android.widget.LinearLayout.LayoutParams params =
-                new android.widget.LinearLayout.LayoutParams(width, android.widget.LinearLayout.LayoutParams.MATCH_PARENT);
-        textView.setLayoutParams(params);
+        textView.getLayoutParams().width = width;
         textView.setText("0");
     }
 
@@ -719,4 +731,18 @@ public final class MapFragment extends android.support.v4.app.Fragment
         }
     }
 
+    public void showPausedDueToNoMotionMessage(boolean show) {
+        mRootView.findViewById(R.id.scanning_paused_message).setVisibility(show? View.VISIBLE : View.INVISIBLE);
+        if (mMapLocationListener != null ) {
+            mMapLocationListener.pauseGpsUpdates(show);
+        }
+    }
+
+    public void stop() {
+        mRootView.findViewById(R.id.scanning_paused_message).setVisibility(View.INVISIBLE);
+        if (mMapLocationListener != null ) {
+            mMapLocationListener.removeListener();
+            mMapLocationListener = null;
+        }
+    }
 }

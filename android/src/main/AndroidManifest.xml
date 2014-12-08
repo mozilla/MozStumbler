@@ -14,6 +14,7 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
+    <uses-feature android:name="android.hardware.sensor.accelerometer" android:required="true" />
     <uses-feature android:name="android.hardware.location" />
     <uses-feature android:name="android.hardware.location.gps" />
     <uses-feature android:name="android.hardware.telephony" android:required="false" />
@@ -85,13 +86,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".client.navdrawer.MainDrawerActivity" />
         </activity>
-
-        <receiver android:name=".client.TurnOffReceiver" >
-            <intent-filter>
-                <action android:name="android.intent.action.BATTERY_LOW" />
-                <action android:name="org.mozilla.mozstumbler.turnMeOff" />
-            </intent-filter>
-        </receiver>
 
         <service
             android:name=".client.ClientStumblerService"

@@ -4,17 +4,20 @@
 
 package org.mozilla.mozstumbler.client;
 
-/**
- * This is the public threadsafe interface for the MainActivity.
- *
- * This is useful as the MainActivity needs to operate on the UI
- * thread, but events may come from bound services, or by Intent
- * listeners.
- */
-
 public interface IMainActivity {
-    public void updateUiOnMainThread();
+    // Thread-safe way to update the main UI.
+    public void updateUiOnMainThread(boolean updateMetrics);
+
+    // Call from main thread only
     public void setUploadState(boolean isUploadingObservations);
+
+    // Call from main thread only
     public void keepScreenOn(boolean isEnabled);
+
+    // Call from main thread only
+    public void isPausedDueToNoMotion(boolean isPaused);
+
+    // Call from main thread only
+    public void stop();
 }
 

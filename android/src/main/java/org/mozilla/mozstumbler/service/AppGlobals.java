@@ -4,6 +4,8 @@
 
 package org.mozilla.mozstumbler.service;
 
+import org.mozilla.mozstumbler.client.subactivities.LogActivity;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.ConcurrentLinkedQueue;

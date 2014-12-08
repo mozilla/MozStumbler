@@ -88,6 +88,7 @@ public class Updater {
                 String latestVersion = tag.substring(1); // strip the 'v' from the beginning
 
                 String installedVersion = PackageUtils.getAppVersion(activity);
+                installedVersion = stripBuildHostName(installedVersion);
 
                 Log.d(LOG_TAG, "Installed version: " + installedVersion);
                 Log.d(LOG_TAG, "Latest version: " + latestVersion);
@@ -101,6 +102,15 @@ public class Updater {
         return true;
     }
 
+    String stripBuildHostName(String installedVersion) {
+        // Some versions had the old buildhost stuff in there, we need
+        // to strip out anything pase the 3rd integer part.
+        String[] parts = installedVersion.split("\\.");
+        if (parts.length < 3) {
+            throw new RuntimeException("Unexpected version string: [" + installedVersion + "] parts:" + parts.length);
+        }
+        return parts[0] + "." + parts[1] + "." + parts[2];
+    }
 
     private boolean isVersionGreaterThan(String a, String b) {
         if (a == null) {

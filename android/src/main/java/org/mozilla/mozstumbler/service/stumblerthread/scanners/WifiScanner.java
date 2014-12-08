@@ -64,7 +64,8 @@ public class WifiScanner extends BroadcastReceiver {
         if (manager == null) {
             return null;
         }
-        return getWifiManager().getScanResults();
+
+        return manager.getScanResults();
     }
 
 
@@ -109,7 +110,12 @@ public class WifiScanner extends BroadcastReceiver {
             final ArrayList<ScanResult> scanResults = new ArrayList<ScanResult>();
             for (ScanResult scanResult : scanResultList) {
                 scanResult.BSSID = BSSIDBlockList.canonicalizeBSSID(scanResult.BSSID);
+
                 if (shouldLog(scanResult)) {
+                    // Once we've checked that we want this scan result, we can safely discard
+                    // the SSID and capabilities.
+                    scanResult.SSID = "";
+                    scanResult.capabilities = "";
                     scanResults.add(scanResult);
                 }
             }

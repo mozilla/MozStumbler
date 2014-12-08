@@ -8,11 +8,15 @@ import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
 import android.os.Looper;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.stumblerthread.StumblerService;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.ClientDataStorageManager;
+
+import org.mozilla.mozstumbler.service.utils.BatteryCheckReceiver;
+import org.mozilla.mozstumbler.service.utils.BatteryCheckReceiver.BatteryCheckCallback;
 
 // Used as a bound service (with foreground priority) in Mozilla Stumbler, a.k.a. active scanning mode.
 // -- In accordance with Android service docs -and experimental findings- this puts the service as low
@@ -21,6 +25,23 @@ import org.mozilla.mozstumbler.service.stumblerthread.datahandling.ClientDataSto
 public class ClientStumblerService extends StumblerService {
     private static final String LOG_TAG = AppGlobals.makeLogTag(StumblerService.class.getSimpleName());
     private final IBinder mBinder = new StumblerBinder();
+    private BatteryCheckReceiver mBatteryChecker;
+
+    private final BatteryCheckCallback mBatteryCheckCallback = new BatteryCheckCallback() {
+        private boolean waitForBatteryOkBeforeSendingNotification;
+        @Override
+        public void batteryCheckCallback(BatteryCheckReceiver receiver) {
+            int minBattery = ClientPrefs.getInstance().getMinBatteryPercent();
+            boolean isLow = receiver.isBatteryNotChargingAndLessThan(minBattery);
+            if (isLow && !waitForBatteryOkBeforeSendingNotification) {
+                waitForBatteryOkBeforeSendingNotification = true;
+                LocalBroadcastManager.getInstance(ClientStumblerService.this).
+                        sendBroadcast(new Intent(MainApp.ACTION_LOW_BATTERY));
+            } else if (receiver.isBatteryNotChargingAndGreaterThan(minBattery)) {
+                waitForBatteryOkBeforeSendingNotification = false;
+            }
+        }
+    };
 
     // Service binding is not used in stand-alone passive mode.
     public final class StumblerBinder extends Binder {
@@ -74,6 +95,21 @@ public class ClientStumblerService extends StumblerService {
         if (mScanManager.stopScanning()) {
             mReporter.flush();
         }
+
+        if (mBatteryChecker != null) {
+            mBatteryChecker.stop();
+        }
+    }
+
+    @Override
+    public synchronized void startScanning() {
+        super.startScanning();
+
+        if (mBatteryChecker == null) {
+            mBatteryChecker = new BatteryCheckReceiver(this, mBatteryCheckCallback);
+        }
+
+        mBatteryChecker.start();
     }
 }
 

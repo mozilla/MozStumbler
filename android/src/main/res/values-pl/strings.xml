@@ -19,13 +19,38 @@
     <string name="yes">Tak</string>
     <string name="no">Nie</string>
     <string name="about_version">Wersja %1$s</string>
-    <string name="about_openstreetmap">Widok mapy © Współtwórcy projektu OpenStreetMap\nhttp://www.openstreetmap.org</string>
-    <string name="about_mapbox_title">Mapbox</string>
+    <string name="about_openstreetmap">Widok mapy\n© Współtwórcy projektu OpenStreetMap\nhttp://www.openstreetmap.org</string>
+    <string name="about_mapbox_title">MapBox</string>
     <string name="about_mapbox">Więcej informacji na http://www.mapbox.com</string>
     <string name="about_legal_aosp">Niektóre ikony w tej aplikacji pochodzą z Android Open Source Project i są używane zgodnie z warunkami licencji Creative Commons 2.5 Attribution.</string>
     <string name="about_legal_flaticons">Ikony GPS, stacji sieci komórkowej, Wi-Fi i lornetki stworzone przez Freepik z http://www.flaticon.com na licencji: https://creativecommons.org/licenses/by-nd/3.0</string>
-    <string name="upload_observations_sent_title">Wszystkie sesje</string>
+    <string name="upload_observations_sent_title">Już wysłane</string>
     <string name="metrics_observations_last_upload_time_title">Ostatnio wysłano:</string>
+    <string name="metrics_observations_last_upload_time_never">nigdy</string>
+    <!--
+    Do not just copy those plurals, please check what is needed for your language.
+    http://developer.android.com/guide/topics/resources/string-resource.html#Plurals
+    -->
+    <plurals name="time_diff_seconds">
+        <item quantity="one">przed chwilą</item>
+        <item quantity="few">chwilę temu</item>
+        <item quantity="other">chwilę temu</item>
+    </plurals>
+    <plurals name="time_diff_minutes">
+        <item quantity="one">minutę temu</item>
+        <item quantity="few">%d minuty temu</item>
+        <item quantity="other">%d minut temu</item>
+    </plurals>
+    <plurals name="time_diff_hours">
+        <item quantity="one">godzinę temu</item>
+        <item quantity="few">%d godziny temu</item>
+        <item quantity="other">%d godzin temu</item>
+    </plurals>
+    <plurals name="time_diff_days">
+        <item quantity="one">wczoraj</item>
+        <item quantity="few">%d dni temu</item>
+        <item quantity="other">%d dni temu</item>
+    </plurals>
     <string name="metrics_observations_title">Obserwacje:</string>
     <string name="metrics_observations_wifis_title">Sieci Wi-Fi:</string>
     <string name="metrics_observations_cell_towers_title">Sieci komórkowe:</string>
@@ -33,7 +58,7 @@
     <string name="upload_wifi_only_title">Automatyczne wysyłanie tylko przez Wi-Fi</string>
     <string name="upload_wifi_only_summary">Ta opcja zmniejszy zużycie danych w sieci komórkowej. Naciśnięcie przycisku Wyślij w karcie Parametry zawsze spowoduje wysłanie.</string>
     <string name="metrics_activity_title">Parametry</string>
-    <string name="metrics_this_session">Ta sesja</string>
+    <string name="metrics_this_session">Bieżąca sesja</string>
     <string name="drawer_map_option_show_mls_locations">Wyświetlanie położeń MLS</string>
     <string name="title_activity_log">Dziennik</string>
     <string name="action_view_log">Wyświetl dziennik</string>
@@ -42,9 +67,10 @@
     <string name="kml_file_title">Plik obserwacji KML</string>
     <string name="kml_file_load">Wczytaj plik KML</string>
     <string name="kml_file_save">Zapisz plik KML</string>
-    <string name="kml_file_description">Zapisywanie/wczytywanie zgłoszeń (położenia, liczby sieci Wi-Fi i komórkowych) do celów debugowania. </string>
+    <string name="kml_file_description">Zapisywanie/wczytywanie obserwacji (położenia, liczby sieci Wi-Fi i komórkowych) do celów debugowania.</string>
     <string name="kml_file_saved_name">Zapisany plik:</string>
-    <string name="keep_screen_on_title">Bez wyłączania ekranu na ekranie mapy</string>
+    <string name="keep_screen_on_title">Bez wyłączania ekranu podczas skanowania</string>
+    <string name="keep_screen_on_summary">Nie wyłącza ekranu, kiedy skanowanie jest aktywne, a aplikacja nie działa w tle.</string>
     <string name="delete_all">Usuń wszystko</string>
     <string name="are_you_sure">Na pewno?</string>
     <string name="loading_kml">Wczytywanie pliku KML</string>
@@ -57,7 +83,7 @@
     <string name="share_after_kml_saved">Plik został zapisany na urządzeniu, wysłać go?</string>
     <string name="enter_email">Wpisz adres e-mail (opcjonalnie)</string>
     <string name="enter_email_title">E-mail: %1$s</string>
-    <string name="enter_email_longtext">Adres e-mail nie jest nikomu pokazywany i jest używany tylko do zgłoszeń użytkownika</string>
+    <string name="enter_email_longtext">Adres e-mail nie jest nikomu pokazywany i jest używany tylko do obserwacji użytkownika.</string>
     <string name="drawer_open">Wysuń szufladę</string>
     <string name="drawer_close">Zamknij szufladę</string>
     <string name="title_activity_leaderboard">Ranking</string>
@@ -68,21 +94,39 @@
     <string name="first_run_welcome_to_mozstumbler">Witaj w Mozilla Stumblerze</string>
     <string name="map_unavailable">Nie można wyświetlić mapy, ponieważ urządzenie nie posiada karty pamięci SD.\nNadal można zbierać dane.</string>
     <string name="map_offline_mode">Mapa nie będzie aktualizowana bez połączenie z Internetem,\nale nadal można zbierać dane.</string>
+    <string name="map_copyright_fdroid">Widok mapy dzięki firmie MapQuest\n© Współtwórcy projektu OpenStreetMap</string>
+    <string name="map_copyright_moz">© MapBox © Współtwórcy projektu OpenStreetMap</string>
     <string name="action_developer">Opcje programistyczne</string>
     <string name="developer_title">Opcje programistyczne</string>
-    <string name="enable_option_show_mls_on_map">Włączenie przełącznika warstw MLS</string>
-    <string name="enable_option_show_mls_on_map_summary">Wykorzystując nieco więcej pamięci i sieci, mapa może wyświetlać zapytania położeń MLS podczas skanowania.</string>
-    <string name="cell_only_observation">Zgłaszanie tylko sieci komórkowych</string>
-    <string name="wifi_only_observation">Zgłaszanie tylko sieci Wi-Fi</string>
-    <string name="low_resolution_map">Mapa o niskiej rozdzielczości</string>
+    <string name="enable_option_show_mls_on_map">Włączenie zapytań położeń MLS</string>
+    <string name="enable_option_show_mls_on_map_summary">Wyświetla położenia usługi Mozilla Location Service (MLS) w obserwacjach.</string>
+    <!-- enable_option_show_mls_on_map_detailed_info: %1$s refers to upload_wifi_only_title -->
+    <string name="enable_option_show_mls_on_map_detailed_info">Wykorzystując nieco więcej pamięci i sieci, mapa może wyświetlać położenia MLS jako czerwone kropki połączone liniami z obserwacjami. Jeśli \"%1$s\" jest włączone, to nie będzie to działało podczas używania połączenia komórkowego.</string>
+    <string name="cell_plus_wifi_observation">Obserwacje sieci Wi-Fi i komórkowych</string>
+    <string name="cell_only_observation">Obserwacje tylko sieci komórkowych</string>
+    <string name="wifi_only_observation">Obserwacje tylko sieci Wi-Fi</string>
+    <string name="low_resolution_map">Mapa o niskiej szczegółowości</string>
     <string name="map_turned_off">Wyłączenie wyświetlania mapy</string>
-    <string name="map_tile_resolution_options_label">Mapa:</string>
+    <string name="map_tile_resolution_options_label">Szczegółowość mapy:</string>
+    <string name="map_tile_resolution_options_summary">Niska szczegółowość zmniejsza zużycie danych.</string>
     <string name="enable_crash_reporting">Zgłaszanie awarii</string>
     <string name="privacy_policy">Polityka prywatności:</string>
+    <string name="satellites_separator">/</string>
+    <string name="must_uninstall_to_update">Należy odinstalować aplikację przed aktualizacją do nowej wersji.</string>
+    <string name="category_leaderboard">Ranking</string>
+    <string name="category_network_usage">Użycie sieci</string>
+    <string name="category_display">Wyświetlanie</string>
+    <string name="category_crashreport">Zgłaszanie awarii</string>
     <string-array name="map_tile_resolution_options">
-        <item>Domyślna</item>
-        <item>Tylko o wysokiej rozdzielczości</item>
-        <item>Tylko o niskiej rozdzielczości</item>
+        <item>Wysoka (Wi-Fi) / niska (sieć komórkowa)</item>
+        <item>Tylko o wysokiej szczegółowości</item>
+        <item>Tylko o niskiej szczegółowości</item>
         <item>Bez mapy</item>
     </string-array>
+    <string name="low_battery_title">Zatrzymywanie skanowania na niskim poziomie naładowania akumulatora</string>
+    <string name="battery_percent_options_label">Zatrzymywanie na poziomie:</string>
+    <string name="motion_detection_title">Wykrywanie ruchu</string>
+    <string name="motion_detection_options_label">Wstrzymywanie skanowania, jeśli nie pokonano</string>
+    <string name="motion_detection_options_conjunction">przez</string>
+    <string name="map_scanning_paused_no_motion">Położenie się nie zmienia, wstrzymano skanowanie.</string>
 </resources>

@@ -106,6 +106,10 @@ public class DetectUnchangingLocation extends BroadcastReceiver {
             return;
         }
 
+        // Set the location time to current time instead of GPS time, as the remainder of the code
+        // compares this time to current time, and we don't want 2 different time systems compared
+        newPosition.setTime(System.currentTimeMillis());
+
         if (mLastLocation == null) {
             mLastLocation = newPosition;
         } else {

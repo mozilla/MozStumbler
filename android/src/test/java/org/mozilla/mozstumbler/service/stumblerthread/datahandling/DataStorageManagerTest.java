@@ -53,9 +53,7 @@ public class DataStorageManagerTest {
         long maxBytes = 20000;
         int maxWeeks = 10;
 
-        // The DM is required to handle the flush() operation in the Reporter.
-        dm = DataStorageManager.createGlobalInstance(ctx, tracker, maxBytes, maxWeeks);
-
+        dm = ClientDataStorageManager.createGlobalInstance(ctx, tracker, maxBytes, maxWeeks);
         // Force the current reports to clear out between test runs.
         dm.mCurrentReports.clearReports();
 

@@ -25,6 +25,7 @@ public class WifiBlockLists implements WifiBlockListInterface {
             "AndroidAP",
             "AndroidHotspot",
             "Android Hotspot",
+            "Audi", // Audio in-car WiFi, mathing regex "^Audi\d+"
             "Autonet-", // Mercedes in-car WiFi, matching regex "^Autonet-\d+"
             "barnacle", // Android tether app
             "Galaxy Note",
@@ -75,11 +76,13 @@ public class WifiBlockLists implements WifiBlockListInterface {
             "CDWiFi",           // Ceske drahy (Czech railways): http://www.cd.cz/cd-online/-15765/
             "CommuteNet", // Copenhagen S-Tog on-train WiFi: http://www.dsb.dk/s-tog/kampagner/fri-internet-i-s-tog
             "csadplzen_bus",    // CSAD Plzen bus hotspots: http://www.csadplzen.cz/?ob=aktuality#wifi7
+            "CUSTSURF", // Konstanz-Meersburg ferry boat (Germany)
             "EMT-Madrid",  // Empresa municipal de transportes de Madrid http://buswifi.com/
             "FlixBus", // FlixBus on-bus WiFi (Germany)
             "Flybussekspressen", // Oslo airport transportation on-bus WiFi (Norway)
             "Flybussen", // Airport transportation on-bus WiFi all over Norway (Norway)
             "Flygbussarna Free WiFi ", // Flygbussarna.se on-bus WiFi (Sweden)
+            "FSCHEIN", // Konstanz-Meersburg ferry boat (Germany)
             "GBUS",
             "GBusWifi",
             "gogoinflight", // Gogo in-flight WiFi

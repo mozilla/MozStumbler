@@ -538,9 +538,9 @@ public final class MapFragment extends android.support.v4.app.Fragment
     private void showCopyright() {
         TextView copyrightArea = (TextView) mRootView.findViewById(R.id.copyright_area);
         if (BuildConfig.TILE_SERVER_URL == null) {
-            copyrightArea.setText("Tiles Courtesy of MapQuest\n© OpenStreetMap contributors");
+            copyrightArea.setText(getActivity().getString(R.string.map_copyright_fdroid));
         } else {
-            copyrightArea.setText("© MapBox © OpenStreetMap contributors");
+            copyrightArea.setText(getActivity().getString(R.string.map_copyright_moz));
         }
     }
 
@@ -647,7 +647,10 @@ public final class MapFragment extends android.support.v4.app.Fragment
         Log.d(LOG_TAG, "onPause");
         saveStateToPrefs();
 
-        mMapLocationListener.removeListener();
+        if (mMapLocationListener != null) {
+            mMapLocationListener.removeListener();
+            mMapLocationListener = null;
+        }
         ObservedLocationsReceiver observer = ObservedLocationsReceiver.getInstance();
         observer.removeMapActivity();
         mHighLowBandwidthChecker.unregister(this.getApplication());
@@ -731,11 +734,18 @@ public final class MapFragment extends android.support.v4.app.Fragment
         }
     }
 
-
     public void showPausedDueToNoMotionMessage(boolean show) {
         mRootView.findViewById(R.id.scanning_paused_message).setVisibility(show? View.VISIBLE : View.INVISIBLE);
         if (mMapLocationListener != null ) {
             mMapLocationListener.pauseGpsUpdates(show);
+        }
+    }
+
+    public void stop() {
+        mRootView.findViewById(R.id.scanning_paused_message).setVisibility(View.INVISIBLE);
+        if (mMapLocationListener != null ) {
+            mMapLocationListener.removeListener();
+            mMapLocationListener = null;
         }
     }
 }

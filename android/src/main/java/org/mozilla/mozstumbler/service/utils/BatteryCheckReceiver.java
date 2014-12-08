@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.BatteryManager;
+import android.support.v4.content.LocalBroadcastManager;
 
 import java.lang.ref.WeakReference;
 
@@ -24,6 +25,7 @@ public class BatteryCheckReceiver extends BroadcastReceiver {
     }
 
     public BatteryCheckReceiver(Context context, BatteryCheckCallback callback) {
+        sDebugInstance = this;
         mCallback = new WeakReference<BatteryCheckCallback>(callback);
         mContext = context;
     }
@@ -37,6 +39,18 @@ public class BatteryCheckReceiver extends BroadcastReceiver {
             mContext.unregisterReceiver(this);
         } catch (Exception ex) {}
     }
+
+    /// Debugging code
+    private static BatteryCheckReceiver sDebugInstance;
+    public static void debugSendBattery(int level) {
+        Intent intent = new Intent(Intent.ACTION_BATTERY_CHANGED);
+        intent.putExtra(BatteryManager.EXTRA_LEVEL, level);
+        intent.putExtra(BatteryManager.EXTRA_SCALE, 100);
+        intent.putExtra(BatteryManager.EXTRA_STATUS, BatteryManager.BATTERY_STATUS_UNKNOWN);
+        // can't fake a system intent broadcast easily, just call this directly
+        sDebugInstance.onReceive(sDebugInstance.mContext, intent);
+    }
+    /// ---
 
     @Override
     public void onReceive(Context context, Intent intent) {

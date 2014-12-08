@@ -1,16 +1,7 @@
 // each of the version numbers must be 0-99
 def versionMajor = 1
-def versionMinor = 4 // minor feature releases
-def versionPatch = 0 // This should be bumped for hot fixes
-def buildHost = ""
-try
-{
-    buildHost = InetAddress.localHost.hostName
-} catch (Exception ex) {
-    // Some machines are ridiculous.
-    buildHost = "localhost"
-}
-buildHost =  buildHost.replaceAll("[^a-zA-Z0-9_-]","")
+def versionMinor = 5 // minor feature releases
+def versionPatch = 2 // This should be bumped for hot fixes
 
 // Double check the versioning
 for (versionPart in [versionPatch, versionMinor, versionMajor]) {
@@ -62,7 +53,7 @@ android {
         targetSdkVersion 18
 
         versionCode versionMajor * 1000000 + versionMinor * 10000 + versionPatch * 100
-        versionName "${versionMajor}.${versionMinor}.${versionPatch}.${buildHost}"
+        versionName "${versionMajor}.${versionMinor}.${versionPatch}"
 
         buildConfigField "boolean", "ROBOLECTRIC", "false"
         buildConfigField "String", "MOZILLA_API_KEY", "\"\""
@@ -76,8 +67,8 @@ android {
 
         // Crash report settings
         buildConfigField "String", "ACRA_URI", "\"http://ec2-54-172-135-65.compute-1.amazonaws.com/acra-stumbler/_design/acra-storage/_update/report\""
-        buildConfigField "String", "ACRA_USER", "\"mozstumbler\""
-        buildConfigField "String", "ACRA_PASS", "\"attielintabl\""
+        buildConfigField "String", "ACRA_USER", "\"nospam\""
+        buildConfigField "String", "ACRA_PASS", "\"4ok3bsWs509i\""
     }
 
     signingConfigs {

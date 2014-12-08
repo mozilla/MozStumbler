@@ -644,10 +644,7 @@ public final class MapFragment extends android.support.v4.app.Fragment
         Log.d(LOG_TAG, "onPause");
         saveStateToPrefs();
 
-        if (mMapLocationListener != null) {
-            mMapLocationListener.removeListener();
-            mMapLocationListener = null;
-        }
+        mMapLocationListener.removeListener();
         ObservedLocationsReceiver observer = ObservedLocationsReceiver.getInstance();
         observer.removeMapActivity();
         mHighLowBandwidthChecker.unregister(this.getApplication());
@@ -742,7 +739,6 @@ public final class MapFragment extends android.support.v4.app.Fragment
         mRootView.findViewById(R.id.scanning_paused_message).setVisibility(View.INVISIBLE);
         if (mMapLocationListener != null ) {
             mMapLocationListener.removeListener();
-            mMapLocationListener = null;
         }
     }
 }

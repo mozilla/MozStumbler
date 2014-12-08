@@ -66,7 +66,7 @@ public class DetectUnchangingLocation extends BroadcastReceiver {
 
     boolean isTimeWindowForMovementExceeded() {
         if (mLastLocation == null) {
-            return System.currentTimeMillis() - mStartTimeMs < INITIAL_DELAY_TO_WAIT_FOR_GPS_FIX_MS;
+            return System.currentTimeMillis() - mStartTimeMs > INITIAL_DELAY_TO_WAIT_FOR_GPS_FIX_MS;
         }
 
         return System.currentTimeMillis() - mPrefMotionChangeTimeWindowMs > mLastLocation.getTime();

@@ -4,8 +4,10 @@
 package org.mozilla.mozstumbler.client.subactivities;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -13,13 +15,25 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.mozilla.mozstumbler.R;
+import org.mozilla.mozstumbler.client.serialize.KMLFragment;
+import org.mozilla.mozstumbler.service.AppGlobals;
+import org.mozilla.mozstumbler.service.Prefs;
+import org.mozilla.mozstumbler.service.core.logging.Log;
+
+import java.io.File;
+
+import org.mozilla.mozstumbler.R;
+import static org.mozilla.mozstumbler.service.stumblerthread.datahandling.ClientDataStorageManager.sdcardArchivePath;
 import org.mozilla.mozstumbler.client.ClientPrefs;
 import org.mozilla.mozstumbler.client.MainApp;
 import org.mozilla.mozstumbler.client.serialize.KMLFragment;
@@ -30,7 +44,7 @@ import org.mozilla.mozstumbler.service.utils.BatteryCheckReceiver;
 
 public class DeveloperActivity extends ActionBarActivity {
 
-    private final String LOG_TAG = AppGlobals.makeLogTag(DeveloperActivity.class.getSimpleName());
+    private final String LOG_TAG = AppGlobals.makeLogTag(DeveloperActivity.class);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +52,7 @@ public class DeveloperActivity extends ActionBarActivity {
         setContentView(R.layout.activity_developer);
         if (savedInstanceState == null) {
             FragmentManager fm = getSupportFragmentManager();
-            FragmentTransaction ft =fm.beginTransaction();
+            FragmentTransaction ft = fm.beginTransaction();
             ft.add(R.id.frame1, new KMLFragment());
             ft.add(R.id.frame2, new DeveloperOptions());
             ft.commit();
@@ -91,12 +105,28 @@ public class DeveloperActivity extends ActionBarActivity {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             mRootView = inflater.inflate(R.layout.fragment_developer_options, container, false);
+            setupSaveJSONLogs();
+            return mRootView;
+        }
 
+        private void setupSaveJSONLogs() {
+            boolean saveStumbleLogs = Prefs.getInstance().isSaveStumbleLogs();
+            CheckBox button = (CheckBox) mRootView.findViewById(R.id.toggleSaveStumbleLogs);
+            button.setChecked(saveStumbleLogs);
+            button.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    onToggleSaveStumbleLogs(isChecked);
+                }
+            });
+        }
+
+        private void setupBatterySaver() {
             final Spinner batterySpinner = (Spinner) mRootView.findViewById(R.id.spinnerBatteryPercent);
             final SpinnerAdapter spinnerAdapter = batterySpinner.getAdapter();
             assert(spinnerAdapter instanceof ArrayAdapter);
             @SuppressWarnings("unchecked")
-            final ArrayAdapter<String> adapter = (ArrayAdapter<String>)spinnerAdapter;
+                final ArrayAdapter<String> adapter = (ArrayAdapter<String>)spinnerAdapter;
             final int percent = ClientPrefs.getInstance().getMinBatteryPercent();
             final int spinnerPosition = adapter.getPosition(percent + "%");
             batterySpinner.setSelection(spinnerPosition);
@@ -110,13 +140,13 @@ public class DeveloperActivity extends ActionBarActivity {
                     prefs.setMinBatteryPercent(percent);
                 }
 
-                @Override
+            @Override
                 public void onNothingSelected(AdapterView<?> arg0) {}
             });
 
             final String[] distanceArray = {"30 m", "50 m", "75 m", "100 m", "125 m", "150 m", "175 m", "200 m"};
             final ArrayAdapter<String> distanceAdapter =
-                    new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_spinner_item, distanceArray);
+                new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_spinner_item, distanceArray);
             final Spinner distanceSpinner = (Spinner) mRootView.findViewById(R.id.spinnerMotionDetectionDistanceMeters);
             distanceSpinner.setAdapter(distanceAdapter);
             final int dist = ClientPrefs.getInstance().getMotionChangeDistanceMeters();
@@ -128,13 +158,13 @@ public class DeveloperActivity extends ActionBarActivity {
                     changeOfMotionDetectionDistanceOrTime(parent, position, IsDistanceOrTime.DISTANCE);
                 }
 
-                @Override
+            @Override
                 public void onNothingSelected(AdapterView<?> arg0) {}
             });
 
             final String[] timeArray = {"5 s", "30 s", "60 s", "90 s", "120 s", "180 s", "210 s", "240 s", "270 s", "300 s"};
             final ArrayAdapter<String> timeAdapter =
-                    new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_spinner_item, timeArray);
+                new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_spinner_item, timeArray);
             final Spinner timeSpinner = (Spinner) mRootView.findViewById(R.id.spinnerMotionDetectionTimeSeconds);
             timeSpinner.setAdapter(timeAdapter);
             final int time = ClientPrefs.getInstance().getMotionChangeTimeWindowSeconds();
@@ -146,11 +176,48 @@ public class DeveloperActivity extends ActionBarActivity {
                     changeOfMotionDetectionDistanceOrTime(parent, position, IsDistanceOrTime.TIME);
                 }
 
-                @Override
+            @Override
                 public void onNothingSelected(AdapterView<?> arg0) {}
             });
+        }
 
-            return mRootView;
+        private void onToggleSaveStumbleLogs(boolean isChecked) {
+            if (isChecked) {
+                Context viewCtx = mRootView.getContext();
+                if (!archiveDirCreatedAndMounted(this.getActivity())) {
+
+                    Toast.makeText(viewCtx,
+                            viewCtx.getString(R.string.create_log_archive_failure),
+                            Toast.LENGTH_SHORT).show();
+                    isChecked = false;
+                    CheckBox button = (CheckBox) mRootView.findViewById(R.id.toggleSaveStumbleLogs);
+                    button.setChecked(isChecked);
+                } else {
+                    Toast.makeText(viewCtx,
+                            viewCtx.getString(R.string.create_log_archive_success) +
+                                    sdcardArchivePath(),
+                            Toast.LENGTH_LONG).show();
+                }
+            }
+            Prefs.getInstance().setSaveStumbleLogs(isChecked);
+        }
+
+        public boolean archiveDirCreatedAndMounted(Context ctx) {
+            File saveDir = new File(sdcardArchivePath());
+            String storageState = Environment.getExternalStorageState();
+
+            // You have to check the mount state of the external storage.
+            // Using the mkdirs() result isn't good enough.
+            if(!storageState.equals(Environment.MEDIA_MOUNTED)) {
+                return false;
+            }
+
+            saveDir.mkdirs();
+            if (!saveDir.exists()) {
+                return false;
+            }
+            Log.d(LOG_TAG, "Created: [" + saveDir.getAbsolutePath() + "]");
+            return true;
         }
 
         private enum IsDistanceOrTime { DISTANCE, TIME }

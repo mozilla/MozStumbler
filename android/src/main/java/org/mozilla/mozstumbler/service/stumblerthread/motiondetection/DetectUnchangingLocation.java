@@ -78,7 +78,8 @@ public class DetectUnchangingLocation extends BroadcastReceiver {
         }
 
         final long ageLastLocation = System.currentTimeMillis() - mLastLocation.getTime();
-        AppGlobals.guiLogInfo("Last loc. age: " + ageLastLocation / 1000.0 + " ms, (max age: " +
+        AppGlobals.guiLogInfo(" " + System.currentTimeMillis()/1000.0 + "," + mLastLocation.getTime()/1000.0);
+        AppGlobals.guiLogInfo("Last loc. age: " + ageLastLocation / 1000.0 + " s, (max age: " +
                 mPrefMotionChangeTimeWindowMs/1000.0 + ")");
         return ageLastLocation > mPrefMotionChangeTimeWindowMs;
     }
@@ -116,6 +117,10 @@ public class DetectUnchangingLocation extends BroadcastReceiver {
         if (newPosition == null) {
             return;
         }
+
+        // Set the location time to current time instead of GPS time, as the remainder of the code
+        // compares this time to current time, and we don't want 2 different time systems compared
+        newPosition.setTime(System.currentTimeMillis());
 
         if (mLastLocation == null) {
             mLastLocation = newPosition;

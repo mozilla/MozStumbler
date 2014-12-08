@@ -29,7 +29,6 @@ public class DetectUnchangingLocation extends BroadcastReceiver {
     private final Context mContext;
     private Location mLastLocation;
     private final Handler mHandler = new Handler();
-    private final long INITIAL_DELAY_TO_WAIT_FOR_GPS_FIX_MS = 1000 * 60 * 5; // 5 mins
     private int mPrefMotionChangeDistanceMeters;
     private long mPrefMotionChangeTimeWindowMs;
     private long mStartTimeMs;
@@ -73,7 +72,7 @@ public class DetectUnchangingLocation extends BroadcastReceiver {
     boolean isTimeWindowForMovementExceeded() {
         if (mLastLocation == null) {
             final long timeWaited = System.currentTimeMillis() - mStartTimeMs;
-            final boolean expired = timeWaited > INITIAL_DELAY_TO_WAIT_FOR_GPS_FIX_MS;
+            final boolean expired = timeWaited > mPrefMotionChangeTimeWindowMs;
             AppGlobals.guiLogInfo("No loc., is gps wait exceeded:" + expired + " (" + timeWaited/1000.0 + "s)");
             return expired;
         }
@@ -93,7 +92,7 @@ public class DetectUnchangingLocation extends BroadcastReceiver {
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(GPSScanner.ACTION_GPS_UPDATED);
         LocalBroadcastManager.getInstance(mContext).registerReceiver(this, intentFilter);
-        mHandler.postDelayed(mCheckTimeout, INITIAL_DELAY_TO_WAIT_FOR_GPS_FIX_MS);
+        mHandler.postDelayed(mCheckTimeout, mPrefMotionChangeTimeWindowMs);
     }
 
     public void stop() {

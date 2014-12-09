@@ -98,6 +98,8 @@ android {
     buildTypes {
         debug {
             jniDebuggable true
+            applicationIdSuffix ".debug"
+            versionNameSuffix "-debug"
 
             // set this to false if you want your debug builds to have
             // standard unlabelled tiles.

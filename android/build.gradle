@@ -18,14 +18,12 @@ buildscript {
 
     dependencies {
         classpath 'com.android.tools.build:gradle:0.12.+'
-
         classpath 'org.robolectric:robolectric-gradle-plugin:0.12.+'
-
-        // Gradle download task is from: https://github.com/michel-kraemer/gradle-download-task
-        classpath 'de.undercouch:gradle-download-task:1.0'
+        classpath 'com.jakewharton.sdkmanager:gradle-plugin:0.12.+'
     }
 }
 
+apply plugin: 'android-sdk-manager'
 apply plugin: 'com.android.application'
 apply plugin: 'robolectric'
 

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
     android:initialLayout="@layout/toggle_widget"
-    android:minHeight="36dp"
-    android:minWidth="216dp"
+    android:minHeight="40dp"
+    android:minWidth="272dp"
     android:updatePeriodMillis="60000"
     android:previewImage="@drawable/ic_widget">
 </appwidget-provider>

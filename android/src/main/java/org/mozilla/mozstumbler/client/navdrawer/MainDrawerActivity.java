@@ -310,10 +310,12 @@ public class MainDrawerActivity
             remoteViews.setImageViewResource(R.id.toggleServiceButton, R.drawable.ic_launcher);
             remoteViews.setTextViewText(R.id.stumbler_info1, Integer.toString(service.getVisibleAPCount()));
             remoteViews.setTextViewText(R.id.stumbler_info2, Integer.toString(service.getVisibleCellInfoCount()));
+            remoteViews.setViewVisibility(R.id.stumbler_info_bar, View.VISIBLE);
         } else {
+            remoteViews.setTextViewText(R.id.stumbler_info1, "0");
+            remoteViews.setTextViewText(R.id.stumbler_info2, "0");
             remoteViews.setImageViewResource(R.id.toggleServiceButton, R.drawable.ic_status_scanning);
-            remoteViews.setTextViewText(R.id.stumbler_info1, "Disabled");
-            remoteViews.setTextViewText(R.id.stumbler_info2, "Disabled");
+            remoteViews.setViewVisibility(R.id.stumbler_info_bar, View.INVISIBLE);
         }
         (AppWidgetManager.getInstance(getApplicationContext())).updateAppWidget(new ComponentName(getApplicationContext(), ToggleWidgetProvider.class), remoteViews);
     }

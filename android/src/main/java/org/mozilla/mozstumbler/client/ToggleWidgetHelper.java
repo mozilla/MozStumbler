@@ -3,6 +3,7 @@ import android.app.Activity;
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.RemoteViews;
 
 import org.mozilla.mozstumbler.R;
@@ -20,14 +21,16 @@ public class ToggleWidgetHelper extends Activity {
         }
         boolean isScanning = app.getService().isScanning();
         if (isScanning) {
-            remoteViews.setTextViewText(R.id.stumbler_info1, "Disabled");
-            remoteViews.setTextViewText(R.id.stumbler_info2, "Disabled");
+            remoteViews.setTextViewText(R.id.stumbler_info1, "0");
+            remoteViews.setTextViewText(R.id.stumbler_info2, "0");
             remoteViews.setImageViewResource(R.id.toggleServiceButton, R.drawable.ic_status_scanning);
+            remoteViews.setViewVisibility(R.id.stumbler_info_bar, View.INVISIBLE);
             app.stopScanning();
         } else {
             remoteViews.setTextViewText(R.id.stumbler_info1, "0");
             remoteViews.setTextViewText(R.id.stumbler_info2, "0");
             remoteViews.setImageViewResource(R.id.toggleServiceButton, R.drawable.ic_launcher);
+            remoteViews.setViewVisibility(R.id.stumbler_info_bar, View.VISIBLE);
             app.startScanning();
         }
         (AppWidgetManager.getInstance(getApplicationContext())).updateAppWidget(new ComponentName(getApplicationContext(), ToggleWidgetProvider.class), remoteViews);

@@ -24,7 +24,7 @@ import org.mozilla.mozstumbler.client.ClientPrefs;
 import org.mozilla.mozstumbler.client.MainApp;
 import org.mozilla.mozstumbler.client.serialize.KMLFragment;
 import org.mozilla.mozstumbler.service.AppGlobals;
-import org.mozilla.mozstumbler.service.stumblerthread.motiondetection.DetectUnchangingLocation;
+import org.mozilla.mozstumbler.service.stumblerthread.motiondetection.LocationChangeSensor;
 import org.mozilla.mozstumbler.service.stumblerthread.motiondetection.MotionSensor;
 import org.mozilla.mozstumbler.service.utils.BatteryCheckReceiver;
 
@@ -60,7 +60,7 @@ public class DeveloperActivity extends ActionBarActivity {
                             a.hashCode();
                             break;
                         case 1:
-                            DetectUnchangingLocation.debugSendLocationUnchanging();
+                            LocationChangeSensor.debugSendLocationUnchanging();
                             break;
                         case 2:
                             MotionSensor.debugMotionDetected();

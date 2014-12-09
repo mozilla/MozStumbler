@@ -9,6 +9,8 @@
     <string name="view_leaderboard">View Leaderboard</string>
     <string name="service_name">Mozilla Stumbler</string>
     <string name="service_scanning">Scanning for Wi-Fi and Cellular networks</string>
+    <string name="notification_scanning_short">Scanning.</string>
+    <string name="notification_paused_short">Paused.</string>
     <string name="enter_nickname">Enter Nickname (optional)</string>
     <string name="enter_nickname_title">Nickname: %1$s</string>
     <string name="enter_nickname_longtext">Your nickname will appear on the leaderboard.</string>
@@ -47,6 +49,9 @@
         <item quantity="one">one day ago</item>
         <item quantity="other">%d days ago</item>
     </plurals>
+    <!-- metrics_notification_text: %1$s refers to notification_scanning_short / notification_paused_short -->
+    <string name="metrics_notification_text">%1$s (Metrics: %2$d, %3$d, %4$d)</string>
+    <string name="metrics_notification_bigtext">Reports: %1$d\nCell networks: %2$d\nWi-Fi networks: %3$d\nLast upload: %4$s</string>
     <string name="metrics_observations_title">Reports:</string>
     <string name="metrics_observations_wifis_title">Wi-Fi networks:</string>
     <string name="metrics_observations_cell_towers_title">Cell networks:</string>

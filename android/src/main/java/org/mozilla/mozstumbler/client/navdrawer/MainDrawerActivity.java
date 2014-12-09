@@ -267,7 +267,8 @@ public class MainDrawerActivity
         mMapFragment.formatTextView(R.id.text_observation_count, "%d", observationCount);
 
         if (updateMetrics) {
-            mMetricsView.setObservationCount(observationCount, service.getUniqueCellCount(), service.getUniqueAPCount());
+            mMetricsView.setObservationCount(observationCount, service.getUniqueCellCount(),
+                    service.getUniqueAPCount(), getApp().isScanningOrPaused());
             mMetricsView.update();
         }
     }

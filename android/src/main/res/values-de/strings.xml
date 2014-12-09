@@ -9,6 +9,8 @@
     <string name="view_leaderboard">Bestenliste ansehen</string>
     <string name="service_name">Mozilla Stumbler</string>
     <string name="service_scanning">Scanne WLAN und Mobilfunknetze</string>
+    <string name="notification_scanning_short">Scanne.</string>
+    <string name="notification_paused_short">Pausiert.</string>
     <string name="enter_nickname">Namen eingeben (optional)</string>
     <string name="enter_nickname_title">Name: %1$s</string>
     <string name="enter_nickname_longtext">Dieser Name wird in der Bestenliste erscheinen.</string>
@@ -43,6 +45,8 @@
         <item quantity="one">vor einem Tag</item>
         <item quantity="other">vor %d Tagen</item>
     </plurals>
+    <string name="metrics_notification_text">%1$s (Metriken: %2$d, %3$d, %4$d)</string>
+    <string name="metrics_notification_bigtext">Berichte: %1$d\nFunkzellen: %2$d\nWLAN-Netzwerke: %3$d\nLetzter Upload: %4$s</string>
     <string name="metrics_observations_title">Berichte:</string>
     <string name="metrics_observations_wifis_title">WLAN-Netzwerke:</string>
     <string name="metrics_observations_cell_towers_title">Funkzellen:</string>

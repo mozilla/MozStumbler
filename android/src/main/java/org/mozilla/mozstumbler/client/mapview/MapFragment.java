@@ -145,41 +145,44 @@ public final class MapFragment extends android.support.v4.app.Fragment
         sGPSColor = getResources().getColor(R.color.gps_track);
 
         mFirstLocationFix = true;
-        int zoomLevel = DEFAULT_ZOOM;
+        int zoomLevel;
         GeoPoint lastLoc = null;
         if (savedInstanceState != null) {
-            mFirstLocationFix = false;
             zoomLevel = savedInstanceState.getInt(ZOOM_KEY, DEFAULT_ZOOM);
             if (savedInstanceState.containsKey(LAT_KEY) && savedInstanceState.containsKey(LON_KEY)) {
+                mFirstLocationFix = false;
                 final double latitude = savedInstanceState.getDouble(LAT_KEY);
                 final double longitude = savedInstanceState.getDouble(LON_KEY);
                 lastLoc = new GeoPoint(latitude, longitude);
             }
         } else {
             lastLoc = ClientPrefs.getInstance().getLastMapCenter();
-            if (lastLoc != null) {
-                zoomLevel = DEFAULT_ZOOM_AFTER_FIX;
+            zoomLevel = DEFAULT_ZOOM_AFTER_FIX;
+            if (new GeoPoint(0, 0).equals(lastLoc)) {
+                lastLoc = null;
             }
         }
 
-        final GeoPoint loc = lastLoc;
-        final int zoom = zoomLevel;
-        mMap.getController().setZoom(zoom);
-        mMap.getController().setCenter(loc);
-        mMap.setMinZoomLevel(AbstractMapOverlay.getDisplaySizeBasedMinZoomLevel());
+        if (lastLoc != null) {
+            final GeoPoint loc = lastLoc;
+            final int zoom = zoomLevel;
+            mMap.getController().setZoom(zoom);
+            mMap.getController().setCenter(loc);
 
-        mMap.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                // https://github.com/osmdroid/osmdroid/issues/22
-                // These need a fully constructed map, which on first load seems to take a while.
-                // Post with no delay does not work for me, adding an arbitrary
-                // delay of 300 ms should be plenty.
-                Log.d(LOG_TAG, "ZOOM " + zoom);
-                mMap.getController().setZoom(zoom);
-                mMap.getController().setCenter(loc);
-            }
-        }, 300);
+            mMap.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    // https://github.com/osmdroid/osmdroid/issues/22
+                    // These need a fully constructed map, which on first load seems to take a while.
+                    // Post with no delay does not work for me, adding an arbitrary
+                    // delay of 300 ms should be plenty.
+                    Log.d(LOG_TAG, "postDelayed ZOOM " + zoom);
+                    mMap.getController().setZoom(zoom);
+                    mMap.getController().setCenter(loc);
+                }
+            }, 300);
+        }
+        mMap.setMinZoomLevel(AbstractMapOverlay.getDisplaySizeBasedMinZoomLevel());
 
         Log.d(LOG_TAG, "onCreate");
 

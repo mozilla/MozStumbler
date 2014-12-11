@@ -17,13 +17,30 @@
         android:layout_marginBottom="10dp"
         />
 
+     <CheckBox
+         android:id="@+id/toggleSaveStumbleLogs"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:text="@string/save_stumble_logs"
+         android:layout_below="@id/line1"/>
+
+    <View
+        android:id="@+id/line2"
+        android:layout_height="1dp"
+        android:layout_width="fill_parent"
+        android:background="#55ffffff"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_below="@id/toggleSaveStumbleLogs"/>
+
+
     <TextView
         android:id="@+id/batteryTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/line1"
+        android:layout_below="@+id/line2"
         android:paddingBottom="10dp"
         android:paddingTop="20dp"
         android:text="@+string/low_battery_title"

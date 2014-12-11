@@ -19,6 +19,7 @@ import java.util.Properties;
 import java.util.Timer;
 import java.util.TimerTask;
 
+
 /* Stores reports in memory (mCurrentReports) until MAX_REPORTS_IN_MEMORY,
  * then writes them to disk as a .gz file. The name of the file has
  * the time written, the # of reports, and the # of cells and wifis.
@@ -39,7 +40,7 @@ import java.util.TimerTask;
  * when the service is destroyed.
  */
 public class DataStorageManager {
-    private static final String LOG_TAG = AppGlobals.makeLogTag(DataStorageManager.class.getSimpleName());
+    private static final String LOG_TAG = AppGlobals.makeLogTag(DataStorageManager.class);
 
     // Used to cap the amount of data stored. When this limit is hit, no more data is saved to disk
     // until the data is uploaded, or and data exceeds DEFAULT_MAX_WEEKS_DATA_ON_DISK.
@@ -48,6 +49,7 @@ public class DataStorageManager {
     // Used as a safeguard to ensure stumbling data is not persisted. The intended use case of the stumbler lib is not
     // for long-term storage, and so if ANY data on disk is this old, ALL data is wiped as a privacy mechanism.
     private static final int DEFAULT_MAX_WEEKS_DATA_ON_DISK = 2;
+    public static final String MOZ_STUMBLER_RELPATH = "mozstumbler";
 
     // Set to the default value specified above.
     private final long mMaxBytesDiskStorage;
@@ -55,16 +57,18 @@ public class DataStorageManager {
     // Set to the default value specified above.
     private final int mMaxWeeksStored;
 
+
     final ReportBatchBuilder mCurrentReports = new ReportBatchBuilder();
-    private final File mReportsDir;
+    protected final File mReportsDir;
+
     private final File mStatsFile;
     private final StorageIsEmptyTracker mTracker;
 
-    private static DataStorageManager sInstance;
+    protected static DataStorageManager sInstance;
 
-    private ReportBatch mCurrentReportsSendBuffer;
+    protected ReportBatch mCurrentReportsSendBuffer;
     private ReportBatchIterator mReportBatchIterator;
-    private ReportFileList mFileList;
+    protected ReportFileList mFileList;
     private Timer mFlushMemoryBuffersToDiskTimer;
 
     static final String SEP_REPORT_COUNT = "-r";
@@ -117,14 +121,16 @@ public class DataStorageManager {
         return new QueuedCounts(reportCount, wifiCount, cellCount, byteLength);
     }
 
-    private static class ReportFileList {
+    protected static class ReportFileList {
         File[] mFiles;
         int mReportCount;
         int mWifiCount;
         int mCellCount;
         long mFilesOnDiskBytes;
 
-        public ReportFileList() {}
+        public ReportFileList() {
+        }
+
         public ReportFileList(ReportFileList other) {
             if (other == null) {
                 return;
@@ -140,7 +146,7 @@ public class DataStorageManager {
             mFilesOnDiskBytes = other.mFilesOnDiskBytes;
         }
 
-        void update(File directory) {
+        protected void update(File directory) {
             mFiles = directory.listFiles();
             if (mFiles == null) {
                 return;
@@ -192,13 +198,13 @@ public class DataStorageManager {
         public void notifyStorageStateEmpty(boolean isEmpty);
     }
 
-    private String getStorageDir(Context c) {
+    public static String getStorageDir(Context c) {
         File dir = null;
         if (AppGlobals.isDebug) {
             // in debug, put files in public location
             dir = c.getExternalFilesDir(null);
             if (dir != null) {
-                dir = new File(dir.getAbsolutePath() + "/mozstumbler");
+                dir = new File(dir.getAbsolutePath() + File.separator + MOZ_STUMBLER_RELPATH);
             }
         }
 
@@ -222,18 +228,25 @@ public class DataStorageManager {
     }
 
     public static synchronized DataStorageManager createGlobalInstance(Context context, StorageIsEmptyTracker tracker,
-                                                         long maxBytesStoredOnDisk, int maxWeeksDataStored) {
+                                                                       long maxBytesStoredOnDisk, int maxWeeksDataStored) {
         if (sInstance == null) {
             sInstance = new DataStorageManager(context, tracker, maxBytesStoredOnDisk, maxWeeksDataStored);
         }
         return sInstance;
     }
 
+
+    // This method only exists to help with unit testing when we need
+    // to switch the singleton version of the DataStorageManager.
+    public static void removeInstance() {
+        sInstance = null;
+    }
+
     public static synchronized DataStorageManager getInstance() {
         return sInstance;
     }
 
-    private DataStorageManager(Context c, StorageIsEmptyTracker tracker,
+    DataStorageManager(Context c, StorageIsEmptyTracker tracker,
                                long maxBytesStoredOnDisk, int maxWeeksDataStored) {
         mMaxBytesDiskStorage = maxBytesStoredOnDisk;
         mMaxWeeksStored = maxWeeksDataStored;
@@ -265,21 +278,6 @@ public class DataStorageManager {
 
     public synchronized boolean isDirEmpty() {
         return (mFileList.mFiles == null || mFileList.mFiles.length < 1);
-    }
-
-    /* Pass filename returned from dataToSend() */
-    public synchronized boolean delete(String filename) {
-        // do not use .equals()
-        //noinspection StringEquality
-        if (filename == MEMORY_BUFFER_NAME) {
-            mCurrentReportsSendBuffer = null;
-            return true;
-        }
-
-        final File file = new File(mReportsDir, filename);
-        final boolean ok = file.delete();
-        mFileList.update(mReportsDir);
-        return ok;
     }
 
     private static long getLongFromFilename(String name, String separator) {
@@ -482,14 +480,30 @@ public class DataStorageManager {
         }
     }
 
+
+    /* Pass filename returned from dataToSend() */
+    public synchronized boolean delete(String filename) {
+        if (filename.equals(MEMORY_BUFFER_NAME)) {
+            mCurrentReportsSendBuffer = null;
+            return true;
+        }
+
+        final File file = new File(mReportsDir, filename);
+        boolean ok = file.delete();
+        mFileList.update(mReportsDir);
+        return ok;
+    }
+
+
     public synchronized void deleteAll() {
         if (mFileList.mFiles == null) {
             return;
         }
 
         for (File f : mFileList.mFiles) {
-            f.delete();
+            delete(f.getName());
         }
+
         mFileList.update(mReportsDir);
     }
 

@@ -12,6 +12,8 @@ import android.os.Build.VERSION;
 import android.text.TextUtils;
 import android.util.Log;
 
+import java.sql.Savepoint;
+
 public class Prefs {
     private static final String LOG_TAG = AppGlobals.makeLogTag(Prefs.class.getSimpleName());
     public static final String NICKNAME_PREF = "nickname";
@@ -26,6 +28,8 @@ public class Prefs {
     private static final String LAST_ATTEMPTED_UPLOAD_TIME = "last_attempted_upload_time";
     private static final String MOTION_CHANGE_DISTANCE_METERS = "motion_change_distance";
     private static final String MOTION_CHANGE_TIME_WINDOW_SECONDS = "motion_change_time";
+
+    private static final String SAVE_STUMBLE_LOGS = "save_stumble_logs";
 
     protected static final String PREFS_FILE = Prefs.class.getSimpleName();
 
@@ -143,6 +147,15 @@ public class Prefs {
     public synchronized boolean getUseWifiOnly() {
         return getBoolPrefWithDefault(WIFI_ONLY, true);
     }
+
+    public synchronized void setSaveStumbleLogs(boolean state) {
+        setBoolPref(SAVE_STUMBLE_LOGS, state);
+    }
+
+    public synchronized boolean isSaveStumbleLogs() {
+        return getBoolPrefWithDefault(SAVE_STUMBLE_LOGS, false);
+    }
+
 
     ///
     /// Privates

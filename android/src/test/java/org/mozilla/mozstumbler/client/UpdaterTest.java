@@ -3,6 +3,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package org.mozilla.mozstumbler.client;
 
+import android.content.Context;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,7 +30,7 @@ public class UpdaterTest {
         }
 
         @Override
-        public boolean wifiExclusiveAndUnavailable() {
+        public boolean wifiExclusiveAndUnavailable(Context c) {
             return false;
         }
     }

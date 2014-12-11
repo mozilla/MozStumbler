@@ -29,10 +29,6 @@ public class AppGlobals {
     /* Location constructor requires a named origin, these are created in the app. */
     public static final String LOCATION_ORIGIN_INTERNAL = "internal";
 
-    public static String makeLogTag(Class<?> cls) {
-        return makeLogTag(cls.getSimpleName());
-    }
-
     public enum ActiveOrPassiveStumbling { ACTIVE_STUMBLING, PASSIVE_STUMBLING }
 
     /* In passive mode, only scan this many times for each gps. */
@@ -69,6 +65,10 @@ public class AppGlobals {
             String ts = formatter.format(new Date());
             guiLogMessageBuffer.add(noTruncateFlag + ts + "<font color='" + color +"'>" + msg + "</font>");
         }
+    }
+
+    public static String makeLogTag(Class<?> cls) {
+        return makeLogTag(cls.getSimpleName());
     }
 
     public static String makeLogTag(String name) {

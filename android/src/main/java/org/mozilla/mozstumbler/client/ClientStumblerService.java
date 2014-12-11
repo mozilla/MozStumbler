@@ -13,7 +13,7 @@ import android.util.Log;
 
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.stumblerthread.StumblerService;
-import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageManager;
+import org.mozilla.mozstumbler.service.stumblerthread.datahandling.ClientDataStorageManager;
 import org.mozilla.mozstumbler.service.utils.BatteryCheckReceiver;
 import org.mozilla.mozstumbler.service.utils.BatteryCheckReceiver.BatteryCheckCallback;
 
@@ -53,7 +53,7 @@ public class ClientStumblerService extends StumblerService {
             if (Looper.getMainLooper().getThread() != callingThread) {
                 throw new RuntimeException("Only call from main thread");
             }
-            DataStorageManager.createGlobalInstance(ClientStumblerService.this,
+            ClientDataStorageManager.createGlobalInstance(ClientStumblerService.this,
                     ClientStumblerService.this, maxBytesOnDisk, maxWeeksOld);
             init();
             return ClientStumblerService.this;

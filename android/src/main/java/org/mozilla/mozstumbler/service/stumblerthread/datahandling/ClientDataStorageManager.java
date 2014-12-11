@@ -64,6 +64,21 @@ public class ClientDataStorageManager extends DataStorageManager {
         return ok;
     }
 
+    @Override
+    public synchronized void deleteAll() {
+        Log.i(LOG_TAG, "deleteAll() called");
+
+        if (mFileList.mFiles == null) {
+            return;
+        }
+
+        for (File f : mFileList.mFiles) {
+            delete(f.getName());
+        }
+
+        mFileList.update(mReportsDir);
+    }
+
     private boolean copyAndDelete(File aFile, File bFile) {
         boolean ok = true;
 

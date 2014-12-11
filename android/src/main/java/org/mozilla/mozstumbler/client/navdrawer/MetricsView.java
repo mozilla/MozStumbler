@@ -20,6 +20,7 @@ import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.client.ClientPrefs;
 import org.mozilla.mozstumbler.client.DateTimeUtils;
 import org.mozilla.mozstumbler.client.subactivities.PreferencesScreen;
+import org.mozilla.mozstumbler.client.util.NotificationUtil;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.Prefs;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageContract;
@@ -29,7 +30,6 @@ import org.mozilla.mozstumbler.service.uploadthread.AsyncUploader;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
-import java.util.Locale;
 import java.util.Properties;
 
 public class MetricsView {
@@ -220,14 +220,9 @@ public class MetricsView {
 
     private void updateLastUploadedLabel() {
         Context context = mView.getContext();
-        String value = (String) context.getText(R.string.metrics_observations_last_upload_time_never);
+        String value = context.getString(R.string.metrics_observations_last_upload_time_never);
         if (mLastUploadTime > 0) {
-            if (Locale.getDefault().getLanguage().equals("en")) {
-                value = DateTimeUtils.prettyPrintTimeDiff(mLastUploadTime, context.getResources());
-            } else {
-                // TODO remove when there are enough translations available
-                value = DateTimeUtils.formatTimeForLocale(mLastUploadTime);
-            }
+            value = DateTimeUtils.prettyPrintTimeDiff(mLastUploadTime, context.getResources());
         }
         mLastUpdateTimeView.setText(value);
     }
@@ -265,9 +260,12 @@ public class MetricsView {
         updateUploadButtonEnabled();
     }
 
-    public void setObservationCount(int observations, int cells, int wifis) {
+    public void setObservationCount(int observations, int cells, int wifis, boolean isActive) {
         sThisSessionObservationsCount = observations;
         sThisSessionUniqueCellCount = cells;
         sThisSessionUniqueWifiCount = wifis;
+
+        NotificationUtil util = new NotificationUtil(mView.getContext().getApplicationContext());
+        util.updateMetrics(observations, cells, wifis, mLastUploadTime, isActive);
     }
 }

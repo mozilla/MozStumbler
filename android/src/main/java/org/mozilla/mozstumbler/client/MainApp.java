@@ -8,7 +8,6 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Application;
 import android.app.Notification;
-import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -18,9 +17,9 @@ import android.content.ServiceConnection;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
+import android.os.Handler;
 import android.os.IBinder;
 import android.os.StrictMode;
-import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
@@ -29,19 +28,22 @@ import org.acra.annotation.ReportsCrashes;
 import org.acra.sender.HttpSender;
 import org.mozilla.mozstumbler.BuildConfig;
 import org.mozilla.mozstumbler.R;
-import org.mozilla.mozstumbler.client.navdrawer.MainDrawerActivity;
 import org.mozilla.mozstumbler.client.subactivities.DeveloperActivity;
 import org.mozilla.mozstumbler.client.subactivities.LogActivity;
+import org.mozilla.mozstumbler.client.util.NotificationUtil;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.Prefs;
 import org.mozilla.mozstumbler.service.core.logging.MockAcraLog;
-import org.mozilla.mozstumbler.service.stumblerthread.StumblerService;
+import org.mozilla.mozstumbler.service.stumblerthread.Reporter;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageManager;
+import org.mozilla.mozstumbler.service.stumblerthread.scanners.ScanManager;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.WifiScanner;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner.CellScanner;
 import org.mozilla.mozstumbler.service.uploadthread.AsyncUploadParam;
 import org.mozilla.mozstumbler.service.uploadthread.AsyncUploader;
 import org.mozilla.mozstumbler.service.utils.NetworkInfo;
+import org.mozilla.mozstumbler.svclocator.ServiceConfig;
+import org.mozilla.mozstumbler.svclocator.ServiceLocator;
 import org.mozilla.osmdroid.tileprovider.constants.TileFilePath;
 
 import java.io.File;
@@ -69,9 +71,20 @@ public class MainApp extends Application
     private final long MAX_BYTES_DISK_STORAGE = 1000 * 1000 * 20; // 20MB for Mozilla Stumbler by default, is ok?
     private final int MAX_WEEKS_OLD_STORED = 4;
     public static final String INTENT_TURN_OFF = "org.mozilla.mozstumbler.turnMeOff";
-    private static final int NOTIFICATION_ID = 1;
     public static final String ACTION_BASE = AppGlobals.ACTION_NAMESPACE + ".MainApp.";
     public static final String ACTION_LOW_BATTERY = ACTION_BASE + ".LOW_BATTERY";
+    private boolean mIsScanningPausedDueToNoMotion;
+
+    private final BroadcastReceiver mReceivePausedState = new BroadcastReceiver() {
+        public void onReceive(Context context, Intent intent) {
+            mIsScanningPausedDueToNoMotion = intent.getBooleanExtra(ScanManager.ACTION_EXTRA_IS_PAUSED, false);
+            new Handler(context.getMainLooper()).post(new Runnable() {
+                public void run() {
+                    updateMotionDetected();
+                }
+            });
+        }
+    };
 
     public ClientPrefs getPrefs() {
         return ClientPrefs.getInstance();
@@ -105,6 +118,10 @@ public class MainApp extends Application
         super.onCreate();
         // The following line triggers the initialization of ACRA
         ACRA.init(this);
+
+        // Bootstrap the service locator with the default list of services
+        ServiceLocator rootLocator = ServiceLocator.newRoot(ServiceConfig.defaultServiceConfig());
+        ServiceLocator.setRootInstance(rootLocator);
 
         // This must be called after init to get a copy of the
         // original ACRA.log instance so that we can toggle the logger on
@@ -171,7 +188,7 @@ public class MainApp extends Application
 
                 Log.d(LOG_TAG, "Service connected");
                 if (mMainActivity.get() != null) {
-                    mMainActivity.get().updateUiOnMainThread();
+                    mMainActivity.get().updateUiOnMainThread(true);
                 }
             }
 
@@ -183,6 +200,9 @@ public class MainApp extends Application
 
         Intent intent = new Intent(this, ClientStumblerService.class);
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+
+        LocalBroadcastManager.getInstance(this).
+            registerReceiver(mReceivePausedState, new IntentFilter(ScanManager.ACTION_SCAN_PAUSED_USER_MOTIONLESS));
     }
 
     @Override
@@ -204,10 +224,12 @@ public class MainApp extends Application
         if (mStumblerService == null) {
             return;
         }
-        mStumblerService.startForeground(NOTIFICATION_ID, buildNotification());
+        NotificationUtil nm = new NotificationUtil(this.getApplicationContext());
+        Notification notification = nm.buildNotification(getString(R.string.stop_scanning));
+        mStumblerService.startForeground(NotificationUtil.NOTIFICATION_ID, notification);
         mStumblerService.startScanning();
         if (mMainActivity.get() != null) {
-            mMainActivity.get().updateUiOnMainThread();
+            mMainActivity.get().updateUiOnMainThread(false);
         }
     }
 
@@ -215,10 +237,14 @@ public class MainApp extends Application
         if (mStumblerService == null) {
             return;
         }
+
+        mIsScanningPausedDueToNoMotion = false;
+
         mStumblerService.stopForeground(true);
         mStumblerService.stopScanning();
         if (mMainActivity.get() != null) {
-            mMainActivity.get().updateUiOnMainThread();
+            mMainActivity.get().updateUiOnMainThread(false);
+            mMainActivity.get().stop();
         }
 
         AsyncUploader uploader = new AsyncUploader();
@@ -256,6 +282,13 @@ public class MainApp extends Application
                 .penaltyLog().build());
     }
 
+    public boolean isScanningOrPaused() {
+        if (mStumblerService == null) {
+            return false;
+        }
+        return mStumblerService.isScanning() || mIsScanningPausedDueToNoMotion;
+    }
+
     private class ServiceBroadcastReceiver extends BroadcastReceiver {
         private boolean mReceiverIsRegistered;
 
@@ -266,6 +299,7 @@ public class MainApp extends Application
                 IntentFilter intentFilter = new IntentFilter();
                 intentFilter.addAction(WifiScanner.ACTION_WIFIS_SCANNED);
                 intentFilter.addAction(CellScanner.ACTION_CELLS_SCANNED);
+                intentFilter.addAction(Reporter.ACTION_NEW_BUNDLE);
                 intentFilter.addAction(ACTION_LOW_BATTERY);
                 LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(this, intentFilter);
 
@@ -283,43 +317,20 @@ public class MainApp extends Application
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (intent.getAction().equals(INTENT_TURN_OFF)) {
+            String action = intent.getAction();
+            if (action.equals(INTENT_TURN_OFF)) {
                 Log.d(LOG_TAG, "INTENT_TURN_OFF");
                 stopScanning();
-            }
-
-            if (intent.getAction().equals(ACTION_LOW_BATTERY)) {
+            } else if (action.equals(ACTION_LOW_BATTERY)) {
                 AppGlobals.guiLogInfo("Stop, low battery detected.");
                 stopScanning();
             }
 
             if (mMainActivity.get() != null) {
-                mMainActivity.get().updateUiOnMainThread();
+                boolean updateMetrics = action.equals(Reporter.ACTION_NEW_BUNDLE);
+                mMainActivity.get().updateUiOnMainThread(updateMetrics);
             }
         }
-    }
-
-    private Notification buildNotification() {
-        Context context = getApplicationContext();
-        PendingIntent turnOffIntent = PendingIntent.getBroadcast(context, 0, new Intent(INTENT_TURN_OFF), 0);
-
-        Intent notificationIntent = new Intent(context, MainDrawerActivity.class);
-        notificationIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_FROM_BACKGROUND);
-        PendingIntent contentIntent = PendingIntent.getActivity(context, NOTIFICATION_ID,
-                notificationIntent,
-                PendingIntent.FLAG_CANCEL_CURRENT);
-
-        return new NotificationCompat.Builder(context)
-                .setSmallIcon(R.drawable.ic_status_scanning)
-                .setContentTitle(getText(R.string.service_name))
-                .setContentText(getText(R.string.service_scanning))
-                .setContentIntent(contentIntent)
-                .setOngoing(true)
-                .setPriority(NotificationCompat.PRIORITY_LOW)
-                .addAction(R.drawable.ic_action_cancel,
-                        getString(R.string.stop_scanning), turnOffIntent)
-                .build();
-
     }
 
     private Map<String, Long> getOldDbStats(Context context) {
@@ -399,5 +410,24 @@ public class MainApp extends Application
         if (mStumblerService != null) {
             mStumblerService.handleLowMemoryNotification();
         }
+    }
+
+    public void updateMotionDetected() {
+        if (mStumblerService == null) {
+            return;
+        }
+
+        AppGlobals.guiLogInfo("Is motionless: " + mIsScanningPausedDueToNoMotion);
+
+        NotificationUtil util = new NotificationUtil(this.getApplicationContext());
+        util.setPaused(mIsScanningPausedDueToNoMotion);
+
+        if (mMainActivity.get() != null) {
+            mMainActivity.get().isPausedDueToNoMotion(mIsScanningPausedDueToNoMotion);
+        }
+    }
+
+    public boolean isIsScanningPausedDueToNoMotion() {
+        return mIsScanningPausedDueToNoMotion;
     }
 }

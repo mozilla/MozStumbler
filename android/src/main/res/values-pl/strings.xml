@@ -20,7 +20,7 @@
     <string name="no">Nie</string>
     <string name="about_version">Wersja %1$s</string>
     <string name="about_openstreetmap">Widok mapy\n© Współtwórcy projektu OpenStreetMap\nhttp://www.openstreetmap.org</string>
-    <string name="about_mapbox_title">Mapbox</string>
+    <string name="about_mapbox_title">MapBox</string>
     <string name="about_mapbox">Więcej informacji na http://www.mapbox.com</string>
     <string name="about_legal_aosp">Niektóre ikony w tej aplikacji pochodzą z Android Open Source Project i są używane zgodnie z warunkami licencji Creative Commons 2.5 Attribution.</string>
     <string name="about_legal_flaticons">Ikony GPS, stacji sieci komórkowej, Wi-Fi i lornetki stworzone przez Freepik z http://www.flaticon.com na licencji: https://creativecommons.org/licenses/by-nd/3.0</string>
@@ -94,17 +94,20 @@
     <string name="first_run_welcome_to_mozstumbler">Witaj w Mozilla Stumblerze</string>
     <string name="map_unavailable">Nie można wyświetlić mapy, ponieważ urządzenie nie posiada karty pamięci SD.\nNadal można zbierać dane.</string>
     <string name="map_offline_mode">Mapa nie będzie aktualizowana bez połączenie z Internetem,\nale nadal można zbierać dane.</string>
+    <string name="map_copyright_fdroid">Widok mapy dzięki firmie MapQuest\n© Współtwórcy projektu OpenStreetMap</string>
+    <string name="map_copyright_moz">© MapBox © Współtwórcy projektu OpenStreetMap</string>
     <string name="action_developer">Opcje programistyczne</string>
     <string name="developer_title">Opcje programistyczne</string>
     <string name="enable_option_show_mls_on_map">Włączenie zapytań położeń MLS</string>
     <string name="enable_option_show_mls_on_map_summary">Wyświetla położenia usługi Mozilla Location Service (MLS) w obserwacjach.</string>
-    <string name="enable_option_show_mls_on_map_detailed_info">Wykorzystując nieco więcej pamięci i sieci, mapa może wyświetlać położenia MLS jako czerwone kropki połączone liniami z obserwacjami.</string>
-    <string name="cell_plus_wifi_observation">Zgłaszanie sieci Wi-Fi i komórkowych</string>
-    <string name="cell_only_observation">Zgłaszanie tylko sieci komórkowych</string>
-    <string name="wifi_only_observation">Zgłaszanie tylko sieci Wi-Fi</string>
-    <string name="low_resolution_map">Mapa o niskiej rozdzielczości</string>
+    <!-- enable_option_show_mls_on_map_detailed_info: %1$s refers to upload_wifi_only_title -->
+    <string name="enable_option_show_mls_on_map_detailed_info">Wykorzystując nieco więcej pamięci i sieci, mapa może wyświetlać położenia MLS jako czerwone kropki połączone liniami z obserwacjami. Jeśli \"%1$s\" jest włączone, to nie będzie to działało podczas używania połączenia komórkowego.</string>
+    <string name="cell_plus_wifi_observation">Obserwacje sieci Wi-Fi i komórkowych</string>
+    <string name="cell_only_observation">Obserwacje tylko sieci komórkowych</string>
+    <string name="wifi_only_observation">Obserwacje tylko sieci Wi-Fi</string>
+    <string name="low_resolution_map">Mapa o niskiej szczegółowości</string>
     <string name="map_turned_off">Wyłączenie wyświetlania mapy</string>
-    <string name="map_tile_resolution_options_label">Mapa:</string>
+    <string name="map_tile_resolution_options_label">Szczegółowość mapy:</string>
     <string name="map_tile_resolution_options_summary">Niska szczegółowość zmniejsza zużycie danych.</string>
     <string name="enable_crash_reporting">Zgłaszanie awarii</string>
     <string name="privacy_policy">Polityka prywatności:</string>
@@ -113,16 +116,17 @@
     <string name="category_leaderboard">Ranking</string>
     <string name="category_network_usage">Użycie sieci</string>
     <string name="category_display">Wyświetlanie</string>
+    <string name="category_crashreport">Zgłaszanie awarii</string>
     <string-array name="map_tile_resolution_options">
-        <item>Wysoka (Wi-Fi)/niska (sieć komórkowa)</item>
+        <item>Wysoka (Wi-Fi) / niska (sieć komórkowa)</item>
         <item>Tylko o wysokiej szczegółowości</item>
         <item>Tylko o niskiej szczegółowości</item>
         <item>Bez mapy</item>
     </string-array>
-    <string-array name="map_tile_resolution_options_intvalues">
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
-    </string-array>
+    <string name="low_battery_title">Zatrzymywanie skanowania na niskim poziomie naładowania akumulatora</string>
+    <string name="battery_percent_options_label">Zatrzymywanie na poziomie:</string>
+    <string name="motion_detection_title">Wykrywanie ruchu</string>
+    <string name="motion_detection_options_label">Wstrzymywanie skanowania, jeśli nie pokonano</string>
+    <string name="motion_detection_options_conjunction">przez</string>
+    <string name="map_scanning_paused_no_motion">Położenie się nie zmienia, wstrzymano skanowanie.</string>
 </resources>

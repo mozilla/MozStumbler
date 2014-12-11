@@ -51,8 +51,12 @@ public class WifiScanner  {
         wifiManagerProxy = new WifiManagerProxy(mAppContext);
     }
 
-    private boolean isWifiEnabled() {
-        return wifiManagerProxy.isWifiEnabled();
+    private boolean isScanEnabled() {
+        return wifiManagerProxy.isScanEnabled();
+    }
+
+    private List<ScanResult> getScanResults() {
+        return wifiManagerProxy.getScanResults();
     }
 
     public synchronized void start(final ActiveOrPassiveStumbling stumblingMode) {
@@ -61,7 +65,7 @@ public class WifiScanner  {
         }
         mStarted = true;
 
-        if (wifiManagerProxy.isScanEnabled()) {
+        if (isScanEnabled()) {
             activatePeriodicScan(stumblingMode);
         }
 
@@ -74,6 +78,37 @@ public class WifiScanner  {
         }
         deactivatePeriodicScan();
         mStarted = false;
+    }
+
+    public void onReceive(Context c, Intent intent) {
+        String action = intent.getAction();
+
+        if (WifiManager.WIFI_STATE_CHANGED_ACTION.equals(action)) {
+            if (isScanEnabled()) {
+                activatePeriodicScan(ActiveOrPassiveStumbling.ACTIVE_STUMBLING);
+            } else {
+                deactivatePeriodicScan();
+            }
+        } else if (WifiManager.SCAN_RESULTS_AVAILABLE_ACTION.equals(action)) {
+            final List<ScanResult> scanResultList = getScanResults();
+            if (scanResultList == null) {
+                return;
+            }
+            final ArrayList<ScanResult> scanResults = new ArrayList<ScanResult>();
+            for (ScanResult scanResult : scanResultList) {
+                scanResult.BSSID = BSSIDBlockList.canonicalizeBSSID(scanResult.BSSID);
+
+                if (shouldLog(scanResult)) {
+                    // Once we've checked that we want this scan result, we can safely discard
+                    // the SSID and capabilities.
+                    scanResult.SSID = "";
+                    scanResult.capabilities = "";
+                    scanResults.add(scanResult);
+                }
+            }
+            mVisibleAPs.set(scanResults.size());
+            reportScanResults(scanResults);
+        }
     }
 
     public static void setWifiBlockList(WifiBlockListInterface blockList) {

@@ -26,11 +26,15 @@ import android.widget.Toast;
 
 import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.client.ClientPrefs;
+import org.mozilla.mozstumbler.client.MainApp;
 import org.mozilla.mozstumbler.client.serialize.KMLFragment;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.Prefs;
 
 import static org.mozilla.mozstumbler.R.string;
+import org.mozilla.mozstumbler.service.stumblerthread.motiondetection.LocationChangeSensor;
+import org.mozilla.mozstumbler.service.stumblerthread.motiondetection.MotionSensor;
+import org.mozilla.mozstumbler.service.utils.BatteryCheckReceiver;
 
 public class DeveloperActivity extends ActionBarActivity {
 
@@ -52,20 +56,35 @@ public class DeveloperActivity extends ActionBarActivity {
         tv.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                new AlertDialog.Builder(DeveloperActivity.this)
-                        .setTitle("ACRA test")
-                        .setMessage("Force a crash?")
-                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                Object empty = null;
-                                empty.hashCode();
-                            }
-                        })
-                        .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {}
-                        })
-                        .setIcon(android.R.drawable.ic_dialog_alert)
-                        .show();
+                final AlertDialog.Builder b = new AlertDialog.Builder(DeveloperActivity.this);
+                final String[] menuList = { "ACRA Crash Test",
+                        "Fake no motion", "Fake motion", "Battery Low", "Battery OK"};
+                b.setTitle("Secret testing.. shhh.");
+                b.setItems(menuList,new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int item) {
+                    switch (item) {
+                        case 0:
+                            Object a = null;
+                            a.hashCode();
+                            break;
+                        case 1:
+                            LocationChangeSensor.debugSendLocationUnchanging();
+                            break;
+                        case 2:
+                            MotionSensor.debugMotionDetected();
+                            break;
+                        case 3:
+                            int pct = ClientPrefs.getInstance().getMinBatteryPercent();
+                            BatteryCheckReceiver.debugSendBattery(pct - 1);
+                            break;
+                        case 4:
+                            BatteryCheckReceiver.debugSendBattery(99);
+                            break;
+
+                    }
+                    }
+                });
+                b.create().show();
                 return true;
             }
         });
@@ -84,8 +103,10 @@ public class DeveloperActivity extends ActionBarActivity {
             // Setup for any logical group of config options should self contained in their
             // own methods.  This is mostly to help with merges in the event that multiple
             // source branches update the developer options.
+
             setupSimulationPreference();
             setupLowBatterySpinner();
+            setupLocationChangeSpinners();
 
             return mRootView;
         }
@@ -151,5 +172,72 @@ public class DeveloperActivity extends ActionBarActivity {
             Prefs.getInstance().setSimulateStumble(isChecked);
         }
 
+        private void setupLocationChangeSpinners() {
+            final String[] distanceArray = {"30 m", "50 m", "75 m", "100 m", "125 m", "150 m", "175 m", "200 m"};
+            final ArrayAdapter<String> distanceAdapter =
+                new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_spinner_item, distanceArray);
+            final Spinner distanceSpinner = (Spinner) mRootView.findViewById(R.id.spinnerMotionDetectionDistanceMeters);
+            distanceSpinner.setAdapter(distanceAdapter);
+            final int dist = ClientPrefs.getInstance().getMotionChangeDistanceMeters();
+            distanceSpinner.setSelection(findIndexOf(dist, distanceArray));
+
+            distanceSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View arg1, int position, long id) {
+                    changeOfMotionDetectionDistanceOrTime(parent, position, IsDistanceOrTime.DISTANCE);
+                }
+
+            @Override
+                public void onNothingSelected(AdapterView<?> arg0) {}
+            });
+
+            final String[] timeArray = {"5 s", "30 s", "60 s", "90 s", "120 s", "180 s", "210 s", "240 s", "270 s", "300 s"};
+            final ArrayAdapter<String> timeAdapter =
+                new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_spinner_item, timeArray);
+            final Spinner timeSpinner = (Spinner) mRootView.findViewById(R.id.spinnerMotionDetectionTimeSeconds);
+            timeSpinner.setAdapter(timeAdapter);
+            final int time = ClientPrefs.getInstance().getMotionChangeTimeWindowSeconds();
+            timeSpinner.setSelection(findIndexOf(time, timeArray));
+
+            timeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View arg1, int position, long id) {
+                    changeOfMotionDetectionDistanceOrTime(parent, position, IsDistanceOrTime.TIME);
+                }
+
+            @Override
+                public void onNothingSelected(AdapterView<?> arg0) {}
+            });
+        }
+
+        private enum IsDistanceOrTime { DISTANCE, TIME }
+        private void changeOfMotionDetectionDistanceOrTime(AdapterView<?> parent, int position, IsDistanceOrTime isDistanceOrTime) {
+            String item = parent.getItemAtPosition(position).toString();
+            int val = Integer.valueOf(item.substring(0, item.indexOf(" ")));
+            ClientPrefs prefs = ClientPrefs.createGlobalInstance(getActivity().getApplicationContext());
+            if (isDistanceOrTime == IsDistanceOrTime.DISTANCE) {
+                prefs.setMotionChangeDistanceMeters(val);
+            } else {
+                prefs.setMotionChangeTimeWindowSeconds(val);
+            }
+            MainApp mainApp = ((MainApp)getActivity().getApplication());
+            if (mainApp.isScanningOrPaused()) {
+                mainApp.stopScanning();
+                mainApp.startScanning();
+            }
+        }
+
+        private int findIndexOf(int needle, String[] haystack) {
+            int i = 0;
+            for (String item : haystack) {
+                int val = Integer.valueOf(item.substring(0, item.indexOf(" ")));
+                if (val == needle) {
+                    return i;
+                }
+                i++;
+            }
+            return 0;
+        }
     }
+
 }

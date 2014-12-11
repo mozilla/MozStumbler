@@ -25,10 +25,15 @@ public class Prefs {
     private static final String FIREFOX_SCAN_ENABLED = "firefox_scan_on";
     private static final String MOZ_API_KEY = "moz_api_key";
     private static final String LAST_ATTEMPTED_UPLOAD_TIME = "last_attempted_upload_time";
+
     // Simulation prefs
     private static final String SIMULATE_STUMBLE = "simulate_stumble";
     private static final String SIMULATION_LAT = "simulate_lat";
     private static final String SIMULATION_LON = "simulate_lon";
+
+    private static final String MOTION_CHANGE_DISTANCE_METERS = "motion_change_distance";
+    private static final String MOTION_CHANGE_TIME_WINDOW_SECONDS = "motion_change_time";
+
     protected static Prefs sInstance;
     private final SharedPreferences mSharedPrefs;
 
@@ -217,6 +222,26 @@ public class Prefs {
 
     public void setSimulationLon(float value) {
         setFloatPref(SIMULATION_LON, value);
+    }
+
+    public int getMotionChangeDistanceMeters() {
+        return getPrefs().getInt(MOTION_CHANGE_DISTANCE_METERS, 50);
+    }
+
+    public int getMotionChangeTimeWindowSeconds() {
+        return getPrefs().getInt(MOTION_CHANGE_TIME_WINDOW_SECONDS, 120);
+    }
+
+    public void setMotionChangeDistanceMeters(int value) {
+        SharedPreferences.Editor editor = getPrefs().edit();
+        editor.putInt(MOTION_CHANGE_DISTANCE_METERS, value);
+        apply(editor);
+    }
+
+    public void setMotionChangeTimeWindowSeconds(int value) {
+        SharedPreferences.Editor editor = getPrefs().edit();
+        editor.putInt(MOTION_CHANGE_TIME_WINDOW_SECONDS, value);
+        apply(editor);
     }
 
 }

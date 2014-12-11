@@ -85,7 +85,7 @@ public final class MapFragment extends android.support.v4.app.Fragment
     private boolean mUserPanning = false;
     private final Timer mGetUrl = new Timer();
     private ObservationPointsOverlay mObservationPointsOverlay;
-    private GPSListener mGPSListener;
+    private MapLocationListener mMapLocationListener;
     private LowResMapOverlay mLowResMapOverlayHighZoom;
     private LowResMapOverlay mLowResMapOverlayLowZoom;
     private Overlay mCoverageTilesOverlayLowZoom;
@@ -146,41 +146,44 @@ public final class MapFragment extends android.support.v4.app.Fragment
         sGPSColor = getResources().getColor(R.color.gps_track);
 
         mFirstLocationFix = true;
-        int zoomLevel = DEFAULT_ZOOM;
+        int zoomLevel;
         GeoPoint lastLoc = null;
         if (savedInstanceState != null) {
-            mFirstLocationFix = false;
             zoomLevel = savedInstanceState.getInt(ZOOM_KEY, DEFAULT_ZOOM);
             if (savedInstanceState.containsKey(LAT_KEY) && savedInstanceState.containsKey(LON_KEY)) {
+                mFirstLocationFix = false;
                 final double latitude = savedInstanceState.getDouble(LAT_KEY);
                 final double longitude = savedInstanceState.getDouble(LON_KEY);
                 lastLoc = new GeoPoint(latitude, longitude);
             }
         } else {
             lastLoc = ClientPrefs.getInstance().getLastMapCenter();
-            if (lastLoc != null) {
-                zoomLevel = DEFAULT_ZOOM_AFTER_FIX;
+            zoomLevel = DEFAULT_ZOOM_AFTER_FIX;
+            if (new GeoPoint(0, 0).equals(lastLoc)) {
+                lastLoc = null;
             }
         }
 
-        final GeoPoint loc = lastLoc;
-        final int zoom = zoomLevel;
-        mMap.getController().setZoom(zoom);
-        mMap.getController().setCenter(loc);
-        mMap.setMinZoomLevel(AbstractMapOverlay.getDisplaySizeBasedMinZoomLevel());
+        if (lastLoc != null) {
+            final GeoPoint loc = lastLoc;
+            final int zoom = zoomLevel;
+            mMap.getController().setZoom(zoom);
+            mMap.getController().setCenter(loc);
 
-        mMap.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                // https://github.com/osmdroid/osmdroid/issues/22
-                // These need a fully constructed map, which on first load seems to take a while.
-                // Post with no delay does not work for me, adding an arbitrary
-                // delay of 300 ms should be plenty.
-                Log.d(LOG_TAG, "ZOOM " + zoom);
-                mMap.getController().setZoom(zoom);
-                mMap.getController().setCenter(loc);
-            }
-        }, 300);
+            mMap.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    // https://github.com/osmdroid/osmdroid/issues/22
+                    // These need a fully constructed map, which on first load seems to take a while.
+                    // Post with no delay does not work for me, adding an arbitrary
+                    // delay of 300 ms should be plenty.
+                    Log.d(LOG_TAG, "postDelayed ZOOM " + zoom);
+                    mMap.getController().setZoom(zoom);
+                    mMap.getController().setCenter(loc);
+                }
+            }, 300);
+        }
+        mMap.setMinZoomLevel(AbstractMapOverlay.getDisplaySizeBasedMinZoomLevel());
 
         Log.d(LOG_TAG, "onCreate");
 
@@ -225,6 +228,8 @@ public final class MapFragment extends android.support.v4.app.Fragment
                 return true;
             }
         }, 0));
+
+        showPausedDueToNoMotionMessage(getApplication().isIsScanningPausedDueToNoMotion());
 
         return mRootView;
     }
@@ -526,7 +531,7 @@ public final class MapFragment extends android.support.v4.app.Fragment
             return;
         }
 
-        boolean isScanning = app.getService().isScanning();
+        boolean isScanning = app.isScanningOrPaused();
         if (isScanning) {
             app.stopScanning();
         } else {
@@ -539,9 +544,9 @@ public final class MapFragment extends android.support.v4.app.Fragment
     private void showCopyright() {
         TextView copyrightArea = (TextView) mRootView.findViewById(R.id.copyright_area);
         if (BuildConfig.TILE_SERVER_URL == null) {
-            copyrightArea.setText("Tiles Courtesy of MapQuest\n© OpenStreetMap contributors");
+            copyrightArea.setText(getActivity().getString(R.string.map_copyright_fdroid));
         } else {
-            copyrightArea.setText("© MapBox © OpenStreetMap contributors");
+            copyrightArea.setText(getActivity().getString(R.string.map_copyright_moz));
         }
     }
 
@@ -609,7 +614,7 @@ public final class MapFragment extends android.support.v4.app.Fragment
         super.onResume();
         Log.d(LOG_TAG, "onResume");
 
-        mGPSListener = new GPSListener(this);
+        mMapLocationListener = new MapLocationListener(this);
 
         ObservedLocationsReceiver observer = ObservedLocationsReceiver.getInstance();
         observer.setMapActivity(this);
@@ -648,7 +653,10 @@ public final class MapFragment extends android.support.v4.app.Fragment
         Log.d(LOG_TAG, "onPause");
         saveStateToPrefs();
 
-        mGPSListener.removeListener();
+        if (mMapLocationListener != null) {
+            mMapLocationListener.removeListener();
+            mMapLocationListener = null;
+        }
         ObservedLocationsReceiver observer = ObservedLocationsReceiver.getInstance();
         observer.removeMapActivity();
         mHighLowBandwidthChecker.unregister(this.getApplication());
@@ -732,4 +740,18 @@ public final class MapFragment extends android.support.v4.app.Fragment
         }
     }
 
+    public void showPausedDueToNoMotionMessage(boolean show) {
+        mRootView.findViewById(R.id.scanning_paused_message).setVisibility(show? View.VISIBLE : View.INVISIBLE);
+        if (mMapLocationListener != null ) {
+            mMapLocationListener.pauseGpsUpdates(show);
+        }
+    }
+
+    public void stop() {
+        mRootView.findViewById(R.id.scanning_paused_message).setVisibility(View.INVISIBLE);
+        if (mMapLocationListener != null ) {
+            mMapLocationListener.removeListener();
+            mMapLocationListener = null;
+        }
+    }
 }

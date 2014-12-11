@@ -7,7 +7,6 @@
 	<string name="stop_scanning">עצירת הסריקה</string>
 	<string name="view_leaderboard">צפייה בלוח המובילים</string>
 	<string name="service_name">מאתר מוזילה</string>
-	<string name="service_scanning">מתבצעת סריקה לאיתור רשתות סלולריות ו־Wi-Fi</string>
 	<string name="enter_nickname">הזנת שם המשתמש (רשות)</string>
 	<string name="enter_nickname_title">כינוי: %1$s</string>
 	<string name="enter_nickname_longtext">הכינוי שלך יופיע בלוח המובילים.</string>

@@ -7,7 +7,6 @@
     <string name="stop_scanning">Τέλος σάρωσης</string>
     <string name="view_leaderboard">Προβολή Πίνακα κατάταξης</string>
     <string name="service_name">Mozilla Stumbler</string>
-    <string name="service_scanning">Σάρωση για  Wi-Fi και κυψέλες τηλεφωνίας</string>
     <string name="enter_nickname">Εισάγετε Ψευδώνυμο (προαιρετικό)</string>
     <string name="enter_nickname_title">Ψευδώνυμο: %1$s</string>
     <string name="enter_nickname_longtext">Το ψευδώνυμό σας θα εμφανιστεί στο Πίνακα κατάταξης.</string>

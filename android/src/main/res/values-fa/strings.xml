@@ -7,7 +7,6 @@
     <string name="stop_scanning">توقف اسکن</string>
     <string name="view_leaderboard">مشاهدهٔ برد بالاترین‌ها</string>
     <string name="service_name">Mozilla Stumbler</string>
-    <string name="service_scanning">اسکن‌کردن برای وای‌فای و شبکه‌های گوشی همراه</string>
     <string name="enter_nickname">ورود نام اختصاری (اختیاری)</string>
     <string name="enter_nickname_title">%1$s :نام اختصاری</string>
     <string name="enter_nickname_longtext">نام اختصاری شما در برد بالاترین‌های ظاهر خواهد شد.</string>

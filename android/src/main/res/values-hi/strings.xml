@@ -8,7 +8,6 @@
 <string name="stop_scanning">क्रमवीक्षण बंद करें</string>
 <string name="view_leaderboard">अग्रणी उपयोगकर्ता फलक देखें</string>
 <string name="service_name">मोज़िला स्टम्बलर</string>
-<string name="service_scanning">Wi -Fi एवं Cellular जाल खोज रहा है</string>
 <string name="enter_nickname">उपनाम डालें (वैकल्पिक)</string>
 <string name="enter_nickname_title">उपनाम: %1$s</string>
 <string name="enter_nickname_longtext">आपका उपनाम अग्रणी उपयोगकर्ता फलक पर दिखाया जाएगा.</string>

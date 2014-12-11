@@ -12,7 +12,6 @@
     <!-- translations missing
     <string name="cells_scanned">Cells Scanned: %1$d</string>
     <string name="cells_visible">Cells Visible: %1$d</string>-->
-    <string name="service_scanning">Escanear para redes Wi-Fi e Cellular</string>
     <string name="enter_nickname">Entre com seu nickname (opcional)</string>
     <string name="enter_nickname_title">Nickname: %1$s</string>
     <string name="enter_nickname_longtext">Seu nickname aparecerá no ranking.</string>

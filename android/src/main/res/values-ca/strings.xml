@@ -10,7 +10,6 @@
     <string name="service_name">Mozilla Stumbler</string>
     <!--translation missing <string name="wifi_disabled">0 (Wi-Fi disabled)</string>-->
     <!--translation missing <string name="coordinate">%1$.4f, %2$.4f</string>-->
-    <string name="service_scanning">Escaneat en cerca de xarxes Wi-Fi i cel·lulars</string>
     <string name="enter_nickname">Introdueixi sobrenom (opcional)</string>
     <string name="enter_nickname_title">Sobrenom: %1$s</string>
     <string name="enter_nickname_longtext">El vostre sobrenom apareixerà en la taula de classificacions.</string>

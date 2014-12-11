@@ -8,7 +8,6 @@
     <string name="stop_scanning">Scanvorgang stoppen</string>
     <string name="view_leaderboard">Bestenliste ansehen</string>
     <string name="service_name">Mozilla Stumbler</string>
-    <string name="service_scanning">Scanne WLAN und Mobilfunknetze</string>
     <string name="enter_nickname">Namen eingeben (optional)</string>
     <string name="enter_nickname_title">Name: %1$s</string>
     <string name="enter_nickname_longtext">Dieser Name wird in der Bestenliste erscheinen.</string>

@@ -8,7 +8,6 @@
     <string name="view_leaderboard">Открыть таблицу лидеров</string>
     <string name="service_name">Mozilla Stumbler</string>
     <!--<string name="wifi_disabled">0 (Wi-Fi disabled)</string> translation missing-->
-    <string name="service_scanning">Сканирование Wi-Fi и сотовых сетей</string>
     <string name="enter_nickname">Укажите свой псевдоним (не обязательно)</string>
     <string name="enter_nickname_title">Псевдоним: %1$s</string>
     <string name="enter_nickname_longtext">Ваш псевдоним появится в таблице лидеров.</string>

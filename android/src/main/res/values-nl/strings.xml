@@ -10,7 +10,6 @@
     <string name="service_name">Mozilla Stumbler</string>
     <!--<string name="wifi_disabled">0 (Wi-Fi disabled)</string> translation missing-->
     <!--<string name="coordinate">%1$.4f, %2$.4f</string> translation missing-->
-    <string name="service_scanning">Bezig met scannen van Wi-Fi en mobiele netwerken</string>
     <string name="enter_nickname">Alias (niet verplicht)</string>
     <string name="enter_nickname_title">Alias: %1$s</string>
     <string name="enter_nickname_longtext">Alias wordt gepubliceerd op het scorebord.</string>

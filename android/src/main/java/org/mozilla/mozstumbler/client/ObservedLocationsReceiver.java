@@ -68,8 +68,13 @@ public class ObservedLocationsReceiver extends BroadcastReceiver {
         @Override
         public void run() {
             synchronized (ObservedLocationsReceiver.this) {
+                ClientPrefs prefs = ClientPrefs.getInstanceWithoutContext();
+                if (prefs == null) {
+                    return;
+                }
                 mHandler.postDelayed(mFetchMLSRunnable, FREQ_FETCH_MLS_MS);
-                if (mQueuedForMLS.size() < 1 || !ClientPrefs.getInstance().getOnMapShowMLS()) {
+                if (mQueuedForMLS.size() < 1 ||
+                    !prefs.getOnMapShowMLS()) {
                     return;
                 }
                 int count = 0;
@@ -106,6 +111,11 @@ public class ObservedLocationsReceiver extends BroadcastReceiver {
 
     @Override
     public synchronized void onReceive(Context context, Intent intent) {
+        ClientPrefs prefs = ClientPrefs.getInstanceWithoutContext();
+        if (prefs == null) {
+            return;
+        }
+
         final String action = intent.getAction();
         if (!action.equals(Reporter.ACTION_NEW_BUNDLE)) {
             return;
@@ -126,7 +136,7 @@ public class ObservedLocationsReceiver extends BroadcastReceiver {
             JSONObject jsonBundle = bundle.toMLSJSON();
             observation.setCounts(jsonBundle);
 
-            boolean getInfoForMLS = ClientPrefs.getInstance().isOptionEnabledToShowMLSOnMap();
+            boolean getInfoForMLS = prefs.isOptionEnabledToShowMLSOnMap();
             if (getInfoForMLS) {
                 observation.setMLSQuery(jsonBundle);
 

@@ -37,8 +37,8 @@ public class Updater {
         httpClient = httpUtil;
     }
 
-    public boolean wifiExclusiveAndUnavailable() {
-        return !NetworkInfo.getInstance().isWifiAvailable() && ClientPrefs.getInstance().getUseWifiOnly();
+    public boolean wifiExclusiveAndUnavailable(Context c) {
+        return !NetworkInfo.getInstance().isWifiAvailable() && ClientPrefs.getInstance(c).getUseWifiOnly();
     }
 
 
@@ -50,7 +50,7 @@ public class Updater {
         }
 
         // No wifi available and require the use of wifi only means skip
-        if (wifiExclusiveAndUnavailable()) {
+        if (wifiExclusiveAndUnavailable(activity.getApplicationContext())) {
             return false;
         }
 

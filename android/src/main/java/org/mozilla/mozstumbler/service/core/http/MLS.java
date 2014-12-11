@@ -23,7 +23,10 @@ public class MLS implements ILocationService {
     private String mozApiKey;
 
     public MLS(IHttpUtil httpUtil) {
-        mozApiKey = Prefs.getInstance().getMozApiKey();
+        Prefs p = Prefs.getInstanceWithoutContext();
+        if (p != null) {
+            mozApiKey = p.getMozApiKey();
+        }
         httpDelegate = httpUtil;
     }
 

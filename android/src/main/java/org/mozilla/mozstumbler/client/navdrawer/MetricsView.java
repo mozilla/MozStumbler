@@ -77,7 +77,7 @@ public class MetricsView {
         mOnMapShowMLS.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                ClientPrefs.getInstance().setOnMapShowMLS(mOnMapShowMLS.isChecked());
+                ClientPrefs.getInstance(mView.getContext()).setOnMapShowMLS(mOnMapShowMLS.isChecked());
                 if (mMapLayerToggleListener.get() != null) {
                     mMapLayerToggleListener.get().setShowMLS(mOnMapShowMLS.isChecked());
                 }
@@ -104,8 +104,8 @@ public class MetricsView {
                 // and have it handled by MainApp
                 AsyncUploader uploader = new AsyncUploader();
                 AsyncUploadParam param = new AsyncUploadParam(false /* useWifiOnly */,
-                    Prefs.getInstance().getNickname(),
-                    Prefs.getInstance().getEmail());
+                    Prefs.getInstance(mView.getContext()).getNickname(),
+                    Prefs.getInstance(mView.getContext()).getEmail());
                 uploader.execute(param);
 
                 setUploadButtonToSyncing(true);
@@ -129,7 +129,7 @@ public class MetricsView {
 
     public void setMapLayerToggleListener(IMapLayerToggleListener listener) {
         mMapLayerToggleListener = new WeakReference<IMapLayerToggleListener>(listener);
-        mOnMapShowMLS.setChecked(ClientPrefs.getInstance().getOnMapShowMLS());
+        mOnMapShowMLS.setChecked(ClientPrefs.getInstance(mView.getContext()).getOnMapShowMLS());
     }
 
 
@@ -180,7 +180,7 @@ public class MetricsView {
     }
 
     public void onOpened() {
-        if (ClientPrefs.getInstance().isOptionEnabledToShowMLSOnMap()) {
+        if (ClientPrefs.getInstance(mView.getContext()).isOptionEnabledToShowMLSOnMap()) {
             mOnMapShowMLS.setVisibility(View.VISIBLE);
         } else {
             mOnMapShowMLS.setVisibility(View.GONE);

@@ -80,9 +80,9 @@ public class UploadAlarmReceiver extends BroadcastReceiver {
 
                 AsyncUploader uploader = new AsyncUploader();
                 AsyncUploadParam param = new AsyncUploadParam(
-                        Prefs.getInstance().getUseWifiOnly(),
-                        Prefs.getInstance().getNickname(),
-                        Prefs.getInstance().getEmail()
+                        Prefs.getInstance(this).getUseWifiOnly(),
+                        Prefs.getInstance(this).getNickname(),
+                        Prefs.getInstance(this).getEmail()
                 );
                 uploader.execute(param);
             }

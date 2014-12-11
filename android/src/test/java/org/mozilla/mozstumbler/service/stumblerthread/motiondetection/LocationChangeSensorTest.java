@@ -78,7 +78,7 @@ public class LocationChangeSensorTest {
                 callbackReceiver);
 
         // Set the minimum change distance to be very large
-        Prefs.getInstance().setMotionChangeDistanceMeters(10000);
+        Prefs.getInstance(this).setMotionChangeDistanceMeters(10000);
         //
         // start the sensor
         locationChangeSensor.start();

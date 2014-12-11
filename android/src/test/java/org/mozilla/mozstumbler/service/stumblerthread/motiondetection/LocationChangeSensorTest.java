@@ -37,7 +37,6 @@ public class LocationChangeSensorTest {
 
     private static final String LOG_TAG = AppGlobals.makeLogTag(LocationChangeSensorTest.class);
     private LocationChangeSensor locationChangeSensor;
-
     private LinkedList<Intent> receivedIntent = new LinkedList<Intent>();
 
     // After DetectUnchangingLocation reports the user is not moving, and the scanning pauses,
@@ -92,11 +91,11 @@ public class LocationChangeSensorTest {
         // we are waiting for mPrefMotionChangeTimeWindowMs for the next GPS signal or else
         // we go to sleep.
 
-        assertFalse(locationChangeSensor.checkTimeScheduled);
+        locationChangeSensor.removeTimeoutCheck();
 
         Intent intent = getLocationIntent(0, 0);
         locationChangeSensor.onReceive(ctx, intent);
-        assertTrue(locationChangeSensor.checkTimeScheduled);
+        assertTrue(locationChangeSensor.removeTimeoutCheck());
     }
 
     @Test
@@ -110,19 +109,21 @@ public class LocationChangeSensorTest {
         // but the person hasn't actually moved geographically.  Keep the scanners on
         // and schedule the next timeout check to see if the user just stops moving around.
 
-        assertFalse(locationChangeSensor.checkTimeScheduled);
-
         intent = getLocationIntent(20, 30);
         expectedPosition = intent.getParcelableExtra(GPSScanner.NEW_LOCATION_ARG_LOCATION);
         locationChangeSensor.onReceive(ctx, intent);
-        assertEquals(expectedPosition, locationChangeSensor.mLastLocation);
+        assertEquals(expectedPosition, locationChangeSensor.testing_getLastLocation());
 
         intent = getLocationIntent(21, 30);
         locationChangeSensor.onReceive(ctx, intent);
-
         // The new recorded position should be 21, 30
         expectedPosition = intent.getParcelableExtra(GPSScanner.NEW_LOCATION_ARG_LOCATION);
-        assertEquals(expectedPosition, locationChangeSensor.mLastLocation);
+        assertEquals(expectedPosition, locationChangeSensor.testing_getLastLocation());
+
+        intent = getLocationIntent(21.000001, 30);
+        locationChangeSensor.onReceive(ctx, intent);
+        // The new recorded position should be unchanged, movement too small
+        assertEquals(expectedPosition, locationChangeSensor.testing_getLastLocation());
     }
 
     @Test
@@ -136,17 +137,14 @@ public class LocationChangeSensorTest {
         Intent intent;
         Location expectedPosition;
 
-
         Robolectric.runUiThreadTasksIncludingDelayedTasks();
-
-        assertFalse(locationChangeSensor.checkTimeScheduled);
 
         intent = getLocationIntent(20, 30);
         expectedPosition = intent.getParcelableExtra(GPSScanner.NEW_LOCATION_ARG_LOCATION);
         locationChangeSensor.onReceive(ctx, intent);
         Robolectric.runUiThreadTasksIncludingDelayedTasks();
 
-        assertEquals(expectedPosition, locationChangeSensor.mLastLocation);
+        assertEquals(expectedPosition, locationChangeSensor.testing_getLastLocation());
 
         intent = getLocationIntent(20.01, 30.01);
 
@@ -156,7 +154,7 @@ public class LocationChangeSensorTest {
         Robolectric.runUiThreadTasksIncludingDelayedTasks();
 
         // The new recorded position should not be changed!
-        assertEquals(expectedPosition, locationChangeSensor.mLastLocation);
+        assertEquals(expectedPosition, locationChangeSensor.testing_getLastLocation());
 
         boolean foundIntent = false;
 

@@ -42,6 +42,8 @@ import org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner.CellS
 import org.mozilla.mozstumbler.service.uploadthread.AsyncUploadParam;
 import org.mozilla.mozstumbler.service.uploadthread.AsyncUploader;
 import org.mozilla.mozstumbler.service.utils.NetworkInfo;
+import org.mozilla.mozstumbler.svclocator.ServiceConfig;
+import org.mozilla.mozstumbler.svclocator.ServiceLocator;
 import org.mozilla.osmdroid.tileprovider.constants.TileFilePath;
 
 import java.io.File;
@@ -116,6 +118,10 @@ public class MainApp extends Application
         super.onCreate();
         // The following line triggers the initialization of ACRA
         ACRA.init(this);
+
+        // Bootstrap the service locator with the default list of services
+        ServiceLocator rootLocator = ServiceLocator.newRoot(ServiceConfig.defaultServiceConfig());
+        ServiceLocator.setRootInstance(rootLocator);
 
         // This must be called after init to get a copy of the
         // original ACRA.log instance so that we can toggle the logger on

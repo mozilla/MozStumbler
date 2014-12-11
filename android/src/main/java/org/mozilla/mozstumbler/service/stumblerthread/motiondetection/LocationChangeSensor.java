@@ -11,8 +11,13 @@ import android.widget.Toast;
 
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.Prefs;
+import org.mozilla.mozstumbler.service.core.logging.Log;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.GPSScanner;
 
+import org.mozilla.mozstumbler.svclocator.ServiceLocator;
+import org.mozilla.mozstumbler.svclocator.services.ISystemClock;
+
+public class LocationChangeSensor extends BroadcastReceiver {
 // This class is a bit confusing because of 2 checks that need to take place.
 // 1) One check happens when a gps event arrives, to see if the user moved x meters in t seconds.
 // 2) The other is a timeout in case no gps event arrives during time t.
@@ -24,30 +29,40 @@ import org.mozilla.mozstumbler.service.stumblerthread.scanners.GPSScanner;
 //  - DetectUnchangingLocation says movement stopped, scanning paused
 //  - Motion detector waits for motion, if motion detected, scanning starts (user assumed to be moving)
 //
-public class DetectUnchangingLocation extends BroadcastReceiver {
     private static final String LOG_TAG = AppGlobals.makeLogTag(BroadcastReceiver.class.getSimpleName());
     private final Context mContext;
-    private Location mLastLocation;
     private final Handler mHandler = new Handler();
+    private ISystemClock sysClock;
+
     private int mPrefMotionChangeDistanceMeters;
     private long mPrefMotionChangeTimeWindowMs;
     private long mStartTimeMs;
     private boolean mDoSingleLocationCheck;
-    private static String ACTION_LOCATION_NOT_CHANGING = AppGlobals.ACTION_NAMESPACE + ".LOCATION_UNCHANGING";
+    public static String ACTION_LOCATION_NOT_CHANGING = AppGlobals.ACTION_NAMESPACE + ".LOCATION_UNCHANGING";
+
+    // attributes used to track the state of the LocationChangeSensor
+    boolean checkTimeScheduled = false;
+    Location mLastLocation;
 
     private final Runnable mCheckTimeout = new Runnable() {
         public void run() {
-            if (!isTimeWindowForMovementExceeded()) {
+            try {
+                if (isTimeWindowForMovementExceeded()) {
+                    AppGlobals.guiLogInfo("No GPS in time window.");
+                    Log.d(LOG_TAG, "No GPS in time window.");
+                    LocalBroadcastManager.getInstance(mContext).sendBroadcastSync(new Intent(ACTION_LOCATION_NOT_CHANGING));
+                    return;
+                }
+                Log.d(LOG_TAG, "We're getting GPS readings in a timely manner. Nothing to see here.");
                 scheduleTimeoutCheck();
-                return;
+            } finally {
+                checkTimeScheduled = false;
             }
-            AppGlobals.guiLogInfo("No GPS in time window.");
-            LocalBroadcastManager.getInstance(mContext).sendBroadcastSync(new Intent(ACTION_LOCATION_NOT_CHANGING));
         }
     };
 
     /// Debugging code
-    static DetectUnchangingLocation sDebugInstance;
+    static LocationChangeSensor sDebugInstance;
     public static void debugSendLocationUnchanging() {
         if (sDebugInstance.mLastLocation == null) {
             Toast.makeText(sDebugInstance.mContext, "No location yet", Toast.LENGTH_SHORT).show();
@@ -62,22 +77,26 @@ public class DetectUnchangingLocation extends BroadcastReceiver {
     }
     /// ---
 
-    public DetectUnchangingLocation(Context context, BroadcastReceiver callbackReceiver) {
+    public LocationChangeSensor(Context context, BroadcastReceiver callbackReceiver) {
         sDebugInstance = this;
         mContext = context;
         LocalBroadcastManager.getInstance(context).registerReceiver(callbackReceiver,
                 new IntentFilter(ACTION_LOCATION_NOT_CHANGING));
+
+        // Bind all services in
+        ServiceLocator svcLocator = ServiceLocator.getInstance();
+        sysClock = (ISystemClock) svcLocator.getService(ISystemClock.class);
     }
 
     boolean isTimeWindowForMovementExceeded() {
         if (mLastLocation == null) {
-            final long timeWaited = System.currentTimeMillis() - mStartTimeMs;
+            final long timeWaited = sysClock.currentTimeMillis() - mStartTimeMs;
             final boolean expired = timeWaited > mPrefMotionChangeTimeWindowMs;
             AppGlobals.guiLogInfo("No loc., is gps wait exceeded:" + expired + " (" + timeWaited/1000.0 + "s)");
             return expired;
         }
 
-        final long ageLastLocation = System.currentTimeMillis() - mLastLocation.getTime();
+        final long ageLastLocation = sysClock.currentTimeMillis() - mLastLocation.getTime();
         AppGlobals.guiLogInfo("Last loc. age: " + ageLastLocation / 1000.0 + " s, (max age: " +
                                 mPrefMotionChangeTimeWindowMs/1000.0 + ")");
         return ageLastLocation > mPrefMotionChangeTimeWindowMs;
@@ -85,7 +104,7 @@ public class DetectUnchangingLocation extends BroadcastReceiver {
 
     public void start() {
         mLastLocation = null;
-        mStartTimeMs = System.currentTimeMillis();
+        mStartTimeMs = sysClock.currentTimeMillis();
         mPrefMotionChangeDistanceMeters = Prefs.getInstance().getMotionChangeDistanceMeters();
         mPrefMotionChangeTimeWindowMs = 1000 * Prefs.getInstance().getMotionChangeTimeWindowSeconds();
 
@@ -119,15 +138,22 @@ public class DetectUnchangingLocation extends BroadcastReceiver {
 
         // Set the location time to current time instead of GPS time, as the remainder of the code
         // compares this time to current time, and we don't want 2 different time systems compared
-        newPosition.setTime(System.currentTimeMillis());
+        newPosition.setTime(sysClock.currentTimeMillis());
 
         if (mLastLocation == null) {
+            Log.d(LOG_TAG, "Received first location");
             mLastLocation = newPosition;
         } else {
             double dist = mLastLocation.distanceTo(newPosition);
+            Log.d(LOG_TAG, "Computed distance: " + dist);
+            Log.d(LOG_TAG, "Pref distance: " + mPrefMotionChangeDistanceMeters);
+
+            // TODO: this pref doesn't take into account the accuracy of the location.
             if (dist > mPrefMotionChangeDistanceMeters) {
+                Log.d(LOG_TAG, "Received new location exceeding distance changed in meters pref");
                 mLastLocation = newPosition;
             } else if (isTimeWindowForMovementExceeded() || mDoSingleLocationCheck) {
+                Log.d(LOG_TAG, "New GPS location received, but time window exceeded.");
                 AppGlobals.guiLogInfo("Insufficient movement:" + dist + " m, " + mPrefMotionChangeDistanceMeters + " m needed.");
                 mDoSingleLocationCheck = false;
                 LocalBroadcastManager.getInstance(mContext).sendBroadcastSync(new Intent(ACTION_LOCATION_NOT_CHANGING));
@@ -146,6 +172,9 @@ public class DetectUnchangingLocation extends BroadcastReceiver {
 
         // Don't schedule it for exactly mPrefMotionChangeTimeWindowMs, we want it slightly after this timeout
         final long addedDelay = 2 * 1000;
+        Log.d(LOG_TAG, "Scheduled timeout check for " + (addedDelay/1000) + " seconds");
+
+        checkTimeScheduled = true;
         mHandler.postDelayed(mCheckTimeout, mPrefMotionChangeTimeWindowMs + addedDelay);
     }
 
@@ -156,6 +185,8 @@ public class DetectUnchangingLocation extends BroadcastReceiver {
         // This check waits 20 seconds for location change, if not, go back to paused.
         final int kWaitTimeMs = 1000 * 20;
         mDoSingleLocationCheck = true;
+        Log.d(LOG_TAG, "Scheduled timeout check for " + (kWaitTimeMs/1000) + " seconds");
+
         mHandler.postDelayed(mCheckTimeout, kWaitTimeMs);
     }
 }

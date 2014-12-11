@@ -13,7 +13,7 @@ import android.util.Log;
 
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.AppGlobals.ActiveOrPassiveStumbling;
-import org.mozilla.mozstumbler.service.stumblerthread.motiondetection.DetectUnchangingLocation;
+import org.mozilla.mozstumbler.service.stumblerthread.motiondetection.LocationChangeSensor;
 import org.mozilla.mozstumbler.service.stumblerthread.motiondetection.MotionSensor;
 import org.mozilla.mozstumbler.service.stumblerthread.Reporter;
 import org.mozilla.mozstumbler.service.stumblerthread.blocklist.WifiBlockListInterface;
@@ -38,7 +38,7 @@ public class ScanManager {
     private BatteryCheckReceiver mPassiveModeBatteryChecker;
     private enum PassiveModeBatteryState { OK, LOW, IGNORE_BATTERY_STATE }
     private PassiveModeBatteryState mPassiveModeBatteryState;
-    private DetectUnchangingLocation mDetectUnchangingLocation;
+    private LocationChangeSensor mLocationChangeSensor;
     private MotionSensor mMotionSensor;
     private boolean mIsMotionlessPausedState;
 
@@ -120,10 +120,10 @@ public class ScanManager {
 
         mIsMotionlessPausedState = false;
 
-        if (mDetectUnchangingLocation == null) {
-            mDetectUnchangingLocation = new DetectUnchangingLocation(mContext, mDetectUserIdleReceiver);
+        if (mLocationChangeSensor == null) {
+            mLocationChangeSensor = new LocationChangeSensor(mContext, mDetectUserIdleReceiver);
         }
-        mDetectUnchangingLocation.start();
+        mLocationChangeSensor.start();
 
         if (mMotionSensor == null) {
             mMotionSensor = new MotionSensor(mContext, mDetectMotionReceiver);
@@ -159,7 +159,7 @@ public class ScanManager {
         }
 
         mIsMotionlessPausedState = false;
-        mDetectUnchangingLocation.stop();
+        mLocationChangeSensor.stop();
         mMotionSensor.stop();
 
         mGPSScanner.stop();
@@ -228,7 +228,7 @@ public class ScanManager {
             startScanning(context);
             mMotionSensor.stop();
 
-            mDetectUnchangingLocation.quickCheckForFalsePositiveAfterMotionSensorMovement();
+            mLocationChangeSensor.quickCheckForFalsePositiveAfterMotionSensorMovement();
 
             Intent sendIntent = new Intent(ACTION_SCAN_PAUSED_USER_MOTIONLESS);
             sendIntent.putExtra(ACTION_EXTRA_IS_PAUSED, mIsMotionlessPausedState);

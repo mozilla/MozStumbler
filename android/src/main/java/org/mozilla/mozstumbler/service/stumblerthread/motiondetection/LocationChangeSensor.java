@@ -33,31 +33,23 @@ public class LocationChangeSensor extends BroadcastReceiver {
     private final Context mContext;
     private final Handler mHandler = new Handler();
     private ISystemClock sysClock;
-
     private int mPrefMotionChangeDistanceMeters;
     private long mPrefMotionChangeTimeWindowMs;
     private long mStartTimeMs;
     private boolean mDoSingleLocationCheck;
     public static String ACTION_LOCATION_NOT_CHANGING = AppGlobals.ACTION_NAMESPACE + ".LOCATION_UNCHANGING";
-
-    // attributes used to track the state of the LocationChangeSensor
-    boolean checkTimeScheduled = false;
-    Location mLastLocation;
+    private Location mLastLocation;
 
     private final Runnable mCheckTimeout = new Runnable() {
         public void run() {
-            try {
-                if (isTimeWindowForMovementExceeded()) {
-                    AppGlobals.guiLogInfo("No GPS in time window.");
-                    Log.d(LOG_TAG, "No GPS in time window.");
-                    LocalBroadcastManager.getInstance(mContext).sendBroadcastSync(new Intent(ACTION_LOCATION_NOT_CHANGING));
-                    return;
-                }
-                Log.d(LOG_TAG, "We're getting GPS readings in a timely manner. Nothing to see here.");
-                scheduleTimeoutCheck();
-            } finally {
-                checkTimeScheduled = false;
+            if (isTimeWindowForMovementExceeded()) {
+                AppGlobals.guiLogInfo("No GPS in time window.");
+                Log.d(LOG_TAG, "No GPS in time window.");
+                LocalBroadcastManager.getInstance(mContext).sendBroadcastSync(new Intent(ACTION_LOCATION_NOT_CHANGING));
+                return;
             }
+            Log.d(LOG_TAG, "We're getting GPS readings in a timely manner. Nothing to see here.");
+            scheduleTimeoutCheck(mPrefMotionChangeTimeWindowMs);
         }
     };
 
@@ -111,11 +103,12 @@ public class LocationChangeSensor extends BroadcastReceiver {
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(GPSScanner.ACTION_GPS_UPDATED);
         LocalBroadcastManager.getInstance(mContext).registerReceiver(this, intentFilter);
-        mHandler.postDelayed(mCheckTimeout, mPrefMotionChangeTimeWindowMs);
+
+        scheduleTimeoutCheck(mPrefMotionChangeTimeWindowMs);
     }
 
     public void stop() {
-        mHandler.removeCallbacks(mCheckTimeout);
+        removeTimeoutCheck();
         try {
             LocalBroadcastManager.getInstance(mContext).unregisterReceiver(this);
         } catch (Exception e) {}
@@ -162,20 +155,28 @@ public class LocationChangeSensor extends BroadcastReceiver {
         }
 
         mDoSingleLocationCheck = false;
-        scheduleTimeoutCheck();
+        scheduleTimeoutCheck(mPrefMotionChangeTimeWindowMs);
     }
 
-    private void scheduleTimeoutCheck() {
+    private void scheduleTimeoutCheck(long delay) {
+        removeTimeoutCheck();
+
+        // Don't schedule it for an exact delay, we want it slightly after this timeout, as the OS can
+        // trigger this earlier than requested (by a fraction of a second).
+        final long addedDelay = 2 * 1000;
+        mHandler.postDelayed(mCheckTimeout, delay + addedDelay);
+
+        Log.d(LOG_TAG, "Scheduled timeout check for " + (delay / 1000) + " seconds");
+    }
+
+    boolean removeTimeoutCheck() {
+        boolean wasScheduled = false;
         try {
             mHandler.removeCallbacks(mCheckTimeout);
+            wasScheduled = true;
         } catch (Exception e) {}
 
-        // Don't schedule it for exactly mPrefMotionChangeTimeWindowMs, we want it slightly after this timeout
-        final long addedDelay = 2 * 1000;
-        Log.d(LOG_TAG, "Scheduled timeout check for " + (addedDelay/1000) + " seconds");
-
-        checkTimeScheduled = true;
-        mHandler.postDelayed(mCheckTimeout, mPrefMotionChangeTimeWindowMs + addedDelay);
+        return wasScheduled;
     }
 
     public void quickCheckForFalsePositiveAfterMotionSensorMovement() {
@@ -187,6 +188,11 @@ public class LocationChangeSensor extends BroadcastReceiver {
         mDoSingleLocationCheck = true;
         Log.d(LOG_TAG, "Scheduled timeout check for " + (kWaitTimeMs/1000) + " seconds");
 
-        mHandler.postDelayed(mCheckTimeout, kWaitTimeMs);
+        scheduleTimeoutCheck(kWaitTimeMs);
     }
+
+    Location testing_getLastLocation() {
+        return mLastLocation;
+    }
+
 }

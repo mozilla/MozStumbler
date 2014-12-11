@@ -269,7 +269,6 @@ public class CellInfo implements Parcelable {
     }
 
     static String getCellRadioTypeName(int networkType) {
-        Log.d(LOG_TAG, "getCellRadioTypeName("+networkType+")");
         switch (networkType) {
             // If the network is either GSM or any high-data-rate variant of it, the radio
             // field should be specified as `gsm`. This includes `GSM`, `EDGE` and `GPRS`.

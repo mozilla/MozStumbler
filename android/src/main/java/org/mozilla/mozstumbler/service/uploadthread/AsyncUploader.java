@@ -8,6 +8,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import org.mozilla.mozstumbler.service.AppGlobals;
+import org.mozilla.mozstumbler.service.Prefs;
 import org.mozilla.mozstumbler.service.core.http.HttpUtil;
 import org.mozilla.mozstumbler.service.core.http.IHttpUtil;
 import org.mozilla.mozstumbler.service.core.http.ILocationService;
@@ -74,6 +75,13 @@ public class AsyncUploader extends AsyncTask<AsyncUploadParam, AsyncProgressList
 
        publishProgress(wrapper);
 
+        if (Prefs.getInstance().isSaveStumbleLogs()) {
+            try {
+                DataStorageManager.getInstance().saveCurrentReportsSendBufferToDisk();
+            } catch (IOException e) {
+                AppGlobals.guiLogError("Error flushing in-memory reports to sdcard");
+            }
+        }
        uploadReports(param);
 
        isUploading.set(false);

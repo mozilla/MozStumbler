@@ -100,8 +100,6 @@ public class MetricsView {
                     return;
                 }
 
-                // @TODO: Emit a signal here to initiate an upload
-                // and have it handled by MainApp
                 AsyncUploader uploader = new AsyncUploader();
                 AsyncUploadParam param = new AsyncUploadParam(false /* useWifiOnly */,
                     Prefs.getInstance().getNickname(),

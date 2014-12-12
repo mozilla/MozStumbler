@@ -188,9 +188,17 @@ public class ScanManager {
         mLocationChangeSensor.stop();
         mMotionSensor.stop();
 
+        if (mGPSScanner != null) {
         mGPSScanner.stop();
+        }
+
+        if (mWifiScanner != null) {
         mWifiScanner.stop();
+        }
+
+        if (mCellScanner != null) {
         mCellScanner.stop();
+        }
 
         mGPSScanner = null;
         mWifiScanner = null;

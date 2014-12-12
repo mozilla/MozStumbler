@@ -167,8 +167,7 @@ public final class MapFragment extends android.support.v4.app.Fragment
         if (lastLoc != null) {
             final GeoPoint loc = lastLoc;
             final int zoom = zoomLevel;
-            mMap.getController().setZoom(zoom);
-            mMap.getController().setCenter(loc);
+            setCenterAndZoom(loc, zoom);
 
             mMap.postDelayed(new Runnable() {
                 @Override
@@ -178,8 +177,7 @@ public final class MapFragment extends android.support.v4.app.Fragment
                     // Post with no delay does not work for me, adding an arbitrary
                     // delay of 300 ms should be plenty.
                     Log.d(LOG_TAG, "postDelayed ZOOM " + zoom);
-                    mMap.getController().setZoom(zoom);
-                    mMap.getController().setCenter(loc);
+                    setCenterAndZoom(loc, zoom);
                 }
             }, 300);
         }
@@ -232,6 +230,11 @@ public final class MapFragment extends android.support.v4.app.Fragment
         showPausedDueToNoMotionMessage(getApplication().isIsScanningPausedDueToNoMotion());
 
         return mRootView;
+    }
+
+    private void setCenterAndZoom(GeoPoint loc, int zoom) {
+        mMap.getController().setZoom(zoom);
+        mMap.getController().setCenter(loc);
     }
 
     MainApp getApplication() {
@@ -564,9 +567,8 @@ public final class MapFragment extends android.support.v4.app.Fragment
         mAccuracyOverlay.setLocation(location);
 
         if (mFirstLocationFix) {
-            mMap.getController().setZoom(DEFAULT_ZOOM_AFTER_FIX);
+            setCenterAndZoom(new GeoPoint(location), DEFAULT_ZOOM_AFTER_FIX);
             mFirstLocationFix = false;
-            mMap.getController().setCenter(new GeoPoint(location));
             mUserPanning = false;
         } else if (!mUserPanning) {
             mMap.getController().animateTo((mAccuracyOverlay.getLocation()));

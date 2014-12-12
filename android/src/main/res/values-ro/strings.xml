@@ -7,7 +7,6 @@
     <string name="stop_scanning">Oprește scanarea</string>
     <string name="view_leaderboard">Arată clasament lideri</string>
     <string name="service_name">Mozilla Stumbler</string>
-    <string name="service_scanning">Se scanează după Wi-Fi și rețele celulare</string>
     <string name="enter_nickname">Introduceți pseudonim (opțional)</string>
     <string name="enter_nickname_title">Pseudonim: %1$s</string>
     <string name="enter_nickname_longtext">Pseudonimul va fi afișat în clasamentul liderilor.</string>

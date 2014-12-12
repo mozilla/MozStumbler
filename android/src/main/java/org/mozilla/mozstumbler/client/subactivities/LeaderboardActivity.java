@@ -66,10 +66,7 @@ public class LeaderboardActivity extends ActionBarActivity {
         });
 
         setProgress(0);
-        ClientPrefs prefs = ClientPrefs.getInstance();
-        if (prefs == null) {
-            prefs = ClientPrefs.createGlobalInstance(this.getApplicationContext());
-        }
+        ClientPrefs prefs = ClientPrefs.getInstance(getApplicationContext());
         String nick = prefs.getNickname();
         String url = LEADERBOARD_URL;
         if (nick != null) {

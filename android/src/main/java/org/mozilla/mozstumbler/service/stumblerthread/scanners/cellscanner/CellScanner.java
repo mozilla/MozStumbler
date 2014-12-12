@@ -48,7 +48,7 @@ public class CellScanner {
 
     public CellScanner(Context appCtx) {
         mAppContext = appCtx;
-        if (AppGlobals.isDebug && Prefs.getInstance().isSimulateStumble()) {
+        if (AppGlobals.isDebug && Prefs.getInstance(appCtx).isSimulateStumble()) {
             mSimpleCellScanner = new MockSimpleCellScanner(mAppContext);
         } else {
             mSimpleCellScanner = new SimpleCellScannerImplementation(mAppContext);

@@ -128,7 +128,7 @@ public class AsyncUploader extends AsyncTask<AsyncUploadParam, AsyncProgressList
             headers.put(MLS.EMAIL_HEADER, param.emailAddress);
             headers.put(MLS.NICKNAME_HEADER, param.nickname);
 
-            Prefs prefs = Prefs.getInstance();
+            Prefs prefs = Prefs.getInstanceWithoutContext();
             while (batch != null) {
                 IResponse result;
                 if (prefs != null && prefs.isSimulateStumble()) {
@@ -137,6 +137,7 @@ public class AsyncUploader extends AsyncTask<AsyncUploadParam, AsyncProgressList
                                                        new HashMap<String, List<String>>(),
                                                        new byte[]{},
                                                        batch.data.length);
+                   Log.i(LOG_TAG, "Simulation skipped upload.");
 
                } else {
                    result = mls.submit(batch.data, headers, true);

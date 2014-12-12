@@ -8,8 +8,7 @@
     <string name="view_leaderboard">Guarda la classifica</string>
     <string name="service_name">Mozilla Stumbler</string>
     <!--<string name="wifi_disabled">0 (Wi-Fi disabled)</string> translation missing-->
-    <string name="service_scanning">Analisi delle reti Wi-Fi e cellulari in corso</string>
-    
+
     <string name="enter_nickname">Inserisci il soprannome (opzionale)</string>
     <string name="enter_nickname_title">Soprannome: %1$s</string>
     <string name="enter_nickname_longtext">Il tuo soprannome comparirà sulla classifica.</string>

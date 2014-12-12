@@ -51,8 +51,8 @@ public class SimulationContext extends ContextWrapper {
     public SimulationContext(Context context) {
         super(context);
 
-        mLat = Prefs.getInstance().getSimulationLat();
-        mLon = Prefs.getInstance().getSimulationLon();
+        mLat = Prefs.getInstance(context).getSimulationLat();
+        mLon = Prefs.getInstance(context).getSimulationLon();
 
         locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
         wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);

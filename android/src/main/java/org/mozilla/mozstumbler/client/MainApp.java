@@ -88,8 +88,8 @@ public class MainApp extends Application
         }
     };
 
-    public ClientPrefs getPrefs() {
-        return ClientPrefs.getInstance();
+    public ClientPrefs getPrefs(Context c) {
+        return ClientPrefs.getInstance(c);
     }
 
     public ClientStumblerService getService() {
@@ -147,7 +147,10 @@ public class MainApp extends Application
             oldPrefs.renameTo(new File(dir, ClientPrefs.getPrefsFileNameForUpgrade()));
         }
 
-        ClientPrefs prefs = ClientPrefs.createGlobalInstance(this);
+        // Doing this onCreate ensures that a ClientPrefs is instantiated for the whole app.
+        // Don't remove this.
+        ClientPrefs prefs = ClientPrefs.getInstance(this);
+
         prefs.setMozApiKey(BuildConfig.MOZILLA_API_KEY);
         String userAgent = System.getProperty("http.agent") + " " +
                 AppGlobals.appName + "/" + AppGlobals.appVersionName;
@@ -214,10 +217,11 @@ public class MainApp extends Application
     private void checkSimulationPermission()
     {
         String permission = "android.permission.MOCK_LOCATION";
-        int res = this.getApplicationContext().checkCallingOrSelfPermission(permission);
+        Context appContext = this.getApplicationContext();
+        int res = appContext.checkCallingOrSelfPermission(permission);
         if (res != PackageManager.PERMISSION_GRANTED) {
-            if (ClientPrefs.getInstance().isSimulateStumble()) {
-                ClientPrefs.getInstance().setSimulateStumble(false);
+            if (ClientPrefs.getInstance(appContext).isSimulateStumble()) {
+                ClientPrefs.getInstance(appContext).setSimulateStumble(false);
             }
             Log.i(LOG_TAG, "Simulation disabled as developer option is not enabled.");
         }
@@ -268,9 +272,9 @@ public class MainApp extends Application
 
         AsyncUploader uploader = new AsyncUploader();
         AsyncUploadParam param = new AsyncUploadParam(
-                ClientPrefs.getInstance().getUseWifiOnly(),
-                Prefs.getInstance().getNickname(),
-                Prefs.getInstance().getEmail());
+                ClientPrefs.getInstance(this).getUseWifiOnly(),
+                Prefs.getInstance(this).getNickname(),
+                Prefs.getInstance(this).getEmail());
 
         uploader.execute(param);
 

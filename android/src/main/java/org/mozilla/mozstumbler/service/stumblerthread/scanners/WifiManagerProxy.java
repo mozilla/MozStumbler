@@ -39,7 +39,7 @@ public class WifiManagerProxy extends BroadcastReceiver {
     }
 
     public boolean runWifiScan() {
-        if (Prefs.getInstance().isSimulateStumble()) {
+        if (Prefs.getInstance(mAppContext).isSimulateStumble()) {
 
             // This intent will signal the WifiScanner class to ask for new scan results
             // by invoking getScanResults
@@ -52,7 +52,7 @@ public class WifiManagerProxy extends BroadcastReceiver {
     }
 
     public List<ScanResult> getScanResults() {
-        if (Prefs.getInstance().isSimulateStumble()) {
+        if (Prefs.getInstance(mAppContext).isSimulateStumble()) {
             LinkedList<ScanResult> result = new LinkedList<ScanResult>();
             SimulationContext ctx;
             try {
@@ -72,10 +72,6 @@ public class WifiManagerProxy extends BroadcastReceiver {
         }
     }
 
-    public boolean isWifiEnabled() {
-        return getWifiManager().isWifiEnabled();
-    }
-
     private WifiManager getWifiManager() {
         return (WifiManager) mAppContext.getSystemService(Context.WIFI_SERVICE);
     }
@@ -83,7 +79,7 @@ public class WifiManagerProxy extends BroadcastReceiver {
     public synchronized void registerReceiver(WifiScanner wifiScanner) {
         mWifiScanner = wifiScanner;
 
-        if (!Prefs.getInstance().isSimulateStumble()) {
+        if (!Prefs.getInstance(mAppContext).isSimulateStumble()) {
             IntentFilter i = new IntentFilter();
             i.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION);
             i.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);

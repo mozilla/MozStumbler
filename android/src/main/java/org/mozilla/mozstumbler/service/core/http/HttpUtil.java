@@ -41,8 +41,10 @@ public class HttpUtil implements IHttpUtil {
     private final String userAgent;
 
     public HttpUtil() {
-        this(Prefs.getInstance().getUserAgent());
+        this((Prefs.getInstanceWithoutContext() != null)?
+              Prefs.getInstanceWithoutContext().getUserAgent() : "user-agent-not-set-properly");
     }
+
     public HttpUtil(String ua){
         userAgent = ua;
     }

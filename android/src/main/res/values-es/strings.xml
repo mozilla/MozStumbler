@@ -8,7 +8,6 @@
     <string name="stop_scanning">Detener escaneo</string>
     <string name="view_leaderboard">Ver tabla de posiciones</string>
     <string name="service_name">Mozilla Stumbler</string>
-    <string name="service_scanning">Escaneando redes Wi-Fi y móviles</string>
     <string name="enter_nickname">Ingresa tu apodo (opcional)</string>
     <string name="enter_nickname_title">Apodo: %1$s</string>
     <string name="enter_nickname_longtext">Tu apodo aparecerá en la tabla de posiciones.</string>

@@ -53,6 +53,12 @@ public class ClientPrefs extends Prefs {
         SharedPreferences.Editor editor = getPrefs().edit();
         editor.putFloat(LAT_PREF, (float) center.getLatitude());
         editor.putFloat(LON_PREF, (float) center.getLongitude());
+
+        if (AppGlobals.isDebug) {
+            // Save the location as the start for simulations
+            setSimulationLat((float) center.getLatitude());
+            setSimulationLon((float) center.getLongitude());
+        }
         apply(editor);
     }
 

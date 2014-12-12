@@ -212,7 +212,7 @@ public class Prefs {
         return getFloatPref(SIMULATION_LAT, (float) 43.6472969);
     }
 
-    public void setSimulationLat(float value) {
+    protected void setSimulationLat(float value) {
         setFloatPref(SIMULATION_LAT, value);
     }
 
@@ -220,7 +220,7 @@ public class Prefs {
         return getFloatPref(SIMULATION_LON, (float) -79.3943137);
     }
 
-    public void setSimulationLon(float value) {
+    protected void setSimulationLon(float value) {
         setFloatPref(SIMULATION_LON, value);
     }
 

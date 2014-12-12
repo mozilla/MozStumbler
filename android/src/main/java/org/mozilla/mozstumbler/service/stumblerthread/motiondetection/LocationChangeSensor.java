@@ -43,12 +43,12 @@ public class LocationChangeSensor extends BroadcastReceiver {
     private final Runnable mCheckTimeout = new Runnable() {
         public void run() {
             if (isTimeWindowForMovementExceeded()) {
-                AppGlobals.guiLogInfo("No GPS in time window.");
-                Log.d(LOG_TAG, "No GPS in time window.");
+                AppGlobals.guiLogInfo("GPS time window exceeded.");
+                Log.d(LOG_TAG, "GPS time window exceeded.");
                 LocalBroadcastManager.getInstance(mContext).sendBroadcastSync(new Intent(ACTION_LOCATION_NOT_CHANGING));
                 return;
             }
-            Log.d(LOG_TAG, "We're getting GPS readings in a timely manner. Nothing to see here.");
+            Log.d(LOG_TAG, "No gps timeout yet.");
             scheduleTimeoutCheck(mPrefMotionChangeTimeWindowMs);
         }
     };
@@ -89,8 +89,11 @@ public class LocationChangeSensor extends BroadcastReceiver {
         }
 
         final long ageLastLocation = sysClock.currentTimeMillis() - mLastLocation.getTime();
-        AppGlobals.guiLogInfo("Last loc. age: " + ageLastLocation / 1000.0 + " s, (max age: " +
-                                mPrefMotionChangeTimeWindowMs/1000.0 + ")");
+        String log = "Last loc. age: " + ageLastLocation / 1000.0 + " s, (" +
+                sysClock.currentTimeMillis()/1000 +  "-" + mLastLocation.getTime()/1000 +
+                ", max age: " + mPrefMotionChangeTimeWindowMs/1000.0 + ")";
+        AppGlobals.guiLogInfo(log);
+        Log.d(LOG_TAG, log);
         return ageLastLocation > mPrefMotionChangeTimeWindowMs;
     }
 
@@ -152,10 +155,12 @@ public class LocationChangeSensor extends BroadcastReceiver {
                 Log.d(LOG_TAG, "Received new location exceeding distance changed in meters pref");
                 mLastLocation = newPosition;
             } else if (isTimeWindowForMovementExceeded() || mDoSingleLocationCheck) {
-                Log.d(LOG_TAG, "New GPS location received, but time window exceeded.");
-                AppGlobals.guiLogInfo("Insufficient movement:" + dist + " m, " + mPrefMotionChangeDistanceMeters + " m needed.");
+                String log = "Insufficient movement:" + dist + " m, " + mPrefMotionChangeDistanceMeters + " m needed.";
+                Log.d(LOG_TAG, log);
+                AppGlobals.guiLogInfo(log);
                 mDoSingleLocationCheck = false;
                 LocalBroadcastManager.getInstance(mContext).sendBroadcastSync(new Intent(ACTION_LOCATION_NOT_CHANGING));
+                removeTimeoutCheck();
                 return;
             }
         }
@@ -169,10 +174,10 @@ public class LocationChangeSensor extends BroadcastReceiver {
 
         // Don't schedule it for an exact delay, we want it slightly after this timeout, as the OS can
         // trigger this earlier than requested (by a fraction of a second).
-        final long addedDelay = 2 * 1000;
-        mHandler.postDelayed(mCheckTimeout, delay + addedDelay);
+        final long addedDelayMs = 100;
+        mHandler.postDelayed(mCheckTimeout, delay + addedDelayMs);
 
-        Log.d(LOG_TAG, "Scheduled timeout check for " + (delay / 1000) + " seconds");
+        Log.d(LOG_TAG, "Scheduled timeout check for " + (delay / 1000.0) + " seconds");
     }
 
     boolean removeTimeoutCheck() {
@@ -189,11 +194,12 @@ public class LocationChangeSensor extends BroadcastReceiver {
         // False positives for movement are common, particularly for the legacy sensor.
         // Without this check, a false positive cause scanning to run for mPrefMotionChangeTimeWindowMs (2 mins default).
         // We don't need to wait the full time window before concluding the user has not moved.
-        // This check waits 20 seconds for location change, if not, go back to paused.
-        final int kWaitTimeMs = 1000 * 20;
+        // This check waits 20 seconds for location change, if no change, go back to paused.
+        long kWaitTimeMs = 1000 * 20;
+        if (kWaitTimeMs > mPrefMotionChangeTimeWindowMs && mPrefMotionChangeTimeWindowMs > 100) {
+            kWaitTimeMs = mPrefMotionChangeTimeWindowMs - 100;
+        }
         mDoSingleLocationCheck = true;
-        Log.d(LOG_TAG, "Scheduled timeout check for " + (kWaitTimeMs/1000) + " seconds");
-
         scheduleTimeoutCheck(kWaitTimeMs);
     }
 
@@ -201,4 +207,7 @@ public class LocationChangeSensor extends BroadcastReceiver {
         return mLastLocation;
     }
 
+    void testing_setTimeoutCheckTime(long timeMs) {
+        mPrefMotionChangeTimeWindowMs = timeMs;
+    }
 }

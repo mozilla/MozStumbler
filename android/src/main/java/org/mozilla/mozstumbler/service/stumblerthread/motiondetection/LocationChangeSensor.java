@@ -97,8 +97,14 @@ public class LocationChangeSensor extends BroadcastReceiver {
     public void start() {
         mLastLocation = null;
         mStartTimeMs = sysClock.currentTimeMillis();
-        mPrefMotionChangeDistanceMeters = Prefs.getInstance().getMotionChangeDistanceMeters();
-        mPrefMotionChangeTimeWindowMs = 1000 * Prefs.getInstance().getMotionChangeTimeWindowSeconds();
+
+        Prefs prefs = Prefs.getInstanceWithoutContext();
+        if (prefs == null) {
+            return;
+        }
+
+        mPrefMotionChangeDistanceMeters = prefs.getMotionChangeDistanceMeters();
+        mPrefMotionChangeTimeWindowMs = 1000 * prefs.getMotionChangeTimeWindowSeconds();
 
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(GPSScanner.ACTION_GPS_UPDATED);

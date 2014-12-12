@@ -156,7 +156,7 @@ public final class MapFragment extends android.support.v4.app.Fragment
                 lastLoc = new GeoPoint(latitude, longitude);
             }
         } else {
-            lastLoc = ClientPrefs.getInstance().getLastMapCenter();
+            lastLoc = ClientPrefs.getInstance(mRootView.getContext()).getLastMapCenter();
             zoomLevel = DEFAULT_ZOOM_AFTER_FIX;
             if (new GeoPoint(0, 0).equals(lastLoc)) {
                 lastLoc = null;
@@ -246,8 +246,10 @@ public final class MapFragment extends android.support.v4.app.Fragment
             final Runnable runnable = new Runnable() {
                 @Override
                 public void run() {
+                    final ClientPrefs.MapTileResolutionOptions resolution =
+                            ClientPrefs.getInstance(mRootView.getContext()).getMapTileResolutionType();
                     if (mCoverageTilesOverlayLowZoom != null ||  // checks if init() has already happened
-                        ClientPrefs.getInstance().getMapTileResolutionType() == ClientPrefs.MapTileResolutionOptions.NoMap) {
+                        resolution == ClientPrefs.MapTileResolutionOptions.NoMap) {
                         return;
                     }
                     initCoverageTiles(sCoverageUrl);
@@ -375,7 +377,7 @@ public final class MapFragment extends android.support.v4.app.Fragment
     // we need an additional "LowZoom" overlay. So in low bandwidth mode, you will see
     // that based on the current zoom level of the map, we show "HighZoom" or "LowZoom" overlays.
     private void setHighBandwidthMap(boolean isHighBandwidth) {
-        final ClientPrefs prefs = ClientPrefs.getInstance();
+        final ClientPrefs prefs = ClientPrefs.getInstance(mRootView.getContext());
         if (prefs == null || getActivity() == null) {
             return;
         }
@@ -619,7 +621,7 @@ public final class MapFragment extends android.support.v4.app.Fragment
 
         mHighLowBandwidthChecker = new HighLowBandwidthReceiver(this);
 
-        ClientPrefs prefs = ClientPrefs.createGlobalInstance(getActivity().getApplicationContext());
+        ClientPrefs prefs = ClientPrefs.getInstance(getActivity().getApplicationContext());
         setShowMLS(prefs.getOnMapShowMLS());
 
         mObservationPointsOverlay.zoomChanged(mMap);
@@ -628,7 +630,7 @@ public final class MapFragment extends android.support.v4.app.Fragment
 
     private void saveStateToPrefs() {
         IGeoPoint center = mMap.getMapCenter();
-        ClientPrefs.getInstance().setLastMapCenter(center);
+        ClientPrefs.getInstance(mRootView.getContext()).setLastMapCenter(center);
     }
 
     @Override

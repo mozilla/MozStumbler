@@ -31,16 +31,16 @@ public class ClientPrefs extends Prefs {
         super(context);
     }
 
-    public static synchronized ClientPrefs createGlobalInstance(Context c) {
-        if (sInstance == null) {
+    public static synchronized ClientPrefs getInstance(Context c) {
+        if (sInstance == null || sInstance.getClass() != ClientPrefs.class) {
             sInstance = new ClientPrefs(c);
         }
         return (ClientPrefs) sInstance;
     }
 
-    public static synchronized ClientPrefs getInstance() {
-        if (sInstance != null && sInstance.getClass().isInstance(ClientPrefs.class)) {
-            throw new IllegalArgumentException("sInstance is improperly initialized");
+    public static synchronized ClientPrefs getInstanceWithoutContext() {
+        if (sInstance != null && sInstance.getClass() != ClientPrefs.class) {
+            return null;
         }
         return (ClientPrefs) sInstance;
     }

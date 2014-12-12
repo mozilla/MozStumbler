@@ -6,7 +6,7 @@ unittest:
 	./gradlew assembleGithubUnittest
 
 debug:
-	./gradlew assembleGithubDebug --info
+	./gradlew assembleGithubDebug
 
 github:
 	./release_check.py github

@@ -162,7 +162,7 @@ public class MainDrawerActivity
             return;
         }
         if (svc.isScanning()) {
-            keepScreenOn(ClientPrefs.getInstance().getKeepScreenOn());
+            keepScreenOn(ClientPrefs.getInstance(this).getKeepScreenOn());
         } else {
             keepScreenOn(false);
         }
@@ -204,7 +204,7 @@ public class MainDrawerActivity
         super.onPostResume();
         mMetricsView.update();
 
-        if (ClientPrefs.getInstance().isFirstRun()) {
+        if (ClientPrefs.getInstance(this).isFirstRun()) {
             FragmentManager fm = getSupportFragmentManager();
             FirstRunFragment.showInstance(fm);
         } else if (!MainApp.getAndSetHasBootedOnce()) {
@@ -275,7 +275,8 @@ public class MainDrawerActivity
         mMapFragment.formatTextView(R.id.text_observation_count, "%d", observationCount);
 
         if (updateMetrics) {
-            mMetricsView.setObservationCount(observationCount, service.getUniqueCellCount(), service.getUniqueAPCount());
+            mMetricsView.setObservationCount(observationCount, service.getUniqueCellCount(),
+                    service.getUniqueAPCount(), getApp().isScanningOrPaused());
             mMetricsView.update();
         }
     }

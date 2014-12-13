@@ -47,7 +47,7 @@ public class FirstRunFragment extends DialogFragment {
             @Override
             public void onClick(View v) {
                 ((MainApp) getActivity().getApplication()).startScanning();
-                ClientPrefs.getInstance().setFirstRun(false);
+                ClientPrefs.getInstance(getActivity()).setFirstRun(false);
 
                 Dialog d = getDialog();
                 if (d != null) {

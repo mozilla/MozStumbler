@@ -7,7 +7,6 @@
     <string name="stop_scanning">Arrêter l\'analyse</string>
     <string name="view_leaderboard">Voir le classement</string>
     <string name="service_name">Mozilla Stumbler</string>
-    <string name="service_scanning">Détection des réseaux Wi-Fi et cellulaires</string>
     <string name="enter_nickname">Saisir un pseudo (optionnel)</string>
     <string name="enter_nickname_title">Pseudo : %1$s</string>
     <string name="enter_nickname_longtext">Votre pseudo apparaîtra dans le classement.</string>

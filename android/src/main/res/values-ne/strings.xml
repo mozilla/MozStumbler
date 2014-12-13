@@ -33,7 +33,6 @@
     <string name="scroll_to_end">अन्त्य सम्म जानु </string>
     <string name="scroll_to_start">सुरुवातमा जानु </string>
     <string name="service_name">मोज़स्टम्बलर</string>
-    <string name="service_scanning">वाइफाइ र सेलुलर नेटवर्क लागि स्क्यान गर्दै </string>
     <string name="share_after_kml_saved">फाइल उपकरणमा राखिएको छ, तपाईं फाइल साझा गर्न चाहनुहुन्छ?</string>
     <string name="share_file">साझा गर्नहोस् </string>
     <string name="start_scanning">स्क्यान सुरु</string>

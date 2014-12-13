@@ -8,7 +8,6 @@
     <string name="stop_scanning">Zatrzymaj skanowanie</string>
     <string name="view_leaderboard">Wyświetl ranking</string>
     <string name="service_name">Mozilla Stumbler</string>
-    <string name="service_scanning">Skanowanie w poszukiwaniu sieci Wi-Fi i komórkowych</string>
     <string name="enter_nickname">Wpisz pseudonim (opcjonalnie)</string>
     <string name="enter_nickname_title">Pseudonim: %1$s</string>
     <string name="enter_nickname_longtext">Twój pseudonim pojawi się w rankingu.</string>

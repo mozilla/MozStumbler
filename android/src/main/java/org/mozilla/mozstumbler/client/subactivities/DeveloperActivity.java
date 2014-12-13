@@ -24,7 +24,7 @@ import org.mozilla.mozstumbler.client.ClientPrefs;
 import org.mozilla.mozstumbler.client.MainApp;
 import org.mozilla.mozstumbler.client.serialize.KMLFragment;
 import org.mozilla.mozstumbler.service.AppGlobals;
-import org.mozilla.mozstumbler.service.stumblerthread.motiondetection.DetectUnchangingLocation;
+import org.mozilla.mozstumbler.service.stumblerthread.motiondetection.LocationChangeSensor;
 import org.mozilla.mozstumbler.service.stumblerthread.motiondetection.MotionSensor;
 import org.mozilla.mozstumbler.service.utils.BatteryCheckReceiver;
 
@@ -60,13 +60,13 @@ public class DeveloperActivity extends ActionBarActivity {
                             a.hashCode();
                             break;
                         case 1:
-                            DetectUnchangingLocation.debugSendLocationUnchanging();
+                            LocationChangeSensor.debugSendLocationUnchanging();
                             break;
                         case 2:
                             MotionSensor.debugMotionDetected();
                             break;
                         case 3:
-                            int pct = ClientPrefs.getInstance().getMinBatteryPercent();
+                            int pct = ClientPrefs.getInstance(DeveloperActivity.this).getMinBatteryPercent();
                             BatteryCheckReceiver.debugSendBattery(pct - 1);
                             break;
                         case 4:
@@ -92,12 +92,13 @@ public class DeveloperActivity extends ActionBarActivity {
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             mRootView = inflater.inflate(R.layout.fragment_developer_options, container, false);
 
+            final ClientPrefs prefs = ClientPrefs.getInstance(mRootView.getContext());
             final Spinner batterySpinner = (Spinner) mRootView.findViewById(R.id.spinnerBatteryPercent);
             final SpinnerAdapter spinnerAdapter = batterySpinner.getAdapter();
             assert(spinnerAdapter instanceof ArrayAdapter);
             @SuppressWarnings("unchecked")
             final ArrayAdapter<String> adapter = (ArrayAdapter<String>)spinnerAdapter;
-            final int percent = ClientPrefs.getInstance().getMinBatteryPercent();
+            final int percent = prefs.getMinBatteryPercent();
             final int spinnerPosition = adapter.getPosition(percent + "%");
             batterySpinner.setSelection(spinnerPosition);
 
@@ -106,7 +107,6 @@ public class DeveloperActivity extends ActionBarActivity {
                 public void onItemSelected(AdapterView<?> parent, View arg1, int position, long id) {
                     String item = parent.getItemAtPosition(position).toString().replace("%", "");
                     int percent = Integer.valueOf(item);
-                    ClientPrefs prefs = ClientPrefs.createGlobalInstance(getActivity().getApplicationContext());
                     prefs.setMinBatteryPercent(percent);
                 }
 
@@ -119,7 +119,7 @@ public class DeveloperActivity extends ActionBarActivity {
                     new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_spinner_item, distanceArray);
             final Spinner distanceSpinner = (Spinner) mRootView.findViewById(R.id.spinnerMotionDetectionDistanceMeters);
             distanceSpinner.setAdapter(distanceAdapter);
-            final int dist = ClientPrefs.getInstance().getMotionChangeDistanceMeters();
+            final int dist = prefs.getMotionChangeDistanceMeters();
             distanceSpinner.setSelection(findIndexOf(dist, distanceArray));
 
             distanceSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -137,7 +137,7 @@ public class DeveloperActivity extends ActionBarActivity {
                     new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_spinner_item, timeArray);
             final Spinner timeSpinner = (Spinner) mRootView.findViewById(R.id.spinnerMotionDetectionTimeSeconds);
             timeSpinner.setAdapter(timeAdapter);
-            final int time = ClientPrefs.getInstance().getMotionChangeTimeWindowSeconds();
+            final int time = prefs.getMotionChangeTimeWindowSeconds();
             timeSpinner.setSelection(findIndexOf(time, timeArray));
 
             timeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -157,7 +157,7 @@ public class DeveloperActivity extends ActionBarActivity {
         private void changeOfMotionDetectionDistanceOrTime(AdapterView<?> parent, int position, IsDistanceOrTime isDistanceOrTime) {
             String item = parent.getItemAtPosition(position).toString();
             int val = Integer.valueOf(item.substring(0, item.indexOf(" ")));
-            ClientPrefs prefs = ClientPrefs.createGlobalInstance(getActivity().getApplicationContext());
+            ClientPrefs prefs = ClientPrefs.getInstance(getActivity().getApplicationContext());
             if (isDistanceOrTime == IsDistanceOrTime.DISTANCE) {
                 prefs.setMotionChangeDistanceMeters(val);
             } else {

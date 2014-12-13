@@ -8,7 +8,6 @@
     <string name="stop_scanning">सर्वेक्षण बंद करा</string>
     <string name="view_leaderboard">अग्रेसर वापरकर्ता फलक बघा</string>
     <string name="service_name">मोझिला स्टंबलर</string>
-    <string name="service_scanning">Wi-Fi आणि भ्रमणध्वनी जाळे शोधत आहे</string>
     <string name="enter_nickname">टोपणनाव टाका (ऐच्छिक)</string>
     <string name="enter_nickname_title">टोपणनाव: %1$s</string>
     <string name="enter_nickname_longtext">तुमचे टोपणनाव अग्रेसर वापरकर्ता फलकावर दिसेल.</string>

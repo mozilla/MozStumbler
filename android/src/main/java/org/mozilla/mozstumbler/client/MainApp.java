@@ -42,6 +42,8 @@ import org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner.CellS
 import org.mozilla.mozstumbler.service.uploadthread.AsyncUploadParam;
 import org.mozilla.mozstumbler.service.uploadthread.AsyncUploader;
 import org.mozilla.mozstumbler.service.utils.NetworkInfo;
+import org.mozilla.mozstumbler.svclocator.ServiceConfig;
+import org.mozilla.mozstumbler.svclocator.ServiceLocator;
 import org.mozilla.osmdroid.tileprovider.constants.TileFilePath;
 
 import java.io.File;
@@ -84,8 +86,8 @@ public class MainApp extends Application
         }
     };
 
-    public ClientPrefs getPrefs() {
-        return ClientPrefs.getInstance();
+    public ClientPrefs getPrefs(Context c) {
+        return ClientPrefs.getInstance(c);
     }
 
     public ClientStumblerService getService() {
@@ -117,6 +119,10 @@ public class MainApp extends Application
         // The following line triggers the initialization of ACRA
         ACRA.init(this);
 
+        // Bootstrap the service locator with the default list of services
+        ServiceLocator rootLocator = ServiceLocator.newRoot(ServiceConfig.defaultServiceConfig());
+        ServiceLocator.setRootInstance(rootLocator);
+
         // This must be called after init to get a copy of the
         // original ACRA.log instance so that we can toggle the logger on
         // and off.
@@ -139,7 +145,9 @@ public class MainApp extends Application
             oldPrefs.renameTo(new File(dir, ClientPrefs.getPrefsFileNameForUpgrade()));
         }
 
-        Prefs prefs = ClientPrefs.createGlobalInstance(this);
+        // Doing this onCreate ensures that a ClientPrefs is instantiated for the whole app.
+        // Don't remove this.
+        ClientPrefs prefs = ClientPrefs.getInstance(this);
         prefs.setMozApiKey(BuildConfig.MOZILLA_API_KEY);
         String userAgent = System.getProperty("http.agent") + " " +
                 AppGlobals.appName + "/" + AppGlobals.appVersionName;
@@ -219,8 +227,7 @@ public class MainApp extends Application
             return;
         }
         NotificationUtil nm = new NotificationUtil(this.getApplicationContext());
-        Notification notification = nm.buildNotification(getText(R.string.service_name).toString(),
-                getText(R.string.service_scanning).toString(), getString(R.string.stop_scanning).toString());
+        Notification notification = nm.buildNotification(getString(R.string.stop_scanning));
         mStumblerService.startForeground(NotificationUtil.NOTIFICATION_ID, notification);
         mStumblerService.startScanning();
         if (mMainActivity.get() != null) {
@@ -244,9 +251,9 @@ public class MainApp extends Application
 
         AsyncUploader uploader = new AsyncUploader();
         AsyncUploadParam param = new AsyncUploadParam(
-                ClientPrefs.getInstance().getUseWifiOnly(),
-                Prefs.getInstance().getNickname(),
-                Prefs.getInstance().getEmail());
+                ClientPrefs.getInstance(this).getUseWifiOnly(),
+                Prefs.getInstance(this).getNickname(),
+                Prefs.getInstance(this).getEmail());
 
         uploader.execute(param);
 
@@ -415,11 +422,7 @@ public class MainApp extends Application
         AppGlobals.guiLogInfo("Is motionless: " + mIsScanningPausedDueToNoMotion);
 
         NotificationUtil util = new NotificationUtil(this.getApplicationContext());
-        if (mIsScanningPausedDueToNoMotion) {
-            util.updateSubtitle(getString(R.string.map_scanning_paused_no_motion));
-        } else {
-            util.updateSubtitle(getString(R.string.service_scanning));
-        }
+        util.setPaused(mIsScanningPausedDueToNoMotion);
 
         if (mMainActivity.get() != null) {
             mMainActivity.get().isPausedDueToNoMotion(mIsScanningPausedDueToNoMotion);

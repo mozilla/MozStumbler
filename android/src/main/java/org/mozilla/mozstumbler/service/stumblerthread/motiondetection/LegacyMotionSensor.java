@@ -32,7 +32,6 @@ public class LegacyMotionSensor {
     // I'm assuming 30 iterations is good enough to get convergence.
     private static int iterations_for_convergence = 30;
     private final float alpha = (float) 0.8;
-    private static final float converged_accel_epsilon = (float) 0.3;
 
     public LegacyMotionSensor(Context ctx)
     {
@@ -61,6 +60,11 @@ public class LegacyMotionSensor {
                     gravity[2] * gravity[2]);
 
             if (iterations_for_convergence > 0) {
+                // We don't use an epsilon to detect convergence because imperically
+                // devices don't seem to comply to the 0.05m/s^2 error that Google
+                // specifies.  The Motorola XT1032 seems to get ~10.10 m/s^s for gravity
+                // when it's tilted to stand on it's edge.  When laid flat,
+                // it gets pretty close with 9.89m/s^2 which is still far from 9.81m/s^2
                 iterations_for_convergence--;
                 return;
             }
@@ -75,7 +79,6 @@ public class LegacyMotionSensor {
         float z = linear_acceleration[2];
 
         final float accel = FloatMath.sqrt(x * x + y * y + z * z);
-        Log.d(LOG_TAG, "Got acceleration of " + accel);
 
         // I found this to be a very low threshold, slight movements of the device are greater than 1.0.
         // False positives are fine, what we don't want is devices that can't be woken up easily.

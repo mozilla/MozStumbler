@@ -7,7 +7,6 @@
     <string name="stop_scanning">หยุดการแสกน</string>
     <string name="view_leaderboard">ดูตารางคะแนน</string>
     <string name="service_name">Mozilla Stumbler</string>
-    <string name="service_scanning">กำลังแสกนหาเครือข่าย Wi-Fi และมือถือ</string>
     <string name="enter_nickname">ใส่ชื่อเล่น (ไม่จำเป็น)</string>
     <string name="enter_nickname_title">ชื่อเล่น: %1$s</string>
     <string name="enter_nickname_longtext">ชื่อเล่นของคุณจะถูกแสดงในตารางคะแนน</string>

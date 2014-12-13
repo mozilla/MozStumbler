@@ -20,6 +20,7 @@ import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.client.ClientPrefs;
 import org.mozilla.mozstumbler.client.DateTimeUtils;
 import org.mozilla.mozstumbler.client.subactivities.PreferencesScreen;
+import org.mozilla.mozstumbler.client.util.NotificationUtil;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.Prefs;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageContract;
@@ -76,7 +77,7 @@ public class MetricsView {
         mOnMapShowMLS.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                ClientPrefs.getInstance().setOnMapShowMLS(mOnMapShowMLS.isChecked());
+                ClientPrefs.getInstance(mView.getContext()).setOnMapShowMLS(mOnMapShowMLS.isChecked());
                 if (mMapLayerToggleListener.get() != null) {
                     mMapLayerToggleListener.get().setShowMLS(mOnMapShowMLS.isChecked());
                 }
@@ -103,8 +104,8 @@ public class MetricsView {
                 // and have it handled by MainApp
                 AsyncUploader uploader = new AsyncUploader();
                 AsyncUploadParam param = new AsyncUploadParam(false /* useWifiOnly */,
-                    Prefs.getInstance().getNickname(),
-                    Prefs.getInstance().getEmail());
+                    Prefs.getInstance(mView.getContext()).getNickname(),
+                    Prefs.getInstance(mView.getContext()).getEmail());
                 uploader.execute(param);
 
                 setUploadButtonToSyncing(true);
@@ -128,7 +129,7 @@ public class MetricsView {
 
     public void setMapLayerToggleListener(IMapLayerToggleListener listener) {
         mMapLayerToggleListener = new WeakReference<IMapLayerToggleListener>(listener);
-        mOnMapShowMLS.setChecked(ClientPrefs.getInstance().getOnMapShowMLS());
+        mOnMapShowMLS.setChecked(ClientPrefs.getInstance(mView.getContext()).getOnMapShowMLS());
     }
 
 
@@ -179,7 +180,7 @@ public class MetricsView {
     }
 
     public void onOpened() {
-        if (ClientPrefs.getInstance().isOptionEnabledToShowMLSOnMap()) {
+        if (ClientPrefs.getInstance(mView.getContext()).isOptionEnabledToShowMLSOnMap()) {
             mOnMapShowMLS.setVisibility(View.VISIBLE);
         } else {
             mOnMapShowMLS.setVisibility(View.GONE);
@@ -219,7 +220,7 @@ public class MetricsView {
 
     private void updateLastUploadedLabel() {
         Context context = mView.getContext();
-        String value = (String) context.getText(R.string.metrics_observations_last_upload_time_never);
+        String value = context.getString(R.string.metrics_observations_last_upload_time_never);
         if (mLastUploadTime > 0) {
             value = DateTimeUtils.prettyPrintTimeDiff(mLastUploadTime, context.getResources());
         }
@@ -259,9 +260,12 @@ public class MetricsView {
         updateUploadButtonEnabled();
     }
 
-    public void setObservationCount(int observations, int cells, int wifis) {
+    public void setObservationCount(int observations, int cells, int wifis, boolean isActive) {
         sThisSessionObservationsCount = observations;
         sThisSessionUniqueCellCount = cells;
         sThisSessionUniqueWifiCount = wifis;
+
+        NotificationUtil util = new NotificationUtil(mView.getContext().getApplicationContext());
+        util.updateMetrics(observations, cells, wifis, mLastUploadTime, isActive);
     }
 }

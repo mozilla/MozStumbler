@@ -56,7 +56,7 @@ public class ReporterTest {
         // The Reporter class needs a reference to a context
         rp.startup(ctx);
 
-        Intent gpsUpdated = getLocationIntent();
+        Intent gpsUpdated = getLocationIntent(0, 0);
         rp.onReceive(ctx, gpsUpdated);
         assertTrue(null != rp.getGPSLocation());
     }
@@ -188,10 +188,17 @@ public class ReporterTest {
         return scan;
     }
 
-    private Intent getLocationIntent() {
+    public static Intent getLocationIntent(double lat, double lon) {
+
+        if (lat == 0) {
+            lat = 20;
+        }
+        if (lon == 0) {
+            lon = 30;
+        }
         Location location = new Location("mock");
-        location.setLongitude(20);
-        location.setLatitude(30);
+        location.setLongitude(lat);
+        location.setLatitude(lon);
         Intent i = new Intent(GPSScanner.ACTION_GPS_UPDATED);
         i.putExtra(Intent.EXTRA_SUBJECT, GPSScanner.SUBJECT_NEW_LOCATION);
         i.putExtra(GPSScanner.NEW_LOCATION_ARG_LOCATION, location);

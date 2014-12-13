@@ -8,7 +8,6 @@
     <string name="stop_scanning">停止扫描</string>
     <string name="view_leaderboard">查看积分榜</string>
     <string name="service_name">Mozilla Stumbler</string>
-    <string name="service_scanning">扫描 Wi-Fi 和移动基站</string>
     <string name="enter_nickname">输入昵称 (可选)</string>
     <string name="enter_nickname_title">昵称: %1$s</string>
     <string name="enter_nickname_longtext">你的昵称将被显示在积分榜中</string>

@@ -242,8 +242,9 @@ public class MainApp extends Application
 
         mIsScanningPausedDueToNoMotion = false;
 
-        mStumblerService.stopForeground(true);
         mStumblerService.stopScanning();
+        mStumblerService.stopForeground(true);
+
         if (mMainActivity.get() != null) {
             mMainActivity.get().updateUiOnMainThread(false);
             mMainActivity.get().stop();

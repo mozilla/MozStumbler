@@ -100,6 +100,7 @@
     <string name="cell_plus_wifi_observation">Reportes de Wi-Fi + celdas móviles</string>
     <string name="cell_only_observation">Reportes de sólo celdas móviles</string>
     <string name="wifi_only_observation">Reportes de sólo Wi-Fi</string>
+    <string name="mls_location_observation">Ubicaciones de MLS</string>
     <string name="low_resolution_map">Mapa de bajos detalles</string>
     <string name="map_turned_off">Pantalla del mapa apagada</string>
     <string name="map_tile_resolution_options_label">Detalles del mapa:</string>

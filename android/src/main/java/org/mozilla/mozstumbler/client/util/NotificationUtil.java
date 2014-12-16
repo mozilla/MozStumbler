@@ -61,6 +61,7 @@ public class NotificationUtil {
                 .setContentIntent(contentIntent)
                 .setOngoing(true)
                 .setPriority(NotificationCompat.PRIORITY_LOW)
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setStyle(new NotificationCompat.BigTextStyle()
                         .bigText(metrics + "\n" + uploadLine))
                 .addAction(R.drawable.ic_action_cancel, sStopTitle, turnOffIntent)

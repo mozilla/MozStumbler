@@ -48,7 +48,6 @@
         <item quantity="one">one day ago</item>
         <item quantity="other">%d days ago</item>
     </plurals>
-    <!-- metrics_notification_text: %1$s refers to notification_scanning_short / notification_paused_short -->
     <string name="metrics_notification_text">Reports:%1$d Cells:%2$d Wi-Fis:%3$d</string>
     <string name="metrics_notification_extraline">Last upload: %1$s</string>
     <string name="metrics_observations_title">Reports:</string>
@@ -105,7 +104,7 @@
     <string name="cell_plus_wifi_observation">Wi-Fi + cell report</string>
     <string name="cell_only_observation">Cell only report</string>
     <string name="wifi_only_observation">Wi-Fi only report</string>
-    <string name="mls_location_observation">MLS locations</string>
+    <string name="mls_location_observation">MLS location</string>
     <string name="low_resolution_map">Low detail map</string>
     <string name="map_turned_off">Map display off</string>
     <string name="map_tile_resolution_options_label">Map detail:</string>

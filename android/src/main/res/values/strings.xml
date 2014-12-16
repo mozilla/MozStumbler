@@ -105,6 +105,7 @@
     <string name="cell_plus_wifi_observation">Wi-Fi + cell report</string>
     <string name="cell_only_observation">Cell only report</string>
     <string name="wifi_only_observation">Wi-Fi only report</string>
+    <string name="mls_location_observation">MLS locations</string>
     <string name="low_resolution_map">Low detail map</string>
     <string name="map_turned_off">Map display off</string>
     <string name="map_tile_resolution_options_label">Map detail:</string>

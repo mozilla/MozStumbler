@@ -52,11 +52,11 @@ public class MotionSensor {
         }
 
         mStopSignificantMotionSensor = false;
-        if (Build.VERSION.SDK_INT >= 18) {
-           mSignificantMotionSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_SIGNIFICANT_MOTION);
-           if (mSignificantMotionSensor != null) {
-               AppGlobals.guiLogInfo("Device has significant motion sensor.");
-           }
+        //if (Build.VERSION.SDK_INT >= 18) -> this doesn't seem to be working in Indian ROMs
+        AppGlobals.guiLogInfo("Build version: " + Build.VERSION.SDK_INT);
+        mSignificantMotionSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_SIGNIFICANT_MOTION);
+        if (mSignificantMotionSensor != null) {
+           AppGlobals.guiLogInfo("Device has significant motion sensor.");
         }
 
         // If no TYPE_SIGNIFICANT_MOTION is available, use alternate means to sense motion

@@ -8,6 +8,8 @@
     <string name="stop_scanning">Zatrzymaj skanowanie</string>
     <string name="view_leaderboard">Wyświetl ranking</string>
     <string name="service_name">Mozilla Stumbler</string>
+    <string name="notification_scanning">Mozilla Stumbler skanuje</string>
+    <string name="notification_paused">Mozilla Stumbler jest wstrzymany</string>
     <string name="enter_nickname">Wpisz pseudonim (opcjonalnie)</string>
     <string name="enter_nickname_title">Pseudonim: %1$s</string>
     <string name="enter_nickname_longtext">Twój pseudonim pojawi się w rankingu.</string>
@@ -50,6 +52,8 @@
         <item quantity="few">%d dni temu</item>
         <item quantity="other">%d dni temu</item>
     </plurals>
+    <string name="metrics_notification_text">Obserwacje: %1$d Sieci komórkowe: %2$d Sieci Wi-Fi: %3$d</string>
+    <string name="metrics_notification_extraline">Ostatnio wysłano: %1$s</string>
     <string name="metrics_observations_title">Obserwacje:</string>
     <string name="metrics_observations_wifis_title">Sieci Wi-Fi:</string>
     <string name="metrics_observations_cell_towers_title">Sieci komórkowe:</string>
@@ -104,6 +108,7 @@
     <string name="cell_plus_wifi_observation">Obserwacje sieci Wi-Fi i komórkowych</string>
     <string name="cell_only_observation">Obserwacje tylko sieci komórkowych</string>
     <string name="wifi_only_observation">Obserwacje tylko sieci Wi-Fi</string>
+    <string name="mls_location_observation">Położenie MLS</string>
     <string name="low_resolution_map">Mapa o niskiej szczegółowości</string>
     <string name="map_turned_off">Wyłączenie wyświetlania mapy</string>
     <string name="map_tile_resolution_options_label">Szczegółowość mapy:</string>

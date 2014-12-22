@@ -4,6 +4,7 @@
 package org.mozilla.mozstumbler.client.subactivities;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -15,15 +16,22 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.client.ClientPrefs;
 import org.mozilla.mozstumbler.client.MainApp;
 import org.mozilla.mozstumbler.client.serialize.KMLFragment;
 import org.mozilla.mozstumbler.service.AppGlobals;
+import org.mozilla.mozstumbler.service.Prefs;
+
+import static org.mozilla.mozstumbler.R.string;
 import org.mozilla.mozstumbler.service.stumblerthread.motiondetection.LocationChangeSensor;
 import org.mozilla.mozstumbler.service.stumblerthread.motiondetection.MotionSensor;
 import org.mozilla.mozstumbler.service.utils.BatteryCheckReceiver;
@@ -92,13 +100,24 @@ public class DeveloperActivity extends ActionBarActivity {
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             mRootView = inflater.inflate(R.layout.fragment_developer_options, container, false);
 
-            final ClientPrefs prefs = ClientPrefs.getInstance(mRootView.getContext());
+            // Setup for any logical group of config options should self contained in their
+            // own methods.  This is mostly to help with merges in the event that multiple
+            // source branches update the developer options.
+            setupSimulationPreference();
+            setupLowBatterySpinner();
+            setupLocationChangeSpinners();
+
+            return mRootView;
+        }
+
+        private void setupLowBatterySpinner() {
+            final ClientPrefs cPrefs = ClientPrefs.getInstance(mRootView.getContext());
             final Spinner batterySpinner = (Spinner) mRootView.findViewById(R.id.spinnerBatteryPercent);
             final SpinnerAdapter spinnerAdapter = batterySpinner.getAdapter();
             assert(spinnerAdapter instanceof ArrayAdapter);
             @SuppressWarnings("unchecked")
             final ArrayAdapter<String> adapter = (ArrayAdapter<String>)spinnerAdapter;
-            final int percent = prefs.getMinBatteryPercent();
+            final int percent = cPrefs.getMinBatteryPercent();
             final int spinnerPosition = adapter.getPosition(percent + "%");
             batterySpinner.setSelection(spinnerPosition);
 
@@ -107,19 +126,59 @@ public class DeveloperActivity extends ActionBarActivity {
                 public void onItemSelected(AdapterView<?> parent, View arg1, int position, long id) {
                     String item = parent.getItemAtPosition(position).toString().replace("%", "");
                     int percent = Integer.valueOf(item);
-                    prefs.setMinBatteryPercent(percent);
+                    cPrefs.setMinBatteryPercent(percent);
                 }
 
                 @Override
                 public void onNothingSelected(AdapterView<?> arg0) {}
             });
+        }
 
+        private void setupSimulationPreference() {
+            boolean simulationEnabled = Prefs.getInstance(mRootView.getContext()).isSimulateStumble();
+            final CheckBox simCheckBox = (CheckBox) mRootView.findViewById(R.id.toggleSimulation);
+            final Button simResetBtn = (Button) mRootView.findViewById(R.id.buttonClearSimulationDefault);
+
+            if (!AppGlobals.isDebug) {
+                simCheckBox.setEnabled(false);
+                simResetBtn.setEnabled(false);
+                return;
+            }
+
+            simCheckBox.setChecked(simulationEnabled);
+            simCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    onToggleSimulation(isChecked);
+                }
+            });
+
+            simResetBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(android.view.View view) {
+                    ClientPrefs cPrefs = ClientPrefs.getInstance(mRootView.getContext());
+                    cPrefs.clearSimulationStart();
+                    Context btnCtx = simResetBtn.getContext();
+                    Toast.makeText(btnCtx,
+                            btnCtx.getText(R.string.reset_simulation_start),
+                            Toast.LENGTH_SHORT).show();
+                }
+            });
+
+        }
+
+        private void onToggleSimulation(boolean isChecked) {
+            Prefs.getInstance(mRootView.getContext()).setSimulateStumble(isChecked);
+        }
+
+        private void setupLocationChangeSpinners() {
+            final ClientPrefs cPrefs = ClientPrefs.getInstance(mRootView.getContext());
             final String[] distanceArray = {"30 m", "50 m", "75 m", "100 m", "125 m", "150 m", "175 m", "200 m"};
             final ArrayAdapter<String> distanceAdapter =
-                    new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_spinner_item, distanceArray);
+                new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_spinner_item, distanceArray);
             final Spinner distanceSpinner = (Spinner) mRootView.findViewById(R.id.spinnerMotionDetectionDistanceMeters);
             distanceSpinner.setAdapter(distanceAdapter);
-            final int dist = prefs.getMotionChangeDistanceMeters();
+            final int dist = cPrefs.getMotionChangeDistanceMeters();
             distanceSpinner.setSelection(findIndexOf(dist, distanceArray));
 
             distanceSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -128,16 +187,16 @@ public class DeveloperActivity extends ActionBarActivity {
                     changeOfMotionDetectionDistanceOrTime(parent, position, IsDistanceOrTime.DISTANCE);
                 }
 
-                @Override
+            @Override
                 public void onNothingSelected(AdapterView<?> arg0) {}
             });
 
             final String[] timeArray = {"5 s", "30 s", "60 s", "90 s", "120 s", "180 s", "210 s", "240 s", "270 s", "300 s"};
             final ArrayAdapter<String> timeAdapter =
-                    new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_spinner_item, timeArray);
+                new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_spinner_item, timeArray);
             final Spinner timeSpinner = (Spinner) mRootView.findViewById(R.id.spinnerMotionDetectionTimeSeconds);
             timeSpinner.setAdapter(timeAdapter);
-            final int time = prefs.getMotionChangeTimeWindowSeconds();
+            final int time = cPrefs.getMotionChangeTimeWindowSeconds();
             timeSpinner.setSelection(findIndexOf(time, timeArray));
 
             timeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -146,11 +205,9 @@ public class DeveloperActivity extends ActionBarActivity {
                     changeOfMotionDetectionDistanceOrTime(parent, position, IsDistanceOrTime.TIME);
                 }
 
-                @Override
+            @Override
                 public void onNothingSelected(AdapterView<?> arg0) {}
             });
-
-            return mRootView;
         }
 
         private enum IsDistanceOrTime { DISTANCE, TIME }

@@ -33,9 +33,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-public class CellScannerImplementation implements CellScanner.CellScannerImpl {
+public class SimpleCellScannerImplementation implements ISimpleCellScanner {
 
-    protected static String LOG_TAG = AppGlobals.makeLogTag(CellScannerImplementation.class.getSimpleName());
+    protected static String LOG_TAG = AppGlobals.makeLogTag(SimpleCellScannerImplementation.class.getSimpleName());
     protected GetAllCellInfoScannerImpl mGetAllInfoCellScanner;
     protected TelephonyManager mTelephonyManager;
     protected boolean mIsStarted;
@@ -58,8 +58,8 @@ public class CellScannerImplementation implements CellScanner.CellScannerImpl {
         List<CellInfo> getAllCellInfo(TelephonyManager tm);
     }
 
-    public CellScannerImplementation(Context context) {
-        mContext = context;
+    public SimpleCellScannerImplementation(Context appContext) {
+        mContext = appContext;
     }
 
     public boolean isSupportedOnThisDevice() {
@@ -92,6 +92,17 @@ public class CellScannerImplementation implements CellScanner.CellScannerImpl {
             }
 
             mTelephonyManager = (TelephonyManager) mContext.getSystemService(Context.TELEPHONY_SERVICE);
+
+            if (mTelephonyManager == null) {
+                // This is almost certainly a tablet or some other wifi only device.
+                return;
+            }
+            mPhoneType = mTelephonyManager.getPhoneType();
+            if (mPhoneType == TelephonyManager.PHONE_TYPE_NONE ||
+                mPhoneType == TelephonyManager.PHONE_TYPE_SIP) {
+                // This is almost certainly a tablet or some other wifi only device.
+                return;
+            }
         }
 
         mPhoneStateListener = new PhoneStateListener() {
@@ -104,6 +115,7 @@ public class CellScannerImplementation implements CellScanner.CellScannerImpl {
                 }
             }
         };
+
         mTelephonyManager.listen(mPhoneStateListener, PhoneStateListener.LISTEN_SIGNAL_STRENGTHS);
     }
 

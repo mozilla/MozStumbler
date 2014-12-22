@@ -4,10 +4,8 @@
 
 package org.mozilla.mozstumbler.service.stumblerthread.scanners;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.net.wifi.WifiManager.WifiLock;
@@ -27,7 +25,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class WifiScanner extends BroadcastReceiver {
+public class WifiScanner  {
     public static final String ACTION_BASE = AppGlobals.ACTION_NAMESPACE + ".WifiScanner.";
     public static final String ACTION_WIFIS_SCANNED = ACTION_BASE + "WIFIS_SCANNED";
     public static final String ACTION_WIFIS_SCANNED_ARG_RESULTS = "scan_results";
@@ -41,33 +39,25 @@ public class WifiScanner extends BroadcastReceiver {
     private static final long WIFI_MIN_UPDATE_TIME = 5000; // milliseconds
 
     private boolean mStarted;
-    private final Context mContext;
+    private final Context mAppContext;
     private WifiLock mWifiLock;
     private Timer mWifiScanTimer;
     private AtomicInteger mVisibleAPs = new AtomicInteger();
 
-    public WifiScanner(Context c) {
-        mContext = c;
+    private final WifiManagerProxy wifiManagerProxy;
+
+    public WifiScanner(Context appContext) {
+        mAppContext = appContext;
+        wifiManagerProxy = new WifiManagerProxy(mAppContext);
     }
 
     private boolean isScanEnabled() {
-        WifiManager manager = getWifiManager();
-        boolean scanEnabled = manager.isWifiEnabled();
-        if (Build.VERSION.SDK_INT >= 18) {
-            scanEnabled |= manager.isScanAlwaysAvailable();
-        }
-        return scanEnabled;
+        return wifiManagerProxy.isScanEnabled();
     }
 
     private List<ScanResult> getScanResults() {
-        WifiManager manager = getWifiManager();
-        if (manager == null) {
-            return null;
-        }
-
-        return manager.getScanResults();
+        return wifiManagerProxy.getScanResults();
     }
-
 
     public synchronized void start(final ActiveOrPassiveStumbling stumblingMode) {
         if (mStarted) {
@@ -79,15 +69,12 @@ public class WifiScanner extends BroadcastReceiver {
             activatePeriodicScan(stumblingMode);
         }
 
-        IntentFilter i = new IntentFilter();
-        i.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION);
-        i.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
-        mContext.registerReceiver(this, i);
+        wifiManagerProxy.registerReceiver(this);
     }
 
     public synchronized void stop() {
         if (mStarted) {
-            mContext.unregisterReceiver(this);
+            wifiManagerProxy.unregisterReceiver();
         }
         deactivatePeriodicScan();
         mStarted = false;
@@ -143,7 +130,7 @@ public class WifiScanner extends BroadcastReceiver {
         return STATUS_ACTIVE;
     }
 
-    private synchronized void activatePeriodicScan(final ActiveOrPassiveStumbling stumblingMode) {
+    synchronized void activatePeriodicScan(final ActiveOrPassiveStumbling stumblingMode) {
         if (mWifiScanTimer != null) {
             return;
         }
@@ -152,31 +139,31 @@ public class WifiScanner extends BroadcastReceiver {
             Log.d(LOG_TAG, "Activate Periodic Scan");
         }
 
-        mWifiLock = getWifiManager().createWifiLock(WifiManager.WIFI_MODE_SCAN_ONLY, "MozStumbler");
+        mWifiLock = wifiManagerProxy.createWifiLock();
         mWifiLock.acquire();
 
         // Ensure that we are constantly scanning for new access points.
         mWifiScanTimer = new Timer();
         mWifiScanTimer.schedule(new TimerTask() {
             int mPassiveScanCount;
+
             @Override
             public void run() {
                 if (stumblingMode == ActiveOrPassiveStumbling.PASSIVE_STUMBLING &&
-                    mPassiveScanCount++ > AppGlobals.PASSIVE_MODE_MAX_SCANS_PER_GPS)
-                {
+                        mPassiveScanCount++ > AppGlobals.PASSIVE_MODE_MAX_SCANS_PER_GPS) {
                     mPassiveScanCount = 0;
                     stop(); // set mWifiScanTimer to null
                     return;
                 }
-                if (AppGlobals.isDebug) {
+                 if (AppGlobals.isDebug) {
                     Log.d(LOG_TAG, "WiFi Scanning Timer fired");
                 }
-                getWifiManager().startScan();
+                wifiManagerProxy.runWifiScan();
             }
         }, 0, WIFI_MIN_UPDATE_TIME);
     }
 
-    private synchronized void deactivatePeriodicScan() {
+    synchronized void deactivatePeriodicScan() {
         if (mWifiScanTimer == null) {
             return;
         }
@@ -206,10 +193,6 @@ public class WifiScanner extends BroadcastReceiver {
         return true;
     }
 
-    private WifiManager getWifiManager() {
-        return (WifiManager) mContext.getSystemService(Context.WIFI_SERVICE);
-    }
-
     private void reportScanResults(ArrayList<ScanResult> scanResults) {
         if (scanResults.isEmpty()) {
             return;
@@ -218,6 +201,34 @@ public class WifiScanner extends BroadcastReceiver {
         Intent i = new Intent(ACTION_WIFIS_SCANNED);
         i.putParcelableArrayListExtra(ACTION_WIFIS_SCANNED_ARG_RESULTS, scanResults);
         i.putExtra(ACTION_WIFIS_SCANNED_ARG_TIME, System.currentTimeMillis());
-        LocalBroadcastManager.getInstance(mContext).sendBroadcastSync(i);
+        LocalBroadcastManager.getInstance(mAppContext).sendBroadcastSync(i);
     }
+
+    public void onProxyReceive(Context c, Intent intent) {
+        String action = intent.getAction();
+
+        if (WifiManager.WIFI_STATE_CHANGED_ACTION.equals(action)) {
+            if (isScanEnabled()) {
+                activatePeriodicScan(ActiveOrPassiveStumbling.ACTIVE_STUMBLING);
+            } else {
+                deactivatePeriodicScan();
+            }
+        } else if (WifiManager.SCAN_RESULTS_AVAILABLE_ACTION.equals(action)) {
+            final List<ScanResult> scanResultList =  wifiManagerProxy.getScanResults();
+            if (scanResultList == null) {
+                return;
+            }
+
+            final ArrayList<ScanResult> scanResults = new ArrayList<ScanResult>();
+            for (ScanResult scanResult : scanResultList) {
+                scanResult.BSSID = BSSIDBlockList.canonicalizeBSSID(scanResult.BSSID);
+                if (shouldLog(scanResult)) {
+                    scanResults.add(scanResult);
+                }
+            }
+            mVisibleAPs.set(scanResults.size());
+            reportScanResults(scanResults);
+        }
+    }
+
 }

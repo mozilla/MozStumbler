@@ -14,6 +14,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
@@ -22,6 +23,7 @@ import android.os.IBinder;
 import android.os.StrictMode;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import android.widget.Toast;
 
 import org.acra.ACRA;
 import org.acra.annotation.ReportsCrashes;
@@ -148,10 +150,15 @@ public class MainApp extends Application
         // Doing this onCreate ensures that a ClientPrefs is instantiated for the whole app.
         // Don't remove this.
         ClientPrefs prefs = ClientPrefs.getInstance(this);
+
         prefs.setMozApiKey(BuildConfig.MOZILLA_API_KEY);
         String userAgent = System.getProperty("http.agent") + " " +
                 AppGlobals.appName + "/" + AppGlobals.appVersionName;
         prefs.setUserAgent(userAgent);
+
+        if (AppGlobals.isDebug) {
+            checkSimulationPermission();
+        }
 
         NetworkInfo.createGlobalInstance(this);
         LogActivity.LogMessageReceiver.createGlobalInstance(this);
@@ -206,6 +213,20 @@ public class MainApp extends Application
         LocalBroadcastManager.getInstance(this).
             registerReceiver(mReceivePausedState, new IntentFilter(ScanManager.ACTION_SCAN_PAUSED_USER_MOTIONLESS));
     }
+
+    private void checkSimulationPermission()
+    {
+        String permission = "android.permission.MOCK_LOCATION";
+        Context appContext = this.getApplicationContext();
+        int res = appContext.checkCallingOrSelfPermission(permission);
+        if (res != PackageManager.PERMISSION_GRANTED) {
+            if (ClientPrefs.getInstance(appContext).isSimulateStumble()) {
+                ClientPrefs.getInstance(appContext).setSimulateStumble(false);
+            }
+            Log.i(LOG_TAG, "Simulation disabled as developer option is not enabled.");
+        }
+    }
+
 
     @Override
     public void onTerminate() {

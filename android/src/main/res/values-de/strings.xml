@@ -8,7 +8,8 @@
     <string name="stop_scanning">Scanvorgang stoppen</string>
     <string name="view_leaderboard">Bestenliste ansehen</string>
     <string name="service_name">Mozilla Stumbler</string>
-    <string name="service_scanning">Scanne WLAN und Mobilfunknetze</string>
+    <string name="notification_scanning">Mozilla Stumbler scannt</string>
+    <string name="notification_paused">Mozilla Stumbler ist pausiert</string>
     <string name="enter_nickname">Namen eingeben (optional)</string>
     <string name="enter_nickname_title">Name: %1$s</string>
     <string name="enter_nickname_longtext">Dieser Name wird in der Bestenliste erscheinen.</string>
@@ -43,6 +44,8 @@
         <item quantity="one">vor einem Tag</item>
         <item quantity="other">vor %d Tagen</item>
     </plurals>
+    <string name="metrics_notification_text">Berichte:%1$d Funkzellen:%2$d WLANs:%3$d</string>
+    <string name="metrics_notification_extraline">Letzter Upload: %1$s</string>
     <string name="metrics_observations_title">Berichte:</string>
     <string name="metrics_observations_wifis_title">WLAN-Netzwerke:</string>
     <string name="metrics_observations_cell_towers_title">Funkzellen:</string>
@@ -96,6 +99,7 @@
     <string name="cell_plus_wifi_observation">WLAN + Funkzellen Bericht</string>
     <string name="cell_only_observation">Nur Funkzellen Bericht</string>
     <string name="wifi_only_observation">Nur WLAN Bericht</string>
+    <string name="mls_location_observation">MLS Standort</string>
     <string name="low_resolution_map">Karte mit geringer Auflösung</string>
     <string name="map_turned_off">Karte deaktiviert</string>
     <string name="map_tile_resolution_options_label">Kartenauflösung:</string>

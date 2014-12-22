@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.Spinner;
@@ -31,6 +32,8 @@ import org.mozilla.mozstumbler.client.serialize.KMLFragment;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.Prefs;
 import org.mozilla.mozstumbler.service.core.logging.Log;
+
+import static org.mozilla.mozstumbler.R.string;
 import org.mozilla.mozstumbler.service.stumblerthread.motiondetection.LocationChangeSensor;
 import org.mozilla.mozstumbler.service.stumblerthread.motiondetection.MotionSensor;
 import org.mozilla.mozstumbler.service.utils.BatteryCheckReceiver;
@@ -77,7 +80,7 @@ public class DeveloperActivity extends ActionBarActivity {
                             MotionSensor.debugMotionDetected();
                             break;
                         case 3:
-                            int pct = ClientPrefs.getInstance().getMinBatteryPercent();
+                            int pct = ClientPrefs.getInstance(DeveloperActivity.this).getMinBatteryPercent();
                             BatteryCheckReceiver.debugSendBattery(pct - 1);
                             break;
                         case 4:
@@ -104,13 +107,19 @@ public class DeveloperActivity extends ActionBarActivity {
         {
             mRootView = inflater.inflate(R.layout.fragment_developer_options, container, false);
 
+            // Setup for any logical group of config options should self contained in their
+            // own methods.  This is mostly to help with merges in the event that multiple
+            // source branches update the developer options.
             setupSaveJSONLogs();
-            setupBatterySaver();
+            setupSimulationPreference();
+            setupLowBatterySpinner();
+            setupLocationChangeSpinners();
+
             return mRootView;
         }
 
         private void setupSaveJSONLogs() {
-            boolean saveStumbleLogs = Prefs.getInstance().isSaveStumbleLogs();
+            boolean saveStumbleLogs = Prefs.getInstanceWithoutContext().isSaveStumbleLogs();
             CheckBox button = (CheckBox) mRootView.findViewById(R.id.toggleSaveStumbleLogs);
             button.setChecked(saveStumbleLogs);
             button.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -121,13 +130,14 @@ public class DeveloperActivity extends ActionBarActivity {
             });
         }
 
-        private void setupBatterySaver() {
+        private void setupLowBatterySpinner() {
+            final ClientPrefs cPrefs = ClientPrefs.getInstance(mRootView.getContext());
             final Spinner batterySpinner = (Spinner) mRootView.findViewById(R.id.spinnerBatteryPercent);
             final SpinnerAdapter spinnerAdapter = batterySpinner.getAdapter();
             assert(spinnerAdapter instanceof ArrayAdapter);
             @SuppressWarnings("unchecked")
-                final ArrayAdapter<String> adapter = (ArrayAdapter<String>)spinnerAdapter;
-            final int percent = ClientPrefs.getInstance().getMinBatteryPercent();
+            final ArrayAdapter<String> adapter = (ArrayAdapter<String>)spinnerAdapter;
+            final int percent = cPrefs.getMinBatteryPercent();
             final int spinnerPosition = adapter.getPosition(percent + "%");
             batterySpinner.setSelection(spinnerPosition);
 
@@ -136,22 +146,61 @@ public class DeveloperActivity extends ActionBarActivity {
                 public void onItemSelected(AdapterView<?> parent, View arg1, int position, long id) {
                     String item = parent.getItemAtPosition(position).toString().replace("%", "");
                     int percent = Integer.valueOf(item);
-                    ClientPrefs prefs = ClientPrefs.createGlobalInstance(getActivity().getApplicationContext());
-                    prefs.setMinBatteryPercent(percent);
+                    cPrefs.setMinBatteryPercent(percent);
                 }
 
                 @Override
                 public void onNothingSelected(AdapterView<?> arg0) {
                 }
             });
+        }
+
+        private void onToggleSimulation(boolean isChecked) {
+            Prefs.getInstance(mRootView.getContext()).setSimulateStumble(isChecked);
+        }
+
+        private void setupSimulationPreference() {
+            boolean simulationEnabled = Prefs.getInstance(mRootView.getContext()).isSimulateStumble();
+            final CheckBox simCheckBox = (CheckBox) mRootView.findViewById(R.id.toggleSimulation);
+            final Button simResetBtn = (Button) mRootView.findViewById(R.id.buttonClearSimulationDefault);
+
+            if (!AppGlobals.isDebug) {
+                simCheckBox.setEnabled(false);
+                simResetBtn.setEnabled(false);
+                return;
+            }
+
+            simCheckBox.setChecked(simulationEnabled);
+            simCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    onToggleSimulation(isChecked);
+                }
+            });
+
+            simResetBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(android.view.View view) {
+                    ClientPrefs cPrefs = ClientPrefs.getInstance(mRootView.getContext());
+                    cPrefs.clearSimulationStart();
+                    Context btnCtx = simResetBtn.getContext();
+                    Toast.makeText(btnCtx,
+                            btnCtx.getText(R.string.reset_simulation_start),
+                            Toast.LENGTH_SHORT).show();
+                }
+            });
+
+        }
 
 
+        private void setupLocationChangeSpinners() {
+            final ClientPrefs cPrefs = ClientPrefs.getInstance(mRootView.getContext());
             final String[] distanceArray = {"30 m", "50 m", "75 m", "100 m", "125 m", "150 m", "175 m", "200 m"};
             final ArrayAdapter<String> distanceAdapter =
                 new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_spinner_item, distanceArray);
             final Spinner distanceSpinner = (Spinner) mRootView.findViewById(R.id.spinnerMotionDetectionDistanceMeters);
             distanceSpinner.setAdapter(distanceAdapter);
-            final int dist = ClientPrefs.getInstance().getMotionChangeDistanceMeters();
+            final int dist = cPrefs.getMotionChangeDistanceMeters();
             distanceSpinner.setSelection(findIndexOf(dist, distanceArray));
 
             distanceSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -161,8 +210,7 @@ public class DeveloperActivity extends ActionBarActivity {
                 }
 
                 @Override
-                public void onNothingSelected(AdapterView<?> arg0) {
-                }
+                public void onNothingSelected(AdapterView<?> arg0) {}
             });
 
             final String[] timeArray = {"5 s", "30 s", "60 s", "90 s", "120 s", "180 s", "210 s", "240 s", "270 s", "300 s"};
@@ -170,7 +218,7 @@ public class DeveloperActivity extends ActionBarActivity {
                 new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_spinner_item, timeArray);
             final Spinner timeSpinner = (Spinner) mRootView.findViewById(R.id.spinnerMotionDetectionTimeSeconds);
             timeSpinner.setAdapter(timeAdapter);
-            final int time = ClientPrefs.getInstance().getMotionChangeTimeWindowSeconds();
+            final int time = cPrefs.getMotionChangeTimeWindowSeconds();
             timeSpinner.setSelection(findIndexOf(time, timeArray));
 
             timeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -203,7 +251,7 @@ public class DeveloperActivity extends ActionBarActivity {
                             Toast.LENGTH_LONG).show();
                 }
             }
-            Prefs.getInstance().setSaveStumbleLogs(isChecked);
+            Prefs.getInstanceWithoutContext().setSaveStumbleLogs(isChecked);
         }
 
         public boolean archiveDirCreatedAndMounted(Context ctx) {
@@ -228,7 +276,7 @@ public class DeveloperActivity extends ActionBarActivity {
         private void changeOfMotionDetectionDistanceOrTime(AdapterView<?> parent, int position, IsDistanceOrTime isDistanceOrTime) {
             String item = parent.getItemAtPosition(position).toString();
             int val = Integer.valueOf(item.substring(0, item.indexOf(" ")));
-            ClientPrefs prefs = ClientPrefs.createGlobalInstance(getActivity().getApplicationContext());
+            ClientPrefs prefs = ClientPrefs.getInstance(getActivity().getApplicationContext());
             if (isDistanceOrTime == IsDistanceOrTime.DISTANCE) {
                 prefs.setMotionChangeDistanceMeters(val);
             } else {

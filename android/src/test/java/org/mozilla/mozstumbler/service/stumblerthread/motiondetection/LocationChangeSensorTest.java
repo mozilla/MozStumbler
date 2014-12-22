@@ -15,8 +15,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.Prefs;
+import org.mozilla.mozstumbler.service.core.logging.Log;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.GPSScanner;
-import org.mozilla.mozstumbler.service.stumblerthread.scanners.ScanManager;
 import org.mozilla.mozstumbler.svclocator.ServiceLocator;
 import org.mozilla.mozstumbler.svclocator.services.ISystemClock;
 import org.mozilla.mozstumbler.svclocator.services.MockSystemClock;
@@ -27,7 +27,8 @@ import org.robolectric.annotation.Config;
 import java.util.LinkedList;
 
 import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertNotSame;
+import static junit.framework.Assert.assertSame;
 import static junit.framework.Assert.assertTrue;
 import static org.mozilla.mozstumbler.service.stumblerthread.ReporterTest.getLocationIntent;
 
@@ -48,6 +49,7 @@ public class LocationChangeSensorTest {
             receivedIntent.add(intent);
         }
     };
+
     private Context ctx;
     private MockSystemClock clock;
 
@@ -75,16 +77,20 @@ public class LocationChangeSensorTest {
         locationChangeSensor = new LocationChangeSensor(
                 ctx,
                 callbackReceiver);
+    }
 
-        // Set the minimum change distance to be very large
-        Prefs.getInstance().setMotionChangeDistanceMeters(10000);
-        //
-        // start the sensor
-        locationChangeSensor.start();
+    private Location setPosition(double x, double y) {
+        Intent intent = getLocationIntent(x, y);
+        Location loc = intent.getParcelableExtra(GPSScanner.NEW_LOCATION_ARG_LOCATION);
+        locationChangeSensor.onReceive(ctx, intent);
+        return loc;
     }
 
     @Test
     public void testStartMotionDetectionAfterFirstGPSLock() {
+        Prefs.getInstance(ctx).setMotionChangeDistanceMeters(10000);
+        locationChangeSensor.start();
+
         // Motion detection should start only after the first GPS lock is acquired.
 
         // Note that this is not the same as having 'start()' called.   This means that
@@ -93,15 +99,16 @@ public class LocationChangeSensorTest {
 
         locationChangeSensor.removeTimeoutCheck();
 
-        Intent intent = getLocationIntent(0, 0);
-        locationChangeSensor.onReceive(ctx, intent);
+        setPosition(0,0);
         assertTrue(locationChangeSensor.removeTimeoutCheck());
     }
 
     @Test
     public void testNotFirstGPSFix_MovedDistance() {
-        Intent intent;
+        Prefs.getInstance(ctx).setMotionChangeDistanceMeters(10000);
+        locationChangeSensor.start();
         Location expectedPosition;
+
         // The second GPS fix must have movement > mPrefMotionChangeDistanceMeters
         // for the saved location to be updated.
 
@@ -109,61 +116,108 @@ public class LocationChangeSensorTest {
         // but the person hasn't actually moved geographically.  Keep the scanners on
         // and schedule the next timeout check to see if the user just stops moving around.
 
-        intent = getLocationIntent(20, 30);
-        expectedPosition = intent.getParcelableExtra(GPSScanner.NEW_LOCATION_ARG_LOCATION);
-        locationChangeSensor.onReceive(ctx, intent);
+        expectedPosition = setPosition(20, 30);
         assertEquals(expectedPosition, locationChangeSensor.testing_getLastLocation());
 
-        intent = getLocationIntent(21, 30);
-        locationChangeSensor.onReceive(ctx, intent);
+        expectedPosition = setPosition(21, 30);
         // The new recorded position should be 21, 30
-        expectedPosition = intent.getParcelableExtra(GPSScanner.NEW_LOCATION_ARG_LOCATION);
         assertEquals(expectedPosition, locationChangeSensor.testing_getLastLocation());
 
-        intent = getLocationIntent(21.000001, 30);
-        locationChangeSensor.onReceive(ctx, intent);
+        setPosition(21.000001, 30);
         // The new recorded position should be unchanged, movement too small
         assertEquals(expectedPosition, locationChangeSensor.testing_getLastLocation());
     }
 
     @Test
-    public void testNotFirstGPSFix_LongWaitForSecondFix() {
-        // If the second fix that comes in arrives late (> time window for movement pref),
-        // then we assume the user isn't actually moving.
-        // Send off a ACTION_LOCATION_NOT_CHANGING intent.
+    public void testLongWaitForSecondFix() {
+        boolean isBigMovement = true;
+        doLongWaitForSecondFix_MovementDistance(!isBigMovement);
+        doLongWaitForSecondFix_MovementDistance(isBigMovement);
+    }
 
-        // The callback receiver passed in the constructor to the DetectUnchangingLocationTest
-        // should get the ACTION_LOCATION_NOT_CHANGING intent
-        Intent intent;
+    private void doLongWaitForSecondFix_MovementDistance(boolean isBigMovement) {
+        Prefs.getInstance(ctx).setMotionChangeDistanceMeters(10000); // 10 km
+        locationChangeSensor.start();
         Location expectedPosition;
-
         Robolectric.runUiThreadTasksIncludingDelayedTasks();
 
-        intent = getLocationIntent(20, 30);
-        expectedPosition = intent.getParcelableExtra(GPSScanner.NEW_LOCATION_ARG_LOCATION);
-        locationChangeSensor.onReceive(ctx, intent);
+        expectedPosition = setPosition(20, 30);
         Robolectric.runUiThreadTasksIncludingDelayedTasks();
-
         assertEquals(expectedPosition, locationChangeSensor.testing_getLastLocation());
 
-        intent = getLocationIntent(20.01, 30.01);
-
+        final double movementDistance = isBigMovement? 1.0 : 0.001;
+        Intent intent = getLocationIntent(20 + movementDistance, 30);
         // Muck about with the time and move to the end of time
         clock.setCurrentTime(Long.MAX_VALUE);
         locationChangeSensor.onReceive(ctx, intent);
+
         Robolectric.runUiThreadTasksIncludingDelayedTasks();
 
-        // The new recorded position should not be changed!
-        assertEquals(expectedPosition, locationChangeSensor.testing_getLastLocation());
+        if (isBigMovement) {
+            assertNotSame(expectedPosition, locationChangeSensor.testing_getLastLocation());
+            assertTrue(receivedIntent.size() == 0);
+        } else {
+            // The new recorded position should not be changed!
+            assertSame(expectedPosition, locationChangeSensor.testing_getLastLocation());
+            assertIsPaused();
+        }
+    }
 
+    private void fakeWait(long t) {
+        Robolectric.runUiThreadTasksIncludingDelayedTasks();
+        clock.setCurrentTime(clock.currentTimeMillis() + t);
+        Log.d(LOG_TAG, "- time is (ms):" + clock.currentTimeMillis());
+    }
+
+    private void assertIsPaused() {
         boolean foundIntent = false;
 
-        for (Intent capturedIntent: receivedIntent) {
+        for (Intent capturedIntent : receivedIntent) {
             if (capturedIntent.getAction().equals(LocationChangeSensor.ACTION_LOCATION_NOT_CHANGING)) {
                 foundIntent = true;
             }
         }
         assertTrue(foundIntent);
+        receivedIntent.clear();
     }
 
+    @Test
+    public void testSmallMovementThenPauseThenBigMovement() {
+        final long tick = 1000;
+        Prefs.getInstance(ctx).setMotionChangeDistanceMeters(50);
+        locationChangeSensor.start();
+        locationChangeSensor.testing_setTimeoutCheckTime(tick);
+        locationChangeSensor.removeTimeoutCheck();
+        receivedIntent.clear();
+
+        double x = 20, y = 30;
+        Location loc1 = setPosition(x, y);
+
+        fakeWait(tick);
+
+        // Movement below threshold, and within time window
+        clock.setCurrentTime(clock.currentTimeMillis() + 50);
+        Location loc2 = setPosition(x + 0.0002, y);
+        assertTrue(loc1.distanceTo(loc2) < 50 /* meters*/);
+        // Insufficient movement in 1sec window
+        assertIsPaused();
+
+        fakeWait(tick);
+
+        // no further notification should happen while paused
+        assertTrue(receivedIntent.size() == 0);
+
+        Log.d(LOG_TAG, "Movement that exceeds distance threshold while in paused state.");
+        locationChangeSensor.quickCheckForFalsePositiveAfterMotionSensorMovement();
+        setPosition(x + 0.1, y);
+
+        fakeWait(tick/2);
+
+        // not enough time has passed to pause
+        assertTrue(receivedIntent.size() == 0);
+
+        fakeWait(tick);
+        fakeWait(tick);
+        assertIsPaused();
+    }
 }

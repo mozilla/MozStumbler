@@ -54,9 +54,7 @@ Examples
 
 A good basic example can be found in LogActivityTest at:
 
-TODO: update this link to the primary Mozilla Stumbler repository:
-
-https://github.com/crankycoder/MozStumbler/blob/features/1294-motion-sensor-tests/android/src/test/java/org/mozilla/mozstumbler/client/subactivities/LogActivityTest.java#L31
+https://github.com/mozilla/MozStumbler/blob/features/1294-motion-sensor-tests/android/src/test/java/org/mozilla/mozstumbler/client/subactivities/LogActivityTest.java#L31
 
 You will find an example there of loading a custom shadow to provide
 specialized behavior as well as the standard annotations you will need
@@ -74,3 +72,15 @@ Android Studio integration
 TODO: Get instructions from here :
 
 http://blog.blundell-apps.com/how-to-run-robolectric-junit-tests-in-android-studio/
+
+
+Simulation Mode
+---------------
+
+There is a new developer option to toggle simulation mode on.  You
+will need to toggle your stumbler off and on once after enabling the
+simulation.  You should see the cell tower count stay at 1, wifi count
+at 2, and the position should incrementally move to the north east.
+
+You will need to first enable mock locations in your Android developer
+options or else this feature won't work.

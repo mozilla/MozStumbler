@@ -495,13 +495,19 @@ public class DataStorageManager {
     }
 
 
+    /*
+     This method just deletes all files.  Note that this is a special case and is only run when
+     the stumbler assumes that the logs are either out of date, or are corrupted.
+
+     We do *not* try to move these files into the sdcard as they are probably just corrupt anyway.
+     */
     public synchronized void deleteAll() {
         if (mFileList.mFiles == null) {
             return;
         }
 
         for (File f : mFileList.mFiles) {
-            delete(f.getName());
+            f.delete();
         }
 
         mFileList.update(mReportsDir);

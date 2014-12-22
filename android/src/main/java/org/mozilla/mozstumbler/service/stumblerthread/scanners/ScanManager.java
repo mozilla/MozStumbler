@@ -9,14 +9,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 
-import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.AppGlobals.ActiveOrPassiveStumbling;
-import org.mozilla.mozstumbler.service.stumblerthread.motiondetection.LocationChangeSensor;
-import org.mozilla.mozstumbler.service.stumblerthread.motiondetection.MotionSensor;
+import org.mozilla.mozstumbler.service.AppGlobals;
+import org.mozilla.mozstumbler.service.Prefs;
+import org.mozilla.mozstumbler.service.core.logging.Log;
 import org.mozilla.mozstumbler.service.stumblerthread.Reporter;
 import org.mozilla.mozstumbler.service.stumblerthread.blocklist.WifiBlockListInterface;
+import org.mozilla.mozstumbler.service.stumblerthread.motiondetection.LocationChangeSensor;
+import org.mozilla.mozstumbler.service.stumblerthread.motiondetection.MotionSensor;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner.CellScanner;
 import org.mozilla.mozstumbler.service.utils.BatteryCheckReceiver;
 
@@ -29,12 +30,15 @@ public class ScanManager {
     public static final String ACTION_EXTRA_IS_PAUSED = "IS_PAUSED";
     private static final String LOG_TAG = AppGlobals.makeLogTag(ScanManager.class.getSimpleName());
     private Timer mPassiveModeFlushTimer;
-    private Context mContext;
+
+    private static Context mAppContext;
+
     private boolean mIsScanning;
     private GPSScanner mGPSScanner;
     private WifiScanner mWifiScanner;
     private CellScanner mCellScanner;
     private ActiveOrPassiveStumbling mStumblingMode = ActiveOrPassiveStumbling.ACTIVE_STUMBLING;
+
     private BatteryCheckReceiver mPassiveModeBatteryChecker;
     private enum PassiveModeBatteryState { OK, LOW, IGNORE_BATTERY_STATE }
     private PassiveModeBatteryState mPassiveModeBatteryState;
@@ -90,7 +94,10 @@ public class ScanManager {
             @Override
             public void run() {
                 Intent flush = new Intent(Reporter.ACTION_FLUSH_TO_BUNDLE);
-                LocalBroadcastManager.getInstance(mContext).sendBroadcastSync(flush);
+                if (mAppContext == null) {
+                    return;
+                }
+                LocalBroadcastManager.getInstance(mAppContext).sendBroadcastSync(flush);
             }
         }, when);
     }
@@ -101,19 +108,21 @@ public class ScanManager {
 
     public synchronized void setPassiveMode(boolean on) {
         if (on && mPassiveModeBatteryChecker == null) {
-            mPassiveModeBatteryChecker = new BatteryCheckReceiver(mContext, mBatteryCheckCallback);
+            mPassiveModeBatteryChecker = new BatteryCheckReceiver(mAppContext, mBatteryCheckCallback);
         }
         mStumblingMode = (on) ? ActiveOrPassiveStumbling.PASSIVE_STUMBLING :
                 ActiveOrPassiveStumbling.ACTIVE_STUMBLING;
     }
 
-    public synchronized void startScanning(Context context) {
+    public synchronized void startScanning(Context ctx) {
+        Log.d(LOG_TAG, "ScanManager::startScanning");
+
         if (isScanning()) {
             return;
         }
 
-        mContext = context.getApplicationContext();
-        if (mContext == null) {
+        mAppContext = ctx.getApplicationContext();
+        if (mAppContext == null) {
             Log.w(LOG_TAG, "No app context available.");
             return;
         }
@@ -121,23 +130,35 @@ public class ScanManager {
         mIsMotionlessPausedState = false;
 
         if (mLocationChangeSensor == null) {
-            mLocationChangeSensor = new LocationChangeSensor(mContext, mDetectUserIdleReceiver);
+            mLocationChangeSensor = new LocationChangeSensor(mAppContext, mDetectUserIdleReceiver);
         }
         mLocationChangeSensor.start();
 
         if (mMotionSensor == null) {
-            mMotionSensor = new MotionSensor(mContext, mDetectMotionReceiver);
+            mMotionSensor = new MotionSensor(mAppContext, mDetectMotionReceiver);
         }
 
         if (mGPSScanner == null) {
-            mGPSScanner = new GPSScanner(context, this);
-            mWifiScanner = new WifiScanner(context);
-            mCellScanner = new CellScanner(context);
+            mGPSScanner = new GPSScanner(mAppContext, this);
+            mWifiScanner = new WifiScanner(mAppContext);
+            mCellScanner = new CellScanner(mAppContext);
         }
 
         if (AppGlobals.isDebug) {
-            Log.d(LOG_TAG, "Scanning started...");
+            // Simulation contexts are only allowed for debug builds.
+            Prefs prefs = Prefs.getInstanceWithoutContext();
+            if (prefs != null) {
+                Log.i(LOG_TAG, "ScanManager::startScanning simulation pref = " + prefs.isSimulateStumble() );
+                if (prefs.isSimulateStumble()) {
+                    mAppContext = new SimulationContext(mAppContext);
+                    Log.d(LOG_TAG, "ScanManager using SimulateStumbleContextWrapper");
+                }
+            }
         }
+
+        mGPSScanner = new GPSScanner(mAppContext, this);
+        mWifiScanner = new WifiScanner(mAppContext);
+        mCellScanner = new CellScanner(mAppContext);
 
         mGPSScanner.start(mStumblingMode);
         if (mStumblingMode == ActiveOrPassiveStumbling.ACTIVE_STUMBLING) {
@@ -154,6 +175,12 @@ public class ScanManager {
             return false;
         }
 
+        if (mAppContext instanceof SimulationContext) {
+            ((SimulationContext)mAppContext).deactivateSimulation();
+        }
+        // Reset the application context to the unwrapped version
+        mAppContext = mAppContext.getApplicationContext();
+
         if (AppGlobals.isDebug) {
             Log.d(LOG_TAG, "Scanning stopped");
         }
@@ -162,9 +189,21 @@ public class ScanManager {
         mLocationChangeSensor.stop();
         mMotionSensor.stop();
 
-        mGPSScanner.stop();
-        mWifiScanner.stop();
-        mCellScanner.stop();
+        if (mGPSScanner != null) {
+            mGPSScanner.stop();
+        }
+
+        if (mWifiScanner != null) {
+            mWifiScanner.stop();
+        }
+
+        if (mCellScanner != null) {
+            mCellScanner.stop();
+        }
+
+        mGPSScanner = null;
+        mWifiScanner = null;
+        mCellScanner = null;
 
         mIsScanning = false;
         return true;
@@ -215,7 +254,7 @@ public class ScanManager {
 
             Intent sendIntent = new Intent(ACTION_SCAN_PAUSED_USER_MOTIONLESS);
             sendIntent.putExtra(ACTION_EXTRA_IS_PAUSED, mIsMotionlessPausedState);
-            LocalBroadcastManager.getInstance(mContext).sendBroadcastSync(sendIntent);
+            LocalBroadcastManager.getInstance(mAppContext).sendBroadcastSync(sendIntent);
         }
     };
 
@@ -232,7 +271,7 @@ public class ScanManager {
 
             Intent sendIntent = new Intent(ACTION_SCAN_PAUSED_USER_MOTIONLESS);
             sendIntent.putExtra(ACTION_EXTRA_IS_PAUSED, mIsMotionlessPausedState);
-            LocalBroadcastManager.getInstance(mContext).sendBroadcastSync(sendIntent);
+            LocalBroadcastManager.getInstance(mAppContext).sendBroadcastSync(sendIntent);
         }
     };
 

@@ -49,7 +49,7 @@ public class ClientDataStorageManager extends DataStorageManager {
         final File file = new File(mReportsDir, filename);
         boolean ok = true;
 
-        if (Prefs.getInstance().isSaveStumbleLogs()) {
+        if (Prefs.getInstanceWithoutContext().isSaveStumbleLogs()) {
             File newFile = new File(sdcardArchivePath() + File.separator + filename);
             ok = copyAndDelete(file, newFile);
 
@@ -62,21 +62,6 @@ public class ClientDataStorageManager extends DataStorageManager {
 
         mFileList.update(mReportsDir);
         return ok;
-    }
-
-    @Override
-    public synchronized void deleteAll() {
-        Log.i(LOG_TAG, "deleteAll() called");
-
-        if (mFileList.mFiles == null) {
-            return;
-        }
-
-        for (File f : mFileList.mFiles) {
-            delete(f.getName());
-        }
-
-        mFileList.update(mReportsDir);
     }
 
     private boolean copyAndDelete(File aFile, File bFile) {

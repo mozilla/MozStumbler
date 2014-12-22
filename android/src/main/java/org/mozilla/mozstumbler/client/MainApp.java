@@ -14,6 +14,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
@@ -22,6 +23,7 @@ import android.os.IBinder;
 import android.os.StrictMode;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import android.widget.Toast;
 
 import org.acra.ACRA;
 import org.acra.annotation.ReportsCrashes;
@@ -86,8 +88,8 @@ public class MainApp extends Application
         }
     };
 
-    public ClientPrefs getPrefs() {
-        return ClientPrefs.getInstance();
+    public ClientPrefs getPrefs(Context c) {
+        return ClientPrefs.getInstance(c);
     }
 
     public ClientStumblerService getService() {
@@ -145,11 +147,18 @@ public class MainApp extends Application
             oldPrefs.renameTo(new File(dir, ClientPrefs.getPrefsFileNameForUpgrade()));
         }
 
-        Prefs prefs = ClientPrefs.createGlobalInstance(this);
+        // Doing this onCreate ensures that a ClientPrefs is instantiated for the whole app.
+        // Don't remove this.
+        ClientPrefs prefs = ClientPrefs.getInstance(this);
+
         prefs.setMozApiKey(BuildConfig.MOZILLA_API_KEY);
         String userAgent = System.getProperty("http.agent") + " " +
                 AppGlobals.appName + "/" + AppGlobals.appVersionName;
         prefs.setUserAgent(userAgent);
+
+        if (AppGlobals.isDebug) {
+            checkSimulationPermission();
+        }
 
         NetworkInfo.createGlobalInstance(this);
         LogActivity.LogMessageReceiver.createGlobalInstance(this);
@@ -205,6 +214,20 @@ public class MainApp extends Application
             registerReceiver(mReceivePausedState, new IntentFilter(ScanManager.ACTION_SCAN_PAUSED_USER_MOTIONLESS));
     }
 
+    private void checkSimulationPermission()
+    {
+        String permission = "android.permission.MOCK_LOCATION";
+        Context appContext = this.getApplicationContext();
+        int res = appContext.checkCallingOrSelfPermission(permission);
+        if (res != PackageManager.PERMISSION_GRANTED) {
+            if (ClientPrefs.getInstance(appContext).isSimulateStumble()) {
+                ClientPrefs.getInstance(appContext).setSimulateStumble(false);
+            }
+            Log.i(LOG_TAG, "Simulation disabled as developer option is not enabled.");
+        }
+    }
+
+
     @Override
     public void onTerminate() {
         super.onTerminate();
@@ -240,8 +263,9 @@ public class MainApp extends Application
 
         mIsScanningPausedDueToNoMotion = false;
 
-        mStumblerService.stopForeground(true);
         mStumblerService.stopScanning();
+        mStumblerService.stopForeground(true);
+
         if (mMainActivity.get() != null) {
             mMainActivity.get().updateUiOnMainThread(false);
             mMainActivity.get().stop();
@@ -249,9 +273,9 @@ public class MainApp extends Application
 
         AsyncUploader uploader = new AsyncUploader();
         AsyncUploadParam param = new AsyncUploadParam(
-                ClientPrefs.getInstance().getUseWifiOnly(),
-                Prefs.getInstance().getNickname(),
-                Prefs.getInstance().getEmail());
+                ClientPrefs.getInstance(this).getUseWifiOnly(),
+                Prefs.getInstance(this).getNickname(),
+                Prefs.getInstance(this).getEmail());
 
         uploader.execute(param);
 

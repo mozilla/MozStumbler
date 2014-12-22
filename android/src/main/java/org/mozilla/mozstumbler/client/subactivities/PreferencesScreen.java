@@ -34,11 +34,7 @@ public class PreferencesScreen extends PreferenceActivity {
     private ListPreference mMapTileDetail;
 
     private ClientPrefs getPrefs() {
-        ClientPrefs prefs = ClientPrefs.getInstance();
-        if (prefs == null) {
-            prefs = ClientPrefs.createGlobalInstance(getApplicationContext());
-        }
-        return prefs;
+        return ClientPrefs.getInstance(this);
     }
 
     @SuppressWarnings("deprecation")
@@ -57,7 +53,7 @@ public class PreferencesScreen extends PreferenceActivity {
         mEnableShowMLSLocations = (CheckBoxPreference) getPreferenceManager().findPreference(ClientPrefs.ENABLE_OPTION_TO_SHOW_MLS_ON_MAP);
         mCrashReportsOn = (CheckBoxPreference) getPreferenceManager().findPreference(ClientPrefs.CRASH_REPORTING);
         mMapTileDetail = (ListPreference) getPreferenceManager().findPreference(ClientPrefs.MAP_TILE_RESOLUTION_TYPE);
-        int valueIndex = ClientPrefs.getInstance().getMapTileResolutionType().ordinal();
+        int valueIndex = ClientPrefs.getInstance(this).getMapTileResolutionType().ordinal();
         mMapTileDetail.setValueIndex(valueIndex);
         updateMapDetailTitle(valueIndex);
 

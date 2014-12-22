@@ -10,6 +10,7 @@ import android.content.res.Configuration;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.location.Location;
+import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
@@ -156,7 +157,7 @@ public final class MapFragment extends android.support.v4.app.Fragment
                 lastLoc = new GeoPoint(latitude, longitude);
             }
         } else {
-            lastLoc = ClientPrefs.getInstance().getLastMapCenter();
+            lastLoc = ClientPrefs.getInstance(mRootView.getContext()).getLastMapCenter();
             zoomLevel = DEFAULT_ZOOM_AFTER_FIX;
             if (new GeoPoint(0, 0).equals(lastLoc)) {
                 lastLoc = null;
@@ -166,8 +167,7 @@ public final class MapFragment extends android.support.v4.app.Fragment
         if (lastLoc != null) {
             final GeoPoint loc = lastLoc;
             final int zoom = zoomLevel;
-            mMap.getController().setZoom(zoom);
-            mMap.getController().setCenter(loc);
+            setCenterAndZoom(loc, zoom);
 
             mMap.postDelayed(new Runnable() {
                 @Override
@@ -177,8 +177,7 @@ public final class MapFragment extends android.support.v4.app.Fragment
                     // Post with no delay does not work for me, adding an arbitrary
                     // delay of 300 ms should be plenty.
                     Log.d(LOG_TAG, "postDelayed ZOOM " + zoom);
-                    mMap.getController().setZoom(zoom);
-                    mMap.getController().setCenter(loc);
+                    setCenterAndZoom(loc, zoom);
                 }
             }, 300);
         }
@@ -233,10 +232,20 @@ public final class MapFragment extends android.support.v4.app.Fragment
         return mRootView;
     }
 
+    private void setCenterAndZoom(GeoPoint loc, int zoom) {
+        mMap.getController().setZoom(zoom);
+        mMap.getController().setCenter(loc);
+    }
+
     MainApp getApplication() {
         return (MainApp) getActivity().getApplication();
     }
 
+    public LocationManager getLocationManager() {
+        return (LocationManager) getActivity().getApplicationContext().
+                getSystemService(Context.LOCATION_SERVICE);
+
+    }
     private static String sCoverageUrl; // Only used by CoverageSetup
 
     private class CoverageSetup {
@@ -246,8 +255,10 @@ public final class MapFragment extends android.support.v4.app.Fragment
             final Runnable runnable = new Runnable() {
                 @Override
                 public void run() {
+                    final ClientPrefs.MapTileResolutionOptions resolution =
+                            ClientPrefs.getInstance(mRootView.getContext()).getMapTileResolutionType();
                     if (mCoverageTilesOverlayLowZoom != null ||  // checks if init() has already happened
-                        ClientPrefs.getInstance().getMapTileResolutionType() == ClientPrefs.MapTileResolutionOptions.NoMap) {
+                        resolution == ClientPrefs.MapTileResolutionOptions.NoMap) {
                         return;
                     }
                     initCoverageTiles(sCoverageUrl);
@@ -375,7 +386,7 @@ public final class MapFragment extends android.support.v4.app.Fragment
     // we need an additional "LowZoom" overlay. So in low bandwidth mode, you will see
     // that based on the current zoom level of the map, we show "HighZoom" or "LowZoom" overlays.
     private void setHighBandwidthMap(boolean isHighBandwidth) {
-        final ClientPrefs prefs = ClientPrefs.getInstance();
+        final ClientPrefs prefs = ClientPrefs.getInstance(mRootView.getContext());
         if (prefs == null || getActivity() == null) {
             return;
         }
@@ -558,9 +569,8 @@ public final class MapFragment extends android.support.v4.app.Fragment
         mAccuracyOverlay.setLocation(location);
 
         if (mFirstLocationFix) {
-            mMap.getController().setZoom(DEFAULT_ZOOM_AFTER_FIX);
+            setCenterAndZoom(new GeoPoint(location), DEFAULT_ZOOM_AFTER_FIX);
             mFirstLocationFix = false;
-            mMap.getController().setCenter(new GeoPoint(location));
             mUserPanning = false;
         } else if (!mUserPanning) {
             mMap.getController().animateTo((mAccuracyOverlay.getLocation()));
@@ -619,7 +629,7 @@ public final class MapFragment extends android.support.v4.app.Fragment
 
         mHighLowBandwidthChecker = new HighLowBandwidthReceiver(this);
 
-        ClientPrefs prefs = ClientPrefs.createGlobalInstance(getActivity().getApplicationContext());
+        ClientPrefs prefs = ClientPrefs.getInstance(getActivity().getApplicationContext());
         setShowMLS(prefs.getOnMapShowMLS());
 
         mObservationPointsOverlay.zoomChanged(mMap);
@@ -628,7 +638,7 @@ public final class MapFragment extends android.support.v4.app.Fragment
 
     private void saveStateToPrefs() {
         IGeoPoint center = mMap.getMapCenter();
-        ClientPrefs.getInstance().setLastMapCenter(center);
+        ClientPrefs.getInstance(mRootView.getContext()).setLastMapCenter(center);
     }
 
     @Override

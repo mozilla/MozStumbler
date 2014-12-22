@@ -4,9 +4,6 @@
 
 package org.mozilla.mozstumbler.service.uploadthread;
 
-/**
- * Created by victorng on 2014-09-29.
- */
 public class AsyncUploadParam {
 
     final boolean useWifiOnly;

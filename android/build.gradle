@@ -1,7 +1,7 @@
 // each of the version numbers must be 0-99
 def versionMajor = 1
 def versionMinor = 5 // minor feature releases
-def versionPatch = 3 // This should be bumped for hot fixes
+def versionPatch = 99 // This should be bumped for hot fixes
 
 // Double check the versioning
 for (versionPart in [versionPatch, versionMinor, versionMajor]) {
@@ -117,6 +117,51 @@ android {
             buildConfigField "boolean", "ROBOLECTRIC", "true"
         }
 
+        applicationVariants.all { variant ->
+            // I hate you gradle. The outputs list should always be of
+            // length 1.  But who knows what darkness lies in the
+            // heart of gradle.  The shadow does.
+            assert(variant.outputs.size == 1);
+
+            def thisVariant = variant.outputs[0];
+
+            def manifestFilePath  = "${buildDir}/intermediates/filtered_manifests/${thisVariant.dirName}/AndroidManifest.xml"
+            thisVariant.processManifest.doLast {
+                println("configuring AndroidManifest.xml for: " + thisVariant.name);
+                println("Variant dirName: " + thisVariant.dirName);
+                copy {
+                    from("${buildDir}/intermediates/manifests/full") {
+                        include "${thisVariant.dirName}/AndroidManifest.xml"
+                    }
+                    into("${buildDir}/intermediates/filtered_manifests")
+                    println("Preprocessing manifest added to: ${buildDir}/intermediates/filtered_manifests");
+                }
+
+                def manifestFile = new File(manifestFilePath);
+                def content = manifestFile.getText()
+
+                def updatedContent = content.replaceAll("ANDROID_VERSIONNAME",
+                        defaultConfig.versionName).replaceAll("ANDROID_VERSIONCODE",
+                            Long.toString(defaultConfig.versionCode))
+
+                def buildTypeName = variant.buildType.name;
+                println("Variant buildType: [" + buildTypeName + "]");
+                if (buildTypeName == 'debug') {
+                    updatedContent = updatedContent.replaceAll("<!-- ANDROID_MOCK_LOCATION -->", 
+                            '<uses-permission android:name="android.permission.ACCESS_MOCK_LOCATION" />')
+                }
+                println("Writing new manifest into ${manifestFilePath}");
+                manifestFile.write(updatedContent)
+            }
+
+            // This is a bit confusing, we want to swap in the
+            // filtered AndroidManifest.xml file so that we don't
+            // modify the original AndroidManifest.xml. This prevents
+            // accidental commit of the mapbox key into source
+            // control, so we actually modify the pointer in gradle.
+            thisVariant.processResources.manifestFile = new File(manifestFilePath);
+            println("Clobbered the manifest: " + thisVariant.processResources.manifestFile);
+        }
     }
 
     sourceSets {
@@ -147,7 +192,7 @@ dependencies {
     // libraries, because they support a wide range of Android versions and
     // provide APIs for recommended user interface patterns.
 
-    compile "com.android.support:support-v4:19.1.+"
+    compile "com.android.support:support-v4:21.0.+"
     compile 'com.android.support:appcompat-v7:19.1.0'
 
     compile('org.simpleframework:simple-xml:2.7.1') {

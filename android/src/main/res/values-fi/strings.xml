@@ -7,7 +7,6 @@
     <string name="stop_scanning">Lopeta skannaus</string>
     <string name="view_leaderboard">Näytä pistetilasto</string>
     <string name="service_name">Mozilla Stumbler</string>
-    <string name="service_scanning">Skannataan Wi-Fi-tukiasemia ja verkkomastoja</string>
     <string name="enter_nickname">Valitse nimimerkki (ei pakollinen)</string>
     <string name="enter_nickname_title">Nimimerkki: %1$s</string>
     <string name="enter_nickname_longtext">Nimimerkkisi näytetään pistetilastossa.</string>

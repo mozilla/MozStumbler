@@ -30,7 +30,7 @@ public class ClientStumblerService extends StumblerService {
         private boolean waitForBatteryOkBeforeSendingNotification;
         @Override
         public void batteryCheckCallback(BatteryCheckReceiver receiver) {
-            int minBattery = ClientPrefs.getInstance().getMinBatteryPercent();
+            int minBattery = ClientPrefs.getInstance(ClientStumblerService.this).getMinBatteryPercent();
             boolean isLow = receiver.isBatteryNotChargingAndLessThan(minBattery);
             if (isLow && !waitForBatteryOkBeforeSendingNotification) {
                 waitForBatteryOkBeforeSendingNotification = true;

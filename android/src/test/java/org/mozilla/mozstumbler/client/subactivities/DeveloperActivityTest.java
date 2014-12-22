@@ -23,7 +23,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import static junit.framework.Assert.assertNull;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -41,7 +40,7 @@ public class DeveloperActivityTest {
     public void setup() {
         // This is really dumb.  robolectric doesn't automatically reset the state
         // of preferences.
-        Prefs.getInstance().setSaveStumbleLogs(false);
+        Prefs.getInstanceWithoutContext().setSaveStumbleLogs(false);
         ShadowEnvironment.setExternalStorageState(Environment.MEDIA_MOUNTED);
     }
 
@@ -53,9 +52,9 @@ public class DeveloperActivityTest {
         CheckBox button = (CheckBox) devOptions.getView().findViewById(R.id.toggleSaveStumbleLogs);
         assertNotNull(button);
 
-        assertFalse(Prefs.getInstance().isSaveStumbleLogs());
+        assertFalse(Prefs.getInstanceWithoutContext().isSaveStumbleLogs());
         button.toggle();
-        assertTrue(Prefs.getInstance().isSaveStumbleLogs());
+        assertTrue(Prefs.getInstanceWithoutContext().isSaveStumbleLogs());
     }
 
     @Test
@@ -68,11 +67,11 @@ public class DeveloperActivityTest {
         CheckBox button = (CheckBox) devOptions.getView().findViewById(R.id.toggleSaveStumbleLogs);
         assertNotNull(button);
 
-        assertFalse(Prefs.getInstance().isSaveStumbleLogs());
+        assertFalse(Prefs.getInstanceWithoutContext().isSaveStumbleLogs());
         button.toggle();
 
         // The stumble log checkbox should still be unchecked
-        assertFalse(Prefs.getInstance().isSaveStumbleLogs());
+        assertFalse(Prefs.getInstanceWithoutContext().isSaveStumbleLogs());
 
         // Check that the toast was displayed
         assertEquals(ShadowToast.getTextOfLatestToast(),
@@ -99,9 +98,9 @@ public class DeveloperActivityTest {
         CheckBox button = (CheckBox) devOptions.getView().findViewById(R.id.toggleSaveStumbleLogs);
         assertNotNull(button);
 
-        assertFalse(Prefs.getInstance().isSaveStumbleLogs());
+        assertFalse(Prefs.getInstanceWithoutContext().isSaveStumbleLogs());
         button.toggle();
-        assertTrue(Prefs.getInstance().isSaveStumbleLogs());
+        assertTrue(Prefs.getInstanceWithoutContext().isSaveStumbleLogs());
         assertTrue(ShadowToast.getTextOfLatestToast().startsWith(ctx.getString(R.string.create_log_archive_success)));
 
         // note that this 'reports' directory was created when the ClientDataStorageManager

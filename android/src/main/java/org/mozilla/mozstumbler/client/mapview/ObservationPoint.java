@@ -54,8 +54,9 @@ public class ObservationPoint implements MLSLocationGetter.MLSLocationGetterCall
         if (mMLSQuery == null || pointMLS != null || mIsMLSLocationQueryRunning) {
             return;
         }
-        ClientPrefs prefs = ClientPrefs.getInstance();
-        if (prefs.getUseWifiOnly() && !NetworkInfo.getInstance().isWifiAvailable()) {
+        ClientPrefs prefs = ClientPrefs.getInstanceWithoutContext();
+        if (prefs == null ||
+           (prefs.getUseWifiOnly() && !NetworkInfo.getInstance().isWifiAvailable())) {
             return;
         }
 

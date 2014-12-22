@@ -190,15 +190,15 @@ public class ScanManager {
         mMotionSensor.stop();
 
         if (mGPSScanner != null) {
-        mGPSScanner.stop();
+            mGPSScanner.stop();
         }
 
         if (mWifiScanner != null) {
-        mWifiScanner.stop();
+            mWifiScanner.stop();
         }
 
         if (mCellScanner != null) {
-        mCellScanner.stop();
+            mCellScanner.stop();
         }
 
         mGPSScanner = null;

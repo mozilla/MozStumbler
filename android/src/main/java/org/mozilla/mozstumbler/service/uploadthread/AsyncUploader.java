@@ -78,6 +78,13 @@ public class AsyncUploader extends AsyncTask<AsyncUploadParam, AsyncProgressList
 
        publishProgress(wrapper);
 
+        if (Prefs.getInstanceWithoutContext().isSaveStumbleLogs()) {
+            try {
+                DataStorageManager.getInstance().saveCurrentReportsSendBufferToDisk();
+            } catch (IOException e) {
+                AppGlobals.guiLogError("Error flushing in-memory reports to sdcard");
+            }
+        }
        uploadReports(param);
 
        isUploading.set(false);

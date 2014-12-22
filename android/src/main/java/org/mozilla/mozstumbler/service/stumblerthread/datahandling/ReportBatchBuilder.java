@@ -1,6 +1,7 @@
 package org.mozilla.mozstumbler.service.stumblerthread.datahandling;
 
 import org.mozilla.mozstumbler.service.AppGlobals;
+import org.mozilla.mozstumbler.service.Prefs;
 import org.mozilla.mozstumbler.service.core.logging.Log;
 
 import java.util.ArrayList;
@@ -52,6 +53,10 @@ public class ReportBatchBuilder {
     }
 
     public boolean maxReportsReached() {
+        // Always try to flush memory to storage if saving stumble logs is enabled.
+        if (Prefs.getInstanceWithoutContext().isSaveStumbleLogs()) {
+            return true;
+        }
         return reportsCount() == MAX_REPORTS_IN_MEMORY;
     }
 }

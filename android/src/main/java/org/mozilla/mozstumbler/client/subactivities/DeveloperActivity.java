@@ -7,6 +7,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -30,11 +31,16 @@ import org.mozilla.mozstumbler.client.MainApp;
 import org.mozilla.mozstumbler.client.serialize.KMLFragment;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.Prefs;
+import org.mozilla.mozstumbler.service.core.logging.Log;
 
 import static org.mozilla.mozstumbler.R.string;
 import org.mozilla.mozstumbler.service.stumblerthread.motiondetection.LocationChangeSensor;
 import org.mozilla.mozstumbler.service.stumblerthread.motiondetection.MotionSensor;
 import org.mozilla.mozstumbler.service.utils.BatteryCheckReceiver;
+
+import java.io.File;
+
+import static org.mozilla.mozstumbler.service.stumblerthread.datahandling.ClientDataStorageManager.sdcardArchivePath;
 
 public class DeveloperActivity extends ActionBarActivity {
 
@@ -97,17 +103,31 @@ public class DeveloperActivity extends ActionBarActivity {
         private View mRootView;
 
         @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) 
+        {
             mRootView = inflater.inflate(R.layout.fragment_developer_options, container, false);
 
             // Setup for any logical group of config options should self contained in their
             // own methods.  This is mostly to help with merges in the event that multiple
             // source branches update the developer options.
+            setupSaveJSONLogs();
             setupSimulationPreference();
             setupLowBatterySpinner();
             setupLocationChangeSpinners();
 
             return mRootView;
+        }
+
+        private void setupSaveJSONLogs() {
+            boolean saveStumbleLogs = Prefs.getInstanceWithoutContext().isSaveStumbleLogs();
+            CheckBox button = (CheckBox) mRootView.findViewById(R.id.toggleSaveStumbleLogs);
+            button.setChecked(saveStumbleLogs);
+            button.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                    onToggleSaveStumbleLogs(isChecked);
+                }
+            });
         }
 
         private void setupLowBatterySpinner() {
@@ -130,8 +150,13 @@ public class DeveloperActivity extends ActionBarActivity {
                 }
 
                 @Override
-                public void onNothingSelected(AdapterView<?> arg0) {}
+                public void onNothingSelected(AdapterView<?> arg0) {
+                }
             });
+        }
+
+        private void onToggleSimulation(boolean isChecked) {
+            Prefs.getInstance(mRootView.getContext()).setSimulateStumble(isChecked);
         }
 
         private void setupSimulationPreference() {
@@ -167,9 +192,6 @@ public class DeveloperActivity extends ActionBarActivity {
 
         }
 
-        private void onToggleSimulation(boolean isChecked) {
-            Prefs.getInstance(mRootView.getContext()).setSimulateStumble(isChecked);
-        }
 
         private void setupLocationChangeSpinners() {
             final ClientPrefs cPrefs = ClientPrefs.getInstance(mRootView.getContext());
@@ -187,7 +209,7 @@ public class DeveloperActivity extends ActionBarActivity {
                     changeOfMotionDetectionDistanceOrTime(parent, position, IsDistanceOrTime.DISTANCE);
                 }
 
-            @Override
+                @Override
                 public void onNothingSelected(AdapterView<?> arg0) {}
             });
 
@@ -205,9 +227,49 @@ public class DeveloperActivity extends ActionBarActivity {
                     changeOfMotionDetectionDistanceOrTime(parent, position, IsDistanceOrTime.TIME);
                 }
 
-            @Override
-                public void onNothingSelected(AdapterView<?> arg0) {}
+                @Override
+                public void onNothingSelected(AdapterView<?> arg0) {
+                }
             });
+
+        }
+        private void onToggleSaveStumbleLogs(boolean isChecked) {
+            if (isChecked) {
+                Context viewCtx = mRootView.getContext();
+                if (!archiveDirCreatedAndMounted(this.getActivity())) {
+
+                    Toast.makeText(viewCtx,
+                            viewCtx.getString(R.string.create_log_archive_failure),
+                            Toast.LENGTH_SHORT).show();
+                    isChecked = false;
+                    CheckBox button = (CheckBox) mRootView.findViewById(R.id.toggleSaveStumbleLogs);
+                    button.setChecked(isChecked);
+                } else {
+                    Toast.makeText(viewCtx,
+                            viewCtx.getString(R.string.create_log_archive_success) +
+                                    sdcardArchivePath(),
+                            Toast.LENGTH_LONG).show();
+                }
+            }
+            Prefs.getInstanceWithoutContext().setSaveStumbleLogs(isChecked);
+        }
+
+        public boolean archiveDirCreatedAndMounted(Context ctx) {
+            File saveDir = new File(sdcardArchivePath());
+            String storageState = Environment.getExternalStorageState();
+
+            // You have to check the mount state of the external storage.
+            // Using the mkdirs() result isn't good enough.
+            if(!storageState.equals(Environment.MEDIA_MOUNTED)) {
+                return false;
+            }
+
+            saveDir.mkdirs();
+            if (!saveDir.exists()) {
+                return false;
+            }
+            Log.d(LOG_TAG, "Created: [" + saveDir.getAbsolutePath() + "]");
+            return true;
         }
 
         private enum IsDistanceOrTime { DISTANCE, TIME }

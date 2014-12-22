@@ -9,13 +9,29 @@
 
 
     <View
-        android:id="@+id/line1"
+        android:id="@+id/line0"
         android:layout_height="1dp"
         android:layout_width="fill_parent"
         android:background="#55ffffff"
         android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp"
         />
+
+     <CheckBox
+         android:id="@+id/toggleSaveStumbleLogs"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:text="@string/save_stumble_logs"
+         android:layout_below="@id/line0"/>
+
+    <View
+        android:id="@+id/line1"
+        android:layout_height="1dp"
+        android:layout_width="fill_parent"
+        android:background="#55ffffff"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_below="@id/toggleSaveStumbleLogs"/>
 
     <CheckBox
         android:id="@+id/toggleSimulation"
@@ -40,8 +56,7 @@
         android:background="#55ffffff"
         android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp"
-        android:layout_below="@id/buttonClearSimulationDefault"
-        />
+        android:layout_below="@id/buttonClearSimulationDefault"/>
 
     <TextView
         android:id="@+id/batteryTitle"

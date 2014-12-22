@@ -12,6 +12,8 @@ import android.os.Build.VERSION;
 import android.text.TextUtils;
 import android.util.Log;
 
+import java.sql.Savepoint;
+
 public class Prefs {
     public static final String NICKNAME_PREF = "nickname";
     public static final String EMAIL_PREF = "email";
@@ -34,8 +36,10 @@ public class Prefs {
     private static final String MOTION_CHANGE_DISTANCE_METERS = "motion_change_distance";
     private static final String MOTION_CHANGE_TIME_WINDOW_SECONDS = "motion_change_time";
 
-    protected static Prefs sInstance;
+    private static final String SAVE_STUMBLE_LOGS = "save_stumble_logs";
     private final SharedPreferences mSharedPrefs;
+
+    protected static Prefs sInstance;
 
     protected Prefs(Context context) {
         mSharedPrefs = context.getSharedPreferences(PREFS_FILE, Context.MODE_MULTI_PROCESS | Context.MODE_PRIVATE);
@@ -151,6 +155,15 @@ public class Prefs {
     public synchronized boolean getUseWifiOnly() {
         return getBoolPrefWithDefault(WIFI_ONLY, true);
     }
+
+    public synchronized void setSaveStumbleLogs(boolean state) {
+        setBoolPref(SAVE_STUMBLE_LOGS, state);
+    }
+
+    public synchronized boolean isSaveStumbleLogs() {
+        return getBoolPrefWithDefault(SAVE_STUMBLE_LOGS, false);
+    }
+
 
     ///
     /// Privates

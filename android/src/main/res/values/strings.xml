@@ -72,7 +72,7 @@
     <string name="file_bug_description_hint">Detailed information about the bug being reported (what happens, when it happens, etc.)</string>
     <string name="file_bug_reproduction">Bug Reproduction:</string>
     <string name="file_bug_reproduction_hint">Steps explaining how to reproduce the bug.</string>
-    <string name="file_bug_report_info">By sending this report, you will also send information regarding the current state of your device. This information will be used to narrow down the cause of the bug. Bug reports for bugs that result in a crash are sent automatically if the option if "Enable crash reporting" is enabled. If you encounter bugs that do not result in a crash, please report them through this form.</string>
+    <string name="file_bug_report_info">By sending this report, you will also send information regarding the current state of your device. This information will be used to narrow down the cause of the bug. Bug reports for bugs that result in a crash are sent automatically if the option \"Enable crash reporting\" is enabled. If you encounter bugs that do not result in a crash, please report them through this form.</string>
     <string name="file_bug_send">Send Bug Report</string>
     <string name="file_bug_type">Bug Type:</string>
     <string-array name="file_bug_type_list">

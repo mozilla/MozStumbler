@@ -85,6 +85,15 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".client.navdrawer.MainDrawerActivity" />
         </activity>
+        <activity
+            android:name=".client.subactivities.FileBugActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:parentActivityName=".client.subactivities.PreferencesScreen" >
+            <!-- Parent activity meta-data to support 4.0 and lower -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".client.subactivities.PreferencesScreen" />
+        </activity>
 
         <service
             android:name=".client.ClientStumblerService"

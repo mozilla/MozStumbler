@@ -311,10 +311,12 @@ public class MainDrawerActivity
             remoteViews.setImageViewResource(R.id.toggleServiceButton, R.drawable.ic_launcher);
             remoteViews.setTextViewText(R.id.stumbler_info1, Integer.toString(service.getVisibleAPCount()));
             remoteViews.setTextViewText(R.id.stumbler_info2, Integer.toString(service.getVisibleCellInfoCount()));
+            remoteViews.setTextViewText(R.id.stumbler_info3, Integer.toString(service.getObservationCount()));
             remoteViews.setViewVisibility(R.id.stumbler_info_bar, View.VISIBLE);
         } else {
             remoteViews.setTextViewText(R.id.stumbler_info1, "0");
             remoteViews.setTextViewText(R.id.stumbler_info2, "0");
+            remoteViews.setTextViewText(R.id.stumbler_info3, "0");
             remoteViews.setImageViewResource(R.id.toggleServiceButton, R.drawable.ic_status_scanning);
             remoteViews.setViewVisibility(R.id.stumbler_info_bar, View.INVISIBLE);
         }

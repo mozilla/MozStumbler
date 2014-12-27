@@ -7,8 +7,9 @@
     android:background="@xml/rounded_border">
     <ImageView
         android:id="@+id/toggleServiceButton"
-        android:layout_width="72dp"
-        android:layout_height="72dp"
+        android:layout_width="54dp"
+        android:layout_height="54dp"
+        android:paddingLeft="10dp"
         android:layout_gravity="center_vertical"
         android:checked="false"
         android:scaleType="center"
@@ -17,64 +18,89 @@
     <LinearLayout
         android:id="@+id/stumbler_info_bar"
         android:layout_width="match_parent"
-        android:minHeight="72dp"
-        android:layout_height="72dp"
-        android:layout_weight="1"
-        android:paddingLeft="10dp"
+        android:minHeight="54dp"
+        android:layout_height="54dp"
         android:layout_gravity="center"
+        android:paddingLeft="4dp"
         android:orientation="horizontal">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:minHeight="72dp"
-            android:layout_weight="0.5"
+            android:minHeight="40dp"
+            android:layout_weight="0.4"
             android:layout_gravity="center"
             android:orientation="horizontal">
             <ImageView
-                android:layout_width="50dp"
-                android:minHeight="72dp"
+                android:layout_width="36dp"
+                android:minHeight="36dp"
                 android:layout_gravity="center"
-                android:layout_height="50dp"
+                android:layout_height="36dp"
                 android:src="@drawable/ic_wifi_flaticondotcom"/>
             <TextView
                 android:id="@+id/stumbler_info1"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:minHeight="72dp"
+                android:minHeight="36dp"
                 android:layout_gravity="center_vertical"
                 android:textAlignment="gravity"
                 android:paddingLeft="7dp"
                 android:paddingRight="7dp"
-                android:textSize="40sp"
+                android:textSize="36sp"
                 android:textColor="@android:color/black"
                 android:text="0" />
 
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
-            android:minHeight="72dp"
-            android:layout_height="72dp"
-            android:layout_weight="0.5"
+            android:minHeight="40dp"
+            android:layout_height="36dp"
+            android:layout_weight="0.4"
             android:layout_gravity="center"
             android:orientation="horizontal">
             <ImageView
-                android:layout_width="50dp"
-                android:minHeight="72dp"
+                android:layout_width="36dp"
+                android:minHeight="36dp"
                 android:layout_gravity="center"
-                android:layout_height="50dp"
+                android:layout_height="36dp"
                 android:src="@drawable/ic_cell_flaticondotcom"/>
             <TextView
                 android:id="@+id/stumbler_info2"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:minHeight="72dp"
+                android:minHeight="36dp"
                 android:layout_gravity="center_vertical"
                 android:textAlignment="gravity"
                 android:paddingLeft="7dp"
                 android:paddingRight="7dp"
-                android:textSize="40sp"
+                android:textSize="36sp"
                 android:textColor="@android:color/black"
                 android:text="0" />
         </LinearLayout>
+        <LinearLayout
+          android:layout_width="match_parent"
+          android:minHeight="36dp"
+          android:layout_height="36dp"
+          android:layout_weight="0.4"
+          android:layout_gravity="center"
+          android:orientation="horizontal">
+          <ImageView
+            android:layout_width="36dp"
+            android:minHeight="36dp"
+            android:layout_gravity="center"
+            android:layout_height="36dp"
+            android:src="@drawable/ic_binoculars_flaticondotcom"/>
+            <TextView
+              android:id="@+id/stumbler_info3"
+              android:layout_width="match_parent"
+              android:layout_height="50dp"
+              android:minHeight="36dp"
+              android:layout_gravity="center_vertical"
+              android:textAlignment="gravity"
+              android:paddingLeft="7dp"
+              android:paddingRight="7dp"
+              android:textSize="36sp"
+              android:textColor="@android:color/black"
+              android:text="0" />
+            </LinearLayout>
     </LinearLayout>
 </LinearLayout>

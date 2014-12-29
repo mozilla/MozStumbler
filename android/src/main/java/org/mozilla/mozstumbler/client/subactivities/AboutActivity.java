@@ -10,6 +10,7 @@ import android.view.Menu;
 import android.widget.TextView;
 
 import org.mozilla.mozstumbler.R;
+import org.mozilla.mozstumbler.BuildConfig;
 import org.mozilla.mozstumbler.client.PackageUtils;
 
 public class AboutActivity extends ActionBarActivity {
@@ -27,6 +28,10 @@ public class AboutActivity extends ActionBarActivity {
         String str = getResources().getString(R.string.about_version);
         str = String.format(str, PackageUtils.getAppVersion(this));
         textView.setText(str);
+
+
+        textView = (TextView) findViewById(R.id.about_git_version);
+        textView.setText(BuildConfig.GIT_DESCRIPTION);
     }
 
     @Override

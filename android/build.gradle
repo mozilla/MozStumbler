@@ -37,6 +37,12 @@ android {
     compileSdkVersion 19
     buildToolsVersion "19.1.0"
 
+    def gitHash = "git rev-parse --short HEAD".execute().text.trim()
+    def hasModifiedDeletedOrOtherFiles = !"git ls-files -mdo --exclude-standard".execute().text.trim().isEmpty()
+    def hasStagedFiles = !"git diff-index --no-ext-diff --name-only --cached HEAD".execute().text.trim().isEmpty()
+    def dirtyWorkingCopy = hasModifiedDeletedOrOtherFiles || hasStagedFiles 
+    def gitDescription = dirtyWorkingCopy ? "${gitHash}-dirty" : gitHash
+
     packagingOptions {
         exclude 'META-INF/NOTICE.txt'
         exclude 'META-INF/NOTICE'
@@ -69,6 +75,9 @@ android {
         buildConfigField "String", "ACRA_URI", "\"http://ec2-54-172-135-65.compute-1.amazonaws.com/acra-stumbler/_design/acra-storage/_update/report\""
         buildConfigField "String", "ACRA_USER", "\"nospam\""
         buildConfigField "String", "ACRA_PASS", "\"4ok3bsWs509i\""
+
+        buildConfigField "String", "GIT_DESCRIPTION", "\"${gitDescription}\""
+        buildConfigField "String", "GIT_VERSION", "\"${versionName} ${gitDescription}\""
     }
 
     signingConfigs {

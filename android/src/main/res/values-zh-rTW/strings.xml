@@ -120,10 +120,10 @@
     <string name="reset_simulation_start">已重設模擬開始位置</string>
     <string name="category_crashreport">錯誤回報</string>
     <string-array name="map_tile_resolution_options">
-      <item>高 (Wi-Fi) / 低 (行動網路)</item>
-      <item>僅顯示高解析度圖資</item>
-      <item>僅顯示低解析度圖資</item>
-      <item>不顯示地圖</item>
+        <item>高 (Wi-Fi) / 低 (行動網路)</item>
+        <item>僅顯示高解析度圖資</item>
+        <item>僅顯示低解析度圖資</item>
+        <item>不顯示地圖</item>
     </string-array>
     <string name="low_battery_title">電力不足時停止觀測</string>
     <string name="battery_percent_options_label">在電力低於多少時停止觀測:</string>

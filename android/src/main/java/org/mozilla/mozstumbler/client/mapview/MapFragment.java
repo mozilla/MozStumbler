@@ -502,12 +502,8 @@ public final class MapFragment extends android.support.v4.app.Fragment
         final boolean hasNetwork = (info != null) && info.isConnected();
         final boolean hasWifi = (info != null) && (info.getType() == ConnectivityManager.TYPE_WIFI);
 
-        if (!hasNetwork) {
-            showMapNotAvailableMessage(NoMapAvailableMessage.eNoMapDueToNoInternet);
-            return;
-        }
-
-        showMapNotAvailableMessage(NoMapAvailableMessage.eHideNoMapMessage);
+        NoMapAvailableMessage message = hasNetwork ? NoMapAvailableMessage.eHideNoMapMessage : NoMapAvailableMessage.eNoMapDueToNoInternet;
+        showMapNotAvailableMessage(message);
         setHighBandwidthMap(hasWifi);
     }
 

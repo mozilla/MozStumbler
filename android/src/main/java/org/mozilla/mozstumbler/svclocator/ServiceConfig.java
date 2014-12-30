@@ -5,7 +5,6 @@ package org.mozilla.mozstumbler.svclocator;
 
 import org.mozilla.mozstumbler.svclocator.services.ISystemClock;
 import org.mozilla.mozstumbler.svclocator.services.SystemClock;
-import org.mozilla.osmdroid.api.IGeoPoint;
 
 import java.util.HashMap;
 

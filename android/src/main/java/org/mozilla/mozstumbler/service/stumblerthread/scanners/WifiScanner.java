@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.net.wifi.WifiManager.WifiLock;
-import android.os.Build;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
@@ -182,6 +181,10 @@ public class WifiScanner  {
     }
 
     public static boolean shouldLog(ScanResult scanResult) {
+        if (SSIDBlockList.isOptOut(scanResult)) {
+            Log.d(LOG_TAG, "Blocked opt-out SSID");
+            return false;
+        }
         if (BSSIDBlockList.contains(scanResult)) {
             Log.w(LOG_TAG, "Blocked BSSID: " + scanResult);
             return false;

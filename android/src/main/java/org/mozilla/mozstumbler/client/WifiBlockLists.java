@@ -139,9 +139,6 @@ public class WifiBlockLists implements WifiBlockListInterface {
             "Portable Hotspot",
             "Tether",
             "tether",
-
-            // Google's SSID opt-out
-            "_nomap",
     };
 
     private static final String[] BSSID_OUI_LIST = {

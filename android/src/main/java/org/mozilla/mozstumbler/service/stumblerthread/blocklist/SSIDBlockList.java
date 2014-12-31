@@ -8,7 +8,8 @@ import android.net.wifi.ScanResult;
 
 public final class SSIDBlockList {
     private static String[] sPrefixList = new String[]{};
-    private static String[] sSuffixList = new String[]{"_nomap"};
+    private static String[] sSuffixList = new String[]{};
+    private static String sOptOut = "_nomap"; // Google's SSID opt-out
 
     private SSIDBlockList() {
     }
@@ -16,6 +17,11 @@ public final class SSIDBlockList {
     public static void setFilterLists(String[] prefix, String[] suffix) {
         sPrefixList = prefix;
         sSuffixList = suffix;
+    }
+
+    public static boolean isOptOut(ScanResult scanResult) {
+        String SSID = scanResult.SSID;
+        return (SSID != null && SSID.endsWith(sOptOut));
     }
 
     public static boolean contains(ScanResult scanResult) {

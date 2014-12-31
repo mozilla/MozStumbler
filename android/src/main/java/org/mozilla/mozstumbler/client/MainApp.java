@@ -181,19 +181,6 @@ public class MainApp extends Application
                 mStumblerService = serviceBinder.getServiceAndInitialize(Thread.currentThread(),
                         MAX_BYTES_DISK_STORAGE, MAX_WEEKS_OLD_STORED);
                 mStumblerService.setWifiBlockList(new WifiBlockLists());
-                // Upgrade the db, if needed
-                Map<String, Long> oldStats = getOldDbStats(MainApp.this);
-                if (oldStats != null) {
-                    long last_upload_time = oldStats.get("last_upload_time");
-                    long observations_sent = oldStats.get("observations_sent");
-                    long wifis_sent = oldStats.get("wifis_sent");
-                    long cells_sent = oldStats.get("cells_sent");
-                    try {
-                        DataStorageManager.getInstance().writeSyncStats(last_upload_time, 0, observations_sent, wifis_sent, cells_sent);
-                    } catch (IOException ex) {
-                        Log.e(LOG_TAG, "Exception in DataStorageManager upgrading db:", ex);
-                    }
-                }
 
                 Log.d(LOG_TAG, "Service connected");
                 if (mMainActivity.get() != null) {
@@ -354,42 +341,6 @@ public class MainApp extends Application
                 boolean updateMetrics = action.equals(Reporter.ACTION_NEW_BUNDLE);
                 mMainActivity.get().updateUiOnMainThread(updateMetrics);
             }
-        }
-    }
-
-    private Map<String, Long> getOldDbStats(Context context) {
-        final File dbFile = new File(context.getFilesDir().getParent() + "/databases/" + "stumbler.db");
-        if (!dbFile.exists()) {
-            return null;
-        }
-
-        SQLiteDatabase db = null;
-        Cursor cursor = null;
-
-        try {
-            db = SQLiteDatabase.openDatabase(dbFile.toString(), null, 0);
-            cursor = db.rawQuery("select * from stats", null);
-            if (cursor == null || !cursor.moveToFirst()) {
-                db.close();
-                return null;
-            }
-
-            Map<String, Long> kv = new HashMap<String, Long>();
-            while (!cursor.isAfterLast()) {
-                String key = cursor.getString(cursor.getColumnIndex("key"));
-                Long value = cursor.getLong(cursor.getColumnIndex("value"));
-                kv.put(key, value);
-                cursor.moveToNext();
-            }
-            return kv;
-        } finally {
-            if (cursor != null) {
-                cursor.close();
-            }
-            if (db != null) {
-                db.close();
-            }
-            dbFile.delete();
         }
     }
 

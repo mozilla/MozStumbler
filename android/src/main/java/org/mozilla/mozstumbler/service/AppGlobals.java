@@ -81,5 +81,14 @@ public class AppGlobals {
 
     public static final String ACTION_TEST_SETTING_ENABLED = "stumbler-test-setting-enabled";
     public static final String ACTION_TEST_SETTING_DISABLED = "stumbler-test-setting-disabled";
+
+    public static final String TELEMETRY_TIME_BETWEEN_UPLOADS_SEC = "STUMBLER_TIME_BETWEEN_UPLOADS_SEC";
+    public static final String TELEMETRY_BYTES_UPLOADED_PER_SEC = "STUMBLER_BYTES_UPLOADED_PER_SEC";
+    public static final String TELEMETRY_TIME_BETWEEN_STARTS_SEC = "STUMBLER_TIME_BETWEEN_START_SEC";
+    public static final String TELEMETRY_BYTES_PER_UPLOAD = "STUMBLER_BYTES_PER_UPLOAD";
+    public static final String TELEMETRY_OBSERVATIONS_PER_UPLOAD = "STUMBLER_OBSERVATIONS_PER_UPLOAD";
+    public static final String TELEMETRY_CELLS_PER_UPLOAD = "STUMBLER_CELLS_PER_UPLOAD";
+    public static final String TELEMETRY_WIFIS_PER_UPLOAD = "STUMBLER_WIFIS_PER_UPLOAD";
+    public static final String TELEMETRY_OBSERVATIONS_PER_DAY = "STUMBLER_OBSERVATIONS_PER_DAY";
 }
 

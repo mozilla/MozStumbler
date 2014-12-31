@@ -57,7 +57,6 @@ public class DataStorageManager {
     // Set to the default value specified above.
     private final int mMaxWeeksStored;
 
-
     final ReportBatchBuilder mCurrentReports = new ReportBatchBuilder();
     protected final File mReportsDir;
 
@@ -480,9 +479,5 @@ public class DataStorageManager {
 
     public synchronized void incrementSyncStats(long bytesSent, long reports, long cells, long wifis) throws IOException {
         mPersistedOnDiskUploadStats.incrementSyncStats(bytesSent, reports, cells, wifis);
-    }
-
-    public void writeSyncStats(long time, long bytesSent, long totalObs, long totalCells, long totalWifis) throws IOException {
-        mPersistedOnDiskUploadStats.writeSyncStats(time, bytesSent, totalObs, totalCells, totalWifis);
     }
 }

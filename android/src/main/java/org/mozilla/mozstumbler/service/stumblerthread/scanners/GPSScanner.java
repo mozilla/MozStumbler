@@ -18,6 +18,7 @@ import android.util.Log;
 
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.AppGlobals.ActiveOrPassiveStumbling;
+import org.mozilla.mozstumbler.service.utils.TelemetryWrapper;
 
 public class GPSScanner implements LocationListener {
     public static final String ACTION_BASE = AppGlobals.ACTION_NAMESPACE + ".GPSScanner.";
@@ -33,7 +34,7 @@ public class GPSScanner implements LocationListener {
     private static final float ACTIVE_MODE_GPS_MIN_UPDATE_DISTANCE_M = 30;
     private static final long PASSIVE_GPS_MIN_UPDATE_FREQ_MS = 3000;
     private static final float PASSIVE_GPS_MOVEMENT_MIN_DELTA_M = 30;
-
+    private long mTelemetry_lastStartedMs;
 
     private final StumblerFilter stumbleFilter = new StumblerFilter();
     private final Context mContext;
@@ -75,6 +76,13 @@ public class GPSScanner implements LocationListener {
             return;
         }
         locationManager.requestLocationUpdates(LocationManager.PASSIVE_PROVIDER, 0, 0, this);
+
+        final int timeDiffSec = Long.valueOf((System.currentTimeMillis() - mTelemetry_lastStartedMs) / 1000).intValue();
+        if (mTelemetry_lastStartedMs > 0 && timeDiffSec > 0) {
+            TelemetryWrapper.addToHistogram(AppGlobals.TELEMETRY_TIME_BETWEEN_STARTS_SEC, timeDiffSec);
+        }
+        mTelemetry_lastStartedMs = System.currentTimeMillis();
+
     }
 
     private void startActiveMode() {

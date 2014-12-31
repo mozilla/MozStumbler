@@ -178,13 +178,18 @@ android {
 
 dependencies {
     androidTestCompile 'junit:junit:4.10'
-    androidTestCompile 'org.robolectric:robolectric:2.4'
+    testCompile        'junit:junit:4.10'
 
-    testCompile 'junit:junit:4.10'
-    testCompile 'org.robolectric:robolectric:2.4'
+    androidTestCompile 'org.robolectric:robolectric:2.4'
+    testCompile        'org.robolectric:robolectric:2.4'
+
+    // This needs to be tweaked so that we don't include this on real
+    // releases, but I'm tired and can't muster the gradle foo.
+    androidTestCompile "org.mockito:mockito-all:1.+"
+    testCompile        "org.mockito:mockito-all:1.+"
+
 
     compile 'com.crankycoder:SimpleKML:1.0'
-
     compile 'org.slf4j:slf4j-android:1.7.7'
 
     // https://developer.android.com/tools/support-library/features.html

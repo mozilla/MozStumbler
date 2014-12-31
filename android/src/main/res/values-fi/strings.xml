@@ -1,15 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <string name="app_name">Mozilla Stumbler</string>
     <string name="action_about">Tietoja</string>
     <string name="action_preferences">Asetukset</string>
     <string name="start_scanning">Aloita skannaus</string>
     <string name="stop_scanning">Lopeta skannaus</string>
-    <string name="view_leaderboard">Näytä pistetilasto</string>
+    <string name="view_leaderboard">Näytä pistetilastot</string>
     <string name="service_name">Mozilla Stumbler</string>
-    <string name="enter_nickname">Valitse nimimerkki (ei pakollinen)</string>
-    <string name="enter_nickname_title">Nimimerkki: %1$s</string>
-    <string name="enter_nickname_longtext">Nimimerkkisi näytetään pistetilastossa.</string>
+    <string name="notification_scanning">Mozilla Stumbler skannaa</string>
+    <string name="notification_paused">Mozilla Stumbler on pysäytetty</string>
+    <string name="enter_nickname">Anna lempinimi (vapaaehtoinen)</string>
+    <string name="enter_nickname_title">Lempinimi: %1$s</string>
+    <string name="enter_nickname_longtext">Lempinimesi näkyy pistetilastoissa.</string>
     <string name="update_title">Lataa Mozilla Stumblerin päivitys?</string>
     <string name="update_message">Asennettu versio: %1$s\nUusin versio: %2$s</string>
     <string name="update_now">Päivitä nyt</string>
@@ -17,24 +20,123 @@
     <string name="yes">Kyllä</string>
     <string name="no">Ei</string>
     <string name="about_version">Versio %1$s</string>
-    <string name="about_openstreetmap">Karttanäkymä © OpenStreetMapin osallistujat\nhttp://www.openstreetmap.org</string>
-    <string name="about_mapbox_title">Kartta</string>
-    <string name="about_mapbox">Lisätietoja karttapalvelusta…</string>
+    <string name="about_openstreetmap">Karttanäkymä\n© OpenStreetMapin tekijät\nhttp://www.openstreetmap.org</string>
+    <string name="about_mapbox_title">MapBox</string>
+    <string name="about_mapbox">Lue lisää osoitteessa http://www.mapbox.com</string>
     <string name="about_legal_aosp">Tämä sovellus sisältää ikoneita Android Open Source -projektista. Käytössä olevat ikonit on lisensoitu Creative Commons 2.5 Attribution -lisenssillä.</string>
+    <string name="about_legal_flaticons">GPS-, masto-, Wi-Fi- ja kiikari-ikonit teki Freepik. Saatavilla osoitteesta  http://www.flaticon.com lisenssillä: https://creativecommons.org/licenses/by-nd/3.0</string>
     <string name="upload_observations_sent_title">Lähetetty</string>
-    <string name="metrics_observations_last_upload_time_title">Edellisen lähetyksen aika:</string>
-    <string name="metrics_observations_title">Tietoja:</string>
-    <string name="metrics_observations_wifis_title">Wi-Fi:</string>
-    <string name="metrics_observations_cell_towers_title">Mastoja:</string>
-    <string name="upload_observations_in_queue_title">Jonossa</string>
-
-
-
-    <string name="upload_wifi_only_title">Lähetä vain Wi-Fi:n yli</string>
-    <string name="upload_wifi_only_summary">Tämä asetus vähentää datan käyttöä matkapuhelinverkon yli</string>
-
+    <string name="metrics_observations_last_upload_time_title">Edellinen lähetys:</string>
+    <string name="metrics_observations_last_upload_time_never">ei koskaan</string>
+    <!--
+    Do not just copy those plurals, please check what is needed for your language.
+    http://developer.android.com/guide/topics/resources/string-resource.html#Plurals
+    -->
+    <plurals name="time_diff_seconds">
+        <item quantity="one">juuri nyt</item>
+        <item quantity="other">hetki sitten</item>
+    </plurals>
+    <plurals name="time_diff_minutes">
+        <item quantity="one">yksi minuutti sitten</item>
+        <item quantity="other">%d minuuttia sitten</item>
+    </plurals>
+    <plurals name="time_diff_hours">
+        <item quantity="one">tunti sitten</item>
+        <item quantity="other">%d tuntia sitten</item>
+    </plurals>
+    <plurals name="time_diff_days">
+        <item quantity="one">päivä sitten</item>
+        <item quantity="other">%d päivää sitten</item>
+    </plurals>
+    <string name="metrics_notification_text">Raportit:%1$d Mastot:%2$d Wi-Fit:%3$d</string>
+    <string name="metrics_notification_extraline">Edellinen lähetys: %1$s</string>
+    <string name="metrics_observations_title">Raportit:</string>
+    <string name="metrics_observations_wifis_title">Wi-Fi-verkot:</string>
+    <string name="metrics_observations_cell_towers_title">GSM-verkot:</string>
+    <string name="upload_observations_in_queue_title">Valmis lähettämään</string>
+    <string name="upload_wifi_only_title">Lähetä automaattisesti vain Wi-Fillä</string>
+    <string name="upload_wifi_only_summary">Tämä asetus vähentää tiedonsiirtoa kännykkäverkon kautta. Lähetä-napin painaminen lähettää tiedot riippumatta tästä asetuksesta.</string>
+    <string name="metrics_activity_title">Tiedot</string>
+    <string name="metrics_this_session">Nykyinen sessio</string>
+    <string name="drawer_map_option_show_mls_locations">Näytä MLS-sijainnit</string>
     <string name="title_activity_log">Loki</string>
     <string name="action_view_log">Näytä loki</string>
-    <string name="scroll_to_start">Siirry alkuun</string>
-    <string name="scroll_to_end">Siirry loppuun</string>
+    <string name="scroll_to_start">Selaa ylös</string>
+    <string name="scroll_to_end">Selaa loppuun</string>
+    <string name="kml_file_title">KML-raporttitiedosto</string>
+    <string name="kml_file_load">Lataa KML-tiedosto</string>
+    <string name="kml_file_save">Tallenna KML-tiedosto</string>
+    <string name="kml_file_description">Tallenna/lataa raportit (sijainti, Wi-Fi, mastotiedot) vianselvitykseen.</string>
+    <string name="kml_file_saved_name">Tallennettu tiedosto:</string>
+    <string name="keep_screen_on_title">Pidä näyttö päällä skannatessa</string>
+    <string name="keep_screen_on_summary">Pidä näyttö päällä kun skannaus on päällä ja ohjelma on näkyvillä.</string>
+    <string name="delete_all">Poista kaikki</string>
+    <string name="are_you_sure">Oletko varma?</string>
+    <string name="loading_kml">Ladataan KML</string>
+    <string name="saving_kml">Tallennetaan KML</string>
+    <string name="mozstumbler_kml_file">Mozilla Stumbler KML -tiedosto</string>
+    <string name="share_file">Jaa tiedosto</string>
+    <string name="load_file">Lataa tiedosto</string>
+    <string name="delete_file">Poista tiedosto</string>
+    <string name="kml_file_saved">KML tallennettu</string>
+    <string name="share_after_kml_saved">Tiedosto on tallennettu laitteelle, haluatko jakaa sen?</string>
+    <string name="enter_email">Anna sähköpostiosoite (vapaaehtoinen)</string>
+    <string name="enter_email_title">Sähköposti: %1$s</string>
+    <string name="enter_email_longtext">Sähköpostiosoitetta ei näytetä muille ja sitä käytetään vain sinun omille raporteillesi.</string>
+    <string name="drawer_open">Näytä laatikko</string>
+    <string name="drawer_close">Sulje laatikko</string>
+    <string name="title_activity_leaderboard">Tilastot</string>
+    <string name="drawer_map_layers_title">Kartan selite</string>
+    <string name="first_run_message_part1">Mozillan paikannuspalvelu on avoin palvelu paikannukseen Wi-Fi- ja kännykkäverkoilla.</string>
+    <string name="first_run_message_part2">Lue <a href="https://location.services.mozilla.com/privacy">yksityisyyden suojasta</a> (englanniksi) ja aloita tietojen kerääminen.</string>
+    <string name="first_run_start_stumbling">Aloita tietojen jakaminen</string>
+    <string name="first_run_welcome_to_mozstumbler">Tervetuloa Mozilla Stumbleriin</string>
+    <string name="map_unavailable">Kartta ei ole saatavilla. Muistikortilla ei ole tilaa.\nVoit silti kerätä ja jakaa tietoa.</string>
+    <string name="map_offline_mode">Kartta ei päivity ilman internet-yhteyttä.\nVoit silti kerätä tietoja.</string>
+    <string name="map_copyright_fdroid">Karttaruudut MapQuestilta\n© OpenStreetMapin tekijät</string>
+    <string name="map_copyright_moz">© MapBox © OpenStreetMapin tekijät</string>
+    <string name="action_developer">Kehittäjä</string>
+    <string name="developer_title">Kehittäjä</string>
+    <string name="enable_option_show_mls_on_map">Ota käyttöön MLS:n sijaintikyselyt</string>
+    <string name="enable_option_show_mls_on_map_summary">Näytä Mozilla Location Service (MLS) -sijainnit raporteissa.</string>
+    <!-- enable_option_show_mls_on_map_detailed_info: %1$s refers to upload_wifi_only_title -->
+
+    <string name="enable_option_show_mls_on_map_detailed_info">MLS-sijainti näytetään jokaiselle raportille, mutta tämä kuluttaa vähän enemmän energiaa, muistia ja verkkoliikennettä. Tämä näytetään kartalla punaisena sijaintina MLS-sijainnille, ja viivana todelliseen paikkaan. Tätä ei näytetä mobiilidatayhteydellä jos \"$1$s\" on päällä.</string>
+    <string name="cell_plus_wifi_observation">Wi-Fi + mastoraportti</string>
+    <string name="cell_only_observation">Raportti vain mastoista</string>
+    <string name="wifi_only_observation">Raportti vain Wi-Fi:stä</string>
+    <string name="mls_location_observation">MLS-sijainti</string>
+    <string name="low_resolution_map">Pieniresoluutioinen kartta</string>
+    <string name="map_turned_off">Sulje karttanäyttö</string>
+    <string name="map_tile_resolution_options_label">Kartan tiedot:</string>
+    <string name="map_tile_resolution_options_summary">Pieniresoluutioinen kartta vähentää internet-yhteyden käyttöä.</string>
+    <string name="enable_crash_reporting">Ota käyttöön virheiden raportointi</string>
+    <string name="enable_simulation">Aloita simulointi</string>
+    <string name="clear_simulation_start_location">Tyhjennä simulaation aloitussijainti</string>
+    <string name="privacy_policy">Yksityisyyden suojaaminen:</string>
+    <string name="satellites_separator">/</string>
+    <string name="must_uninstall_to_update">Sinun täytyy poistaa edellinen versio ennen päivittämistä.</string>
+    <string name="category_leaderboard">Tilastot</string>
+    <string name="category_network_usage">Internetin käyttö</string>
+    <string name="category_display">Näytä</string>
+    <string name="reset_simulation_start">Simulaation aloituskohta on tyhjennetty</string>
+    <string name="category_crashreport">Virheiden raportointi</string>
+    <string-array name="map_tile_resolution_options">
+        <item>Korkea (Wi-Fi) / matala (cell)</item>
+        <item>Vain suuritarkkuuksinen</item>
+        <item>Vain pienitarkkuuksinen</item>
+        <item>Ei karttaa</item>
+    </string-array>
+    <string name="low_battery_title">Lopeta kun patteri on vähissä</string>
+    <string name="battery_percent_options_label">Lopeta kun patteria on jäljellä:</string>
+    <string name="motion_detection_title">Liikkeen tunnistaminen</string>
+    <string name="motion_detection_options_label">Pysäytä skannaus jos et liiku</string>
+    <string name="motion_detection_options_conjunction"></string>
+    <string name="map_scanning_paused_no_motion">Sijainti ei muutu, skannaus on pysäytetty.</string>
+
+
+    <string name="save_stumble_logs">Tallenna lokit</string>
+    <string name="create_log_archive_failure">Lokihakemiston luominen epäonnistui</string>
+    <string name="create_log_archive_success">Lokien tallennussijainti:</string>
+
 </resources>

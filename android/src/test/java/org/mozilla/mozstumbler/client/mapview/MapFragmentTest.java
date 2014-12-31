@@ -4,22 +4,20 @@
 
 package org.mozilla.mozstumbler.client.mapview;
 
-import android.content.Context;
-import android.support.v4.app.FragmentActivity;
+import android.os.Bundle;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
-import java.io.File;
-
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 import static org.robolectric.util.FragmentTestUtil.startFragment;
 
 @Config(emulateSdk = 18)
@@ -31,10 +29,31 @@ public class MapFragmentTest {
     @Test
     @Config(shadows = {CustomShadowConnectivityManager.class})
     public void testMapNetworkConnectionChanged() {
-        MapFragment mapFragment = new MapFragment();
+        MapFragment mapFragment = spy(MapFragment.class);
+
+        // skip most of the map setup
+        doNothing().when(mapFragment).doOnCreateView(any(Bundle.class));
+
+        // disable this method
+        doNothing().when(mapFragment).getUrlAndInit();
+
+        // disable setHighBandwidthMap method from doing anything,
+        // we just care that it gets called and we want to verify the argument being passed in.
+        doNothing().when(mapFragment).setHighBandwidthMap(Mockito.anyBoolean());
+
+        // Disable the onResume's main chunk of code - too much going on in there and
+        // we just don't care about it
+        doNothing().when(mapFragment).doOnResume();
 
         startFragment(mapFragment);
 
+        mapFragment.mapNetworkConnectionChanged();
+
+        // now verify that a network connection changed just shows a no map available message
+        verify(mapFragment).showMapNotAvailableMessage(MapFragment.NoMapAvailableMessage.eNoMapDueToNoInternet);
+
+        // Check that the setHighBandwidthMap method was called
+        verify(mapFragment).setHighBandwidthMap(false);
     }
 
 }

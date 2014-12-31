@@ -117,21 +117,28 @@ public class MapFragment extends android.support.v4.app.Fragment
 
         mRootView = inflater.inflate(R.layout.activity_map, container, false);
 
+        doOnCreateView(savedInstanceState);
+
+        return mRootView;
+    }
+
+    /*
+      This method has been extracted from onCreateView so that it's easy to stub
+      it out when the class is under test.
+     */
+    void doOnCreateView(Bundle savedInstanceState) {
         AbstractMapOverlay.setDisplayBasedMinimumZoomLevel(getApplication());
         showMapNotAvailableMessage(NoMapAvailableMessage.eHideNoMapMessage);
 
         hideLowResMapMessage();
-
         initializeMapControls();
         initializeLastLocation(savedInstanceState);
         initializeMapOverlays();
         initializeVisibleCounts();
         initializeListeners();
-
         showPausedDueToNoMotionMessage(getApplication().isIsScanningPausedDueToNoMotion());
 
         showCopyright();
-        return mRootView;
     }
 
     private void hideLowResMapMessage() {
@@ -408,7 +415,7 @@ public class MapFragment extends android.support.v4.app.Fragment
     // To handle the case where the user zooms out to show a large area when in low bandwidth mode,
     // we need an additional "LowZoom" overlay. So in low bandwidth mode, you will see
     // that based on the current zoom level of the map, we show "HighZoom" or "LowZoom" overlays.
-    private void setHighBandwidthMap(boolean isHighBandwidth) {
+    void setHighBandwidthMap(boolean isHighBandwidth) {
         final ClientPrefs prefs = ClientPrefs.getInstance(mRootView.getContext());
         if (prefs == null || getActivity() == null) {
             return;
@@ -642,6 +649,14 @@ public class MapFragment extends android.support.v4.app.Fragment
         super.onResume();
         Log.d(LOG_TAG, "onResume");
 
+        doOnResume();
+    }
+
+    /*
+     This method has been extracted from onResume so that we can just disable the behavior when
+     the class is under test
+     */
+    void doOnResume() {
         mMapLocationListener = new MapLocationListener(this);
 
         ObservedLocationsReceiver observer = ObservedLocationsReceiver.getInstance();

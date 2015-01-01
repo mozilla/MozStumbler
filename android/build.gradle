@@ -194,8 +194,8 @@ dependencies {
 
     // This needs to be tweaked so that we don't include this on real
     // releases, but I'm tired and can't muster the gradle foo.
-    androidTestCompile "org.mockito:mockito-all:1.+"
-    testCompile        "org.mockito:mockito-all:1.+"
+    androidTestCompile "org.mockito:mockito-core:1.+"
+    testCompile        "org.mockito:mockito-core:1.+"
 
 
     compile 'com.crankycoder:SimpleKML:1.0'

@@ -1,0 +1,163 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context=".client.subactivities.FileBugActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="@dimen/padding_below_for_bug_report_fields">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/file_bug_sender_name" />
+
+            <EditText
+                android:id="@+id/bug_report_sender_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/file_bug_sender_name_hint"
+                android:inputType="textPersonName|textCapWords"
+                android:singleLine="true"
+                android:textSize="@dimen/font_size_for_bug_report_fields" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="@dimen/padding_below_for_bug_report_fields">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/file_bug_sender_email" />
+
+            <EditText
+                android:id="@+id/bug_report_sender_email"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/file_bug_sender_email_hint"
+                android:inputType="textEmailAddress"
+                android:singleLine="true"
+                android:textSize="@dimen/font_size_for_bug_report_fields" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="@dimen/padding_below_for_bug_report_fields">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/file_bug_name" />
+
+            <EditText
+                android:id="@+id/bug_report_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/file_bug_name_hint"
+                android:inputType="textCapWords"
+                android:singleLine="true"
+                android:textSize="@dimen/font_size_for_bug_report_fields" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="@dimen/padding_below_for_bug_report_fields">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/file_bug_type" />
+
+            <Spinner
+                android:id="@+id/bug_report_type"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:entries="@array/file_bug_type_list"
+                android:prompt="@string/file_bug_type" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="@dimen/padding_below_for_bug_report_fields">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/file_bug_description" />
+
+            <EditText
+                android:id="@+id/bug_report_description"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/edit_text_size_bug_report_fields"
+                android:gravity="top|left"
+                android:hint="@string/file_bug_description_hint"
+                android:inputType="textCapSentences|textMultiLine|textAutoCorrect"
+                android:textSize="@dimen/font_size_for_bug_report_fields" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/file_bug_reproduction"/>
+
+            <EditText
+                android:id="@+id/bug_report_reproduction"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/edit_text_size_bug_report_fields"
+                android:gravity="top|left"
+                android:hint="@string/file_bug_reproduction_hint"
+                android:inputType="textCapSentences|textMultiLine|textAutoCorrect"
+                android:textSize="@dimen/font_size_for_bug_report_fields" />
+
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:paddingBottom="32dp"
+            android:paddingTop="32dp"
+            android:text="@string/file_bug_report_info"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textSize="13dp" />
+
+        <Button
+            android:id="@+id/bug_report_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="sendReport"
+            android:text="@string/file_bug_send" />
+
+    </LinearLayout>
+</ScrollView>

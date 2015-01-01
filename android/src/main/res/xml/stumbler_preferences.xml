@@ -55,6 +55,8 @@
         android:key="leaderboard_button"/>
     </PreferenceCategory>
 
+    <Preference android:title="@string/action_file_bug"
+        android:key="file_bug"/>
     <Preference android:title="@string/action_view_log"
         android:key="log_button"/>
     <Preference android:title="@string/action_about"

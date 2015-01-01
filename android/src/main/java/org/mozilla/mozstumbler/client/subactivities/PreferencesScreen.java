@@ -17,6 +17,7 @@ import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceGroup;
 import android.text.TextUtils;
+import android.widget.Toast;
 
 import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.client.ClientPrefs;
@@ -98,6 +99,15 @@ public class PreferencesScreen extends PreferenceActivity {
             @Override
             public boolean onPreferenceClick(Preference arg) {
                 ((MainApp) getApplication()).showDeveloperDialog(PreferencesScreen.this);
+                return true;
+            }
+        });
+
+        button = findPreference("file_bug");
+        button.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference arg) {
+                startActivity(new Intent(PreferencesScreen.this, FileBugActivity.class));
                 return true;
             }
         });

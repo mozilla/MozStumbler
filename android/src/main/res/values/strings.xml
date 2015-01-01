@@ -60,6 +60,30 @@
     <string name="metrics_this_session">Current session</string>
     <string name="drawer_map_option_show_mls_locations">Show MLS locations</string>
     <string name="title_activity_log">Log</string>
+
+    <string name="action_file_bug">File a Bug</string>
+    <string name="file_bug_sender_name">Your Name:</string>
+    <string name="file_bug_sender_name_hint">Optional</string>
+    <string name="file_bug_sender_email">Your Email:</string>
+    <string name="file_bug_sender_email_hint">Optional</string>
+    <string name="file_bug_name">Bug Title:</string>
+    <string name="file_bug_name_hint">Descriptive title for the bug</string>
+    <string name="file_bug_description">Bug Description:</string>
+    <string name="file_bug_description_hint">Detailed information about the bug being reported (what happens, when it happens, etc.)</string>
+    <string name="file_bug_reproduction">Bug Reproduction:</string>
+    <string name="file_bug_reproduction_hint">Steps explaining how to reproduce the bug.</string>
+    <string name="file_bug_report_info">By sending this report, you will also send information regarding the current state of your device. This information will be used to narrow down the cause of the bug. Bug reports for bugs that result in a crash are sent automatically if the option \"Enable crash reporting\" is enabled. If you encounter bugs that do not result in a crash, please report them through this form.</string>
+    <string name="file_bug_send">Send Bug Report</string>
+    <string name="file_bug_type">Bug Type:</string>
+    <string-array name="file_bug_type_list">
+        <item>Cosmetic</item>
+        <item>Performance</item>
+        <item>Compatibility</item>
+        <item>Functionality</item>
+        <item>Feature Request</item>
+        <item>Other</item>
+    </string-array>
+
     <string name="action_view_log">View Log</string>
     <string name="scroll_to_start">Scroll to Top</string>
     <string name="scroll_to_end">Scroll to End</string>

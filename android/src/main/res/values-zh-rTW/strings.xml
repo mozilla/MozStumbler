@@ -8,7 +8,7 @@
     <string name="stop_scanning">停止掃描</string>
     <string name="view_leaderboard">觀看排行榜</string>
     <string name="service_name">Mozilla Stumbler</string>
-    <string name="notification_scanning">Mozilla Stumbler 正在掃描</string>
+    <string name="notification_scanning">Mozilla Stumbler 掃描中</string>
     <string name="notification_paused">Mozilla Stumbler 已暫停</string>
     <string name="enter_nickname">輸入暱稱（非必填）</string>
     <string name="enter_nickname_title">暱稱: %1$s</string>
@@ -100,9 +100,9 @@
     <string name="enable_option_show_mls_on_map">啟用 MLS 位置查詢</string>
     <!-- enable_option_show_mls_on_map_detailed_info: %1$s refers to upload_wifi_only_title -->
     <string name="enable_option_show_mls_on_map_summary">多用一些電力、記憶體與網路用量，就可在每次回報中包含您掃到的 MLS 位置。MLS 位置在地圖上會以紅點顯示，並將回報點用線連結起來。但若您開啟「僅在使用 Wi-Fi 時自動上傳資料」的話，就不會透過行動數據連線來查詢位置。</string>
-    <string name="cell_plus_wifi_observation">觀測 Wi-Fi 與行動網路基地台</string>
-    <string name="cell_only_observation">僅觀測行動網路基地台</string>
-    <string name="wifi_only_observation">僅觀測 Wi-Fi 基地台</string>
+    <string name="cell_plus_wifi_observation">觀測到 Wi-Fi 與行動網路基地台</string>
+    <string name="cell_only_observation">僅觀測到行動網路基地台</string>
+    <string name="wifi_only_observation">僅觀測到 Wi-Fi 基地台</string>
     <string name="mls_location_observation">MLS 位置</string>
     <string name="low_resolution_map">低解析度地圖</string>
     <string name="map_turned_off">關閉地圖顯示</string>

@@ -114,7 +114,7 @@
                 android:id="@+id/bug_report_description"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/edit_text_size_bug_report_fields"
-                android:gravity="top|left"
+                android:gravity="top|start"
                 android:hint="@string/file_bug_description_hint"
                 android:inputType="textCapSentences|textMultiLine|textAutoCorrect"
                 android:textSize="@dimen/font_size_for_bug_report_fields" />
@@ -135,7 +135,7 @@
                 android:id="@+id/bug_report_reproduction"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/edit_text_size_bug_report_fields"
-                android:gravity="top|left"
+                android:gravity="top|start"
                 android:hint="@string/file_bug_reproduction_hint"
                 android:inputType="textCapSentences|textMultiLine|textAutoCorrect"
                 android:textSize="@dimen/font_size_for_bug_report_fields" />

@@ -33,19 +33,15 @@
     http://developer.android.com/guide/topics/resources/string-resource.html#Plurals
     -->
     <plurals name="time_diff_seconds">
-      <item quantity="one">剛剛</item>
       <item quantity="other">一陣子前</item>
     </plurals>
     <plurals name="time_diff_minutes">
-      <item quantity="one">1 分鐘前</item>
       <item quantity="other">%d 分鐘前</item>
     </plurals>
     <plurals name="time_diff_hours">
-      <item quantity="one">1 小時前</item>
       <item quantity="other">%d 小時前</item>
     </plurals>
     <plurals name="time_diff_days">
-      <item quantity="one">1 天前</item>
       <item quantity="other">%d 天前</item>
     </plurals>
     <string name="metrics_notification_text">報告:%1$d 行動:%2$d Wi-Fi:%3$d</string>

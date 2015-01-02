@@ -52,7 +52,10 @@ public class MapFragmentTest {
         // now verify that a network connection changed just shows a no map available message
         verify(mapFragment).showMapNotAvailableMessage(MapFragment.NoMapAvailableMessage.eNoMapDueToNoInternet);
 
-        // Check that the setHighBandwidthMap method was called
+        // Check that the setHighBandwidthMap method was called. This
+        // never happened before
+        // https://github.com/mozilla/MozStumbler/pull/1370 was
+        // merged.
         verify(mapFragment).setHighBandwidthMap(false);
     }
 

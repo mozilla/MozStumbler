@@ -129,7 +129,7 @@ public class SmartFSProvider extends MapTileModuleProviderBase {
         // @TODO vng: this is called far up the inheritance chain in super class
         // MapTileModuleProviderBase::loadMapTileAsync(...).  This
         // whole class hierarchy should be squashed down.
-        return new TileLoader();
+        return new SmartFSAbstractTileLoader(this);
     }
 
     @Override
@@ -153,7 +153,11 @@ public class SmartFSProvider extends MapTileModuleProviderBase {
     // Inner and Anonymous Classes
     // ===========================================================
 
-    protected class TileLoader extends MapTileModuleProviderBase.TileLoader {
+    protected class SmartFSAbstractTileLoader extends AbstractTileLoader {
+
+        public SmartFSAbstractTileLoader(MapTileModuleProviderBase mapTileModuleProviderBase) {
+            super(mapTileModuleProviderBase);
+        }
 
         @Override
         public Drawable loadTile(final MapTileRequestState pState) throws CantContinueException {

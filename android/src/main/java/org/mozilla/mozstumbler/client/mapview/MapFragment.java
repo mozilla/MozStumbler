@@ -16,7 +16,6 @@ import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -41,6 +40,7 @@ import org.mozilla.mozstumbler.client.navdrawer.MetricsView;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.core.http.HttpUtil;
 import org.mozilla.mozstumbler.service.core.http.IHttpUtil;
+import org.mozilla.mozstumbler.service.core.logging.Log;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.GPSScanner;
 import org.mozilla.osmdroid.ResourceProxy;
 import org.mozilla.osmdroid.api.IGeoPoint;
@@ -63,15 +63,14 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public final class MapFragment extends android.support.v4.app.Fragment
+public class MapFragment extends android.support.v4.app.Fragment
         implements MetricsView.IMapLayerToggleListener {
 
-    public enum NoMapAvailableMessage { eHideNoMapMessage, eNoMapDueToNoAccessibleStorage, eNoMapDueToNoInternet }
+    public static enum NoMapAvailableMessage { eHideNoMapMessage, eNoMapDueToNoAccessibleStorage, eNoMapDueToNoInternet }
 
     private static final String LOG_TAG = AppGlobals.makeLogTag(MapFragment.class.getSimpleName());
 
     private static final String COVERAGE_REDIRECT_URL = "https://location.services.mozilla.com/map.json";
-    private static int sGPSColor;
     private static final String ZOOM_KEY = "zoom";
     private static final int DEFAULT_ZOOM = 13;
     private static final int DEFAULT_ZOOM_AFTER_FIX = 16;
@@ -104,6 +103,7 @@ public final class MapFragment extends android.support.v4.app.Fragment
                     AbstractMapOverlay.MAX_ZOOM_LEVEL_OF_MAP, AbstractMapOverlay.TILE_PIXEL_SIZE,
                     "", new String[] {""});
         }
+        
         @Override
         public String getTileURLString(MapTile aTile) {
             return null;
@@ -117,10 +117,43 @@ public final class MapFragment extends android.support.v4.app.Fragment
 
         mRootView = inflater.inflate(R.layout.activity_map, container, false);
 
-        AbstractMapOverlay.setDisplayBasedMinimumZoomLevel(getApplication());
+        doOnCreateView(savedInstanceState);
 
+        return mRootView;
+    }
+
+    /*
+      This method has been extracted from onCreateView so that it's easy to stub
+      it out when the class is under test.
+     */
+    void doOnCreateView(Bundle savedInstanceState) {
+        AbstractMapOverlay.setDisplayBasedMinimumZoomLevel(getApplication());
         showMapNotAvailableMessage(NoMapAvailableMessage.eHideNoMapMessage);
 
+        hideLowResMapMessage();
+        initializeMapControls();
+        initializeLastLocation(savedInstanceState);
+        initializeMapOverlays();
+        initializeVisibleCounts();
+        initializeListeners();
+        showPausedDueToNoMotionMessage(getApplication().isIsScanningPausedDueToNoMotion());
+
+        showCopyright();
+    }
+
+    private void hideLowResMapMessage() {
+        mTextViewIsLowResMap = (TextView) mRootView.findViewById(R.id.low_resolution_map_message);
+        mTextViewIsLowResMap.setVisibility(View.GONE);
+    }
+
+    private void initializeMapControls() {
+        mMap = (MapView) mRootView.findViewById(R.id.map);
+        mMap.setBuiltInZoomControls(true);
+        mMap.setMultiTouchControls(true);
+        mMap.setMinZoomLevel(AbstractMapOverlay.getDisplaySizeBasedMinZoomLevel());
+    }
+
+    private void initializeCenterMeListener() {
         final ImageButton centerMe = (ImageButton) mRootView.findViewById(R.id.my_location_button);
         centerMe.setVisibility(View.INVISIBLE);
         centerMe.setOnClickListener(new View.OnClickListener() {
@@ -133,18 +166,50 @@ public final class MapFragment extends android.support.v4.app.Fragment
                 centerMe.setBackgroundResource(R.drawable.ic_mylocation_android_assets);
             }
         });
+    }
 
-        mTextViewIsLowResMap = (TextView) mRootView.findViewById(R.id.low_resolution_map_message);
-        mTextViewIsLowResMap.setVisibility(View.GONE);
+    private void initializeListeners() {
+        initializeCenterMeListener();
 
-        mMap = (MapView) mRootView.findViewById(R.id.map);
-        mMap.setBuiltInZoomControls(true);
-        mMap.setMultiTouchControls(true);
+        mMap.getOverlays().add(new SwipeListeningOverlay(getActivity().getApplicationContext(), new SwipeListeningOverlay.OnSwipeListener() {
+            @Override
+            public void onSwipe() {
+                mUserPanning = true;
+                setCenterButtonToNotCenteredIcon();
+            }
+        }));
 
-        listenForPanning(mMap);
+        mMap.setMapListener(new DelayedMapListener(new MapListener() {
+            @Override
+            public boolean onZoom(final ZoomEvent e) {
+                // This is key to no-wifi (low-res) tile functions, that
+                // when the zoom level changes, we check to see if the
+                // low-zoom or high-zoom should be shown
+                int z = e.getZoomLevel();
+                updateOverlayBaseLayer(z);
+                updateOverlayCoverageLayer(z);
+                mObservationPointsOverlay.zoomChanged(mMap);
+                return true;
+            }
 
-        sGPSColor = getResources().getColor(R.color.gps_track);
+            @Override
+            public boolean onScroll(final ScrollEvent e) {
+                return true;
+            }
+        }, 0));
+        ObservedLocationsReceiver observer = ObservedLocationsReceiver.getInstance();
+        observer.setMapActivity(this);
+    }
 
+    private void initializeMapOverlays() {
+        mAccuracyOverlay = new AccuracyCircleOverlay(mRootView.getContext(), getResources().getColor(R.color.gps_track));
+        mMap.getOverlays().add(mAccuracyOverlay);
+
+        mObservationPointsOverlay = new ObservationPointsOverlay(mRootView.getContext());
+        mMap.getOverlays().add(mObservationPointsOverlay);
+    }
+
+    private void initializeLastLocation(Bundle savedInstanceState) {
         mFirstLocationFix = true;
         int zoomLevel;
         GeoPoint lastLoc = null;
@@ -181,19 +246,9 @@ public final class MapFragment extends android.support.v4.app.Fragment
                 }
             }, 300);
         }
-        mMap.setMinZoomLevel(AbstractMapOverlay.getDisplaySizeBasedMinZoomLevel());
+    }
 
-        Log.d(LOG_TAG, "onCreate");
-
-        mAccuracyOverlay = new AccuracyCircleOverlay(mRootView.getContext(), sGPSColor);
-        mMap.getOverlays().add(mAccuracyOverlay);
-
-        mObservationPointsOverlay = new ObservationPointsOverlay(mRootView.getContext());
-        mMap.getOverlays().add(mObservationPointsOverlay);
-
-        ObservedLocationsReceiver observer = ObservedLocationsReceiver.getInstance();
-        observer.setMapActivity(this);
-
+    private void initializeVisibleCounts() {
         Configuration c = getResources().getConfiguration();
         if (c.fontScale > 1) {
             Log.d(LOG_TAG, "Large text is enabled: " + c.fontScale);
@@ -205,31 +260,6 @@ public final class MapFragment extends android.support.v4.app.Fragment
         initTextView(R.id.text_cells_visible, "000");
         initTextView(R.id.text_wifis_visible, "000");
         initTextView(R.id.text_observation_count, "00000");
-
-        showCopyright();
-
-        mMap.setMapListener(new DelayedMapListener(new MapListener() {
-            @Override
-            public boolean onZoom(final ZoomEvent e) {
-                // This is key to no-wifi (low-res) tile functions, that
-                // when the zoom level changes, we check to see if the
-                // low-zoom or high-zoom should be shown
-                int z = e.getZoomLevel();
-                updateOverlayBaseLayer(z);
-                updateOverlayCoverageLayer(z);
-                mObservationPointsOverlay.zoomChanged(mMap);
-                return true;
-            }
-
-            @Override
-            public boolean onScroll(final ScrollEvent e) {
-                return true;
-            }
-        }, 0));
-
-        showPausedDueToNoMotionMessage(getApplication().isIsScanningPausedDueToNoMotion());
-
-        return mRootView;
     }
 
     private void setCenterAndZoom(GeoPoint loc, int zoom) {
@@ -385,7 +415,7 @@ public final class MapFragment extends android.support.v4.app.Fragment
     // To handle the case where the user zooms out to show a large area when in low bandwidth mode,
     // we need an additional "LowZoom" overlay. So in low bandwidth mode, you will see
     // that based on the current zoom level of the map, we show "HighZoom" or "LowZoom" overlays.
-    private void setHighBandwidthMap(boolean isHighBandwidth) {
+    void setHighBandwidthMap(boolean isHighBandwidth) {
         final ClientPrefs prefs = ClientPrefs.getInstance(mRootView.getContext());
         if (prefs == null || getActivity() == null) {
             return;
@@ -483,8 +513,8 @@ public final class MapFragment extends android.support.v4.app.Fragment
     public void mapNetworkConnectionChanged() {
 
         FragmentActivity activity = getActivity();
-
         if (activity == null) {
+            // This is only null because of roboelectric
             return;
         }
 
@@ -494,9 +524,10 @@ public final class MapFragment extends android.support.v4.app.Fragment
             showMapNotAvailableMessage(NoMapAvailableMessage.eNoMapDueToNoAccessibleStorage);
             return;
         }
+        getUrlAndInit();
 
-        mCoverageSetup.getUrlAndInit();
-
+        // Note that under test, roboelectric will return null from getActivity(), but
+        // getActivity().getSystemService(...) will properly return the ShadowConnectivityManager
         final ConnectivityManager cm = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
         final NetworkInfo info = cm.getActiveNetworkInfo();
         final boolean hasNetwork = (info != null) && info.isConnected();
@@ -505,6 +536,10 @@ public final class MapFragment extends android.support.v4.app.Fragment
         NoMapAvailableMessage message = hasNetwork ? NoMapAvailableMessage.eHideNoMapMessage : NoMapAvailableMessage.eNoMapDueToNoInternet;
         showMapNotAvailableMessage(message);
         setHighBandwidthMap(hasWifi);
+    }
+
+    void getUrlAndInit() {
+        mCoverageSetup.getUrlAndInit();
     }
 
     public void setZoomButtonsVisible(boolean visible) {
@@ -614,6 +649,14 @@ public final class MapFragment extends android.support.v4.app.Fragment
         super.onResume();
         Log.d(LOG_TAG, "onResume");
 
+        doOnResume();
+    }
+
+    /*
+     This method has been extracted from onResume so that we can just disable the behavior when
+     the class is under test
+     */
+    void doOnResume() {
         mMapLocationListener = new MapLocationListener(this);
 
         ObservedLocationsReceiver observer = ObservedLocationsReceiver.getInstance();
@@ -682,16 +725,6 @@ public final class MapFragment extends android.support.v4.app.Fragment
 
         mMap.getTileProvider().clearTileCache();
         BitmapPool.getInstance().clearBitmapPool();
-    }
-
-    private void listenForPanning(MapView map) {
-        map.getOverlays().add(new SwipeListeningOverlay(getActivity().getApplicationContext(), new SwipeListeningOverlay.OnSwipeListener() {
-            @Override
-            public void onSwipe() {
-                mUserPanning = true;
-                setCenterButtonToNotCenteredIcon();
-            }
-        }));
     }
 
     public void formatTextView(int textViewId, int stringId, Object... args) {

@@ -83,6 +83,8 @@
         <item>Feature Request</item>
         <item>Other</item>
     </string-array>
+    <string name="file_bug_toast_success">Bug Report Sent\n Thank you!</string>
+    <string name="file_bug_missing_field">This field is required!</string>
 
     <string name="action_view_log">View Log</string>
     <string name="scroll_to_start">Scroll to Top</string>

@@ -66,7 +66,7 @@ public class FileBugActivity extends ActionBarActivity {
             ACRA.getErrorReporter().handleException(null);
 
             // Notify the user that the report was sent
-            Toast toast = Toast.makeText(this, "Bug Report Sent\n Thank you!", Toast.LENGTH_LONG);
+            Toast toast = Toast.makeText(this, getResources().getString(R.string.file_bug_toast_success), Toast.LENGTH_LONG);
             toast.show();
             this.finish();
         }
@@ -78,7 +78,7 @@ public class FileBugActivity extends ActionBarActivity {
         for (EditText field : args) {
             String input = field.getText().toString();
             if (input.trim().length() == 0) {
-                field.setError("This field is required!");
+                field.setError(getResources().getString(R.string.file_bug_missing_field));
                 allValid = false;
             }
         }

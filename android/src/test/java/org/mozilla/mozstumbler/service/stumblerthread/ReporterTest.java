@@ -87,6 +87,7 @@ public class ReporterTest {
         assertNull(rp.mBundle);
     }
 
+    @Test
     public void testReporterCellLimits() {
         // Spam the Reporter with cell data
         ArrayList<CellInfo> cellIdList = new ArrayList<CellInfo>();

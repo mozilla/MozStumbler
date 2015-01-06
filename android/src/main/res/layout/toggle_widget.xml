@@ -25,34 +25,6 @@
         android:orientation="horizontal">
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:minHeight="40dp"
-            android:layout_weight="0.4"
-            android:layout_gravity="center"
-            android:orientation="horizontal">
-            <ImageView
-                android:layout_width="36dp"
-                android:minHeight="36dp"
-                android:layout_gravity="center"
-                android:layout_height="36dp"
-                android:src="@drawable/ic_wifi_flaticondotcom"/>
-            <TextView
-                android:id="@+id/stumbler_info1"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:minHeight="36dp"
-                android:layout_gravity="center_vertical"
-                android:textAlignment="gravity"
-                android:paddingLeft="7dp"
-                android:paddingRight="7dp"
-                android:textSize="16sp"
-                android:textColor="@android:color/black"
-                android:text="0"
-                android:gravity="center_vertical" />
-
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
             android:minHeight="40dp"
             android:layout_height="36dp"
             android:layout_weight="0.4"
@@ -66,6 +38,33 @@
                 android:src="@drawable/ic_cell_flaticondotcom"/>
             <TextView
                 android:id="@+id/stumbler_info2"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:minHeight="36dp"
+                android:layout_gravity="center_vertical"
+                android:textAlignment="gravity"
+                android:paddingLeft="7dp"
+                android:paddingRight="7dp"
+                android:textSize="16sp"
+                android:textColor="@android:color/black"
+                android:text="0"
+                android:gravity="center_vertical" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:minHeight="40dp"
+            android:layout_weight="0.4"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+            <ImageView
+                android:layout_width="36dp"
+                android:minHeight="36dp"
+                android:layout_gravity="center"
+                android:layout_height="36dp"
+                android:src="@drawable/ic_wifi_flaticondotcom"/>
+            <TextView
+                android:id="@+id/stumbler_info1"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:minHeight="36dp"

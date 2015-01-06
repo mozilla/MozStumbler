@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="org.mozilla.mozstumbler" >
-
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <!-- ANDROID_MOCK_LOCATION -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
@@ -40,7 +39,7 @@
         <activity
             android:name=".client.subactivities.PreferencesScreen"
             android:label="@string/action_preferences"
-            android:parentActivityName=".client.navdrawer.MainDrawerActivity" >
+            android:parentActivityName=".client.navdrawer.MainDrawerActivity">
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -49,7 +48,7 @@
         <activity
             android:name=".client.subactivities.AboutActivity"
             android:label="@string/action_about"
-            android:parentActivityName=".client.subactivities.PreferencesScreen" >
+            android:parentActivityName=".client.subactivities.PreferencesScreen">
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -59,7 +58,7 @@
         <activity
             android:name=".client.subactivities.LogActivity"
             android:label="@string/title_activity_log"
-            android:parentActivityName=".client.subactivities.PreferencesScreen" >
+            android:parentActivityName=".client.subactivities.PreferencesScreen">
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -70,7 +69,7 @@
             android:name=".client.subactivities.LeaderboardActivity"
             android:label="@string/title_activity_leaderboard"
             android:configChanges="orientation|screenSize|keyboard"
-            android:parentActivityName=".client.navdrawer.MainDrawerActivity" >
+            android:parentActivityName=".client.navdrawer.MainDrawerActivity">
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -79,7 +78,7 @@
         <activity
             android:name=".client.subactivities.DeveloperActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
-            android:parentActivityName=".client.navdrawer.MainDrawerActivity" >
+            android:parentActivityName=".client.navdrawer.MainDrawerActivity">
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -95,6 +94,10 @@
                 android:value=".client.subactivities.PreferencesScreen" />
         </activity>
 
+        <activity
+            android:name=".client.ToggleWidgetHelper"
+            android:label="@string/app_name"></activity>
+
         <service
             android:name=".client.ClientStumblerService"
             android:icon="@drawable/ic_launcher"
@@ -104,6 +107,18 @@
         <receiver android:name=".service.uploadthread.UploadAlarmReceiver" />
         <service android:name=".service.uploadthread.UploadAlarmReceiver$UploadAlarmService" />
 
+        <receiver
+            android:name=".client.ToggleWidgetProvider"
+            android:icon="@drawable/ic_launcher"
+            android:label="Mozilla Stumbler">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/toggle_widget_provider" />
+        </receiver>
         <!-- For debugging the passive service -->
         <!--
         test with

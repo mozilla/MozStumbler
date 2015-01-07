@@ -42,13 +42,17 @@ class Stuff {
 
     }
     def resolveMethod(elementAtCaret) {
-        def node = elementAtCaret;
-        def METHOD_IMPL = "com.intellij.psi.impl.source.PsiMethodImpl"
-        while (!node.getClass().getName().equals(METHOD_IMPL)) {
-            node = node.parent;
+        try {
+            def node = elementAtCaret;
+            def METHOD_IMPL = "com.intellij.psi.impl.source.PsiMethodImpl"
+            while (!node.getClass().getName().equals(METHOD_IMPL)) {
+                node = node.parent;
+            }
+            //show("Returning: "+ node.toString())
+            return node;
+        } catch (NullPointerException npe) {
+            return null;
         }
-        //show("Returning: "+ node.toString())
-        return node;
     }
 
     def runTestMethod(project, baseDir, testClassName, testMethodName) {
@@ -102,8 +106,15 @@ class Stuff {
         if (elementAtCaret != null) {
             msg += "\nCurrent Element: ["+elementAtCaret+"]"
             containingMethod = resolveMethod(elementAtCaret)
+            if (containingMethod == null) {
+                show("This doesn't look like a test method.")
+                return
+            }
             testMethodName = containingMethod.getName()
-            if testMethodName
+            if (testMethodName == null || !testMethodName.startsWith("test")) {
+                show("This doesn't look like a test method.")
+                return
+            }
             msg += "\nCurrent method: ["+testMethodName+"]"
 
             containingClass = resolveClass(containingMethod)

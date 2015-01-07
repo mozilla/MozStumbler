@@ -8,14 +8,7 @@ import org.mozilla.mozstumbler.service.core.http.IResponse;
 import org.mozilla.mozstumbler.service.core.logging.Log;
 import org.mozilla.osmdroid.tileprovider.MapTile;
 import org.mozilla.osmdroid.tileprovider.tilesource.ITileSource;
-import org.mozilla.osmdroid.tileprovider.util.StreamUtils;
 
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -98,7 +91,7 @@ public class TileDownloaderDelegate {
 
         if (resp.httpResponse() == 304) {
             // Resave the file - this will automatically update the cache-control value
-            serializableTile.saveFile();
+            serializableTile.saveFile(tileSource.getCacheTime());
             return true;
         }
         return false;

@@ -32,6 +32,7 @@ public class CoverageOverlay extends AbstractMapOverlay {
                 ".png",
                 new String[] { coverageUrl });
         this.setLoadingBackgroundColor(Color.TRANSPARENT);
+        coverageTileSource.setCacheTime(12 * 60 * 60 * 1000);
         mTileProvider.setTileRequestCompleteHandler(new SimpleInvalidationHandler(mapView));
         mTileProvider.setTileSource(coverageTileSource);
     }

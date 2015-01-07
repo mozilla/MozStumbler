@@ -6,8 +6,6 @@ import org.mozilla.osmdroid.ResourceProxy;
 import org.mozilla.osmdroid.tileprovider.MapTile;
 import org.mozilla.osmdroid.tileprovider.tilesource.BitmapTileSourceBase.LowMemoryException;
 
-import java.io.InputStream;
-
 public interface ITileSource {
 
     /**
@@ -45,7 +43,7 @@ public interface ITileSource {
     /**
      * Get a rendered Drawable from the specified file path.
      *
-     * @param aFilePath a file path
+     * @param tileData a file path
      * @return the rendered Drawable
      */
     Drawable getDrawable(byte[] tileData) throws LowMemoryException;
@@ -73,4 +71,7 @@ public interface ITileSource {
 
     public String getTileURLString(MapTile tile);
 
+    public long getCacheTime();
+
+    public void setCacheTime(long cacheTime);
 }

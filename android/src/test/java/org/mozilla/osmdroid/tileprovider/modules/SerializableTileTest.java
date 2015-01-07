@@ -88,7 +88,7 @@ public class SerializableTileTest {
         sTile.setTileData(tileData);
 
         SerializableTile newTile = new SerializableTile();
-        sTile.saveFile(temp);
+        sTile.saveFile(temp, 0);
         newTile.fromFile(temp);
 
         // There's going to be an etag header

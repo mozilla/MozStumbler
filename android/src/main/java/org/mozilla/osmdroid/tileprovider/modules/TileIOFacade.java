@@ -5,18 +5,9 @@ import org.mozilla.mozstumbler.service.core.logging.Log;
 import org.mozilla.osmdroid.tileprovider.MapTile;
 import org.mozilla.osmdroid.tileprovider.constants.OSMConstants;
 import org.mozilla.osmdroid.tileprovider.tilesource.ITileSource;
-import org.mozilla.osmdroid.tileprovider.util.StreamUtils;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -116,7 +107,7 @@ public class TileIOFacade  {
         SerializableTile serializableTile = new SerializableTile();
         serializableTile.setTileData(tileBytes);
         serializableTile.setHeader("etag", etag);
-        serializableTile.saveFile(sTileFile);
+        serializableTile.saveFile(sTileFile, pTileSource.getCacheTime());
 
         mUsedCacheSpace += tileBytes.length;
         if (mUsedCacheSpace > OSMConstants.TILE_MAX_CACHE_SIZE_BYTES) {

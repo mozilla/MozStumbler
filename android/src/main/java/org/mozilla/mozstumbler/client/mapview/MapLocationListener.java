@@ -96,7 +96,7 @@ class MapLocationListener  {
         mLocationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
         if (mLocationManager == null) {
             // Ugly non-localized message, which is fine, the app is not usable on any device that shows this toast.
-            Toast.makeText(context, "Error: no LOCATION_SERVICE", Toast.LENGTH_LONG);
+            Toast.makeText(context, "Error: no LOCATION_SERVICE", Toast.LENGTH_LONG).show();
             return;
         }
 

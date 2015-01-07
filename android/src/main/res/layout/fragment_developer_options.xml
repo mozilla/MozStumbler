@@ -67,7 +67,7 @@
         android:layout_below="@+id/line2"
         android:paddingBottom="10dp"
         android:paddingTop="20dp"
-        android:text="@+string/low_battery_title"
+        android:text="@string/low_battery_title"
         android:textColor="#ff33b5e5"
         android:textSize="@dimen/font_size_for_metrics_top_title"
         android:textStyle="bold" />
@@ -82,7 +82,7 @@
         android:layout_height="wrap_content"
         android:paddingRight="10dp"
         android:paddingEnd="10dp"
-        android:text="@+string/battery_percent_options_label"
+        android:text="@string/battery_percent_options_label"
         android:textSize="@dimen/font_size_for_metrics" />
     <Spinner
         android:id="@+id/spinnerBatteryPercent"
@@ -101,7 +101,7 @@
         android:layout_below="@+id/layout1"
         android:paddingBottom="10dp"
         android:paddingTop="20dp"
-        android:text="@+string/motion_detection_title"
+        android:text="@string/motion_detection_title"
         android:textColor="#ff33b5e5"
         android:textSize="@dimen/font_size_for_metrics_top_title"
         android:textStyle="bold" />
@@ -115,7 +115,7 @@
         android:id="@+id/motionDetectionDistanceLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@+string/motion_detection_options_label"
+        android:text="@string/motion_detection_options_label"
         android:textSize="@dimen/font_size_for_metrics" />
     </LinearLayout>
 
@@ -136,7 +136,7 @@
             android:layout_height="wrap_content"
             android:paddingRight="10dp"
             android:paddingLeft="10dp"
-            android:text="@+string/motion_detection_options_conjunction"
+            android:text="@string/motion_detection_options_conjunction"
             android:textSize="22sp"
            />
         <Spinner

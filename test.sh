@@ -7,4 +7,4 @@
 # See: https://github.com/JCAndKSolutions/android-unit-test for more
 # details.
 
-./gradlew testGithubUnittest -DtestGithubUnittest.single=$1
+./gradlew testGithubUnittest --tests org.mozilla.mozstumbler.client.UpdaterTest.testUpdater

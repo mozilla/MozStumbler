@@ -6,6 +6,7 @@ import org.mozilla.mozstumbler.service.core.http.HttpUtil;
 import org.mozilla.mozstumbler.service.core.http.IHttpUtil;
 import org.mozilla.mozstumbler.service.core.http.IResponse;
 import org.mozilla.mozstumbler.service.core.logging.Log;
+import org.mozilla.mozstumbler.svclocator.ServiceLocator;
 import org.mozilla.osmdroid.tileprovider.MapTile;
 import org.mozilla.osmdroid.tileprovider.tilesource.ITileSource;
 import org.mozilla.osmdroid.tileprovider.util.StreamUtils;
@@ -131,7 +132,7 @@ public class TileDownloaderDelegate {
         // downloading again.
         HTTP404_CACHE.remove(tileURLString);
 
-        IHttpUtil httpClient = new HttpUtil();
+        IHttpUtil httpClient = (IHttpUtil) ServiceLocator.getInstance().getService(IHttpUtil.class);
         IResponse resp = httpClient.get(tileURLString, null);
 
         if (resp == null) {

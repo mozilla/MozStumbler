@@ -4,6 +4,7 @@
 
 package org.mozilla.mozstumbler.client.navdrawer;
 
+import android.app.Service;
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.Intent;
@@ -38,6 +39,7 @@ import org.mozilla.mozstumbler.client.subactivities.FirstRunFragment;
 import org.mozilla.mozstumbler.client.subactivities.LeaderboardActivity;
 import org.mozilla.mozstumbler.service.core.http.HttpUtil;
 import org.mozilla.mozstumbler.service.core.http.IHttpUtil;
+import org.mozilla.mozstumbler.svclocator.ServiceLocator;
 
 public class MainDrawerActivity
         extends ActionBarActivity
@@ -116,9 +118,8 @@ public class MainDrawerActivity
 
         getApp().setMainActivity(this);
 
-        IHttpUtil httpUtil = new HttpUtil();
         if (BuildConfig.GITHUB) {
-            Updater upd = new Updater(httpUtil);
+            Updater upd = new Updater();
             upd.checkForUpdates(this, BuildConfig.MOZILLA_API_KEY);
         }
 

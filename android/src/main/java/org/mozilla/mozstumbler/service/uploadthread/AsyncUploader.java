@@ -19,6 +19,7 @@ import org.mozilla.mozstumbler.service.core.http.MLS;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageManager;
 import org.mozilla.mozstumbler.service.utils.NetworkInfo;
 import org.mozilla.mozstumbler.service.utils.Zipper;
+import org.mozilla.mozstumbler.svclocator.ServiceLocator;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -123,7 +124,7 @@ public class AsyncUploader extends AsyncTask<AsyncUploadParam, AsyncProgressList
             return;
         }
 
-        IHttpUtil httpUtil = new HttpUtil();
+        IHttpUtil httpUtil = (IHttpUtil) ServiceLocator.getInstance().getService(IHttpUtil.class);
         ILocationService mls = new MLS(httpUtil);
         DataStorageManager dm = DataStorageManager.getInstance();
 

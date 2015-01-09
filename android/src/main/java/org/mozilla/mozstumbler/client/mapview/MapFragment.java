@@ -42,6 +42,7 @@ import org.mozilla.mozstumbler.service.core.http.HttpUtil;
 import org.mozilla.mozstumbler.service.core.http.IHttpUtil;
 import org.mozilla.mozstumbler.service.core.logging.Log;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.GPSScanner;
+import org.mozilla.mozstumbler.svclocator.ServiceLocator;
 import org.mozilla.osmdroid.ResourceProxy;
 import org.mozilla.osmdroid.api.IGeoPoint;
 import org.mozilla.osmdroid.events.DelayedMapListener;
@@ -316,8 +317,7 @@ public class MapFragment extends android.support.v4.app.Fragment
                     mGetUrl.schedule(new TimerTask() {
                         @Override
                         public void run() {
-                            IHttpUtil httpUtil = new HttpUtil();
-
+                            IHttpUtil httpUtil = (IHttpUtil) ServiceLocator.getInstance().getService(IHttpUtil.class);
                             java.util.Scanner scanner;
                             try {
                                 scanner = new java.util.Scanner(httpUtil.getUrlAsStream(COVERAGE_REDIRECT_URL), "UTF-8");

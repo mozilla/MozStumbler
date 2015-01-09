@@ -17,6 +17,7 @@ import org.mozilla.mozstumbler.service.core.http.ILocationService;
 import org.mozilla.mozstumbler.service.core.http.IResponse;
 import org.mozilla.mozstumbler.service.core.http.MLS;
 import org.mozilla.mozstumbler.service.utils.LocationAdapter;
+import org.mozilla.mozstumbler.svclocator.ServiceLocator;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -41,7 +42,7 @@ public class MLSLocationGetter extends AsyncTask<String, Void, Location> {
         mCallback = callback;
         mQueryMLSBytes  = mlsQueryObj.toString().getBytes();
 
-        IHttpUtil httpUtil = new HttpUtil();
+        IHttpUtil httpUtil = (IHttpUtil) ServiceLocator.getInstance().getService(IHttpUtil.class);
         mls = new MLS(httpUtil);
     }
 

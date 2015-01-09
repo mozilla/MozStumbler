@@ -19,6 +19,7 @@ import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.core.http.IHttpUtil;
 import org.mozilla.mozstumbler.service.core.http.IResponse;
 import org.mozilla.mozstumbler.service.utils.NetworkInfo;
+import org.mozilla.mozstumbler.svclocator.ServiceLocator;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,10 +32,8 @@ public class Updater {
     private static final String LOG_TAG = AppGlobals.makeLogTag(Updater.class.getSimpleName());
     private static final String LATEST_URL = "https://github.com/mozilla/MozStumbler/releases/latest";
     private static final String APK_URL_FORMAT = "https://github.com/mozilla/MozStumbler/releases/download/v%s/MozStumbler-v%s.apk";
-    private final IHttpUtil httpClient;
 
-    public Updater(IHttpUtil httpUtil) {
-        httpClient = httpUtil;
+    public Updater() {
     }
 
     public boolean wifiExclusiveAndUnavailable(Context c) {
@@ -57,6 +56,7 @@ public class Updater {
         new AsyncTask<Void, Void, IResponse>() {
             @Override
             public IResponse doInBackground(Void... params) {
+                IHttpUtil httpClient = (IHttpUtil) ServiceLocator.getInstance().getService(IHttpUtil.class);
                 return httpClient.head(LATEST_URL, null);
             }
 
@@ -234,6 +234,7 @@ public class Updater {
         }
 
         try {
+            IHttpUtil httpClient = (IHttpUtil) ServiceLocator.getInstance().getService(IHttpUtil.class);
             return httpClient.getUrlAsFile(url, file);
         } catch (IOException e) {
             Log.e(LOG_TAG, "", e);

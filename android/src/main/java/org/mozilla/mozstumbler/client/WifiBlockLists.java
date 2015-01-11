@@ -90,6 +90,7 @@ public class WifiBlockLists implements WifiBlockListInterface {
             "wifi_rail", // BART
             "egged.co.il", // Egged transportation services (Israel)
             "gb-tours.com", // GB Tours transportation services (Israel)
+            "In Flight", // Gogo in-flight WiFi
             "ISRAEL-RAILWAYS",
             "KATNET_", // Konstanz-Friedrichshafen public transport on-boat WiFi (Germany)
             "Kolumbus", // Stavanger public transport on-boat WiFi (Norway)
@@ -117,6 +118,7 @@ public class WifiBlockLists implements WifiBlockListInterface {
             "TPE-Free Bus", // Taipei City on-bus WiFi (Taiwan)
             "THSR-VeeTIME", // Taiwan High Speed Rail on-train WiFi
             "TriangleTransitWiFi_", // Triangle Transit on-bus WiFi
+            "United_Wi-Fi", // United Airlines in-flight WiFi
             "VR-junaverkko", // VR on-train WiFi (Finland)
             "WiFi in de trein", //Nederlandse Spoorwegen on-train WiFi (Netherlands)
             "WiFi PPLUS", //Primera Plus passenger buses

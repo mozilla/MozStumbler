@@ -37,14 +37,17 @@ import org.mozilla.mozstumbler.client.Updater;
 import org.mozilla.mozstumbler.client.mapview.MapFragment;
 import org.mozilla.mozstumbler.client.subactivities.FirstRunFragment;
 import org.mozilla.mozstumbler.client.subactivities.LeaderboardActivity;
+import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.core.http.HttpUtil;
 import org.mozilla.mozstumbler.service.core.http.IHttpUtil;
+import org.mozilla.mozstumbler.service.core.logging.Log;
 import org.mozilla.mozstumbler.svclocator.ServiceLocator;
 
 public class MainDrawerActivity
         extends ActionBarActivity
         implements IMainActivity {
 
+    private static final String LOG_TAG = AppGlobals.makeLogTag(MainDrawerActivity.class);
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
     private MetricsView mMetricsView;
@@ -321,6 +324,11 @@ public class MainDrawerActivity
             remoteViews.setImageViewResource(R.id.toggleServiceButton, R.drawable.ic_status_scanning);
             remoteViews.setViewVisibility(R.id.stumbler_info_bar, View.INVISIBLE);
         }
-        (AppWidgetManager.getInstance(getApplicationContext())).updateAppWidget(new ComponentName(getApplicationContext(), ToggleWidgetProvider.class), remoteViews);
+        try {
+
+            (AppWidgetManager.getInstance(getApplicationContext())).updateAppWidget(new ComponentName(getApplicationContext(), ToggleWidgetProvider.class), remoteViews);
+        } catch (RuntimeException rEx) {
+            Log.w(LOG_TAG, "Error with updating widget: " + rEx.toString());
+        }
     }
 }

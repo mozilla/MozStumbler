@@ -30,7 +30,7 @@ public class ServiceConfig extends HashMap<Class<?>, Object> {
         try {
             c = Class.forName(className);
         } catch (ClassNotFoundException e) {
-            throw new RuntimeException("Error loading ScanResult class");
+            throw new RuntimeException("Error loading ["+className+"] class");
         }
         Constructor[] constructors = c.getConstructors();
 

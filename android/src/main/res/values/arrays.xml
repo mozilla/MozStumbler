@@ -15,4 +15,11 @@
         <item>60%</item>
         <item>75%</item>
     </string-array>
+
+    <string-array name="power_saving_mode_options_intvalues">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+
 </resources>

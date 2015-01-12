@@ -18,6 +18,7 @@ public class Prefs {
     public static final String NICKNAME_PREF = "nickname";
     public static final String EMAIL_PREF = "email";
     public static final String WIFI_ONLY = "wifi_only";
+    public static final String POWER_SAVING_MODE = "power_saving_mode_type";
     protected static final String PREFS_FILE = Prefs.class.getSimpleName();
     private static final String LOG_TAG = AppGlobals.makeLogTag(Prefs.class.getSimpleName());
     private static final String USER_AGENT_PREF = "user-agent";
@@ -38,6 +39,8 @@ public class Prefs {
 
     private static final String SAVE_STUMBLE_LOGS = "save_stumble_logs";
     private final SharedPreferences mSharedPrefs;
+
+    public enum PowerSavingModeOptions { Off, On, Aggressive }
 
     protected static Prefs sInstance;
 
@@ -256,4 +259,24 @@ public class Prefs {
         apply(editor);
     }
 
+    public void setPowerSavingMode(int index) {
+        if (index >= PowerSavingModeOptions.values().length) {
+            index = 0;
+        }
+        setPowerSavingMode(PowerSavingModeOptions.values()[index]);
+    }
+
+    public void setPowerSavingMode(PowerSavingModeOptions mode) {
+        SharedPreferences.Editor editor = getPrefs().edit();
+        editor.putInt(POWER_SAVING_MODE, mode.ordinal());
+        apply(editor);
+    }
+
+    public PowerSavingModeOptions getPowerSavingMode() {
+        int i = getPrefs().getInt(POWER_SAVING_MODE, 1);
+        if (i >= PowerSavingModeOptions.values().length) {
+            i = 0;
+        }
+        return PowerSavingModeOptions.values()[i];
+    }
 }

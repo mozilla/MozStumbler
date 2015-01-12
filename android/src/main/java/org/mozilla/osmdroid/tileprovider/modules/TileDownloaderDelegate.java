@@ -2,21 +2,13 @@ package org.mozilla.osmdroid.tileprovider.modules;
 
 import org.apache.http.conn.HttpHostConnectException;
 import org.mozilla.mozstumbler.service.AppGlobals;
-import org.mozilla.mozstumbler.service.core.http.HttpUtil;
 import org.mozilla.mozstumbler.service.core.http.IHttpUtil;
 import org.mozilla.mozstumbler.service.core.http.IResponse;
 import org.mozilla.mozstumbler.service.core.logging.Log;
 import org.mozilla.mozstumbler.svclocator.ServiceLocator;
 import org.mozilla.osmdroid.tileprovider.MapTile;
 import org.mozilla.osmdroid.tileprovider.tilesource.ITileSource;
-import org.mozilla.osmdroid.tileprovider.util.StreamUtils;
 
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -81,34 +73,15 @@ public class TileDownloaderDelegate {
             return true;
         }
 
-        String etag = serializableTile.getEtag();
-        if (etag == null) {
-            // No etag means we want to download the file, no need
-            // to go checking the etag status over the network.
-            return false;
-        }
+        // To optimize data usage, the etag is only checked when the map tile is to be downloaded.
 
-        IHttpUtil httpUtil = new HttpUtil();
-        HashMap<String, String> headers = new HashMap<String, String>();
-        headers.put(ETAG_MATCH_HEADER, etag);
-        IResponse resp = httpUtil.get(tileURLString, headers);
-        if (resp == null) {
-            Log.w(LOG_TAG, "Error with network request.");
-            return false;
-        }
-
-        if (resp.httpResponse() == 304) {
-            // Resave the file - this will automatically update the cache-control value
-            serializableTile.saveFile();
-            return true;
-        }
         return false;
     }
 
     /*
      * Write a tile from network to disk.
      */
-    public boolean downloadTile(ITileSource tileSource, MapTile tile) {
+    public boolean downloadTile(SerializableTile serializableTile, ITileSource tileSource, MapTile tile) {
         if (tileSource == null) {
             Log.i(LOG_TAG, "tileSource is null");
             return false;
@@ -133,13 +106,22 @@ public class TileDownloaderDelegate {
         HTTP404_CACHE.remove(tileURLString);
 
         IHttpUtil httpClient = (IHttpUtil) ServiceLocator.getInstance().getService(IHttpUtil.class);
-        IResponse resp = httpClient.get(tileURLString, null);
+        HashMap<String, String> headers = new HashMap<String, String>();
+        String cachedEtag = serializableTile.getEtag();
+        if (cachedEtag != null) {
+            headers.put(ETAG_MATCH_HEADER, cachedEtag);
+        }
+        IResponse resp = httpClient.get(tileURLString, headers);
 
         if (resp == null) {
             return false;
         }
 
-        if (resp.httpResponse() != 200) {
+        if (resp.httpResponse() == 304) {
+            // Resave the file - this will automatically update the cache-control value
+            serializableTile.saveFile();
+            return true;
+        } else if (resp.httpResponse() != 200) {
             if (resp.httpResponse() == 404) {
                 HTTP404_CACHE.put(tileURLString, System.currentTimeMillis() + ONE_HOUR_MS);
             } else {

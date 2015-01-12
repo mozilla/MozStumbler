@@ -1,5 +1,7 @@
 package org.mozilla.mozstumbler.service.core.logging;
 
+import android.support.v4.util.CircularArray;
+
 import org.mozilla.mozstumbler.BuildConfig;
 import org.mozilla.mozstumbler.service.AppGlobals;
 
@@ -13,9 +15,13 @@ import java.io.Writer;
  */
 public class Log {
 
+    public static CircularArray<String> messageBuffer = new CircularArray<String>(10);
+
     public static void w(String logTag, String s) {
         if (BuildConfig.BUILD_TYPE.equals("unittest")) {
-            System.out.println("W: " + logTag + ", " + s);
+            String msg = "W: " + logTag + ", " + s;
+            System.out.println(msg);
+            messageBuffer.addLast(msg);
         } else {
             android.util.Log.w(logTag, s);
         }
@@ -45,10 +51,13 @@ public class Log {
         }
 
         if (BuildConfig.BUILD_TYPE.equals("unittest")) {
-            System.out.println("E: " + logTag + ", " + s);
+            msg = "E: " + logTag + ", " + s;
+            System.out.println(msg);
             if (e != null) {
                 e.printStackTrace();
             }
+            messageBuffer.addLast(msg);
+
         } else {
             android.util.Log.e(logTag, s + ":" + msg);
         }
@@ -58,7 +67,9 @@ public class Log {
 
     public static void i(String logTag, String s) {
         if (BuildConfig.BUILD_TYPE.equals("unittest")) {
-            System.out.println("i: " + logTag + ", " + s);
+            String msg = "i: " + logTag + ", " + s;
+            System.out.println(msg);
+            messageBuffer.addLast(msg);
         } else {
             android.util.Log.i(logTag, s);
         }
@@ -71,7 +82,9 @@ public class Log {
         }
 
         if (BuildConfig.BUILD_TYPE.equals("unittest")) {
-            System.out.println("d: " + logTag + ", " + s);
+            String msg = "d: " + logTag + ", " + s;
+            System.out.println(msg);
+            messageBuffer.addLast(msg);
         } else {
             android.util.Log.d(logTag, s);
         }

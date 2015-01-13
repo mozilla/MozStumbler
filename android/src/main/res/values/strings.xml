@@ -165,12 +165,12 @@
     <string name="category_power_saving">Power Saving</string>
     <string name="power_saving_mode">Motion detection</string>
     <string name="power_saving_mode_summary">Pauses and unpauses the app if you aren\'t moving.
-        If your GPS takes a long time to get a fix, don\'t use Aggressive mode.</string>
+        If your GPS takes a long time to get a fix, don\'t use extra power saving mode.</string>
 
     <string-array name="power_saving_mode_options">
         <item>Off</item>
         <item>On</item>
-        <item>Aggressive</item>
+        <item>On, extra power saving</item>
     </string-array>
 
 </resources>

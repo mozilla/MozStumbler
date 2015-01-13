@@ -215,7 +215,7 @@ public class SmartFSProvider extends MapTileModuleProviderBase {
             }
 
             boolean writeOK = false;
-            writeOK = delegate.downloadTile(tileSource, tile);
+            writeOK = delegate.downloadTile(serializableTile, tileSource, tile);
 
             // @TODO: the writeOK flag isn't always going to succeed
             // because of network failures - just ignore it for now

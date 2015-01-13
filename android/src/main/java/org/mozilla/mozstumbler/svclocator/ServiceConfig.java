@@ -4,6 +4,7 @@
 package org.mozilla.mozstumbler.svclocator;
 
 import org.mozilla.mozstumbler.service.core.http.IHttpUtil;
+import org.mozilla.mozstumbler.svclocator.services.IAppWidgetManagerProxy;
 import org.mozilla.mozstumbler.svclocator.services.ISystemClock;
 
 import java.lang.reflect.Constructor;
@@ -18,8 +19,12 @@ public class ServiceConfig extends HashMap<Class<?>, Object> {
         ServiceConfig result = new ServiceConfig();
 
         // All classes here must have an argument free constructor.
-        result.put(ISystemClock.class, load("org.mozilla.mozstumbler.svclocator.services.SystemClock"));
-        result.put(IHttpUtil.class, load("org.mozilla.mozstumbler.service.core.http.HttpUtil"));
+        result.put(ISystemClock.class,
+                load("org.mozilla.mozstumbler.svclocator.services.SystemClock"));
+        result.put(IAppWidgetManagerProxy.class,
+                load("org.mozilla.mozstumbler.svclocator.services.AppWidgetManagerProxy"));
+        result.put(IHttpUtil.class,
+                load("org.mozilla.mozstumbler.service.core.http.HttpUtil"));
 
         return result;
     }

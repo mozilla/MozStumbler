@@ -17,7 +17,6 @@ import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceGroup;
 import android.text.TextUtils;
-import android.widget.Toast;
 
 import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.client.ClientPrefs;
@@ -200,9 +199,14 @@ public class PreferencesScreen extends PreferenceActivity {
         mPowerSavingMode.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
-                int i = mPowerSavingMode.findIndexOfValue(newValue.toString());
+                final int i = mPowerSavingMode.findIndexOfValue(newValue.toString());
                 getPrefs().setPowerSavingMode(i);
                 updatePowerSavingMode(i);
+                final MainApp app = ((MainApp) getApplication());
+                if (app.isScanningOrPaused()) {
+                    app.stopScanning();
+                    app.startScanning();
+                }
                 return true;
             }
         });

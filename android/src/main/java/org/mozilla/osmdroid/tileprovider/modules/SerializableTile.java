@@ -37,15 +37,31 @@ public class SerializableTile {
     final byte[] FILE_HEADER = {(byte) 0xde, (byte) 0xca, (byte) 0xfb, (byte) 0xad};
 
     byte[] tData;
-    Map<String, String> headers;
+    Map<String, String> headers = new HashMap<String, String>();
     private File myFile;
 
-    public SerializableTile() {
-        headers = new HashMap<String, String>();
+    public SerializableTile(File sTileFile) {
+
+        if (sTileFile.exists()) {
+            boolean tileIsCurrent = false;
+            try {
+                fromFile(sTileFile);
+            } catch (FileNotFoundException e) {
+                Log.e(LOG_TAG, "TileFile was deleted by Android during tile load.", e);
+                tData = null;
+            }
+        }
     }
 
+    public SerializableTile(byte[] tileBytes, String etag) {
+        setTileData(tileBytes);
+        setHeader("etag", etag);
+    }
 
     public void setTileData(byte[] tileData) {
+        if (tileData == null) {
+            tileData = new byte[0];
+        }
         tData = tileData;
     }
 
@@ -54,7 +70,11 @@ public class SerializableTile {
     }
 
     public void setHeaders(Map<String, String> h) {
-        headers = new HashMap<String, String>();
+        headers.clear();
+        if (h == null) {
+            return;
+        }
+
         for (Map.Entry<String, String> entry : h.entrySet()) {
             if (entry.getValue() == null || entry.getKey() == null) {
                 // skip over this
@@ -236,6 +256,8 @@ public class SerializableTile {
         int contentLength = java.nio.ByteBuffer.wrap(buffer).getInt();
         if (bb.remaining() != contentLength) {
             Log.w(LOG_TAG, "Remaining byte count does not match actual["+bb.remaining()+"] vs expected["+contentLength+"]");
+            // Force data to be null on errors.
+            tData = null;
             return false;
         }
 

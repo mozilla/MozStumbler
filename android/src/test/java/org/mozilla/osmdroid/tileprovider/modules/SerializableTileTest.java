@@ -13,6 +13,7 @@ import java.nio.charset.CharacterCodingException;
 import java.util.Arrays;
 import java.util.HashMap;
 
+import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.fail;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
@@ -21,58 +22,20 @@ import static junit.framework.Assert.assertTrue;
 @RunWith(RobolectricTestRunner.class)
 public class SerializableTileTest {
 
-    @Before
-    public void setUp() throws Exception {
-    }
-
     @Test
-    public void testSerializeTiles() {
+    public void testSerializeTilesNoData() throws IOException {
+        File temp = File.createTempFile("temp", ".txt");
+
         HashMap<String, String> headers = new HashMap<String, String>();
-        headers.put("abc", "abc");
-        headers.put("12345", "12345");
+        SerializableTile sTile = new SerializableTile(null, "abc");
+        sTile.saveFile(temp);
 
-        SerializableTile sTile = new SerializableTile();
-        sTile.setHeaders(headers);
-        byte[] tileData = {(byte) 0xde, (byte) 0xca, (byte) 0xfb, (byte) 0xad};
-        sTile.setTileData(tileData);
-
-        SerializableTile newTile = new SerializableTile();
-
-        try {
-            newTile.fromBytes(sTile.asBytes());
-        } catch (CharacterCodingException e) {
-            fail(e.toString());
-        }
+        SerializableTile newTile = new SerializableTile(temp);
 
         assertEquals(2, newTile.getHeaders().size());
-        assertEquals("abc", newTile.getHeaders().get("abc"));
-        assertEquals("12345", newTile.getHeaders().get("12345"));
-        assertTrue(Arrays.equals(tileData, newTile.getTileData()));
-    }
-
-    @Test
-    public void testSerializeTilesNoData() {
-        HashMap<String, String> headers = new HashMap<String, String>();
-        headers.put("abc", "abc");
-        headers.put("12345", "12345");
-
-        SerializableTile sTile = new SerializableTile();
-        sTile.setHeaders(headers);
-        byte[] tileData = {};
-        sTile.setTileData(tileData);
-
-        SerializableTile newTile = new SerializableTile();
-
-        try {
-            newTile.fromBytes(sTile.asBytes());
-        } catch (CharacterCodingException e) {
-            fail(e.toString());
-        }
-
-        assertEquals(2, newTile.getHeaders().size());
-        assertEquals("abc", newTile.getHeaders().get("abc"));
-        assertEquals("12345", newTile.getHeaders().get("12345"));
-        assertTrue(Arrays.equals(tileData, newTile.getTileData()));
+        assertEquals("abc", newTile.getHeaders().get("etag"));
+        assertNotNull(newTile.getHeaders().get("cache-control"));
+        assertEquals(0, newTile.getTileData().length);
     }
 
     @Test
@@ -80,21 +43,17 @@ public class SerializableTileTest {
         File temp = File.createTempFile("temp", ".txt");
 
         HashMap<String, String> headers = new HashMap<String, String>();
-        headers.put("abc", "abc");
-        headers.put("12345", "12345");
-        SerializableTile sTile = new SerializableTile();
-        sTile.setHeaders(headers);
         byte[] tileData = {(byte) 0xde, (byte) 0xca, (byte) 0xfb, (byte) 0xad};
-        sTile.setTileData(tileData);
 
-        SerializableTile newTile = new SerializableTile();
+        SerializableTile sTile = new SerializableTile(tileData, "abc");
         sTile.saveFile(temp);
-        newTile.fromFile(temp);
+        SerializableTile newTile = new SerializableTile(temp);
 
         // There's going to be an etag header
-        assertEquals(3, newTile.getHeaders().size());
-        assertEquals("abc", newTile.getHeaders().get("abc"));
-        assertEquals("12345", newTile.getHeaders().get("12345"));
+        assertEquals(2, newTile.getHeaders().size());
+        assertEquals("abc", newTile.getHeaders().get("etag"));
+        assertNotNull(newTile.getHeaders().get("cache-control"));
+
 
         assertTrue(Arrays.equals(tileData, newTile.getTileData()));
     }

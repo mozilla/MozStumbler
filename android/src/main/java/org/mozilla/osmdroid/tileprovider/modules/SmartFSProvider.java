@@ -175,69 +175,39 @@ public class SmartFSProvider extends MapTileModuleProviderBase {
 
             File sTileFile  = new File(OSMConstants.TILE_PATH_BASE,
                     tileSource.getTileRelativeFilenameString(tile) + OSMConstants.MERGED_FILE_EXT);
-            SerializableTile serializableTile = new SerializableTile();
-
 
             final Drawable drawable;
-            if (sTileFile.exists()) {
+            SerializableTile serializableTile = null;
+            serializableTile = new SerializableTile(sTileFile);
 
-                boolean tileIsCurrent = false;
-                try {
-                    serializableTile.fromFile(sTileFile);
-                } catch (FileNotFoundException e) {
-                    Log.e(LOG_TAG, "TileFile was deleted by Android during tile load.", e);
-                    throw new RuntimeException(e);
-                }
-
-                try {
-                    tileIsCurrent = delegate.isTileCurrent(serializableTile, tileSource, tile);
-                } catch (IOException ioEx) {
-                    Log.e(LOG_TAG, "Error checking etag status", ioEx);
-                    return null;
-                }
-
-                if (tileIsCurrent) {
-                    // Use the on disk tile
+            if (delegate == null) {
+                // If the delegate is null, we can't talk to the network.
+                // Try to just check if the SerializableTile has any data in it
+                // and try to use that instead.
+                if (serializableTile.getTileData().length > 0) {
                     try {
                         drawable = tileSource.getDrawable(serializableTile.getTileData());
                         return drawable;
+                    } catch (NullPointerException npe) {
+                        Log.e(LOG_TAG, "Something horrible happened.", npe);
+                        return null;
                     } catch (final LowMemoryException e) {
                         // low memory so empty the queue
-                        Log.w(LOG_TAG, "LowMemoryException downloading MapTile: " + tile + " : " + e);
+                        Log.w(LOG_TAG, "LowMemoryException fetching MapTile from disk: " + tile + " : " + e);
                         throw new CantContinueException(e);
                     }
                 }
-            }
-
-            // call the delegate and load a tile from the network
-            if (delegate == null) {
+                // Failed to load tile from disk when the network is down. Just give up then.
                 return null;
             }
 
-            boolean writeOK = false;
-            writeOK = delegate.downloadTile(serializableTile, tileSource, tile);
-
-            // @TODO: the writeOK flag isn't always going to succeed
-            // because of network failures - just ignore it for now
-            // and test for file existence. The tile will get updated
-            // anyway on the next redraw using conditional get.
-
-            if (sTileFile.exists()) {
-                try {
-                    serializableTile.fromFile(sTileFile);
-                    drawable = tileSource.getDrawable(serializableTile.getTileData());
-                    return drawable;
-                } catch (final LowMemoryException e) {
-                    // low memory so empty the queue
-                    Log.w(LOG_TAG, "LowMemoryException downloading MapTile: " + tile + " : " + e);
-                    throw new CantContinueException(e);
-                } catch (FileNotFoundException e) {
-                    Log.e(LOG_TAG, "TileFile was deleted by Android during tile load.", e);
-                    throw new RuntimeException(e);                }
+            try {
+                return delegate.downloadTile(serializableTile, tileSource, tile);
+            } catch (final LowMemoryException e) {
+                // low memory so empty the queue
+                Log.w(LOG_TAG, "LowMemoryException downloading MapTile: " + tile + " : " + e);
+                throw new CantContinueException(e);
             }
-
-            // If we get here then there is no file stored on disk or the network.
-            return null;
         }
     }
 

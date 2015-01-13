@@ -100,7 +100,7 @@ public class TileIOFacade  {
 
     // @TODO vng: this should really just take in a header defined as
     // Map<String, String> instead of the single etag header
-    public boolean saveFile(final ITileSource pTileSource, final MapTile pTile,
+    public SerializableTile saveFile(final ITileSource pTileSource, final MapTile pTile,
                             final byte[] tileBytes, String etag) {
         File parent;
 
@@ -110,19 +110,16 @@ public class TileIOFacade  {
 
         if (!parent.exists() && !createFolderAndCheckIfExists(parent)) {
             Log.w(LOG_TAG, "Can't create parent folder for actual serializable tile. parent [" + parent + "]");
-            return false;
+            return null;
         }
 
-        SerializableTile serializableTile = new SerializableTile();
-        serializableTile.setTileData(tileBytes);
-        serializableTile.setHeader("etag", etag);
+        SerializableTile serializableTile = new SerializableTile(tileBytes, etag);
         serializableTile.saveFile(sTileFile);
-
         mUsedCacheSpace += tileBytes.length;
         if (mUsedCacheSpace > OSMConstants.TILE_MAX_CACHE_SIZE_BYTES) {
             cutCurrentCache(); // TODO perhaps we should do this in the background
         }
-        return true;
+        return serializableTile;
     }
 
     // ===========================================================

@@ -17,7 +17,6 @@ import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceGroup;
 import android.text.TextUtils;
-import android.widget.Toast;
 
 import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.client.ClientPrefs;
@@ -33,6 +32,7 @@ public class PreferencesScreen extends PreferenceActivity {
     private CheckBoxPreference mEnableShowMLSLocations;
     private CheckBoxPreference mCrashReportsOn;
     private ListPreference mMapTileDetail;
+    private ListPreference mPowerSavingMode;
 
     private ClientPrefs getPrefs() {
         return ClientPrefs.getInstance(this);
@@ -57,6 +57,11 @@ public class PreferencesScreen extends PreferenceActivity {
         int valueIndex = ClientPrefs.getInstance(this).getMapTileResolutionType().ordinal();
         mMapTileDetail.setValueIndex(valueIndex);
         updateMapDetailTitle(valueIndex);
+
+        mPowerSavingMode = (ListPreference) getPreferenceManager().findPreference(Prefs.POWER_SAVING_MODE);
+        valueIndex = Prefs.getInstance(this).getPowerSavingMode().ordinal();
+        mPowerSavingMode.setValueIndex(valueIndex);
+        updatePowerSavingMode(valueIndex);
 
         setPreferenceListener();
         setButtonListeners();
@@ -117,6 +122,11 @@ public class PreferencesScreen extends PreferenceActivity {
         mMapTileDetail.setTitle(
             getString(R.string.map_tile_resolution_options_label) + " " +
             mMapTileDetail.getEntries()[index]);
+    }
+
+    private void updatePowerSavingMode(int index) {
+        mPowerSavingMode.setTitle(getString(R.string.power_saving_mode) + ": " +
+            mPowerSavingMode.getEntries()[index]);
     }
 
     private void setPreferenceListener() {
@@ -183,6 +193,20 @@ public class PreferencesScreen extends PreferenceActivity {
                 int i = mMapTileDetail.findIndexOfValue(newValue.toString());
                 getPrefs().setMapTileResolutionType(i);
                 updateMapDetailTitle(i);
+                return true;
+            }
+        });
+        mPowerSavingMode.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                final int i = mPowerSavingMode.findIndexOfValue(newValue.toString());
+                getPrefs().setPowerSavingMode(i);
+                updatePowerSavingMode(i);
+                final MainApp app = ((MainApp) getApplication());
+                if (app.isScanningOrPaused()) {
+                    app.stopScanning();
+                    app.startScanning();
+                }
                 return true;
             }
         });

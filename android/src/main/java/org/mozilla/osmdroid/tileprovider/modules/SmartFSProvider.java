@@ -11,15 +11,10 @@ import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.core.logging.Log;
 import org.mozilla.osmdroid.tileprovider.IRegisterReceiver;
 import org.mozilla.osmdroid.tileprovider.MapTile;
-import org.mozilla.osmdroid.tileprovider.MapTileRequestState;
-import org.mozilla.osmdroid.tileprovider.constants.OSMConstants;
-import org.mozilla.osmdroid.tileprovider.tilesource.BitmapTileSourceBase.LowMemoryException;
+import org.mozilla.osmdroid.tileprovider.tilesource.BitmapTileSourceBase;
 import org.mozilla.osmdroid.tileprovider.tilesource.ITileSource;
 import org.mozilla.osmdroid.tileprovider.tilesource.TileSourceFactory;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -102,9 +97,22 @@ public class SmartFSProvider extends MapTileModuleProviderBase {
     // Getter & Setter
     // ===========================================================
 
+    public boolean hasDelegate() {
+        return delegate != null;
+    }
+
+    public Drawable downloadTile(SerializableTile serializableTile, ITileSource tileSource, MapTile tile) throws BitmapTileSourceBase.LowMemoryException {
+        return delegate.downloadTile(serializableTile, tileSource, tile);
+    }
+
     public void configureDelegate(TileDownloaderDelegate d) {
         delegate = d;
     }
+
+    public ITileSource getTileSource() {
+        return mTileSource.get();
+    }
+
     // ===========================================================
     // Methods from SuperClass/Interfaces
     // ===========================================================
@@ -152,68 +160,6 @@ public class SmartFSProvider extends MapTileModuleProviderBase {
     // ===========================================================
     // Inner and Anonymous Classes
     // ===========================================================
-
-    protected class SmartFSAbstractTileLoader extends AbstractTileLoader {
-
-        public SmartFSAbstractTileLoader(MapTileModuleProviderBase mapTileModuleProviderBase) {
-            super(mapTileModuleProviderBase);
-        }
-
-        @Override
-        public Drawable loadTile(final MapTileRequestState pState) throws CantContinueException {
-
-            ITileSource tileSource = mTileSource.get();
-            if (tileSource == null) {
-                return null;
-            }
-
-            final MapTile tile = pState.getMapTile();
-
-            // if there's no sdcard then don't do anything
-            if (!getSdCardAvailable()) {
-                if (DEBUGMODE) {
-                    Log.d(LOG_TAG, "No sdcard - do nothing for tile: " + tile);
-                }
-                return null;
-            }
-
-            File sTileFile  = new File(OSMConstants.TILE_PATH_BASE,
-                    tileSource.getTileRelativeFilenameString(tile) + OSMConstants.MERGED_FILE_EXT);
-
-            final Drawable drawable;
-            SerializableTile serializableTile = null;
-            serializableTile = new SerializableTile(sTileFile);
-
-            if (delegate == null) {
-                // If the delegate is null, we can't talk to the network.
-                // Try to just check if the SerializableTile has any data in it
-                // and try to use that instead.
-                if (serializableTile.getTileData().length > 0) {
-                    try {
-                        drawable = tileSource.getDrawable(serializableTile.getTileData());
-                        return drawable;
-                    } catch (NullPointerException npe) {
-                        Log.e(LOG_TAG, "Something horrible happened.", npe);
-                        return null;
-                    } catch (final LowMemoryException e) {
-                        // low memory so empty the queue
-                        Log.w(LOG_TAG, "LowMemoryException fetching MapTile from disk: " + tile + " : " + e);
-                        throw new CantContinueException(e);
-                    }
-                }
-                // Failed to load tile from disk when the network is down. Just give up then.
-                return null;
-            }
-
-            try {
-                return delegate.downloadTile(serializableTile, tileSource, tile);
-            } catch (final LowMemoryException e) {
-                // low memory so empty the queue
-                Log.w(LOG_TAG, "LowMemoryException downloading MapTile: " + tile + " : " + e);
-                throw new CantContinueException(e);
-            }
-        }
-    }
 
     // Stuff from superclass
     void checkSdCard() {

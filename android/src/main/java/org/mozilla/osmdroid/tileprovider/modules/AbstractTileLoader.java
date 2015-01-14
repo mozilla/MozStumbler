@@ -36,10 +36,10 @@ public abstract class AbstractTileLoader implements Runnable {
      * @param pState
      * @return the tile if it was loaded successfully, or null if failed to
      * load and other tile providers need to be called
-     * @throws org.mozilla.osmdroid.tileprovider.modules.MapTileModuleProviderBase.CantContinueException
+     * @throws CantContinueException
      */
     protected abstract Drawable loadTile(MapTileRequestState pState)
-            throws MapTileModuleProviderBase.CantContinueException;
+            throws CantContinueException;
 
     protected void onTileLoaderInit() {
         // Do nothing by default
@@ -134,7 +134,7 @@ public abstract class AbstractTileLoader implements Runnable {
             try {
                 result = null;
                 result = loadTile(state);
-            } catch (final MapTileModuleProviderBase.CantContinueException e) {
+            } catch (final CantContinueException e) {
                 Log.e(LOG_TAG, "Tile loader can't continue: " + state.getMapTile(), e);
                 mapTileModuleProviderBase.clearQueue();
             } catch (final Throwable e) {

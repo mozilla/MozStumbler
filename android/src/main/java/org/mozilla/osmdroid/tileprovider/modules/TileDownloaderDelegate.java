@@ -2,7 +2,6 @@ package org.mozilla.osmdroid.tileprovider.modules;
 
 import android.graphics.drawable.Drawable;
 
-import org.apache.http.conn.HttpHostConnectException;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.core.http.IHttpUtil;
 import org.mozilla.mozstumbler.service.core.http.IResponse;
@@ -15,8 +14,6 @@ import org.mozilla.osmdroid.tileprovider.tilesource.ITileSource;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-
-import static org.mozilla.osmdroid.tileprovider.modules.MapTileModuleProviderBase.*;
 
 /*
  * This is a self contained tile downloader and writer to disk.
@@ -138,7 +135,11 @@ public class TileDownloaderDelegate {
 
         // write the data using the TileIOFacade
         serializableTile = tileIOFacade.saveFile(tileSource, tile, tileBytes, etag);
-        return tileSource.getDrawable(serializableTile.getTileData());
+        if (AppGlobals.isDebug) {
+            Log.d(LOG_TAG, "serializableTile == " + serializableTile);
+        }
+        byte[] data = serializableTile.getTileData();
+        return tileSource.getDrawable(data);
 
     }
 
@@ -148,7 +149,7 @@ public class TileDownloaderDelegate {
      *
      * In all other cases, assume the network is available.
      */
-    private boolean networkIsUnavailable() {
+    protected boolean networkIsUnavailable() {
         if (networkAvailablityCheck != null && !networkAvailablityCheck.getNetworkAvailable()) {
             return true;
         }
@@ -158,7 +159,7 @@ public class TileDownloaderDelegate {
     /*
      * Check if this URL is already known to 404 on us.
      */
-    private boolean urlIs404Cached(String url) {
+    protected boolean urlIs404Cached(String url) {
         Long cacheTs = HTTP404_CACHE.get(url);
         if (cacheTs != null) {
             if (cacheTs.longValue() > System.currentTimeMillis()) {

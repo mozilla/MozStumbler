@@ -88,12 +88,15 @@ public class TileDownloaderDelegate {
         }
         IResponse resp = httpClient.get(tileURLString, headers);
 
+        if (AppGlobals.isDebug) {
+            Log.d(LOG_TAG, "Got a response: " + resp.httpStatusCode());
+        }
         if (resp == null) {
             Log.w(LOG_TAG, "A NULL response was returned from the HTTP client.  This should never have happened.");
             return null;
         }
 
-        if (resp.httpResponse() == 304) {
+        if (resp.httpStatusCode() == 304) {
             if (serializableTile.getTileData().length > 0) {
                 // Resave the file - this will automatically update the cache-control value
                 serializableTile.saveFile();
@@ -107,11 +110,11 @@ public class TileDownloaderDelegate {
             }
         }
 
-        if (resp.httpResponse() != 200) {
-            if (resp.httpResponse() == 404) {
+        if (resp.httpStatusCode() != 200) {
+            if (resp.httpStatusCode() == 404) {
                 HTTP404_CACHE.put(tileURLString, System.currentTimeMillis() + ONE_HOUR_MS);
             } else {
-                Log.w(LOG_TAG, "Unexpected response from tile server: [" + resp.httpResponse() + "]");
+                Log.w(LOG_TAG, "Unexpected response from tile server: [" + resp.httpStatusCode() + "]");
             }
 
             // @TODO vng: This is a hack so that we skip over anything that errors from the mozilla
@@ -124,7 +127,7 @@ public class TileDownloaderDelegate {
                 // Do nothing here for now.  We may as well generate an empty bitmap and return that
                 // on the refactoring.
             } else {
-                Log.w(LOG_TAG, "Error downloading [" + tileURLString + "] HTTP Response Code:" + resp.httpResponse());
+                Log.w(LOG_TAG, "Error downloading [" + tileURLString + "] HTTP Response Code:" + resp.httpStatusCode());
             }
 
             return null;

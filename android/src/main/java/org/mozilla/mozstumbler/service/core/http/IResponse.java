@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 public interface IResponse {
-    public int httpResponse();
+    public int httpStatusCode();
 
     public String body();
     public byte[] bodyBytes();

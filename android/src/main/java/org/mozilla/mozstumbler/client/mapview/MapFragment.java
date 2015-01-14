@@ -300,10 +300,9 @@ public class MapFragment extends android.support.v4.app.Fragment
         }
 
         void getUrlAndInit() {
-            if (isGetUrlAndInitCoverageRunning.get() || mCoverageTilesOverlayLowZoom != null) {
+            if (!isGetUrlAndInitCoverageRunning.compareAndSet(false, true)) {
                 return;
             }
-            isGetUrlAndInitCoverageRunning.set(true);
 
             final Runnable coverageUrlQuery = new Runnable() {
                 @Override
@@ -317,29 +316,30 @@ public class MapFragment extends android.support.v4.app.Fragment
                     mGetUrl.schedule(new TimerTask() {
                         @Override
                         public void run() {
-                            IHttpUtil httpUtil = (IHttpUtil) ServiceLocator.getInstance().getService(IHttpUtil.class);
-                            java.util.Scanner scanner;
                             try {
-                                scanner = new java.util.Scanner(httpUtil.getUrlAsStream(COVERAGE_REDIRECT_URL), "UTF-8");
+                                IHttpUtil httpUtil = (IHttpUtil) ServiceLocator.getInstance().getService(IHttpUtil.class);
+                                java.util.Scanner scanner = new java.util.Scanner(httpUtil.getUrlAsStream(COVERAGE_REDIRECT_URL), "UTF-8");
+                                if (scanner.hasNext()) {
+                                    scanner.useDelimiter("\\A");
+                                    String result = scanner.next();
+                                    try {
+                                        sCoverageUrl = new JSONObject(result).getString("tiles_url");
+                                        removeLayer(mCoverageTilesOverlayHighZoom);
+                                        removeLayer(mCoverageTilesOverlayLowZoom);
+                                        mCoverageTilesOverlayHighZoom = mCoverageTilesOverlayLowZoom = null;
+                                    } catch (JSONException ex) {
+                                        AppGlobals.guiLogInfo("Failed to get coverage url: " + ex.toString());
+                                    }
+                                }
+                                scanner.close();
                             } catch (Exception ex) {
+                                // this will catch java.net.UnknownHostException when offline
                                 if (AppGlobals.isDebug) {
                                     Log.d(LOG_TAG, ex.toString());
                                 }
-                                isGetUrlAndInitCoverageRunning.set(false);
-                                return;
                             }
-                            if (!scanner.hasNext()) {
-                                return;
-                            }
-                            scanner.useDelimiter("\\A");
-
-                            String result = scanner.next();
-                            try {
-                                sCoverageUrl = new JSONObject(result).getString("tiles_url");
-                            } catch (JSONException ex) {
-                                AppGlobals.guiLogInfo("Failed to get coverage url:" + ex.toString());
-                            }
-                            scanner.close();
+                            // always init coverage tiles
+                            // cached tiles will be shown even if sCoverageUrl == null
                             initOnMainThread();
                             isGetUrlAndInitCoverageRunning.set(false);
                         }

@@ -137,7 +137,7 @@ public class SmartFSProvider extends MapTileModuleProviderBase {
         // @TODO vng: this is called far up the inheritance chain in super class
         // MapTileModuleProviderBase::loadMapTileAsync(...).  This
         // whole class hierarchy should be squashed down.
-        return new SmartFSAbstractTileLoader(this);
+        return new SmartFSTileLoader(this);
     }
 
     @Override

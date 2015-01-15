@@ -414,7 +414,7 @@ public class MapFragment extends android.support.v4.app.Fragment
     // To handle the case where the user zooms out to show a large area when in low bandwidth mode,
     // we need an additional "LowZoom" overlay. So in low bandwidth mode, you will see
     // that based on the current zoom level of the map, we show "HighZoom" or "LowZoom" overlays.
-    void setHighBandwidthMap(boolean isHighBandwidth) {
+    void setHighBandwidthMap(boolean hasNetwork, boolean isHighBandwidth) {
         final ClientPrefs prefs = ClientPrefs.getInstance(mRootView.getContext());
         if (prefs == null || getActivity() == null) {
             return;
@@ -423,6 +423,8 @@ public class MapFragment extends android.support.v4.app.Fragment
         final ClientPrefs.MapTileResolutionOptions tileType = prefs.getMapTileResolutionType();
         final int idxTileType = tileType.ordinal();
         if (idxTileType > 0) {
+            hasNetwork = true; // always update the map type
+
             if (tileType == ClientPrefs.MapTileResolutionOptions.NoMap) {
                 setMapTextView(tileType, isHighBandwidth);
                 mMap.setTileSource(new BlankTileSource());
@@ -438,11 +440,18 @@ public class MapFragment extends android.support.v4.app.Fragment
             } else if (tileType == ClientPrefs.MapTileResolutionOptions.LowRes) {
                 isHighBandwidth = false;
             }
+        } else if (!hasNetwork) {
+            isHighBandwidth = true; // use this as initial default
         }
 
         final boolean isMLSTileStore = (BuildConfig.TILE_SERVER_URL != null);
         final boolean hasHighResMap = mLowResMapOverlayHighZoom == null && mMap.getTileProvider().getTileSource() == mHighResMapSource;
         final boolean hasLowResMap = mLowResMapOverlayHighZoom != null;
+
+        if (!hasNetwork && (hasHighResMap || hasLowResMap)) {
+            setMapTextView(tileType, hasHighResMap);
+            return;
+        }
 
         if (isHighBandwidth && !hasHighResMap) {
             removeLayer(mLowResMapOverlayHighZoom);
@@ -534,7 +543,7 @@ public class MapFragment extends android.support.v4.app.Fragment
 
         NoMapAvailableMessage message = hasNetwork ? NoMapAvailableMessage.eHideNoMapMessage : NoMapAvailableMessage.eNoMapDueToNoInternet;
         showMapNotAvailableMessage(message);
-        setHighBandwidthMap(hasWifi);
+        setHighBandwidthMap(hasNetwork, hasWifi);
     }
 
     void getUrlAndInit() {

@@ -38,8 +38,8 @@ public class MapFragmentTest {
         doNothing().when(mapFragment).getUrlAndInit();
 
         // disable setHighBandwidthMap method from doing anything,
-        // we just care that it gets called and we want to verify the argument being passed in.
-        doNothing().when(mapFragment).setHighBandwidthMap(Mockito.anyBoolean());
+        // we just care that it gets called and we want to verify the arguments being passed in.
+        doNothing().when(mapFragment).setHighBandwidthMap(Mockito.anyBoolean(), Mockito.anyBoolean());
 
         // Disable the onResume's main chunk of code - too much going on in there and
         // we just don't care about it
@@ -56,7 +56,7 @@ public class MapFragmentTest {
         // never happened before
         // https://github.com/mozilla/MozStumbler/pull/1370 was
         // merged.
-        verify(mapFragment).setHighBandwidthMap(false);
+        verify(mapFragment).setHighBandwidthMap(false, false);
     }
 
 }

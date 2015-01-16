@@ -156,7 +156,7 @@
         android:layout_alignParentBottom="true"/>
 
     <TextView
-        android:id="@+id/low_resolution_map_message"
+        android:id="@+id/resolution_info_map_message"
         android:textColor="@android:color/black"
         android:gravity="end"
         android:layout_width="wrap_content"

@@ -91,7 +91,7 @@ public class MapFragment extends android.support.v4.app.Fragment
     private Overlay mCoverageTilesOverlayHighZoom;
     private ITileSource mHighResMapSource;
     private View mRootView;
-    private TextView mTextViewIsLowResMap;
+    private TextView mTextViewMapResolutionInfo;
     private HighLowBandwidthReceiver mHighLowBandwidthChecker;
     private CoverageSetup mCoverageSetup = new CoverageSetup();
 
@@ -142,8 +142,8 @@ public class MapFragment extends android.support.v4.app.Fragment
     }
 
     private void hideLowResMapMessage() {
-        mTextViewIsLowResMap = (TextView) mRootView.findViewById(R.id.low_resolution_map_message);
-        mTextViewIsLowResMap.setVisibility(View.GONE);
+        mTextViewMapResolutionInfo = (TextView) mRootView.findViewById(R.id.resolution_info_map_message);
+        mTextViewMapResolutionInfo.setVisibility(View.GONE);
     }
 
     private void initializeMapControls() {
@@ -421,12 +421,11 @@ public class MapFragment extends android.support.v4.app.Fragment
         }
 
         final ClientPrefs.MapTileResolutionOptions tileType = prefs.getMapTileResolutionType();
-        final int idxTileType = tileType.ordinal();
-        if (idxTileType > 0) {
+        if (tileType != ClientPrefs.MapTileResolutionOptions.Default) {
             hasNetwork = true; // always update the map type
 
             if (tileType == ClientPrefs.MapTileResolutionOptions.NoMap) {
-                setMapTextView(tileType, isHighBandwidth);
+                updateMapResolutionTextView(tileType, isHighBandwidth);
                 mMap.setTileSource(new BlankTileSource());
                 removeLayer(mLowResMapOverlayLowZoom);
                 removeLayer(mLowResMapOverlayHighZoom);
@@ -449,7 +448,7 @@ public class MapFragment extends android.support.v4.app.Fragment
         final boolean hasLowResMap = mLowResMapOverlayHighZoom != null;
 
         if (!hasNetwork && (hasHighResMap || hasLowResMap)) {
-            setMapTextView(tileType, hasHighResMap);
+            updateMapResolutionTextView(tileType, hasHighResMap);
             return;
         }
 
@@ -491,15 +490,14 @@ public class MapFragment extends android.support.v4.app.Fragment
             updateOverlayBaseLayer(mMap.getZoomLevel());
         }
 
-        setMapTextView(tileType, isHighBandwidth);
+        updateMapResolutionTextView(tileType, isHighBandwidth);
     }
 
-    void setMapTextView(ClientPrefs.MapTileResolutionOptions tileType, boolean isHighBandwidth) {
+    private void updateMapResolutionTextView(ClientPrefs.MapTileResolutionOptions tileType, boolean isHighBandwidth) {
         String text = "";
         int visibility = View.VISIBLE;
 
-        final int idxTileType = tileType.ordinal();
-        if (idxTileType == 0) {
+        if (tileType == ClientPrefs.MapTileResolutionOptions.Default) {
             if (isHighBandwidth) {
                 visibility = View.GONE;
             } else {
@@ -510,12 +508,12 @@ public class MapFragment extends android.support.v4.app.Fragment
                 text = getActivity().getString(R.string.map_turned_off);
             } else {
                 final String[] labels = getActivity().getResources().getStringArray(R.array.map_tile_resolution_options);
-                text = labels[idxTileType];
+                text = labels[tileType.ordinal()];
             }
         }
 
-        mTextViewIsLowResMap.setText(text);
-        mTextViewIsLowResMap.setVisibility(visibility);
+        mTextViewMapResolutionInfo.setText(text);
+        mTextViewMapResolutionInfo.setVisibility(visibility);
     }
 
     public void mapNetworkConnectionChanged() {

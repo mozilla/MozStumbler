@@ -26,6 +26,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 public abstract class AbstractMapOverlay extends TilesOverlay {
+    public static final String MLS_MAP_TILE_BASE_NAME = "Stumbler-BaseMap-Tiles";
     // We want the map to zoom to level 20, even if tiles have less zoom available
     public static final int MAX_ZOOM_LEVEL_OF_MAP = 20;
     private static int sMinZoomLevelOfMapDisplaySizeBased;

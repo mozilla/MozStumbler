@@ -23,15 +23,15 @@ public class LowResMapOverlay extends AbstractMapOverlay {
         final int zoomLevel = (type == LowResType.HIGHER_ZOOM)?
                 AbstractMapOverlay.getDisplaySizeBasedMinZoomLevel() : LOW_ZOOM_LEVEL;
 
-        ITileSource coverageTileSource;
+        ITileSource mapTileSource;
         if (isMLSTileStore) {
-            coverageTileSource = new XYTileSource("MLS-coverage-tiles", null,
+            mapTileSource = new XYTileSource(MLS_MAP_TILE_BASE_NAME, null,
                     zoomLevel, zoomLevel,
                     AbstractMapOverlay.TILE_PIXEL_SIZE,
                     AbstractMapOverlay.FILE_TYPE_SUFFIX_PNG,
                     new String[]{BuildConfig.TILE_SERVER_URL});
         } else {
-            coverageTileSource = new XYTileSource("MapquestOSM", ResourceProxy.string.mapquest_osm,
+            mapTileSource = new XYTileSource("MapquestOSM", ResourceProxy.string.mapquest_osm,
                     zoomLevel, zoomLevel,
                     AbstractMapOverlay.TILE_PIXEL_SIZE, ".jpg", new String[]{
                     "http://otile1.mqcdn.com/tiles/1.0.0/map/",
@@ -41,6 +41,6 @@ public class LowResMapOverlay extends AbstractMapOverlay {
         }
         this.setLoadingBackgroundColor(Color.TRANSPARENT);
         mTileProvider.setTileRequestCompleteHandler(new SimpleInvalidationHandler(mapView));
-        mTileProvider.setTileSource(coverageTileSource);
+        mTileProvider.setTileSource(mapTileSource);
     }
 }

@@ -478,7 +478,7 @@ public class MapFragment extends android.support.v4.app.Fragment
             if (!isMLSTileStore) {
                 mHighResMapSource = TileSourceFactory.MAPQUESTOSM;
             } else {
-                mHighResMapSource = new XYTileSource("Stumbler-BaseMap-Tiles",
+                mHighResMapSource = new XYTileSource(AbstractMapOverlay.MLS_MAP_TILE_BASE_NAME,
                         null, 1, AbstractMapOverlay.MAX_ZOOM_LEVEL_OF_MAP,
                         AbstractMapOverlay.TILE_PIXEL_SIZE,
                         AbstractMapOverlay.FILE_TYPE_SUFFIX_PNG,

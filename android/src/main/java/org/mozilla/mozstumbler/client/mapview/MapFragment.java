@@ -38,7 +38,6 @@ import org.mozilla.mozstumbler.client.mapview.tiles.CoverageOverlay;
 import org.mozilla.mozstumbler.client.mapview.tiles.LowResMapOverlay;
 import org.mozilla.mozstumbler.client.navdrawer.MetricsView;
 import org.mozilla.mozstumbler.service.AppGlobals;
-import org.mozilla.mozstumbler.service.core.http.HttpUtil;
 import org.mozilla.mozstumbler.service.core.http.IHttpUtil;
 import org.mozilla.mozstumbler.service.core.logging.Log;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.GPSScanner;
@@ -92,7 +91,7 @@ public class MapFragment extends android.support.v4.app.Fragment
     private Overlay mCoverageTilesOverlayHighZoom;
     private ITileSource mHighResMapSource;
     private View mRootView;
-    private TextView mTextViewIsLowResMap;
+    private TextView mTextViewMapResolutionInfo;
     private HighLowBandwidthReceiver mHighLowBandwidthChecker;
     private CoverageSetup mCoverageSetup = new CoverageSetup();
 
@@ -143,8 +142,8 @@ public class MapFragment extends android.support.v4.app.Fragment
     }
 
     private void hideLowResMapMessage() {
-        mTextViewIsLowResMap = (TextView) mRootView.findViewById(R.id.low_resolution_map_message);
-        mTextViewIsLowResMap.setVisibility(View.GONE);
+        mTextViewMapResolutionInfo = (TextView) mRootView.findViewById(R.id.resolution_info_map_message);
+        mTextViewMapResolutionInfo.setVisibility(View.GONE);
     }
 
     private void initializeMapControls() {
@@ -415,18 +414,18 @@ public class MapFragment extends android.support.v4.app.Fragment
     // To handle the case where the user zooms out to show a large area when in low bandwidth mode,
     // we need an additional "LowZoom" overlay. So in low bandwidth mode, you will see
     // that based on the current zoom level of the map, we show "HighZoom" or "LowZoom" overlays.
-    void setHighBandwidthMap(boolean isHighBandwidth) {
+    void setHighBandwidthMap(boolean hasNetwork, boolean isHighBandwidth) {
         final ClientPrefs prefs = ClientPrefs.getInstance(mRootView.getContext());
         if (prefs == null || getActivity() == null) {
             return;
         }
 
         final ClientPrefs.MapTileResolutionOptions tileType = prefs.getMapTileResolutionType();
-        final int idxTileType = tileType.ordinal();
-        if (idxTileType > 0) {
+        if (tileType != ClientPrefs.MapTileResolutionOptions.Default) {
+            hasNetwork = true; // always update the map type
+
             if (tileType == ClientPrefs.MapTileResolutionOptions.NoMap) {
-                mTextViewIsLowResMap.setVisibility(View.VISIBLE);
-                mTextViewIsLowResMap.setText(getActivity().getString(R.string.map_turned_off));
+                updateMapResolutionTextView(tileType, isHighBandwidth);
                 mMap.setTileSource(new BlankTileSource());
                 removeLayer(mLowResMapOverlayLowZoom);
                 removeLayer(mLowResMapOverlayHighZoom);
@@ -440,36 +439,24 @@ public class MapFragment extends android.support.v4.app.Fragment
             } else if (tileType == ClientPrefs.MapTileResolutionOptions.LowRes) {
                 isHighBandwidth = false;
             }
+        } else if (!hasNetwork) {
+            isHighBandwidth = true; // use this as initial default
         }
 
         final boolean isMLSTileStore = (BuildConfig.TILE_SERVER_URL != null);
+        final boolean hasHighResMap = mLowResMapOverlayHighZoom == null && mMap.getTileProvider().getTileSource() == mHighResMapSource;
+        final boolean hasLowResMap = mLowResMapOverlayHighZoom != null;
 
-        if (idxTileType == 0) {
-            if (isHighBandwidth) {
-                mTextViewIsLowResMap.setVisibility(View.GONE);
-            } else {
-                mTextViewIsLowResMap.setText(getActivity().getString(R.string.low_resolution_map));
-                mTextViewIsLowResMap.setVisibility(View.VISIBLE);
-            }
-        } else {
-            String[] labels = getActivity().getResources().getStringArray(R.array.map_tile_resolution_options);
-            mTextViewIsLowResMap.setText(labels[idxTileType]);
-            mTextViewIsLowResMap.setVisibility(View.VISIBLE);
+        if (!hasNetwork && (hasHighResMap || hasLowResMap)) {
+            updateMapResolutionTextView(tileType, hasHighResMap);
+            return;
         }
 
-        if (isHighBandwidth) {
-            if (mLowResMapOverlayHighZoom == null && mMap.getTileProvider().getTileSource() == mHighResMapSource) {
-                // already have set this tile source
-                return;
-            } else  {
-                if (mLowResMapOverlayHighZoom != null) {
-                    removeLayer(mLowResMapOverlayHighZoom);
-                    removeLayer(mLowResMapOverlayLowZoom);
-
-                    mLowResMapOverlayLowZoom = null;
-                    mLowResMapOverlayHighZoom = null;
-                }
-            }
+        if (isHighBandwidth && !hasHighResMap) {
+            removeLayer(mLowResMapOverlayHighZoom);
+            removeLayer(mLowResMapOverlayLowZoom);
+            mLowResMapOverlayLowZoom = null;
+            mLowResMapOverlayHighZoom = null;
 
             // We've destroyed 2 layers for lowResMapOverlay
             // Force GC to cleanup underlying LRU caches in overlay
@@ -486,28 +473,47 @@ public class MapFragment extends android.support.v4.app.Fragment
             }
             System.gc();
             mMap.setTileSource(mHighResMapSource);
-        } else {
-            if (mLowResMapOverlayHighZoom != null) {
-                // already set this
-                return;
-            }
 
+        } else if (!isHighBandwidth && !hasLowResMap) {
             // Unhooking the highres map means we should nullify it and force GC
             // to cleanup underlying LRU cache in MapSource
             mHighResMapSource = null;
             System.gc();
 
             mMap.setTileSource(new BlankTileSource());
-            if (mLowResMapOverlayHighZoom == null) {
-                mLowResMapOverlayLowZoom = new LowResMapOverlay(LowResMapOverlay.LowResType.LOWER_ZOOM,
-                        this.getActivity(), isMLSTileStore, mMap);
-                mLowResMapOverlayHighZoom = new LowResMapOverlay(LowResMapOverlay.LowResType.HIGHER_ZOOM,
-                        this.getActivity(), isMLSTileStore, mMap);
 
-                updateOverlayBaseLayer(mMap.getZoomLevel());
-            }
+            mLowResMapOverlayLowZoom = new LowResMapOverlay(LowResMapOverlay.LowResType.LOWER_ZOOM,
+                    this.getActivity(), isMLSTileStore, mMap);
+            mLowResMapOverlayHighZoom = new LowResMapOverlay(LowResMapOverlay.LowResType.HIGHER_ZOOM,
+                    this.getActivity(), isMLSTileStore, mMap);
 
+            updateOverlayBaseLayer(mMap.getZoomLevel());
         }
+
+        updateMapResolutionTextView(tileType, isHighBandwidth);
+    }
+
+    private void updateMapResolutionTextView(ClientPrefs.MapTileResolutionOptions tileType, boolean isHighBandwidth) {
+        String text = "";
+        int visibility = View.VISIBLE;
+
+        if (tileType == ClientPrefs.MapTileResolutionOptions.Default) {
+            if (isHighBandwidth) {
+                visibility = View.GONE;
+            } else {
+                text = getActivity().getString(R.string.low_resolution_map);
+            }
+        } else {
+            if (tileType == ClientPrefs.MapTileResolutionOptions.NoMap) {
+                text = getActivity().getString(R.string.map_turned_off);
+            } else {
+                final String[] labels = getActivity().getResources().getStringArray(R.array.map_tile_resolution_options);
+                text = labels[tileType.ordinal()];
+            }
+        }
+
+        mTextViewMapResolutionInfo.setText(text);
+        mTextViewMapResolutionInfo.setVisibility(visibility);
     }
 
     public void mapNetworkConnectionChanged() {
@@ -535,7 +541,7 @@ public class MapFragment extends android.support.v4.app.Fragment
 
         NoMapAvailableMessage message = hasNetwork ? NoMapAvailableMessage.eHideNoMapMessage : NoMapAvailableMessage.eNoMapDueToNoInternet;
         showMapNotAvailableMessage(message);
-        setHighBandwidthMap(hasWifi);
+        setHighBandwidthMap(hasNetwork, hasWifi);
     }
 
     void getUrlAndInit() {

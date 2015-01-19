@@ -4,7 +4,6 @@
 
 package org.mozilla.mozstumbler.client.navdrawer;
 
-import android.content.ComponentName;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Build;
@@ -34,10 +33,6 @@ import org.mozilla.mozstumbler.client.mapview.MapFragment;
 import org.mozilla.mozstumbler.client.subactivities.FirstRunFragment;
 import org.mozilla.mozstumbler.client.subactivities.LeaderboardActivity;
 import org.mozilla.mozstumbler.service.AppGlobals;
-import org.mozilla.mozstumbler.service.core.logging.Log;
-import org.mozilla.mozstumbler.svclocator.ServiceLocator;
-import org.mozilla.mozstumbler.svclocator.services.AppWidgetManagerProxy;
-import org.mozilla.mozstumbler.svclocator.services.IAppWidgetManagerProxy;
 
 public class MainDrawerActivity
         extends ActionBarActivity

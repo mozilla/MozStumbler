@@ -1,6 +1,6 @@
 test: unittest
+	./gradlew copyTestResources
 	./gradlew testGithubUnittest --info
-
 
 unittest:
 	./gradlew assembleGithubUnittest

@@ -79,7 +79,7 @@ public class ClientPrefs extends Prefs {
     }
 
     public boolean getKeepScreenOn() {
-        return getBoolPrefWithDefault(KEEP_SCREEN_ON_PREF, true);
+        return getBoolPrefWithDefault(KEEP_SCREEN_ON_PREF, false);
     }
 
     public void setKeepScreenOn(boolean on) {

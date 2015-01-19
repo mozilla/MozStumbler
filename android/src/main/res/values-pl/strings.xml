@@ -64,6 +64,32 @@
     <string name="metrics_this_session">Bieżąca sesja</string>
     <string name="drawer_map_option_show_mls_locations">Wyświetlanie położeń MLS</string>
     <string name="title_activity_log">Dziennik</string>
+
+    <string name="action_file_bug">Zgłoś błąd</string>
+    <string name="file_bug_sender_name">Imię i nazwisko:</string>
+    <string name="file_bug_sender_name_hint">Opcjonalne</string>
+    <string name="file_bug_sender_email">Adres e-mail:</string>
+    <string name="file_bug_sender_email_hint">Opcjonalne</string>
+    <string name="file_bug_name">Tytuł błędu:</string>
+    <string name="file_bug_name_hint">Opisowy tytuł błędu</string>
+    <string name="file_bug_description">Opis błędu:</string>
+    <string name="file_bug_description_hint">Szczegółowe informacje o zgłaszanym błędzie (co się stało, kiedy itd.)</string>
+    <string name="file_bug_reproduction">Jak powtórzyć błąd:</string>
+    <string name="file_bug_reproduction_hint">Kroki wyjaśniające, jak powtórzyć błąd.</string>
+    <string name="file_bug_report_info">Wysyłając to zgłoszenie, wysłane zostaną także informacje o obecnym stanie urządzenia. Zostaną one użyte do znalezienia przyczyny występowania błędu. Zgłoszenia błędów powodujących awarie są wysyłane automatycznie, jeśli włączono opcję \"Zgłaszanie awarii\". Błędy niepowodujące awarii można zgłaszać za pomocą tego formularza.</string>
+    <string name="file_bug_send">Wyślij zgłoszenie błędu</string>
+    <string name="file_bug_type">Rodzaj błędu:</string>
+    <string-array name="file_bug_type_list">
+        <item>Kosmetyczny</item>
+        <item>Wydajność</item>
+        <item>Zgodność</item>
+        <item>Funkcjonalność</item>
+        <item>Prośba o nową funkcję</item>
+        <item>Inny</item>
+    </string-array>
+    <string name="file_bug_toast_success">Wysłano zgłoszenie błędu\n Dziękujemy!</string>
+    <string name="file_bug_missing_field">To pole jest wymagane.</string>
+
     <string name="action_view_log">Wyświetl dziennik</string>
     <string name="scroll_to_start">Przewiń do góry</string>
     <string name="scroll_to_end">Przewiń na dół</string>
@@ -114,12 +140,15 @@
     <string name="map_tile_resolution_options_label">Szczegółowość mapy:</string>
     <string name="map_tile_resolution_options_summary">Niska szczegółowość zmniejsza zużycie danych.</string>
     <string name="enable_crash_reporting">Zgłaszanie awarii</string>
+    <string name="enable_simulation">Symulacja</string>
+    <string name="clear_simulation_start_location">Wyczyść położenie startowe symulacji</string>
     <string name="privacy_policy">Polityka prywatności:</string>
     <string name="satellites_separator">/</string>
     <string name="must_uninstall_to_update">Należy odinstalować aplikację przed aktualizacją do nowej wersji.</string>
     <string name="category_leaderboard">Ranking</string>
     <string name="category_network_usage">Użycie sieci</string>
     <string name="category_display">Wyświetlanie</string>
+    <string name="reset_simulation_start">Przywrócono pozycję startową symulacji</string>
     <string name="category_crashreport">Zgłaszanie awarii</string>
     <string-array name="map_tile_resolution_options">
         <item>Wysoka (Wi-Fi) / niska (sieć komórkowa)</item>
@@ -133,4 +162,19 @@
     <string name="motion_detection_options_label">Wstrzymywanie skanowania, jeśli nie pokonano</string>
     <string name="motion_detection_options_conjunction">przez</string>
     <string name="map_scanning_paused_no_motion">Położenie się nie zmienia, wstrzymano skanowanie.</string>
+
+    <string name="save_stumble_logs">Zapisz dzienniki wykrywania</string>
+    <string name="create_log_archive_failure">Nie można utworzyć katalogu archiwum dla dzienników</string>
+    <string name="create_log_archive_success">Dzienniki zostaną zapisane w:</string>
+    <string name="category_power_saving">Oszczędzanie zasilania</string>
+    <string name="power_saving_mode">Wykrywanie ruchu</string>
+    <string name="power_saving_mode_summary">Wstrzymuje i wznawia aplikację po wykryciu bezruchu.
+        Nie należy używać trybu dodatkowego oszczędzania zasilania, jeśli GPS potrzebuje dłuższego czasu na odnalezienie położenia.</string>
+
+    <string-array name="power_saving_mode_options">
+        <item>Wyłączone</item>
+        <item>Włączone</item>
+        <item>Włączone, dodatkowe oszczędzanie zasilania</item>
+    </string-array>
+
 </resources>

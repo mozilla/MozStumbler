@@ -9,6 +9,7 @@ import junit.framework.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mozilla.mozstumbler.client.mapview.tiles.AbstractMapOverlay;
+import org.mozilla.mozstumbler.test.fixtures.FixtureLoader;
 import org.mozilla.osmdroid.tileprovider.MapTile;
 import org.mozilla.osmdroid.tileprovider.tilesource.BitmapTileSourceBase;
 import org.mozilla.osmdroid.tileprovider.tilesource.ITileSource;
@@ -17,6 +18,7 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 
 import static junit.framework.Assert.assertNotNull;
@@ -60,8 +62,19 @@ public class TileDownloaderDelegateTest {
 
         
         // Check that we've actually downloaded the file
-        File tmpFile = new File("/Users/victorng/dev/MozStumbler/android/src/test/java/org/mozilla/osmdroid/tileprovider/modules/fixtures/tiles/Mozilla Location Service Coverage Map/13/2287/2976.png.merged");
-        SerializableTile sTile = new SerializableTile(tmpFile);
+        File tmpFile = File.createTempFile("stile", "tmpfile");
+        String absPath = tmpFile.getAbsolutePath();
+        FileOutputStream stream = new FileOutputStream(tmpFile);
+        try {
+            byte[] bytes = FixtureLoader.loadResource("org/mozilla/mozstumbler/test/fixtures/2976.png.merged");
+            assertTrue(bytes.length > 0);
+            stream.write(bytes);
+        } finally {
+            stream.flush();
+            stream.close();
+        }
+
+        SerializableTile sTile = new SerializableTile(new File(absPath));
         assertTrue(sTile.getTileData().length > 0);
 
         // TODO: we need a separate testcase to exercise the TileIOFacade to make sure

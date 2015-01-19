@@ -245,7 +245,7 @@ dependencies {
 
 
 tasks.withType(JavaCompile) {
-    options.compilerArgs = ['-Xlint:all', '-Werror', '-Xlint:-deprecation']
+    options.compilerArgs = ['-Xlint:all', '-Xlint:-deprecation']
 }
 
 File signFile = rootProject.file('android/properties/signing.properties')

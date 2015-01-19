@@ -6,26 +6,20 @@
 package org.mozilla.mozstumbler.test.fixtures;
 
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.robolectric.RobolectricTestRunner;
-import org.robolectric.annotation.Config;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 
-import static junit.framework.Assert.assertTrue;
+import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertNull;
 
-@Config(emulateSdk = 18)
-@RunWith(RobolectricTestRunner.class)
 public class FixtureLoaderTest {
 
     @Test
     public void testLoadPNG() throws IOException {
         // This is just a basic test to see that the FixtureLoader is behaving correctly.
+        assertNotNull(FixtureLoader.loadResource("org/mozilla/mozstumbler/test/fixtures/2976.png.merged"));
+        assertNull(FixtureLoader.loadResource("org/mozilla/mozstumbler/test/fixtures/not_a_real_tile"));
 
-        this.getClass().getClassLoader().getResourceAsStream("/2976.png.merged").read();
     }
 
 }

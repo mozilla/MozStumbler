@@ -34,6 +34,7 @@ repositories {
 }
 
 android {
+
     compileSdkVersion 19
     buildToolsVersion "19.1.0"
 
@@ -85,19 +86,27 @@ android {
     }
 
     productFlavors {
+        flavorDimensions "appstore"
+
         github {
+            flavorDimension "appstore"
+
             buildConfigField "String", "MOZILLA_API_KEY", getMozillaApiKey('github')
             buildConfigField "String", "TILE_SERVER_URL", getTileServerUrl('github')
             buildConfigField "boolean", "GITHUB", "true"
         }
 
         playstore {
+            flavorDimension "appstore"
+
             buildConfigField "String", "MOZILLA_API_KEY", getMozillaApiKey('playstore')
             buildConfigField "String", "TILE_SERVER_URL", getTileServerUrl('playstore')
             buildConfigField "boolean", "PLAYSTORE", "true"
         }
 
         fdroid {
+            flavorDimension "appstore"
+
             buildConfigField "String", "MOZILLA_API_KEY", getMozillaApiKey('fdroid')
             buildConfigField "String", "TILE_SERVER_URL", getTileServerUrl('fdroid')
             buildConfigField "boolean", "FDROID", "true"
@@ -182,10 +191,15 @@ android {
         abortOnError false
     }
 
+
 }
+
 
 apply plugin: 'android-unit-test'
 
+androidUnitTest {
+
+}
 
 dependencies {
     androidTestCompile 'junit:junit:4.10'
@@ -227,6 +241,8 @@ dependencies {
     compile "org.apache.httpcomponents:httpmime:4.0.1"
     compile "org.apache.james:apache-mime4j:0.6"
 }
+
+
 
 tasks.withType(JavaCompile) {
     options.compilerArgs = ['-Xlint:all', '-Werror', '-Xlint:-deprecation']
@@ -287,3 +303,20 @@ String getTileServerUrl(String scope) {
 // Yay for apk basenames that you can only figure out by reading the
 // gradle source.
 project.archivesBaseName = "MozStumbler";
+
+
+// JUnit tests missing test resources in classpath
+// See: https://code.google.com/p/android/issues/detail?id=64887
+// This task copies the resources to a folder that exists on the
+// classpath
+// Note that this snippet attahes a dependency to the check task
+// which is specific to the 'android' plugin.  Regular java builds
+// would normally attack copyTestResources as a dependency on the test
+// task.
+// See: http://stackoverflow.com/questions/27444978/no-ressources-availbable-when-running-unit-test
+
+task copyTestResources(type: Copy) {
+    from "${projectDir}/src/test/res"
+    into "${buildDir}/test-classes/github/unittest"
+}
+check.dependsOn copyTestResources

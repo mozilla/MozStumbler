@@ -36,7 +36,7 @@ public class SerializableTile {
 
     final byte[] FILE_HEADER = {(byte) 0xde, (byte) 0xca, (byte) 0xfb, (byte) 0xad};
 
-    byte[] tData;
+    byte[] tData = new byte[0];
     Map<String, String> headers = new HashMap<String, String>();
     private File myFile;
 

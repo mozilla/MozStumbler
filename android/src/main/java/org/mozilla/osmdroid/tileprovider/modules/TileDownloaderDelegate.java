@@ -7,6 +7,7 @@ import org.mozilla.mozstumbler.service.core.http.IHttpUtil;
 import org.mozilla.mozstumbler.service.core.http.IResponse;
 import org.mozilla.mozstumbler.service.core.logging.Log;
 import org.mozilla.mozstumbler.svclocator.ServiceLocator;
+import org.mozilla.mozstumbler.svclocator.services.ISystemClock;
 import org.mozilla.osmdroid.tileprovider.MapTile;
 import org.mozilla.osmdroid.tileprovider.tilesource.BitmapTileSourceBase;
 import org.mozilla.osmdroid.tileprovider.tilesource.ITileSource;
@@ -50,6 +51,9 @@ public class TileDownloaderDelegate {
      */
     public Drawable downloadTile(SerializableTile serializableTile, ITileSource tileSource, MapTile tile)
             throws BitmapTileSourceBase.LowMemoryException {
+
+        ServiceLocator svcLocator = ServiceLocator.getInstance();
+
         if (tileSource == null) {
             Log.i(LOG_TAG, "tileSource is null");
             return null;
@@ -69,7 +73,8 @@ public class TileDownloaderDelegate {
             return null;
         }
 
-        if (System.currentTimeMillis() < serializableTile.getCacheControl()) {
+        ISystemClock systemClock = (ISystemClock) svcLocator.getService(ISystemClock.class);
+        if (systemClock.currentTimeMillis() < serializableTile.getCacheControl()) {
             return tileSource.getDrawable(serializableTile.getTileData());
         }
 
@@ -77,7 +82,7 @@ public class TileDownloaderDelegate {
         // downloading again.
         HTTP404_CACHE.remove(tileURLString);
 
-        IHttpUtil httpClient = (IHttpUtil) ServiceLocator.getInstance().getService(IHttpUtil.class);
+        IHttpUtil httpClient = (IHttpUtil) svcLocator.getService(IHttpUtil.class);
         HashMap<String, String> headers = new HashMap<String, String>();
         String cachedEtag = serializableTile.getEtag();
         if (cachedEtag != null) {

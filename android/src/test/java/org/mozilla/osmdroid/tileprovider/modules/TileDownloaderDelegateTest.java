@@ -93,7 +93,6 @@ public class TileDownloaderDelegateTest {
 
         ServiceLocator.getInstance().putService(IHttpUtil.class, mockHttp);
 
-        // TODO: we need a separate testcase to exercise the TileIOFacade to make sure
         // that tileBytes are properly saved to disk.
         doReturn(sTile).when(ioFacade).saveFile(any(ITileSource.class),
                 any(MapTile.class),
@@ -129,7 +128,6 @@ public class TileDownloaderDelegateTest {
 
         SerializableTile sTile = getSerializableTile();
         String expectedEtag = sTile.getEtag();
-        Log.d(LOG_TAG, "Debug tile has an etag of: [" + expectedEtag + "]");
         assertTrue(sTile.getTileData().length > 0);
 
         // Clobber the IHttpUtil class so that the response is just the bytes from fixture data
@@ -185,7 +183,6 @@ public class TileDownloaderDelegateTest {
         SerializableTile sTile = getEmptySerializableTile("66aa0fd89644ec8814559dcecbd47490");
 
         String expectedEtag = sTile.getEtag();
-        Log.d(LOG_TAG, "Debug tile has an etag of: [" + expectedEtag + "]");
         assertEquals(0, sTile.getTileData().length);
 
         // Clobber the IHttpUtil class so that the response is just the bytes from fixture data
@@ -217,6 +214,68 @@ public class TileDownloaderDelegateTest {
         // The etag on the SerializableTile should have been cleared.
         assertEquals("", sTile.getEtag());
     }
+
+    @Test
+    public void testNetworkIsDownDiskHasTile() throws BitmapTileSourceBase.LowMemoryException, IOException {
+        /*
+         This test case mocks out enough to get the TileDownloaderDelegate to run to completion
+         and return real tile data.
+         */
+
+        INetworkAvailablityCheck netAvailabilityCheck = mock(INetworkAvailablityCheck.class);
+        TileIOFacade ioFacade = mock(TileIOFacade.class);
+
+        ITileSource mockTileSource =  spy(new XYTileSource("Stumbler-BaseMap-Tiles",
+                null, 1, AbstractMapOverlay.MAX_ZOOM_LEVEL_OF_MAP,
+                AbstractMapOverlay.TILE_PIXEL_SIZE,
+                AbstractMapOverlay.FILE_TYPE_SUFFIX_PNG,
+                new String[]{testUrl}));
+        doReturn(testUrl).when(mockTileSource).getTileURLString((MapTile) anyObject());
+
+        MapTile tile = mock(MapTile.class);
+
+        TileDownloaderDelegate delegate = spy(new TileDownloaderDelegate(netAvailabilityCheck, ioFacade));
+
+        doReturn(true).when(delegate).networkIsUnavailable();
+
+        SerializableTile sTile = getSerializableTile();
+        assertTrue(sTile.getTileData().length > 0);
+
+        // We should have a valid Drawable instance here
+        assertNotNull(delegate.downloadTile(sTile, mockTileSource, tile));
+    }
+
+    @Test
+    public void testNetworkIsDownNoData() throws BitmapTileSourceBase.LowMemoryException, IOException {
+        /*
+         This test case mocks out enough to get the TileDownloaderDelegate to run to completion
+         and return real tile data.
+         */
+
+        INetworkAvailablityCheck netAvailabilityCheck = mock(INetworkAvailablityCheck.class);
+        TileIOFacade ioFacade = mock(TileIOFacade.class);
+
+        ITileSource mockTileSource =  spy(new XYTileSource("Stumbler-BaseMap-Tiles",
+                null, 1, AbstractMapOverlay.MAX_ZOOM_LEVEL_OF_MAP,
+                AbstractMapOverlay.TILE_PIXEL_SIZE,
+                AbstractMapOverlay.FILE_TYPE_SUFFIX_PNG,
+                new String[]{testUrl}));
+        doReturn(testUrl).when(mockTileSource).getTileURLString((MapTile) anyObject());
+
+        MapTile tile = mock(MapTile.class);
+
+        TileDownloaderDelegate delegate = spy(new TileDownloaderDelegate(netAvailabilityCheck, ioFacade));
+
+        doReturn(true).when(delegate).networkIsUnavailable();
+
+        SerializableTile sTile = getEmptySerializableTile("blank_etag");
+        assertTrue(sTile.getTileData().length == 0);
+
+        // We should have null here
+        assertNull(delegate.downloadTile(sTile, mockTileSource, tile));
+    }
+
+
 
     private SerializableTile getEmptySerializableTile(String etag) throws IOException {
         // Check that we've actually downloaded the file

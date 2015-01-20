@@ -51,15 +51,19 @@ public class TileDownloaderDelegate {
      */
     public Drawable downloadTile(SerializableTile serializableTile, ITileSource tileSource, MapTile tile)
             throws BitmapTileSourceBase.LowMemoryException {
+        if (networkIsUnavailable()) {
+            if (serializableTile.getTileData().length > 0) {
+                // Just try to return what we've got on disk if the network is just down.
+                // This should really be pulled out into a wrapping function.
+                return tileSource.getDrawable(serializableTile.getTileData());
+            }
+            return null;
+        }
 
         ServiceLocator svcLocator = ServiceLocator.getInstance();
 
         if (tileSource == null) {
             Log.i(LOG_TAG, "tileSource is null");
-            return null;
-        }
-
-        if (networkIsUnavailable()) {
             return null;
         }
 

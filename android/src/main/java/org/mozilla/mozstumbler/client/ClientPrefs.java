@@ -26,6 +26,16 @@ public class ClientPrefs extends Prefs {
     private static final String DEFAULT_SIMULATION_LAT_LONG = "default_simulation_lat_lon";
     private static final String MIN_BATTERY_PCT = "min_battery_pct";
     public static final int MIN_BATTERY_DEFAULT = 15;
+    public static final String LAST_VERSION = "last_version";
+
+    public long getLastVersion() {
+        return getPrefs().getLong(LAST_VERSION, 0);
+    }
+
+    public void setDontShowChangelog() {
+        setLongPref(LAST_VERSION, BuildConfig.VERSION_CODE);
+    }
+
 
     public enum MapTileResolutionOptions {Default, HighRes, LowRes, NoMap}
 

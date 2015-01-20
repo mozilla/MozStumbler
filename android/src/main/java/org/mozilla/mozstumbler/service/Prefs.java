@@ -200,6 +200,12 @@ public class Prefs {
         apply(editor);
     }
 
+    protected void setLongPref(String key, long value) {
+        SharedPreferences.Editor editor = getPrefs().edit();
+        editor.putLong(key, value);
+        apply(editor);
+    }
+
     protected void setStringPref(String key, String value) {
         SharedPreferences.Editor editor = getPrefs().edit();
         editor.putString(key, value);

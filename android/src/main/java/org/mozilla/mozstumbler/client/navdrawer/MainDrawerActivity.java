@@ -4,6 +4,10 @@
 
 package org.mozilla.mozstumbler.client.navdrawer;
 
+import android.app.AlertDialog;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Build;
@@ -15,12 +19,15 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
+import android.text.Html;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.CompoundButton;
 import android.widget.Switch;
+import android.widget.TextView;
 
 import org.mozilla.mozstumbler.BuildConfig;
 import org.mozilla.mozstumbler.R;
@@ -58,6 +65,10 @@ public class MainDrawerActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_drawer);
 
+        init();
+    }
+
+    private void init() {
         assert (findViewById(android.R.id.content) != null);
 
         if (Build.VERSION.SDK_INT > 10) {
@@ -116,6 +127,8 @@ public class MainDrawerActivity
         }
 
         mMetricsView = new MetricsView(findViewById(R.id.left_drawer));
+
+
     }
 
     private static final int MENU_START_STOP = 1;
@@ -196,10 +209,21 @@ public class MainDrawerActivity
         super.onPostResume();
         mMetricsView.update();
 
+        ClientPrefs prefs = ClientPrefs.getInstance(this);
+
         if (ClientPrefs.getInstance(this).isFirstRun()) {
             FragmentManager fm = getSupportFragmentManager();
             FirstRunFragment.showInstance(fm);
+            //prefs.setDontShowChangelog();
         } else if (!MainApp.getAndSetHasBootedOnce()) {
+
+            long currentVersionNumber = BuildConfig.VERSION_CODE;
+            long savedVersionNumber = prefs.getLastVersion();
+            if (currentVersionNumber != savedVersionNumber) {
+                //prefs.setDontShowChangelog();
+                showWhatsNewDialog();
+            }
+
             findViewById(android.R.id.content).postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -299,4 +323,26 @@ public class MainDrawerActivity
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         mMetricsView.update();
     }
+
+
+    public void showWhatsNewDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(R.string.whats_new_title)
+                .setCancelable(false)
+                .setTitle(Html.fromHtml(getString(R.string.whats_new_title)))
+                .setMessage(getText(R.string.whats_new))
+                .setPositiveButton(getText(R.string.ok), new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.dismiss();
+                    }
+                });
+
+
+        AlertDialog alert = builder.create();
+        alert.show();
+        TextView msgTxt = (TextView) alert.findViewById(android.R.id.message);
+        msgTxt.setTextSize(12);
+
+    }
 }
+

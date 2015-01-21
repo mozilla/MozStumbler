@@ -56,6 +56,32 @@
     <string name="metrics_this_session">Aktuelle Sitzung</string>
     <string name="drawer_map_option_show_mls_locations">MLS Ortungen anzeigen</string>
     <string name="title_activity_log">Protokoll</string>
+
+    <string name="action_file_bug">Fehler melden</string>
+    <string name="file_bug_sender_name">Ihr Name:</string>
+    <string name="file_bug_sender_name_hint">Optional</string>
+    <string name="file_bug_sender_email">Ihre E-Mail-Adresse:</string>
+    <string name="file_bug_sender_email_hint">Optional</string>
+    <string name="file_bug_name">Fehlertitel:</string>
+    <string name="file_bug_name_hint">Aussagekräftiger Fehlertitel</string>
+    <string name="file_bug_description">Fehlerbeschreibung:</string>
+    <string name="file_bug_description_hint">Detaillierte Informationen über den zu meldenden Fehler (was passiert, wann passiert es, usw.)</string>
+    <string name="file_bug_reproduction">Reproduzierbarkeit:</string>
+    <string name="file_bug_reproduction_hint">Schritte erklären, wie der Fehler reproduziert werden kann.</string>
+    <string name="file_bug_report_info">Wenn Sie diesen Bericht senden, senden Sie auch Informationen über Ihren aktuellen Gerätezustand. Diese Informationen werden dazu genutzt, den Grund für den Fehler einzugrenzen. Fehlerberichte für Fehler, die einen Absturz verursachen, werden automatisch gesendet, wenn Sie die Option \"Absturzberichte senden\" aktiviert haben. Wenn Sie Fehler entdecken, die keinen Absturz verursachen, melden Sie diese bitte mittels dieses Formulars.</string>
+    <string name="file_bug_send">Fehlerbericht senden</string>
+    <string name="file_bug_type">Fehlerkategorie:</string>
+    <string-array name="file_bug_type_list">
+        <item>Kosmetisch</item>
+        <item>Leistung</item>
+        <item>Kompatibilität</item>
+        <item>Funktionalität</item>
+        <item>Funktion vorschlagen</item>
+        <item>Andere</item>
+    </string-array>
+    <string name="file_bug_toast_success">Fehlerbericht gesendet!\n Vielen Dank!</string>
+    <string name="file_bug_missing_field">Diese Angabe ist erforderlich!</string>
+
     <string name="action_view_log">Protokoll anzeigen</string>
     <string name="scroll_to_start">Nach Oben scrollen</string>
     <string name="scroll_to_end">Ans Ende scrollen</string>
@@ -105,12 +131,15 @@
     <string name="map_tile_resolution_options_label">Kartenauflösung:</string>
     <string name="map_tile_resolution_options_summary">Niedrige Auflösung reduziert den Datenverbrauch.</string>
     <string name="enable_crash_reporting">Absturzberichte senden</string>
+    <string name="enable_simulation">Starte Simulation</string>
+    <string name="clear_simulation_start_location">Simulations-Startpunkt löschen</string>
     <string name="privacy_policy">Datenschutzerklärung:</string>
     <string name="satellites_separator">/</string>
     <string name="must_uninstall_to_update">Sie müssen zuerst eine Deinstallation durchführen, um auf die neueste Version zu aktualisieren.</string>
     <string name="category_leaderboard">Bestenliste</string>
     <string name="category_network_usage">Datenverbrauch</string>
     <string name="category_display">Anzeige</string>
+    <string name="reset_simulation_start">Simulations-Startpunkt wurde zurückgesetzt</string>
     <string name="category_crashreport">Absturzberichte</string>
     <string-array name="map_tile_resolution_options">
         <item>Hoch (WLAN) / niedrig (Mobil)</item>
@@ -124,4 +153,18 @@
     <string name="motion_detection_options_label">Scannen pausieren, wenn keine Bewegung um</string>
     <string name="motion_detection_options_conjunction">in</string>
     <string name="map_scanning_paused_no_motion">Keine Positionsänderung, Scannen pausiert.</string>
+
+    <string name="save_stumble_logs">Scan-Protokoll speichern</string>
+    <string name="create_log_archive_failure">Verzeichnis für Archivierung des Protokolls konnte nicht erstellt werden</string>
+    <string name="create_log_archive_success">Protokoll wird gespeichert in: </string>
+    <string name="category_power_saving">Energiesparen</string>
+    <string name="power_saving_mode">Bewegungserkennung</string>
+    <string name="power_saving_mode_summary">Pausiert und setzt das Scannen fort, wenn Sie sich nicht bewegen.
+        Wenn das GPS viel Zeit benötigt, um Ihren Standort zu orten, dann wählen Sie bitte nicht den besonders energiesparenden Modus.</string>
+
+    <string-array name="power_saving_mode_options">
+        <item>Aus</item>
+        <item>An</item>
+        <item>An, besonders energiesparend</item>
+    </string-array>
 </resources>

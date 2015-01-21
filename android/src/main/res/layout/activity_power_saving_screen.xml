@@ -1,0 +1,92 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    tools:context="org.mozilla.mozstumbler.client.subactivities.PowerSavingScreen">
+
+    <TextView
+        android:id="@+id/batteryTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/line2"
+        android:paddingBottom="10dp"
+        android:paddingTop="20dp"
+        android:text="@string/low_battery_title"
+        android:textColor="#ff33b5e5"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+    <LinearLayout
+        android:id="@+id/layout1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/batteryTitle">
+        <TextView
+            android:id="@+id/batteryLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingRight="10dp"
+            android:paddingEnd="10dp"
+            android:text="@string/battery_percent_options_label"
+            android:textSize="16sp" />
+        <Spinner
+            android:id="@+id/spinnerBatteryPercent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:entries="@array/battery_percent_options"
+            />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/title_stumble_only_when_moving"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@id/layout1"
+        android:paddingBottom="10dp"
+        android:paddingTop="20dp"
+        android:text="@string/motion_detection_title"
+        android:textColor="#ff33b5e5"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/title_stumble_only_when_moving"
+        android:id="@+id/linearLayout">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingBottom="20dp"
+            android:text="@string/power_saving_mode_summary"
+            android:textSize="16sp"
+            android:paddingRight="12dp"
+            android:layout_weight="1"
+             />
+        <CheckBox
+            android:id="@+id/checkbox_motion_detection"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:checked="true"
+            android:text=""
+            android:layout_weight="0"/>
+    </LinearLayout>
+    <TextView
+        android:id="@+id/message_sensor_type"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@id/linearLayout"
+        android:paddingBottom="10dp"
+        android:paddingTop="20dp"
+        android:text="@string/sensor_type_legacy"
+        android:textSize="14sp"
+        android:textStyle="bold" />
+
+</RelativeLayout>

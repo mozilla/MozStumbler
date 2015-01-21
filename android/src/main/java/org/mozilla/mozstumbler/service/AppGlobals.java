@@ -4,8 +4,6 @@
 
 package org.mozilla.mozstumbler.service;
 
-import org.mozilla.mozstumbler.client.subactivities.LogActivity;
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -44,6 +42,7 @@ public class AppGlobals {
     public static String appName = "StumblerService";
     public static boolean isDebug;
     public static boolean isRobolectric;
+    public static boolean hasSignificantMotionSensor;
 
     private static final SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss: ");
     public static final String NO_TRUNCATE_FLAG = "~";

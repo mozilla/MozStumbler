@@ -37,7 +37,7 @@ import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.Prefs;
 import org.mozilla.mozstumbler.service.core.logging.MockAcraLog;
 import org.mozilla.mozstumbler.service.stumblerthread.Reporter;
-import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageManager;
+import org.mozilla.mozstumbler.service.stumblerthread.motiondetection.MotionSensor;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.ScanManager;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.WifiScanner;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner.CellScanner;
@@ -49,10 +49,7 @@ import org.mozilla.mozstumbler.svclocator.ServiceLocator;
 import org.mozilla.osmdroid.tileprovider.constants.TileFilePath;
 
 import java.io.File;
-import java.io.IOException;
 import java.lang.ref.WeakReference;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @ReportsCrashes(
@@ -137,6 +134,8 @@ public class MainApp extends Application
         AppGlobals.appVersionName = BuildConfig.VERSION_NAME;
         AppGlobals.appVersionCode = BuildConfig.VERSION_CODE;
         AppGlobals.appName = this.getResources().getString(R.string.app_name);
+
+        AppGlobals.hasSignificantMotionSensor = new MotionSensor(this, null).hasSignificantMotionSensor();
 
         AsyncUploader.setGlobalUploadListener(this);
 

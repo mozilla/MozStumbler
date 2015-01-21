@@ -41,20 +41,24 @@
                 android:layout_alignParentStart="true"
                 android:layout_below="@+id/metrics_title">
 
-                <TableRow>
+                <TableRow android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
 
                     <TextView
                         android:id="@+id/this_session_header"
                         android:layout_gravity="start"
                         android:layout_span="2"
                         android:paddingBottom="@dimen/padding_below_for_metrics_titles"
-                        android:paddingTop="@dimen/padding_above_for_metrics_titles"
+                        android:paddingTop="5dp"
                         android:text="@string/metrics_this_session"
                         android:textSize="@dimen/font_size_for_metrics_titles"
-                        android:textStyle="bold" />
+                        android:textStyle="bold"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
                 </TableRow>
 
-                <TableRow>
+                <TableRow android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
 
                     <TextView
                         android:id="@+id/this_session_observations_title"
@@ -63,17 +67,22 @@
                         android:paddingEnd="3dp"
                         android:paddingRight="3dp"
                         android:text="@string/metrics_observations_title"
-                        android:textSize="@dimen/font_size_for_metrics" />
+                        android:textSize="@dimen/font_size_for_metrics"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
 
                     <TextView
                         android:id="@+id/this_session_observations_value"
                         android:layout_gravity="start"
                         android:paddingBottom="@dimen/padding_below_for_metrics_titles"
                         android:textSize="@dimen/font_size_for_metrics"
-                        tools:text="50" />
+                        tools:text="50"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
                 </TableRow>
 
-                <TableRow>
+                <TableRow android:layout_height="wrap_content"
+                    android:layout_width="wrap_content">
 
                     <TextView
                         android:id="@+id/cells_unique_title"
@@ -82,44 +91,49 @@
                         android:paddingEnd="3dp"
                         android:paddingRight="3dp"
                         android:text="@string/metrics_observations_cell_towers_title"
-                        android:textSize="@dimen/font_size_for_metrics" />
+                        android:textSize="@dimen/font_size_for_metrics"
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content" />
 
                     <TextView
                         android:id="@+id/cells_unique_value"
                         android:layout_gravity="start"
                         android:paddingBottom="@dimen/padding_below_for_metrics_titles"
                         android:textSize="@dimen/font_size_for_metrics"
-                        tools:text="10" />
+                        tools:text="10"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
                 </TableRow>
 
-                <TableRow>
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
                     <TextView
                         android:id="@+id/wifis_unqiue_title"
                         android:layout_gravity="start"
                         android:paddingBottom="@dimen/padding_below_for_metrics_titles"
-                        android:paddingEnd="3dp"
-                        android:paddingRight="3dp"
+                        android:paddingEnd="6dp"
+                        android:paddingRight="6dp"
                         android:text="@string/metrics_observations_wifis_title"
-                        android:textSize="@dimen/font_size_for_metrics" />
+                        android:textSize="@dimen/font_size_for_metrics"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
 
                     <TextView
                         android:id="@+id/wifis_unique_value"
                         android:layout_gravity="start"
                         android:paddingBottom="@dimen/padding_below_for_metrics_titles"
                         android:textSize="@dimen/font_size_for_metrics"
-                        tools:text="100" />
+                        tools:text="100"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
                 </TableRow>
+
 
                 <TableRow
                     android:layout_width="match_parent"
-                    android:layout_marginTop="5dp"
-                    android:background="@android:color/darker_gray">
-
-                    <View android:layout_height="1dp" />
-                </TableRow>
-
-                <TableRow>
+                    android:layout_height="wrap_content">
 
                     <TextView
                         android:id="@+id/sent_header"
@@ -129,10 +143,14 @@
                         android:paddingTop="@dimen/padding_above_for_metrics_titles"
                         android:text="@string/upload_observations_sent_title"
                         android:textSize="@dimen/font_size_for_metrics_titles"
-                        android:textStyle="bold" />
+                        android:textStyle="bold"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
                 </TableRow>
 
-                <TableRow>
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
                     <TextView
                         android:id="@+id/last_upload_time_title"
@@ -141,17 +159,23 @@
                         android:paddingEnd="3dp"
                         android:paddingRight="3dp"
                         android:text="@string/metrics_observations_last_upload_time_title"
-                        android:textSize="@dimen/font_size_for_metrics" />
+                        android:textSize="@dimen/font_size_for_metrics"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
 
                     <TextView
                         android:id="@+id/last_upload_time_value"
                         android:layout_gravity="start"
                         android:paddingBottom="@dimen/padding_below_for_metrics_titles"
                         android:textSize="@dimen/font_size_for_metrics"
-                        tools:text="16.02.14 13:07" />
+                        tools:text="16.02.14 13:07"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
                 </TableRow>
 
-                <TableRow>
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
                     <TextView
                         android:id="@+id/observations_sent_title"
@@ -160,17 +184,23 @@
                         android:paddingEnd="3dp"
                         android:paddingRight="3dp"
                         android:text="@string/metrics_observations_title"
-                        android:textSize="@dimen/font_size_for_metrics" />
+                        android:textSize="@dimen/font_size_for_metrics"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
 
                     <TextView
                         android:id="@+id/observations_sent_value"
                         android:layout_gravity="start"
                         android:paddingBottom="@dimen/padding_below_for_metrics_titles"
                         android:textSize="@dimen/font_size_for_metrics"
-                        tools:text="100" />
+                        tools:text="100"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
                 </TableRow>
 
-                <TableRow>
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
                     <TextView
                         android:id="@+id/queued_header"
@@ -180,10 +210,14 @@
                         android:paddingTop="@dimen/padding_above_for_metrics_titles"
                         android:text="@string/upload_observations_in_queue_title"
                         android:textSize="@dimen/font_size_for_metrics_titles"
-                        android:textStyle="bold" />
+                        android:textStyle="bold"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
                 </TableRow>
 
-                <TableRow>
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
                     <TextView
                         android:id="@+id/observations_queued_title"
@@ -192,17 +226,83 @@
                         android:paddingEnd="3dp"
                         android:paddingRight="3dp"
                         android:text="@string/metrics_observations_title"
-                        android:textSize="@dimen/font_size_for_metrics" />
+                        android:textSize="@dimen/font_size_for_metrics"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
 
                     <TextView
                         android:id="@+id/observations_queued_value"
                         android:layout_gravity="start"
                         android:paddingBottom="@dimen/padding_below_for_metrics_titles"
                         android:textSize="@dimen/font_size_for_metrics"
-                        tools:text="50" />
+                        tools:text="50"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_marginTop="10dp"
+                    android:background="@android:color/darker_gray"
+                    android:layout_height="wrap_content">
+
+                    <View android:layout_height="1dp"
+                        android:layout_width="match_parent" />
                 </TableRow>
 
             </TableLayout>
+
+            <TextView
+                android:id="@+id/power_saving_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/metrics_table"
+                android:paddingBottom="@dimen/padding_below_for_metrics_titles"
+                android:paddingTop="@dimen/padding_above_for_metrics_titles"
+                android:text="@string/power_saving_title"
+                android:textColor="#ff33b5e5"
+                android:textSize="@dimen/font_size_for_metrics_top_title"
+                android:textStyle="bold" />
+
+
+            <TextView
+                android:id="@+id/textview_stop_at_battery"
+                android:paddingBottom="@dimen/padding_below_for_metrics_titles"
+                android:paddingEnd="3dp"
+                android:paddingRight="3dp"
+                android:layout_below="@id/power_saving_textview"
+                android:text="@string/stop_at_x_battery"
+                android:textSize="@dimen/font_size_for_metrics"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+
+            <TextView
+                android:id="@+id/textview_motion_detection"
+                android:paddingBottom="@dimen/padding_below_for_metrics_titles"
+                android:paddingEnd="3dp"
+                android:paddingRight="3dp"
+                android:layout_below="@id/textview_stop_at_battery"
+                android:text="@string/motion_detection_onoff"
+                android:textSize="@dimen/font_size_for_metrics"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <Button
+                style="?android:attr/buttonStyleSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/change_power_saving"
+                android:id="@+id/button_change_power_setting"
+                android:layout_above="@+id/map_info_title"
+                android:layout_alignRight="@+id/cell_plus_wifi_layout"
+                android:layout_alignEnd="@+id/cell_plus_wifi_layout"
+                android:maxHeight="34dp"
+                android:minHeight="34dp"
+                android:layout_marginBottom="4dp"
+                  />
 
             <TextView
                 android:id="@+id/map_info_title"
@@ -210,9 +310,9 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
-                android:layout_below="@+id/metrics_table"
+                android:layout_below="@+id/textview_motion_detection"
                 android:paddingBottom="@dimen/padding_below_for_metrics_titles"
-                android:paddingTop="20dp"
+                android:paddingTop="@dimen/padding_above_for_metrics_titles"
                 android:text="@string/drawer_map_layers_title"
                 android:textColor="#ff33b5e5"
                 android:textSize="@dimen/font_size_for_metrics_top_title"
@@ -234,6 +334,7 @@
                     android:adjustViewBounds="true"
                     android:maxHeight="14dp"
                     android:maxWidth="14dp"
+                    android:layout_gravity="center_vertical"
                     android:src="@drawable/ic_greendot" />
 
                 <TextView
@@ -261,6 +362,7 @@
                     android:adjustViewBounds="true"
                     android:maxHeight="14dp"
                     android:maxWidth="14dp"
+                    android:layout_gravity="center_vertical"
                     android:src="@drawable/ic_purplering" />
 
                 <TextView
@@ -288,6 +390,7 @@
                     android:adjustViewBounds="true"
                     android:maxHeight="14dp"
                     android:maxWidth="14dp"
+                    android:layout_gravity="center_vertical"
                     android:src="@drawable/ic_bluerect" />
 
                 <TextView
@@ -317,6 +420,7 @@
                     android:adjustViewBounds="true"
                     android:maxHeight="14dp"
                     android:maxWidth="14dp"
+                    android:layout_gravity="center_vertical"
                     android:src="@drawable/ic_reddot" />
 
                 <TextView
@@ -332,14 +436,14 @@
             <CheckBox
                 android:id="@+id/checkBox_show_mls"
                 android:layout_width="wrap_content"
-                android:layout_height="34dp"
+                android:layout_height="20dp"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:layout_below="@id/mls_location_layout"
                 android:checked="false"
                 android:text="@string/drawer_map_option_show_mls_locations"
+                android:layout_marginLeft="-8dp"
                 android:textSize="14sp" />
-
         </RelativeLayout>
 
     </ScrollView>

@@ -95,6 +95,16 @@
         </activity>
 
         <activity
+            android:name=".client.subactivities.PowerSavingScreen"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:label="@string/title_activity_power_saving_screen"
+            android:parentActivityName=".client.navdrawer.MainDrawerActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".client.navdrawer.MainDrawerActivity" />
+        </activity>
+
+        <activity
             android:name=".client.ToggleWidgetHelper"
             android:label="@string/app_name"></activity>
 

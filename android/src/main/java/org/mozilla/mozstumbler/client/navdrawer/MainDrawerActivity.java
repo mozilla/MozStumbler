@@ -296,4 +296,7 @@ public class MainDrawerActivity
         mMapFragment.stop();
     }
 
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        mMetricsView.update();
+    }
 }

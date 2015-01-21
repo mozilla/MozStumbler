@@ -259,13 +259,6 @@ public class Prefs {
         apply(editor);
     }
 
-    public void setPowerSavingMode(int index) {
-        if (index >= PowerSavingModeOptions.values().length) {
-            index = 0;
-        }
-        setPowerSavingMode(PowerSavingModeOptions.values()[index]);
-    }
-
     public void setPowerSavingMode(PowerSavingModeOptions mode) {
         SharedPreferences.Editor editor = getPrefs().edit();
         editor.putInt(POWER_SAVING_MODE, mode.ordinal());
@@ -273,7 +266,8 @@ public class Prefs {
     }
 
     public PowerSavingModeOptions getPowerSavingMode() {
-        int i = getPrefs().getInt(POWER_SAVING_MODE, 1);
+        int defaultSetting = AppGlobals.hasSignificantMotionSensor ? 1 : 0;
+        int i = getPrefs().getInt(POWER_SAVING_MODE, defaultSetting);
         if (i >= PowerSavingModeOptions.values().length) {
             i = 0;
         }

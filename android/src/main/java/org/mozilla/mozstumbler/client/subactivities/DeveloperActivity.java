@@ -21,7 +21,6 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.Spinner;
-import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -112,7 +111,6 @@ public class DeveloperActivity extends ActionBarActivity {
             // source branches update the developer options.
             setupSaveJSONLogs();
             setupSimulationPreference();
-            setupLowBatterySpinner();
             setupLocationChangeSpinners();
 
             return mRootView;
@@ -126,31 +124,6 @@ public class DeveloperActivity extends ActionBarActivity {
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
                     onToggleSaveStumbleLogs(isChecked);
-                }
-            });
-        }
-
-        private void setupLowBatterySpinner() {
-            final ClientPrefs cPrefs = ClientPrefs.getInstance(mRootView.getContext());
-            final Spinner batterySpinner = (Spinner) mRootView.findViewById(R.id.spinnerBatteryPercent);
-            final SpinnerAdapter spinnerAdapter = batterySpinner.getAdapter();
-            assert(spinnerAdapter instanceof ArrayAdapter);
-            @SuppressWarnings("unchecked")
-            final ArrayAdapter<String> adapter = (ArrayAdapter<String>)spinnerAdapter;
-            final int percent = cPrefs.getMinBatteryPercent();
-            final int spinnerPosition = adapter.getPosition(percent + "%");
-            batterySpinner.setSelection(spinnerPosition);
-
-            batterySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                @Override
-                public void onItemSelected(AdapterView<?> parent, View arg1, int position, long id) {
-                    String item = parent.getItemAtPosition(position).toString().replace("%", "");
-                    int percent = Integer.valueOf(item);
-                    cPrefs.setMinBatteryPercent(percent);
-                }
-
-                @Override
-                public void onNothingSelected(AdapterView<?> arg0) {
                 }
             });
         }

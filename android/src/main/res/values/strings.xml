@@ -48,6 +48,7 @@
         <item quantity="one">one day ago</item>
         <item quantity="other">%d days ago</item>
     </plurals>
+
     <string name="metrics_notification_text">Reports:%1$d Cells:%2$d Wi-Fis:%3$d</string>
     <string name="metrics_notification_extraline">Last upload: %1$s</string>
     <string name="metrics_observations_title">Reports:</string>
@@ -60,7 +61,6 @@
     <string name="metrics_this_session">Current session</string>
     <string name="drawer_map_option_show_mls_locations">Show MLS locations</string>
     <string name="title_activity_log">Log</string>
-
     <string name="action_file_bug">File a Bug</string>
     <string name="file_bug_sender_name">Your Name:</string>
     <string name="file_bug_sender_name_hint">Optional</string>
@@ -75,6 +75,7 @@
     <string name="file_bug_report_info">By sending this report, you will also send information regarding the current state of your device. This information will be used to narrow down the cause of the bug. Bug reports for bugs that result in a crash are sent automatically if the option \"Enable crash reporting\" is enabled. If you encounter bugs that do not result in a crash, please report them through this form.</string>
     <string name="file_bug_send">Send Bug Report</string>
     <string name="file_bug_type">Bug Type:</string>
+
     <string-array name="file_bug_type_list">
         <item>Cosmetic</item>
         <item>Performance</item>
@@ -83,9 +84,9 @@
         <item>Feature Request</item>
         <item>Other</item>
     </string-array>
+
     <string name="file_bug_toast_success">Bug Report Sent\n Thank you!</string>
     <string name="file_bug_missing_field">This field is required!</string>
-
     <string name="action_view_log">View Log</string>
     <string name="scroll_to_start">Scroll to Top</string>
     <string name="scroll_to_end">Scroll to End</string>
@@ -146,26 +147,32 @@
     <string name="category_display">Display</string>
     <string name="reset_simulation_start">Simulation start position has been reset</string>
     <string name="category_crashreport">Crash reporting</string>
+
     <string-array name="map_tile_resolution_options">
         <item>High (Wi-Fi) / low (cell)</item>
         <item>High detail only</item>
         <item>Low detail only</item>
         <item>No map</item>
     </string-array>
+
     <string name="low_battery_title">Stop stumbling on low battery</string>
     <string name="battery_percent_options_label">Stop when battery drops to:</string>
     <string name="motion_detection_title">Motion Detection</string>
     <string name="motion_detection_options_label">Pause scanning if you don\'t move</string>
     <string name="motion_detection_options_conjunction">in</string>
     <string name="map_scanning_paused_no_motion">Location not changing, scanning paused.</string>
-
     <string name="save_stumble_logs">Save Stumble Logs</string>
     <string name="create_log_archive_failure">Unable to create archive directory for logs</string>
     <string name="create_log_archive_success">Logs will be save to:</string>
     <string name="category_power_saving">Power Saving</string>
     <string name="power_saving_mode">Motion detection</string>
-    <string name="power_saving_mode_summary">Pauses and unpauses the app if you aren\'t moving.
-        If your GPS takes a long time to get a fix, don\'t use extra power saving mode.</string>
+    <string name="power_saving_mode_summary">Pauses and unpauses the app if you aren\'t moving.</string>
+    <string name="power_saving_title">Power Saving</string>
+    <string name="stop_at_x_battery">Stop at %1$d%% battery</string>
+    <string name="motion_detection_onoff">Motion detection %1$s</string>
+    <string name="change_power_saving">Change</string>
+    <string name="on">On</string>
+    <string name="off">Off</string>
 
     <string-array name="power_saving_mode_options">
         <item>Off</item>
@@ -173,4 +180,7 @@
         <item>On, extra power saving</item>
     </string-array>
 
+    <string name="title_activity_power_saving_screen">Power Saving Options</string>
+    <string name="sensor_type_legacy">Your device has legacy sensors only. You may not want to use this feature if you have difficulty unpausing the app on motion.</string>
+    <string name="sensor_type_significant_motion">Your device has a significant motion sensor, motion detection \'on\' is the recommended setting.</string>
 </resources>

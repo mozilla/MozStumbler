@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     android:key="preferences">
+
+    <!-- friendly reminder: the android:key must match the name of the value in [Client]Prefs.java -->
+
     <PreferenceCategory android:title="@string/category_leaderboard" >
     <EditTextPreference
         android:key="nickname"
@@ -11,18 +14,6 @@
         android:title="@string/enter_email"
         android:inputType="textEmailAddress"
         android:summary="@string/enter_email_longtext" />
-    </PreferenceCategory>
-
-    <PreferenceCategory android:title="@string/category_power_saving" >
-
-        <!-- friendly reminder: the android:key must match the name of the value in [Client]Prefs.java -->
-        <ListPreference
-            android:key="power_saving_mode_type"
-            android:title="@string/power_saving_mode"
-            android:entries="@array/power_saving_mode_options"
-            android:entryValues="@array/power_saving_mode_options_intvalues"
-            android:summary="@string/power_saving_mode_summary"
-            />
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/category_network_usage" >

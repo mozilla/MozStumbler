@@ -6,14 +6,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.hardware.TriggerEvent;
 import android.hardware.TriggerEventListener;
 import android.os.Build;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.FloatMath;
 
 import org.mozilla.mozstumbler.service.AppGlobals;
 
@@ -38,6 +35,10 @@ public class MotionSensor {
         LocalBroadcastManager.getInstance(sDebugInstance.mContext).sendBroadcastSync(new Intent(ACTION_USER_MOTION_DETECTED));
     }
     /// ---
+
+    public boolean hasSignificantMotionSensor() {
+        return mSignificantMotionSensor != null;
+    }
 
     public MotionSensor(Context context, BroadcastReceiver callbackReceiver) {
         sDebugInstance = this;

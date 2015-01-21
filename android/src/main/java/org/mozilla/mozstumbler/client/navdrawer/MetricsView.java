@@ -4,12 +4,14 @@
 
 package org.mozilla.mozstumbler.client.navdrawer;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageButton;
@@ -19,6 +21,7 @@ import android.widget.TextView;
 import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.client.ClientPrefs;
 import org.mozilla.mozstumbler.client.DateTimeUtils;
+import org.mozilla.mozstumbler.client.subactivities.PowerSavingScreen;
 import org.mozilla.mozstumbler.client.subactivities.PreferencesScreen;
 import org.mozilla.mozstumbler.client.util.NotificationUtil;
 import org.mozilla.mozstumbler.service.AppGlobals;
@@ -113,8 +116,10 @@ public class MetricsView {
         mSettingsButton = (ImageButton) mView.findViewById(R.id.metrics_settings_button);
         mSettingsButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                view.getContext().startActivity(new Intent(view.getContext(), PreferencesScreen.class));
+            public void onClick(View v) {
+                Activity mainDrawer = (Activity) v.getContext();
+                assert(mainDrawer instanceof MainDrawerActivity);
+                mainDrawer.startActivityForResult(new Intent(v.getContext(), PreferencesScreen.class), 1);
             }
         });
 
@@ -123,6 +128,37 @@ public class MetricsView {
         mButtonsContainer.setOnClickListener(null);
 
         mHandler.postDelayed(mUpdateLastUploadedLabel, FREQ_UPDATE_UPLOADTIME);
+
+        Button showPowerButton = (Button) mView.findViewById(R.id.button_change_power_setting);
+        showPowerButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Activity mainDrawer = (Activity) v.getContext();
+                assert(mainDrawer instanceof MainDrawerActivity);
+                mainDrawer.startActivityForResult(new Intent(v.getContext(), PowerSavingScreen.class), 1);
+            }
+        });
+
+    }
+
+    void updatePowerSavingsLabels() {
+        Prefs.PowerSavingModeOptions opt = ClientPrefs.getInstance(mView.getContext()).getPowerSavingMode();
+        int battPct = ClientPrefs.getInstance(mView.getContext()).getMinBatteryPercent();
+
+        TextView tv = (TextView) mView.findViewById(R.id.textview_stop_at_battery);
+        String s = String.format(mView.getResources().getString(R.string.stop_at_x_battery),
+                    battPct);
+        tv.setText(s);
+
+        tv = (TextView) mView.findViewById(R.id.textview_motion_detection);
+        final String onOrOff = (opt == Prefs.PowerSavingModeOptions.Off) ?
+                mView.getResources().getString(R.string.off) :
+                mView.getResources().getString(R.string.on);
+
+        s = String.format(mView.getResources().getString(R.string.motion_detection_onoff),
+                onOrOff);
+        tv.setText(s);
+
     }
 
     public void setMapLayerToggleListener(IMapLayerToggleListener listener) {
@@ -170,6 +206,14 @@ public class MetricsView {
             return;
         }
 
+        if (ClientPrefs.getInstance(mView.getContext()).isOptionEnabledToShowMLSOnMap()) {
+            mOnMapShowMLS.setVisibility(View.VISIBLE);
+        } else {
+            mOnMapShowMLS.setVisibility(View.GONE);
+        }
+
+        updatePowerSavingsLabels();
+
         updateQueuedStats(dm);
         updateSentStats(dm);
         updateThisSessionStats();
@@ -178,11 +222,6 @@ public class MetricsView {
     }
 
     public void onOpened() {
-        if (ClientPrefs.getInstance(mView.getContext()).isOptionEnabledToShowMLSOnMap()) {
-            mOnMapShowMLS.setVisibility(View.VISIBLE);
-        } else {
-            mOnMapShowMLS.setVisibility(View.GONE);
-        }
         update();
     }
 

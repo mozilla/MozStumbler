@@ -40,10 +40,10 @@
             android:name=".client.subactivities.PreferencesScreen"
             android:label="@string/action_preferences"
             android:parentActivityName=".client.navdrawer.MainDrawerActivity">
-            <!-- Parent activity meta-data to support 4.0 and lower -->
+            <!-- Parent activity meta-data to support <= 4.0, full namespace is needed -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".client.navdrawer.MainDrawerActivity" />
+                android:value="org.mozilla.mozstumbler.client.navdrawer.MainDrawerActivity" />
         </activity>
         <activity
             android:name=".client.subactivities.AboutActivity"
@@ -52,7 +52,7 @@
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".client.subactivities.PreferencesScreen" />
+                android:value="org.mozilla.mozstumbler.client.subactivities.PreferencesScreen" />
         </activity>
 
         <activity
@@ -62,7 +62,7 @@
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".client.subactivities.PreferencesScreen" />
+                android:value="org.mozilla.mozstumbler.client.subactivities.PreferencesScreen" />
         </activity>
 
         <activity
@@ -73,7 +73,7 @@
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".client.navdrawer.MainDrawerActivity" />
+                android:value="org.mozilla.mozstumbler.client.navdrawer.MainDrawerActivity" />
         </activity>
         <activity
             android:name=".client.subactivities.DeveloperActivity"
@@ -82,7 +82,7 @@
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".client.navdrawer.MainDrawerActivity" />
+                android:value="org.mozilla.mozstumbler.client.navdrawer.MainDrawerActivity" />
         </activity>
         <activity
             android:name=".client.subactivities.FileBugActivity"
@@ -91,7 +91,7 @@
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".client.subactivities.PreferencesScreen" />
+                android:value="org.mozilla.mozstumbler.client.subactivities.PreferencesScreen" />
         </activity>
 
         <activity
@@ -101,12 +101,8 @@
             android:parentActivityName=".client.navdrawer.MainDrawerActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".client.navdrawer.MainDrawerActivity" />
+                android:value="org.mozilla.mozstumbler.client.navdrawer.MainDrawerActivity" />
         </activity>
-
-        <activity
-            android:name=".client.ToggleWidgetHelper"
-            android:label="@string/app_name"></activity>
 
         <service
             android:name=".client.ClientStumblerService"
@@ -117,14 +113,6 @@
         <receiver android:name=".service.uploadthread.UploadAlarmReceiver" />
         <service android:name=".service.uploadthread.UploadAlarmReceiver$UploadAlarmService" />
 
-        <receiver
-            android:name=".client.ToggleWidgetProvider"
-            android:icon="@drawable/ic_launcher"
-            android:label="Mozilla Stumbler">
-            <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-            </intent-filter>
-        </receiver>
         <!-- For debugging the passive service -->
         <!--
         test with

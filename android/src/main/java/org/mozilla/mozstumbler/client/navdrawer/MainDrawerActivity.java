@@ -4,8 +4,6 @@
 
 package org.mozilla.mozstumbler.client.navdrawer;
 
-import android.appwidget.AppWidgetManager;
-import android.content.ComponentName;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Build;
@@ -22,7 +20,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.CompoundButton;
-import android.widget.RemoteViews;
 import android.widget.Switch;
 
 import org.mozilla.mozstumbler.BuildConfig;
@@ -31,16 +28,11 @@ import org.mozilla.mozstumbler.client.ClientPrefs;
 import org.mozilla.mozstumbler.client.ClientStumblerService;
 import org.mozilla.mozstumbler.client.IMainActivity;
 import org.mozilla.mozstumbler.client.MainApp;
-import org.mozilla.mozstumbler.client.ToggleWidgetProvider;
 import org.mozilla.mozstumbler.client.Updater;
 import org.mozilla.mozstumbler.client.mapview.MapFragment;
 import org.mozilla.mozstumbler.client.subactivities.FirstRunFragment;
 import org.mozilla.mozstumbler.client.subactivities.LeaderboardActivity;
 import org.mozilla.mozstumbler.service.AppGlobals;
-import org.mozilla.mozstumbler.service.core.logging.Log;
-import org.mozilla.mozstumbler.svclocator.ServiceLocator;
-import org.mozilla.mozstumbler.svclocator.services.AppWidgetManagerProxy;
-import org.mozilla.mozstumbler.svclocator.services.IAppWidgetManagerProxy;
 
 public class MainDrawerActivity
         extends ActionBarActivity
@@ -52,7 +44,6 @@ public class MainDrawerActivity
     private MetricsView mMetricsView;
     private MapFragment mMapFragment;
     private MenuItem mMenuItemStartStop;
-    RemoteViews remoteViews;
 
     final CompoundButton.OnCheckedChangeListener mStartStopButtonListener =
             new CompoundButton.OnCheckedChangeListener() {
@@ -78,7 +69,6 @@ public class MainDrawerActivity
         getSupportActionBar().setTitle(getString(R.string.app_name));
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        remoteViews = new RemoteViews(getApplicationContext().getPackageName(), R.layout.toggle_widget);
         mDrawerToggle = new ActionBarDrawerToggle(
                 this,                  /* host Activity */
                 mDrawerLayout,         /* DrawerLayout object */
@@ -190,7 +180,6 @@ public class MainDrawerActivity
             }
         }
 
-        updateWidget(svc);
         mMapFragment.dimToolbar();
     }
 
@@ -270,7 +259,6 @@ public class MainDrawerActivity
             return;
         }
 
-        updateWidget(service);
         mMapFragment.formatTextView(R.id.text_cells_visible, "%d", service.getVisibleCellInfoCount());
         mMapFragment.formatTextView(R.id.text_wifis_visible, "%d", service.getVisibleAPCount());
 
@@ -308,29 +296,4 @@ public class MainDrawerActivity
         mMapFragment.stop();
     }
 
-    void updateWidget(ClientStumblerService service) {
-        boolean isScanning = service.isScanning();
-        if (isScanning) {
-            remoteViews.setImageViewResource(R.id.toggleServiceButton, R.drawable.ic_launcher);
-            remoteViews.setTextViewText(R.id.stumbler_info1, Integer.toString(service.getVisibleAPCount()));
-            remoteViews.setTextViewText(R.id.stumbler_info2, Integer.toString(service.getVisibleCellInfoCount()));
-            remoteViews.setTextViewText(R.id.stumbler_info3, Integer.toString(service.getObservationCount()));
-            remoteViews.setViewVisibility(R.id.stumbler_info_bar, View.VISIBLE);
-        } else {
-            remoteViews.setTextViewText(R.id.stumbler_info1, "0");
-            remoteViews.setTextViewText(R.id.stumbler_info2, "0");
-            remoteViews.setTextViewText(R.id.stumbler_info3, "0");
-            remoteViews.setImageViewResource(R.id.toggleServiceButton, R.drawable.ic_status_scanning);
-            remoteViews.setViewVisibility(R.id.stumbler_info_bar, View.INVISIBLE);
-        }
-        try {
-            ServiceLocator svcLocator = ServiceLocator.getInstance();
-            AppWidgetManagerProxy managerProxy = (AppWidgetManagerProxy) svcLocator.getService(IAppWidgetManagerProxy.class);
-            managerProxy.updateAppWidget(getApplicationContext(),
-                    new ComponentName(getApplicationContext(), ToggleWidgetProvider.class),
-                    remoteViews);
-        } catch (RuntimeException rEx) {
-            Log.w(LOG_TAG, "Error with updating widget: " + rEx.toString());
-        }
-    }
 }

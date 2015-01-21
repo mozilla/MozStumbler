@@ -166,7 +166,7 @@
     <string name="create_log_archive_success">Logs will be save to:</string>
     <string name="category_power_saving">Power Saving</string>
     <string name="power_saving_mode">Motion detection</string>
-    <string name="power_saving_mode_summary">Pauses and unpauses the app if you aren\'t moving.</string>
+    <string name="power_saving_mode_summary">Pauses the scanning if you aren\'t moving, and starts it again if movement is detected.</string>
     <string name="power_saving_title">Power Saving</string>
     <string name="stop_at_x_battery">Stop at %1$d%% battery</string>
     <string name="motion_detection_onoff">Motion detection %1$s</string>

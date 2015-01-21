@@ -7,4 +7,5 @@
 # See: https://github.com/JCAndKSolutions/android-unit-test for more
 # details.
 
+./gradlew copyTestResources
 ./gradlew testGithubUnittest --tests **$1

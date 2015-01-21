@@ -55,10 +55,33 @@ class Stuff {
         }
     }
 
+    def copyTestResources(project, baseDir) {
+
+        def console = TextConsoleBuilderFactory.getInstance().createBuilder(project).getConsole()
+        def pb = new ProcessBuilder("./gradlew",
+                "copyTestResources")
+        pb.directory(new File(baseDir));
+        def p = pb.start()
+        try {
+            def stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
+            def stdError = new BufferedReader(new InputStreamReader(p.getErrorStream()));
+
+            def s = ""
+            while ((s = stdInput.readLine()) != null) {
+                console.print(s, ConsoleViewContentType.NORMAL_OUTPUT)
+            }
+
+            while ((s = stdError.readLine()) != null) {
+                console.print(s, ConsoleViewContentType.ERROR_OUTPUT)
+            }
+        } catch (Exception e) {
+            show("Got an exception: " + e)
+        }
+    }
+
     def runTestMethod(project, baseDir, testClassName, testMethodName) {
 
         def console = TextConsoleBuilderFactory.getInstance().createBuilder(project).getConsole()
-
         def pb = new ProcessBuilder("./gradlew",
                 "testGithubUnittest",
                 "--tests",
@@ -130,6 +153,7 @@ class Stuff {
         //show(msg)
 
         show("Testing "+ testClassName + ":" + testMethodName)
+        copyTestResources(event.project, basePath)
         runTestMethod(event.project, basePath, testClassName, testMethodName)
         BrowserUtil.open(baseFileUrl + "/android/build/test-report/github/unittest/classes/" + testClassName + ".html")
     }

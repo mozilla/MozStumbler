@@ -53,7 +53,7 @@ public class HTTPResponse implements IResponse {
         return statusCode / 100 == 2;
     }
 
-    public int httpResponse() {
+    public int httpStatusCode() {
         return statusCode;
     }
 

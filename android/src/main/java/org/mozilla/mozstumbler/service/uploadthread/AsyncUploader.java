@@ -7,11 +7,9 @@ package org.mozilla.mozstumbler.service.uploadthread;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import org.mozilla.mozstumbler.client.ClientPrefs;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.Prefs;
 import org.mozilla.mozstumbler.service.core.http.HTTPResponse;
-import org.mozilla.mozstumbler.service.core.http.HttpUtil;
 import org.mozilla.mozstumbler.service.core.http.IHttpUtil;
 import org.mozilla.mozstumbler.service.core.http.ILocationService;
 import org.mozilla.mozstumbler.service.core.http.IResponse;
@@ -154,7 +152,7 @@ public class AsyncUploader extends AsyncTask<AsyncUploadParam, AsyncProgressList
                 if (result != null && result.isSuccessCode2XX()) {
                     totalBytesSent += result.bytesSent();
 
-                    String logMsg =  "MLS Submit: [HTTP Status:" + result.httpResponse() + "], [Bytes Sent:" + result.bytesSent() + "]";
+                    String logMsg =  "MLS Submit: [HTTP Status:" + result.httpStatusCode() + "], [Bytes Sent:" + result.bytesSent() + "]";
                     AppGlobals.guiLogInfo(logMsg, "#FFFFCC", true, false);
 
                     dm.delete(batch.filename);
@@ -165,7 +163,7 @@ public class AsyncUploader extends AsyncTask<AsyncUploadParam, AsyncProgressList
                 } else {
                     String logMsg = "HTTP error unknown";
                     if (result != null) {
-                        logMsg = "HTTP non-success code: " + result.httpResponse();
+                        logMsg = "HTTP non-success code: " + result.httpStatusCode();
                     }
                     
                     if (result != null && result.isErrorCode400BadRequest()) {

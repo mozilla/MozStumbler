@@ -1,22 +1,17 @@
 package org.mozilla.osmdroid.tileprovider.modules;
 
-import org.apache.http.conn.HttpHostConnectException;
+import android.graphics.drawable.Drawable;
+
 import org.mozilla.mozstumbler.service.AppGlobals;
-import org.mozilla.mozstumbler.service.core.http.HttpUtil;
 import org.mozilla.mozstumbler.service.core.http.IHttpUtil;
 import org.mozilla.mozstumbler.service.core.http.IResponse;
 import org.mozilla.mozstumbler.service.core.logging.Log;
 import org.mozilla.mozstumbler.svclocator.ServiceLocator;
+import org.mozilla.mozstumbler.svclocator.services.ISystemClock;
 import org.mozilla.osmdroid.tileprovider.MapTile;
+import org.mozilla.osmdroid.tileprovider.tilesource.BitmapTileSourceBase;
 import org.mozilla.osmdroid.tileprovider.tilesource.ITileSource;
-import org.mozilla.osmdroid.tileprovider.util.StreamUtils;
 
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -52,101 +47,83 @@ public class TileDownloaderDelegate {
     }
 
     /*
-     * Check if the tile is current by running a conditional get on
-     * the URL
-     */
-    public boolean isTileCurrent(SerializableTile serializableTile, ITileSource tileSource, MapTile tile) throws HttpHostConnectException {
-        if (tileSource == null) {
-            return false;
-        }
-
-        if (networkIsUnavailable()) {
-            return false;
-        }
-
-        final String tileURLString = tileSource.getTileURLString(tile);
-
-        if (tileURLString == null || tileURLString.length() == 0) {
-            return false;
-        }
-
-        if (urlIs404Cached(tileURLString)) {
-            // Note that this behaviour is different than
-            // actually downloading a tile.  If the URL is 404 cached,
-            // we just assume that the tile is 'current'
-            return true;
-        }
-
-        if (System.currentTimeMillis() < serializableTile.getCacheControl()) {
-            return true;
-        }
-
-        String etag = serializableTile.getEtag();
-        if (etag == null) {
-            // No etag means we want to download the file, no need
-            // to go checking the etag status over the network.
-            return false;
-        }
-
-        IHttpUtil httpUtil = new HttpUtil();
-        HashMap<String, String> headers = new HashMap<String, String>();
-        headers.put(ETAG_MATCH_HEADER, etag);
-        IResponse resp = httpUtil.get(tileURLString, headers);
-        if (resp == null) {
-            Log.w(LOG_TAG, "Error with network request.");
-            return false;
-        }
-
-        if (resp.httpResponse() == 304) {
-            // Resave the file - this will automatically update the cache-control value
-            serializableTile.saveFile();
-            return true;
-        }
-        return false;
-    }
-
-    /*
      * Write a tile from network to disk.
      */
-    public boolean downloadTile(ITileSource tileSource, MapTile tile) {
-        if (tileSource == null) {
-            Log.i(LOG_TAG, "tileSource is null");
-            return false;
+    public Drawable downloadTile(SerializableTile serializableTile, ITileSource tileSource, MapTile tile)
+            throws BitmapTileSourceBase.LowMemoryException {
+        if (networkIsUnavailable()) {
+            if (serializableTile.getTileData().length > 0) {
+                // Just try to return what we've got on disk if the network is just down.
+                // This should really be pulled out into a wrapping function.
+                return tileSource.getDrawable(serializableTile.getTileData());
+            }
+            return null;
         }
 
-        if (networkIsUnavailable()) {
-            return false;
+        ServiceLocator svcLocator = ServiceLocator.getInstance();
+
+        if (tileSource == null) {
+            Log.i(LOG_TAG, "tileSource is null");
+            return null;
         }
 
         final String tileURLString = tileSource.getTileURLString(tile);
 
         if (tileURLString == null || tileURLString.length() == 0) {
-            return false;
+            return null;
         }
 
         if (urlIs404Cached(tileURLString)) {
-            return false;
+            return null;
+        }
+
+        ISystemClock systemClock = (ISystemClock) svcLocator.getService(ISystemClock.class);
+        if (systemClock.currentTimeMillis() < serializableTile.getCacheControl()) {
+            return tileSource.getDrawable(serializableTile.getTileData());
         }
 
         // Always try remove the tileURL from the cache before we try
         // downloading again.
         HTTP404_CACHE.remove(tileURLString);
 
-        IHttpUtil httpClient = (IHttpUtil) ServiceLocator.getInstance().getService(IHttpUtil.class);
-        IResponse resp = httpClient.get(tileURLString, null);
+        IHttpUtil httpClient = (IHttpUtil) svcLocator.getService(IHttpUtil.class);
+        HashMap<String, String> headers = new HashMap<String, String>();
+        String cachedEtag = serializableTile.getEtag();
+        if (cachedEtag != null) {
+            headers.put(ETAG_MATCH_HEADER, cachedEtag);
+        }
+        IResponse resp = httpClient.get(tileURLString, headers);
 
+        if (AppGlobals.isDebug) {
+            Log.d(LOG_TAG, "Got a response: " + resp.httpStatusCode());
+        }
         if (resp == null) {
-            return false;
+            Log.w(LOG_TAG, "A NULL response was returned from the HTTP client.  This should never have happened.");
+            return null;
         }
 
-        if (resp.httpResponse() != 200) {
-            if (resp.httpResponse() == 404) {
+        if (resp.httpStatusCode() == 304) {
+            if (serializableTile.getTileData().length > 0) {
+                // Resave the file - this will automatically update the cache-control value
+                serializableTile.saveFile();
+                return tileSource.getDrawable(serializableTile.getTileData());
+            } else {
+                // Something terrible went wrong.  Clear the etag and the tile data.
+                serializableTile.setHeader("etag", "");
+                serializableTile.setTileData(null);
+                serializableTile.saveFile();
+                return null;
+            }
+        }
+
+        if (resp.httpStatusCode() != 200) {
+            if (resp.httpStatusCode() == 404) {
                 HTTP404_CACHE.put(tileURLString, System.currentTimeMillis() + ONE_HOUR_MS);
             } else {
-                Log.w(LOG_TAG, "Unexpected response from tile server: [" + resp.httpResponse() + "]");
+                Log.w(LOG_TAG, "Unexpected response from tile server: [" + resp.httpStatusCode() + "]");
             }
 
-            // @TODO vng: This is a hack so that we skip over anything  errors from the mozilla
+            // @TODO vng: This is a hack so that we skip over anything that errors from the mozilla
             // cloudfront backed coverage tile server.
             if (tileURLString.contains("cloudfront.net")) {
                 // A refactoring that would be useful is a callback mechanism so that we a TileProvider
@@ -156,17 +133,23 @@ public class TileDownloaderDelegate {
                 // Do nothing here for now.  We may as well generate an empty bitmap and return that
                 // on the refactoring.
             } else {
-                Log.w(LOG_TAG, "Error downloading [" + tileURLString + "] HTTP Response Code:" + resp.httpResponse());
+                Log.w(LOG_TAG, "Error downloading [" + tileURLString + "] HTTP Response Code:" + resp.httpStatusCode());
             }
 
-            return false;
+            return null;
         }
+
         byte[] tileBytes = resp.bodyBytes();
         String etag = resp.getFirstHeader("etag");
 
         // write the data using the TileIOFacade
-        tileIOFacade.saveFile(tileSource, tile, tileBytes, etag);
-        return true;
+        serializableTile = tileIOFacade.saveFile(tileSource, tile, tileBytes, etag);
+        if (AppGlobals.isDebug) {
+            Log.d(LOG_TAG, "serializableTile == " + serializableTile);
+        }
+        byte[] data = serializableTile.getTileData();
+        return tileSource.getDrawable(data);
+
     }
 
     /*
@@ -175,7 +158,7 @@ public class TileDownloaderDelegate {
      *
      * In all other cases, assume the network is available.
      */
-    private boolean networkIsUnavailable() {
+    protected boolean networkIsUnavailable() {
         if (networkAvailablityCheck != null && !networkAvailablityCheck.getNetworkAvailable()) {
             return true;
         }
@@ -185,7 +168,7 @@ public class TileDownloaderDelegate {
     /*
      * Check if this URL is already known to 404 on us.
      */
-    private boolean urlIs404Cached(String url) {
+    protected boolean urlIs404Cached(String url) {
         Long cacheTs = HTTP404_CACHE.get(url);
         if (cacheTs != null) {
             if (cacheTs.longValue() > System.currentTimeMillis()) {

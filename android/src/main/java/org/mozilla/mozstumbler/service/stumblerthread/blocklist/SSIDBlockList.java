@@ -14,11 +14,6 @@ public final class SSIDBlockList {
     private SSIDBlockList() {
     }
 
-    public static void setFilterLists(String[] prefix, String[] suffix) {
-        sPrefixList = prefix;
-        sSuffixList = suffix;
-    }
-
     public static boolean isOptOut(ScanResult scanResult) {
         String SSID = scanResult.SSID;
         return (SSID != null && SSID.endsWith(sOptOut));

@@ -64,12 +64,6 @@ public class StumblerService extends PersistentIntentService
         mScanManager.startScanning(this);
     }
 
-    // This is optional, not used in Fennec, and is for clients to specify a (potentially long) list
-    // of blocklisted SSIDs/BSSIDs
-    public synchronized void setWifiBlockList(WifiBlockListInterface list) {
-        mScanManager.setWifiBlockList(list);
-    }
-
     public synchronized Prefs getPrefs(Context c) {
         return Prefs.getInstance(c);
     }

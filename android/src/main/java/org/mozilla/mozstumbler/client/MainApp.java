@@ -15,15 +15,12 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.StrictMode;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
-import android.widget.Toast;
 
 import org.acra.ACRA;
 import org.acra.annotation.ReportsCrashes;
@@ -179,7 +176,6 @@ public class MainApp extends Application
                 ClientStumblerService.StumblerBinder serviceBinder = (ClientStumblerService.StumblerBinder) binder;
                 mStumblerService = serviceBinder.getServiceAndInitialize(Thread.currentThread(),
                         MAX_BYTES_DISK_STORAGE, MAX_WEEKS_OLD_STORED);
-                mStumblerService.setWifiBlockList(new WifiBlockLists());
 
                 Log.d(LOG_TAG, "Service connected");
                 if (mMainActivity.get() != null) {

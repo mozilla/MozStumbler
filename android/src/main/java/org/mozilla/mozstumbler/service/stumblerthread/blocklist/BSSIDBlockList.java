@@ -17,13 +17,8 @@ public final class BSSIDBlockList {
     private static final String NULL_BSSID = "000000000000";
     private static final String WILDCARD_BSSID = "ffffffffffff";
     private static final Pattern BSSID_PATTERN = Pattern.compile("([0-9a-f]{12})");
-    private static String[] sOuiList = new String[]{};
 
     private BSSIDBlockList() {
-    }
-
-    public static void setFilterList(String[] list) {
-        sOuiList = list;
     }
 
     public static boolean contains(ScanResult scanResult) {
@@ -35,12 +30,6 @@ public final class BSSIDBlockList {
         if (!isCanonicalBSSID(BSSID)) {
             Log.w(LOG_TAG, "", new IllegalArgumentException("Unexpected BSSID format: " + BSSID));
             return true; // blocked!
-        }
-
-        for (String oui : sOuiList) {
-            if (BSSID.startsWith(oui)) {
-                return true; // blocked!
-            }
         }
 
         return false; // OK

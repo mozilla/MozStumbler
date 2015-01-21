@@ -11,7 +11,7 @@ import com.ekito.simpleKML.model.Coordinate;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.mozilla.mozstumbler.client.ClientPrefs;
-import org.mozilla.mozstumbler.service.core.logging.Log;
+import org.mozilla.mozstumbler.service.core.logging.ClientLog;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageContract;
 import org.mozilla.mozstumbler.service.utils.NetworkInfo;
 import org.mozilla.osmdroid.util.GeoPoint;
@@ -91,7 +91,7 @@ public class ObservationPoint implements MLSLocationGetter.MLSLocationGetterCall
 
     public void errorMLSResponse(boolean stopRequesting) {
         if (stopRequesting) {
-            Log.i(ObservationPoint.class.getSimpleName(), "Error:" + mMLSQuery.toString());
+            ClientLog.i(ObservationPoint.class.getSimpleName(), "Error:" + mMLSQuery.toString());
             mMLSQuery = null;
         }
         mIsMLSLocationQueryRunning = false;

@@ -4,12 +4,13 @@
 
 package org.mozilla.mozstumbler.service;
 
+import org.mozilla.mozstumbler.service.core.logging.ClientLog;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class AppGlobals {
-    public static final String LOG_PREFIX = "Stumbler_";
 
     /* All intent actions start with this string. Only locally broadcasted. */
     public static final String ACTION_NAMESPACE = "org.mozilla.mozstumbler.intent.action";
@@ -26,10 +27,6 @@ public class AppGlobals {
 
     /* Location constructor requires a named origin, these are created in the app. */
     public static final String LOCATION_ORIGIN_INTERNAL = "internal";
-
-    public static String makeLogTag(Class<?> cls) {
-        return makeLogTag(cls.getSimpleName());
-    }
 
     public enum ActiveOrPassiveStumbling { ACTIVE_STUMBLING, PASSIVE_STUMBLING }
 
@@ -68,14 +65,6 @@ public class AppGlobals {
             String ts = formatter.format(new Date());
             guiLogMessageBuffer.add(noTruncateFlag + ts + "<font color='" + color +"'>" + msg + "</font>");
         }
-    }
-
-    public static String makeLogTag(String name) {
-        final int maxLen = 23 - LOG_PREFIX.length();
-        if (name.length() > maxLen) {
-                name = name.substring(name.length() - maxLen, name.length());
-            }
-        return LOG_PREFIX + name;
     }
 
     public static final String ACTION_TEST_SETTING_ENABLED = "stumbler-test-setting-enabled";

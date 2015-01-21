@@ -6,9 +6,9 @@ package org.mozilla.mozstumbler.service.stumblerthread.datahandling;
 import android.content.Context;
 import android.os.Environment;
 
-import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.Prefs;
-import org.mozilla.mozstumbler.service.core.logging.Log;
+import org.mozilla.mozstumbler.service.core.logging.ClientLog;
+import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -18,7 +18,7 @@ import java.io.IOException;
 
 public class ClientDataStorageManager extends DataStorageManager {
 
-    private static final String LOG_TAG = AppGlobals.makeLogTag(ClientDataStorageManager.class);
+    private static final String LOG_TAG = LoggerUtil.makeLogTag(ClientDataStorageManager.class);
 
     private ClientDataStorageManager(Context c, StorageIsEmptyTracker tracker, long maxBytesStoredOnDisk, int maxWeeksDataStored) {
         super(c, tracker, maxBytesStoredOnDisk, maxWeeksDataStored);
@@ -78,14 +78,14 @@ public class ClientDataStorageManager extends DataStorageManager {
                 try {
                     inStream.close();
                 }catch (IOException ioEx) {
-                    Log.e(LOG_TAG, "error shutting down streams during a failed copy", ioEx);
+                    ClientLog.e(LOG_TAG, "error shutting down streams during a failed copy", ioEx);
                 }
             }
             if (outStream != null) {
                 try {
                     outStream.close();
                 } catch (IOException ioEx) {
-                    Log.e(LOG_TAG, "error shutting down streams during a failed copy", ioEx);
+                    ClientLog.e(LOG_TAG, "error shutting down streams during a failed copy", ioEx);
                 }
             }
             return false;
@@ -99,20 +99,20 @@ public class ClientDataStorageManager extends DataStorageManager {
                 outStream.write(buffer, 0, length);
             }
         } catch (IOException e) {
-            Log.e(LOG_TAG, "Error copying bytes over", e);
+            ClientLog.e(LOG_TAG, "Error copying bytes over", e);
 
             if (inStream != null) {
                 try {
                     inStream.close();
                 }catch (IOException ioEx) {
-                    Log.e(LOG_TAG, "error shutting down streams during a failed copy", ioEx);
+                    ClientLog.e(LOG_TAG, "error shutting down streams during a failed copy", ioEx);
                 }
             }
             if (outStream != null) {
                 try {
                     outStream.close();
                 } catch (IOException ioEx) {
-                    Log.e(LOG_TAG, "error shutting down streams during a failed copy", ioEx);
+                    ClientLog.e(LOG_TAG, "error shutting down streams during a failed copy", ioEx);
                 }
             }
             return false;
@@ -122,7 +122,7 @@ public class ClientDataStorageManager extends DataStorageManager {
             try {
                 inStream.close();
             }catch (IOException ioEx) {
-                Log.e(LOG_TAG, "error shutting down streams during a failed copy", ioEx);
+                ClientLog.e(LOG_TAG, "error shutting down streams during a failed copy", ioEx);
                 ok = false;
             }
         }
@@ -131,7 +131,7 @@ public class ClientDataStorageManager extends DataStorageManager {
             try {
                 outStream.close();
             } catch (IOException ioEx) {
-                Log.e(LOG_TAG, "error shutting down streams during a failed copy", ioEx);
+                ClientLog.e(LOG_TAG, "error shutting down streams during a failed copy", ioEx);
                 ok = false;
             }
         }

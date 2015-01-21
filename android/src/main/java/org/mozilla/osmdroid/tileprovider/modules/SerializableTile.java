@@ -1,8 +1,8 @@
 package org.mozilla.osmdroid.tileprovider.modules;
 
 import org.apache.http.util.ByteArrayBuffer;
-import org.mozilla.mozstumbler.service.AppGlobals;
-import org.mozilla.mozstumbler.service.core.logging.Log;
+import org.mozilla.mozstumbler.service.core.logging.ClientLog;
+import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -10,11 +10,9 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.nio.CharBuffer;
 import java.nio.charset.CharacterCodingException;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
-import java.nio.charset.CharsetEncoder;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -31,8 +29,7 @@ public class SerializableTile {
     // enable offline stumbles.
     public static final long CACHE_TILE_MS = 60 * 60 * 12 * 1000;
 
-    private static final String LOG_TAG =
-            AppGlobals.LOG_PREFIX + SerializableTile.class.getSimpleName();
+    private static final String LOG_TAG = LoggerUtil.makeLogTag(SerializableTile.class);
 
     final byte[] FILE_HEADER = {(byte) 0xde, (byte) 0xca, (byte) 0xfb, (byte) 0xad};
 
@@ -47,7 +44,7 @@ public class SerializableTile {
             try {
                 fromFile(sTileFile);
             } catch (FileNotFoundException e) {
-                Log.e(LOG_TAG, "TileFile was deleted by Android during tile load.", e);
+                ClientLog.e(LOG_TAG, "TileFile was deleted by Android during tile load.", e);
                 tData = null;
             }
         }
@@ -152,7 +149,7 @@ public class SerializableTile {
             fos.close();
             return true;
         } catch (IOException e) {
-            Log.w(LOG_TAG, "Error writing SerializableTile to disk");
+            ClientLog.w(LOG_TAG, "Error writing SerializableTile to disk");
             return false;
         }
     }
@@ -176,7 +173,7 @@ public class SerializableTile {
         try {
             fis.read(arr);
         } catch (IOException e) {
-            Log.e(LOG_TAG, "Error reading file into array.", e);
+            ClientLog.e(LOG_TAG, "Error reading file into array.", e);
         } finally {
             if (fis != null) {
                 try {
@@ -191,7 +188,7 @@ public class SerializableTile {
             myFile  = file.getAbsoluteFile();
             return fromBytes(arr);
         } catch (CharacterCodingException e) {
-            Log.e(LOG_TAG, "Error decoding strings from file", e);
+            ClientLog.e(LOG_TAG, "Error decoding strings from file", e);
             return false;
         }
     }
@@ -210,7 +207,7 @@ public class SerializableTile {
 
         bb.get(buffer, 0, 4);
         if (!Arrays.equals(buffer, FILE_HEADER)) {
-            Log.w(LOG_TAG, "Unexpected header in tile file: ["+bytesToHex(buffer)+"]");
+            ClientLog.w(LOG_TAG, "Unexpected header in tile file: [" + bytesToHex(buffer) + "]");
             return false;
         }
 
@@ -255,7 +252,7 @@ public class SerializableTile {
         bb.get(buffer, 0, 4);
         int contentLength = java.nio.ByteBuffer.wrap(buffer).getInt();
         if (bb.remaining() != contentLength) {
-            Log.w(LOG_TAG, "Remaining byte count does not match actual["+bb.remaining()+"] vs expected["+contentLength+"]");
+            ClientLog.w(LOG_TAG, "Remaining byte count does not match actual[" + bb.remaining() + "] vs expected[" + contentLength + "]");
             // Force data to be null on errors.
             tData = null;
             return false;

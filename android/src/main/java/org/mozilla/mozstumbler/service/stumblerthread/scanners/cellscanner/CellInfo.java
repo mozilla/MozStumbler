@@ -16,10 +16,10 @@ import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.mozilla.mozstumbler.service.AppGlobals;
+import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
 public class CellInfo implements Parcelable {
-    private static final String LOG_TAG = AppGlobals.makeLogTag(CellInfo.class.getSimpleName());
+    private static final String LOG_TAG = LoggerUtil.makeLogTag(CellInfo.class);
 
     public static final String RADIO_GSM = "gsm";
     public static final String RADIO_CDMA = "cdma";

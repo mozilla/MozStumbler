@@ -12,7 +12,7 @@ import android.os.Build.VERSION;
 import android.text.TextUtils;
 import android.util.Log;
 
-import java.sql.Savepoint;
+import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
 public class Prefs {
     public static final String NICKNAME_PREF = "nickname";
@@ -20,7 +20,7 @@ public class Prefs {
     public static final String WIFI_ONLY = "wifi_only";
     public static final String POWER_SAVING_MODE = "power_saving_mode_type";
     protected static final String PREFS_FILE = Prefs.class.getSimpleName();
-    private static final String LOG_TAG = AppGlobals.makeLogTag(Prefs.class.getSimpleName());
+    private static final String LOG_TAG = LoggerUtil.makeLogTag(Prefs.class);
     private static final String USER_AGENT_PREF = "user-agent";
     private static final String VALUES_VERSION_PREF = "values_version";
     private static final String LAT_PREF = "lat_pref";

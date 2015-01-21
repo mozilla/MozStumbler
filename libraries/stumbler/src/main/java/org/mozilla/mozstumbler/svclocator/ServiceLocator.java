@@ -3,7 +3,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package org.mozilla.mozstumbler.svclocator;
 
-import java.util.HashMap;
+import java.lang.reflect.Proxy;
 
 public class ServiceLocator {
 
@@ -12,26 +12,39 @@ public class ServiceLocator {
 
     private static ServiceLocator instance = null;
 
-
-    public static synchronized ServiceLocator newRoot(ServiceConfig newMap) {
-        ServiceLocator svcLocator = new ServiceLocator(null);
-        svcLocator.svcMap = newMap;
-        return svcLocator;
-    }
-
-    public static synchronized void setRootInstance(ServiceLocator root) {
-        instance = root;
-    }
-
-    public static synchronized ServiceLocator getInstance() {
-        return instance;
-    }
-
     public ServiceLocator(ServiceLocator parent) {
         parentLocator = parent;
     }
 
-    public Object getService(Class<?> svcInterface) {
+    public static synchronized void newRoot(ServiceConfig newMap) {
+        if (instance == null) {
+            instance = getInstance();
+        }
+        instance.svcMap = newMap;
+    }
+
+    public static synchronized ServiceLocator getInstance() {
+        if (instance == null) {
+            instance = new ServiceLocator(null);
+        }
+        return instance;
+    }
+
+
+    /*
+     Call this method with an interface class to get a lazily bound proxy to the service.
+     */
+    public Object getService(Class<?> svcDefinition) {
+        return Proxy.newProxyInstance(svcDefinition.getClassLoader(),
+                new Class<?>[]{svcDefinition},
+                new DynamicProxy(svcDefinition));
+    }
+
+    /*
+     You almost certainly don't want to be calling this.  Use getService instead to get a lazily
+     bound proxy instance.
+     */
+    public Object getDirectService(Class<?> svcInterface) {
         Object result = null;
 
         if (svcMap.containsKey(svcInterface)) {

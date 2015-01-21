@@ -2,19 +2,19 @@ package org.mozilla.mozstumbler.client;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.widget.Toast;
 
 import org.acra.ACRA;
 import org.mozilla.mozstumbler.BuildConfig;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.Prefs;
-import org.mozilla.mozstumbler.service.core.logging.Log;
+import org.mozilla.mozstumbler.service.core.logging.ClientLog;
 import org.mozilla.mozstumbler.service.core.logging.MockAcraLog;
+import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 import org.mozilla.osmdroid.api.IGeoPoint;
 import org.mozilla.osmdroid.util.GeoPoint;
 
 public class ClientPrefs extends Prefs {
-    private static final String LOG_TAG = AppGlobals.makeLogTag(ClientPrefs.class.getSimpleName());
+    private static final String LOG_TAG = LoggerUtil.makeLogTag(ClientPrefs.class);
     private static final String LAT_PREF = "lat";
     private static final String LON_PREF = "lon";
     private static final String IS_FIRST_RUN = "is_first_run";
@@ -126,10 +126,10 @@ public class ClientPrefs extends Prefs {
     public void setCrashReportingEnabled(boolean isOn) {
         setBoolPref(CRASH_REPORTING, isOn);
         if (isOn) {
-            Log.d(LOG_TAG, "Enabled crash reporting");
+            ClientLog.d(LOG_TAG, "Enabled crash reporting");
             ACRA.setLog(MockAcraLog.getOriginalLog());
         } else {
-            Log.d(LOG_TAG, "Disabled crash reporting");
+            ClientLog.d(LOG_TAG, "Disabled crash reporting");
             ACRA.setLog(new MockAcraLog());
         }
     }

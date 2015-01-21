@@ -1,23 +1,13 @@
 // Created by plusminus on 21:46:22 - 25.09.2008
 package org.mozilla.osmdroid.tileprovider;
 
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.graphics.Point;
-import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
 
-import org.mozilla.mozstumbler.service.AppGlobals;
-import org.mozilla.mozstumbler.service.core.logging.Log;
+import org.mozilla.mozstumbler.service.core.logging.ClientLog;
+import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 import org.mozilla.osmdroid.tileprovider.constants.OSMConstants;
-import org.mozilla.osmdroid.tileprovider.modules.MapTileModuleProviderBase;
 import org.mozilla.osmdroid.tileprovider.tilesource.ITileSource;
-import org.mozilla.osmdroid.util.TileLooper;
-import org.mozilla.osmdroid.views.Projection;
-
-import java.util.HashMap;
 
 /**
  * This is an abstract class. The tile provider is responsible for:
@@ -34,7 +24,7 @@ import java.util.HashMap;
 public abstract class MapTileProviderBase implements IMapTileProviderCallback,
         OSMConstants {
 
-	private static final String LOG_TAG = AppGlobals.makeLogTag(MapTileProviderBase.class.getSimpleName());
+	private static final String LOG_TAG = LoggerUtil.makeLogTag(MapTileProviderBase.class);
 
 	protected final MapTileCache mTileCache;
 	protected Handler mTileRequestCompleteHandler;
@@ -127,7 +117,7 @@ public abstract class MapTileProviderBase implements IMapTileProviderCallback,
 		}
 
 		if (DEBUG_TILE_PROVIDERS) {
-			Log.d(LOG_TAG, "MapTileProviderBase.mapTileRequestCompleted(): " + pState.getMapTile());
+			ClientLog.d(LOG_TAG, "MapTileProviderBase.mapTileRequestCompleted(): " + pState.getMapTile());
 		}
 	}
 
@@ -145,7 +135,7 @@ public abstract class MapTileProviderBase implements IMapTileProviderCallback,
 		}
 
 		if (DEBUG_TILE_PROVIDERS) {
-			Log.d(LOG_TAG, "MapTileProviderBase.mapTileRequestFailed(): " + pState.getMapTile());
+			ClientLog.d(LOG_TAG, "MapTileProviderBase.mapTileRequestFailed(): " + pState.getMapTile());
 		}
 	}
 
@@ -170,7 +160,7 @@ public abstract class MapTileProviderBase implements IMapTileProviderCallback,
 		}
 
 		if (DEBUG_TILE_PROVIDERS) {
-			Log.d(LOG_TAG, "MapTileProviderBase.mapTileRequestExpiredTile(): " + pState.getMapTile());
+			ClientLog.d(LOG_TAG, "MapTileProviderBase.mapTileRequestExpiredTile(): " + pState.getMapTile());
 		}
 	}
 

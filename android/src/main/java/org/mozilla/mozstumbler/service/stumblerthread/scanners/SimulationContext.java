@@ -15,10 +15,10 @@ import android.os.Handler;
 import android.os.SystemClock;
 import android.telephony.TelephonyManager;
 
-import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.Prefs;
-import org.mozilla.mozstumbler.service.core.logging.Log;
+import org.mozilla.mozstumbler.service.core.logging.ClientLog;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner.CellInfo;
+import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -29,7 +29,7 @@ import java.util.List;
 public class SimulationContext extends ContextWrapper {
 
     public final static int SIMULATION_PING_INTERVAL = 1000 * 1; // Every second
-    private static final String LOG_TAG = AppGlobals.makeLogTag(SimulationContext.class.getSimpleName());
+    private static final String LOG_TAG = LoggerUtil.makeLogTag(SimulationContext.class);
     private double mLon;
     private double mLat;
     Handler handler = new Handler();
@@ -148,7 +148,7 @@ public class SimulationContext extends ContextWrapper {
             scan.BSSID = "E0:3F:49:98:A6:A0";
             resultList.add(scan);
         } catch (Exception e) {
-            Log.e(LOG_TAG, "Error creating a mock ScanResult", e);
+            ClientLog.e(LOG_TAG, "Error creating a mock ScanResult", e);
         }
 
         return resultList;
@@ -160,7 +160,7 @@ public class SimulationContext extends ContextWrapper {
         try {
             result.add(makeCellInfo(1, 1, 60330, 1660199, 19));
         } catch (Exception e) {
-            Log.e(LOG_TAG, "Error creating a mock CellInfo block", e);
+            ClientLog.e(LOG_TAG, "Error creating a mock CellInfo block", e);
         }
         return result;
     }

@@ -5,9 +5,10 @@ import android.graphics.drawable.Drawable;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.core.http.IHttpUtil;
 import org.mozilla.mozstumbler.service.core.http.IResponse;
-import org.mozilla.mozstumbler.service.core.logging.Log;
+import org.mozilla.mozstumbler.service.core.logging.ClientLog;
 import org.mozilla.mozstumbler.svclocator.ServiceLocator;
 import org.mozilla.mozstumbler.svclocator.services.ISystemClock;
+import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 import org.mozilla.osmdroid.tileprovider.MapTile;
 import org.mozilla.osmdroid.tileprovider.tilesource.BitmapTileSourceBase;
 import org.mozilla.osmdroid.tileprovider.tilesource.ITileSource;
@@ -38,7 +39,7 @@ public class TileDownloaderDelegate {
     private static final int HTTP404_CACHE_SIZE = 2000;
     Map<String, Long> HTTP404_CACHE = Collections.synchronizedMap(new LruCache<String, Long>(HTTP404_CACHE_SIZE));
 
-    private static final String LOG_TAG = AppGlobals.makeLogTag(TileDownloaderDelegate.class.getSimpleName());
+    private static final String LOG_TAG = LoggerUtil.makeLogTag(TileDownloaderDelegate.class);
 
     public TileDownloaderDelegate(INetworkAvailablityCheck pNetworkAvailablityCheck,
                                   TileIOFacade tw) {
@@ -63,7 +64,7 @@ public class TileDownloaderDelegate {
         ServiceLocator svcLocator = ServiceLocator.getInstance();
 
         if (tileSource == null) {
-            Log.i(LOG_TAG, "tileSource is null");
+            ClientLog.i(LOG_TAG, "tileSource is null");
             return null;
         }
 
@@ -95,10 +96,10 @@ public class TileDownloaderDelegate {
         IResponse resp = httpClient.get(tileURLString, headers);
 
         if (AppGlobals.isDebug) {
-            Log.d(LOG_TAG, "Got a response: " + resp.httpStatusCode());
+            ClientLog.d(LOG_TAG, "Got a response: " + resp.httpStatusCode());
         }
         if (resp == null) {
-            Log.w(LOG_TAG, "A NULL response was returned from the HTTP client.  This should never have happened.");
+            ClientLog.w(LOG_TAG, "A NULL response was returned from the HTTP client.  This should never have happened.");
             return null;
         }
 
@@ -120,7 +121,7 @@ public class TileDownloaderDelegate {
             if (resp.httpStatusCode() == 404) {
                 HTTP404_CACHE.put(tileURLString, System.currentTimeMillis() + ONE_HOUR_MS);
             } else {
-                Log.w(LOG_TAG, "Unexpected response from tile server: [" + resp.httpStatusCode() + "]");
+                ClientLog.w(LOG_TAG, "Unexpected response from tile server: [" + resp.httpStatusCode() + "]");
             }
 
             // @TODO vng: This is a hack so that we skip over anything that errors from the mozilla
@@ -133,7 +134,7 @@ public class TileDownloaderDelegate {
                 // Do nothing here for now.  We may as well generate an empty bitmap and return that
                 // on the refactoring.
             } else {
-                Log.w(LOG_TAG, "Error downloading [" + tileURLString + "] HTTP Response Code:" + resp.httpStatusCode());
+                ClientLog.w(LOG_TAG, "Error downloading [" + tileURLString + "] HTTP Response Code:" + resp.httpStatusCode());
             }
 
             return null;
@@ -145,7 +146,7 @@ public class TileDownloaderDelegate {
         // write the data using the TileIOFacade
         serializableTile = tileIOFacade.saveFile(tileSource, tile, tileBytes, etag);
         if (AppGlobals.isDebug) {
-            Log.d(LOG_TAG, "serializableTile == " + serializableTile);
+            ClientLog.d(LOG_TAG, "serializableTile == " + serializableTile);
         }
         byte[] data = serializableTile.getTileData();
         return tileSource.getDrawable(data);

@@ -6,8 +6,8 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.InputStreamBody;
-import org.mozilla.mozstumbler.service.AppGlobals;
-import org.mozilla.mozstumbler.service.core.logging.Log;
+import org.mozilla.mozstumbler.service.core.logging.ClientLog;
+import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 import org.mozilla.osmdroid.contributor.util.RecordedGeoPoint;
 import org.mozilla.osmdroid.contributor.util.RecordedRouteGPXFormatter;
 import org.mozilla.osmdroid.contributor.util.Util;
@@ -22,7 +22,7 @@ import java.util.ArrayList;
 
 public class GpxToPHPUploader {
 
-	private static final String LOG_TAG = AppGlobals.makeLogTag(GpxToPHPUploader.class.getSimpleName());
+	private static final String LOG_TAG = LoggerUtil.makeLogTag(GpxToPHPUploader.class);
 
 	protected static final String UPLOADSCRIPT_URL = "http://www.PLACEYOURDOMAINHERE.com/anyfolder/gpxuploader/upload.php";
 
@@ -60,7 +60,7 @@ public class GpxToPHPUploader {
 					final int status = response.getStatusLine().getStatusCode();
 
 					if (status != HttpStatus.SC_OK) {
-						Log.w(LOG_TAG, "GPXUploader status != HttpStatus.SC_OK");
+						ClientLog.w(LOG_TAG, "GPXUploader status != HttpStatus.SC_OK");
 					} else {
 						final Reader r = new InputStreamReader(new BufferedInputStream(response
 								.getEntity().getContent()));
@@ -71,10 +71,10 @@ public class GpxToPHPUploader {
 						while ((read = r.read(buf)) != -1)
 							sb.append(buf, 0, read);
 
-						Log.d(LOG_TAG, "GPXUploader Response: " + sb.toString());
+						ClientLog.d(LOG_TAG, "GPXUploader Response: " + sb.toString());
 					}
 				} catch (final Exception e) {
-					Log.e(LOG_TAG, "OSMUpload Error", e);
+					ClientLog.e(LOG_TAG, "OSMUpload Error", e);
 				}
 			}
 		}).start();

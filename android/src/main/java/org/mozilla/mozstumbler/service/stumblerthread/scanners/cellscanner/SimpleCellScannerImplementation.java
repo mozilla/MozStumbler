@@ -26,7 +26,7 @@ import android.telephony.SignalStrength;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 
-import org.mozilla.mozstumbler.service.AppGlobals;
+import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -35,7 +35,7 @@ import java.util.List;
 
 public class SimpleCellScannerImplementation implements ISimpleCellScanner {
 
-    protected static String LOG_TAG = AppGlobals.makeLogTag(SimpleCellScannerImplementation.class.getSimpleName());
+    protected static String LOG_TAG = LoggerUtil.makeLogTag(SimpleCellScannerImplementation.class);
     protected GetAllCellInfoScannerImpl mGetAllInfoCellScanner;
     protected TelephonyManager mTelephonyManager;
     protected boolean mIsStarted;

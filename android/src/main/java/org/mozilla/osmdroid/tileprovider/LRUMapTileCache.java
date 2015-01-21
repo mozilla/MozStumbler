@@ -3,7 +3,8 @@ package org.mozilla.osmdroid.tileprovider;
 import android.graphics.drawable.Drawable;
 
 import org.mozilla.mozstumbler.service.AppGlobals;
-import org.mozilla.mozstumbler.service.core.logging.Log;
+import org.mozilla.mozstumbler.service.core.logging.ClientLog;
+import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
 import java.util.LinkedHashMap;
 
@@ -28,7 +29,7 @@ import java.util.LinkedHashMap;
 public class LRUMapTileCache {
     private int mCapacity = 0;
     private InnerLRUMapTileCache innerCache;
-    private static final String LOG_TAG = AppGlobals.makeLogTag(LRUMapTileCache.class.getSimpleName());
+    private static final String LOG_TAG = LoggerUtil.makeLogTag(LRUMapTileCache.class);
 
     public LRUMapTileCache(int capacity) {
         ensureCapacity(capacity);
@@ -36,7 +37,7 @@ public class LRUMapTileCache {
 
     public synchronized void ensureCapacity(final int aCapacity) {
         if (aCapacity > mCapacity) {
-            Log.d(LOG_TAG, "Tile cache increased from " + mCapacity + " to " + aCapacity);
+            ClientLog.d(LOG_TAG, "Tile cache increased from " + mCapacity + " to " + aCapacity);
             mCapacity = aCapacity;
             innerCache  = new InnerLRUMapTileCache(mCapacity);
             System.gc();
@@ -110,7 +111,7 @@ public class LRUMapTileCache {
             if (size() > mCapacity) {
                 final MapTile eldest = aEldest.getKey();
                 if (AppGlobals.isDebug) {
-                    Log.d(LOG_TAG, "Remove old tile: " + eldest);
+                    ClientLog.d(LOG_TAG, "Remove old tile: " + eldest);
                 }
                 remove(eldest);
                 // don't return true because we've already removed it

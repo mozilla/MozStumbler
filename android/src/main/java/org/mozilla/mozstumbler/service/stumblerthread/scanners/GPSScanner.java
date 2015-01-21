@@ -19,6 +19,7 @@ import android.util.Log;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.AppGlobals.ActiveOrPassiveStumbling;
 import org.mozilla.mozstumbler.service.utils.TelemetryWrapper;
+import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
 public class GPSScanner implements LocationListener {
     public static final String ACTION_BASE = AppGlobals.ACTION_NAMESPACE + ".GPSScanner.";
@@ -29,7 +30,7 @@ public class GPSScanner implements LocationListener {
     public static final String NEW_LOCATION_ARG_LOCATION = "location";
     public static final int MIN_SAT_USED_IN_FIX = 3;
 
-    private static final String LOG_TAG = AppGlobals.makeLogTag(GPSScanner.class.getSimpleName());
+    private static final String LOG_TAG = LoggerUtil.makeLogTag(GPSScanner.class);
     private static final long ACTIVE_MODE_GPS_MIN_UPDATE_TIME_MS = 2000;
     private static final float ACTIVE_MODE_GPS_MIN_UPDATE_DISTANCE_M = 30;
     private static final long PASSIVE_GPS_MIN_UPDATE_FREQ_MS = 3000;

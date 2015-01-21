@@ -4,11 +4,7 @@
 
 package org.mozilla.mozstumbler.test.fixtures;
 
-import org.mozilla.mozstumbler.service.AppGlobals;
-import org.mozilla.mozstumbler.service.core.logging.Log;
-
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 
 public class FixtureLoader {

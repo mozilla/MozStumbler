@@ -18,6 +18,7 @@ import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageMa
 import org.mozilla.mozstumbler.service.utils.NetworkInfo;
 import org.mozilla.mozstumbler.service.utils.Zipper;
 import org.mozilla.mozstumbler.svclocator.ServiceLocator;
+import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -50,7 +51,7 @@ public class AsyncUploader extends AsyncTask<AsyncUploadParam, AsyncProgressList
     }
 
     private static AsyncUploaderListener sAsyncListener;
-    private static final String LOG_TAG = AppGlobals.makeLogTag(AsyncUploader.class.getSimpleName());
+    private static final String LOG_TAG = LoggerUtil.makeLogTag(AsyncUploader.class);
     public static final AtomicLong sTotalBytesUploadedThisSession = new AtomicLong();
     public static final AtomicBoolean isUploading = new AtomicBoolean();
 

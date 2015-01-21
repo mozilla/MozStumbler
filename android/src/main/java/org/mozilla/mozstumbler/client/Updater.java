@@ -15,11 +15,11 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import org.mozilla.mozstumbler.R;
-import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.core.http.IHttpUtil;
 import org.mozilla.mozstumbler.service.core.http.IResponse;
 import org.mozilla.mozstumbler.service.utils.NetworkInfo;
 import org.mozilla.mozstumbler.svclocator.ServiceLocator;
+import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.Map;
 
 public class Updater {
-    private static final String LOG_TAG = AppGlobals.makeLogTag(Updater.class.getSimpleName());
+    private static final String LOG_TAG = LoggerUtil.makeLogTag(Updater.class);
     private static final String LATEST_URL = "https://github.com/mozilla/MozStumbler/releases/latest";
     private static final String APK_URL_FORMAT = "https://github.com/mozilla/MozStumbler/releases/download/v%s/MozStumbler-v%s.apk";
 

@@ -6,8 +6,8 @@ package org.mozilla.osmdroid.tileprovider.modules;
 
 import android.graphics.drawable.Drawable;
 
-import org.mozilla.mozstumbler.service.AppGlobals;
-import org.mozilla.mozstumbler.service.core.logging.Log;
+import org.mozilla.mozstumbler.service.core.logging.ClientLog;
+import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 import org.mozilla.osmdroid.tileprovider.MapTile;
 import org.mozilla.osmdroid.tileprovider.MapTileRequestState;
 import org.mozilla.osmdroid.tileprovider.constants.OSMConstants;
@@ -18,7 +18,7 @@ import java.io.File;
 
 class SmartFSTileLoader extends AbstractTileLoader {
 
-    private final static String LOG_TAG = AppGlobals.makeLogTag(SmartFSTileLoader.class);
+    private final static String LOG_TAG = LoggerUtil.makeLogTag(SmartFSTileLoader.class);
     private SmartFSProvider smartFSProvider;
 
     public SmartFSTileLoader(SmartFSProvider mapTileModuleProviderBase) {
@@ -41,7 +41,7 @@ class SmartFSTileLoader extends AbstractTileLoader {
         // if there's no sdcard then don't do anything
         if (!smartFSProvider.getSdCardAvailable()) {
             if (OSMConstants.DEBUGMODE) {
-                Log.d(LOG_TAG, "No sdcard - do nothing for tile: " + tile);
+                ClientLog.d(LOG_TAG, "No sdcard - do nothing for tile: " + tile);
             }
             return null;
         }
@@ -61,11 +61,11 @@ class SmartFSTileLoader extends AbstractTileLoader {
                     drawable = tileSource.getDrawable(serializableTile.getTileData());
                     return drawable;
                 } catch (NullPointerException npe) {
-                    Log.e(LOG_TAG, "Something horrible happened.", npe);
+                    ClientLog.e(LOG_TAG, "Something horrible happened.", npe);
                     return null;
                 } catch (final BitmapTileSourceBase.LowMemoryException e) {
                     // low memory so empty the queue
-                    Log.w(LOG_TAG, "LowMemoryException fetching MapTile from disk: " + tile + " : " + e);
+                    ClientLog.w(LOG_TAG, "LowMemoryException fetching MapTile from disk: " + tile + " : " + e);
                     throw new CantContinueException(e);
                 }
             }
@@ -77,7 +77,7 @@ class SmartFSTileLoader extends AbstractTileLoader {
             return smartFSProvider.downloadTile(serializableTile, tileSource, tile);
         } catch (final BitmapTileSourceBase.LowMemoryException e) {
             // low memory so empty the queue
-            Log.w(LOG_TAG, "LowMemoryException downloading MapTile: " + tile + " : " + e);
+            ClientLog.w(LOG_TAG, "LowMemoryException downloading MapTile: " + tile + " : " + e);
             throw new CantContinueException(e);
         }
     }

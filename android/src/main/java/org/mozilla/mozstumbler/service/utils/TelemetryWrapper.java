@@ -1,14 +1,15 @@
 package org.mozilla.mozstumbler.service.utils;
 
 import android.util.Log;
-import org.mozilla.mozstumbler.service.AppGlobals;
+
+import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Properties;
 
 // Currently this is only implemented for Fennec.
 public class TelemetryWrapper {
-    private static final String LOG_TAG = AppGlobals.makeLogTag(TelemetryWrapper.class.getSimpleName());
+    private static final String LOG_TAG = LoggerUtil.makeLogTag(TelemetryWrapper.class);
     private static Method mAddToHistogram;
 
     public static void addToHistogram(String key, int value) {

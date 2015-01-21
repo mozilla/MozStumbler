@@ -7,8 +7,8 @@ import android.content.IntentFilter;
 import android.graphics.drawable.Drawable;
 import android.os.Environment;
 
-import org.mozilla.mozstumbler.service.AppGlobals;
-import org.mozilla.mozstumbler.service.core.logging.Log;
+import org.mozilla.mozstumbler.service.core.logging.ClientLog;
+import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 import org.mozilla.osmdroid.tileprovider.IRegisterReceiver;
 import org.mozilla.osmdroid.tileprovider.MapTile;
 import org.mozilla.osmdroid.tileprovider.tilesource.BitmapTileSourceBase;
@@ -35,7 +35,7 @@ public class SmartFSProvider extends MapTileModuleProviderBase {
     // Constants
     // ===========================================================
 
-    private static final String LOG_TAG = AppGlobals.makeLogTag(SmartFSProvider.class.getSimpleName());
+    private static final String LOG_TAG = LoggerUtil.makeLogTag(SmartFSProvider.class);
 
     /**
      * whether the sdcard is mounted read/write
@@ -164,7 +164,7 @@ public class SmartFSProvider extends MapTileModuleProviderBase {
     // Stuff from superclass
     void checkSdCard() {
         final String state = Environment.getExternalStorageState();
-        Log.d(LOG_TAG, "sdcard state: " + state);
+        ClientLog.d(LOG_TAG, "sdcard state: " + state);
         mSdCardAvailable = Environment.MEDIA_MOUNTED.equals(state);
     }
 

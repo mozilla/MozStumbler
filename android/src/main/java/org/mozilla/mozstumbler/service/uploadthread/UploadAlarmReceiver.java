@@ -12,10 +12,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.Prefs;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageManager;
 import org.mozilla.mozstumbler.service.utils.NetworkInfo;
+import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
 // Only if data is queued and device awake: check network availability and upload.
 // Mozilla Stumbler use: this alarm is periodic and repeating.
@@ -30,7 +30,7 @@ import org.mozilla.mozstumbler.service.utils.NetworkInfo;
 // - triggered from the main thread
 // - actual work is done the upload thread (AsyncUploader)
 public class UploadAlarmReceiver extends BroadcastReceiver {
-    private static final String LOG_TAG = AppGlobals.makeLogTag(UploadAlarmReceiver.class.getSimpleName());
+    private static final String LOG_TAG = LoggerUtil.makeLogTag(UploadAlarmReceiver.class);
     private static final String EXTRA_IS_REPEATING = "is_repeating";
     private static boolean sIsAlreadyScheduled;
 

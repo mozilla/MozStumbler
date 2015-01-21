@@ -39,13 +39,13 @@ import org.mozilla.mozstumbler.client.Updater;
 import org.mozilla.mozstumbler.client.mapview.MapFragment;
 import org.mozilla.mozstumbler.client.subactivities.FirstRunFragment;
 import org.mozilla.mozstumbler.client.subactivities.LeaderboardActivity;
-import org.mozilla.mozstumbler.service.AppGlobals;
+import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
 public class MainDrawerActivity
         extends ActionBarActivity
         implements IMainActivity {
 
-    private static final String LOG_TAG = AppGlobals.makeLogTag(MainDrawerActivity.class);
+    private static final String LOG_TAG = LoggerUtil.makeLogTag(MainDrawerActivity.class);
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
     private MetricsView mMetricsView;

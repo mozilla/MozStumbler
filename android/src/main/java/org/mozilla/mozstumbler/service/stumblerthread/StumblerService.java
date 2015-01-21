@@ -19,6 +19,7 @@ import org.mozilla.mozstumbler.service.stumblerthread.scanners.ScanManager;
 import org.mozilla.mozstumbler.service.uploadthread.UploadAlarmReceiver;
 import org.mozilla.mozstumbler.service.utils.NetworkInfo;
 import org.mozilla.mozstumbler.service.utils.PersistentIntentService;
+import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -28,7 +29,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 //
 public class StumblerService extends PersistentIntentService
         implements DataStorageManager.StorageIsEmptyTracker {
-    private static final String LOG_TAG = AppGlobals.makeLogTag(StumblerService.class.getSimpleName());
+    private static final String LOG_TAG = LoggerUtil.makeLogTag(StumblerService.class);
     public static final String ACTION_BASE = AppGlobals.ACTION_NAMESPACE;
     public static final String ACTION_START_PASSIVE = ACTION_BASE + ".START_PASSIVE";
     public static final String ACTION_EXTRA_MOZ_API_KEY = ACTION_BASE + ".MOZKEY";
@@ -61,6 +62,7 @@ public class StumblerService extends PersistentIntentService
     }
 
     public synchronized void startScanning() {
+
         mScanManager.startScanning(this);
     }
 

@@ -2,8 +2,8 @@ package org.mozilla.osmdroid.events;
 
 import android.os.Handler;
 
-import org.mozilla.mozstumbler.service.AppGlobals;
-import org.mozilla.mozstumbler.service.core.logging.Log;
+import org.mozilla.mozstumbler.service.core.logging.ClientLog;
+import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
 /*
  * A MapListener that aggregates multiple events called in quick succession.
@@ -15,7 +15,7 @@ import org.mozilla.mozstumbler.service.core.logging.Log;
  */
 public class DelayedMapListener implements MapListener {
 
-    private static final String LOG_TAG = AppGlobals.makeLogTag(DelayedMapListener.class.getSimpleName());
+    private static final String LOG_TAG = LoggerUtil.makeLogTag(DelayedMapListener.class);
 
     /**
      * Default listening delay
@@ -99,7 +99,7 @@ public class DelayedMapListener implements MapListener {
                 wrappedListener.onZoom((ZoomEvent) event);
             } else {
                 // unknown event; discard
-                Log.d(LOG_TAG, "Unknown event received: " + event);
+                ClientLog.d(LOG_TAG, "Unknown event received: " + event);
             }
         }
     }

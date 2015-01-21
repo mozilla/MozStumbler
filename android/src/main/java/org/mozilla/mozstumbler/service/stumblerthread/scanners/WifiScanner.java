@@ -16,6 +16,7 @@ import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.AppGlobals.ActiveOrPassiveStumbling;
 import org.mozilla.mozstumbler.service.stumblerthread.blocklist.BSSIDBlockList;
 import org.mozilla.mozstumbler.service.stumblerthread.blocklist.SSIDBlockList;
+import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +34,7 @@ public class WifiScanner  {
     public static final int STATUS_ACTIVE = 1;
     public static final int STATUS_WIFI_DISABLED = -1;
 
-    private static final String LOG_TAG = AppGlobals.makeLogTag(WifiScanner.class.getSimpleName());
+    private static final String LOG_TAG = LoggerUtil.makeLogTag(WifiScanner.class);
     private static final long WIFI_MIN_UPDATE_TIME = 5000; // milliseconds
 
     private boolean mStarted;

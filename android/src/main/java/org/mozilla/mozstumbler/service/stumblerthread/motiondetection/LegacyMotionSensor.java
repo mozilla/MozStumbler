@@ -12,11 +12,10 @@ import android.hardware.SensorManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.FloatMath;
 
-import org.mozilla.mozstumbler.service.AppGlobals;
-import org.mozilla.mozstumbler.service.core.logging.Log;
+import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
 public class LegacyMotionSensor {
-    private static final String LOG_TAG = AppGlobals.makeLogTag(LegacyMotionSensor.class);
+    private static final String LOG_TAG = LoggerUtil.makeLogTag(LegacyMotionSensor.class);
     private final Context mAppContext;
     final SensorManager mSensorManager;
     private long mLastTimeThereWasMovementMs;

@@ -4,15 +4,15 @@ import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 
-import org.mozilla.mozstumbler.service.AppGlobals;
-import org.mozilla.mozstumbler.service.core.logging.Log;
+import org.mozilla.mozstumbler.service.core.logging.ClientLog;
+import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
 /**
  * Utility class for reading the manifest
  */
 public class ManifestUtil {
 
-    private static final String LOG_TAG = AppGlobals.makeLogTag(ManifestUtil.class.getSimpleName());
+    private static final String LOG_TAG = LoggerUtil.makeLogTag(ManifestUtil.class);
 
     /**
      * Retrieve a key from the manifest meta data, or empty string if not found.
@@ -25,17 +25,17 @@ public class ManifestUtil {
             final ApplicationInfo info = pm.getApplicationInfo(aContext.getPackageName(),
                     PackageManager.GET_META_DATA);
             if (info.metaData == null) {
-                Log.i(LOG_TAG, "Key " + aKey + " not found in manifest");
+                ClientLog.i(LOG_TAG, "Key " + aKey + " not found in manifest");
             } else {
                 final String value = info.metaData.getString(aKey);
                 if (value == null) {
-                    Log.i(LOG_TAG, "Key " + aKey + " not found in manifest");
+                    ClientLog.i(LOG_TAG, "Key " + aKey + " not found in manifest");
                 } else {
                     return value.trim();
                 }
             }
         } catch (final PackageManager.NameNotFoundException e) {
-            Log.i(LOG_TAG, "Key " + aKey + " not found in manifest");
+            ClientLog.i(LOG_TAG, "Key " + aKey + " not found in manifest");
         }
         return "";
     }

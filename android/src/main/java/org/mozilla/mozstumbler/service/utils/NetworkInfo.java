@@ -8,10 +8,10 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.util.Log;
 
-import org.mozilla.mozstumbler.service.AppGlobals;
+import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
 public final class NetworkInfo {
-    private static final String LOG_TAG = AppGlobals.makeLogTag(NetworkInfo.class.getSimpleName());
+    private static final String LOG_TAG = LoggerUtil.makeLogTag(NetworkInfo.class);
 
     ConnectivityManager mConnectivityManager;
     static NetworkInfo sInstance;

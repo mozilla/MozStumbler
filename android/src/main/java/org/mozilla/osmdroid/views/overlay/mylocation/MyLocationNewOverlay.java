@@ -17,8 +17,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 
-import org.mozilla.mozstumbler.service.AppGlobals;
-import org.mozilla.mozstumbler.service.core.logging.Log;
+import org.mozilla.mozstumbler.service.core.logging.ClientLog;
+import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 import org.mozilla.osmdroid.DefaultResourceProxyImpl;
 import org.mozilla.osmdroid.ResourceProxy;
 import org.mozilla.osmdroid.api.IMapController;
@@ -39,7 +39,7 @@ import java.util.LinkedList;
  */
 public class MyLocationNewOverlay extends Overlay implements IMyLocationConsumer,
         IOverlayMenuProvider, Snappable {
-    private static final String LOG_TAG = AppGlobals.makeLogTag(MyLocationNewOverlay.class.getSimpleName());
+    private static final String LOG_TAG = LoggerUtil.makeLogTag(MyLocationNewOverlay.class);
 
     // ===========================================================
     // Constants
@@ -303,7 +303,7 @@ public class MyLocationNewOverlay extends Overlay implements IMyLocationConsumer
             final double yDiff = y - mMapCoordsTranslated.y;
             boolean snap = xDiff * xDiff + yDiff * yDiff < 64;
             if (DEBUGMODE) {
-                Log.d(LOG_TAG, "snap=" + snap);
+                ClientLog.d(LOG_TAG, "snap=" + snap);
             }
             return snap;
         } else {

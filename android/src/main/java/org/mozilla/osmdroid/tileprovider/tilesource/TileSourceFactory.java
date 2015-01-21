@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 public class TileSourceFactory {
 
-    // private static final String LOG_TAG = AppGlobals.makeLogTag(TileSourceFactory.class.getSimpleName());
+    // private static final String LOG_TAG = AppGlobals.makeLogTag(TileSourceFactory.class);
 
     /**
      * Get the tile source with the specified name.

@@ -29,7 +29,7 @@ import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.client.MainApp;
 import org.mozilla.mozstumbler.client.ObservedLocationsReceiver;
 import org.mozilla.mozstumbler.client.mapview.ObservationPoint;
-import org.mozilla.mozstumbler.service.AppGlobals;
+import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -39,7 +39,7 @@ import java.util.LinkedList;
 public class KMLFragment extends Fragment
     implements ObservationPointSerializer.IListener {
 
-    private final String LOG_TAG = AppGlobals.makeLogTag(KMLFragment.class.getSimpleName());
+    private final String LOG_TAG = LoggerUtil.makeLogTag(KMLFragment.class);
 
     private LinkedList<ObservationPoint> mPointsToWrite;
     private WeakReference<ProgressDialog> mProgressDialog;

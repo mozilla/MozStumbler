@@ -7,11 +7,11 @@ package org.mozilla.mozstumbler.service.stumblerthread.datahandling;
 import android.content.Context;
 
 import org.mozilla.mozstumbler.service.AppGlobals;
-import org.mozilla.mozstumbler.service.core.logging.Log;
+import org.mozilla.mozstumbler.service.core.logging.ClientLog;
 import org.mozilla.mozstumbler.service.utils.Zipper;
+import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -40,7 +40,7 @@ import java.util.TimerTask;
  * when the service is destroyed.
  */
 public class DataStorageManager {
-    private static final String LOG_TAG = AppGlobals.makeLogTag(DataStorageManager.class);
+    private static final String LOG_TAG = LoggerUtil.makeLogTag(DataStorageManager.class);
 
     // Used to cap the amount of data stored. When this limit is hit, no more data is saved to disk
     // until the data is uploaded, or and data exceeds DEFAULT_MAX_WEEKS_DATA_ON_DISK.
@@ -102,7 +102,7 @@ public class DataStorageManager {
             byte[] bytes;
             bytes = Zipper.zipData(mCurrentReports.finalizeReports().getBytes());
             if (bytes == null) {
-                Log.e(LOG_TAG, "Error compressing current reports queued", new RuntimeException("GZip Failure"));
+                ClientLog.e(LOG_TAG, "Error compressing current reports queued", new RuntimeException("GZip Failure"));
             } else {
                 byteLength += bytes.length;
             }
@@ -153,7 +153,7 @@ public class DataStorageManager {
 
             if (AppGlobals.isDebug) {
                 for (File f : mFiles) {
-                    Log.d("StumblerFiles", f.getName());
+                    ClientLog.d("StumblerFiles", f.getName());
                 }
             }
 
@@ -214,7 +214,7 @@ public class DataStorageManager {
         if (!dir.exists()) {
             boolean ok = dir.mkdirs();
             if (!ok) {
-                Log.d(LOG_TAG, "getStorageDir: error in mkdirs()");
+                ClientLog.d(LOG_TAG, "getStorageDir: error in mkdirs()");
             }
         }
 
@@ -428,7 +428,7 @@ public class DataStorageManager {
                     try {
                         saveCurrentReportsToDisk();
                     } catch (IOException ex) {
-                        Log.e(LOG_TAG, "mFlushMemoryBuffersToDiskTimer exception", ex);
+                        ClientLog.e(LOG_TAG, "mFlushMemoryBuffersToDiskTimer exception", ex);
                     }
                 }
             }, kMillis);

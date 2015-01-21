@@ -1,8 +1,7 @@
 package org.mozilla.mozstumbler.service.stumblerthread.datahandling;
 
-import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.Prefs;
-import org.mozilla.mozstumbler.service.core.logging.Log;
+import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
 import java.util.ArrayList;
 
@@ -13,7 +12,7 @@ public class ReportBatchBuilder {
     // The max number of reports stored in the mCurrentReports. Each report is a GPS location plus wifi and cell scan.
     // Once this size is reached, data is persisted to disk, mCurrentReports is cleared.
     public static final int MAX_REPORTS_IN_MEMORY = 50;
-    private static final String LOG_TAG = AppGlobals.makeLogTag(ReportBatchBuilder.class);
+    private static final String LOG_TAG = LoggerUtil.makeLogTag(ReportBatchBuilder.class);
     private final ArrayList<String> reports = new ArrayList<String>();
     public int wifiCount;
     public int cellCount;

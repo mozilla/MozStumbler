@@ -6,7 +6,7 @@ package org.mozilla.mozstumbler.service.utils;
 
 import android.util.Log;
 
-import org.mozilla.mozstumbler.service.AppGlobals;
+import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -18,7 +18,7 @@ import java.util.zip.GZIPOutputStream;
 
 public class Zipper {
 
-    private static final String LOG_TAG = AppGlobals.makeLogTag(Zipper.class.getSimpleName());
+    private static final String LOG_TAG = LoggerUtil.makeLogTag(Zipper.class);
 
     public enum ZippedState {
         eNotZipped,

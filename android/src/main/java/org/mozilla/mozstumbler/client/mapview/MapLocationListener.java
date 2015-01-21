@@ -14,15 +14,16 @@ import android.os.Bundle;
 import android.widget.Toast;
 
 import org.mozilla.mozstumbler.service.AppGlobals;
-import org.mozilla.mozstumbler.service.core.logging.Log;
+import org.mozilla.mozstumbler.service.core.logging.ClientLog;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.GPSScanner;
+import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
 import java.lang.ref.WeakReference;
 
 class MapLocationListener  {
     private final WeakReference<MapFragment> mMapActivity;
     private LocationManager mLocationManager;
-    private static final String LOG_TAG = AppGlobals.makeLogTag(MapLocationListener.class.getSimpleName());
+    private static final String LOG_TAG = LoggerUtil.makeLogTag(MapLocationListener.class);
 
     interface ReceivedLocationCallback {
         void receivedLocation();
@@ -107,7 +108,7 @@ class MapLocationListener  {
             lastLoc = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
         }
         if (lastLoc != null && mMapActivity.get() != null) {
-            Log.d(LOG_TAG, "set last known location");
+            ClientLog.d(LOG_TAG, "set last known location");
             mMapActivity.get().setUserPositionAt(lastLoc);
         }
 

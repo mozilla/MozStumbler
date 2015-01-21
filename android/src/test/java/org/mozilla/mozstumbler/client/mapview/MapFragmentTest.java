@@ -9,7 +9,7 @@ import android.os.Bundle;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
-import org.mozilla.mozstumbler.service.AppGlobals;
+import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
@@ -24,7 +24,7 @@ import static org.robolectric.util.FragmentTestUtil.startFragment;
 @RunWith(RobolectricTestRunner.class)
 public class MapFragmentTest {
 
-    private static final String LOG_TAG = AppGlobals.makeLogTag(MapFragmentTest.class);
+    private static final String LOG_TAG = LoggerUtil.makeLogTag(MapFragmentTest.class);
 
     @Test
     @Config(shadows = {CustomShadowConnectivityManager.class})

@@ -8,8 +8,8 @@ import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 
 import org.mozilla.mozstumbler.BuildConfig;
-import org.mozilla.mozstumbler.service.AppGlobals;
-import org.mozilla.mozstumbler.service.core.logging.Log;
+import org.mozilla.mozstumbler.service.core.logging.ClientLog;
+import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 import org.mozilla.osmdroid.ResourceProxy;
 import org.mozilla.osmdroid.ResourceProxy.string;
 import org.mozilla.osmdroid.tileprovider.BitmapPool;
@@ -17,13 +17,12 @@ import org.mozilla.osmdroid.tileprovider.MapTile;
 import org.mozilla.osmdroid.tileprovider.ReusableBitmapDrawable;
 import org.mozilla.osmdroid.tileprovider.constants.OSMConstants;
 
-import java.io.File;
 import java.util.Random;
 
 public abstract class BitmapTileSourceBase
         implements ITileSource, OSMConstants {
 
-    private static final String LOG_TAG = AppGlobals.makeLogTag(BitmapTileSourceBase.class.getSimpleName());
+    private static final String LOG_TAG = LoggerUtil.makeLogTag(BitmapTileSourceBase.class);
 
     private static int globalOrdinal = 0;
 
@@ -151,7 +150,7 @@ public abstract class BitmapTileSourceBase
                 return new ReusableBitmapDrawable(bitmap);
             }
         } catch (final OutOfMemoryError e) {
-            Log.e(LOG_TAG, "OutOfMemoryError loading bitmap", e);
+            ClientLog.e(LOG_TAG, "OutOfMemoryError loading bitmap", e);
             System.gc();
         }
         return null;

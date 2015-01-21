@@ -6,9 +6,9 @@ package org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner;
 
 import android.content.Context;
 
-import org.mozilla.mozstumbler.service.AppGlobals;
-import org.mozilla.mozstumbler.service.core.logging.Log;
+import org.mozilla.mozstumbler.service.core.logging.ClientLog;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.SimulationContext;
+import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -16,7 +16,7 @@ import java.util.List;
 
 public class MockSimpleCellScanner implements ISimpleCellScanner {
 
-    private static final String LOG_TAG = AppGlobals.LOG_PREFIX + MockSimpleCellScanner.class.getSimpleName();
+    private static final String LOG_TAG = LoggerUtil.makeLogTag(MockSimpleCellScanner.class);
 
     private final Context mAppContext;
     private boolean started = false;
@@ -51,7 +51,7 @@ public class MockSimpleCellScanner implements ISimpleCellScanner {
             ctx = (SimulationContext)mAppContext;
             result.addAll(ctx.getNextMockCellBlock());
         } catch (ClassCastException ex) {
-            Log.e(LOG_TAG, "Error getting the proper context", ex);
+            ClientLog.e(LOG_TAG, "Error getting the proper context", ex);
         }
         return result;
     }

@@ -27,12 +27,12 @@ import org.mozilla.mozstumbler.client.DateTimeUtils;
 import org.mozilla.mozstumbler.client.subactivities.PowerSavingScreen;
 import org.mozilla.mozstumbler.client.subactivities.PreferencesScreen;
 import org.mozilla.mozstumbler.client.util.NotificationUtil;
-import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.Prefs;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageContract;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageManager;
 import org.mozilla.mozstumbler.service.uploadthread.AsyncUploadParam;
 import org.mozilla.mozstumbler.service.uploadthread.AsyncUploader;
+import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
@@ -44,7 +44,7 @@ public class MetricsView {
         public void setShowMLS(boolean isOn);
     }
 
-    private static final String LOG_TAG = AppGlobals.makeLogTag(MetricsView.class.getSimpleName());
+    private static final String LOG_TAG = LoggerUtil.makeLogTag(MetricsView.class);
 
     private final TextView
             mLastUpdateTimeView,

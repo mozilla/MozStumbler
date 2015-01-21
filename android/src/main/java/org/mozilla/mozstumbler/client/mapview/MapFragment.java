@@ -39,9 +39,10 @@ import org.mozilla.mozstumbler.client.mapview.tiles.LowResMapOverlay;
 import org.mozilla.mozstumbler.client.navdrawer.MetricsView;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.core.http.IHttpUtil;
-import org.mozilla.mozstumbler.service.core.logging.Log;
+import org.mozilla.mozstumbler.service.core.logging.ClientLog;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.GPSScanner;
 import org.mozilla.mozstumbler.svclocator.ServiceLocator;
+import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 import org.mozilla.osmdroid.ResourceProxy;
 import org.mozilla.osmdroid.api.IGeoPoint;
 import org.mozilla.osmdroid.events.DelayedMapListener;
@@ -68,7 +69,7 @@ public class MapFragment extends android.support.v4.app.Fragment
 
     public static enum NoMapAvailableMessage { eHideNoMapMessage, eNoMapDueToNoAccessibleStorage, eNoMapDueToNoInternet }
 
-    private static final String LOG_TAG = AppGlobals.makeLogTag(MapFragment.class.getSimpleName());
+    private static final String LOG_TAG = LoggerUtil.makeLogTag(MapFragment.class);
 
     private static final String COVERAGE_REDIRECT_URL = "https://location.services.mozilla.com/map.json";
     private static final String ZOOM_KEY = "zoom";
@@ -241,7 +242,7 @@ public class MapFragment extends android.support.v4.app.Fragment
                     // These need a fully constructed map, which on first load seems to take a while.
                     // Post with no delay does not work for me, adding an arbitrary
                     // delay of 300 ms should be plenty.
-                    Log.d(LOG_TAG, "postDelayed ZOOM " + zoom);
+                    ClientLog.d(LOG_TAG, "postDelayed ZOOM " + zoom);
                     setCenterAndZoom(loc, zoom);
                 }
             }, 300);
@@ -251,7 +252,7 @@ public class MapFragment extends android.support.v4.app.Fragment
     private void initializeVisibleCounts() {
         Configuration c = getResources().getConfiguration();
         if (c.fontScale > 1) {
-            Log.d(LOG_TAG, "Large text is enabled: " + c.fontScale);
+            ClientLog.d(LOG_TAG, "Large text is enabled: " + c.fontScale);
             mRootView.findViewById(R.id.text_satellites_sep).setVisibility(View.GONE);
             mRootView.findViewById(R.id.text_satellites_avail).setVisibility(View.GONE);
         } else {
@@ -334,7 +335,7 @@ public class MapFragment extends android.support.v4.app.Fragment
                             } catch (Exception ex) {
                                 // this will catch java.net.UnknownHostException when offline
                                 if (AppGlobals.isDebug) {
-                                    Log.d(LOG_TAG, ex.toString());
+                                    ClientLog.d(LOG_TAG, ex.toString());
                                 }
                             }
                             // always init coverage tiles
@@ -351,7 +352,7 @@ public class MapFragment extends android.support.v4.app.Fragment
     }
 
     private void initCoverageTiles(String coverageUrl) {
-        Log.i(LOG_TAG, "initCoverageTiles: " + coverageUrl);
+        ClientLog.i(LOG_TAG, "initCoverageTiles: " + coverageUrl);
         mCoverageTilesOverlayLowZoom = new CoverageOverlay(CoverageOverlay.LowResType.LOWER_ZOOM,
                 mRootView.getContext(), coverageUrl, mMap);
         mCoverageTilesOverlayHighZoom = new CoverageOverlay(CoverageOverlay.LowResType.HIGHER_ZOOM,
@@ -653,7 +654,7 @@ public class MapFragment extends android.support.v4.app.Fragment
     @Override
     public void onResume() {
         super.onResume();
-        Log.d(LOG_TAG, "onResume");
+        ClientLog.d(LOG_TAG, "onResume");
 
         doOnResume();
     }
@@ -699,7 +700,7 @@ public class MapFragment extends android.support.v4.app.Fragment
     @Override
     public void onPause() {
         super.onPause();
-        Log.d(LOG_TAG, "onPause");
+        ClientLog.d(LOG_TAG, "onPause");
         saveStateToPrefs();
 
         if (mMapLocationListener != null) {
@@ -722,7 +723,7 @@ public class MapFragment extends android.support.v4.app.Fragment
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.d(LOG_TAG, "onDestroy");
+        ClientLog.d(LOG_TAG, "onDestroy");
 
         removeLayer(mLowResMapOverlayHighZoom);
         removeLayer(mLowResMapOverlayLowZoom);

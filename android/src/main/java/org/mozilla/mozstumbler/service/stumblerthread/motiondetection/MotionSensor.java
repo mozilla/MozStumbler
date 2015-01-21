@@ -13,10 +13,11 @@ import android.os.Build;
 import android.support.v4.content.LocalBroadcastManager;
 
 import org.mozilla.mozstumbler.service.AppGlobals;
+import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
 public class MotionSensor {
 
-    private static final String LOG_TAG = AppGlobals.makeLogTag(MotionSensor.class);
+    private static final String LOG_TAG = LoggerUtil.makeLogTag(MotionSensor.class);
 
     private final SensorManager mSensorManager;
     public static final String ACTION_USER_MOTION_DETECTED = AppGlobals.ACTION_NAMESPACE + ".USER_MOVE";

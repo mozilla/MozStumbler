@@ -13,12 +13,13 @@ import android.support.v4.content.LocalBroadcastManager;
 import org.mozilla.mozstumbler.service.AppGlobals.ActiveOrPassiveStumbling;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.Prefs;
-import org.mozilla.mozstumbler.service.core.logging.Log;
+import org.mozilla.mozstumbler.service.core.logging.ClientLog;
 import org.mozilla.mozstumbler.service.stumblerthread.Reporter;
 import org.mozilla.mozstumbler.service.stumblerthread.motiondetection.LocationChangeSensor;
 import org.mozilla.mozstumbler.service.stumblerthread.motiondetection.MotionSensor;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner.CellScanner;
 import org.mozilla.mozstumbler.service.utils.BatteryCheckReceiver;
+import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
 import java.util.Date;
 import java.util.Timer;
@@ -27,7 +28,7 @@ import java.util.TimerTask;
 public class ScanManager {
     public static final String ACTION_SCAN_PAUSED_USER_MOTIONLESS = AppGlobals.ACTION_NAMESPACE + ".NOTIFY_USER_MOTIONLESS";
     public static final String ACTION_EXTRA_IS_PAUSED = "IS_PAUSED";
-    private static final String LOG_TAG = AppGlobals.makeLogTag(ScanManager.class.getSimpleName());
+    private static final String LOG_TAG = LoggerUtil.makeLogTag(ScanManager.class);
     private Timer mPassiveModeFlushTimer;
 
     private static Context mAppContext;
@@ -72,7 +73,7 @@ public class ScanManager {
         }
 
         if (AppGlobals.isDebug) {
-            Log.d(LOG_TAG, "New passive location");
+            ClientLog.d(LOG_TAG, "New passive location");
         }
 
         mWifiScanner.start(ActiveOrPassiveStumbling.PASSIVE_STUMBLING);
@@ -114,7 +115,7 @@ public class ScanManager {
     }
 
     public synchronized void startScanning(Context ctx) {
-        Log.d(LOG_TAG, "ScanManager::startScanning");
+        ClientLog.d(LOG_TAG, "ScanManager::startScanning");
 
         if (isScanning()) {
             return;
@@ -122,7 +123,7 @@ public class ScanManager {
 
         mAppContext = ctx.getApplicationContext();
         if (mAppContext == null) {
-            Log.w(LOG_TAG, "No app context available.");
+            ClientLog.w(LOG_TAG, "No app context available.");
             return;
         }
 
@@ -147,10 +148,10 @@ public class ScanManager {
             // Simulation contexts are only allowed for debug builds.
             Prefs prefs = Prefs.getInstanceWithoutContext();
             if (prefs != null) {
-                Log.i(LOG_TAG, "ScanManager::startScanning simulation pref = " + prefs.isSimulateStumble() );
+                ClientLog.i(LOG_TAG, "ScanManager::startScanning simulation pref = " + prefs.isSimulateStumble());
                 if (prefs.isSimulateStumble()) {
                     mAppContext = new SimulationContext(mAppContext);
-                    Log.d(LOG_TAG, "ScanManager using SimulateStumbleContextWrapper");
+                    ClientLog.d(LOG_TAG, "ScanManager using SimulateStumbleContextWrapper");
                 }
             }
         }
@@ -181,7 +182,7 @@ public class ScanManager {
         mAppContext = mAppContext.getApplicationContext();
 
         if (AppGlobals.isDebug) {
-            Log.d(LOG_TAG, "Scanning stopped");
+            ClientLog.d(LOG_TAG, "Scanning stopped");
         }
 
         mIsMotionlessPausedState = false;
@@ -244,7 +245,7 @@ public class ScanManager {
             stopScanning();
             mIsMotionlessPausedState = true;
             if (AppGlobals.isDebug) {
-                Log.d(LOG_TAG, "MotionSensor started");
+                ClientLog.d(LOG_TAG, "MotionSensor started");
             }
             mMotionSensor.start();
 

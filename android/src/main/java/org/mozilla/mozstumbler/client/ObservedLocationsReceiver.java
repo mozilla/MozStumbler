@@ -18,10 +18,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.mozilla.mozstumbler.client.mapview.MapFragment;
 import org.mozilla.mozstumbler.client.mapview.ObservationPoint;
-import org.mozilla.mozstumbler.service.AppGlobals;
-import org.mozilla.mozstumbler.service.core.logging.Log;
+import org.mozilla.mozstumbler.service.core.logging.ClientLog;
 import org.mozilla.mozstumbler.service.stumblerthread.Reporter;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.StumblerBundle;
+import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 import org.mozilla.osmdroid.util.GeoPoint;
 
 import java.lang.ref.WeakReference;
@@ -30,7 +30,7 @@ import java.util.LinkedList;
 
 public class ObservedLocationsReceiver extends BroadcastReceiver {
 
-    private static final String LOG_TAG = AppGlobals.makeLogTag(ObservedLocationsReceiver.class.getSimpleName());
+    private static final String LOG_TAG = LoggerUtil.makeLogTag(ObservedLocationsReceiver.class);
     private WeakReference<MapFragment> mMapActivity = new WeakReference<MapFragment>(null);
     private final LinkedList<ObservationPoint> mCollectionPoints = new LinkedList<ObservationPoint>();
     private final LinkedList<ObservationPoint> mQueuedForMLS = new LinkedList<ObservationPoint>();
@@ -145,7 +145,7 @@ public class ObservedLocationsReceiver extends BroadcastReceiver {
                 }
             }
         } catch (JSONException e) {
-            Log.w(LOG_TAG, "Failed to convert bundle to JSON: " + e);
+            ClientLog.w(LOG_TAG, "Failed to convert bundle to JSON: " + e);
         }
 
         while (mCollectionPoints.size() > MAX_SIZE_OF_POINT_LISTS) {

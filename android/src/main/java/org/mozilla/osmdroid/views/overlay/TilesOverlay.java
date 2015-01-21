@@ -13,8 +13,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
 
-import org.mozilla.mozstumbler.service.AppGlobals;
-import org.mozilla.mozstumbler.service.core.logging.Log;
+import org.mozilla.mozstumbler.service.core.logging.ClientLog;
+import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 import org.mozilla.osmdroid.ResourceProxy;
 import org.mozilla.osmdroid.tileprovider.MapTile;
 import org.mozilla.osmdroid.tileprovider.MapTileProviderBase;
@@ -34,7 +34,7 @@ import org.mozilla.osmdroid.views.Projection;
 
 public class TilesOverlay extends Overlay implements IOverlayMenuProvider {
 
-    private static final String LOG_TAG = AppGlobals.makeLogTag(TilesOverlay.class.getSimpleName());
+    private static final String LOG_TAG = LoggerUtil.makeLogTag(TilesOverlay.class);
 
     public static final int MENU_MAP_MODE = getSafeMenuId();
     public static final int MENU_TILE_SOURCE_STARTING_ID = getSafeMenuIdSequence(TileSourceFactory
@@ -121,7 +121,7 @@ public class TilesOverlay extends Overlay implements IOverlayMenuProvider {
     protected void draw(Canvas c, MapView osmv, boolean shadow) {
 
         if (DEBUGMODE) {
-            Log.d(LOG_TAG, "onDraw(" + shadow + ")");
+            ClientLog.d(LOG_TAG, "onDraw(" + shadow + ")");
         }
 
         if (shadow) {
@@ -348,7 +348,7 @@ public class TilesOverlay extends Overlay implements IOverlayMenuProvider {
                 mLoadingTile = new BitmapDrawable(bitmap);
             } catch (final OutOfMemoryError e) {
                 // OOM is 'normal' for bitmap operations on Android
-                Log.e(LOG_TAG, "OutOfMemoryError getting loading tile", e);
+                ClientLog.e(LOG_TAG, "OutOfMemoryError getting loading tile", e);
                 System.gc();
             }
         }

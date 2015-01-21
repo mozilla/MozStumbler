@@ -1,1 +1,1 @@
-include ':android', ':android-library'
+include ':android', ':libraries:stumbler'

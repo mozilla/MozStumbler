@@ -24,7 +24,8 @@ import android.widget.TextView;
 
 import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.service.AppGlobals;
-import org.mozilla.mozstumbler.service.core.logging.Log;
+import org.mozilla.mozstumbler.service.core.logging.ClientLog;
+import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
 import java.lang.ref.WeakReference;
 import java.util.LinkedList;
@@ -33,7 +34,7 @@ import java.util.TimerTask;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class LogActivity extends ActionBarActivity {
-    private static String LOG_TAG = AppGlobals.makeLogTag(LogActivity.class.getSimpleName());
+    private static String LOG_TAG = LoggerUtil.makeLogTag(LogActivity.class);
     private static LinkedList<String> buffer = new LinkedList<String>();
     private static int sLongLinesCounter;
     private static final int MAX_SIZE = 200;
@@ -120,7 +121,7 @@ public class LogActivity extends ActionBarActivity {
             String prev = (buffer.size() > 0) ? buffer.getLast() : null;
             if (prev != null && prev.length() > 10 && s.length() > 10) {
                 if (prev.substring(10).equals(s.substring(10))) {
-                    Log.d(LOG_TAG, "Message is repeated: " + s);
+                    ClientLog.d(LOG_TAG, "Message is repeated: " + s);
                     return;
                 }
             }
@@ -163,7 +164,7 @@ public class LogActivity extends ActionBarActivity {
     }
 
     public static class ConsoleView extends ScrollView {
-        private static final String LOG_TAG = AppGlobals.makeLogTag(ConsoleView.class);
+        private static final String LOG_TAG = LoggerUtil.makeLogTag(ConsoleView.class);
         public TextView tv;
         boolean enable_scroll = true;
 

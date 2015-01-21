@@ -30,12 +30,12 @@ import org.mozilla.mozstumbler.client.MainApp;
 import org.mozilla.mozstumbler.client.serialize.KMLFragment;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.Prefs;
-import org.mozilla.mozstumbler.service.core.logging.Log;
+import org.mozilla.mozstumbler.service.core.logging.ClientLog;
 
-import static org.mozilla.mozstumbler.R.string;
 import org.mozilla.mozstumbler.service.stumblerthread.motiondetection.LocationChangeSensor;
 import org.mozilla.mozstumbler.service.stumblerthread.motiondetection.MotionSensor;
 import org.mozilla.mozstumbler.service.utils.BatteryCheckReceiver;
+import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
 import java.io.File;
 
@@ -43,7 +43,7 @@ import static org.mozilla.mozstumbler.service.stumblerthread.datahandling.Client
 
 public class DeveloperActivity extends ActionBarActivity {
 
-    private final String LOG_TAG = AppGlobals.makeLogTag(DeveloperActivity.class.getSimpleName());
+    private final String LOG_TAG = LoggerUtil.makeLogTag(DeveloperActivity.class);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,7 +97,7 @@ public class DeveloperActivity extends ActionBarActivity {
 
     // For misc developer options
     public static class DeveloperOptions extends Fragment {
-        private final String LOG_TAG = AppGlobals.makeLogTag(DeveloperOptions.class.getSimpleName());
+        private final String LOG_TAG = LoggerUtil.makeLogTag(DeveloperOptions.class);
 
         private View mRootView;
 
@@ -241,7 +241,7 @@ public class DeveloperActivity extends ActionBarActivity {
             if (!saveDir.exists()) {
                 return false;
             }
-            Log.d(LOG_TAG, "Created: [" + saveDir.getAbsolutePath() + "]");
+            ClientLog.d(LOG_TAG, "Created: [" + saveDir.getAbsolutePath() + "]");
             return true;
         }
 

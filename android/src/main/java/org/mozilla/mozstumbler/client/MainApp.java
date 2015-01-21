@@ -32,6 +32,7 @@ import org.mozilla.mozstumbler.client.subactivities.LogActivity;
 import org.mozilla.mozstumbler.client.util.NotificationUtil;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.Prefs;
+import org.mozilla.mozstumbler.service.core.http.IHttpUtil;
 import org.mozilla.mozstumbler.service.core.logging.MockAcraLog;
 import org.mozilla.mozstumbler.service.stumblerthread.Reporter;
 import org.mozilla.mozstumbler.service.stumblerthread.motiondetection.MotionSensor;
@@ -43,6 +44,9 @@ import org.mozilla.mozstumbler.service.uploadthread.AsyncUploader;
 import org.mozilla.mozstumbler.service.utils.NetworkInfo;
 import org.mozilla.mozstumbler.svclocator.ServiceConfig;
 import org.mozilla.mozstumbler.svclocator.ServiceLocator;
+import org.mozilla.mozstumbler.svclocator.services.ISystemClock;
+import org.mozilla.mozstumbler.svclocator.services.log.ILogger;
+import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 import org.mozilla.osmdroid.tileprovider.constants.TileFilePath;
 
 import java.io.File;
@@ -59,7 +63,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class MainApp extends Application
         implements AsyncUploader.AsyncUploaderListener {
     public static final AtomicBoolean isUploading = new AtomicBoolean();
-    private final String LOG_TAG = AppGlobals.makeLogTag(MainApp.class.getSimpleName());
+    private final String LOG_TAG = LoggerUtil.makeLogTag(MainApp.class);
     private ClientStumblerService mStumblerService;
     private ServiceConnection mConnection;
     private ServiceBroadcastReceiver mReceiver;
@@ -109,6 +113,31 @@ public class MainApp extends Application
         return new File(dir, "osmdroid");
     }
 
+    public static ServiceConfig defaultServiceConfig() {
+        /*
+         This will configure the service map with all services required for runtime.
+
+         Note that the logger checks the buildconfig type to determine whether or not to use the DebugLogger
+         or the ProductionLogger.
+         */
+
+        ServiceConfig result = new ServiceConfig();
+        // All classes here must have an argument free constructor.
+        result.put(IHttpUtil.class,
+                ServiceConfig.load("org.mozilla.mozstumbler.service.core.http.HttpUtil"));
+        // All classes here must have an argument free constructor.
+        result.put(ISystemClock.class,
+                ServiceConfig.load("org.mozilla.mozstumbler.svclocator.services.SystemClock"));
+
+        if (BuildConfig.BUILD_TYPE.equals("unittest")) {
+            result.put(ILogger.class, ServiceConfig.load("org.mozilla.mozstumbler.svclocator.services.log.DebugLogger"));
+        } else {
+            result.put(ILogger.class, ServiceConfig.load("org.mozilla.mozstumbler.svclocator.services.log.ProductionLogger"));
+        }
+
+        return result;
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -116,8 +145,7 @@ public class MainApp extends Application
         ACRA.init(this);
 
         // Bootstrap the service locator with the default list of services
-        ServiceLocator rootLocator = ServiceLocator.newRoot(ServiceConfig.defaultServiceConfig());
-        ServiceLocator.setRootInstance(rootLocator);
+        ServiceLocator.newRoot(defaultServiceConfig());
 
         // This must be called after init to get a copy of the
         // original ACRA.log instance so that we can toggle the logger on

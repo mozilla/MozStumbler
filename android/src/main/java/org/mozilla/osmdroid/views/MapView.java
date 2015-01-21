@@ -25,8 +25,8 @@ import org.metalev.multitouch.controller.MultiTouchController;
 import org.metalev.multitouch.controller.MultiTouchController.MultiTouchObjectCanvas;
 import org.metalev.multitouch.controller.MultiTouchController.PointInfo;
 import org.metalev.multitouch.controller.MultiTouchController.PositionAndScale;
-import org.mozilla.mozstumbler.service.AppGlobals;
-import org.mozilla.mozstumbler.service.core.logging.Log;
+import org.mozilla.mozstumbler.service.core.logging.ClientLog;
+import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 import org.mozilla.osmdroid.DefaultResourceProxyImpl;
 import org.mozilla.osmdroid.ResourceProxy;
 import org.mozilla.osmdroid.api.IGeoPoint;
@@ -65,7 +65,7 @@ public class MapView extends ViewGroup implements IMapView, MapViewConstants,
     // Constants
     // ===========================================================
 
-    private static final String LOG_TAG = AppGlobals.makeLogTag(MapView.class.getSimpleName());
+    private static final String LOG_TAG = LoggerUtil.makeLogTag(MapView.class);
 
     private static final double ZOOM_SENSITIVITY = 1.0;
     private static final double ZOOM_LOG_BASE_INV = 1.0 / Math.log(2.0 / ZOOM_SENSITIVITY);
@@ -152,7 +152,7 @@ public class MapView extends ViewGroup implements IMapView, MapViewConstants,
         this.mScroller = new Scroller(context);
         TileSystem.setTileSize(tileSizePixels);
 
-        Log.d(LOG_TAG, "Constructor received TileProvider = [" + tileProvider + "]");
+        ClientLog.d(LOG_TAG, "Constructor received TileProvider = [" + tileProvider + "]");
         if (tileProvider == null) {
             final ITileSource tileSource = getTileSourceFromAttributes(attrs);
             tileProvider = new BetterTileProvider(context, tileSource);
@@ -162,7 +162,7 @@ public class MapView extends ViewGroup implements IMapView, MapViewConstants,
                 ? new SimpleInvalidationHandler(this)
                 : tileRequestCompleteHandler;
         mTileProvider = tileProvider;
-        Log.d(LOG_TAG, "TileProvider is: [" + mTileProvider.getClass().getName() + "]");
+        ClientLog.d(LOG_TAG, "TileProvider is: [" + mTileProvider.getClass().getName() + "]");
 
         mTileProvider.setTileRequestCompleteHandler(mTileRequestCompleteHandler);
 
@@ -769,7 +769,7 @@ public class MapView extends ViewGroup implements IMapView, MapViewConstants,
     public boolean dispatchTouchEvent(final MotionEvent event) {
 
         if (DEBUGMODE) {
-            Log.d(LOG_TAG, "dispatchTouchEvent(" + event + ")");
+            ClientLog.d(LOG_TAG, "dispatchTouchEvent(" + event + ")");
         }
 
         if (mZoomController.isVisible() && mZoomController.onTouch(this, event)) {
@@ -782,7 +782,7 @@ public class MapView extends ViewGroup implements IMapView, MapViewConstants,
         try {
             if (super.dispatchTouchEvent(event)) {
                 if (DEBUGMODE) {
-                    Log.d(LOG_TAG, "super handled onTouchEvent");
+                    ClientLog.d(LOG_TAG, "super handled onTouchEvent");
                 }
                 return true;
             }
@@ -793,14 +793,14 @@ public class MapView extends ViewGroup implements IMapView, MapViewConstants,
 
             if (mMultiTouchController != null && mMultiTouchController.onTouchEvent(event)) {
                 if (DEBUGMODE) {
-                    Log.d(LOG_TAG, "mMultiTouchController handled onTouchEvent");
+                    ClientLog.d(LOG_TAG, "mMultiTouchController handled onTouchEvent");
                 }
                 return true;
             }
 
             if (mGestureDetector.onTouchEvent(rotatedEvent)) {
                 if (DEBUGMODE) {
-                    Log.d(LOG_TAG, "mGestureDetector handled onTouchEvent");
+                    ClientLog.d(LOG_TAG, "mGestureDetector handled onTouchEvent");
                 }
                 return true;
             }
@@ -811,7 +811,7 @@ public class MapView extends ViewGroup implements IMapView, MapViewConstants,
         }
 
         if (DEBUGMODE) {
-            Log.d(LOG_TAG, "no-one handled onTouchEvent");
+            ClientLog.d(LOG_TAG, "no-one handled onTouchEvent");
         }
         return false;
     }
@@ -987,7 +987,7 @@ public class MapView extends ViewGroup implements IMapView, MapViewConstants,
 
         if (DEBUGMODE) {
             final long endMs = System.currentTimeMillis();
-            Log.d(LOG_TAG, "Rendering overall: " + (endMs - startMs) + "ms");
+            ClientLog.d(LOG_TAG, "Rendering overall: " + (endMs - startMs) + "ms");
         }
     }
 
@@ -1116,10 +1116,10 @@ public class MapView extends ViewGroup implements IMapView, MapViewConstants,
             if (tileSourceAttr != null) {
                 try {
                     final ITileSource r = TileSourceFactory.getTileSource(tileSourceAttr);
-                    Log.d(LOG_TAG, "Using tile source specified in layout attributes: " + r);
+                    ClientLog.d(LOG_TAG, "Using tile source specified in layout attributes: " + r);
                     tileSource = r;
                 } catch (final IllegalArgumentException e) {
-                    Log.w(LOG_TAG, "Invalid tile source specified in layout attributes: " + tileSource);
+                    ClientLog.w(LOG_TAG, "Invalid tile source specified in layout attributes: " + tileSource);
                 }
             }
         }
@@ -1127,14 +1127,14 @@ public class MapView extends ViewGroup implements IMapView, MapViewConstants,
         if (aAttributeSet != null && tileSource instanceof IStyledTileSource) {
             final String style = aAttributeSet.getAttributeValue(null, "style");
             if (style == null) {
-                Log.d(LOG_TAG, "Using default style: 1");
+                ClientLog.d(LOG_TAG, "Using default style: 1");
             } else {
-                Log.d(LOG_TAG, "Using style specified in layout attributes: " + style);
+                ClientLog.d(LOG_TAG, "Using style specified in layout attributes: " + style);
                 ((IStyledTileSource<?>) tileSource).setStyle(style);
             }
         }
 
-        Log.d(LOG_TAG, "Using tile source: " + tileSource);
+        ClientLog.d(LOG_TAG, "Using tile source: " + tileSource);
         return tileSource;
     }
 

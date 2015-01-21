@@ -16,7 +16,7 @@ import android.telephony.TelephonyManager;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.mozilla.mozstumbler.service.AppGlobals;
-import org.mozilla.mozstumbler.service.core.logging.Log;
+import org.mozilla.mozstumbler.service.core.logging.ClientLog;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageContract;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageManager;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.StumblerBundle;
@@ -24,6 +24,7 @@ import org.mozilla.mozstumbler.service.stumblerthread.scanners.GPSScanner;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.WifiScanner;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner.CellInfo;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner.CellScanner;
+import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
 import java.io.IOException;
 import java.util.HashSet;
@@ -31,7 +32,7 @@ import java.util.List;
 import java.util.Set;
 
 public final class Reporter extends BroadcastReceiver implements IReporter {
-    private static final String LOG_TAG = AppGlobals.makeLogTag(Reporter.class.getSimpleName());
+    private static final String LOG_TAG = LoggerUtil.makeLogTag(Reporter.class);
     public static final String ACTION_FLUSH_TO_BUNDLE = AppGlobals.ACTION_NAMESPACE + ".FLUSH";
     public static final String ACTION_NEW_BUNDLE = AppGlobals.ACTION_NAMESPACE + ".NEW_BUNDLE";
     public static final String NEW_BUNDLE_ARG_BUNDLE = "bundle";
@@ -57,7 +58,7 @@ public final class Reporter extends BroadcastReceiver implements IReporter {
         if (tm != null) {
             mPhoneType = tm.getPhoneType();
         } else {
-            Log.d(LOG_TAG, "No telephony manager.");
+            ClientLog.d(LOG_TAG, "No telephony manager.");
             mPhoneType = TelephonyManager.PHONE_TYPE_NONE;
         }
 
@@ -81,7 +82,7 @@ public final class Reporter extends BroadcastReceiver implements IReporter {
 
         mIsStarted = false;
 
-        Log.d(LOG_TAG, "shutdown");
+        ClientLog.d(LOG_TAG, "shutdown");
         flush();
         LocalBroadcastManager.getInstance(mContext).unregisterReceiver(this);
     }
@@ -176,7 +177,7 @@ public final class Reporter extends BroadcastReceiver implements IReporter {
             wifiCount = mlsObj.getInt(DataStorageContract.ReportsColumns.WIFI_COUNT);
             cellCount = mlsObj.getInt(DataStorageContract.ReportsColumns.CELL_COUNT);
         } catch (JSONException e) {
-            Log.w(LOG_TAG, "Failed to convert bundle to JSON: " + e);
+            ClientLog.w(LOG_TAG, "Failed to convert bundle to JSON: " + e);
             mBundle = null;
             return;
         }
@@ -200,7 +201,7 @@ public final class Reporter extends BroadcastReceiver implements IReporter {
             i.putExtra(AppGlobals.ACTION_ARG_TIME, System.currentTimeMillis());
             LocalBroadcastManager.getInstance(mContext).sendBroadcastSync(i);
         } catch (IOException e) {
-            Log.w(LOG_TAG, e.toString());
+            ClientLog.w(LOG_TAG, e.toString());
         }
 
         mBundle = null;

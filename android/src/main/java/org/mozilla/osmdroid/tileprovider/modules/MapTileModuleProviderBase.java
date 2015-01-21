@@ -1,7 +1,7 @@
 package org.mozilla.osmdroid.tileprovider.modules;
 
-import org.mozilla.mozstumbler.service.AppGlobals;
-import org.mozilla.mozstumbler.service.core.logging.Log;
+import org.mozilla.mozstumbler.service.core.logging.ClientLog;
+import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 import org.mozilla.osmdroid.tileprovider.MapTile;
 import org.mozilla.osmdroid.tileprovider.MapTileRequestState;
 import org.mozilla.osmdroid.tileprovider.constants.OSMConstants;
@@ -78,7 +78,7 @@ public abstract class MapTileModuleProviderBase implements OSMConstants {
 
 	private final ExecutorService mExecutor;
 
-	private static final String LOG_TAG = AppGlobals.makeLogTag(MapTileModuleProviderBase.class.getSimpleName());
+	private static final String LOG_TAG = LoggerUtil.makeLogTag(MapTileModuleProviderBase.class);
 
 	protected final Object mQueueLockObject = new Object();
 	protected final HashMap<MapTile, MapTileRequestState> mWorking;
@@ -86,7 +86,7 @@ public abstract class MapTileModuleProviderBase implements OSMConstants {
 
 	public MapTileModuleProviderBase(int pThreadPoolSize, final int pPendingQueueSize) {
 		if (pPendingQueueSize < pThreadPoolSize) {
-			Log.w(LOG_TAG, "The pending queue size is smaller than the thread pool size. Automatically reducing the thread pool size.");
+			ClientLog.w(LOG_TAG, "The pending queue size is smaller than the thread pool size. Automatically reducing the thread pool size.");
 			pThreadPoolSize = pPendingQueueSize;
 		}
 		mExecutor = Executors.newFixedThreadPool(pThreadPoolSize,
@@ -128,12 +128,12 @@ public abstract class MapTileModuleProviderBase implements OSMConstants {
 	public void loadMapTileAsync(final MapTileRequestState pState) {
 		synchronized (mQueueLockObject) {
 			if (DEBUG_TILE_PROVIDERS) {
-				Log.d(LOG_TAG, "MapTileModuleProviderBase.loadMaptileAsync() on provider: "
-						+ getName() + " for tile: " + pState.getMapTile());
+				ClientLog.d(LOG_TAG, "MapTileModuleProviderBase.loadMaptileAsync() on provider: "
+                        + getName() + " for tile: " + pState.getMapTile());
 				if (mPending.containsKey(pState.getMapTile()))
-					Log.d(LOG_TAG, "MapTileModuleProviderBase.loadMaptileAsync() tile already exists in request queue for modular provider. Moving to front of queue.");
+					ClientLog.d(LOG_TAG, "MapTileModuleProviderBase.loadMaptileAsync() tile already exists in request queue for modular provider. Moving to front of queue.");
 				else
-					Log.d(LOG_TAG, "MapTileModuleProviderBase.loadMaptileAsync() adding tile to request queue for modular provider.");
+					ClientLog.d(LOG_TAG, "MapTileModuleProviderBase.loadMaptileAsync() adding tile to request queue for modular provider.");
 			}
 
 			// this will put the tile in the queue, or move it to the front of
@@ -143,7 +143,7 @@ public abstract class MapTileModuleProviderBase implements OSMConstants {
 		try {
 			mExecutor.execute(getTileLoader());
 		} catch (final RejectedExecutionException e) {
-			Log.e(LOG_TAG, "RejectedExecutionException", e);
+			ClientLog.e(LOG_TAG, "RejectedExecutionException", e);
 		}
 	}
 
@@ -165,8 +165,8 @@ public abstract class MapTileModuleProviderBase implements OSMConstants {
 	void removeTileFromQueues(final MapTile mapTile) {
 		synchronized (mQueueLockObject) {
 			if (DEBUG_TILE_PROVIDERS) {
-				Log.d(LOG_TAG, "MapTileModuleProviderBase.removeTileFromQueues() on provider: "
-						+ getName() + " for tile: " + mapTile);
+				ClientLog.d(LOG_TAG, "MapTileModuleProviderBase.removeTileFromQueues() on provider: "
+                        + getName() + " for tile: " + mapTile);
 			}
 			mPending.remove(mapTile);
 			mWorking.remove(mapTile);

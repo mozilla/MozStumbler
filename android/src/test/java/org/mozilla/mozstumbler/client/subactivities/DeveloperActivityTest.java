@@ -8,11 +8,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mozilla.mozstumbler.R;
-import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.Prefs;
-import org.mozilla.mozstumbler.service.core.logging.Log;
+import org.mozilla.mozstumbler.service.core.logging.ClientLog;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.ClientDataStorageManager;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageManager;
+import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
@@ -34,7 +34,7 @@ import static org.robolectric.util.FragmentTestUtil.startFragment;
 @RunWith(RobolectricTestRunner.class)
 public class DeveloperActivityTest {
 
-    private static final String LOG_TAG = AppGlobals.makeLogTag(DeveloperActivityTest.class);
+    private static final String LOG_TAG = LoggerUtil.makeLogTag(DeveloperActivityTest.class);
 
     @Before
     public void setup() {
@@ -112,7 +112,7 @@ public class DeveloperActivityTest {
                 "foo.txt";
 
         File fakeReport = new File(mockFilePath);
-        Log.d(LOG_TAG, "Trying to write fake report: [" + mockFilePath + "]");
+        ClientLog.d(LOG_TAG, "Trying to write fake report: [" + mockFilePath + "]");
         FileWriter fw = new FileWriter(fakeReport);
         fw.write("hello world");
         fw.flush();

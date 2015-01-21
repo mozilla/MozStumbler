@@ -8,9 +8,9 @@ import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 
-import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.Prefs;
-import org.mozilla.mozstumbler.service.core.logging.Log;
+import org.mozilla.mozstumbler.service.core.logging.ClientLog;
+import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -20,7 +20,7 @@ import java.util.List;
  so that we can properly mock it out and simulate inbound intents.
  */
 public class WifiManagerProxy extends BroadcastReceiver {
-    private static final String LOG_TAG = AppGlobals.LOG_PREFIX + WifiManagerProxy.class.getSimpleName();
+    private static final String LOG_TAG = LoggerUtil.makeLogTag(WifiManagerProxy.class);
 
     private final Context mAppContext;
     private WifiScanner mWifiScanner;
@@ -60,7 +60,7 @@ public class WifiManagerProxy extends BroadcastReceiver {
                 ctx = ((SimulationContext) mAppContext);
                 result.addAll(ctx.getNextMockWifiBlock());
             } catch (ClassCastException ex) {
-                Log.e(LOG_TAG, "Simulation was enabled, but invalid context was found", ex);
+                ClientLog.e(LOG_TAG, "Simulation was enabled, but invalid context was found", ex);
             }
             return result;
         } else {

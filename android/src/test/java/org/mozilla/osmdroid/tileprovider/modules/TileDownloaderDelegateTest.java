@@ -4,18 +4,14 @@
 
 package org.mozilla.osmdroid.tileprovider.modules;
 
-import junit.framework.Assert;
-
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mozilla.mozstumbler.client.mapview.tiles.AbstractMapOverlay;
-import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.core.http.IHttpUtil;
 import org.mozilla.mozstumbler.service.core.http.IResponse;
-import org.mozilla.mozstumbler.service.core.logging.Log;
 import org.mozilla.mozstumbler.svclocator.ServiceLocator;
+import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 import org.mozilla.mozstumbler.test.fixtures.FixtureLoader;
 import org.mozilla.osmdroid.tileprovider.MapTile;
 import org.mozilla.osmdroid.tileprovider.tilesource.BitmapTileSourceBase;
@@ -40,15 +36,13 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @Config(emulateSdk = 18)
 @RunWith(RobolectricTestRunner.class)
 public class TileDownloaderDelegateTest {
 
-    private final String LOG_TAG = AppGlobals.makeLogTag(TileDownloaderDelegateTest.class);
+    private final String LOG_TAG = LoggerUtil.makeLogTag(TileDownloaderDelegateTest.class);
 
     private static final String testUrl = "http://not.a.real.url/";
 

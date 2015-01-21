@@ -472,6 +472,7 @@ public class MapFragment extends android.support.v4.app.Fragment
                         new String[]{BuildConfig.TILE_SERVER_URL});
             }
             System.gc();
+            mHighResMapSource.setCacheTime(7 * 24 * 60 * 60 * 1000);
             mMap.setTileSource(mHighResMapSource);
 
         } else if (!isHighBandwidth && !hasLowResMap) {

@@ -6,6 +6,7 @@ import org.mozilla.osmdroid.tileprovider.MapTile;
 public abstract class OnlineTileSourceBase extends BitmapTileSourceBase {
 
     public String mBaseUrls[];
+    private long mCacheTime = 12 * 60 * 60 * 1000;
 
     /**
      * Constructor
@@ -33,5 +34,15 @@ public abstract class OnlineTileSourceBase extends BitmapTileSourceBase {
      */
     protected String getBaseUrl() {
         return mBaseUrls[random.nextInt(mBaseUrls.length)];
+    }
+
+    @Override
+    public long getCacheTime() {
+        return mCacheTime;
+    }
+
+    @Override
+    public void setCacheTime(long aCacheTime) {
+        mCacheTime = aCacheTime;
     }
 }

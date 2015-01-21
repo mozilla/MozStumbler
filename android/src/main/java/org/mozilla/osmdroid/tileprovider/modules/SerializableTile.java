@@ -10,11 +10,9 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.nio.CharBuffer;
 import java.nio.charset.CharacterCodingException;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
-import java.nio.charset.CharsetEncoder;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -25,11 +23,6 @@ import java.util.Map;
  * This class represents a serializable Tile.
  */
 public class SerializableTile {
-
-    // Cache tiles locally for 12 hours. Ichanea doesn't update tiles
-    // more than once a day anyway and this should be good enough to 
-    // enable offline stumbles.
-    public static final long CACHE_TILE_MS = 60 * 60 * 12 * 1000;
 
     private static final String LOG_TAG =
             AppGlobals.LOG_PREFIX + SerializableTile.class.getSimpleName();
@@ -120,12 +113,12 @@ public class SerializableTile {
         return buff.toByteArray();
     }
 
-    public boolean saveFile(File aFile) {
+    public boolean saveFile(File aFile, long aCacheTime) {
         try {
             myFile = aFile;
             // Always update cache-control on save
             setHeader("cache-control",
-                    Long.toString(CACHE_TILE_MS + System.currentTimeMillis()));
+                    Long.toString(aCacheTime + System.currentTimeMillis()));
             FileOutputStream fos = new FileOutputStream(aFile);
             fos.write(this.asBytes());
             fos.flush();
@@ -142,9 +135,9 @@ public class SerializableTile {
 
     Generally only used to update a file that was previously loaded from disk.
      */
-    public boolean saveFile() {
+    public boolean saveFile(long aCacheTime) {
         if (myFile != null) {
-            return saveFile(myFile);
+            return saveFile(myFile, aCacheTime);
         }
         return false;
     }

@@ -40,6 +40,7 @@ public class LowResMapOverlay extends AbstractMapOverlay {
                     "http://otile4.mqcdn.com/tiles/1.0.0/map/"});
         }
         this.setLoadingBackgroundColor(Color.TRANSPARENT);
+        coverageTileSource.setCacheTime(7 * 24 * 60 * 60 * 1000);
         mTileProvider.setTileRequestCompleteHandler(new SimpleInvalidationHandler(mapView));
         mTileProvider.setTileSource(mapTileSource);
     }

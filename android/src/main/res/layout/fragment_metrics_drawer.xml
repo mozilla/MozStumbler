@@ -49,7 +49,7 @@
                         android:layout_gravity="start"
                         android:layout_span="2"
                         android:paddingBottom="@dimen/padding_below_for_metrics_titles"
-                        android:paddingTop="@dimen/padding_above_for_metrics_titles"
+                        android:paddingTop="5dp"
                         android:text="@string/metrics_this_session"
                         android:textSize="@dimen/font_size_for_metrics_titles"
                         android:textStyle="bold"
@@ -113,8 +113,8 @@
                         android:id="@+id/wifis_unqiue_title"
                         android:layout_gravity="start"
                         android:paddingBottom="@dimen/padding_below_for_metrics_titles"
-                        android:paddingEnd="3dp"
-                        android:paddingRight="3dp"
+                        android:paddingEnd="6dp"
+                        android:paddingRight="6dp"
                         android:text="@string/metrics_observations_wifis_title"
                         android:textSize="@dimen/font_size_for_metrics"
                         android:layout_width="match_parent"
@@ -130,15 +130,6 @@
                         android:layout_height="wrap_content" />
                 </TableRow>
 
-                <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_marginTop="5dp"
-                    android:background="@android:color/darker_gray"
-                    android:layout_height="wrap_content">
-
-                    <View android:layout_height="1dp"
-                        android:layout_width="match_parent" />
-                </TableRow>
 
                 <TableRow
                     android:layout_width="match_parent"
@@ -249,6 +240,16 @@
                         android:layout_height="wrap_content" />
                 </TableRow>
 
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_marginTop="10dp"
+                    android:background="@android:color/darker_gray"
+                    android:layout_height="wrap_content">
+
+                    <View android:layout_height="1dp"
+                        android:layout_width="match_parent" />
+                </TableRow>
+
             </TableLayout>
 
             <TextView
@@ -297,7 +298,11 @@
                 android:id="@+id/button_change_power_setting"
                 android:layout_above="@+id/map_info_title"
                 android:layout_alignRight="@+id/cell_plus_wifi_layout"
-                android:layout_alignEnd="@+id/cell_plus_wifi_layout" />
+                android:layout_alignEnd="@+id/cell_plus_wifi_layout"
+                android:maxHeight="34dp"
+                android:minHeight="34dp"
+                android:layout_marginBottom="4dp"
+                  />
 
             <TextView
                 android:id="@+id/map_info_title"
@@ -437,6 +442,7 @@
                 android:layout_below="@id/mls_location_layout"
                 android:checked="false"
                 android:text="@string/drawer_map_option_show_mls_locations"
+                android:layout_marginLeft="-8dp"
                 android:textSize="14sp" />
         </RelativeLayout>
 

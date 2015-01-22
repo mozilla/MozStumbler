@@ -166,15 +166,7 @@
     <string name="save_stumble_logs">Zapisz dzienniki wykrywania</string>
     <string name="create_log_archive_failure">Nie można utworzyć katalogu archiwum dla dzienników</string>
     <string name="create_log_archive_success">Dzienniki zostaną zapisane w:</string>
-    <string name="category_power_saving">Oszczędzanie zasilania</string>
-    <string name="power_saving_mode">Wykrywanie ruchu</string>
-    <string name="power_saving_mode_summary">Wstrzymuje i wznawia aplikację po wykryciu bezruchu.
-        Nie należy używać trybu dodatkowego oszczędzania zasilania, jeśli GPS potrzebuje dłuższego czasu na odnalezienie położenia.</string>
-
-    <string-array name="power_saving_mode_options">
-        <item>Wyłączone</item>
-        <item>Włączone</item>
-        <item>Włączone, dodatkowe oszczędzanie zasilania</item>
-    </string-array>
+    <string name="power_saving_title">Oszczędzanie zasilania</string>
+    <string name="power_saving_mode_summary">Wstrzymuje i wznawia aplikację po wykryciu bezruchu.</string>
 
 </resources>

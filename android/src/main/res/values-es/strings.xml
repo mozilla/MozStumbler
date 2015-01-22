@@ -8,6 +8,8 @@
     <string name="stop_scanning">Detener escaneo</string>
     <string name="view_leaderboard">Ver tabla de posiciones</string>
     <string name="service_name">Mozilla Stumbler</string>
+    <string name="notification_scanning">Mozilla Stumbler está escaneando</string>
+    <string name="notification_paused">Mozilla Stumbler está pausado</string>
     <string name="enter_nickname">Ingresa tu apodo (opcional)</string>
     <string name="enter_nickname_title">Apodo: %1$s</string>
     <string name="enter_nickname_longtext">Tu apodo aparecerá en la tabla de posiciones.</string>
@@ -46,6 +48,9 @@
         <item quantity="one">hace un día</item>
         <item quantity="other">hace %d días</item>
     </plurals>
+
+    <string name="metrics_notification_text">Reportes:%1$d celdas móviles:%2$d Wi-Fis:%3$d</string>
+    <string name="metrics_notification_extraline">Última subida: %1$s</string>
     <string name="metrics_observations_title">Reportes:</string>
     <string name="metrics_observations_wifis_title">Redes Wi-Fi:</string>
     <string name="metrics_observations_cell_towers_title">Redes celulares:</string>
@@ -56,13 +61,39 @@
     <string name="metrics_this_session">Sesión actual</string>
     <string name="drawer_map_option_show_mls_locations">Mostrar ubicaciones de MLS</string>
     <string name="title_activity_log">Log</string>
+    <string name="action_file_bug">Informar de un fallo</string>
+    <string name="file_bug_sender_name">Tu nombre:</string>
+    <string name="file_bug_sender_name_hint">Opcional</string>
+    <string name="file_bug_sender_email">Tu email:</string>
+    <string name="file_bug_sender_email_hint">Opcional</string>
+    <string name="file_bug_name">Título del fallo:</string>
+    <string name="file_bug_name_hint">Título descriptivo para el fallo</string>
+    <string name="file_bug_description">Descripción del fallo:</string>
+    <string name="file_bug_description_hint">Información detallada sobre el fallo que se informa (lo que sucede, cuando sucede, etc.)</string>
+    <string name="file_bug_reproduction">Réplica del fallo:</string>
+    <string name="file_bug_reproduction_hint">Explica los pasos para replicar el fallo.</string>
+    <string name="file_bug_report_info">Mediante el envío de este informe, también se va a enviar información sobre el estado actual de tu dispositivo. Esta información se utilizará para limitar el origen del fallo. Los informes de fallos para los errores que provocados por cuelgues se envían automáticamente si la opción \ "Habilitar informador de fallos \" está habilitada. Si encuentras fallos que no provocan cuelgues, por favor háznoslos saber a través de este formulario.</string>
+    <string name="file_bug_send">Enviar un reporte de fallo</string>
+    <string name="file_bug_type">Tipo de fallo:</string>
+
+    <string-array name="file_bug_type_list">
+        <item>Cosmético</item>
+        <item>Rendimiento</item>
+        <item>Compatibilidad</item>
+        <item>Funcionalidad</item>
+        <item>Peticón de nueva característica</item>
+        <item>Otros</item>
+    </string-array>
+
+    <string name="file_bug_toast_success">Reporte de fallo enviado\n ¡Gracias!</string>
+    <string name="file_bug_missing_field">¡Este campo es obligatorio!</string>
     <string name="action_view_log">Ver log</string>
     <string name="scroll_to_start">Ir al principio</string>
     <string name="scroll_to_end">Ir al final</string>
     <string name="kml_file_title">Archivo KML de reportes</string>
     <string name="kml_file_load">Cargar archivo KML</string>
     <string name="kml_file_save">Guardar archivo KML</string>
-    <string name="kml_file_description">Guardar/Cargar los reportes (ubicaciones, datos wi-fi+celulares) para debugear.</string>
+    <string name="kml_file_description">Guardar/Cargar los reportes (ubicaciones, datos Wi-Fi + celulares) para depurar.</string>
     <string name="kml_file_saved_name">Archivo guardado:</string>
     <string name="keep_screen_on_title">Mantener la pantalla encendida mientras escaneas</string>
     <string name="keep_screen_on_summary">Mantendrá la pantalla encendia mientras escaneas y la aplicación está en primer plano.</string>
@@ -107,23 +138,50 @@
     <string name="map_tile_resolution_options_label_dynamic">Detalles del mapa: %1$s</string>
     <string name="map_tile_resolution_options_summary">Bajos detalles reducirán tu uso de datos móviles.</string>
     <string name="enable_crash_reporting">Habilitar informador de fallos</string>
+    <string name="enable_simulation">Activar simulación</string>
+    <string name="clear_simulation_start_location">Borrar posición de inicio de la simulación</string>
     <string name="privacy_policy">Política de privacidad:</string>
     <string name="satellites_separator">/</string>
     <string name="must_uninstall_to_update">Deberías desinstalar primero para actualizar a la nueva versión.</string>
     <string name="category_leaderboard">Tabla de posiciones</string>
     <string name="category_network_usage">Uso de la red</string>
     <string name="category_display">Visualización</string>
+    <string name="reset_simulation_start">La posición de inicio de la simulación se ha restablecido</string>
     <string name="category_crashreport">Informe de fallos</string>
+
     <string-array name="map_tile_resolution_options">
         <item>Alto (Wi-Fi) / Bajo (datos móviles)</item>
         <item>Sólo alto detalle</item>
         <item>Sólo bajo detalle</item>
         <item>Sin mapa</item>
     </string-array>
+
     <string name="low_battery_title">Dejar de escanear con poca batería</string>
     <string name="battery_percent_options_label">Dejar de escanear cuando la batería alcance el:</string>
     <string name="motion_detection_title">Detección de movimiento</string>
     <string name="motion_detection_options_label">Pausar el escaneo si no te mueves</string>
     <string name="motion_detection_options_conjunction">en</string>
     <string name="map_scanning_paused_no_motion">La ubicación no cambia, escaneo en pausa.</string>
+    <string name="save_stumble_logs">Guardar registros de Stumble</string>
+    <string name="create_log_archive_failure">No se puede crear directorio de archivo para los registros</string>
+    <string name="create_log_archive_success">Los registros deben guardarse en:</string>
+    <string name="category_power_saving">Ahorro de energía</string>
+    <string name="power_saving_mode">Detección de movimiento</string>
+    <string name="power_saving_mode_summary">Hace una pausa en la exploración si no se está moviendo, y comienza de nuevo cuando detecta movimiento.</string>
+    <string name="power_saving_title">Ahorro de energía</string>
+    <string name="stop_at_x_battery">Detener con %1$d%% de batería</string>
+    <string name="motion_detection_onoff">Detección de movimiento %1$s</string>
+    <string name="change_power_saving">Cambiar</string>
+    <string name="on">Encendido</string>
+    <string name="off">Apagado</string>
+
+    <string-array name="power_saving_mode_options">
+        <item>Apagado</item>
+        <item>Encendido</item>
+        <item>Encendido, con ahorro de energía extra</item>
+    </string-array>
+
+    <string name="title_activity_power_saving_screen">Opciones de ahorro de energía</string>
+    <string name="sensor_type_legacy">Tu dispositivo solamente tiene sensores heredados. Puede que no quieras utilizar esta función si tienes dificultad al volver a poner en marcha la aplicación con el movimiento.</string>
+    <string name="sensor_type_significant_motion">El dispositivo cuenta con un sensor de movimiento respetable, el ajuste recomendado es detección de movimiento \'Encendido\'.</string>
 </resources>

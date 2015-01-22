@@ -27,6 +27,7 @@ public class MotionSensor {
 
     /// Testing code
     private static MotionSensor sDebugInstance;
+
     public static void debugMotionDetected() {
         if (sDebugInstance.mStopSignificantMotionSensor) {
             return;
@@ -36,15 +37,27 @@ public class MotionSensor {
     }
     /// ---
 
-    public boolean hasSignificantMotionSensor() {
-        return mSignificantMotionSensor != null;
+    public static Sensor getSignificantMotionSensor(Context context) {
+        SensorManager sensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
+        Sensor significantSensor;
+        if (sensorManager == null) {
+            AppGlobals.guiLogInfo("No sensor manager.");
+            return null;
+        }
+        if (Build.VERSION.SDK_INT >= 18) {
+            significantSensor = sensorManager.getDefaultSensor(Sensor.TYPE_SIGNIFICANT_MOTION);
+            if (significantSensor != null) {
+                AppGlobals.guiLogInfo("Device has significant motion sensor.");
+                return significantSensor;
+            }
+        }
+        return null;
     }
 
     public MotionSensor(Context context, BroadcastReceiver callbackReceiver) {
         sDebugInstance = this;
         mContext = context;
-        LocalBroadcastManager.getInstance(context).registerReceiver(callbackReceiver,
-                new IntentFilter(ACTION_USER_MOTION_DETECTED));
+        mStopSignificantMotionSensor = false;
 
         mSensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         if (mSensorManager == null) {
@@ -52,13 +65,12 @@ public class MotionSensor {
             return;
         }
 
-        mStopSignificantMotionSensor = false;
-        if (Build.VERSION.SDK_INT >= 18) {
-           mSignificantMotionSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_SIGNIFICANT_MOTION);
-           if (mSignificantMotionSensor != null) {
-               AppGlobals.guiLogInfo("Device has significant motion sensor.");
-           }
+        if (callbackReceiver != null) {
+            LocalBroadcastManager.getInstance(context).registerReceiver(callbackReceiver,
+                    new IntentFilter(ACTION_USER_MOTION_DETECTED));
         }
+
+        mSignificantMotionSensor = getSignificantMotionSensor(context);
 
         // If no TYPE_SIGNIFICANT_MOTION is available, use alternate means to sense motion
         if (mSignificantMotionSensor == null) {
@@ -66,6 +78,7 @@ public class MotionSensor {
             AppGlobals.guiLogInfo("Device has legacy motion sensor.");
         }
     }
+
     public void start() {
         if (mSignificantMotionSensor == null) {
             if (mLegacyMotionSensor != null) {

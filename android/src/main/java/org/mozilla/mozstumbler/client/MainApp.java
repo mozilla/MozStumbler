@@ -135,7 +135,7 @@ public class MainApp extends Application
         AppGlobals.appVersionCode = BuildConfig.VERSION_CODE;
         AppGlobals.appName = this.getResources().getString(R.string.app_name);
 
-        AppGlobals.hasSignificantMotionSensor = new MotionSensor(this, null).hasSignificantMotionSensor();
+        AppGlobals.hasSignificantMotionSensor = (MotionSensor.getSignificantMotionSensor(this) != null);
 
         AsyncUploader.setGlobalUploadListener(this);
 

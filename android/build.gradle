@@ -1,7 +1,7 @@
 // each of the version numbers must be 0-99
 def versionMajor = 1
-def versionMinor = 5 // minor feature releases
-def versionPatch = 5 // This should be bumped for hot fixes
+def versionMinor = 6 // minor feature releases
+def versionPatch = 0 // This should be bumped for hot fixes
 
 // Double check the versioning
 for (versionPart in [versionPatch, versionMinor, versionMajor]) {

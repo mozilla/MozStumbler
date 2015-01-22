@@ -164,8 +164,6 @@
     <string name="save_stumble_logs">Save Stumble Logs</string>
     <string name="create_log_archive_failure">Unable to create archive directory for logs</string>
     <string name="create_log_archive_success">Logs will be save to:</string>
-    <string name="category_power_saving">Power Saving</string>
-    <string name="power_saving_mode">Motion detection</string>
     <string name="power_saving_mode_summary">Pauses the scanning if you aren\'t moving, and starts it again if movement is detected.</string>
     <string name="power_saving_title">Power Saving</string>
     <string name="stop_at_x_battery">Stop at %1$d%% battery</string>
@@ -173,12 +171,6 @@
     <string name="change_power_saving">Change</string>
     <string name="on">On</string>
     <string name="off">Off</string>
-
-    <string-array name="power_saving_mode_options">
-        <item>Off</item>
-        <item>On</item>
-        <item>On, extra power saving</item>
-    </string-array>
 
     <string name="title_activity_power_saving_screen">Power Saving Options</string>
     <string name="sensor_type_legacy">Your device has legacy sensors only. You may not want to use this feature if you have difficulty unpausing the app on motion.</string>

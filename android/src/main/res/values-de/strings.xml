@@ -157,14 +157,15 @@
     <string name="save_stumble_logs">Scan-Protokoll speichern</string>
     <string name="create_log_archive_failure">Verzeichnis für Archivierung des Protokolls konnte nicht erstellt werden</string>
     <string name="create_log_archive_success">Protokoll wird gespeichert in: </string>
-    <string name="category_power_saving">Energiesparen</string>
-    <string name="power_saving_mode">Bewegungserkennung</string>
-    <string name="power_saving_mode_summary">Pausiert und setzt das Scannen fort, wenn Sie sich nicht bewegen.
-        Wenn das GPS viel Zeit benötigt, um Ihren Standort zu orten, dann wählen Sie bitte nicht den besonders energiesparenden Modus.</string>
+    <string name="power_saving_mode_summary">Pausiert das Scannen, wenn Sie sich nicht bewegen, und setzt es wieder fort, wenn Bewegung erkannt wird.</string>
+    <string name="power_saving_title">Energiesparen</string>
+    <string name="stop_at_x_battery">Ab %1$d%% Akkustand stoppen</string>
+    <string name="motion_detection_onoff">Bewegungserkennung %1$s</string>
+    <string name="change_power_saving">Ändern</string>
+    <string name="on">an</string>
+    <string name="off">aus</string>
 
-    <string-array name="power_saving_mode_options">
-        <item>Aus</item>
-        <item>An</item>
-        <item>An, besonders energiesparend</item>
-    </string-array>
+    <string name="title_activity_power_saving_screen">Energiesparoptionen</string>
+    <string name="sensor_type_legacy">Ihr Gerät besitzt nur ältere Sensoren. Sie sollten diese Funktion deaktivieren, wenn das Scannen beim Bewegen nicht fortgesetzt wird.</string>
+    <string name="sensor_type_significant_motion">Ihr Gerät besitzt einen Sensor zur Erkennung signifikanter Bewegungen. Die empfohlene Einstellung ist Bewegungserkennung \"an\".</string>
 </resources>

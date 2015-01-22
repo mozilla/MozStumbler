@@ -91,6 +91,7 @@
     <string name="low_resolution_map">低分辨率地图</string>
     <string name="map_turned_off">不显示地图</string>
     <string name="map_tile_resolution_options_label">地图图层选项：</string>
+    <string name="map_tile_resolution_options_label_dynamic">地图图层选项：%1$s</string>
     <string name="enable_crash_reporting">启用崩溃报告</string>
     <string name="privacy_policy">隐私政策：</string>
     <string name="satellites_separator">/</string>

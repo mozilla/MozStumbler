@@ -113,9 +113,9 @@ public class PreferencesScreen extends PreferenceActivity {
     }
 
     private void updateMapDetailTitle(int index) {
-        mMapTileDetail.setTitle(
-            getString(R.string.map_tile_resolution_options_label) + " " +
-            mMapTileDetail.getEntries()[index]);
+        String label = getString(R.string.map_tile_resolution_options_label_dynamic);
+        String option = mMapTileDetail.getEntries()[index].toString();
+        mMapTileDetail.setTitle(String.format(label, option));
     }
 
     private void setPreferenceListener() {

@@ -72,7 +72,8 @@
     <string name="file_bug_description_hint">Detailed information about the bug being reported (what happens, when it happens, etc.)</string>
     <string name="file_bug_reproduction">Bug Reproduction:</string>
     <string name="file_bug_reproduction_hint">Steps explaining how to reproduce the bug.</string>
-    <string name="file_bug_report_info">By sending this report, you will also send information regarding the current state of your device. This information will be used to narrow down the cause of the bug. Bug reports for bugs that result in a crash are sent automatically if the option \"Enable crash reporting\" is enabled. If you encounter bugs that do not result in a crash, please report them through this form.</string>
+    <!-- file_bug_report_info: %1$s refers to enable_crash_reporting -->
+    <string name="file_bug_report_info">By sending this report, you will also send information regarding the current state of your device. This information will be used to narrow down the cause of the bug. Bug reports for bugs that result in a crash are sent automatically if the option \"%1$s\" is enabled. If you encounter bugs that do not result in a crash, please report them through this form.</string>
     <string name="file_bug_send">Send Bug Report</string>
     <string name="file_bug_type">Bug Type:</string>
 
@@ -135,6 +136,7 @@
     <string name="low_resolution_map">Low detail map</string>
     <string name="map_turned_off">Map display off</string>
     <string name="map_tile_resolution_options_label">Map detail:</string>
+    <string name="map_tile_resolution_options_label_dynamic">Map detail: %1$s</string>
     <string name="map_tile_resolution_options_summary">Low detail reduces network data usage.</string>
     <string name="enable_crash_reporting">Enable crash reporting</string>
     <string name="enable_simulation">Enable Simulation</string>

@@ -10,6 +10,7 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.acra.ACRA;
@@ -35,6 +36,11 @@ public class FileBugActivity extends ActionBarActivity {
     @Override
     protected void onStart() {
         super.onStart();
+
+        TextView textView = (TextView) findViewById(R.id.bug_report_info);
+        String info = getString(R.string.file_bug_report_info);
+        String crashreporting = getString(R.string.enable_crash_reporting);
+        textView.setText(String.format(info, crashreporting));
     }
 
     @Override

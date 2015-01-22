@@ -35,7 +35,7 @@
             android:gravity="center"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:layout_gravity="center_horizontal"
-            android:text="unknown" />
+            tools:text="git hash" />
 
         <TextView
             android:layout_width="match_parent"

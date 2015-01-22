@@ -95,6 +95,7 @@
 <string name="low_resolution_map">कम रीजोलुशन नक्शा</string>
 <string name="map_turned_off">नक्शा दिखाना बंद</string>
 <string name="map_tile_resolution_options_label">नक्शा टाइल्स विकल्प:</string>
+<string name="map_tile_resolution_options_label_dynamic">नक्शा टाइल्स विकल्प: %1$s</string>
 <string name="enable_crash_reporting">क्रैश विवरणी भेजना शुरू करे</string>
 <string name="privacy_policy">गोपनीयता नीति:</string>
 <string name="satellites_separator">/</string>

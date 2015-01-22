@@ -76,7 +76,8 @@
     <string name="file_bug_description_hint">Szczegółowe informacje o zgłaszanym błędzie (co się stało, kiedy itd.)</string>
     <string name="file_bug_reproduction">Jak powtórzyć błąd:</string>
     <string name="file_bug_reproduction_hint">Kroki wyjaśniające, jak powtórzyć błąd.</string>
-    <string name="file_bug_report_info">Wysyłając to zgłoszenie, wysłane zostaną także informacje o obecnym stanie urządzenia. Zostaną one użyte do znalezienia przyczyny występowania błędu. Zgłoszenia błędów powodujących awarie są wysyłane automatycznie, jeśli włączono opcję \"Zgłaszanie awarii\". Błędy niepowodujące awarii można zgłaszać za pomocą tego formularza.</string>
+    <!-- file_bug_report_info: %1$s refers to enable_crash_reporting -->
+    <string name="file_bug_report_info">Wysyłając to zgłoszenie, wysłane zostaną także informacje o obecnym stanie urządzenia. Zostaną one użyte do znalezienia przyczyny występowania błędu. Zgłoszenia błędów powodujących awarie są wysyłane automatycznie, jeśli włączono opcję \"%1$s\". Błędy niepowodujące awarii można zgłaszać za pomocą tego formularza.</string>
     <string name="file_bug_send">Wyślij zgłoszenie błędu</string>
     <string name="file_bug_type">Rodzaj błędu:</string>
     <string-array name="file_bug_type_list">
@@ -138,6 +139,7 @@
     <string name="low_resolution_map">Mapa o niskiej szczegółowości</string>
     <string name="map_turned_off">Wyłączenie wyświetlania mapy</string>
     <string name="map_tile_resolution_options_label">Szczegółowość mapy:</string>
+    <string name="map_tile_resolution_options_label_dynamic">Szczegółowość mapy: %1$s</string>
     <string name="map_tile_resolution_options_summary">Niska szczegółowość zmniejsza zużycie danych.</string>
     <string name="enable_crash_reporting">Zgłaszanie awarii</string>
     <string name="enable_simulation">Symulacja</string>

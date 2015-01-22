@@ -12,7 +12,6 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/line2"
         android:paddingBottom="10dp"
         android:paddingTop="20dp"
         android:text="@string/low_battery_title"
@@ -66,6 +65,7 @@
             android:text="@string/power_saving_mode_summary"
             android:textSize="16sp"
             android:paddingRight="12dp"
+            android:paddingEnd="12dp"
             android:layout_weight="1"
              />
         <CheckBox

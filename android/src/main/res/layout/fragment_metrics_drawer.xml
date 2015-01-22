@@ -443,6 +443,7 @@
                 android:checked="false"
                 android:text="@string/drawer_map_option_show_mls_locations"
                 android:layout_marginLeft="-8dp"
+                android:layout_marginStart="-8dp"
                 android:textSize="14sp" />
         </RelativeLayout>
 

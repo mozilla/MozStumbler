@@ -103,6 +103,7 @@
     <string name="low_resolution_map">低解析度地圖</string>
     <string name="map_turned_off">關閉地圖顯示</string>
     <string name="map_tile_resolution_options_label">圖資選項:</string>
+    <string name="map_tile_resolution_options_label_dynamic">圖資選項: %1$s</string>
     <string name="map_tile_resolution_options_summary">低解析度第圖可減少網路使用量。</string>
     <string name="enable_crash_reporting">開啟錯誤回報</string>
     <string name="enable_simulation">開啟模擬</string>

@@ -68,7 +68,7 @@
     <string name="file_bug_description_hint">Detaillierte Informationen über den zu meldenden Fehler (was passiert, wann passiert es, usw.)</string>
     <string name="file_bug_reproduction">Reproduzierbarkeit:</string>
     <string name="file_bug_reproduction_hint">Schritte erklären, wie der Fehler reproduziert werden kann.</string>
-    <string name="file_bug_report_info">Wenn Sie diesen Bericht senden, senden Sie auch Informationen über Ihren aktuellen Gerätezustand. Diese Informationen werden dazu genutzt, den Grund für den Fehler einzugrenzen. Fehlerberichte für Fehler, die einen Absturz verursachen, werden automatisch gesendet, wenn Sie die Option \"Absturzberichte senden\" aktiviert haben. Wenn Sie Fehler entdecken, die keinen Absturz verursachen, melden Sie diese bitte mittels dieses Formulars.</string>
+    <string name="file_bug_report_info">Wenn Sie diesen Bericht senden, senden Sie auch Informationen über Ihren aktuellen Gerätezustand. Diese Informationen werden dazu genutzt, den Grund für den Fehler einzugrenzen. Fehlerberichte für Fehler, die einen Absturz verursachen, werden automatisch gesendet, wenn Sie die Option \"%1$s\" aktiviert haben. Wenn Sie Fehler entdecken, die keinen Absturz verursachen, melden Sie diese bitte mittels dieses Formulars.</string>
     <string name="file_bug_send">Fehlerbericht senden</string>
     <string name="file_bug_type">Fehlerkategorie:</string>
     <string-array name="file_bug_type_list">
@@ -129,6 +129,7 @@
     <string name="low_resolution_map">Karte mit geringer Auflösung</string>
     <string name="map_turned_off">Karte deaktiviert</string>
     <string name="map_tile_resolution_options_label">Kartenauflösung:</string>
+    <string name="map_tile_resolution_options_label_dynamic">Kartenauflösung: %1$s</string>
     <string name="map_tile_resolution_options_summary">Niedrige Auflösung reduziert den Datenverbrauch.</string>
     <string name="enable_crash_reporting">Absturzberichte senden</string>
     <string name="enable_simulation">Starte Simulation</string>

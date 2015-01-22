@@ -109,6 +109,7 @@
     <string name="low_resolution_map">Pieniresoluutioinen kartta</string>
     <string name="map_turned_off">Sulje karttanäyttö</string>
     <string name="map_tile_resolution_options_label">Kartan tiedot:</string>
+    <string name="map_tile_resolution_options_label_dynamic">Kartan tiedot: %1$s</string>
     <string name="map_tile_resolution_options_summary">Pieniresoluutioinen kartta vähentää internet-yhteyden käyttöä.</string>
     <string name="enable_crash_reporting">Ota käyttöön virheiden raportointi</string>
     <string name="enable_simulation">Aloita simulointi</string>

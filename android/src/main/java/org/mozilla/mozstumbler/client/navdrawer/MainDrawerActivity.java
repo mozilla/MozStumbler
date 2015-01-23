@@ -214,13 +214,13 @@ public class MainDrawerActivity
         if (ClientPrefs.getInstance(this).isFirstRun()) {
             FragmentManager fm = getSupportFragmentManager();
             FirstRunFragment.showInstance(fm);
-            //prefs.setDontShowChangelog();
+            prefs.setDontShowChangelog();
         } else if (!MainApp.getAndSetHasBootedOnce()) {
 
             long currentVersionNumber = BuildConfig.VERSION_CODE;
             long savedVersionNumber = prefs.getLastVersion();
             if (currentVersionNumber != savedVersionNumber) {
-                //prefs.setDontShowChangelog();
+                prefs.setDontShowChangelog();
                 showWhatsNewDialog();
             }
 

@@ -327,10 +327,19 @@ public class MainDrawerActivity
 
     public void showWhatsNewDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        CharSequence whats_new_text = getText(R.string.whats_new);
+
+        if (whats_new_text.toString().trim().length() == 0 ){
+            // Don't show the dialog if the what's new text is
+            // an empty string.
+            return;
+        }
+
         builder.setMessage(R.string.whats_new_title)
                 .setCancelable(false)
                 .setTitle(Html.fromHtml(getString(R.string.whats_new_title)))
-                .setMessage(getText(R.string.whats_new))
+                .setMessage(whats_new_text)
                 .setPositiveButton(getText(R.string.ok), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         dialog.dismiss();

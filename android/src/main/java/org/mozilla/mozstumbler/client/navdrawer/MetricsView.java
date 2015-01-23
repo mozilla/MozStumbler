@@ -8,6 +8,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.LightingColorFilter;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
@@ -131,7 +133,11 @@ public class MetricsView {
         mHandler.postDelayed(mUpdateLastUploadedLabel, FREQ_UPDATE_UPLOADTIME);
 
         Button showPowerButton = (Button) mView.findViewById(R.id.button_change_power_setting);
-        showPowerButton.getBackground().setColorFilter(new LightingColorFilter(0xFFFFFFFF, 0xFF106E99));
+        if (Build.VERSION.SDK_INT >= 16) {
+            Drawable clone = showPowerButton.getBackground().getConstantState().newDrawable();
+            clone.setColorFilter(new LightingColorFilter(0xFFFFFFFF, 0xFF106E99));
+            showPowerButton.setBackground(clone);
+        }
         showPowerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

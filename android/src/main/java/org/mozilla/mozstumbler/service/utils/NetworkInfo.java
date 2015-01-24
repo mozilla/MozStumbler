@@ -31,6 +31,16 @@ public final class NetworkInfo {
         return sInstance;
     }
 
+    public synchronized boolean isConnected() {
+        if (mConnectivityManager == null) {
+            Log.e(LOG_TAG, "ConnectivityManager is null!");
+            return false;
+        }
+
+        android.net.NetworkInfo aNet = mConnectivityManager.getActiveNetworkInfo();
+        return (aNet != null && aNet.isConnected());
+    }
+
     public synchronized boolean isWifiAvailable() {
         if (mConnectivityManager == null) {
             Log.e(LOG_TAG, "ConnectivityManager is null!");

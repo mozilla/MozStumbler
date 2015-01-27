@@ -210,11 +210,11 @@ public class MainDrawerActivity
         mMetricsView.update();
 
         ClientPrefs prefs = ClientPrefs.getInstance(this);
-
-        if (ClientPrefs.getInstance(this).isFirstRun()) {
+        if (prefs.isFirstRun()) {
             FragmentManager fm = getSupportFragmentManager();
             FirstRunFragment.showInstance(fm);
             prefs.setDontShowChangelog();
+            MainApp.getAndSetHasBootedOnce();
         } else if (!MainApp.getAndSetHasBootedOnce()) {
 
             long currentVersionNumber = BuildConfig.VERSION_CODE;

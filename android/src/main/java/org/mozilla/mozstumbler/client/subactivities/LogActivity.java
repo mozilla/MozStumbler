@@ -159,6 +159,7 @@ public class LogActivity extends ActionBarActivity {
     @Override
     protected void onPause() {
         super.onPause();
+        mConsoleView.clear();
         sConsoleView = null;
     }
 

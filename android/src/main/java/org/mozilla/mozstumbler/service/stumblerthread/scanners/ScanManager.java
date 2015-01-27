@@ -15,7 +15,6 @@ import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.Prefs;
 import org.mozilla.mozstumbler.service.core.logging.Log;
 import org.mozilla.mozstumbler.service.stumblerthread.Reporter;
-import org.mozilla.mozstumbler.service.stumblerthread.blocklist.WifiBlockListInterface;
 import org.mozilla.mozstumbler.service.stumblerthread.motiondetection.LocationChangeSensor;
 import org.mozilla.mozstumbler.service.stumblerthread.motiondetection.MotionSensor;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner.CellScanner;
@@ -207,10 +206,6 @@ public class ScanManager {
 
         mIsScanning = false;
         return true;
-    }
-
-    public void setWifiBlockList(WifiBlockListInterface list) {
-        WifiScanner.setWifiBlockList(list);
     }
 
     public synchronized boolean isScanning() {

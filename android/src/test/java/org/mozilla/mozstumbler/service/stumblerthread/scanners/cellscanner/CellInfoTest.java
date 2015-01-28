@@ -72,7 +72,5 @@ public class CellInfoTest {
             cellInfo.setCellLocation(gcl, networkType, "123456", 5, 5);
             assertEquals(CellInfo.CELL_RADIO_CDMA, cellInfo.getCellRadio());
         }
-
     }
-
 }

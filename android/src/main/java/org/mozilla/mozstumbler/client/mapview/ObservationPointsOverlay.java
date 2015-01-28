@@ -30,6 +30,9 @@ import java.util.ListIterator;
 
 class ObservationPointsOverlay extends Overlay {
     private static final String LOG_TAG = LoggerUtil.makeLogTag(ObservationPointsOverlay.class);
+    private static final long DRAW_TIME_MILLIS = 30; // Abort drawing after this time
+    private static final int TIME_CHECK_MULTIPLE = 100; // Check the time after drawing this many
+    final DevicePixelConverter mConvertPx;
     private final Paint mRedPaint = new Paint();
     private final Paint mGreenPaint = new Paint();
     private final Paint mCellPaint = new Paint();
@@ -37,18 +40,10 @@ class ObservationPointsOverlay extends Overlay {
     private final Paint mBlackStrokePaint = new Paint();
     private final Paint mBlackStrokePaintThin = new Paint();
     private final Paint mBlackMLSLinePaint = new Paint();
-
-    final DevicePixelConverter mConvertPx;
-
-    private static final long DRAW_TIME_MILLIS = 30; // Abort drawing after this time
-    private static final int TIME_CHECK_MULTIPLE = 100; // Check the time after drawing this many
-
-    public boolean mOnMapShowMLS;
-
     private final int mSize3px;
-
+    public boolean mOnMapShowMLS;
     LinkedHashMap<Integer, ObservationPoint> mHashedGrid;
-    private Point mHashedGridAnchorPoint = new Point(0,0);
+    private Point mHashedGridAnchorPoint = new Point(0, 0);
 
     ObservationPointsOverlay(Context ctx) {
         super(ctx);
@@ -84,7 +79,7 @@ class ObservationPointsOverlay extends Overlay {
 
     void update(ObservationPoint obsPoint, MapView mapView, boolean isMlsPointUpdate) {
         final Projection pj = mapView.getProjection();
-        GeoPoint geoPoint = (isMlsPointUpdate)? obsPoint.pointMLS : obsPoint.pointGPS;
+        GeoPoint geoPoint = (isMlsPointUpdate) ? obsPoint.pointMLS : obsPoint.pointGPS;
         if (geoPoint == null) {
             ClientLog.w(LOG_TAG, "Caller error: geoPoint is null");
             return;
@@ -95,7 +90,7 @@ class ObservationPointsOverlay extends Overlay {
             // add to hashed grid
             addToGridHash(obsPoint, point, new Point(mapView.getScrollX(), mapView.getScrollY()));
         }
-        
+
         mapView.postInvalidate();
     }
 

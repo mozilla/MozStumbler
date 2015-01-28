@@ -6,8 +6,8 @@ import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 import java.util.ArrayList;
 
 /**
-* Created by victorng on 14-11-20.
-*/
+ * Created by victorng on 14-11-20.
+ */
 public class ReportBatchBuilder {
     // The max number of reports stored in the mCurrentReports. Each report is a GPS location plus wifi and cell scan.
     // Once this size is reached, data is persisted to disk, mCurrentReports is cleared.
@@ -28,7 +28,7 @@ public class ReportBatchBuilder {
         String sep = "";
         final String separator = ",";
         if (reports != null) {
-            for(String s: reports) {
+            for (String s : reports) {
                 sb.append(sep).append(s);
                 sep = separator;
             }

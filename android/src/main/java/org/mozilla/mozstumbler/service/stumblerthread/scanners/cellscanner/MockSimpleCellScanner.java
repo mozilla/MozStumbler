@@ -48,7 +48,7 @@ public class MockSimpleCellScanner implements ISimpleCellScanner {
         SimulationContext ctx;
 
         try {
-            ctx = (SimulationContext)mAppContext;
+            ctx = (SimulationContext) mAppContext;
             result.addAll(ctx.getNextMockCellBlock());
         } catch (ClassCastException ex) {
             ClientLog.e(LOG_TAG, "Error getting the proper context", ex);
@@ -59,5 +59,4 @@ public class MockSimpleCellScanner implements ISimpleCellScanner {
     public boolean isSupportedOnThisDevice() {
         return true;
     }
-
 }

@@ -15,9 +15,8 @@ public class StreamUtils {
     // Constants
     // ===========================================================
 
-    private static final String LOG_TAG = LoggerUtil.makeLogTag(StreamUtils.class);
-
     public static final int IO_BUFFER_SIZE = 8 * 1024;
+    private static final String LOG_TAG = LoggerUtil.makeLogTag(StreamUtils.class);
 
     // ===========================================================
     // Fields

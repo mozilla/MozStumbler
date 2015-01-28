@@ -41,11 +41,11 @@ public class HttpUtil implements IHttpUtil {
     private final String userAgent;
 
     public HttpUtil() {
-        this((Prefs.getInstanceWithoutContext() != null)?
-              Prefs.getInstanceWithoutContext().getUserAgent() : "user-agent-not-set-properly");
+        this((Prefs.getInstanceWithoutContext() != null) ?
+                Prefs.getInstanceWithoutContext().getUserAgent() : "user-agent-not-set-properly");
     }
 
-    public HttpUtil(String ua){
+    public HttpUtil(String ua) {
         userAgent = ua;
     }
 
@@ -113,7 +113,7 @@ public class HttpUtil implements IHttpUtil {
             URLConnection connection = openConnectionWithProxy(url);
             inputStream = connection.getInputStream();
             outputStream = new FileOutputStream(file);
-            for (;;) {
+            for (; ; ) {
                 int readLength = inputStream.read(buffer, 0, bufferLength);
                 if (readLength == -1) {
                     return file;
@@ -180,9 +180,9 @@ public class HttpUtil implements IHttpUtil {
 
         try {
             return new HTTPResponse(httpURLConnection.getResponseCode(),
-                                    httpURLConnection.getHeaderFields(),
-                                    getContentBody(httpURLConnection),
-                                    0);
+                    httpURLConnection.getHeaderFields(),
+                    getContentBody(httpURLConnection),
+                    0);
         } catch (IOException e) {
             ClientLog.e(LOG_TAG, "Networking error", e);
         } finally {
@@ -225,7 +225,6 @@ public class HttpUtil implements IHttpUtil {
             // http://stackoverflow.com/questions/8587913/what-exactly-does-urlconnection-setdooutput-affect
             httpURLConnection.setDoOutput(true);
             httpURLConnection.setRequestMethod("POST");
-
         } catch (IOException e) {
             ClientLog.e(LOG_TAG, "Couldn't open a connection: ", e);
             return null;

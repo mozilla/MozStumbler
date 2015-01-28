@@ -20,15 +20,11 @@ import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
 import java.lang.ref.WeakReference;
 
-class MapLocationListener  {
-    private final WeakReference<MapFragment> mMapActivity;
-    private LocationManager mLocationManager;
+class MapLocationListener {
     private static final String LOG_TAG = LoggerUtil.makeLogTag(MapLocationListener.class);
-
-    interface ReceivedLocationCallback {
-        void receivedLocation();
-    }
-
+    private final WeakReference<MapFragment> mMapActivity;
+    private final LocationUpdateListener mNetworkLocationListener =
+            new LocationUpdateListener(LocationManager.NETWORK_PROVIDER, 1000, null);
     private final ReceivedLocationCallback mReceivedGpsLocation = new ReceivedLocationCallback() {
         @Override
         public void receivedLocation() {
@@ -36,37 +32,9 @@ class MapLocationListener  {
             enableLocationListener(false, mNetworkLocationListener);
         }
     };
-
-    private class LocationUpdateListener implements LocationListener {
-        final ReceivedLocationCallback mCallback;
-        final long mFreqMs;
-        final String mType;
-        boolean mIsActive;
-        public LocationUpdateListener(String type, long freq, ReceivedLocationCallback callback) {
-            mCallback = callback;
-            mType = type;
-            mFreqMs = freq;
-        }
-
-        public void onLocationChanged(Location location) {
-            if (mMapActivity.get() != null) {
-                mMapActivity.get().setUserPositionAt(location);
-            }
-            if (mCallback != null) {
-                mCallback.receivedLocation();
-            }
-        }
-
-        public void onStatusChanged(String s, int i, Bundle bundle) {}
-        public void onProviderEnabled(String s) {}
-        public void onProviderDisabled(String s) {}
-    }
-
     private final LocationUpdateListener mGpsLocationListener =
             new LocationUpdateListener(LocationManager.GPS_PROVIDER, 5000, mReceivedGpsLocation);
-    private final LocationUpdateListener mNetworkLocationListener =
-            new LocationUpdateListener(LocationManager.NETWORK_PROVIDER, 1000, null);
-
+    private LocationManager mLocationManager;
     private final GpsStatus.Listener mSatelliteListener = new GpsStatus.Listener() {
         public void onGpsStatusChanged(int event) {
             if (event == GpsStatus.GPS_EVENT_SATELLITE_STATUS && mLocationManager != null) {
@@ -151,5 +119,40 @@ class MapLocationListener  {
     public void pauseGpsUpdates(boolean isGpsOff) {
         enableLocationListener(!isGpsOff, mGpsLocationListener);
         enableLocationListener(true, mNetworkLocationListener);
+    }
+
+    interface ReceivedLocationCallback {
+        void receivedLocation();
+    }
+
+    private class LocationUpdateListener implements LocationListener {
+        final ReceivedLocationCallback mCallback;
+        final long mFreqMs;
+        final String mType;
+        boolean mIsActive;
+
+        public LocationUpdateListener(String type, long freq, ReceivedLocationCallback callback) {
+            mCallback = callback;
+            mType = type;
+            mFreqMs = freq;
+        }
+
+        public void onLocationChanged(Location location) {
+            if (mMapActivity.get() != null) {
+                mMapActivity.get().setUserPositionAt(location);
+            }
+            if (mCallback != null) {
+                mCallback.receivedLocation();
+            }
+        }
+
+        public void onStatusChanged(String s, int i, Bundle bundle) {
+        }
+
+        public void onProviderEnabled(String s) {
+        }
+
+        public void onProviderDisabled(String s) {
+        }
     }
 }

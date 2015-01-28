@@ -35,15 +35,14 @@ public class GPSScanner implements LocationListener {
     private static final float ACTIVE_MODE_GPS_MIN_UPDATE_DISTANCE_M = 30;
     private static final long PASSIVE_GPS_MIN_UPDATE_FREQ_MS = 3000;
     private static final float PASSIVE_GPS_MOVEMENT_MIN_DELTA_M = 30;
-    private long mTelemetry_lastStartedMs;
-
     private final StumblerFilter stumbleFilter = new StumblerFilter();
     private final Context mContext;
+    private final ScanManager mScanManager;
+    private long mTelemetry_lastStartedMs;
     private GpsStatus.Listener mGPSListener;
     private int mLocationCount;
     private Location mLocation = new Location("internal");
     private boolean mIsPassiveMode;
-    private final ScanManager mScanManager;
 
     public GPSScanner(Context context, ScanManager scanManager) {
         mContext = context;
@@ -52,7 +51,7 @@ public class GPSScanner implements LocationListener {
 
     public void start(final ActiveOrPassiveStumbling stumblingMode) {
         mIsPassiveMode = (stumblingMode == ActiveOrPassiveStumbling.PASSIVE_STUMBLING);
-        if (mIsPassiveMode ) {
+        if (mIsPassiveMode) {
             startPassiveMode();
         } else {
             startActiveMode();
@@ -61,7 +60,7 @@ public class GPSScanner implements LocationListener {
 
     private boolean isGpsAvailable(LocationManager locationManager) {
         if (locationManager == null ||
-            locationManager.getProvider(LocationManager.GPS_PROVIDER) == null) {
+                locationManager.getProvider(LocationManager.GPS_PROVIDER) == null) {
             String msg = "No GPS available, scanning not started.";
             Log.d(LOG_TAG, msg);
             AppGlobals.guiLogError(msg);
@@ -82,7 +81,6 @@ public class GPSScanner implements LocationListener {
             TelemetryWrapper.addToHistogram(AppGlobals.TELEMETRY_TIME_BETWEEN_STARTS_SEC, timeDiffSec);
         }
         mTelemetry_lastStartedMs = System.currentTimeMillis();
-
     }
 
     private void startActiveMode() {
@@ -99,7 +97,7 @@ public class GPSScanner implements LocationListener {
         reportLocationLost();
 
         mGPSListener = new GpsStatus.Listener() {
-                public void onGpsStatusChanged(int event) {
+            public void onGpsStatusChanged(int event) {
                 if (event == GpsStatus.GPS_EVENT_SATELLITE_STATUS) {
                     GpsStatus status = getLocationManager().getGpsStatus(null);
                     Iterable<GpsSatellite> sats = status.getSatellites();
@@ -132,8 +130,8 @@ public class GPSScanner implements LocationListener {
         reportLocationLost();
 
         if (mGPSListener != null) {
-          lm.removeGpsStatusListener(mGPSListener);
-          mGPSListener = null;
+            lm.removeGpsStatusListener(mGPSListener);
+            mGPSListener = null;
         }
     }
 
@@ -164,7 +162,7 @@ public class GPSScanner implements LocationListener {
             return;
         }
 
-        String logMsg = (mIsPassiveMode)? "[Passive] " : "[Active] ";
+        String logMsg = (mIsPassiveMode) ? "[Passive] " : "[Active] ";
 
         String provider = location.getProvider();
         if (!provider.toLowerCase().contains("gps")) {
@@ -209,7 +207,7 @@ public class GPSScanner implements LocationListener {
 
         if (timeDeltaMs > 0) {
             TelemetryWrapper.addToHistogram(AppGlobals.TELEMETRY_TIME_BETWEEN_RECEIVED_LOCATIONS_SEC,
-                Long.valueOf(timeDeltaMs).intValue() / 1000);
+                    Long.valueOf(timeDeltaMs).intValue() / 1000);
         }
     }
 
@@ -227,7 +225,7 @@ public class GPSScanner implements LocationListener {
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {
         if ((status != LocationProvider.AVAILABLE) &&
-            (LocationManager.GPS_PROVIDER.equals(provider))) {
+                (LocationManager.GPS_PROVIDER.equals(provider))) {
             reportLocationLost();
         }
     }
@@ -250,5 +248,4 @@ public class GPSScanner implements LocationListener {
         i.putExtra(ACTION_ARG_TIME, System.currentTimeMillis());
         LocalBroadcastManager.getInstance(mContext).sendBroadcastSync(i);
     }
-
 }

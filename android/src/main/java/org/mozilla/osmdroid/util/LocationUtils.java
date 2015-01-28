@@ -48,5 +48,4 @@ public class LocationUtils implements UtilConstants {
         }
         return pLocationManager.getLastKnownLocation(pProvider);
     }
-
 }

@@ -16,5 +16,4 @@ public class CustomShadowLocationManager extends ShadowLocationManager {
     public android.location.LocationProvider getProvider(java.lang.String name) {
         return null;
     }
-
 }

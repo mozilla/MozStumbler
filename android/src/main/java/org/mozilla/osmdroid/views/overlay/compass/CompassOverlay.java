@@ -31,34 +31,27 @@ import org.mozilla.osmdroid.views.overlay.Overlay;
  * @author Manuel Stahl
  */
 public class CompassOverlay extends Overlay implements IOverlayMenuProvider, IOrientationConsumer {
+    public static final int MENU_COMPASS = getSafeMenuId();
     private static final Paint sSmoothPaint = new Paint(Paint.FILTER_BITMAP_FLAG);
     protected final MapView mMapView;
-    private final Display mDisplay;
-
-    public IOrientationProvider mOrientationProvider;
-
     protected final Paint mPaint = new Paint();
-    protected Bitmap mCompassFrameBitmap;
-    protected Bitmap mCompassRoseBitmap;
-    private final Matrix mCompassMatrix = new Matrix();
-    private boolean mIsCompassEnabled;
-
-    /**
-     * The bearing, in degrees east of north, or NaN if none has been set.
-     */
-    private float mAzimuth = Float.NaN;
-
-    private float mCompassCenterX = 35.0f;
-    private float mCompassCenterY = 35.0f;
-    private final float mCompassRadius = 20.0f;
-
     protected final float mCompassFrameCenterX;
     protected final float mCompassFrameCenterY;
     protected final float mCompassRoseCenterX;
     protected final float mCompassRoseCenterY;
-
-    public static final int MENU_COMPASS = getSafeMenuId();
-
+    private final Display mDisplay;
+    private final Matrix mCompassMatrix = new Matrix();
+    private final float mCompassRadius = 20.0f;
+    public IOrientationProvider mOrientationProvider;
+    protected Bitmap mCompassFrameBitmap;
+    protected Bitmap mCompassRoseBitmap;
+    private boolean mIsCompassEnabled;
+    /**
+     * The bearing, in degrees east of north, or NaN if none has been set.
+     */
+    private float mAzimuth = Float.NaN;
+    private float mCompassCenterX = 35.0f;
+    private float mCompassCenterY = 35.0f;
     private boolean mOptionsMenuEnabled = true;
 
     // ===========================================================
@@ -187,13 +180,13 @@ public class CompassOverlay extends Overlay implements IOverlayMenuProvider, IOr
     // ===========================================================
 
     @Override
-    public void setOptionsMenuEnabled(final boolean pOptionsMenuEnabled) {
-        this.mOptionsMenuEnabled = pOptionsMenuEnabled;
+    public boolean isOptionsMenuEnabled() {
+        return this.mOptionsMenuEnabled;
     }
 
     @Override
-    public boolean isOptionsMenuEnabled() {
-        return this.mOptionsMenuEnabled;
+    public void setOptionsMenuEnabled(final boolean pOptionsMenuEnabled) {
+        this.mOptionsMenuEnabled = pOptionsMenuEnabled;
     }
 
     @Override

@@ -33,7 +33,6 @@ public class LocationAdapter {
     }
 
 
-
     public static Location fromJSON(JSONObject jsonObj) {
         Location location = new Location(AppGlobals.LOCATION_ORIGIN_INTERNAL);
         location.setLatitude(getLat(jsonObj));
@@ -70,5 +69,4 @@ public class LocationAdapter {
         }
         return result;
     }
-
 }

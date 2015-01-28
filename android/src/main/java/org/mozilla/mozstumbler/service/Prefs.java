@@ -38,11 +38,8 @@ public class Prefs {
     private static final String MOTION_CHANGE_TIME_WINDOW_SECONDS = "motion_change_time";
 
     private static final String SAVE_STUMBLE_LOGS = "save_stumble_logs";
-    private final SharedPreferences mSharedPrefs;
-
-    public enum PowerSavingModeOptions { Off, On, Aggressive }
-
     protected static Prefs sInstance;
+    private final SharedPreferences mSharedPrefs;
 
     protected Prefs(Context context) {
         mSharedPrefs = context.getSharedPreferences(PREFS_FILE, Context.MODE_MULTI_PROCESS | Context.MODE_PRIVATE);
@@ -159,22 +156,22 @@ public class Prefs {
         return getBoolPrefWithDefault(WIFI_ONLY, true);
     }
 
-    public synchronized void setSaveStumbleLogs(boolean state) {
-        setBoolPref(SAVE_STUMBLE_LOGS, state);
+    public synchronized void setUseWifiOnly(boolean state) {
+        setBoolPref(WIFI_ONLY, state);
     }
 
     public synchronized boolean isSaveStumbleLogs() {
         return getBoolPrefWithDefault(SAVE_STUMBLE_LOGS, false);
     }
 
+    public synchronized void setSaveStumbleLogs(boolean state) {
+        setBoolPref(SAVE_STUMBLE_LOGS, state);
+    }
+
 
     ///
     /// Privates
     ///
-
-    public synchronized void setUseWifiOnly(boolean state) {
-        setBoolPref(WIFI_ONLY, state);
-    }
 
     protected String getStringPref(String key) {
         return getPrefs().getString(key, null);
@@ -249,25 +246,19 @@ public class Prefs {
         return getPrefs().getInt(MOTION_CHANGE_DISTANCE_METERS, 50);
     }
 
-    public int getMotionChangeTimeWindowSeconds() {
-        return getPrefs().getInt(MOTION_CHANGE_TIME_WINDOW_SECONDS, 120);
-    }
-
     public void setMotionChangeDistanceMeters(int value) {
         SharedPreferences.Editor editor = getPrefs().edit();
         editor.putInt(MOTION_CHANGE_DISTANCE_METERS, value);
         apply(editor);
     }
 
+    public int getMotionChangeTimeWindowSeconds() {
+        return getPrefs().getInt(MOTION_CHANGE_TIME_WINDOW_SECONDS, 120);
+    }
+
     public void setMotionChangeTimeWindowSeconds(int value) {
         SharedPreferences.Editor editor = getPrefs().edit();
         editor.putInt(MOTION_CHANGE_TIME_WINDOW_SECONDS, value);
-        apply(editor);
-    }
-
-    public void setPowerSavingMode(PowerSavingModeOptions mode) {
-        SharedPreferences.Editor editor = getPrefs().edit();
-        editor.putInt(POWER_SAVING_MODE, mode.ordinal());
         apply(editor);
     }
 
@@ -279,4 +270,12 @@ public class Prefs {
         }
         return PowerSavingModeOptions.values()[i];
     }
+
+    public void setPowerSavingMode(PowerSavingModeOptions mode) {
+        SharedPreferences.Editor editor = getPrefs().edit();
+        editor.putInt(POWER_SAVING_MODE, mode.ordinal());
+        apply(editor);
+    }
+
+    public enum PowerSavingModeOptions {Off, On, Aggressive}
 }

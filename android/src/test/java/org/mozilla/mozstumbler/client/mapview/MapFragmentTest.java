@@ -15,7 +15,6 @@ import org.robolectric.annotation.Config;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.robolectric.util.FragmentTestUtil.startFragment;
@@ -58,5 +57,4 @@ public class MapFragmentTest {
         // merged.
         verify(mapFragment).setHighBandwidthMap(false, false);
     }
-
 }

@@ -129,7 +129,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/file_bug_reproduction"/>
+                android:text="@string/file_bug_reproduction" />
 
             <EditText
                 android:id="@+id/bug_report_reproduction"

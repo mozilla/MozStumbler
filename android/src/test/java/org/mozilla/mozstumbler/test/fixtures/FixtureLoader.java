@@ -13,7 +13,7 @@ public class FixtureLoader {
 
      Returns null on error loading the test fixture.
      */
-    public static byte[] loadResource(String path)  {
+    public static byte[] loadResource(String path) {
         int nRead;
         byte[] data = new byte[16384];
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();

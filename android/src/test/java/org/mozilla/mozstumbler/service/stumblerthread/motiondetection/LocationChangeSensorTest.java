@@ -37,9 +37,6 @@ import static org.mozilla.mozstumbler.service.stumblerthread.ReporterTest.getLoc
 public class LocationChangeSensorTest {
 
     private static final String LOG_TAG = LoggerUtil.makeLogTag(LocationChangeSensorTest.class);
-    private LocationChangeSensor locationChangeSensor;
-    private LinkedList<Intent> receivedIntent = new LinkedList<Intent>();
-
     // After DetectUnchangingLocation reports the user is not moving, and the scanning pauses,
     // then use MotionSensor to determine when to wake up and start scanning again.
     private final BroadcastReceiver callbackReceiver = new BroadcastReceiver() {
@@ -49,7 +46,8 @@ public class LocationChangeSensorTest {
             receivedIntent.add(intent);
         }
     };
-
+    private LocationChangeSensor locationChangeSensor;
+    private LinkedList<Intent> receivedIntent = new LinkedList<Intent>();
     private Context ctx;
     private MockSystemClock clock;
 
@@ -97,7 +95,7 @@ public class LocationChangeSensorTest {
 
         locationChangeSensor.removeTimeoutCheck();
 
-        setPosition(0,0);
+        setPosition(0, 0);
         assertTrue(locationChangeSensor.removeTimeoutCheck());
     }
 
@@ -143,7 +141,7 @@ public class LocationChangeSensorTest {
         Robolectric.runUiThreadTasksIncludingDelayedTasks();
         assertEquals(expectedPosition, locationChangeSensor.testing_getLastLocation());
 
-        final double movementDistance = isBigMovement? 1.0 : 0.001;
+        final double movementDistance = isBigMovement ? 1.0 : 0.001;
         Intent intent = getLocationIntent(20 + movementDistance, 30);
         // Muck about with the time and move to the end of time
         clock.setCurrentTime(Long.MAX_VALUE);
@@ -209,7 +207,7 @@ public class LocationChangeSensorTest {
         locationChangeSensor.quickCheckForFalsePositiveAfterMotionSensorMovement();
         setPosition(x + 0.1, y);
 
-        fakeWait(tick/2);
+        fakeWait(tick / 2);
 
         // not enough time has passed to pause
         assertTrue(receivedIntent.size() == 0);

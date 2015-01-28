@@ -36,15 +36,13 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.verify;
 
 @Config(emulateSdk = 18)
 @RunWith(RobolectricTestRunner.class)
 public class TileDownloaderDelegateTest {
 
-    private final String LOG_TAG = LoggerUtil.makeLogTag(TileDownloaderDelegateTest.class);
-
     private static final String testUrl = "http://not.a.real.url/";
+    private final String LOG_TAG = LoggerUtil.makeLogTag(TileDownloaderDelegateTest.class);
 
     @Test
     public void testSimpleHTTP200() throws BitmapTileSourceBase.LowMemoryException, IOException {
@@ -56,7 +54,7 @@ public class TileDownloaderDelegateTest {
         INetworkAvailablityCheck netAvailabilityCheck = mock(INetworkAvailablityCheck.class);
         TileIOFacade ioFacade = mock(TileIOFacade.class);
 
-        ITileSource mockTileSource =  spy(new XYTileSource("Stumbler-BaseMap-Tiles",
+        ITileSource mockTileSource = spy(new XYTileSource("Stumbler-BaseMap-Tiles",
                 null, 1, AbstractMapOverlay.MAX_ZOOM_LEVEL_OF_MAP,
                 AbstractMapOverlay.TILE_PIXEL_SIZE,
                 AbstractMapOverlay.FILE_TYPE_SUFFIX_PNG,
@@ -106,7 +104,7 @@ public class TileDownloaderDelegateTest {
         INetworkAvailablityCheck netAvailabilityCheck = mock(INetworkAvailablityCheck.class);
         TileIOFacade ioFacade = mock(TileIOFacade.class);
 
-        ITileSource mockTileSource =  spy(new XYTileSource("Stumbler-BaseMap-Tiles",
+        ITileSource mockTileSource = spy(new XYTileSource("Stumbler-BaseMap-Tiles",
                 null, 1, AbstractMapOverlay.MAX_ZOOM_LEVEL_OF_MAP,
                 AbstractMapOverlay.TILE_PIXEL_SIZE,
                 AbstractMapOverlay.FILE_TYPE_SUFFIX_PNG,
@@ -160,7 +158,7 @@ public class TileDownloaderDelegateTest {
         INetworkAvailablityCheck netAvailabilityCheck = mock(INetworkAvailablityCheck.class);
         TileIOFacade ioFacade = mock(TileIOFacade.class);
 
-        ITileSource mockTileSource =  spy(new XYTileSource("Stumbler-BaseMap-Tiles",
+        ITileSource mockTileSource = spy(new XYTileSource("Stumbler-BaseMap-Tiles",
                 null, 1, AbstractMapOverlay.MAX_ZOOM_LEVEL_OF_MAP,
                 AbstractMapOverlay.TILE_PIXEL_SIZE,
                 AbstractMapOverlay.FILE_TYPE_SUFFIX_PNG,
@@ -219,7 +217,7 @@ public class TileDownloaderDelegateTest {
         INetworkAvailablityCheck netAvailabilityCheck = mock(INetworkAvailablityCheck.class);
         TileIOFacade ioFacade = mock(TileIOFacade.class);
 
-        ITileSource mockTileSource =  spy(new XYTileSource("Stumbler-BaseMap-Tiles",
+        ITileSource mockTileSource = spy(new XYTileSource("Stumbler-BaseMap-Tiles",
                 null, 1, AbstractMapOverlay.MAX_ZOOM_LEVEL_OF_MAP,
                 AbstractMapOverlay.TILE_PIXEL_SIZE,
                 AbstractMapOverlay.FILE_TYPE_SUFFIX_PNG,
@@ -249,7 +247,7 @@ public class TileDownloaderDelegateTest {
         INetworkAvailablityCheck netAvailabilityCheck = mock(INetworkAvailablityCheck.class);
         TileIOFacade ioFacade = mock(TileIOFacade.class);
 
-        ITileSource mockTileSource =  spy(new XYTileSource("Stumbler-BaseMap-Tiles",
+        ITileSource mockTileSource = spy(new XYTileSource("Stumbler-BaseMap-Tiles",
                 null, 1, AbstractMapOverlay.MAX_ZOOM_LEVEL_OF_MAP,
                 AbstractMapOverlay.TILE_PIXEL_SIZE,
                 AbstractMapOverlay.FILE_TYPE_SUFFIX_PNG,
@@ -270,11 +268,11 @@ public class TileDownloaderDelegateTest {
     }
 
 
-
     private SerializableTile getEmptySerializableTile(String etag) throws IOException {
         // Check that we've actually downloaded the file
         return new SerializableTile(new byte[0], etag);
     }
+
     private SerializableTile getSerializableTile() throws IOException {
         // Check that we've actually downloaded the file
         File tmpFile = File.createTempFile("stile", "tmpfile");
@@ -291,5 +289,4 @@ public class TileDownloaderDelegateTest {
 
         return new SerializableTile(new File(absPath));
     }
-
 }

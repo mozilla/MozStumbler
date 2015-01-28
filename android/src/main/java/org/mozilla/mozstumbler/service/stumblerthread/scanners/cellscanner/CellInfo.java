@@ -19,20 +19,16 @@ import org.json.JSONObject;
 import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
 public class CellInfo implements Parcelable {
-    private static final String LOG_TAG = LoggerUtil.makeLogTag(CellInfo.class);
-
     public static final String RADIO_GSM = "gsm";
     public static final String RADIO_CDMA = "cdma";
-
     public static final String CELL_RADIO_UNKNOWN = "";
     public static final String CELL_RADIO_GSM = "gsm";
     public static final String CELL_RADIO_UMTS = "umts";
     public static final String CELL_RADIO_CDMA = "cdma";
     public static final String CELL_RADIO_LTE = "lte";
-
     public static final int UNKNOWN_CID = -1;
     public static final int UNKNOWN_SIGNAL = -1000;
-
+    private static final String LOG_TAG = LoggerUtil.makeLogTag(CellInfo.class);
     private String mRadio;
     private String mCellRadio;
 
@@ -50,12 +46,74 @@ public class CellInfo implements Parcelable {
         setRadio(phoneType);
     }
 
+    static String getCellRadioTypeName(int networkType) {
+        switch (networkType) {
+            // If the network is either GSM or any high-data-rate variant of it, the radio
+            // field should be specified as `gsm`. This includes `GSM`, `EDGE` and `GPRS`.
+            case TelephonyManager.NETWORK_TYPE_GPRS:
+            case TelephonyManager.NETWORK_TYPE_EDGE:
+                return CELL_RADIO_GSM;
+
+            // If the network is either UMTS or any high-data-rate variant of it, the radio
+            // field should be specified as `umts`. This includes `UMTS`, `HSPA`, `HSDPA`,
+            // `HSPA+` and `HSUPA`.
+            case TelephonyManager.NETWORK_TYPE_UMTS:
+            case TelephonyManager.NETWORK_TYPE_HSDPA:
+            case TelephonyManager.NETWORK_TYPE_HSUPA:
+            case TelephonyManager.NETWORK_TYPE_HSPA:
+            case TelephonyManager.NETWORK_TYPE_HSPAP:
+                return CELL_RADIO_UMTS;
+
+            case TelephonyManager.NETWORK_TYPE_LTE:
+                return CELL_RADIO_LTE;
+
+            // If the network is either CDMA or one of the EVDO variants, the radio
+            // field should be specified as `cdma`. This includes `1xRTT`, `CDMA`, `eHRPD`,
+            // `EVDO_0`, `EVDO_A`, `EVDO_B`, `IS95A` and `IS95B`.
+            case TelephonyManager.NETWORK_TYPE_EVDO_0:
+            case TelephonyManager.NETWORK_TYPE_EVDO_A:
+            case TelephonyManager.NETWORK_TYPE_EVDO_B:
+            case TelephonyManager.NETWORK_TYPE_1xRTT:
+            case TelephonyManager.NETWORK_TYPE_EHRPD:
+            case TelephonyManager.NETWORK_TYPE_IDEN:
+                return CELL_RADIO_CDMA;
+
+            default:
+                Log.e(LOG_TAG, "", new IllegalArgumentException("Unexpected network type: " + networkType));
+                return CELL_RADIO_UNKNOWN;
+        }
+    }
+
+    @SuppressWarnings("fallthrough")
+    private static String getRadioTypeName(int phoneType) {
+        switch (phoneType) {
+            case TelephonyManager.PHONE_TYPE_CDMA:
+                return RADIO_CDMA;
+
+            case TelephonyManager.PHONE_TYPE_GSM:
+                return RADIO_GSM;
+
+            default:
+                Log.e(LOG_TAG, "", new IllegalArgumentException("Unexpected phone type: " + phoneType));
+                // fallthrough
+
+            case TelephonyManager.PHONE_TYPE_NONE:
+            case TelephonyManager.PHONE_TYPE_SIP:
+                // These devices have no radio.
+                return "";
+        }
+    }
+
     public boolean isCellRadioValid() {
         return mCellRadio != null && (mCellRadio.length() > 0) && !mCellRadio.equals("0");
     }
 
     public String getRadio() {
         return mRadio;
+    }
+
+    void setRadio(int phoneType) {
+        mRadio = getRadioTypeName(phoneType);
     }
 
     public String getCellRadio() {
@@ -142,10 +200,6 @@ public class CellInfo implements Parcelable {
         mAsu = UNKNOWN_SIGNAL;
         mTa = UNKNOWN_CID;
         mPsc = UNKNOWN_CID;
-    }
-
-    void setRadio(int phoneType) {
-        mRadio = getRadioTypeName(phoneType);
     }
 
     void setNeighboringCellInfo(NeighboringCellInfo nci, String networkOperator) {
@@ -235,11 +289,11 @@ public class CellInfo implements Parcelable {
     /**
      * @param mcc Mobile Country Code, Integer.MAX_VALUE if unknown
      * @param mnc Mobile Network Code, Integer.MAX_VALUE if unknown
-     * @param ci Cell Identity, Integer.MAX_VALUE if unknown
+     * @param ci  Cell Identity, Integer.MAX_VALUE if unknown
      * @param pci Physical Cell Id, Integer.MAX_VALUE if unknown
      * @param tac Tracking Area Code, Integer.MAX_VALUE if unknown
      * @param asu Arbitrary strength unit
-     * @param ta Timing advance
+     * @param ta  Timing advance
      */
     void setLteCellInfo(int mcc, int mnc, int ci, int pci, int tac, int asu, int ta) {
         mCellRadio = CELL_RADIO_LTE;
@@ -268,64 +322,6 @@ public class CellInfo implements Parcelable {
         mMnc = Integer.parseInt(mccMnc.substring(3));
     }
 
-    static String getCellRadioTypeName(int networkType) {
-        switch (networkType) {
-            // If the network is either GSM or any high-data-rate variant of it, the radio
-            // field should be specified as `gsm`. This includes `GSM`, `EDGE` and `GPRS`.
-            case TelephonyManager.NETWORK_TYPE_GPRS:
-            case TelephonyManager.NETWORK_TYPE_EDGE:
-                return CELL_RADIO_GSM;
-
-            // If the network is either UMTS or any high-data-rate variant of it, the radio
-            // field should be specified as `umts`. This includes `UMTS`, `HSPA`, `HSDPA`,
-            // `HSPA+` and `HSUPA`.
-            case TelephonyManager.NETWORK_TYPE_UMTS:
-            case TelephonyManager.NETWORK_TYPE_HSDPA:
-            case TelephonyManager.NETWORK_TYPE_HSUPA:
-            case TelephonyManager.NETWORK_TYPE_HSPA:
-            case TelephonyManager.NETWORK_TYPE_HSPAP:
-                return CELL_RADIO_UMTS;
-
-            case TelephonyManager.NETWORK_TYPE_LTE:
-                return CELL_RADIO_LTE;
-
-            // If the network is either CDMA or one of the EVDO variants, the radio
-            // field should be specified as `cdma`. This includes `1xRTT`, `CDMA`, `eHRPD`,
-            // `EVDO_0`, `EVDO_A`, `EVDO_B`, `IS95A` and `IS95B`.
-            case TelephonyManager.NETWORK_TYPE_EVDO_0:
-            case TelephonyManager.NETWORK_TYPE_EVDO_A:
-            case TelephonyManager.NETWORK_TYPE_EVDO_B:
-            case TelephonyManager.NETWORK_TYPE_1xRTT:
-            case TelephonyManager.NETWORK_TYPE_EHRPD:
-            case TelephonyManager.NETWORK_TYPE_IDEN:
-                return CELL_RADIO_CDMA;
-
-            default:
-                Log.e(LOG_TAG, "", new IllegalArgumentException("Unexpected network type: " + networkType));
-                return CELL_RADIO_UNKNOWN;
-        }
-    }
-
-    @SuppressWarnings("fallthrough")
-    private static String getRadioTypeName(int phoneType) {
-        switch (phoneType) {
-            case TelephonyManager.PHONE_TYPE_CDMA:
-                return RADIO_CDMA;
-
-            case TelephonyManager.PHONE_TYPE_GSM:
-                return RADIO_GSM;
-
-            default:
-                Log.e(LOG_TAG, "", new IllegalArgumentException("Unexpected phone type: " + phoneType));
-                // fallthrough
-
-            case TelephonyManager.PHONE_TYPE_NONE:
-            case TelephonyManager.PHONE_TYPE_SIP:
-                // These devices have no radio.
-                return "";
-        }
-    }
-
     @Override
     public boolean equals(Object o) {
         if (o == this) {
@@ -336,15 +332,15 @@ public class CellInfo implements Parcelable {
         }
         CellInfo ci = (CellInfo) o;
         return mRadio.equals(ci.mRadio)
-               && mCellRadio.equals(ci.mCellRadio)
-               && mMcc == ci.mMcc
-               && mMnc == ci.mMnc
-               && mCid == ci.mCid
-               && mLac == ci.mLac
-               && mSignal == ci.mSignal
-               && mAsu == ci.mAsu
-               && mTa == ci.mTa
-               && mPsc == ci.mPsc;
+                && mCellRadio.equals(ci.mCellRadio)
+                && mMcc == ci.mMcc
+                && mMnc == ci.mMnc
+                && mCid == ci.mCid
+                && mLac == ci.mLac
+                && mSignal == ci.mSignal
+                && mAsu == ci.mAsu
+                && mTa == ci.mTa
+                && mPsc == ci.mPsc;
     }
 
     @Override

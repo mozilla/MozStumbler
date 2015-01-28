@@ -19,13 +19,13 @@ import org.mozilla.osmdroid.util.GeoPoint;
 public class ObservationPoint implements MLSLocationGetter.MLSLocationGetterCallback {
     public final GeoPoint pointGPS;
     public GeoPoint pointMLS;
-    private JSONObject mMLSQuery;
-    private boolean mIsMLSLocationQueryRunning;
     public long mTimestamp;
     public int mWifiCount;
     public int mCellCount;
     public boolean mWasReadFromFile;
     public double mHeading;
+    private JSONObject mMLSQuery;
+    private boolean mIsMLSLocationQueryRunning;
 
     public ObservationPoint(GeoPoint pointGPS) {
         this.pointGPS = pointGPS;
@@ -47,7 +47,8 @@ public class ObservationPoint implements MLSLocationGetter.MLSLocationGetterCall
         try {
             mCellCount = ichnaeaQueryObj.getInt(DataStorageContract.ReportsColumns.CELL_COUNT);
             mWifiCount = ichnaeaQueryObj.getInt(DataStorageContract.ReportsColumns.WIFI_COUNT);
-        } catch (JSONException ex) {}
+        } catch (JSONException ex) {
+        }
     }
 
     public void fetchMLS() {
@@ -56,7 +57,7 @@ public class ObservationPoint implements MLSLocationGetter.MLSLocationGetterCall
         }
         ClientPrefs prefs = ClientPrefs.getInstanceWithoutContext();
         if (prefs == null ||
-           (prefs.getUseWifiOnly() && !NetworkInfo.getInstance().isWifiAvailable())) {
+                (prefs.getUseWifiOnly() && !NetworkInfo.getInstance().isWifiAvailable())) {
             return;
         }
 

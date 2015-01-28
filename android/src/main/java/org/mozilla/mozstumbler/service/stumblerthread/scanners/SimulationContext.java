@@ -30,10 +30,6 @@ public class SimulationContext extends ContextWrapper {
 
     public final static int SIMULATION_PING_INTERVAL = 1000 * 1; // Every second
     private static final String LOG_TAG = LoggerUtil.makeLogTag(SimulationContext.class);
-    private double mLon;
-    private double mLat;
-    Handler handler = new Handler();
-    private LocationManager locationManager;
     final boolean REQUIRED_NETWORK = false;
     final boolean REQUIRES_SATELLITE = false;
     final boolean REQUIRES_CELL = false;
@@ -44,6 +40,10 @@ public class SimulationContext extends ContextWrapper {
     final int POWER_REQUIREMENT = 0;
     final int ACCURACY = 5;
     private final WifiManager wifiManager;
+    Handler handler = new Handler();
+    private double mLon;
+    private double mLat;
+    private LocationManager locationManager;
     private boolean keepRunning;
     private Object nextWifiBlock;
     private List<CellInfo> nextCellBlock;
@@ -78,11 +78,9 @@ public class SimulationContext extends ContextWrapper {
         } catch (IllegalArgumentException ex) {
             // no test provider was registered.  Shouldn't happen but it's totally safe.
         }
-
     }
 
-    void startRepeatingTask()
-    {
+    void startRepeatingTask() {
         synchronized (this) {
             keepRunning = true;
         }
@@ -94,12 +92,11 @@ public class SimulationContext extends ContextWrapper {
                     return;
                 }
 
-                synchronized(this) {
+                synchronized (this) {
                     if (keepRunning) {
                         locationManager.setTestProviderLocation(LocationManager.GPS_PROVIDER, mockLocation);
                         // Send another ping
                         handler.postDelayed(this, SIMULATION_PING_INTERVAL);
-
                     }
                 }
             }
@@ -126,7 +123,7 @@ public class SimulationContext extends ContextWrapper {
     }
 
     public Object getSystemService(String name) {
-        if (name.equals(Context.LOCATION_SERVICE)){
+        if (name.equals(Context.LOCATION_SERVICE)) {
             return locationManager;
         }
         return super.getSystemService(name);
@@ -182,7 +179,6 @@ public class SimulationContext extends ContextWrapper {
             }
         }
         return null;
-
     }
 
     private CellInfo makeCellInfo(int mcc, int mnc, int lac, int cid, int asu) throws IllegalAccessException, InvocationTargetException {
@@ -203,6 +199,5 @@ public class SimulationContext extends ContextWrapper {
         }
         return null;
     }
-
 }
 

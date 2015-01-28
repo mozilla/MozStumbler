@@ -22,8 +22,7 @@ public class ShaUtil {
 
         try {
             md = MessageDigest.getInstance("SHA-1");
-        }
-        catch(NoSuchAlgorithmException e) {
+        } catch (NoSuchAlgorithmException e) {
             Log.e(LOG_TAG, "Couldn't obtain SHA1 digest: " + e);
             return null;
         }
@@ -35,5 +34,4 @@ public class ShaUtil {
         }
         return result;
     }
-
 }

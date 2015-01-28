@@ -29,8 +29,7 @@ public class TelemetryWrapper {
         if (mAddToHistogram != null) {
             try {
                 mAddToHistogram.invoke(null, key, value);
-            }
-            catch (IllegalArgumentException e) {
+            } catch (IllegalArgumentException e) {
                 Log.d(LOG_TAG, "Got exception invoking.");
             } catch (InvocationTargetException e) {
                 Log.d(LOG_TAG, "Got exception invoking.");

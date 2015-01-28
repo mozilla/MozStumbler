@@ -25,7 +25,7 @@ public class ClientDataStorageManager extends DataStorageManager {
     }
 
     public static String sdcardArchivePath() {
-        return Environment.getExternalStorageDirectory()+ File.separator + "MozStumbler";
+        return Environment.getExternalStorageDirectory() + File.separator + "MozStumbler";
     }
 
     // This 'overrides' the static createGlobalInstance method
@@ -77,7 +77,7 @@ public class ClientDataStorageManager extends DataStorageManager {
             if (inStream != null) {
                 try {
                     inStream.close();
-                }catch (IOException ioEx) {
+                } catch (IOException ioEx) {
                     ClientLog.e(LOG_TAG, "error shutting down streams during a failed copy", ioEx);
                 }
             }
@@ -95,7 +95,7 @@ public class ClientDataStorageManager extends DataStorageManager {
         int length;
         //copy the file content in bytes
         try {
-            while ((length = inStream.read(buffer)) > 0){
+            while ((length = inStream.read(buffer)) > 0) {
                 outStream.write(buffer, 0, length);
             }
         } catch (IOException e) {
@@ -104,7 +104,7 @@ public class ClientDataStorageManager extends DataStorageManager {
             if (inStream != null) {
                 try {
                     inStream.close();
-                }catch (IOException ioEx) {
+                } catch (IOException ioEx) {
                     ClientLog.e(LOG_TAG, "error shutting down streams during a failed copy", ioEx);
                 }
             }
@@ -121,7 +121,7 @@ public class ClientDataStorageManager extends DataStorageManager {
         if (inStream != null) {
             try {
                 inStream.close();
-            }catch (IOException ioEx) {
+            } catch (IOException ioEx) {
                 ClientLog.e(LOG_TAG, "error shutting down streams during a failed copy", ioEx);
                 ok = false;
             }
@@ -139,6 +139,4 @@ public class ClientDataStorageManager extends DataStorageManager {
         // delete the original file
         return ok && aFile.delete();
     }
-
-
 }

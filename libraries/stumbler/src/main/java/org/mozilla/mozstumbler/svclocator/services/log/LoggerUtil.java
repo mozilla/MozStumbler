@@ -11,8 +11,8 @@ public class LoggerUtil {
         String name = cls.getSimpleName();
         final int maxLen = 23 - LOG_PREFIX.length();
         if (name.length() > maxLen) {
-                name = name.substring(name.length() - maxLen, name.length());
-            }
+            name = name.substring(name.length() - maxLen, name.length());
+        }
         return LOG_PREFIX + name;
     }
 }

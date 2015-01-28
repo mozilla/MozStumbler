@@ -36,7 +36,7 @@ public final class DateTimeUtils {
     public static long removeDay(long time) {
         Calendar c = Calendar.getInstance();
         c.setTimeInMillis(time);
-        c.set(Calendar.DAY_OF_MONTH,1);
+        c.set(Calendar.DAY_OF_MONTH, 1);
         return c.getTimeInMillis();
     }
 

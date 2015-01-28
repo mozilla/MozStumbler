@@ -9,7 +9,6 @@ public class ProductionLogger implements ILogger {
     public void w(String logTag, String s) {
 
         android.util.Log.w(logTag, s);
-
     }
 
     public String e(String logTag, String s, Throwable e) {
@@ -25,7 +24,6 @@ public class ProductionLogger implements ILogger {
             msg = "";
         } else {
             msg = e.toString();
-
         }
         android.util.Log.e(logTag, s + ":" + msg);
         return msg;
@@ -34,13 +32,10 @@ public class ProductionLogger implements ILogger {
     public void i(String logTag, String s) {
 
         android.util.Log.i(logTag, s);
-
     }
 
     public void d(String logTag, String s) {
 
         return;
-
     }
-
 }

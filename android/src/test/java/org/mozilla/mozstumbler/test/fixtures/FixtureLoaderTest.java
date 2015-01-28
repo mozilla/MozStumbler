@@ -19,7 +19,5 @@ public class FixtureLoaderTest {
         // This is just a basic test to see that the FixtureLoader is behaving correctly.
         assertNotNull(FixtureLoader.loadResource("org/mozilla/mozstumbler/test/fixtures/2976.png.merged"));
         assertNull(FixtureLoader.loadResource("org/mozilla/mozstumbler/test/fixtures/not_a_real_tile"));
-
     }
-
 }

@@ -315,6 +315,10 @@ public class MapController implements IMapController, MapViewConstants, OnFirstL
         }
     }
 
+    private enum ReplayType {
+        ZoomToSpanPoint, AnimateToPoint, AnimateToGeoPoint, SetCenterPoint
+    }
+
     protected class MyZoomAnimatorListener extends AnimatorListenerAdapter {
         @Override
         public void onAnimationStart(Animator animation) {
@@ -353,10 +357,6 @@ public class MapController implements IMapController, MapViewConstants, OnFirstL
         public void onAnimationRepeat(Animation animation) {
             // Nothing to do here...
         }
-    }
-
-    private enum ReplayType {
-        ZoomToSpanPoint, AnimateToPoint, AnimateToGeoPoint, SetCenterPoint
     }
 
     ;

@@ -15,25 +15,21 @@ import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
  */
 public class DelayedMapListener implements MapListener {
 
-    private static final String LOG_TAG = LoggerUtil.makeLogTag(DelayedMapListener.class);
-
     /**
      * Default listening delay
      */
     protected static final int DEFAULT_DELAY = 100;
-
-    /**
-     * The wrapped MapListener
-     */
-    MapListener wrappedListener;
-
+    private static final String LOG_TAG = LoggerUtil.makeLogTag(DelayedMapListener.class);
     /**
      * Listening delay, in milliseconds
      */
     protected long delay;
-
     protected Handler handler;
     protected CallbackTask callback;
+    /**
+     * The wrapped MapListener
+     */
+    MapListener wrappedListener;
 
     /*
      * @param wrappedListener The wrapped MapListener

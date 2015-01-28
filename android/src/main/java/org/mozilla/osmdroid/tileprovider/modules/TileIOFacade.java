@@ -25,7 +25,7 @@ import java.util.NoSuchElementException;
  The class has been extended to do read/write of etag and cache-control.
 
  */
-public class TileIOFacade  {
+public class TileIOFacade {
 
     // ===========================================================
     // Constants
@@ -93,10 +93,10 @@ public class TileIOFacade  {
     // @TODO vng: this should really just take in a header defined as
     // Map<String, String> instead of the single etag header
     public SerializableTile saveFile(final ITileSource pTileSource, final MapTile pTile,
-                            final byte[] tileBytes, String etag) {
+                                     final byte[] tileBytes, String etag) {
         File parent;
 
-        File sTileFile  = new File(OSMConstants.TILE_PATH_BASE,
+        File sTileFile = new File(OSMConstants.TILE_PATH_BASE,
                 pTileSource.getTileRelativeFilenameString(pTile) + OSMConstants.MERGED_FILE_EXT);
         parent = sTileFile.getParentFile();
 
@@ -179,7 +179,6 @@ public class TileIOFacade  {
             // See: http://code.google.com/p/android/issues/detail?id=5807
             return true;
         }
-
     }
 
     private List<File> getDirectoryFileList(final File aDirectory) {
@@ -239,5 +238,4 @@ public class TileIOFacade  {
             }
         }
     }
-
 }

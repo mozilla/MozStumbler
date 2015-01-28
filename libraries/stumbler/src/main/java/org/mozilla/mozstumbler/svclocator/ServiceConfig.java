@@ -3,8 +3,6 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package org.mozilla.mozstumbler.svclocator;
 
-import org.mozilla.mozstumbler.svclocator.services.ISystemClock;
-
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
 
@@ -18,12 +16,12 @@ public class ServiceConfig extends HashMap<Class<?>, Object> {
         try {
             c = Class.forName(className);
         } catch (ClassNotFoundException e) {
-            throw new RuntimeException("Error loading ["+className+"] class");
+            throw new RuntimeException("Error loading [" + className + "] class");
         }
         Constructor[] constructors = c.getConstructors();
 
-        Constructor<?> myConstructor= null;
-        for (Constructor<?> construct: constructors) {
+        Constructor<?> myConstructor = null;
+        for (Constructor<?> construct : constructors) {
             if (construct.getParameterTypes().length == 0) {
                 myConstructor = construct;
                 break;

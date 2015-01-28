@@ -5,9 +5,7 @@ package org.mozilla.mozstumbler.service.stumblerthread.motiondetection;
 
 import android.content.Context;
 import android.hardware.Sensor;
-import android.hardware.SensorEvent;
 import android.hardware.SensorManager;
-import android.net.wifi.ScanResult;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,12 +14,8 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowSensorManager;
 
-import java.lang.reflect.Constructor;
-
 import static junit.framework.Assert.assertNotNull;
 import static org.robolectric.Robolectric.shadowOf;
-
-import static org.robolectric.RobolectricShadowOfLevel16.shadowOf;
 
 @Config(emulateSdk = 18)
 @RunWith(RobolectricTestRunner.class)
@@ -33,7 +27,7 @@ public class LegacyMotionSensorTest {
         Context ctx = Robolectric.application;
 
         // Setup a ShadowSensorManager
-        SensorManager sensorManager  = (SensorManager)
+        SensorManager sensorManager = (SensorManager)
                 Robolectric.application.getSystemService(Context.SENSOR_SERVICE);
         ShadowSensorManager shadowSensorManager = shadowOf(sensorManager);
 
@@ -76,15 +70,11 @@ public class LegacyMotionSensorTest {
 
 
         // Push events through now.
-        for (float[] row: values) {
+        for (float[] row : values) {
             lms.sensorChanged(Sensor.TYPE_ACCELEROMETER, row);
         }
 
         // This is close enough.  Android sensors have a lot of noise.
-        assert(Math.abs(lms.computed_gravity - 9.81) < 0.25);
+        assert (Math.abs(lms.computed_gravity - 9.81) < 0.25);
     }
-
-
-
-
 }

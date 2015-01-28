@@ -14,7 +14,9 @@ import android.support.v4.content.LocalBroadcastManager;
 
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.AppGlobals.ActiveOrPassiveStumbling;
+import org.mozilla.mozstumbler.service.Prefs;
 import org.mozilla.mozstumbler.service.stumblerthread.Reporter;
+import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -22,9 +24,6 @@ import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicBoolean;
-
-import org.mozilla.mozstumbler.service.Prefs;
-import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
 public class CellScanner {
     public static final String ACTION_BASE = AppGlobals.ACTION_NAMESPACE + ".CellScanner.";
@@ -115,7 +114,6 @@ public class CellScanner {
                 Message message = new Message();
                 message.obj = intent;
                 mBroadcastScannedHandler.sendMessage(message);
-
             }
         }, 0, CELL_MIN_UPDATE_TIME);
     }

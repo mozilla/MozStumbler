@@ -17,8 +17,8 @@
     <string name="yes">بله</string>
     <string name="no">خیر</string>
     <string name="about_version">نسخهٔ %1$s</string>
-	<!--translations missing
-	<string name="about_openstreetmap">Map view tiles © OpenStreetMap contributors\nhttp://www.openstreetmap.org</string>
+    <!--translations missing
+    <string name="about_openstreetmap">Map view tiles © OpenStreetMap contributors\nhttp://www.openstreetmap.org</string>
     <string name="about_mapbox_title">MapBox</string>-->
     <string name="about_mapbox">دربارهٔ فراهم آورندهٔ نقشهٔ ما بیشتر بدانید…</string>
     <string name="about_legal_aosp">بیشتر آیکون‌ها استفاده‌شده در این برنامه از آثار ایجاد و به‌اشتراک‌گذاری‌شده توسط پروژهٔ متن‌باز اندروید گرفته یا بازتولیدشده‌است و بنا به شروط توضیح‌داده‌شده در مجوز Creative Commons 2.5 Attribution استفاده شده‌است.</string>
@@ -28,7 +28,6 @@
     <string name="metrics_observations_wifis_title">نقاط دسترسی وای‌فای:</string>
     <string name="metrics_observations_cell_towers_title">شبکه‌های گوشی همراه:</string>
     <string name="upload_observations_in_queue_title">در صف</string>
-
 
 
     <string name="upload_wifi_only_title">بارگذاری فقط هنگام وای‌فای</string>

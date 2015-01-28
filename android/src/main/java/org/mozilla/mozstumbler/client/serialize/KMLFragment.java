@@ -37,7 +37,7 @@ import java.lang.ref.WeakReference;
 import java.util.LinkedList;
 
 public class KMLFragment extends Fragment
-    implements ObservationPointSerializer.IListener {
+        implements ObservationPointSerializer.IListener {
 
     private final String LOG_TAG = LoggerUtil.makeLogTag(KMLFragment.class);
 
@@ -46,13 +46,15 @@ public class KMLFragment extends Fragment
     private TextView mSavedFileLocation;
 
     private View mRootView;
+    private boolean mIsRunning;
+    private Dialog mLoadFileDialog;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mRootView = inflater.inflate(R.layout.fragment_kml, container, false);
         mPointsToWrite = ObservedLocationsReceiver.getInstance().getObservationPoints();
         mProgressDialog = new WeakReference<ProgressDialog>(null);
-        mSavedFileLocation = (TextView)mRootView.findViewById(R.id.textViewSavedFile);
+        mSavedFileLocation = (TextView) mRootView.findViewById(R.id.textViewSavedFile);
 
         View buttonLoad = mRootView.findViewById(R.id.buttonLoad);
         View buttonSave = mRootView.findViewById(R.id.buttonSave);
@@ -73,7 +75,6 @@ public class KMLFragment extends Fragment
         return mRootView;
     }
 
-    private boolean mIsRunning;
     private void showProgress(boolean isStarted, String msg) {
         if (isStarted) {
             mProgressDialog = new WeakReference<ProgressDialog>(new ProgressDialog(getActivity()));
@@ -137,7 +138,7 @@ public class KMLFragment extends Fragment
 
     private void onClickSave(View v) {
         stopScanning();
-        
+
         if (mPointsToWrite == null) {
             return;
         }
@@ -151,7 +152,7 @@ public class KMLFragment extends Fragment
 
         final DateTime date = DateTime.now();
         final DateTimeFormatter dtf = DateTimeFormat.forPattern("dd-MM-yyyy-HH:mm");
-        final String name = "obs-" +  mPointsToWrite.size() + "-date-" + dtf.print(date) + ".kml";
+        final String name = "obs-" + mPointsToWrite.size() + "-date-" + dtf.print(date) + ".kml";
         final File dir = getActivity().getExternalFilesDir(null);
         final File file = new File(dir, name);
 
@@ -164,8 +165,8 @@ public class KMLFragment extends Fragment
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
 
-        final ListView list = (ListView)v;
-        final AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)menuInfo;
+        final ListView list = (ListView) v;
+        final AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
         final int position = info.position;
         final Object object = list.getAdapter().getItem(position);
 
@@ -177,7 +178,7 @@ public class KMLFragment extends Fragment
         MenuItem.OnMenuItemClickListener listener = new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                contextItemSelected(item, (object == null)? null : object.toString());
+                contextItemSelected(item, (object == null) ? null : object.toString());
                 if (mLoadFileDialog != null && mLoadFileDialog.isShowing()) {
                     mLoadFileDialog.dismiss();
                 }
@@ -258,14 +259,12 @@ public class KMLFragment extends Fragment
                 return name.endsWith(".kml");
             }
         });
-        return (list != null)? list : new String[0];
+        return (list != null) ? list : new String[0];
     }
 
     private void stopScanning() {
-        ((MainApp)getActivity().getApplication()).stopScanning();
+        ((MainApp) getActivity().getApplication()).stopScanning();
     }
-
-    private Dialog mLoadFileDialog;
 
     private void onClickLoad(View v) {
         stopScanning();
@@ -285,9 +284,9 @@ public class KMLFragment extends Fragment
         final ListView listView = new ListView(getActivity());
         registerForContextMenu(listView);
         final ArrayAdapter<String> modeAdapter = new ArrayAdapter<String>(getActivity(),
-                                                                    android.R.layout.simple_list_item_1,
-                                                                    android.R.id.text1,
-                                                                    files);
+                android.R.layout.simple_list_item_1,
+                android.R.id.text1,
+                files);
         listView.setAdapter(modeAdapter);
         builder.setView(listView);
         mLoadFileDialog = builder.create();

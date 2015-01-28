@@ -25,10 +25,9 @@ import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 public class ClientStumblerService extends StumblerService {
     private static final String LOG_TAG = LoggerUtil.makeLogTag(StumblerService.class);
     private final IBinder mBinder = new StumblerBinder();
-    private BatteryCheckReceiver mBatteryChecker;
-
     private final BatteryCheckCallback mBatteryCheckCallback = new BatteryCheckCallback() {
         private boolean waitForBatteryOkBeforeSendingNotification;
+
         @Override
         public void batteryCheckCallback(BatteryCheckReceiver receiver) {
             int minBattery = ClientPrefs.getInstance(ClientStumblerService.this).getMinBatteryPercent();
@@ -42,28 +41,7 @@ public class ClientStumblerService extends StumblerService {
             }
         }
     };
-
-    // Service binding is not used in stand-alone passive mode.
-    public final class StumblerBinder extends Binder {
-        // Only to be used in the non-standalone, non-passive case (Mozilla Stumbler). In the passive standalone usage
-        // of this class, everything, including initialization, is done on its dedicated thread
-        // This function is written to enforce the contract of its usage, and will throw if called from the wrong thread
-        public ClientStumblerService getServiceAndInitialize(Thread callingThread,
-                                                             long maxBytesOnDisk,
-                                                             int maxWeeksOld) {
-            if (Looper.getMainLooper().getThread() != callingThread) {
-                throw new RuntimeException("Only call from main thread");
-            }
-            ClientDataStorageManager.createGlobalInstance(ClientStumblerService.this,
-                    ClientStumblerService.this, maxBytesOnDisk, maxWeeksOld);
-            init();
-            return ClientStumblerService.this;
-        }
-
-        public ClientStumblerService getService() {
-            return ClientStumblerService.this;
-        }
-    }
+    private BatteryCheckReceiver mBatteryChecker;
 
     // Service binding is not used in stand-alone passive mode.
     @Override
@@ -87,7 +65,7 @@ public class ClientStumblerService extends StumblerService {
     @Override
     public void onRebind(Intent intent) {
         if (AppGlobals.isDebug) {
-            Log.d(LOG_TAG,"onRebind");
+            Log.d(LOG_TAG, "onRebind");
         }
     }
 
@@ -110,6 +88,28 @@ public class ClientStumblerService extends StumblerService {
         }
 
         mBatteryChecker.start();
+    }
+
+    // Service binding is not used in stand-alone passive mode.
+    public final class StumblerBinder extends Binder {
+        // Only to be used in the non-standalone, non-passive case (Mozilla Stumbler). In the passive standalone usage
+        // of this class, everything, including initialization, is done on its dedicated thread
+        // This function is written to enforce the contract of its usage, and will throw if called from the wrong thread
+        public ClientStumblerService getServiceAndInitialize(Thread callingThread,
+                                                             long maxBytesOnDisk,
+                                                             int maxWeeksOld) {
+            if (Looper.getMainLooper().getThread() != callingThread) {
+                throw new RuntimeException("Only call from main thread");
+            }
+            ClientDataStorageManager.createGlobalInstance(ClientStumblerService.this,
+                    ClientStumblerService.this, maxBytesOnDisk, maxWeeksOld);
+            init();
+            return ClientStumblerService.this;
+        }
+
+        public ClientStumblerService getService() {
+            return ClientStumblerService.this;
+        }
     }
 }
 

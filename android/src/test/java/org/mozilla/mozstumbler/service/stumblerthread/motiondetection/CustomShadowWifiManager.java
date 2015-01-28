@@ -4,7 +4,6 @@
 package org.mozilla.mozstumbler.service.stumblerthread.motiondetection;
 
 import android.net.wifi.WifiManager;
-import android.os.Build;
 
 import org.robolectric.annotation.Implementation;
 import org.robolectric.annotation.Implements;
@@ -22,5 +21,4 @@ public class CustomShadowWifiManager extends ShadowWifiManager {
     public boolean isScanAlwaysAvailable() {
         return true;
     }
-
 }

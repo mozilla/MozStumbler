@@ -18,8 +18,8 @@
     <string name="yes">Ja</string>
     <string name="no">Nei</string>
     <string name="about_version">Versjon %1$s</string>
-	<!--translations missing
-	<string name="about_openstreetmap">Map view tiles © OpenStreetMap contributors\nhttp://www.openstreetmap.org</string>
+    <!--translations missing
+    <string name="about_openstreetmap">Map view tiles © OpenStreetMap contributors\nhttp://www.openstreetmap.org</string>
     <string name="about_mapbox_title">MapBox</string>-->
     <string name="about_mapbox">Lær mer om vår kartleverandør…</string>
     <string name="about_legal_aosp">Noen av ikonene i denne appen er gjenbruk av arbeid laget og delt av Androids åpen kildekode-prosjekt og blir brukt i henhold til Creative Commons 2.5-navngivelseslisensen.</string>
@@ -29,7 +29,6 @@
     <string name="metrics_observations_wifis_title">Trådløspunkt:</string>
     <string name="metrics_observations_cell_towers_title">Mobilnettverk:</string>
     <string name="upload_observations_in_queue_title">I kø</string>
-
 
 
     <string name="upload_wifi_only_title">Last bare opp via trådløsnett</string>

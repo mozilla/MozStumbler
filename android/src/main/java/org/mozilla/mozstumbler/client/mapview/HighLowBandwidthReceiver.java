@@ -16,7 +16,7 @@ public class HighLowBandwidthReceiver extends BroadcastReceiver {
     public HighLowBandwidthReceiver(MapFragment map) {
         mMapFragment = new WeakReference<MapFragment>(map);
         Context c = mMapFragment.get().getActivity();
-        assert(c != null && c.getApplicationContext() != null);
+        assert (c != null && c.getApplicationContext() != null);
         c.getApplicationContext().registerReceiver(this,
                 new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
     }

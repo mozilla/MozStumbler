@@ -34,6 +34,47 @@ public class UploadAlarmReceiver extends BroadcastReceiver {
     private static final String EXTRA_IS_REPEATING = "is_repeating";
     private static boolean sIsAlreadyScheduled;
 
+    private static PendingIntent createIntent(Context c, boolean isRepeating) {
+        Intent intent = new Intent(c, UploadAlarmReceiver.class);
+        intent.putExtra(EXTRA_IS_REPEATING, isRepeating);
+        return PendingIntent.getBroadcast(c, 0, intent, 0);
+    }
+
+    public static void cancelAlarm(Context c, boolean isRepeating) {
+        Log.d(LOG_TAG, "cancelAlarm");
+        // this is to stop scheduleAlarm from constantly rescheduling, not to guard cancellation.
+        sIsAlreadyScheduled = false;
+        AlarmManager alarmManager = (AlarmManager) c.getSystemService(Context.ALARM_SERVICE);
+        PendingIntent pi = createIntent(c, isRepeating);
+        alarmManager.cancel(pi);
+    }
+
+    public static void scheduleAlarm(Context c, long secondsToWait, boolean isRepeating) {
+        if (sIsAlreadyScheduled) {
+            return;
+        }
+
+        long intervalMsec = secondsToWait * 1000;
+        Log.d(LOG_TAG, "schedule alarm (ms):" + intervalMsec);
+
+        sIsAlreadyScheduled = true;
+        AlarmManager alarmManager = (AlarmManager) c.getSystemService(Context.ALARM_SERVICE);
+        PendingIntent pi = createIntent(c, isRepeating);
+
+        long triggerAtMs = System.currentTimeMillis() + intervalMsec;
+        if (isRepeating) {
+            alarmManager.setInexactRepeating(AlarmManager.RTC, triggerAtMs, intervalMsec, pi);
+        } else {
+            alarmManager.set(AlarmManager.RTC, triggerAtMs, pi);
+        }
+    }
+
+    @Override
+    public void onReceive(final Context context, Intent intent) {
+        Intent startServiceIntent = new Intent(context, UploadAlarmService.class);
+        context.startService(startServiceIntent);
+    }
+
     public static class UploadAlarmService extends IntentService {
 
         public UploadAlarmService(String name) {
@@ -87,46 +128,5 @@ public class UploadAlarmReceiver extends BroadcastReceiver {
                 uploader.execute(param);
             }
         }
-    }
-
-    private static PendingIntent createIntent(Context c, boolean isRepeating) {
-        Intent intent = new Intent(c, UploadAlarmReceiver.class);
-        intent.putExtra(EXTRA_IS_REPEATING, isRepeating);
-        return PendingIntent.getBroadcast(c, 0, intent, 0);
-    }
-
-    public static void cancelAlarm(Context c, boolean isRepeating) {
-        Log.d(LOG_TAG, "cancelAlarm");
-        // this is to stop scheduleAlarm from constantly rescheduling, not to guard cancellation.
-        sIsAlreadyScheduled = false;
-        AlarmManager alarmManager = (AlarmManager) c.getSystemService(Context.ALARM_SERVICE);
-        PendingIntent pi = createIntent(c, isRepeating);
-        alarmManager.cancel(pi);
-    }
-
-    public static void scheduleAlarm(Context c, long secondsToWait, boolean isRepeating) {
-        if (sIsAlreadyScheduled) {
-            return;
-        }
-
-        long intervalMsec = secondsToWait * 1000;
-        Log.d(LOG_TAG, "schedule alarm (ms):" + intervalMsec);
-
-        sIsAlreadyScheduled = true;
-        AlarmManager alarmManager = (AlarmManager) c.getSystemService(Context.ALARM_SERVICE);
-        PendingIntent pi = createIntent(c, isRepeating);
-
-        long triggerAtMs = System.currentTimeMillis() + intervalMsec;
-        if (isRepeating) {
-            alarmManager.setInexactRepeating(AlarmManager.RTC, triggerAtMs, intervalMsec, pi);
-        } else {
-            alarmManager.set(AlarmManager.RTC, triggerAtMs, pi);
-        }
-    }
-
-    @Override
-    public void onReceive(final Context context, Intent intent) {
-        Intent startServiceIntent = new Intent(context, UploadAlarmService.class);
-        context.startService(startServiceIntent);
     }
 }

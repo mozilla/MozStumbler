@@ -25,5 +25,4 @@ public class ConfigurablePriorityThreadFactory implements ThreadFactory {
         }
         return thread;
     }
-
 }

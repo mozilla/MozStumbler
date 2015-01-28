@@ -2,123 +2,121 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".AboutActivity" >
-    
+    tools:context=".AboutActivity">
+
     <LinearLayout
-        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:orientation="vertical"
         android:paddingBottom="@dimen/activity_vertical_margin"
         android:paddingLeft="@dimen/activity_horizontal_margin"
         android:paddingRight="@dimen/activity_horizontal_margin"
         android:paddingTop="@dimen/activity_vertical_margin">
-        
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="@string/app_name" />
+            android:text="@string/app_name"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
 
         <TextView
             android:id="@+id/about_version"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="@string/about_version" />
+            android:text="@string/about_version"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <TextView
             android:id="@+id/about_git_version"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
             android:gravity="center"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:layout_gravity="center_horizontal"
             tools:text="git hash" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:paddingTop="16dp"
             android:autoLink="web"
+            android:gravity="center"
+            android:paddingTop="16dp"
             android:text="https://location.services.mozilla.com"
-            android:textSize="13sp"
-            />
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textSize="13sp" />
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:paddingTop="16dp"
-            android:autoLink="web"
-            android:text="@string/privacy_policy"
-            android:textSize="13sp"
             android:id="@+id/textViewPrivacyTitle"
-            android:layout_gravity="center_horizontal" />
-        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:layout_gravity="center_horizontal"
             android:autoLink="web"
-            android:text="https://location.services.mozilla.com/privacy"
-            android:textSize="13sp"
+            android:gravity="center"
+            android:paddingTop="16dp"
+            android:text="@string/privacy_policy"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textSize="13sp" />
+
+        <TextView
             android:id="@+id/textViewPrivacyLink"
-            android:layout_gravity="center_horizontal" />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:autoLink="web"
+            android:gravity="center"
+            android:text="https://location.services.mozilla.com/privacy"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textSize="13sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:autoLink="web"
+            android:gravity="center"
+            android:paddingTop="32dp"
+            android:text="@string/about_openstreetmap"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textSize="13sp" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:paddingTop="32dp"
-            android:autoLink="web"
-            android:text="@string/about_openstreetmap"
-            android:textSize="13sp"
-            />
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:textAppearance="?android:attr/textAppearanceMedium"
             android:paddingTop="32dp"
             android:text="@string/about_mapbox_title"
-            android:textSize="13sp"
-            />
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textSize="13sp" />
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:textAppearance="?android:attr/textAppearanceMedium"
             android:autoLink="web"
-            android:text="@string/about_mapbox"
+            android:gravity="center"
             android:singleLine="false"
-            android:textSize="13sp"
-            />
+            android:text="@string/about_mapbox"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textSize="13sp" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:textAppearance="?android:attr/textAppearanceMedium"
             android:paddingTop="32dp"
             android:text="@string/about_legal_aosp"
-            android:textSize="13dp"
-            />
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textSize="13dp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:autoLink="web"
             android:gravity="center"
-            android:textAppearance="?android:attr/textAppearanceMedium"
             android:paddingTop="32dp"
             android:text="@string/about_legal_flaticons"
-            android:layout_gravity="center_horizontal"
-            android:textSize="13dp"
-            android:autoLink="web" />
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textSize="13dp" />
     </LinearLayout>
 </ScrollView>

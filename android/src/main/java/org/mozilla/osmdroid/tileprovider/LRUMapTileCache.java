@@ -27,9 +27,9 @@ import java.util.LinkedHashMap;
  *
  */
 public class LRUMapTileCache {
+    private static final String LOG_TAG = LoggerUtil.makeLogTag(LRUMapTileCache.class);
     private int mCapacity = 0;
     private InnerLRUMapTileCache innerCache;
-    private static final String LOG_TAG = LoggerUtil.makeLogTag(LRUMapTileCache.class);
 
     public LRUMapTileCache(int capacity) {
         ensureCapacity(capacity);
@@ -39,7 +39,7 @@ public class LRUMapTileCache {
         if (aCapacity > mCapacity) {
             ClientLog.d(LOG_TAG, "Tile cache increased from " + mCapacity + " to " + aCapacity);
             mCapacity = aCapacity;
-            innerCache  = new InnerLRUMapTileCache(mCapacity);
+            innerCache = new InnerLRUMapTileCache(mCapacity);
             System.gc();
         }
     }
@@ -118,6 +118,5 @@ public class LRUMapTileCache {
             }
             return false;
         }
-
     }
 }

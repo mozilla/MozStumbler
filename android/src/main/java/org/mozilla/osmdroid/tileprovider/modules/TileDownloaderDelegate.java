@@ -31,15 +31,12 @@ public class TileDownloaderDelegate {
     public static final String ETAG_MATCH_HEADER = "If-None-Match";
 
     public static final int ONE_HOUR_MS = 1000 * 60 * 60;
-
-    private final INetworkAvailablityCheck networkAvailablityCheck;
-    private final TileIOFacade tileIOFacade;
-
     // We use an LRU cache to track any URLs that give us a HTTP 404.
     private static final int HTTP404_CACHE_SIZE = 2000;
     Map<String, Long> HTTP404_CACHE = Collections.synchronizedMap(new LruCache<String, Long>(HTTP404_CACHE_SIZE));
-
     private static final String LOG_TAG = LoggerUtil.makeLogTag(TileDownloaderDelegate.class);
+    private final INetworkAvailablityCheck networkAvailablityCheck;
+    private final TileIOFacade tileIOFacade;
 
     public TileDownloaderDelegate(INetworkAvailablityCheck pNetworkAvailablityCheck,
                                   TileIOFacade tw) {
@@ -150,7 +147,6 @@ public class TileDownloaderDelegate {
         }
         byte[] data = serializableTile.getTileData();
         return tileSource.getDrawable(data);
-
     }
 
     /*
@@ -178,6 +174,5 @@ public class TileDownloaderDelegate {
         }
         return false;
     }
-
 }
 

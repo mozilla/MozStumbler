@@ -48,5 +48,4 @@ public class DebugLogger implements ILogger {
         System.out.println(msg);
         messageBuffer.addLast(msg);
     }
-
 }

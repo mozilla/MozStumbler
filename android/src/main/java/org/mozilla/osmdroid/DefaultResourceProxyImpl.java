@@ -164,5 +164,4 @@ public class DefaultResourceProxyImpl implements ResourceProxy, MapViewConstants
     public float getDisplayMetricsDensity() {
         return mDisplayMetrics.density;
     }
-
 }

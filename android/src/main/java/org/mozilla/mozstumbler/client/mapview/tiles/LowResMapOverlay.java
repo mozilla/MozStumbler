@@ -20,7 +20,7 @@ public class LowResMapOverlay extends AbstractMapOverlay {
     public LowResMapOverlay(LowResType type, final Context aContext, boolean isMLSTileStore, MapView mapView) {
         super(aContext);
 
-        final int zoomLevel = (type == LowResType.HIGHER_ZOOM)?
+        final int zoomLevel = (type == LowResType.HIGHER_ZOOM) ?
                 AbstractMapOverlay.getDisplaySizeBasedMinZoomLevel() : LOW_ZOOM_LEVEL;
 
         ITileSource mapTileSource;

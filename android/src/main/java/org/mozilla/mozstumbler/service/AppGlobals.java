@@ -4,8 +4,6 @@
 
 package org.mozilla.mozstumbler.service;
 
-import org.mozilla.mozstumbler.service.core.logging.ClientLog;
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -27,12 +25,21 @@ public class AppGlobals {
 
     /* Location constructor requires a named origin, these are created in the app. */
     public static final String LOCATION_ORIGIN_INTERNAL = "internal";
-
-    public enum ActiveOrPassiveStumbling { ACTIVE_STUMBLING, PASSIVE_STUMBLING }
-
     /* In passive mode, only scan this many times for each gps. */
     public static final int PASSIVE_MODE_MAX_SCANS_PER_GPS = 3;
-
+    public static final String NO_TRUNCATE_FLAG = "~";
+    public static final String ACTION_TEST_SETTING_ENABLED = "stumbler-test-setting-enabled";
+    public static final String ACTION_TEST_SETTING_DISABLED = "stumbler-test-setting-disabled";
+    public static final String TELEMETRY_TIME_BETWEEN_UPLOADS_SEC = "STUMBLER_TIME_BETWEEN_UPLOADS_SEC";
+    public static final String TELEMETRY_BYTES_UPLOADED_PER_SEC = "STUMBLER_VOLUME_BYTES_UPLOADED_PER_SEC";
+    public static final String TELEMETRY_TIME_BETWEEN_STARTS_SEC = "STUMBLER_TIME_BETWEEN_START_SEC";
+    public static final String TELEMETRY_BYTES_PER_UPLOAD = "STUMBLER_UPLOAD_BYTES";
+    public static final String TELEMETRY_OBSERVATIONS_PER_UPLOAD = "STUMBLER_UPLOAD_OBSERVATION_COUNT";
+    public static final String TELEMETRY_CELLS_PER_UPLOAD = "STUMBLER_UPLOAD_CELL_COUNT";
+    public static final String TELEMETRY_WIFIS_PER_UPLOAD = "STUMBLER_UPLOAD_WIFI_AP_COUNT";
+    public static final String TELEMETRY_OBSERVATIONS_PER_DAY = "STUMBLER_OBSERVATIONS_PER_DAY";
+    public static final String TELEMETRY_TIME_BETWEEN_RECEIVED_LOCATIONS_SEC = "STUMBLER_TIME_BETWEEN_RECEIVED_LOCATIONS_SEC";
+    private static final SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss: ");
     /* These are set on startup. The appVersionName and code are not used in the service-only case. */
     public static String appVersionName = "0.0.0";
     public static int appVersionCode = 0;
@@ -40,10 +47,6 @@ public class AppGlobals {
     public static boolean isDebug;
     public static boolean isRobolectric;
     public static boolean hasSignificantMotionSensor;
-
-    private static final SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss: ");
-    public static final String NO_TRUNCATE_FLAG = "~";
-
     /* The log activity will clear this periodically, and display the messages.
      * Always null when the stumbler service is used stand-alone. */
     public static volatile ConcurrentLinkedQueue<String> guiLogMessageBuffer;
@@ -61,23 +64,12 @@ public class AppGlobals {
             if (isBold) {
                 msg = "<b>" + msg + "</b>";
             }
-            String noTruncateFlag = doNotTruncateLongString? NO_TRUNCATE_FLAG : "";
+            String noTruncateFlag = doNotTruncateLongString ? NO_TRUNCATE_FLAG : "";
             String ts = formatter.format(new Date());
-            guiLogMessageBuffer.add(noTruncateFlag + ts + "<font color='" + color +"'>" + msg + "</font>");
+            guiLogMessageBuffer.add(noTruncateFlag + ts + "<font color='" + color + "'>" + msg + "</font>");
         }
     }
 
-    public static final String ACTION_TEST_SETTING_ENABLED = "stumbler-test-setting-enabled";
-    public static final String ACTION_TEST_SETTING_DISABLED = "stumbler-test-setting-disabled";
-
-    public static final String TELEMETRY_TIME_BETWEEN_UPLOADS_SEC = "STUMBLER_TIME_BETWEEN_UPLOADS_SEC";
-    public static final String TELEMETRY_BYTES_UPLOADED_PER_SEC = "STUMBLER_VOLUME_BYTES_UPLOADED_PER_SEC";
-    public static final String TELEMETRY_TIME_BETWEEN_STARTS_SEC = "STUMBLER_TIME_BETWEEN_START_SEC";
-    public static final String TELEMETRY_BYTES_PER_UPLOAD = "STUMBLER_UPLOAD_BYTES";
-    public static final String TELEMETRY_OBSERVATIONS_PER_UPLOAD = "STUMBLER_UPLOAD_OBSERVATION_COUNT";
-    public static final String TELEMETRY_CELLS_PER_UPLOAD = "STUMBLER_UPLOAD_CELL_COUNT";
-    public static final String TELEMETRY_WIFIS_PER_UPLOAD = "STUMBLER_UPLOAD_WIFI_AP_COUNT";
-    public static final String TELEMETRY_OBSERVATIONS_PER_DAY = "STUMBLER_OBSERVATIONS_PER_DAY";
-    public static final String TELEMETRY_TIME_BETWEEN_RECEIVED_LOCATIONS_SEC = "STUMBLER_TIME_BETWEEN_RECEIVED_LOCATIONS_SEC";
+    public enum ActiveOrPassiveStumbling {ACTIVE_STUMBLING, PASSIVE_STUMBLING}
 }
 

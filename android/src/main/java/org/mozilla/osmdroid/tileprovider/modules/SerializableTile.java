@@ -19,7 +19,7 @@ import java.util.Map;
 
 /**
  * Created by victorng on 14-10-24.
- *
+ * <p/>
  * This class represents a serializable Tile.
  */
 public class SerializableTile {
@@ -28,11 +28,9 @@ public class SerializableTile {
     // more than once a day anyway and this should be good enough to 
     // enable offline stumbles.
     public static final long CACHE_TILE_MS = 60 * 60 * 12 * 1000;
-
+    final protected static char[] hexArray = "0123456789abcdef".toCharArray();
     private static final String LOG_TAG = LoggerUtil.makeLogTag(SerializableTile.class);
-
     final byte[] FILE_HEADER = {(byte) 0xde, (byte) 0xca, (byte) 0xfb, (byte) 0xad};
-
     byte[] tData = new byte[0];
     Map<String, String> headers = new HashMap<String, String>();
     private File myFile;
@@ -55,6 +53,20 @@ public class SerializableTile {
         setHeader("etag", etag);
     }
 
+    public static String bytesToHex(byte[] bytes) {
+        char[] hexChars = new char[bytes.length * 2];
+        for (int j = 0; j < bytes.length; j++) {
+            int v = bytes[j] & 0xFF;
+            hexChars[j * 2] = hexArray[v >>> 4];
+            hexChars[j * 2 + 1] = hexArray[v & 0x0F];
+        }
+        return new String(hexChars);
+    }
+
+    public byte[] getTileData() {
+        return tData;
+    }
+
     public void setTileData(byte[] tileData) {
         if (tileData == null) {
             tileData = new byte[0];
@@ -62,8 +74,12 @@ public class SerializableTile {
         tData = tileData;
     }
 
-    public byte[] getTileData() {
-        return tData;
+    public void clearHeaders() {
+        headers.clear();
+    }
+
+    public Map<String, String> getHeaders() {
+        return headers;
     }
 
     public void setHeaders(Map<String, String> h) {
@@ -81,14 +97,6 @@ public class SerializableTile {
             // Always make headers lowercase
             headers.put(entry.getKey().toLowerCase(), entry.getValue());
         }
-    }
-
-    public void clearHeaders() {
-        headers.clear();
-    }
-
-    public Map<String, String> getHeaders() {
-        return headers;
     }
 
     /*
@@ -185,7 +193,7 @@ public class SerializableTile {
         }
 
         try {
-            myFile  = file.getAbsoluteFile();
+            myFile = file.getAbsoluteFile();
             return fromBytes(arr);
         } catch (CharacterCodingException e) {
             ClientLog.e(LOG_TAG, "Error decoding strings from file", e);
@@ -193,7 +201,7 @@ public class SerializableTile {
         }
     }
 
-    protected boolean fromBytes(byte[] arr) throws CharacterCodingException  {
+    protected boolean fromBytes(byte[] arr) throws CharacterCodingException {
         byte[] buffer = null;
 
         Charset charsetE = Charset.forName("UTF-8");
@@ -218,7 +226,7 @@ public class SerializableTile {
 
         headers.clear();
 
-        for (int i=0; i < headerCount; i++) {
+        for (int i = 0; i < headerCount; i++) {
             buffer = new byte[4];
             bb.get(buffer, 0, 4);
             int keyLength = java.nio.ByteBuffer.wrap(buffer).getInt();
@@ -268,18 +276,6 @@ public class SerializableTile {
         return ByteBuffer.allocate(4).putInt(integer).array();
     }
 
-    final protected static char[] hexArray = "0123456789abcdef".toCharArray();
-
-    public static String bytesToHex(byte[] bytes) {
-        char[] hexChars = new char[bytes.length * 2];
-        for ( int j = 0; j < bytes.length; j++ ) {
-            int v = bytes[j] & 0xFF;
-            hexChars[j * 2] = hexArray[v >>> 4];
-            hexChars[j * 2 + 1] = hexArray[v & 0x0F];
-        }
-        return new String(hexChars);
-    }
-
     public long getCacheControl() {
         String cc = getHeader("cache-control");
         if (cc == null) {
@@ -289,7 +285,7 @@ public class SerializableTile {
         }
     }
 
-    public String getHeader(String k){
+    public String getHeader(String k) {
         return headers.get(k.toLowerCase());
     }
 

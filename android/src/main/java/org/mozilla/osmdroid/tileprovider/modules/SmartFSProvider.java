@@ -36,19 +36,16 @@ public class SmartFSProvider extends MapTileModuleProviderBase {
     // ===========================================================
 
     private static final String LOG_TAG = LoggerUtil.makeLogTag(SmartFSProvider.class);
-
+    private final IRegisterReceiver mRegisterReceiver;
+    private final AtomicReference<ITileSource> mTileSource = new AtomicReference<ITileSource>();
     /**
      * whether the sdcard is mounted read/write
      */
     private boolean mSdCardAvailable = true;
-
-    private final IRegisterReceiver mRegisterReceiver;
-    private MyBroadcastReceiver mBroadcastReceiver;
     // ===========================================================
     // Fields
     // ===========================================================
-
-    private final AtomicReference<ITileSource> mTileSource = new AtomicReference<ITileSource>();
+    private MyBroadcastReceiver mBroadcastReceiver;
     private TileDownloaderDelegate delegate;
 
     // ===========================================================
@@ -66,7 +63,6 @@ public class SmartFSProvider extends MapTileModuleProviderBase {
                 pTileSource,
                 NUMBER_OF_IO_THREADS,
                 TILE_FILESYSTEM_MAXIMUM_QUEUE_SIZE);
-
     }
 
     /**
@@ -118,6 +114,11 @@ public class SmartFSProvider extends MapTileModuleProviderBase {
     // ===========================================================
 
     @Override
+    public void setTileSource(final ITileSource pTileSource) {
+        mTileSource.set(pTileSource);
+    }
+
+    @Override
     public boolean getUsesDataConnection() {
         return true;
     }
@@ -152,11 +153,6 @@ public class SmartFSProvider extends MapTileModuleProviderBase {
         return tileSource != null ? tileSource.getMaximumZoomLevel() : MAXIMUM_ZOOMLEVEL;
     }
 
-    @Override
-    public void setTileSource(final ITileSource pTileSource) {
-        mTileSource.set(pTileSource);
-    }
-
     // ===========================================================
     // Inner and Anonymous Classes
     // ===========================================================
@@ -180,6 +176,15 @@ public class SmartFSProvider extends MapTileModuleProviderBase {
         // Do nothing by default. Override to handle.
     }
 
+    @Override
+    public void detach() {
+        if (mBroadcastReceiver != null) {
+            mRegisterReceiver.unregisterReceiver(mBroadcastReceiver);
+            mBroadcastReceiver = null;
+        }
+        super.detach();
+    }
+
     /**
      * This broadcast receiver will recheck the sd card when the mount/unmount messages happen
      */
@@ -198,14 +203,5 @@ public class SmartFSProvider extends MapTileModuleProviderBase {
                 onMediaUnmounted();
             }
         }
-    }
-
-    @Override
-    public void detach() {
-        if (mBroadcastReceiver != null) {
-            mRegisterReceiver.unregisterReceiver(mBroadcastReceiver);
-            mBroadcastReceiver = null;
-        }
-        super.detach();
     }
 }

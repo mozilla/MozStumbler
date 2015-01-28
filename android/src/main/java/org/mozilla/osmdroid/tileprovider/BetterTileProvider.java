@@ -75,5 +75,4 @@ public class BetterTileProvider extends BetterMapTileProviderArray implements IM
 
         mTileProviderList.add(smartProvider);
     }
-
 }

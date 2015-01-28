@@ -32,21 +32,20 @@ import java.util.List;
 import java.util.Set;
 
 public final class Reporter extends BroadcastReceiver implements IReporter {
-    private static final String LOG_TAG = LoggerUtil.makeLogTag(Reporter.class);
     public static final String ACTION_FLUSH_TO_BUNDLE = AppGlobals.ACTION_NAMESPACE + ".FLUSH";
     public static final String ACTION_NEW_BUNDLE = AppGlobals.ACTION_NAMESPACE + ".NEW_BUNDLE";
     public static final String NEW_BUNDLE_ARG_BUNDLE = "bundle";
-    private boolean mIsStarted;
-
-    private Context mContext;
-    private int mPhoneType;
-
-    StumblerBundle mBundle;
-    private int mObservationCount = 0;
+    private static final String LOG_TAG = LoggerUtil.makeLogTag(Reporter.class);
     private final Set<String> mUniqueAPs = new HashSet<String>();
     private final Set<String> mUniqueCells = new HashSet<String>();
+    StumblerBundle mBundle;
+    private boolean mIsStarted;
+    private Context mContext;
+    private int mPhoneType;
+    private int mObservationCount = 0;
 
-    public Reporter() {}
+    public Reporter() {
+    }
 
     public synchronized void startup(Context context) {
         if (mIsStarted) {
@@ -129,15 +128,14 @@ public final class Reporter extends BroadcastReceiver implements IReporter {
         }
 
         if (mBundle != null &&
-                (mBundle.hasMaxWifisPerLocation() || mBundle.hasMaxCellsPerLocation()))
-        {
+                (mBundle.hasMaxWifisPerLocation() || mBundle.hasMaxCellsPerLocation())) {
             // no gps for a while, have too much data, just bundle it
             flush();
         }
     }
 
     public synchronized Location getGPSLocation() {
-        if (mBundle == null){
+        if (mBundle == null) {
             return null;
         }
         return mBundle.getGpsPosition();
@@ -218,5 +216,4 @@ public final class Reporter extends BroadcastReceiver implements IReporter {
     public synchronized int getUniqueCellCount() {
         return mUniqueCells.size();
     }
-
 }

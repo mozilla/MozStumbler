@@ -26,17 +26,21 @@ import java.util.Map;
  * A StumblerBundle contains stumbling data related to a single GPS lat/long fix.
  */
 public final class StumblerBundle implements Parcelable {
+    /* The maximum number of Wi-Fi access points in a single observation. */
+    public static final int MAX_WIFIS_PER_LOCATION = 200;
+    /* The maximum number of cells in a single observation */
+    public static final int MAX_CELLS_PER_LOCATION = 50;
     private final int mPhoneType;
     private final Location mGpsPosition;
-
     private final Map<String, ScanResult> mWifiData;
     private final Map<String, CellInfo> mCellData;
 
-    /* The maximum number of Wi-Fi access points in a single observation. */
-    public static final int MAX_WIFIS_PER_LOCATION = 200;
-
-    /* The maximum number of cells in a single observation */
-    public static final int MAX_CELLS_PER_LOCATION  = 50;
+    public StumblerBundle(Location position, int phoneType) {
+        mGpsPosition = position;
+        mPhoneType = phoneType;
+        mWifiData = new HashMap<String, ScanResult>();
+        mCellData = new HashMap<String, CellInfo>();
+    }
 
     @Override
     public int describeContents() {
@@ -61,13 +65,6 @@ public final class StumblerBundle implements Parcelable {
         out.writeBundle(cellBundle);
         out.writeParcelable(mGpsPosition, 0);
         out.writeInt(mPhoneType);
-    }
-
-    public StumblerBundle(Location position, int phoneType) {
-        mGpsPosition = position;
-        mPhoneType = phoneType;
-        mWifiData = new HashMap<String, ScanResult>();
-        mCellData = new HashMap<String, CellInfo>();
     }
 
     public Location getGpsPosition() {

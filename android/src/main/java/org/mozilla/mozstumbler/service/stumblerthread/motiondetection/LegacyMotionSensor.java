@@ -16,29 +16,36 @@ import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
 public class LegacyMotionSensor {
     private static final String LOG_TAG = LoggerUtil.makeLogTag(LegacyMotionSensor.class);
-    private final Context mAppContext;
+    // I'm assuming 30 iterations is good enough to get convergence.
+    private static int iterations_for_convergence = 30;
     final SensorManager mSensorManager;
-    private long mLastTimeThereWasMovementMs;
-    private int mMovementCountWithinTimeWindow;
+    final SensorEventListener mSensorEventListener = new SensorEventListener() {
+        @Override
+        public void onSensorChanged(SensorEvent event) {
+            // This must call a method in the LegacyMotionSensor
+            // or else we have no way of instrumenting the class with tests.
+            sensorChanged(event.sensor.getType(), event.values);
+        }
 
+        @Override
+        public void onAccuracyChanged(Sensor sensor, int accuracy) {
+        }
+    };
+    private final Context mAppContext;
     // A few sensor movements are required within a time window before we say there is user motion.
     private final int TIME_WINDOW_MS = 1000;
     private final int MOVEMENTS_REQUIRED_IN_TIME_WINDOW = 3;
-
+    private final float alpha = (float) 0.8;
+    public float computed_gravity = 0;
+    private long mLastTimeThereWasMovementMs;
+    private int mMovementCountWithinTimeWindow;
     private float[] gravity = {0, 0, 0};
     private float[] linear_acceleration = {0, 0, 0};
 
-    // I'm assuming 30 iterations is good enough to get convergence.
-    private static int iterations_for_convergence = 30;
-    private final float alpha = (float) 0.8;
-
-    public LegacyMotionSensor(Context ctx)
-    {
+    public LegacyMotionSensor(Context ctx) {
         mAppContext = ctx;
         mSensorManager = (SensorManager) mAppContext.getSystemService(Context.SENSOR_SERVICE);
     }
-
-    public float computed_gravity = 0;
 
     /*
      This function is called by the SensorEventListener so that we have something to test.
@@ -98,21 +105,7 @@ public class LegacyMotionSensor {
                 mMovementCountWithinTimeWindow = 0;
             }
         }
-
     }
-
-    final SensorEventListener mSensorEventListener = new SensorEventListener() {
-        @Override
-        public void onSensorChanged(SensorEvent event) {
-            // This must call a method in the LegacyMotionSensor
-            // or else we have no way of instrumenting the class with tests.
-            sensorChanged(event.sensor.getType(), event.values);
-        }
-
-        @Override
-        public void onAccuracyChanged(Sensor sensor, int accuracy) {
-        }
-    };
 
     void start() {
         mSensorManager.registerListener(mSensorEventListener,

@@ -69,7 +69,7 @@ public class Updater {
                 if (headers == null) {
                     return;
                 }
-                Log.i(LOG_TAG, "Got headers: "+ headers.toString());
+                Log.i(LOG_TAG, "Got headers: " + headers.toString());
                 if (headers.get("Location") == null) {
                     return;
                 }
@@ -81,7 +81,7 @@ public class Updater {
                 if (parts.length < 2) {
                     return;
                 }
-                String tag = parts[parts.length-1];
+                String tag = parts[parts.length - 1];
                 if (tag.length() < 2) {
                     return;
                 }
@@ -148,13 +148,13 @@ public class Updater {
     }
 
     private void showUpdateDialog(final Context context,
-                                         String installedVersion,
-                                         final String latestVersion) {
+                                  String installedVersion,
+                                  final String latestVersion) {
         String msg = context.getString(R.string.update_message);
         msg = String.format(msg, installedVersion, latestVersion);
 
         if (installedVersion.startsWith("0.") &&
-           latestVersion.startsWith("1.")) {
+                latestVersion.startsWith("1.")) {
             // From 0.x to 1.0 and higher, the keystore changed
             msg += " " + context.getString(R.string.must_uninstall_to_update);
         }
@@ -167,25 +167,25 @@ public class Updater {
         };
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context)
-            .setTitle(context.getString(R.string.update_title))
-            .setMessage(msg)
-            .setPositiveButton(context.getString(R.string.update_now),
-                               new Dialog.OnClickListener() {
-                                   @Override
-                                   public void onClick(DialogInterface di, int which) {
-                                       Log.d(LOG_TAG, "Update Now");
-                                       di.dismiss();
-                                       downloadAndInstallUpdate(context, latestVersion);
-                                   }
-                               })
-            .setNegativeButton(context.getString(R.string.update_later),
-                               new Dialog.OnClickListener() {
-                                   @Override
-                                    public void onClick(DialogInterface di, int which) {
-                                        onCancel.onCancel(di);
-                                    }
-                               })
-            .setOnCancelListener(onCancel);
+                .setTitle(context.getString(R.string.update_title))
+                .setMessage(msg)
+                .setPositiveButton(context.getString(R.string.update_now),
+                        new Dialog.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface di, int which) {
+                                Log.d(LOG_TAG, "Update Now");
+                                di.dismiss();
+                                downloadAndInstallUpdate(context, latestVersion);
+                            }
+                        })
+                .setNegativeButton(context.getString(R.string.update_later),
+                        new Dialog.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface di, int which) {
+                                onCancel.onCancel(di);
+                            }
+                        })
+                .setOnCancelListener(onCancel);
         builder.create().show();
     }
 
@@ -204,7 +204,7 @@ public class Updater {
             }
 
             @Override
-            public void onPostExecute(File result){
+            public void onPostExecute(File result) {
                 if (result != null) {
                     installPackage(context, result);
                 }
@@ -227,7 +227,7 @@ public class Updater {
         File file;
         File dir = context.getExternalFilesDir(null);
         try {
-            file  = File.createTempFile("update", ".apk", dir);
+            file = File.createTempFile("update", ".apk", dir);
         } catch (IOException e1) {
             Log.e(LOG_TAG, "", e1);
             return null;

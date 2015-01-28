@@ -15,9 +15,7 @@ import org.robolectric.shadows.ShadowTextView;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
-import static org.junit.Assert.assertThat;
 import static org.mozilla.mozstumbler.client.subactivities.LogActivity.ConsoleView;
-import static org.robolectric.Robolectric.shadowOf;
 
 @Config(emulateSdk = 18)
 @RunWith(RobolectricTestRunner.class)

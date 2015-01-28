@@ -29,10 +29,8 @@
     <string name="upload_observations_in_queue_title">În coadă</string>
 
 
-
     <string name="upload_wifi_only_title">Încarcă numai prin Wi-Fi</string>
     <string name="upload_wifi_only_summary">Această opțiune va reduce cantitatea de date utilizate prin rețeaua celulară.</string>
-
 
 
     <string name="title_activity_log">Jurnal</string>

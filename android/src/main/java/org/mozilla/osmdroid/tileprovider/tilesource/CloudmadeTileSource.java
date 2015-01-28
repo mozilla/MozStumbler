@@ -45,16 +45,16 @@ public class CloudmadeTileSource extends OnlineTileSourceBase implements IStyled
     }
 
     @Override
+    public Integer getStyle() {
+        return mStyle;
+    }
+
+    @Override
     public void setStyle(final String pStyle) {
         try {
             mStyle = Integer.parseInt(pStyle);
         } catch (final NumberFormatException e) {
             ClientLog.w(LOG_TAG, "Error setting integer style: " + pStyle);
         }
-    }
-
-    @Override
-    public Integer getStyle() {
-        return mStyle;
     }
 }

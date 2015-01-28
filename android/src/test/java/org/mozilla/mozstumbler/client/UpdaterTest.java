@@ -21,7 +21,6 @@ import static junit.framework.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 
@@ -63,10 +62,9 @@ public class UpdaterTest {
 
         assertEquals("1.3.0", upd.stripBuildHostName("1.3.0.Victors-MBPr"));
         assertEquals("1.3.0", upd.stripBuildHostName("1.3.0"));
-
     }
 
-    @Test(expected=RuntimeException.class)
+    @Test(expected = RuntimeException.class)
     public void testUpdaterThrowsExceptions() {
         Updater upd = new Updater();
         upd = spy(upd);
@@ -76,5 +74,4 @@ public class UpdaterTest {
 
         upd.stripBuildHostName("1.0");
     }
-
 }

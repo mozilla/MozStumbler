@@ -85,7 +85,6 @@ public class CloudmadeUtil implements OSMConstants {
             mPreferenceEditor.putString(CLOUDMADE_ID, mAndroidId);
             mPreferenceEditor.commit();
         }
-
     }
 
     /**

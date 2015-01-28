@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-  
+
     <string name="app_name">Mozilla Stumbler</string>
     <string name="action_about">关于 Mozilla Stumbler</string>
     <string name="action_preferences">设置</string>

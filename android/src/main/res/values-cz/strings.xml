@@ -15,7 +15,7 @@
     <string name="enter_nickname">Vložte jméno (nepovinné)</string>
     <string name="enter_nickname_title">Jméno: %1$s</string>
     <string name="enter_nickname_longtext">Vaše jméno se zobrazí v žebříčku.</string>
-    
+
     <!--translations missing
     <string name="update_title">Stáhnout novou verzi Mozilla Stumbleru?</string>
     <string name="update_message">Nainstalovana verze: %1$s\nPoslední verze: %2$s</string>
@@ -26,8 +26,8 @@
     <string name="yes">Ano</string>
     <string name="no">Ne</string>
     <string name="about_version">Verze %1$s</string>
-	<!--translations missing
-	<string name="about_openstreetmap">Map view tiles © OpenStreetMap contributors\nhttp://www.openstreetmap.org</string>
+    <!--translations missing
+    <string name="about_openstreetmap">Map view tiles © OpenStreetMap contributors\nhttp://www.openstreetmap.org</string>
     <string name="about_mapbox_title">MapBox</string>-->
     <string name="about_mapbox">Zjistit více informací o mapových datech…</string>
     <!--<string name="about_legal_aosp">Some iconography in this app is reproduced from work created and shared by the Android Open Source Project and used according to terms described in the Creative Commons 2.5 Attribution License.</string> translation missing-->

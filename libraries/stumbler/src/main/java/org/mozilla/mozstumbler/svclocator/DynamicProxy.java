@@ -12,10 +12,9 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 
 public class DynamicProxy implements InvocationHandler {
+    private static final String LOG_TAG = LoggerUtil.makeLogTag(DynamicProxy.class);
     private Object impl;
     private Class<?> svcDefinition;
-
-    private static final String LOG_TAG = LoggerUtil.makeLogTag(DynamicProxy.class);
 
     public DynamicProxy(Class<?> svcDef) {
         this.svcDefinition = svcDef;

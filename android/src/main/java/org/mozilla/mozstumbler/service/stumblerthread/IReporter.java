@@ -7,7 +7,7 @@ package org.mozilla.mozstumbler.service.stumblerthread;
 import android.content.Context;
 
 /**
- * This is the public interface for the Reporter class.  
+ * This is the public interface for the Reporter class.
  * All methods here are properly synchronized as the reporter
  * must manage a consistent StumblerBundle instance.
  */

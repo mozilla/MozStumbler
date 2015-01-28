@@ -34,7 +34,7 @@ public class LocationActivityTest {
                 Robolectric.application.getSystemService(Context.LOCATION_SERVICE);
         ShadowLocationManager shadowLocationManager = shadowOf(locationManager);
 
-        LocationGenerator lgen= new LocationGenerator();
+        LocationGenerator lgen = new LocationGenerator();
         Location expectedLocation = lgen.next();
 
         // This would be a method on our SimulationContext
@@ -51,5 +51,4 @@ public class LocationActivityTest {
         location.setTime(System.currentTimeMillis());
         return location;
     }
-
 }

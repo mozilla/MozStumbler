@@ -82,16 +82,16 @@ public class DeveloperActivityTest {
     @Test
     public void testDatastorageMovesFiles() throws IOException {
 
-        Context roboContext = (Context)Robolectric.application;
+        Context roboContext = (Context) Robolectric.application;
         FileDirTestContext ctx = new FileDirTestContext(roboContext);
 
         // Make sure that we have a fresh data storage manager here
         ClientDataStorageManager.removeInstance();
         DataStorageManager dsm = ClientDataStorageManager.createGlobalInstance(
-                 ctx,
-                 null,
-                 20000000,
-                 52);
+                ctx,
+                null,
+                20000000,
+                52);
         DeveloperOptions devOptions = new DeveloperOptions();
         startFragment(devOptions);
 
@@ -130,8 +130,5 @@ public class DeveloperActivityTest {
 
         assertTrue(movedFile.exists());
         assertFalse(fakeReport.exists());
-
     }
-
-
 }

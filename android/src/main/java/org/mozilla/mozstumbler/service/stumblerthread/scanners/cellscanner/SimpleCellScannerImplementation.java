@@ -36,27 +36,15 @@ import java.util.List;
 public class SimpleCellScannerImplementation implements ISimpleCellScanner {
 
     protected static String LOG_TAG = LoggerUtil.makeLogTag(SimpleCellScannerImplementation.class);
+    protected final Context mContext;
     protected GetAllCellInfoScannerImpl mGetAllInfoCellScanner;
     protected TelephonyManager mTelephonyManager;
     protected boolean mIsStarted;
     protected int mPhoneType;
-    protected final Context mContext;
-
     protected volatile int mSignalStrength = CellInfo.UNKNOWN_SIGNAL;
     protected volatile int mCdmaDbm = CellInfo.UNKNOWN_SIGNAL;
 
     private PhoneStateListener mPhoneStateListener;
-
-    private static class GetAllCellInfoScannerDummy implements GetAllCellInfoScannerImpl {
-        @Override
-        public List<CellInfo> getAllCellInfo(TelephonyManager tm) {
-            return Collections.emptyList();
-        }
-    }
-
-    interface GetAllCellInfoScannerImpl {
-        List<CellInfo> getAllCellInfo(TelephonyManager tm);
-    }
 
     public SimpleCellScannerImplementation(Context appContext) {
         mContext = appContext;
@@ -68,8 +56,8 @@ public class SimpleCellScannerImplementation implements ISimpleCellScanner {
             telephonyManager = (TelephonyManager) mContext.getSystemService(Context.TELEPHONY_SERVICE);
         }
         return telephonyManager != null &&
-           (telephonyManager.getPhoneType() == TelephonyManager.PHONE_TYPE_CDMA ||
-            telephonyManager.getPhoneType() == TelephonyManager.PHONE_TYPE_GSM);
+                (telephonyManager.getPhoneType() == TelephonyManager.PHONE_TYPE_CDMA ||
+                        telephonyManager.getPhoneType() == TelephonyManager.PHONE_TYPE_GSM);
     }
 
     @Override
@@ -99,7 +87,7 @@ public class SimpleCellScannerImplementation implements ISimpleCellScanner {
             }
             mPhoneType = mTelephonyManager.getPhoneType();
             if (mPhoneType == TelephonyManager.PHONE_TYPE_NONE ||
-                mPhoneType == TelephonyManager.PHONE_TYPE_SIP) {
+                    mPhoneType == TelephonyManager.PHONE_TYPE_SIP) {
                 // This is almost certainly a tablet or some other wifi only device.
                 return;
             }
@@ -140,7 +128,7 @@ public class SimpleCellScannerImplementation implements ISimpleCellScanner {
                 return records;
             }
             records.add(currentCell);
-        }else {
+        } else {
             records.addAll(allCells);
         }
 
@@ -203,11 +191,10 @@ public class SimpleCellScannerImplementation implements ISimpleCellScanner {
         return records;
     }
 
-
     @TargetApi(18)
     protected boolean addWCDMACellToList(List<CellInfo> cells,
-                                    android.telephony.CellInfo observedCell,
-                                    TelephonyManager tm) {
+                                         android.telephony.CellInfo observedCell,
+                                         TelephonyManager tm) {
         boolean added = false;
         if (Build.VERSION.SDK_INT >= 18 &&
                 observedCell instanceof CellInfoWcdma) {
@@ -230,8 +217,8 @@ public class SimpleCellScannerImplementation implements ISimpleCellScanner {
 
     @TargetApi(18)
     protected boolean addCellToList(List<CellInfo> cells,
-                                 android.telephony.CellInfo observedCell,
-                                 TelephonyManager tm) {
+                                    android.telephony.CellInfo observedCell,
+                                    TelephonyManager tm) {
         if (tm.getPhoneType() == 0) {
             return false;
         }
@@ -272,8 +259,8 @@ public class SimpleCellScannerImplementation implements ISimpleCellScanner {
                         ident.getTac(),
                         strength.getAsuLevel(),
                         strength.getTimingAdvance());
-               cells.add(cell);
-               added = true;
+                cells.add(cell);
+                added = true;
             }
         }
 
@@ -282,6 +269,18 @@ public class SimpleCellScannerImplementation implements ISimpleCellScanner {
         }
 
         return added;
+    }
+
+
+    interface GetAllCellInfoScannerImpl {
+        List<CellInfo> getAllCellInfo(TelephonyManager tm);
+    }
+
+    private static class GetAllCellInfoScannerDummy implements GetAllCellInfoScannerImpl {
+        @Override
+        public List<CellInfo> getAllCellInfo(TelephonyManager tm) {
+            return Collections.emptyList();
+        }
     }
 
     @TargetApi(18)

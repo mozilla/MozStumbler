@@ -14,13 +14,13 @@ import org.mozilla.mozstumbler.client.MainApp;
 import org.mozilla.mozstumbler.client.navdrawer.MainDrawerActivity;
 
 public class NotificationUtil {
-    private final Context mContext;
     public static final int NOTIFICATION_ID = 1;
     private static final long UPDATE_FREQUENCY = 60 * 1000;
     private static String sStopTitle;
     private static int sObservations, sCells, sWifis;
     private static long sUploadTime, sDisplayTime, sLastUpdateTime;
     private static boolean sIsPaused;
+    private final Context mContext;
 
     public NotificationUtil(Context context) {
         mContext = context;

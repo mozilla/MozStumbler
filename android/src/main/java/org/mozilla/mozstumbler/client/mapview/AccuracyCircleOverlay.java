@@ -16,13 +16,13 @@ import org.mozilla.osmdroid.views.Projection;
 import org.mozilla.osmdroid.views.overlay.Overlay;
 
 class AccuracyCircleOverlay extends Overlay {
+    private final DevicePixelConverter mConvertPx;
     private GeoPoint mPoint;
     private float mAccuracy;
     private Paint mCircleFillPaint = new Paint();
     private Paint mCircleStrokePaint = new Paint();
     private Paint mCenterPaint = new Paint();
     private Paint mCenterStrokePaint = new Paint();
-    private final DevicePixelConverter mConvertPx;
 
     AccuracyCircleOverlay(Context ctx, int color) {
         super(ctx);
@@ -62,12 +62,12 @@ class AccuracyCircleOverlay extends Overlay {
         c.drawCircle(center.x, center.y, blueDotRadius, mCenterStrokePaint);
     }
 
+    public GeoPoint getLocation() {
+        return mPoint;
+    }
+
     public void setLocation(final Location location) {
         mAccuracy = location.getAccuracy();
         mPoint = new GeoPoint(location.getLatitude(), location.getLongitude());
-    }
-
-    public GeoPoint getLocation() {
-        return mPoint;
     }
 }

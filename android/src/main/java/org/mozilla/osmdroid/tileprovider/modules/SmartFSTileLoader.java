@@ -46,7 +46,7 @@ class SmartFSTileLoader extends AbstractTileLoader {
             return null;
         }
 
-        File sTileFile  = new File(OSMConstants.TILE_PATH_BASE,
+        File sTileFile = new File(OSMConstants.TILE_PATH_BASE,
                 tileSource.getTileRelativeFilenameString(tile) + OSMConstants.MERGED_FILE_EXT);
 
         final Drawable drawable;

@@ -9,8 +9,8 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.widget.TextView;
 
-import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.BuildConfig;
+import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.client.PackageUtils;
 
 public class AboutActivity extends ActionBarActivity {
@@ -38,5 +38,4 @@ public class AboutActivity extends ActionBarActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         return false;
     }
-
 }

@@ -6,8 +6,6 @@ import org.mozilla.osmdroid.ResourceProxy;
 import org.mozilla.osmdroid.tileprovider.MapTile;
 import org.mozilla.osmdroid.tileprovider.tilesource.BitmapTileSourceBase.LowMemoryException;
 
-import java.io.InputStream;
-
 public interface ITileSource {
 
     /**
@@ -72,5 +70,4 @@ public interface ITileSource {
     public int getTileSizePixels();
 
     public String getTileURLString(MapTile tile);
-
 }

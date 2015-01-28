@@ -10,12 +10,12 @@ import static org.junit.Assert.assertTrue;
 @RunWith(RobolectricTestRunner.class)
 public class DefaultPackageTest {
 
-	@Before
-	public void setUp() throws Exception {
-	}
+    @Before
+    public void setUp() throws Exception {
+    }
 
-	@Test
-	public void shouldBeTrue() {
-		assertTrue(true);
-	}
+    @Test
+    public void shouldBeTrue() {
+        assertTrue(true);
+    }
 }

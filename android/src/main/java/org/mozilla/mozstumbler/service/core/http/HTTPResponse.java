@@ -41,6 +41,7 @@ public class HTTPResponse implements IResponse {
     public Map<String, List<String>> getHeaders() {
         return headers;
     }
+
     @Override
     public String getFirstHeader(String key) {
         List<String> matches = headers.get(key);
@@ -75,5 +76,4 @@ public class HTTPResponse implements IResponse {
     public int bytesSent() {
         return bytesSent;
     }
-
 }

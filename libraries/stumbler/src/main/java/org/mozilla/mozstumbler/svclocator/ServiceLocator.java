@@ -7,10 +7,9 @@ import java.lang.reflect.Proxy;
 
 public class ServiceLocator {
 
+    private static ServiceLocator instance = null;
     private ServiceConfig svcMap = new ServiceConfig();
     private ServiceLocator parentLocator = null;
-
-    private static ServiceLocator instance = null;
 
     public ServiceLocator(ServiceLocator parent) {
         parentLocator = parent;
@@ -60,5 +59,4 @@ public class ServiceLocator {
     public void putService(Class<?> svcInterface, Object obj) {
         svcMap.put(svcInterface, obj);
     }
-
 }

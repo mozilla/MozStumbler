@@ -50,5 +50,4 @@ public class MockHttpUtil implements IHttpUtil {
     public IResponse post(String urlString, byte[] data, Map<String, String> headers, boolean precompressed) {
         return null;
     }
-
 }

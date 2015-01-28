@@ -10,13 +10,19 @@ public interface ISampleInterface {
     String echo(String name);
 
     boolean getBool();
+
     int getInt();
+
     long getLong();
+
     float getFloat();
+
     char getChar();
 
     byte getByte();
+
     short getShort();
+
     double getDouble();
 
     Integer getBoxedInteger();

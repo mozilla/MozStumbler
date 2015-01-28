@@ -9,7 +9,6 @@ import android.graphics.Canvas;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.WindowManager;
@@ -29,26 +28,69 @@ public abstract class AbstractMapOverlay extends TilesOverlay {
     public static final String MLS_MAP_TILE_BASE_NAME = "Stumbler-BaseMap-Tiles";
     // We want the map to zoom to level 20, even if tiles have less zoom available
     public static final int MAX_ZOOM_LEVEL_OF_MAP = 20;
-    private static int sMinZoomLevelOfMapDisplaySizeBased;
-
     public static final int TILE_PIXEL_SIZE = 256;
-    // Use png32 which is a 32-color indexed image, the tiles are ~30% smaller
-    public static String FILE_TYPE_SUFFIX_PNG = ".png32";
-    private final Rect mTileRect = new Rect();
-    private final Point mTilePoint = new Point();
-    private final Point mTilePointMercator = new Point();
-    private final Set<MapTile> mDrawnSet = new HashSet<MapTile>();
-    private Projection mProjection;
-
     // TODO make this a single value configurable in developer settings
     private static final int SMALL_SCREEN_MIN_ZOOM = 11;
     private static final int MEDIUM_SCREEN_MIN_ZOOM = 12;
     private static final int LARGE_SCREEN_MIN_ZOOM = 13;
+    // Use png32 which is a 32-color indexed image, the tiles are ~30% smaller
+    public static String FILE_TYPE_SUFFIX_PNG = ".png32";
+    private static int sMinZoomLevelOfMapDisplaySizeBased;
+    private final Rect mTileRect = new Rect();
+    protected final TileLooper mCoverageTileLooper = new TileLooper() {
+        @Override
+        public void initialiseLoop(int pZoomLevel, int pTileSizePx) {
+            // make sure the cache is big enough for all the tiles
+            final int numNeeded = (mLowerRight.y - mUpperLeft.y + 1) * (mLowerRight.x - mUpperLeft.x + 1);
+            mTileProvider.ensureCapacity(numNeeded + OVERSHOOT_TILE_CACHE_SIZE);
+        }
 
+        @Override
+        public void finaliseLoop() {
+        }
 
-    public enum LowResType {
-        HIGHER_ZOOM, LOWER_ZOOM
-    }
+        @Override
+        public void handleTile(Canvas pCanvas, int pTileSizePx, MapTile pTile, int pX, int pY) {
+            int zoomLevel = Math.min(pTile.getZoomLevel(), mTileProvider.getMaximumZoomLevel());
+            final int zoomDifference = pTile.getZoomLevel() - zoomLevel;
+            final int scaleDiff = 1 << zoomDifference;
+
+            pTileSizePx *= scaleDiff;
+            pX /= scaleDiff;
+            pY /= scaleDiff;
+
+            final MapTile tile = new MapTile(zoomLevel, pTile.getX() >> zoomDifference, pTile.getY() >> zoomDifference);
+            if (mDrawnSet.contains(tile)) {
+                return;
+            }
+            mDrawnSet.add(tile);
+
+            Drawable currentMapTile = mTileProvider.getMapTile(tile);
+
+            boolean isReusable = currentMapTile instanceof ReusableBitmapDrawable;
+            final ReusableBitmapDrawable reusableBitmapDrawable =
+                    isReusable ? (ReusableBitmapDrawable) currentMapTile : null;
+
+            if (currentMapTile != null) {
+                mTilePoint.set(pX * pTileSizePx, pY * pTileSizePx);
+                mTileRect.set(mTilePoint.x, mTilePoint.y, mTilePoint.x + pTileSizePx, mTilePoint.y
+                        + pTileSizePx);
+                if (isReusable) {
+                    reusableBitmapDrawable.beginUsingDrawable();
+                }
+                try {
+                    onTileReadyToDraw2(pCanvas, currentMapTile, mTileRect);
+                } finally {
+                    if (isReusable)
+                        reusableBitmapDrawable.finishUsingDrawable();
+                }
+            }
+        }
+    };
+    private final Point mTilePoint = new Point();
+    private final Point mTilePointMercator = new Point();
+    private final Set<MapTile> mDrawnSet = new HashSet<MapTile>();
+    private Projection mProjection;
 
     public AbstractMapOverlay(final Context context) {
         super(new BetterTileProvider(context), new DefaultResourceProxyImpl(context));
@@ -91,61 +133,15 @@ public abstract class AbstractMapOverlay extends TilesOverlay {
         }
     }
 
-    protected final TileLooper mCoverageTileLooper = new TileLooper() {
-        @Override
-        public void initialiseLoop(int pZoomLevel, int pTileSizePx) {
-            // make sure the cache is big enough for all the tiles
-            final int numNeeded = (mLowerRight.y - mUpperLeft.y + 1) * (mLowerRight.x - mUpperLeft.x + 1);
-            mTileProvider.ensureCapacity(numNeeded + OVERSHOOT_TILE_CACHE_SIZE);
-        }
-
-        @Override
-        public void finaliseLoop() {}
-
-        @Override
-        public void handleTile(Canvas pCanvas, int pTileSizePx, MapTile pTile, int pX, int pY) {
-            int zoomLevel = Math.min(pTile.getZoomLevel(), mTileProvider.getMaximumZoomLevel());
-            final int zoomDifference = pTile.getZoomLevel() - zoomLevel;
-            final int scaleDiff = 1 << zoomDifference;
-
-            pTileSizePx *= scaleDiff;
-            pX /= scaleDiff;
-            pY /= scaleDiff;
-
-            final MapTile tile = new MapTile(zoomLevel, pTile.getX() >> zoomDifference, pTile.getY() >> zoomDifference);
-            if (mDrawnSet.contains(tile)) {
-                return;
-            }
-            mDrawnSet.add(tile);
-
-            Drawable currentMapTile = mTileProvider.getMapTile(tile);
-
-            boolean isReusable = currentMapTile instanceof ReusableBitmapDrawable;
-            final ReusableBitmapDrawable reusableBitmapDrawable =
-                    isReusable ? (ReusableBitmapDrawable) currentMapTile : null;
-
-            if (currentMapTile != null) {
-                mTilePoint.set(pX * pTileSizePx, pY * pTileSizePx);
-                mTileRect.set(mTilePoint.x, mTilePoint.y, mTilePoint.x + pTileSizePx, mTilePoint.y
-                        + pTileSizePx);
-                if (isReusable) {
-                    reusableBitmapDrawable.beginUsingDrawable();
-                }
-                try {
-                    onTileReadyToDraw2(pCanvas, currentMapTile, mTileRect);
-                } finally {
-                    if (isReusable)
-                        reusableBitmapDrawable.finishUsingDrawable();
-                }
-            }
-        }
-    };
-
     private void onTileReadyToDraw2(final Canvas c, final Drawable currentMapTile,
-                                     final Rect tileRect) {
+                                    final Rect tileRect) {
         mProjection.toPixelsFromMercator(tileRect.left, tileRect.top, mTilePointMercator);
         tileRect.offsetTo(mTilePointMercator.x, mTilePointMercator.y);
         currentMapTile.setBounds(tileRect);
         currentMapTile.draw(c);
+    }
+
+    public enum LowResType {
+        HIGHER_ZOOM, LOWER_ZOOM
     }
 }

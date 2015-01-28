@@ -40,12 +40,10 @@ import java.util.Properties;
 
 public class MetricsView {
 
-    public interface IMapLayerToggleListener {
-        public void setShowMLS(boolean isOn);
-    }
-
     private static final String LOG_TAG = LoggerUtil.makeLogTag(MetricsView.class);
-
+    private static int sThisSessionObservationsCount;
+    private static int sThisSessionUniqueWifiCount;
+    private static int sThisSessionUniqueCellCount;
     private final TextView
             mLastUpdateTimeView,
             mAllTimeObservationsSentView,
@@ -53,27 +51,19 @@ public class MetricsView {
             mThisSessionObservationsView,
             mThisSessionUniqueCellsView,
             mThisSessionUniqueAPsView;
-
     private final CheckBox mOnMapShowMLS;
-
-    private WeakReference<IMapLayerToggleListener> mMapLayerToggleListener = new WeakReference<IMapLayerToggleListener>(null);
-
     private final Handler mHandler = new Handler(Looper.getMainLooper());
     private final long FREQ_UPDATE_UPLOADTIME = 10 * 1000;
-
     private final ImageButton mUploadButton;
     private final ImageButton mSettingsButton;
     private final RelativeLayout mButtonsContainer;
     private final View mView;
+    private final String mObservationAndSize = "%1$d  %2$s";
+    private WeakReference<IMapLayerToggleListener> mMapLayerToggleListener = new WeakReference<IMapLayerToggleListener>(null);
     private long mTotalBytesUploadedThisSession_lastDisplayed = -1;
     private long mLastUploadTime = 0;
-    private final String mObservationAndSize = "%1$d  %2$s";
-
     private boolean mHasQueuedObservations;
-
-    private static int sThisSessionObservationsCount;
-    private static int sThisSessionUniqueWifiCount;
-    private static int sThisSessionUniqueCellCount;
+    private boolean buttonIsSyncIcon;
 
     public MetricsView(View view) {
         mView = view;
@@ -108,8 +98,8 @@ public class MetricsView {
 
                 AsyncUploader uploader = new AsyncUploader();
                 AsyncUploadParam param = new AsyncUploadParam(false /* useWifiOnly */,
-                    Prefs.getInstance(mView.getContext()).getNickname(),
-                    Prefs.getInstance(mView.getContext()).getEmail());
+                        Prefs.getInstance(mView.getContext()).getNickname(),
+                        Prefs.getInstance(mView.getContext()).getEmail());
                 uploader.execute(param);
 
                 setUploadButtonToSyncing(true);
@@ -121,7 +111,7 @@ public class MetricsView {
             @Override
             public void onClick(View v) {
                 Activity mainDrawer = (Activity) v.getContext();
-                assert(mainDrawer instanceof MainDrawerActivity);
+                assert (mainDrawer instanceof MainDrawerActivity);
                 mainDrawer.startActivityForResult(new Intent(v.getContext(), PreferencesScreen.class), 1);
             }
         });
@@ -142,11 +132,10 @@ public class MetricsView {
             @Override
             public void onClick(View v) {
                 Activity mainDrawer = (Activity) v.getContext();
-                assert(mainDrawer instanceof MainDrawerActivity);
+                assert (mainDrawer instanceof MainDrawerActivity);
                 mainDrawer.startActivityForResult(new Intent(v.getContext(), PowerSavingScreen.class), 1);
             }
         });
-
     }
 
     void updatePowerSavingsLabels() {
@@ -155,7 +144,7 @@ public class MetricsView {
 
         TextView tv = (TextView) mView.findViewById(R.id.textview_stop_at_battery);
         String s = String.format(mView.getResources().getString(R.string.stop_at_x_battery),
-                    battPct);
+                battPct);
         tv.setText(s);
 
         tv = (TextView) mView.findViewById(R.id.textview_motion_detection);
@@ -166,7 +155,6 @@ public class MetricsView {
         s = String.format(mView.getResources().getString(R.string.motion_detection_onoff),
                 onOrOff);
         tv.setText(s);
-
     }
 
     public void setMapLayerToggleListener(IMapLayerToggleListener listener) {
@@ -174,8 +162,6 @@ public class MetricsView {
         mOnMapShowMLS.setChecked(ClientPrefs.getInstance(mView.getContext()).getOnMapShowMLS());
     }
 
-
-    private boolean buttonIsSyncIcon;
     private void updateUploadButtonEnabled() {
         if (buttonIsSyncIcon) {
             mUploadButton.setEnabled(false);
@@ -255,14 +241,6 @@ public class MetricsView {
         return "(" + (Math.round(kb * 10.0f) / 10.0f) + " KB)";
     }
 
-    private final Runnable mUpdateLastUploadedLabel = new Runnable() {
-        @Override
-        public void run() {
-            updateLastUploadedLabel();
-            mHandler.postDelayed(mUpdateLastUploadedLabel, FREQ_UPDATE_UPLOADTIME);
-        }
-    };
-
     private void updateLastUploadedLabel() {
         Context context = mView.getContext();
         String value = context.getString(R.string.metrics_observations_last_upload_time_never);
@@ -303,7 +281,13 @@ public class MetricsView {
 
         mHasQueuedObservations = q.mReportCount > 0;
         updateUploadButtonEnabled();
-    }
+    }    private final Runnable mUpdateLastUploadedLabel = new Runnable() {
+        @Override
+        public void run() {
+            updateLastUploadedLabel();
+            mHandler.postDelayed(mUpdateLastUploadedLabel, FREQ_UPDATE_UPLOADTIME);
+        }
+    };
 
     public void setObservationCount(int observations, int cells, int wifis, boolean isActive) {
         sThisSessionObservationsCount = observations;
@@ -313,4 +297,10 @@ public class MetricsView {
         NotificationUtil util = new NotificationUtil(mView.getContext().getApplicationContext());
         util.updateMetrics(observations, cells, wifis, mLastUploadTime, isActive);
     }
+
+    public interface IMapLayerToggleListener {
+        public void setShowMLS(boolean isOn);
+    }
+
+
 }

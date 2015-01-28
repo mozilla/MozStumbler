@@ -11,6 +11,4 @@ public interface ISystemClock {
 
     // Implementations should provide an implementation of System.currentTimeMillis
     public long currentTimeMillis();
-
-
 }

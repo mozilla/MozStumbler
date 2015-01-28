@@ -20,11 +20,6 @@ public class Zipper {
 
     private static final String LOG_TAG = LoggerUtil.makeLogTag(Zipper.class);
 
-    public enum ZippedState {
-        eNotZipped,
-        eAlreadyZipped
-    }
-
     /*
     Compress data using gzip, return null if compression fails.
      */
@@ -42,7 +37,7 @@ public class Zipper {
             return null;
         } finally {
             try {
-                if (gz_outputstream != null){
+                if (gz_outputstream != null) {
                     gz_outputstream.close();
                 }
             } catch (IOException e) {
@@ -79,4 +74,8 @@ public class Zipper {
         return result.toString();
     }
 
+    public enum ZippedState {
+        eNotZipped,
+        eAlreadyZipped
+    }
 }

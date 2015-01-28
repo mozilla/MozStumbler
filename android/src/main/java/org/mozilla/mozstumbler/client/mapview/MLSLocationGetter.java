@@ -26,20 +26,16 @@ This class provides MLS locations by calling HTTP methods against the MLS.
 public class MLSLocationGetter extends AsyncTask<String, Void, Location> {
     private static final String LOG_TAG = LoggerUtil.makeLogTag(MLSLocationGetter.class);
     private static final String RESPONSE_OK_TEXT = "ok";
+    private static AtomicInteger sRequestCounter = new AtomicInteger(0);
+    private final int MAX_REQUESTS = 10;
     private ILocationService mls;
     private MLSLocationGetterCallback mCallback;
     private byte[] mQueryMLSBytes;
-    private final int MAX_REQUESTS = 10;
-    private static AtomicInteger sRequestCounter = new AtomicInteger(0);
     private boolean mIsBadRequest;
-    public interface MLSLocationGetterCallback {
-        void setMLSResponseLocation(Location loc);
-        void errorMLSResponse(boolean stopRequesting);
-    }
 
     public MLSLocationGetter(MLSLocationGetterCallback callback, JSONObject mlsQueryObj) {
         mCallback = callback;
-        mQueryMLSBytes  = mlsQueryObj.toString().getBytes();
+        mQueryMLSBytes = mlsQueryObj.toString().getBytes();
 
         IHttpUtil httpUtil = (IHttpUtil) ServiceLocator.getInstance().getService(IHttpUtil.class);
         mls = new MLS(httpUtil);
@@ -96,5 +92,11 @@ public class MLSLocationGetter extends AsyncTask<String, Void, Location> {
         } else {
             mCallback.setMLSResponseLocation(location);
         }
+    }
+
+    public interface MLSLocationGetterCallback {
+        void setMLSResponseLocation(Location loc);
+
+        void errorMLSResponse(boolean stopRequesting);
     }
 }

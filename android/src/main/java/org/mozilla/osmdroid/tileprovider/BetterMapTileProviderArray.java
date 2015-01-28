@@ -29,10 +29,8 @@ import java.util.Map;
  */
 public class BetterMapTileProviderArray extends MapTileProviderBase {
 
-    protected final Map<MapTile, MapTileRequestState> mWorking = Collections.synchronizedMap(new HashMap<MapTile, MapTileRequestState>());
-
     private static final String LOG_TAG = LoggerUtil.makeLogTag(BetterMapTileProviderArray.class);
-
+    protected final Map<MapTile, MapTileRequestState> mWorking = Collections.synchronizedMap(new HashMap<MapTile, MapTileRequestState>());
     protected final List<MapTileModuleProviderBase> mTileProviderList;
 
     /**

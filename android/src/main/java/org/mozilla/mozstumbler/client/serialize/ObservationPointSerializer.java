@@ -41,12 +41,8 @@ import java.util.Map;
 // load -> show list to pick from
 
 public class ObservationPointSerializer extends AsyncTask<Void, Void, Boolean> {
-    public interface IListener {
-        public void onWriteComplete(File file);
-        public void onReadComplete(LinkedList<ObservationPoint> points, File file);
-        public void onError();
-    }
-
+    public static final String WIFIS = "Wi-Fis";
+    public static final String CELLS = "Cells";
     private static final String LOG_TAG = LoggerUtil.makeLogTag(ObservationPointSerializer.class);
     private static final String GPS_NAME = "GPS";
     private static final String MLS_NAME = "MLS";
@@ -54,25 +50,16 @@ public class ObservationPointSerializer extends AsyncTask<Void, Void, Boolean> {
     private static final String STYLE_NAME_RED_CIRCLE = "redcircle";
     private static final String ICON_ARROW = "http://maps.google.com/mapfiles/kml/shapes/arrow.png";
     private static final String STYLE_NAME_ARROW = "arrow";
-
     private static final String COLOR_HAS_WIFI = "ffff0000"; //green in AABBGGRR
     private static final String COLOR_HAS_CELLS = "ff00ffff"; // yellow
     private static final String COLOR_HAS_BOTH = "ff00ff00"; // blue
-
-    public static final String WIFIS = "Wi-Fis";
-    public static final String CELLS = "Cells";
-
-    public enum Mode { READ, WRITE }
-
+    final WeakReference<IListener> mObservationPointSerializerListener;
     private final LinkedList<ObservationPoint> mPointList;
     private File mFile;
     private Mode mMode;
 
-    final WeakReference<IListener> mObservationPointSerializerListener;
-
     ObservationPointSerializer(IListener listener, Mode mode, File file,
-                               LinkedList<ObservationPoint> pointList)
-    {
+                               LinkedList<ObservationPoint> pointList) {
         mObservationPointSerializerListener = new WeakReference<IListener>(listener);
         mFile = file;
         mPointList = pointList;
@@ -111,7 +98,7 @@ public class ObservationPointSerializer extends AsyncTask<Void, Void, Boolean> {
         placemark.setStyleUrl("#" + STYLE_NAME_ARROW);
 
         IconStyle iconStyle = new IconStyle();
-        iconStyle.setHeading((float)heading);
+        iconStyle.setHeading((float) heading);
         if (color != null) {
             iconStyle.setColor(color);
         }
@@ -148,8 +135,8 @@ public class ObservationPointSerializer extends AsyncTask<Void, Void, Boolean> {
             time.setWhen(dateTime.toString() /* Date auto formats to RFC 3339 */);
             placemark.setTimePrimitive(time);
 
-            String color = (observationPoint.mWifiCount > 0)? COLOR_HAS_WIFI : COLOR_HAS_CELLS;
-            if (observationPoint.mWifiCount > 0 && observationPoint.mCellCount > 0 ) {
+            String color = (observationPoint.mWifiCount > 0) ? COLOR_HAS_WIFI : COLOR_HAS_CELLS;
+            if (observationPoint.mWifiCount > 0 && observationPoint.mCellCount > 0) {
                 color = COLOR_HAS_BOTH;
             }
 
@@ -247,7 +234,7 @@ public class ObservationPointSerializer extends AsyncTask<Void, Void, Boolean> {
 
             List<Feature> subFeatures = ((Folder) topFeatures).getFeatureList();
             if (subFeatures == null) {
-               continue;
+                continue;
             }
 
             for (Feature f : subFeatures) {
@@ -329,5 +316,15 @@ public class ObservationPointSerializer extends AsyncTask<Void, Void, Boolean> {
         } else {
             listener.onReadComplete(mPointList, mFile);
         }
+    }
+
+    public enum Mode {READ, WRITE}
+
+    public interface IListener {
+        public void onWriteComplete(File file);
+
+        public void onReadComplete(LinkedList<ObservationPoint> points, File file);
+
+        public void onError();
     }
 }

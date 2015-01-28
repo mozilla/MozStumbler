@@ -54,27 +54,27 @@ import java.lang.ref.WeakReference;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @ReportsCrashes(
-    formKey="",
-    httpMethod = HttpSender.Method.PUT,
-    reportType = HttpSender.Type.JSON,
-    formUri = BuildConfig.ACRA_URI,
-    formUriBasicAuthLogin = BuildConfig.ACRA_USER,
-    formUriBasicAuthPassword = BuildConfig.ACRA_PASS)
+        formKey = "",
+        httpMethod = HttpSender.Method.PUT,
+        reportType = HttpSender.Type.JSON,
+        formUri = BuildConfig.ACRA_URI,
+        formUriBasicAuthLogin = BuildConfig.ACRA_USER,
+        formUriBasicAuthPassword = BuildConfig.ACRA_PASS)
 public class MainApp extends Application
         implements AsyncUploader.AsyncUploaderListener {
     public static final AtomicBoolean isUploading = new AtomicBoolean();
+    public static final String INTENT_TURN_OFF = "org.mozilla.mozstumbler.turnMeOff";
+    public static final String ACTION_BASE = AppGlobals.ACTION_NAMESPACE + ".MainApp.";
+    public static final String ACTION_LOW_BATTERY = ACTION_BASE + ".LOW_BATTERY";
+    private static boolean sHasBootedOnce;
     private final String LOG_TAG = LoggerUtil.makeLogTag(MainApp.class);
+    private final long MAX_BYTES_DISK_STORAGE = 1000 * 1000 * 20; // 20MB for Mozilla Stumbler by default, is ok?
+    private final int MAX_WEEKS_OLD_STORED = 4;
     private ClientStumblerService mStumblerService;
     private ServiceConnection mConnection;
     private ServiceBroadcastReceiver mReceiver;
     private WeakReference<IMainActivity> mMainActivity = new WeakReference<IMainActivity>(null);
-    private final long MAX_BYTES_DISK_STORAGE = 1000 * 1000 * 20; // 20MB for Mozilla Stumbler by default, is ok?
-    private final int MAX_WEEKS_OLD_STORED = 4;
-    public static final String INTENT_TURN_OFF = "org.mozilla.mozstumbler.turnMeOff";
-    public static final String ACTION_BASE = AppGlobals.ACTION_NAMESPACE + ".MainApp.";
-    public static final String ACTION_LOW_BATTERY = ACTION_BASE + ".LOW_BATTERY";
     private boolean mIsScanningPausedDueToNoMotion;
-
     private final BroadcastReceiver mReceivePausedState = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
             mIsScanningPausedDueToNoMotion = intent.getBooleanExtra(ScanManager.ACTION_EXTRA_IS_PAUSED, false);
@@ -85,6 +85,37 @@ public class MainApp extends Application
             });
         }
     };
+
+    public static ServiceConfig defaultServiceConfig() {
+        /*
+         This will configure the service map with all services required for runtime.
+
+         Note that the logger checks the buildconfig type to determine whether or not to use the DebugLogger
+         or the ProductionLogger.
+         */
+
+        ServiceConfig result = new ServiceConfig();
+        // All classes here must have an argument free constructor.
+        result.put(IHttpUtil.class,
+                ServiceConfig.load("org.mozilla.mozstumbler.service.core.http.HttpUtil"));
+        // All classes here must have an argument free constructor.
+        result.put(ISystemClock.class,
+                ServiceConfig.load("org.mozilla.mozstumbler.svclocator.services.SystemClock"));
+
+        if (BuildConfig.BUILD_TYPE.equals("unittest")) {
+            result.put(ILogger.class, ServiceConfig.load("org.mozilla.mozstumbler.svclocator.services.log.DebugLogger"));
+        } else {
+            result.put(ILogger.class, ServiceConfig.load("org.mozilla.mozstumbler.svclocator.services.log.ProductionLogger"));
+        }
+
+        return result;
+    }
+
+    public static boolean getAndSetHasBootedOnce() {
+        boolean b = sHasBootedOnce;
+        sHasBootedOnce = true;
+        return b;
+    }
 
     public ClientPrefs getPrefs(Context c) {
         return ClientPrefs.getInstance(c);
@@ -111,31 +142,6 @@ public class MainApp extends Application
         }
 
         return new File(dir, "osmdroid");
-    }
-
-    public static ServiceConfig defaultServiceConfig() {
-        /*
-         This will configure the service map with all services required for runtime.
-
-         Note that the logger checks the buildconfig type to determine whether or not to use the DebugLogger
-         or the ProductionLogger.
-         */
-
-        ServiceConfig result = new ServiceConfig();
-        // All classes here must have an argument free constructor.
-        result.put(IHttpUtil.class,
-                ServiceConfig.load("org.mozilla.mozstumbler.service.core.http.HttpUtil"));
-        // All classes here must have an argument free constructor.
-        result.put(ISystemClock.class,
-                ServiceConfig.load("org.mozilla.mozstumbler.svclocator.services.SystemClock"));
-
-        if (BuildConfig.BUILD_TYPE.equals("unittest")) {
-            result.put(ILogger.class, ServiceConfig.load("org.mozilla.mozstumbler.svclocator.services.log.DebugLogger"));
-        } else {
-            result.put(ILogger.class, ServiceConfig.load("org.mozilla.mozstumbler.svclocator.services.log.ProductionLogger"));
-        }
-
-        return result;
     }
 
     @Override
@@ -221,11 +227,10 @@ public class MainApp extends Application
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
 
         LocalBroadcastManager.getInstance(this).
-            registerReceiver(mReceivePausedState, new IntentFilter(ScanManager.ACTION_SCAN_PAUSED_USER_MOTIONLESS));
+                registerReceiver(mReceivePausedState, new IntentFilter(ScanManager.ACTION_SCAN_PAUSED_USER_MOTIONLESS));
     }
 
-    private void checkSimulationPermission()
-    {
+    private void checkSimulationPermission() {
         String permission = "android.permission.MOCK_LOCATION";
         Context appContext = this.getApplicationContext();
         int res = appContext.checkCallingOrSelfPermission(permission);
@@ -236,7 +241,6 @@ public class MainApp extends Application
             Log.i(LOG_TAG, "Simulation disabled as developer option is not enabled.");
         }
     }
-
 
     @Override
     public void onTerminate() {
@@ -288,7 +292,6 @@ public class MainApp extends Application
                 Prefs.getInstance(this).getEmail());
 
         uploader.execute(param);
-
     }
 
     @TargetApi(9)
@@ -321,6 +324,61 @@ public class MainApp extends Application
             return false;
         }
         return mStumblerService.isScanning() || mIsScanningPausedDueToNoMotion;
+    }
+
+    public void showDeveloperDialog(Activity activity) {
+        activity.startActivity(new Intent(activity, DeveloperActivity.class));
+    }
+
+    @Override
+    public void onUploadProgress(boolean isUploading) {
+        if (mMainActivity.get() != null) {
+            mMainActivity.get().setUploadState(isUploading);
+        }
+    }
+
+    public void keepScreenOnPrefChanged(boolean isEnabled) {
+        if (mMainActivity.get() != null) {
+            mMainActivity.get().keepScreenOn(isEnabled);
+        }
+    }
+
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+
+        if (mStumblerService != null) {
+            mStumblerService.handleLowMemoryNotification();
+        }
+    }
+
+    @TargetApi(14)
+    @Override
+    public void onTrimMemory(int level) {
+        super.onTrimMemory(level);
+
+        if (mStumblerService != null) {
+            mStumblerService.handleLowMemoryNotification();
+        }
+    }
+
+    public void updateMotionDetected() {
+        if (mStumblerService == null) {
+            return;
+        }
+
+        AppGlobals.guiLogInfo("Is motionless: " + mIsScanningPausedDueToNoMotion);
+
+        NotificationUtil util = new NotificationUtil(this.getApplicationContext());
+        util.setPaused(mIsScanningPausedDueToNoMotion);
+
+        if (mMainActivity.get() != null) {
+            mMainActivity.get().isPausedDueToNoMotion(mIsScanningPausedDueToNoMotion);
+        }
+    }
+
+    public boolean isIsScanningPausedDueToNoMotion() {
+        return mIsScanningPausedDueToNoMotion;
     }
 
     private class ServiceBroadcastReceiver extends BroadcastReceiver {
@@ -365,67 +423,5 @@ public class MainApp extends Application
                 mMainActivity.get().updateUiOnMainThread(updateMetrics);
             }
         }
-    }
-
-    public void showDeveloperDialog(Activity activity) {
-       activity.startActivity(new Intent(activity, DeveloperActivity.class));
-    }
-
-    @Override
-    public void onUploadProgress(boolean isUploading) {
-        if (mMainActivity.get() != null) {
-            mMainActivity.get().setUploadState(isUploading);
-        }
-    }
-
-    public void keepScreenOnPrefChanged(boolean isEnabled) {
-        if (mMainActivity.get() != null) {
-            mMainActivity.get().keepScreenOn(isEnabled);
-        }
-    }
-
-    private static boolean sHasBootedOnce;
-    public static boolean getAndSetHasBootedOnce() {
-        boolean b = sHasBootedOnce;
-        sHasBootedOnce = true;
-        return b;
-    }
-
-    @Override
-    public void onLowMemory() {
-        super.onLowMemory();
-
-        if (mStumblerService != null) {
-            mStumblerService.handleLowMemoryNotification();
-        }
-    }
-
-    @TargetApi(14)
-    @Override
-    public void onTrimMemory(int level) {
-        super.onTrimMemory(level);
-
-        if (mStumblerService != null) {
-            mStumblerService.handleLowMemoryNotification();
-        }
-    }
-
-    public void updateMotionDetected() {
-        if (mStumblerService == null) {
-            return;
-        }
-
-        AppGlobals.guiLogInfo("Is motionless: " + mIsScanningPausedDueToNoMotion);
-
-        NotificationUtil util = new NotificationUtil(this.getApplicationContext());
-        util.setPaused(mIsScanningPausedDueToNoMotion);
-
-        if (mMainActivity.get() != null) {
-            mMainActivity.get().isPausedDueToNoMotion(mIsScanningPausedDueToNoMotion);
-        }
-    }
-
-    public boolean isIsScanningPausedDueToNoMotion() {
-        return mIsScanningPausedDueToNoMotion;
     }
 }

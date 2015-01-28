@@ -67,10 +67,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class MapFragment extends android.support.v4.app.Fragment
         implements MetricsView.IMapLayerToggleListener {
 
-    public static enum NoMapAvailableMessage { eHideNoMapMessage, eNoMapDueToNoAccessibleStorage, eNoMapDueToNoInternet }
-
     private static final String LOG_TAG = LoggerUtil.makeLogTag(MapFragment.class);
-
     private static final String COVERAGE_REDIRECT_URL = "https://location.services.mozilla.com/map.json";
     private static final String ZOOM_KEY = "zoom";
     private static final int DEFAULT_ZOOM = 13;
@@ -78,12 +75,12 @@ public class MapFragment extends android.support.v4.app.Fragment
     private static final String LAT_KEY = "latitude";
     private static final String LON_KEY = "longitude";
     private static final int HIGH_ZOOM_THRESHOLD = 14;
-
+    private static String sCoverageUrl; // Only used by CoverageSetup
+    private final Timer mGetUrl = new Timer();
     private MapView mMap;
     private AccuracyCircleOverlay mAccuracyOverlay;
     private boolean mFirstLocationFix;
     private boolean mUserPanning = false;
-    private final Timer mGetUrl = new Timer();
     private ObservationPointsOverlay mObservationPointsOverlay;
     private MapLocationListener mMapLocationListener;
     private LowResMapOverlay mLowResMapOverlayHighZoom;
@@ -95,21 +92,6 @@ public class MapFragment extends android.support.v4.app.Fragment
     private TextView mTextViewMapResolutionInfo;
     private HighLowBandwidthReceiver mHighLowBandwidthChecker;
     private CoverageSetup mCoverageSetup = new CoverageSetup();
-
-    // Used to blank the high-res tile source when adding a low-res overlay
-    private class BlankTileSource extends OnlineTileSourceBase {
-        BlankTileSource() {
-            super("fake", ResourceProxy.string.mapquest_aerial /* arbitrary value */,
-                    AbstractMapOverlay.getDisplaySizeBasedMinZoomLevel(),
-                    AbstractMapOverlay.MAX_ZOOM_LEVEL_OF_MAP, AbstractMapOverlay.TILE_PIXEL_SIZE,
-                    "", new String[] {""});
-        }
-        
-        @Override
-        public String getTileURLString(MapTile aTile) {
-            return null;
-        }
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -275,80 +257,6 @@ public class MapFragment extends android.support.v4.app.Fragment
     public LocationManager getLocationManager() {
         return (LocationManager) getActivity().getApplicationContext().
                 getSystemService(Context.LOCATION_SERVICE);
-
-    }
-    private static String sCoverageUrl; // Only used by CoverageSetup
-
-    private class CoverageSetup {
-        private AtomicBoolean isGetUrlAndInitCoverageRunning = new AtomicBoolean();
-
-        private void initOnMainThread() {
-            final Runnable runnable = new Runnable() {
-                @Override
-                public void run() {
-                    final ClientPrefs.MapTileResolutionOptions resolution =
-                            ClientPrefs.getInstance(mRootView.getContext()).getMapTileResolutionType();
-                    if (mCoverageTilesOverlayLowZoom != null ||  // checks if init() has already happened
-                        resolution == ClientPrefs.MapTileResolutionOptions.NoMap) {
-                        return;
-                    }
-                    initCoverageTiles(sCoverageUrl);
-                    updateOverlayCoverageLayer(mMap.getZoomLevel());
-                }
-            };
-            mMap.post(runnable);
-        }
-
-        void getUrlAndInit() {
-            if (!isGetUrlAndInitCoverageRunning.compareAndSet(false, true)) {
-                return;
-            }
-
-            final Runnable coverageUrlQuery = new Runnable() {
-                @Override
-                public void run() {
-                    if (sCoverageUrl != null) {
-                        initOnMainThread();
-                        isGetUrlAndInitCoverageRunning.set(false);
-                        return;
-                    }
-
-                    mGetUrl.schedule(new TimerTask() {
-                        @Override
-                        public void run() {
-                            try {
-                                IHttpUtil httpUtil = (IHttpUtil) ServiceLocator.getInstance().getService(IHttpUtil.class);
-                                java.util.Scanner scanner = new java.util.Scanner(httpUtil.getUrlAsStream(COVERAGE_REDIRECT_URL), "UTF-8");
-                                if (scanner.hasNext()) {
-                                    scanner.useDelimiter("\\A");
-                                    String result = scanner.next();
-                                    try {
-                                        sCoverageUrl = new JSONObject(result).getString("tiles_url");
-                                        removeLayer(mCoverageTilesOverlayHighZoom);
-                                        removeLayer(mCoverageTilesOverlayLowZoom);
-                                        mCoverageTilesOverlayHighZoom = mCoverageTilesOverlayLowZoom = null;
-                                    } catch (JSONException ex) {
-                                        AppGlobals.guiLogInfo("Failed to get coverage url: " + ex.toString());
-                                    }
-                                }
-                                scanner.close();
-                            } catch (Exception ex) {
-                                // this will catch java.net.UnknownHostException when offline
-                                if (AppGlobals.isDebug) {
-                                    ClientLog.d(LOG_TAG, ex.toString());
-                                }
-                            }
-                            // always init coverage tiles
-                            // cached tiles will be shown even if sCoverageUrl == null
-                            initOnMainThread();
-                            isGetUrlAndInitCoverageRunning.set(false);
-                        }
-                    }, 0);
-                }
-            };
-
-            mMap.post(coverageUrlQuery);
-        }
     }
 
     private void initCoverageTiles(String coverageUrl) {
@@ -375,8 +283,8 @@ public class MapFragment extends android.support.v4.app.Fragment
             return;
         }
         final List<Overlay> overlays = mMap.getOverlays();
-        final Overlay overlayRemoved = (!isHighZoom(zoomLevel))? mLowResMapOverlayHighZoom : mLowResMapOverlayLowZoom;
-        final Overlay overlayAdded = (isHighZoom(zoomLevel))? mLowResMapOverlayHighZoom : mLowResMapOverlayLowZoom;
+        final Overlay overlayRemoved = (!isHighZoom(zoomLevel)) ? mLowResMapOverlayHighZoom : mLowResMapOverlayLowZoom;
+        final Overlay overlayAdded = (isHighZoom(zoomLevel)) ? mLowResMapOverlayHighZoom : mLowResMapOverlayLowZoom;
         if (overlays.indexOf(overlayRemoved) > -1) {
             overlays.remove(overlayRemoved);
         }
@@ -396,12 +304,12 @@ public class MapFragment extends android.support.v4.app.Fragment
 
         final List<Overlay> overlays = mMap.getOverlays();
         int idx = 0;
-        if (overlays.indexOf(mLowResMapOverlayHighZoom) > -1 || overlays.indexOf(mLowResMapOverlayLowZoom) > -1 ) {
+        if (overlays.indexOf(mLowResMapOverlayHighZoom) > -1 || overlays.indexOf(mLowResMapOverlayLowZoom) > -1) {
             idx = 1;
         }
 
-        final Overlay overlayRemoved = (!isHighZoom(zoomLevel))? mCoverageTilesOverlayHighZoom : mCoverageTilesOverlayLowZoom;
-        final Overlay overlayAdded = (isHighZoom(zoomLevel))? mCoverageTilesOverlayHighZoom : mCoverageTilesOverlayLowZoom;
+        final Overlay overlayRemoved = (!isHighZoom(zoomLevel)) ? mCoverageTilesOverlayHighZoom : mCoverageTilesOverlayLowZoom;
+        final Overlay overlayAdded = (isHighZoom(zoomLevel)) ? mCoverageTilesOverlayHighZoom : mCoverageTilesOverlayLowZoom;
         if (overlays.indexOf(overlayRemoved) > -1) {
             overlays.remove(overlayRemoved);
         }
@@ -474,7 +382,6 @@ public class MapFragment extends android.support.v4.app.Fragment
             }
             System.gc();
             mMap.setTileSource(mHighResMapSource);
-
         } else if (!isHighBandwidth && !hasLowResMap) {
             // Unhooking the highres map means we should nullify it and force GC
             // to cleanup underlying LRU cache in MapSource
@@ -613,7 +520,6 @@ public class MapFragment extends android.support.v4.app.Fragment
         } else if (!mUserPanning) {
             mMap.getController().animateTo((mAccuracyOverlay.getLocation()));
         }
-
     }
 
     void updateGPSInfo(int satellites, int fixes) {
@@ -622,33 +528,6 @@ public class MapFragment extends android.support.v4.app.Fragment
         // @TODO this is still not accurate
         int icon = fixes >= GPSScanner.MIN_SAT_USED_IN_FIX ? R.drawable.ic_gps_receiving_flaticondotcom : R.drawable.ic_gps_no_signal_flaticondotcom;
         ((ImageView) mRootView.findViewById(R.id.fix_indicator)).setImageResource(icon);
-    }
-
-    // An overlay for the sole purpose of reporting a user swiping on the map
-    private static class SwipeListeningOverlay extends Overlay {
-        private static interface OnSwipeListener {
-            public void onSwipe();
-        }
-
-        final OnSwipeListener mOnSwipe;
-
-        SwipeListeningOverlay(Context ctx, OnSwipeListener onSwipe) {
-            super(ctx);
-            mOnSwipe = onSwipe;
-        }
-
-        @Override
-        protected void draw(Canvas c, MapView osmv, boolean shadow) {
-            // Nothing to draw
-        }
-
-        @Override
-        public boolean onTouchEvent(final MotionEvent event, final MapView mapView) {
-            if (mOnSwipe != null && event.getAction() == MotionEvent.ACTION_MOVE) {
-                mOnSwipe.onSwipe();
-            }
-            return false;
-        }
     }
 
     @Override
@@ -774,24 +653,140 @@ public class MapFragment extends android.support.v4.app.Fragment
             noMapMessage.setVisibility(View.INVISIBLE);
         } else {
             noMapMessage.setVisibility(View.VISIBLE);
-            int resId = (noMapAvailableMessage == NoMapAvailableMessage.eNoMapDueToNoInternet)?
+            int resId = (noMapAvailableMessage == NoMapAvailableMessage.eNoMapDueToNoInternet) ?
                     R.string.map_offline_mode : R.string.map_unavailable;
             noMapMessage.setText(resId);
         }
     }
 
     public void showPausedDueToNoMotionMessage(boolean show) {
-        mRootView.findViewById(R.id.scanning_paused_message).setVisibility(show? View.VISIBLE : View.INVISIBLE);
-        if (mMapLocationListener != null ) {
+        mRootView.findViewById(R.id.scanning_paused_message).setVisibility(show ? View.VISIBLE : View.INVISIBLE);
+        if (mMapLocationListener != null) {
             mMapLocationListener.pauseGpsUpdates(show);
         }
     }
 
     public void stop() {
         mRootView.findViewById(R.id.scanning_paused_message).setVisibility(View.INVISIBLE);
-        if (mMapLocationListener != null ) {
+        if (mMapLocationListener != null) {
             mMapLocationListener.removeListener();
             mMapLocationListener = null;
+        }
+    }
+
+    public static enum NoMapAvailableMessage {eHideNoMapMessage, eNoMapDueToNoAccessibleStorage, eNoMapDueToNoInternet}
+
+    // An overlay for the sole purpose of reporting a user swiping on the map
+    private static class SwipeListeningOverlay extends Overlay {
+        final OnSwipeListener mOnSwipe;
+
+        SwipeListeningOverlay(Context ctx, OnSwipeListener onSwipe) {
+            super(ctx);
+            mOnSwipe = onSwipe;
+        }
+
+        @Override
+        protected void draw(Canvas c, MapView osmv, boolean shadow) {
+            // Nothing to draw
+        }
+
+        @Override
+        public boolean onTouchEvent(final MotionEvent event, final MapView mapView) {
+            if (mOnSwipe != null && event.getAction() == MotionEvent.ACTION_MOVE) {
+                mOnSwipe.onSwipe();
+            }
+            return false;
+        }
+
+        private static interface OnSwipeListener {
+            public void onSwipe();
+        }
+    }
+
+    // Used to blank the high-res tile source when adding a low-res overlay
+    private class BlankTileSource extends OnlineTileSourceBase {
+        BlankTileSource() {
+            super("fake", ResourceProxy.string.mapquest_aerial /* arbitrary value */,
+                    AbstractMapOverlay.getDisplaySizeBasedMinZoomLevel(),
+                    AbstractMapOverlay.MAX_ZOOM_LEVEL_OF_MAP, AbstractMapOverlay.TILE_PIXEL_SIZE,
+                    "", new String[]{""});
+        }
+
+        @Override
+        public String getTileURLString(MapTile aTile) {
+            return null;
+        }
+    }
+
+    private class CoverageSetup {
+        private AtomicBoolean isGetUrlAndInitCoverageRunning = new AtomicBoolean();
+
+        private void initOnMainThread() {
+            final Runnable runnable = new Runnable() {
+                @Override
+                public void run() {
+                    final ClientPrefs.MapTileResolutionOptions resolution =
+                            ClientPrefs.getInstance(mRootView.getContext()).getMapTileResolutionType();
+                    if (mCoverageTilesOverlayLowZoom != null ||  // checks if init() has already happened
+                            resolution == ClientPrefs.MapTileResolutionOptions.NoMap) {
+                        return;
+                    }
+                    initCoverageTiles(sCoverageUrl);
+                    updateOverlayCoverageLayer(mMap.getZoomLevel());
+                }
+            };
+            mMap.post(runnable);
+        }
+
+        void getUrlAndInit() {
+            if (!isGetUrlAndInitCoverageRunning.compareAndSet(false, true)) {
+                return;
+            }
+
+            final Runnable coverageUrlQuery = new Runnable() {
+                @Override
+                public void run() {
+                    if (sCoverageUrl != null) {
+                        initOnMainThread();
+                        isGetUrlAndInitCoverageRunning.set(false);
+                        return;
+                    }
+
+                    mGetUrl.schedule(new TimerTask() {
+                        @Override
+                        public void run() {
+                            try {
+                                IHttpUtil httpUtil = (IHttpUtil) ServiceLocator.getInstance().getService(IHttpUtil.class);
+                                java.util.Scanner scanner = new java.util.Scanner(httpUtil.getUrlAsStream(COVERAGE_REDIRECT_URL), "UTF-8");
+                                if (scanner.hasNext()) {
+                                    scanner.useDelimiter("\\A");
+                                    String result = scanner.next();
+                                    try {
+                                        sCoverageUrl = new JSONObject(result).getString("tiles_url");
+                                        removeLayer(mCoverageTilesOverlayHighZoom);
+                                        removeLayer(mCoverageTilesOverlayLowZoom);
+                                        mCoverageTilesOverlayHighZoom = mCoverageTilesOverlayLowZoom = null;
+                                    } catch (JSONException ex) {
+                                        AppGlobals.guiLogInfo("Failed to get coverage url: " + ex.toString());
+                                    }
+                                }
+                                scanner.close();
+                            } catch (Exception ex) {
+                                // this will catch java.net.UnknownHostException when offline
+                                if (AppGlobals.isDebug) {
+                                    ClientLog.d(LOG_TAG, ex.toString());
+                                }
+                            }
+                            // always init coverage tiles
+                            // cached tiles will be shown even if sCoverageUrl == null
+                            initOnMainThread();
+                            isGetUrlAndInitCoverageRunning.set(false);
+                        }
+                    }, 0);
+                }
+            };
+
+            mMap.post(coverageUrlQuery);
         }
     }
 }

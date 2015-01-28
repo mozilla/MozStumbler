@@ -11,11 +11,8 @@ import org.mozilla.mozstumbler.svclocator.ServiceLocator;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
-import java.lang.reflect.Proxy;
-
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
-import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
 
 @Config(emulateSdk = 18)
@@ -48,12 +45,11 @@ public class DynamicProxyTest {
 
         assertEquals("bob", t.echo("bob"));
         assertEquals((byte) 1, t.getByte());
-        assertEquals((short)1, t.getShort());
+        assertEquals((short) 1, t.getShort());
         assertEquals(1, t.getInt());
         assertEquals(1, t.getLong());
-        assertTrue(0 == Float.compare((float)1, t.getFloat()));
+        assertTrue(0 == Float.compare((float) 1, t.getFloat()));
         assertTrue(0 == Double.compare(t.getDouble(), (double) 1));
         assertEquals('a', t.getChar());        //assertNull(t.getServiceLocator());
-
     }
 }

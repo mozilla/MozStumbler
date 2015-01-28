@@ -18,8 +18,7 @@ public class MockAcraLog implements ACRALog {
         }
     }
 
-    public static synchronized ACRALog getOriginalLog()
-    {
+    public static synchronized ACRALog getOriginalLog() {
         return origLog;
     }
 

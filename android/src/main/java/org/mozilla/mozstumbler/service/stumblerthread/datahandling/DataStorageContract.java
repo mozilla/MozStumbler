@@ -6,6 +6,9 @@ package org.mozilla.mozstumbler.service.stumblerthread.datahandling;
 
 public final class DataStorageContract {
 
+    private DataStorageContract() {
+    }
+
     public static class ReportsColumns {
         public static final String LAT = "lat";
         public static final String LON = "lon";
@@ -28,8 +31,5 @@ public final class DataStorageContract {
         public static final String KEY_WIFIS_SENT = "wifis_sent";
         public static final String KEY_CELLS_SENT = "cells_sent";
         public static final String KEY_OBSERVATIONS_PER_DAY = "obs_per_day";
-    }
-
-    private DataStorageContract() {
     }
 }

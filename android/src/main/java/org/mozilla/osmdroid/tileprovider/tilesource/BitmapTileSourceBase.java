@@ -25,15 +25,12 @@ public abstract class BitmapTileSourceBase
     private static final String LOG_TAG = LoggerUtil.makeLogTag(BitmapTileSourceBase.class);
 
     private static int globalOrdinal = 0;
-
-    private final int mMinimumZoomLevel;
-    private final int mMaximumZoomLevel;
-
-    private final int mOrdinal;
     protected final String mName;
     protected final String mImageFilenameEnding;
     protected final Random random = new Random();
-
+    private final int mMinimumZoomLevel;
+    private final int mMaximumZoomLevel;
+    private final int mOrdinal;
     private final int mTileSizePixels;
 
     private final string mResourceId;

@@ -30,5 +30,4 @@ public interface IMyLocationOverlay {
     void onStatusChanged(String provider, int status, Bundle extras);
 
     Location getLastFix();
-
 }

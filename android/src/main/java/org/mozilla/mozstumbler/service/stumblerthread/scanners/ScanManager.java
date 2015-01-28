@@ -137,12 +137,6 @@ public class ScanManager {
             mMotionSensor = new MotionSensor(mAppContext, mDetectMotionReceiver);
         }
 
-        if (mGPSScanner == null) {
-            mGPSScanner = new GPSScanner(mAppContext, this);
-            mWifiScanner = new WifiScanner(mAppContext);
-            mCellScanner = new CellScanner(mAppContext);
-        }
-
         if (AppGlobals.isDebug) {
             // Simulation contexts are only allowed for debug builds.
             Prefs prefs = Prefs.getInstanceWithoutContext();

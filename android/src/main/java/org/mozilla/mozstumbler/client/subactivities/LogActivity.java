@@ -59,12 +59,6 @@ public class LogActivity extends ActionBarActivity {
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
-        sConsoleView = null;
-    }
-
-    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.log_menu, menu);
         MenuItem m = menu.findItem(R.id.scroll_to_end);
@@ -184,6 +178,14 @@ public class LogActivity extends ActionBarActivity {
                 } while (msg != null);
             }
         }
+    }
+
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mConsoleView.clear();
+        sConsoleView = null;
     }
 
     public static class ConsoleView extends ScrollView {

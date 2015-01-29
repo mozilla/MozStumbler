@@ -10,7 +10,6 @@ import org.mozilla.mozstumbler.service.Prefs;
 import org.mozilla.mozstumbler.service.core.logging.ClientLog;
 import org.mozilla.mozstumbler.service.utils.Zipper;
 import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
-import org.mozilla.osmdroid.tileprovider.util.StreamUtils;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -35,6 +34,7 @@ import java.util.List;
 import java.util.Map;
 
 public class HttpUtil implements IHttpUtil {
+    public final static int IO_BUFFER_SIZE = 8 * 1024;
 
     private static final String LOG_TAG = LoggerUtil.makeLogTag(HttpUtil.class);
     private static final String USER_AGENT_HEADER = "User-Agent";
@@ -292,8 +292,8 @@ public class HttpUtil implements IHttpUtil {
 
         try {
             dataStream = new ByteArrayOutputStream();
-            out = new BufferedOutputStream(dataStream, StreamUtils.IO_BUFFER_SIZE);
-            StreamUtils.copy(in, out);
+            out = new BufferedOutputStream(dataStream, IO_BUFFER_SIZE);
+            copyStream(in, out);
             out.flush();
         } finally {
             if (out != null) {
@@ -313,5 +313,25 @@ public class HttpUtil implements IHttpUtil {
         }
 
         return dataStream.toByteArray();
+    }
+
+    /**
+     * Copy the content of the input stream into the output stream, using a temporary byte array
+     * buffer whose size is defined by {@link #IO_BUFFER_SIZE}.
+     *
+     * @param in  The input stream to copy from.
+     * @param out The output stream to copy to.
+     * @return the total length copied
+     * @throws IOException If any error occurs during the copy.
+     */
+    private static long copyStream(final InputStream in, final OutputStream out) throws IOException {
+        long length = 0;
+        final byte[] b = new byte[IO_BUFFER_SIZE];
+        int read;
+        while ((read = in.read(b)) != -1) {
+            out.write(b, 0, read);
+            length += read;
+        }
+        return length;
     }
 }

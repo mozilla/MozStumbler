@@ -20,7 +20,6 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="about_version">Version %1$s</string>
-    <string name="about_show_changelog">Show Changelog</string>
     <string name="about_openstreetmap">Map view tiles\n© OpenStreetMap contributors\nhttp://www.openstreetmap.org</string>
     <string name="about_mapbox_title">MapBox</string>
     <string name="about_mapbox">Learn more at http://www.mapbox.com</string>

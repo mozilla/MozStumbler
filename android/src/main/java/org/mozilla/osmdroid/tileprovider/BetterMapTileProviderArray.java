@@ -2,7 +2,7 @@ package org.mozilla.osmdroid.tileprovider;
 
 import android.graphics.drawable.Drawable;
 
-import org.mozilla.mozstumbler.service.AppGlobals;
+import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 import org.mozilla.osmdroid.tileprovider.modules.MapTileModuleProviderBase;
 import org.mozilla.osmdroid.tileprovider.tilesource.ITileSource;
 
@@ -29,10 +29,8 @@ import java.util.Map;
  */
 public class BetterMapTileProviderArray extends MapTileProviderBase {
 
+    private static final String LOG_TAG = LoggerUtil.makeLogTag(BetterMapTileProviderArray.class);
     protected final Map<MapTile, MapTileRequestState> mWorking = Collections.synchronizedMap(new HashMap<MapTile, MapTileRequestState>());
-
-    private static final String LOG_TAG = AppGlobals.makeLogTag(BetterMapTileProviderArray.class.getSimpleName());
-
     protected final List<MapTileModuleProviderBase> mTileProviderList;
 
     /**

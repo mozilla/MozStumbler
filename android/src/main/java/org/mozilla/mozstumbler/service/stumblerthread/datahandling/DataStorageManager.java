@@ -7,11 +7,11 @@ package org.mozilla.mozstumbler.service.stumblerthread.datahandling;
 import android.content.Context;
 
 import org.mozilla.mozstumbler.service.AppGlobals;
-import org.mozilla.mozstumbler.service.core.logging.Log;
+import org.mozilla.mozstumbler.service.core.logging.ClientLog;
 import org.mozilla.mozstumbler.service.utils.Zipper;
+import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -40,161 +40,48 @@ import java.util.TimerTask;
  * when the service is destroyed.
  */
 public class DataStorageManager {
-    private static final String LOG_TAG = AppGlobals.makeLogTag(DataStorageManager.class);
-
-    // Used to cap the amount of data stored. When this limit is hit, no more data is saved to disk
-    // until the data is uploaded, or and data exceeds DEFAULT_MAX_WEEKS_DATA_ON_DISK.
-    private static final long DEFAULT_MAX_BYTES_STORED_ON_DISK = 1024 * 250; // 250 KiB max by default
-
-    // Used as a safeguard to ensure stumbling data is not persisted. The intended use case of the stumbler lib is not
-    // for long-term storage, and so if ANY data on disk is this old, ALL data is wiped as a privacy mechanism.
-    private static final int DEFAULT_MAX_WEEKS_DATA_ON_DISK = 2;
     public static final String MOZ_STUMBLER_RELPATH = "mozstumbler";
-
-    // Set to the default value specified above.
-    private final long mMaxBytesDiskStorage;
-
-    // Set to the default value specified above.
-    private final int mMaxWeeksStored;
-
-    final ReportBatchBuilder mCurrentReports = new ReportBatchBuilder();
-    protected final File mReportsDir;
-
-    private final StorageIsEmptyTracker mTracker;
-
-    protected static DataStorageManager sInstance;
-
-    protected ReportBatch mCurrentReportsSendBuffer;
-    private ReportBatchIterator mReportBatchIterator;
-    protected ReportFileList mFileList;
-    private Timer mFlushMemoryBuffersToDiskTimer;
-    private final PersistedStats mPersistedOnDiskUploadStats;
-
     static final String SEP_REPORT_COUNT = "-r";
     static final String SEP_WIFI_COUNT = "-w";
     static final String SEP_CELL_COUNT = "-c";
     static final String SEP_TIME_MS = "-t";
     static final String FILENAME_PREFIX = "reports";
     static final String MEMORY_BUFFER_NAME = "in memory send buffer";
+    private static final String LOG_TAG = LoggerUtil.makeLogTag(DataStorageManager.class);
+    // Used to cap the amount of data stored. When this limit is hit, no more data is saved to disk
+    // until the data is uploaded, or and data exceeds DEFAULT_MAX_WEEKS_DATA_ON_DISK.
+    private static final long DEFAULT_MAX_BYTES_STORED_ON_DISK = 1024 * 250; // 250 KiB max by default
+    // Used as a safeguard to ensure stumbling data is not persisted. The intended use case of the stumbler lib is not
+    // for long-term storage, and so if ANY data on disk is this old, ALL data is wiped as a privacy mechanism.
+    private static final int DEFAULT_MAX_WEEKS_DATA_ON_DISK = 2;
+    protected static DataStorageManager sInstance;
+    protected final File mReportsDir;
+    final ReportBatchBuilder mCurrentReports = new ReportBatchBuilder();
+    // Set to the default value specified above.
+    private final long mMaxBytesDiskStorage;
+    // Set to the default value specified above.
+    private final int mMaxWeeksStored;
+    private final StorageIsEmptyTracker mTracker;
+    private final PersistedStats mPersistedOnDiskUploadStats;
+    protected ReportBatch mCurrentReportsSendBuffer;
+    protected ReportFileList mFileList;
+    private ReportBatchIterator mReportBatchIterator;
+    private Timer mFlushMemoryBuffersToDiskTimer;
 
-    public static class QueuedCounts {
-        public final int mReportCount;
-        public final int mWifiCount;
-        public final int mCellCount;
-        public final long mBytes;
-
-        QueuedCounts(int reportCount, int wifiCount, int cellCount, long bytes) {
-            this.mReportCount = reportCount;
-            this.mWifiCount = wifiCount;
-            this.mCellCount = cellCount;
-            this.mBytes = bytes;
+    DataStorageManager(Context c, StorageIsEmptyTracker tracker,
+                       long maxBytesStoredOnDisk, int maxWeeksDataStored) {
+        mMaxBytesDiskStorage = maxBytesStoredOnDisk;
+        mMaxWeeksStored = maxWeeksDataStored;
+        mTracker = tracker;
+        final String baseDir = getStorageDir(c);
+        mReportsDir = new File(baseDir + "/reports");
+        if (!mReportsDir.exists()) {
+            mReportsDir.mkdirs();
         }
-    }
+        mFileList = new ReportFileList();
+        mFileList.update(mReportsDir);
 
-    /* Some data is calculated on-demand, don't abuse this function */
-    public synchronized QueuedCounts getQueuedCounts() {
-        int reportCount = mFileList.mReportCount + mCurrentReports.reportsCount();
-        int wifiCount = mFileList.mWifiCount + mCurrentReports.wifiCount;
-        int cellCount = mFileList.mCellCount + mCurrentReports.cellCount;
-        long byteLength = 0;
-
-        if (mCurrentReports.reportsCount() > 0) {
-            byte[] bytes;
-            bytes = Zipper.zipData(mCurrentReports.finalizeReports().getBytes());
-            if (bytes == null) {
-                Log.e(LOG_TAG, "Error compressing current reports queued", new RuntimeException("GZip Failure"));
-            } else {
-                byteLength += bytes.length;
-            }
-            if (mFileList.mReportCount > 0) {
-                byteLength += mFileList.mFilesOnDiskBytes;
-            }
-        }
-
-        if (mCurrentReportsSendBuffer != null) {
-            reportCount += mCurrentReportsSendBuffer.reportCount;
-            wifiCount += mCurrentReportsSendBuffer.wifiCount;
-            cellCount += mCurrentReportsSendBuffer.cellCount;
-            byteLength += mCurrentReportsSendBuffer.data.length;
-        }
-        return new QueuedCounts(reportCount, wifiCount, cellCount, byteLength);
-    }
-
-    protected static class ReportFileList {
-        File[] mFiles;
-        int mReportCount;
-        int mWifiCount;
-        int mCellCount;
-        long mFilesOnDiskBytes;
-
-        public ReportFileList() {
-        }
-
-        public ReportFileList(ReportFileList other) {
-            if (other == null) {
-                return;
-            }
-
-            if (other.mFiles != null) {
-                mFiles = other.mFiles.clone();
-            }
-
-            mReportCount = other.mReportCount;
-            mWifiCount = other.mWifiCount;
-            mCellCount = other.mCellCount;
-            mFilesOnDiskBytes = other.mFilesOnDiskBytes;
-        }
-
-        protected void update(File directory) {
-            mFiles = directory.listFiles();
-            if (mFiles == null) {
-                return;
-            }
-
-            if (AppGlobals.isDebug) {
-                for (File f : mFiles) {
-                    Log.d("StumblerFiles", f.getName());
-                }
-            }
-
-            mFilesOnDiskBytes = mReportCount = mWifiCount = mCellCount = 0;
-            for (File f : mFiles) {
-                mReportCount += (int) getLongFromFilename(f.getName(), SEP_REPORT_COUNT);
-                mWifiCount += (int) getLongFromFilename(f.getName(), SEP_WIFI_COUNT);
-                mCellCount += (int) getLongFromFilename(f.getName(), SEP_CELL_COUNT);
-                mFilesOnDiskBytes += f.length();
-            }
-        }
-    }
-
-    public static class ReportBatch {
-        public final String filename;
-        public final byte[] data;
-        public final int reportCount;
-        public final int wifiCount;
-        public final int cellCount;
-
-        public ReportBatch(String filename, byte[] data, int reportCount, int wifiCount, int cellCount) {
-            this.filename = filename;
-            this.data = data;
-            this.reportCount = reportCount;
-            this.wifiCount = wifiCount;
-            this.cellCount = cellCount;
-        }
-    }
-
-    private static class ReportBatchIterator {
-        public ReportBatchIterator(ReportFileList list) {
-            fileList = new ReportFileList(list);
-        }
-
-        static final int BATCH_INDEX_FOR_MEM_BUFFER = -1;
-        public int currentIndex = BATCH_INDEX_FOR_MEM_BUFFER;
-        public final ReportFileList fileList;
-    }
-
-    public interface StorageIsEmptyTracker {
-        public void notifyStorageStateEmpty(boolean isEmpty);
+        mPersistedOnDiskUploadStats = new PersistedStats(baseDir);
     }
 
     public static String getStorageDir(Context c) {
@@ -214,7 +101,7 @@ public class DataStorageManager {
         if (!dir.exists()) {
             boolean ok = dir.mkdirs();
             if (!ok) {
-                Log.d(LOG_TAG, "getStorageDir: error in mkdirs()");
+                ClientLog.d(LOG_TAG, "getStorageDir: error in mkdirs()");
             }
         }
 
@@ -234,7 +121,6 @@ public class DataStorageManager {
         return sInstance;
     }
 
-
     // This method only exists to help with unit testing when we need
     // to switch the singleton version of the DataStorageManager.
     public static void removeInstance() {
@@ -243,26 +129,6 @@ public class DataStorageManager {
 
     public static synchronized DataStorageManager getInstance() {
         return sInstance;
-    }
-
-    DataStorageManager(Context c, StorageIsEmptyTracker tracker,
-                               long maxBytesStoredOnDisk, int maxWeeksDataStored) {
-        mMaxBytesDiskStorage = maxBytesStoredOnDisk;
-        mMaxWeeksStored = maxWeeksDataStored;
-        mTracker = tracker;
-        final String baseDir = getStorageDir(c);
-        mReportsDir = new File(baseDir + "/reports");
-        if (!mReportsDir.exists()) {
-            mReportsDir.mkdirs();
-        }
-        mFileList = new ReportFileList();
-        mFileList.update(mReportsDir);
-
-        mPersistedOnDiskUploadStats = new PersistedStats(baseDir);
-    }
-
-    public synchronized int getMaxWeeksStored() {
-        return mMaxWeeksStored;
     }
 
     private static byte[] readFile(File file) throws IOException {
@@ -276,10 +142,6 @@ public class DataStorageManager {
         }
     }
 
-    public synchronized boolean isDirEmpty() {
-        return (mFileList.mFiles == null || mFileList.mFiles.length < 1);
-    }
-
     private static long getLongFromFilename(String name, String separator) {
         final int s = name.indexOf(separator) + separator.length();
         int e = name.indexOf('-', s);
@@ -287,6 +149,43 @@ public class DataStorageManager {
             e = name.indexOf('.', s);
         }
         return Long.parseLong(name.substring(s, e));
+    }
+
+    /* Some data is calculated on-demand, don't abuse this function */
+    public synchronized QueuedCounts getQueuedCounts() {
+        int reportCount = mFileList.mReportCount + mCurrentReports.reportsCount();
+        int wifiCount = mFileList.mWifiCount + mCurrentReports.wifiCount;
+        int cellCount = mFileList.mCellCount + mCurrentReports.cellCount;
+        long byteLength = 0;
+
+        if (mCurrentReports.reportsCount() > 0) {
+            byte[] bytes;
+            bytes = Zipper.zipData(mCurrentReports.finalizeReports().getBytes());
+            if (bytes == null) {
+                ClientLog.e(LOG_TAG, "Error compressing current reports queued", new RuntimeException("GZip Failure"));
+            } else {
+                byteLength += bytes.length;
+            }
+            if (mFileList.mReportCount > 0) {
+                byteLength += mFileList.mFilesOnDiskBytes;
+            }
+        }
+
+        if (mCurrentReportsSendBuffer != null) {
+            reportCount += mCurrentReportsSendBuffer.reportCount;
+            wifiCount += mCurrentReportsSendBuffer.wifiCount;
+            cellCount += mCurrentReportsSendBuffer.cellCount;
+            byteLength += mCurrentReportsSendBuffer.data.length;
+        }
+        return new QueuedCounts(reportCount, wifiCount, cellCount, byteLength);
+    }
+
+    public synchronized int getMaxWeeksStored() {
+        return mMaxWeeksStored;
+    }
+
+    public synchronized boolean isDirEmpty() {
+        return (mFileList.mFiles == null || mFileList.mFiles.length < 1);
     }
 
     /* return name of file used, or memory buffer sentinel value.
@@ -317,7 +216,7 @@ public class DataStorageManager {
 
     private void clearCurrentReports() {
         mCurrentReports.clearReports();
-         mCurrentReports.wifiCount = mCurrentReports.cellCount = 0;
+        mCurrentReports.wifiCount = mCurrentReports.cellCount = 0;
     }
 
     public synchronized ReportBatch getNextBatch() throws IOException {
@@ -327,7 +226,7 @@ public class DataStorageManager {
 
         mReportBatchIterator.currentIndex++;
         if (mReportBatchIterator.currentIndex < 0 ||
-            mReportBatchIterator.currentIndex > mReportBatchIterator.fileList.mFiles.length - 1) {
+                mReportBatchIterator.currentIndex > mReportBatchIterator.fileList.mFiles.length - 1) {
             return null;
         }
 
@@ -343,10 +242,10 @@ public class DataStorageManager {
     private File createFile(int reportCount, int wifiCount, int cellCount) {
         final long time = System.currentTimeMillis();
         final String name = FILENAME_PREFIX +
-                      SEP_TIME_MS + time +
-                      SEP_REPORT_COUNT + reportCount +
-                      SEP_WIFI_COUNT + wifiCount +
-                      SEP_CELL_COUNT + cellCount + ".gz";
+                SEP_TIME_MS + time +
+                SEP_REPORT_COUNT + reportCount +
+                SEP_WIFI_COUNT + wifiCount +
+                SEP_CELL_COUNT + cellCount + ".gz";
         return new File(mReportsDir, name);
     }
 
@@ -371,14 +270,14 @@ public class DataStorageManager {
         }
 
         saveToDisk(mCurrentReportsSendBuffer.data,
-                   mCurrentReportsSendBuffer.reportCount,
-                   mCurrentReportsSendBuffer.wifiCount,
-                   mCurrentReportsSendBuffer.cellCount);
+                mCurrentReportsSendBuffer.reportCount,
+                mCurrentReportsSendBuffer.wifiCount,
+                mCurrentReportsSendBuffer.cellCount);
         mCurrentReportsSendBuffer = null;
     }
 
     private void saveToDisk(byte[] bytes, int reportCount, int wifiCount, int cellCount)
-      throws IOException {
+            throws IOException {
         if (mFileList.mFilesOnDiskBytes > mMaxBytesDiskStorage) {
             return;
         }
@@ -428,7 +327,7 @@ public class DataStorageManager {
                     try {
                         saveCurrentReportsToDisk();
                     } catch (IOException ex) {
-                        Log.e(LOG_TAG, "mFlushMemoryBuffersToDiskTimer exception", ex);
+                        ClientLog.e(LOG_TAG, "mFlushMemoryBuffersToDiskTimer exception", ex);
                     }
                 }
             }, kMillis);
@@ -447,7 +346,6 @@ public class DataStorageManager {
         mFileList.update(mReportsDir);
         return ok;
     }
-
 
     /*
      This method just deletes all files.  Note that this is a special case and is only run when
@@ -479,5 +377,96 @@ public class DataStorageManager {
 
     public synchronized void incrementSyncStats(long bytesSent, long reports, long cells, long wifis) throws IOException {
         mPersistedOnDiskUploadStats.incrementSyncStats(bytesSent, reports, cells, wifis);
+    }
+
+    public interface StorageIsEmptyTracker {
+        public void notifyStorageStateEmpty(boolean isEmpty);
+    }
+
+    public static class QueuedCounts {
+        public final int mReportCount;
+        public final int mWifiCount;
+        public final int mCellCount;
+        public final long mBytes;
+
+        QueuedCounts(int reportCount, int wifiCount, int cellCount, long bytes) {
+            this.mReportCount = reportCount;
+            this.mWifiCount = wifiCount;
+            this.mCellCount = cellCount;
+            this.mBytes = bytes;
+        }
+    }
+
+    protected static class ReportFileList {
+        File[] mFiles;
+        int mReportCount;
+        int mWifiCount;
+        int mCellCount;
+        long mFilesOnDiskBytes;
+
+        public ReportFileList() {
+        }
+
+        public ReportFileList(ReportFileList other) {
+            if (other == null) {
+                return;
+            }
+
+            if (other.mFiles != null) {
+                mFiles = other.mFiles.clone();
+            }
+
+            mReportCount = other.mReportCount;
+            mWifiCount = other.mWifiCount;
+            mCellCount = other.mCellCount;
+            mFilesOnDiskBytes = other.mFilesOnDiskBytes;
+        }
+
+        protected void update(File directory) {
+            mFiles = directory.listFiles();
+            if (mFiles == null) {
+                return;
+            }
+
+            if (AppGlobals.isDebug) {
+                for (File f : mFiles) {
+                    ClientLog.d("StumblerFiles", f.getName());
+                }
+            }
+
+            mFilesOnDiskBytes = mReportCount = mWifiCount = mCellCount = 0;
+            for (File f : mFiles) {
+                mReportCount += (int) getLongFromFilename(f.getName(), SEP_REPORT_COUNT);
+                mWifiCount += (int) getLongFromFilename(f.getName(), SEP_WIFI_COUNT);
+                mCellCount += (int) getLongFromFilename(f.getName(), SEP_CELL_COUNT);
+                mFilesOnDiskBytes += f.length();
+            }
+        }
+    }
+
+    public static class ReportBatch {
+        public final String filename;
+        public final byte[] data;
+        public final int reportCount;
+        public final int wifiCount;
+        public final int cellCount;
+
+        public ReportBatch(String filename, byte[] data, int reportCount, int wifiCount, int cellCount) {
+            this.filename = filename;
+            this.data = data;
+            this.reportCount = reportCount;
+            this.wifiCount = wifiCount;
+            this.cellCount = cellCount;
+        }
+    }
+
+    private static class ReportBatchIterator {
+        static final int BATCH_INDEX_FOR_MEM_BUFFER = -1;
+        public final ReportFileList fileList;
+        public int currentIndex = BATCH_INDEX_FOR_MEM_BUFFER;
+
+        public ReportBatchIterator(ReportFileList list) {
+            fileList = new ReportFileList(list);
+        }
     }
 }

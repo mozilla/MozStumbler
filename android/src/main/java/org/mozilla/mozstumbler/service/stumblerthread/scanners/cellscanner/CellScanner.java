@@ -11,23 +11,19 @@ import android.content.IntentFilter;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.content.LocalBroadcastManager;
-import android.telephony.TelephonyManager;
 
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.AppGlobals.ActiveOrPassiveStumbling;
+import org.mozilla.mozstumbler.service.Prefs;
 import org.mozilla.mozstumbler.service.stumblerthread.Reporter;
+import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicBoolean;
-
-import org.mozilla.mozstumbler.service.Prefs;
-import org.mozilla.mozstumbler.service.core.logging.Log;
-import org.mozilla.mozstumbler.service.stumblerthread.Reporter;
 
 public class CellScanner {
     public static final String ACTION_BASE = AppGlobals.ACTION_NAMESPACE + ".CellScanner.";
@@ -35,7 +31,7 @@ public class CellScanner {
     public static final String ACTION_CELLS_SCANNED_ARG_CELLS = "cells";
     public static final String ACTION_CELLS_SCANNED_ARG_TIME = AppGlobals.ACTION_ARG_TIME;
 
-    private static final String LOG_TAG = AppGlobals.makeLogTag(CellScanner.class.getSimpleName());
+    private static final String LOG_TAG = LoggerUtil.makeLogTag(CellScanner.class);
     private static final long CELL_MIN_UPDATE_TIME = 1000; // milliseconds
 
     private final Context mAppContext;
@@ -118,7 +114,6 @@ public class CellScanner {
                 Message message = new Message();
                 message.obj = intent;
                 mBroadcastScannedHandler.sendMessage(message);
-
             }
         }, 0, CELL_MIN_UPDATE_TIME);
     }

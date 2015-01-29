@@ -53,7 +53,6 @@ public class FirstRunFragment extends DialogFragment {
                 if (d != null) {
                     dismiss();
                 }
-
             }
         });
 

@@ -31,5 +31,5 @@ public interface IHttpUtil {
 
     IResponse get(String urlString, Map<String, String> headers);
 
-    IResponse head(String latestUrl,  Map<String, String> headers);
+    IResponse head(String latestUrl, Map<String, String> headers);
 }

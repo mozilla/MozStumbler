@@ -1,7 +1,8 @@
 package org.mozilla.mozstumbler.service.core.http;
 
 import org.mozilla.mozstumbler.service.AppGlobals;
-import org.mozilla.mozstumbler.service.core.logging.Log;
+import org.mozilla.mozstumbler.service.core.logging.ClientLog;
+import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
 import java.io.UnsupportedEncodingException;
 import java.util.List;
@@ -9,7 +10,7 @@ import java.util.Map;
 
 public class HTTPResponse implements IResponse {
 
-    private static final String LOG_TAG = AppGlobals.makeLogTag(HTTPResponse.class.getSimpleName());
+    private static final String LOG_TAG = LoggerUtil.makeLogTag(HTTPResponse.class);
 
     private final int statusCode;
     private final byte[] bodyBytes;
@@ -22,7 +23,7 @@ public class HTTPResponse implements IResponse {
         bytesSent = txByteLength;
         headers = headerFields;
         if (AppGlobals.isDebug) {
-            Log.d(LOG_TAG, "HTTP Status: " + Integer.toString(statusCode) +
+            ClientLog.d(LOG_TAG, "HTTP Status: " + Integer.toString(statusCode) +
                     ", Bytes Sent: " + Integer.toString(bytesSent) +
                     ", Bytes received: " + Integer.toString(bodyBytes.length));
         }
@@ -40,6 +41,7 @@ public class HTTPResponse implements IResponse {
     public Map<String, List<String>> getHeaders() {
         return headers;
     }
+
     @Override
     public String getFirstHeader(String key) {
         List<String> matches = headers.get(key);
@@ -74,5 +76,4 @@ public class HTTPResponse implements IResponse {
     public int bytesSent() {
         return bytesSent;
     }
-
 }

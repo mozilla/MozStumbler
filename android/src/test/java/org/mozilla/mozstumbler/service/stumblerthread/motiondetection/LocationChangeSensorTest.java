@@ -13,13 +13,13 @@ import android.support.v4.content.LocalBroadcastManager;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.Prefs;
-import org.mozilla.mozstumbler.service.core.logging.Log;
+import org.mozilla.mozstumbler.service.core.logging.ClientLog;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.GPSScanner;
 import org.mozilla.mozstumbler.svclocator.ServiceLocator;
 import org.mozilla.mozstumbler.svclocator.services.ISystemClock;
 import org.mozilla.mozstumbler.svclocator.services.MockSystemClock;
+import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
@@ -36,10 +36,7 @@ import static org.mozilla.mozstumbler.service.stumblerthread.ReporterTest.getLoc
 @RunWith(RobolectricTestRunner.class)
 public class LocationChangeSensorTest {
 
-    private static final String LOG_TAG = AppGlobals.makeLogTag(LocationChangeSensorTest.class);
-    private LocationChangeSensor locationChangeSensor;
-    private LinkedList<Intent> receivedIntent = new LinkedList<Intent>();
-
+    private static final String LOG_TAG = LoggerUtil.makeLogTag(LocationChangeSensorTest.class);
     // After DetectUnchangingLocation reports the user is not moving, and the scanning pauses,
     // then use MotionSensor to determine when to wake up and start scanning again.
     private final BroadcastReceiver callbackReceiver = new BroadcastReceiver() {
@@ -49,7 +46,8 @@ public class LocationChangeSensorTest {
             receivedIntent.add(intent);
         }
     };
-
+    private LocationChangeSensor locationChangeSensor;
+    private LinkedList<Intent> receivedIntent = new LinkedList<Intent>();
     private Context ctx;
     private MockSystemClock clock;
 
@@ -57,11 +55,9 @@ public class LocationChangeSensorTest {
     public void setup() {
         ctx = Robolectric.application;
 
-        ServiceLocator rootLocator = new ServiceLocator(null);
 
         clock = new MockSystemClock();
-        rootLocator.putService(ISystemClock.class, clock);
-        ServiceLocator.setRootInstance(rootLocator);
+        ServiceLocator.getInstance().putService(ISystemClock.class, clock);
         clock.setCurrentTime(0);
         receivedIntent.clear();
 
@@ -99,7 +95,7 @@ public class LocationChangeSensorTest {
 
         locationChangeSensor.removeTimeoutCheck();
 
-        setPosition(0,0);
+        setPosition(0, 0);
         assertTrue(locationChangeSensor.removeTimeoutCheck());
     }
 
@@ -145,7 +141,7 @@ public class LocationChangeSensorTest {
         Robolectric.runUiThreadTasksIncludingDelayedTasks();
         assertEquals(expectedPosition, locationChangeSensor.testing_getLastLocation());
 
-        final double movementDistance = isBigMovement? 1.0 : 0.001;
+        final double movementDistance = isBigMovement ? 1.0 : 0.001;
         Intent intent = getLocationIntent(20 + movementDistance, 30);
         // Muck about with the time and move to the end of time
         clock.setCurrentTime(Long.MAX_VALUE);
@@ -166,7 +162,7 @@ public class LocationChangeSensorTest {
     private void fakeWait(long t) {
         Robolectric.runUiThreadTasksIncludingDelayedTasks();
         clock.setCurrentTime(clock.currentTimeMillis() + t);
-        Log.d(LOG_TAG, "- time is (ms):" + clock.currentTimeMillis());
+        ClientLog.d(LOG_TAG, "- time is (ms):" + clock.currentTimeMillis());
     }
 
     private void assertIsPaused() {
@@ -207,11 +203,11 @@ public class LocationChangeSensorTest {
         // no further notification should happen while paused
         assertTrue(receivedIntent.size() == 0);
 
-        Log.d(LOG_TAG, "Movement that exceeds distance threshold while in paused state.");
+        ClientLog.d(LOG_TAG, "Movement that exceeds distance threshold while in paused state.");
         locationChangeSensor.quickCheckForFalsePositiveAfterMotionSensorMovement();
         setPosition(x + 0.1, y);
 
-        fakeWait(tick/2);
+        fakeWait(tick / 2);
 
         // not enough time has passed to pause
         assertTrue(receivedIntent.size() == 0);

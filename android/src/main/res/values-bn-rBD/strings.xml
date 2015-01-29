@@ -17,12 +17,12 @@
     <string name="yes">হ্যাঁ</string>
     <string name="no">না</string>
     <string name="about_version">সংস্করণ %1$s</string>
-	<!--translations missing
-	<string name="about_openstreetmap">Map view tiles © OpenStreetMap contributors\nhttp://www.openstreetmap.org</string>
+    <!--translations missing
+    <string name="about_openstreetmap">Map view tiles © OpenStreetMap contributors\nhttp://www.openstreetmap.org</string>
     <string name="about_mapbox_title">MapBox</string>-->
     <string name="about_mapbox">ম্যাপিং প্রোভাইডার সম্পর্কে আরও জানুন</string>
-	<string name="about_legal_aosp">এই এপ্লিকেশনের কিছু কিছু আইকন বা গ্রাফিক্স সংক্রান্ত কাজ Android Open Source Project থেকে নেয়া হয়েছে এবং তা Creative Commons 2.5 Attribution License এর আওতায় ব্যবহৃত হয়েছে।</string>
-	<string name="upload_observations_sent_title">আপলোডকৃত</string>
+    <string name="about_legal_aosp">এই এপ্লিকেশনের কিছু কিছু আইকন বা গ্রাফিক্স সংক্রান্ত কাজ Android Open Source Project থেকে নেয়া হয়েছে এবং তা Creative Commons 2.5 Attribution License এর আওতায় ব্যবহৃত হয়েছে।</string>
+    <string name="upload_observations_sent_title">আপলোডকৃত</string>
     <string name="metrics_observations_last_upload_time_title">সর্বশেষ আপলোডের সময়:</string>
     <string name="metrics_observations_title">তথ্য:</string>
     <string name="metrics_observations_wifis_title">ওয়াই-ফাই এক্সেস পয়েন্ট:</string>
@@ -30,10 +30,8 @@
     <string name="upload_observations_in_queue_title">আপলোডের জন্যে অপেক্ষমান</string>
 
 
-
-	<string name="upload_wifi_only_title">শুধুমাত্র ওয়াই-ফাই দ্বারা আপলোড</string>
+    <string name="upload_wifi_only_title">শুধুমাত্র ওয়াই-ফাই দ্বারা আপলোড</string>
     <string name="upload_wifi_only_summary">এই অপশনটি আপনার মোবাইল নেটওয়ার্কের ডাটা ব্যবহার কমাবে।</string>
-
 
 
     <!--translations missing

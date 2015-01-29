@@ -34,7 +34,6 @@ repositories {
 }
 
 android {
-
     compileSdkVersion 19
     buildToolsVersion "19.1.0"
 
@@ -208,8 +207,6 @@ dependencies {
     androidTestCompile 'org.robolectric:robolectric:2.4'
     testCompile        'org.robolectric:robolectric:2.4'
 
-    // This needs to be tweaked so that we don't include this on real
-    // releases, but I'm tired and can't muster the gradle foo.
     androidTestCompile "org.mockito:mockito-core:1.+"
     testCompile        "org.mockito:mockito-core:1.+"
 
@@ -240,6 +237,8 @@ dependencies {
     // osmdroid stuff
     compile "org.apache.httpcomponents:httpmime:4.0.1"
     compile "org.apache.james:apache-mime4j:0.6"
+
+    compile project(':libraries:stumbler')
 }
 
 

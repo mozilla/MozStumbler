@@ -90,6 +90,5 @@ public class FileBugActivity extends ActionBarActivity {
         }
         return allValid;
     }
-
 }
 

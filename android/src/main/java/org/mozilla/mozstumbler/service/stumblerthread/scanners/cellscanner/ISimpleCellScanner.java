@@ -8,8 +8,12 @@ import java.util.List;
 
 public interface ISimpleCellScanner {
     void start();
+
     boolean isStarted();
+
     void stop();
+
     List<CellInfo> getCellInfo();
+
     public boolean isSupportedOnThisDevice();
 }

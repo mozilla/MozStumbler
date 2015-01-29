@@ -1,7 +1,7 @@
 package org.mozilla.osmdroid.tileprovider.modules;
 
-import org.mozilla.mozstumbler.service.AppGlobals;
-import org.mozilla.mozstumbler.service.core.logging.Log;
+import org.mozilla.mozstumbler.service.core.logging.ClientLog;
+import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 import org.mozilla.osmdroid.tileprovider.MapTile;
 import org.mozilla.osmdroid.tileprovider.MapTileRequestState;
 import org.mozilla.osmdroid.tileprovider.constants.OSMConstants;
@@ -23,154 +23,150 @@ import java.util.concurrent.RejectedExecutionException;
  */
 public abstract class MapTileModuleProviderBase implements OSMConstants {
 
-	/**
-	 * Gets the human-friendly name assigned to this tile provider.
-	 *
-	 * @return the thread name
-	 */
-	protected abstract String getName();
+    private static final String LOG_TAG = LoggerUtil.makeLogTag(MapTileModuleProviderBase.class);
+    protected final Object mQueueLockObject = new Object();
+    protected final HashMap<MapTile, MapTileRequestState> mWorking;
+    protected final LinkedHashMap<MapTile, MapTileRequestState> mPending;
+    private final ExecutorService mExecutor;
 
-	/**
-	 * Gets the name assigned to the thread for this provider.
-	 *
-	 * @return the thread name
-	 */
-	protected abstract String getThreadGroupName();
+    public MapTileModuleProviderBase(int pThreadPoolSize, final int pPendingQueueSize) {
+        if (pPendingQueueSize < pThreadPoolSize) {
+            ClientLog.w(LOG_TAG, "The pending queue size is smaller than the thread pool size. Automatically reducing the thread pool size.");
+            pThreadPoolSize = pPendingQueueSize;
+        }
+        mExecutor = Executors.newFixedThreadPool(pThreadPoolSize,
+                new ConfigurablePriorityThreadFactory(Thread.NORM_PRIORITY, getThreadGroupName()));
 
-	/**
-	 * It is expected that the implementation will construct an internal member which internally
-	 * implements a {@link AbstractTileLoader}. This method is expected to return a that internal member to
-	 * methods of the parent methods.
-	 *
-	 * @return the internal member of this tile provider.
-	 */
-	protected abstract Runnable getTileLoader();
+        mWorking = new HashMap<MapTile, MapTileRequestState>();
+        mPending = new LinkedHashMap<MapTile, MapTileRequestState>(pPendingQueueSize + 2, 0.1f,
+                true) {
 
-	/**
-	 * Returns true if implementation uses a data connection, false otherwise. This value is used to
-	 * determine if this provider should be skipped if there is no data connection.
-	 *
-	 * @return true if implementation uses a data connection, false otherwise
-	 */
-	public abstract boolean getUsesDataConnection();
+            private static final long serialVersionUID = 6455337315681858866L;
 
-	/**
-	 * Gets the minimum zoom level this tile provider can provide
-	 *
-	 * @return the minimum zoom level
-	 */
-	public abstract int getMinimumZoomLevel();
+            @Override
+            protected boolean removeEldestEntry(
+                    final Map.Entry<MapTile, MapTileRequestState> pEldest) {
+                if (size() > pPendingQueueSize) {
+                    MapTile result = null;
 
-	/**
-	 * Gets the maximum zoom level this tile provider can provide
-	 *
-	 * @return the maximum zoom level
-	 */
-	public abstract int getMaximumZoomLevel();
+                    // get the oldest tile that isn't in the mWorking queue
+                    Iterator<MapTile> iterator = mPending.keySet().iterator();
 
-	/**
-	 * Sets the tile source for this tile provider.
-	 *
-	 * @param tileSource
-	 *            the tile source
-	 */
-	public abstract void setTileSource(ITileSource tileSource);
+                    while (result == null && iterator.hasNext()) {
+                        final MapTile tile = iterator.next();
+                        if (!mWorking.containsKey(tile)) {
+                            result = tile;
+                        }
+                    }
 
-	private final ExecutorService mExecutor;
+                    if (result != null) {
+                        MapTileRequestState state = mPending.get(result);
+                        removeTileFromQueues(result);
+                        state.getCallback().mapTileRequestFailed(state);
+                    }
+                }
+                return false;
+            }
+        };
+    }
 
-	private static final String LOG_TAG = AppGlobals.makeLogTag(MapTileModuleProviderBase.class.getSimpleName());
+    /**
+     * Gets the human-friendly name assigned to this tile provider.
+     *
+     * @return the thread name
+     */
+    protected abstract String getName();
 
-	protected final Object mQueueLockObject = new Object();
-	protected final HashMap<MapTile, MapTileRequestState> mWorking;
-	protected final LinkedHashMap<MapTile, MapTileRequestState> mPending;
+    /**
+     * Gets the name assigned to the thread for this provider.
+     *
+     * @return the thread name
+     */
+    protected abstract String getThreadGroupName();
 
-	public MapTileModuleProviderBase(int pThreadPoolSize, final int pPendingQueueSize) {
-		if (pPendingQueueSize < pThreadPoolSize) {
-			Log.w(LOG_TAG, "The pending queue size is smaller than the thread pool size. Automatically reducing the thread pool size.");
-			pThreadPoolSize = pPendingQueueSize;
-		}
-		mExecutor = Executors.newFixedThreadPool(pThreadPoolSize,
-				new ConfigurablePriorityThreadFactory(Thread.NORM_PRIORITY, getThreadGroupName()));
+    /**
+     * It is expected that the implementation will construct an internal member which internally
+     * implements a {@link AbstractTileLoader}. This method is expected to return a that internal member to
+     * methods of the parent methods.
+     *
+     * @return the internal member of this tile provider.
+     */
+    protected abstract Runnable getTileLoader();
 
-		mWorking = new HashMap<MapTile, MapTileRequestState>();
-		mPending = new LinkedHashMap<MapTile, MapTileRequestState>(pPendingQueueSize + 2, 0.1f,
-				true) {
+    /**
+     * Returns true if implementation uses a data connection, false otherwise. This value is used to
+     * determine if this provider should be skipped if there is no data connection.
+     *
+     * @return true if implementation uses a data connection, false otherwise
+     */
+    public abstract boolean getUsesDataConnection();
 
-			private static final long serialVersionUID = 6455337315681858866L;
+    /**
+     * Gets the minimum zoom level this tile provider can provide
+     *
+     * @return the minimum zoom level
+     */
+    public abstract int getMinimumZoomLevel();
 
-			@Override
-			protected boolean removeEldestEntry(
-					final Map.Entry<MapTile, MapTileRequestState> pEldest) {
-				if (size() > pPendingQueueSize) {
-					MapTile result = null;
+    /**
+     * Gets the maximum zoom level this tile provider can provide
+     *
+     * @return the maximum zoom level
+     */
+    public abstract int getMaximumZoomLevel();
 
-					// get the oldest tile that isn't in the mWorking queue
-					Iterator<MapTile> iterator = mPending.keySet().iterator();
+    /**
+     * Sets the tile source for this tile provider.
+     *
+     * @param tileSource the tile source
+     */
+    public abstract void setTileSource(ITileSource tileSource);
 
-					while (result == null && iterator.hasNext()) {
-						final MapTile tile = iterator.next();
-						if (!mWorking.containsKey(tile)) {
-							result = tile;
-						}
-					}
+    public void loadMapTileAsync(final MapTileRequestState pState) {
+        synchronized (mQueueLockObject) {
+            if (DEBUG_TILE_PROVIDERS) {
+                ClientLog.d(LOG_TAG, "MapTileModuleProviderBase.loadMaptileAsync() on provider: "
+                        + getName() + " for tile: " + pState.getMapTile());
+                if (mPending.containsKey(pState.getMapTile()))
+                    ClientLog.d(LOG_TAG, "MapTileModuleProviderBase.loadMaptileAsync() tile already exists in request queue for modular provider. Moving to front of queue.");
+                else
+                    ClientLog.d(LOG_TAG, "MapTileModuleProviderBase.loadMaptileAsync() adding tile to request queue for modular provider.");
+            }
 
-					if (result != null) {
-						MapTileRequestState state = mPending.get(result);
-						removeTileFromQueues(result);
-						state.getCallback().mapTileRequestFailed(state);
-					}
-				}
-				return false;
-			}
-		};
-	}
+            // this will put the tile in the queue, or move it to the front of
+            // the queue if it's already present
+            mPending.put(pState.getMapTile(), pState);
+        }
+        try {
+            mExecutor.execute(getTileLoader());
+        } catch (final RejectedExecutionException e) {
+            ClientLog.e(LOG_TAG, "RejectedExecutionException", e);
+        }
+    }
 
-	public void loadMapTileAsync(final MapTileRequestState pState) {
-		synchronized (mQueueLockObject) {
-			if (DEBUG_TILE_PROVIDERS) {
-				Log.d(LOG_TAG, "MapTileModuleProviderBase.loadMaptileAsync() on provider: "
-						+ getName() + " for tile: " + pState.getMapTile());
-				if (mPending.containsKey(pState.getMapTile()))
-					Log.d(LOG_TAG, "MapTileModuleProviderBase.loadMaptileAsync() tile already exists in request queue for modular provider. Moving to front of queue.");
-				else
-					Log.d(LOG_TAG, "MapTileModuleProviderBase.loadMaptileAsync() adding tile to request queue for modular provider.");
-			}
+    void clearQueue() {
+        synchronized (mQueueLockObject) {
+            mPending.clear();
+            mWorking.clear();
+        }
+    }
 
-			// this will put the tile in the queue, or move it to the front of
-			// the queue if it's already present
-			mPending.put(pState.getMapTile(), pState);
-		}
-		try {
-			mExecutor.execute(getTileLoader());
-		} catch (final RejectedExecutionException e) {
-			Log.e(LOG_TAG, "RejectedExecutionException", e);
-		}
-	}
+    /**
+     * Detach, we're shutting down - Stops all workers.
+     */
+    public void detach() {
+        this.clearQueue();
+        this.mExecutor.shutdown();
+    }
 
-	void clearQueue() {
-		synchronized (mQueueLockObject) {
-			mPending.clear();
-			mWorking.clear();
-		}
-	}
-
-	/**
-	 * Detach, we're shutting down - Stops all workers.
-	 */
-	public void detach() {
-		this.clearQueue();
-		this.mExecutor.shutdown();
-	}
-
-	void removeTileFromQueues(final MapTile mapTile) {
-		synchronized (mQueueLockObject) {
-			if (DEBUG_TILE_PROVIDERS) {
-				Log.d(LOG_TAG, "MapTileModuleProviderBase.removeTileFromQueues() on provider: "
-						+ getName() + " for tile: " + mapTile);
-			}
-			mPending.remove(mapTile);
-			mWorking.remove(mapTile);
-		}
-	}
-
+    void removeTileFromQueues(final MapTile mapTile) {
+        synchronized (mQueueLockObject) {
+            if (DEBUG_TILE_PROVIDERS) {
+                ClientLog.d(LOG_TAG, "MapTileModuleProviderBase.removeTileFromQueues() on provider: "
+                        + getName() + " for tile: " + mapTile);
+            }
+            mPending.remove(mapTile);
+            mWorking.remove(mapTile);
+        }
+    }
 }

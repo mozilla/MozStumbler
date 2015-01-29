@@ -11,8 +11,8 @@ import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
-import org.mozilla.mozstumbler.service.AppGlobals;
-import org.mozilla.mozstumbler.service.core.logging.Log;
+import org.mozilla.mozstumbler.service.core.logging.ClientLog;
+import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 import org.mozilla.osmdroid.http.HttpClientFactory;
 import org.mozilla.osmdroid.tileprovider.constants.OSMConstants;
 
@@ -30,7 +30,7 @@ import java.io.InputStreamReader;
  */
 public class CloudmadeUtil implements OSMConstants {
 
-    private static final String LOG_TAG = AppGlobals.makeLogTag(CloudmadeUtil.class.getSimpleName());
+    private static final String LOG_TAG = LoggerUtil.makeLogTag(CloudmadeUtil.class);
 
     /**
      * the meta data key in the manifest
@@ -85,7 +85,6 @@ public class CloudmadeUtil implements OSMConstants {
             mPreferenceEditor.putString(CLOUDMADE_ID, mAndroidId);
             mPreferenceEditor.commit();
         }
-
     }
 
     /**
@@ -115,7 +114,7 @@ public class CloudmadeUtil implements OSMConstants {
                         httpPost.setEntity(new StringEntity("", "utf-8"));
                         final HttpResponse response = httpClient.execute(httpPost);
                         if (DEBUGMODE) {
-                            Log.d(LOG_TAG, "Response from Cloudmade auth: " + response.getStatusLine());
+                            ClientLog.d(LOG_TAG, "Response from Cloudmade auth: " + response.getStatusLine());
                         }
                         if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
                             final BufferedReader br =
@@ -124,7 +123,7 @@ public class CloudmadeUtil implements OSMConstants {
                                             StreamUtils.IO_BUFFER_SIZE);
                             final String line = br.readLine();
                             if (DEBUGMODE) {
-                                Log.d(LOG_TAG, "First line from Cloudmade auth: " + line);
+                                ClientLog.d(LOG_TAG, "First line from Cloudmade auth: " + line);
                             }
                             mToken = line.trim();
                             if (mToken.length() > 0) {
@@ -133,11 +132,11 @@ public class CloudmadeUtil implements OSMConstants {
                                 // we don't need the editor any more
                                 mPreferenceEditor = null;
                             } else {
-                                Log.w(LOG_TAG, "No authorization token received from Cloudmade");
+                                ClientLog.w(LOG_TAG, "No authorization token received from Cloudmade");
                             }
                         }
                     } catch (final IOException e) {
-                        Log.e(LOG_TAG, "No authorization token received from Cloudmade: ", e);
+                        ClientLog.e(LOG_TAG, "No authorization token received from Cloudmade: ", e);
                     }
                 }
             }

@@ -1,0 +1,53 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:1.0.0'
+        classpath 'com.jakewharton.sdkmanager:gradle-plugin:0.12.+'
+        classpath 'com.github.jcandksolutions.gradle:android-unit-test:2.1.1'
+    }
+}
+
+apply plugin: 'android-sdk-manager'
+apply plugin: 'android-library'
+
+android {
+    compileSdkVersion 19
+    buildToolsVersion "19.1.0"
+
+    sourceSets {
+        androidTest.setRoot('src/test')
+    }
+
+    defaultConfig {
+        minSdkVersion 10
+        targetSdkVersion 18
+    }
+}
+
+apply plugin: 'android-unit-test'
+
+androidUnitTest {
+}
+
+
+dependencies {
+    androidTestCompile 'junit:junit:4.10'
+    testCompile        'junit:junit:4.10'
+    androidTestCompile 'org.robolectric:robolectric:2.4'
+    testCompile        'org.robolectric:robolectric:2.4'
+
+    androidTestCompile "org.mockito:mockito-core:1.+"
+    testCompile        "org.mockito:mockito-core:1.+"
+
+    // https://developer.android.com/tools/support-library/features.html
+    // In general, we recommend including the v4 support and v7 appcompat
+    // libraries, because they support a wide range of Android versions and
+    // provide APIs for recommended user interface patterns.
+
+    compile "com.android.support:support-v4:21.0.+"
+    compile 'com.android.support:appcompat-v7:19.1.0'
+
+}

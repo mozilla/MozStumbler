@@ -7,8 +7,8 @@ import android.content.IntentFilter;
 import android.graphics.drawable.Drawable;
 import android.os.Environment;
 
-import org.mozilla.mozstumbler.service.AppGlobals;
-import org.mozilla.mozstumbler.service.core.logging.Log;
+import org.mozilla.mozstumbler.service.core.logging.ClientLog;
+import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 import org.mozilla.osmdroid.tileprovider.IRegisterReceiver;
 import org.mozilla.osmdroid.tileprovider.MapTile;
 import org.mozilla.osmdroid.tileprovider.tilesource.BitmapTileSourceBase;
@@ -35,20 +35,17 @@ public class SmartFSProvider extends MapTileModuleProviderBase {
     // Constants
     // ===========================================================
 
-    private static final String LOG_TAG = AppGlobals.makeLogTag(SmartFSProvider.class.getSimpleName());
-
+    private static final String LOG_TAG = LoggerUtil.makeLogTag(SmartFSProvider.class);
+    private final IRegisterReceiver mRegisterReceiver;
+    private final AtomicReference<ITileSource> mTileSource = new AtomicReference<ITileSource>();
     /**
      * whether the sdcard is mounted read/write
      */
     private boolean mSdCardAvailable = true;
-
-    private final IRegisterReceiver mRegisterReceiver;
-    private MyBroadcastReceiver mBroadcastReceiver;
     // ===========================================================
     // Fields
     // ===========================================================
-
-    private final AtomicReference<ITileSource> mTileSource = new AtomicReference<ITileSource>();
+    private MyBroadcastReceiver mBroadcastReceiver;
     private TileDownloaderDelegate delegate;
 
     // ===========================================================
@@ -66,7 +63,6 @@ public class SmartFSProvider extends MapTileModuleProviderBase {
                 pTileSource,
                 NUMBER_OF_IO_THREADS,
                 TILE_FILESYSTEM_MAXIMUM_QUEUE_SIZE);
-
     }
 
     /**
@@ -118,6 +114,11 @@ public class SmartFSProvider extends MapTileModuleProviderBase {
     // ===========================================================
 
     @Override
+    public void setTileSource(final ITileSource pTileSource) {
+        mTileSource.set(pTileSource);
+    }
+
+    @Override
     public boolean getUsesDataConnection() {
         return true;
     }
@@ -152,11 +153,6 @@ public class SmartFSProvider extends MapTileModuleProviderBase {
         return tileSource != null ? tileSource.getMaximumZoomLevel() : MAXIMUM_ZOOMLEVEL;
     }
 
-    @Override
-    public void setTileSource(final ITileSource pTileSource) {
-        mTileSource.set(pTileSource);
-    }
-
     // ===========================================================
     // Inner and Anonymous Classes
     // ===========================================================
@@ -164,7 +160,7 @@ public class SmartFSProvider extends MapTileModuleProviderBase {
     // Stuff from superclass
     void checkSdCard() {
         final String state = Environment.getExternalStorageState();
-        Log.d(LOG_TAG, "sdcard state: " + state);
+        ClientLog.d(LOG_TAG, "sdcard state: " + state);
         mSdCardAvailable = Environment.MEDIA_MOUNTED.equals(state);
     }
 
@@ -178,6 +174,15 @@ public class SmartFSProvider extends MapTileModuleProviderBase {
 
     protected void onMediaUnmounted() {
         // Do nothing by default. Override to handle.
+    }
+
+    @Override
+    public void detach() {
+        if (mBroadcastReceiver != null) {
+            mRegisterReceiver.unregisterReceiver(mBroadcastReceiver);
+            mBroadcastReceiver = null;
+        }
+        super.detach();
     }
 
     /**
@@ -198,14 +203,5 @@ public class SmartFSProvider extends MapTileModuleProviderBase {
                 onMediaUnmounted();
             }
         }
-    }
-
-    @Override
-    public void detach() {
-        if (mBroadcastReceiver != null) {
-            mRegisterReceiver.unregisterReceiver(mBroadcastReceiver);
-            mBroadcastReceiver = null;
-        }
-        super.detach();
     }
 }

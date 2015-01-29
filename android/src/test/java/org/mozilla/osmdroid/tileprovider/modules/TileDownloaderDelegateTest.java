@@ -4,18 +4,14 @@
 
 package org.mozilla.osmdroid.tileprovider.modules;
 
-import junit.framework.Assert;
-
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mozilla.mozstumbler.client.mapview.tiles.AbstractMapOverlay;
-import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.core.http.IHttpUtil;
 import org.mozilla.mozstumbler.service.core.http.IResponse;
-import org.mozilla.mozstumbler.service.core.logging.Log;
 import org.mozilla.mozstumbler.svclocator.ServiceLocator;
+import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 import org.mozilla.mozstumbler.test.fixtures.FixtureLoader;
 import org.mozilla.osmdroid.tileprovider.MapTile;
 import org.mozilla.osmdroid.tileprovider.tilesource.BitmapTileSourceBase;
@@ -40,17 +36,13 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @Config(emulateSdk = 18)
 @RunWith(RobolectricTestRunner.class)
 public class TileDownloaderDelegateTest {
 
-    private final String LOG_TAG = AppGlobals.makeLogTag(TileDownloaderDelegateTest.class);
-
     private static final String testUrl = "http://not.a.real.url/";
+    private final String LOG_TAG = LoggerUtil.makeLogTag(TileDownloaderDelegateTest.class);
 
     @Test
     public void testSimpleHTTP200() throws BitmapTileSourceBase.LowMemoryException, IOException {
@@ -62,7 +54,7 @@ public class TileDownloaderDelegateTest {
         INetworkAvailablityCheck netAvailabilityCheck = mock(INetworkAvailablityCheck.class);
         TileIOFacade ioFacade = mock(TileIOFacade.class);
 
-        ITileSource mockTileSource =  spy(new XYTileSource("Stumbler-BaseMap-Tiles",
+        ITileSource mockTileSource = spy(new XYTileSource("Stumbler-BaseMap-Tiles",
                 null, 1, AbstractMapOverlay.MAX_ZOOM_LEVEL_OF_MAP,
                 AbstractMapOverlay.TILE_PIXEL_SIZE,
                 AbstractMapOverlay.FILE_TYPE_SUFFIX_PNG,
@@ -112,7 +104,7 @@ public class TileDownloaderDelegateTest {
         INetworkAvailablityCheck netAvailabilityCheck = mock(INetworkAvailablityCheck.class);
         TileIOFacade ioFacade = mock(TileIOFacade.class);
 
-        ITileSource mockTileSource =  spy(new XYTileSource("Stumbler-BaseMap-Tiles",
+        ITileSource mockTileSource = spy(new XYTileSource("Stumbler-BaseMap-Tiles",
                 null, 1, AbstractMapOverlay.MAX_ZOOM_LEVEL_OF_MAP,
                 AbstractMapOverlay.TILE_PIXEL_SIZE,
                 AbstractMapOverlay.FILE_TYPE_SUFFIX_PNG,
@@ -166,7 +158,7 @@ public class TileDownloaderDelegateTest {
         INetworkAvailablityCheck netAvailabilityCheck = mock(INetworkAvailablityCheck.class);
         TileIOFacade ioFacade = mock(TileIOFacade.class);
 
-        ITileSource mockTileSource =  spy(new XYTileSource("Stumbler-BaseMap-Tiles",
+        ITileSource mockTileSource = spy(new XYTileSource("Stumbler-BaseMap-Tiles",
                 null, 1, AbstractMapOverlay.MAX_ZOOM_LEVEL_OF_MAP,
                 AbstractMapOverlay.TILE_PIXEL_SIZE,
                 AbstractMapOverlay.FILE_TYPE_SUFFIX_PNG,
@@ -225,7 +217,7 @@ public class TileDownloaderDelegateTest {
         INetworkAvailablityCheck netAvailabilityCheck = mock(INetworkAvailablityCheck.class);
         TileIOFacade ioFacade = mock(TileIOFacade.class);
 
-        ITileSource mockTileSource =  spy(new XYTileSource("Stumbler-BaseMap-Tiles",
+        ITileSource mockTileSource = spy(new XYTileSource("Stumbler-BaseMap-Tiles",
                 null, 1, AbstractMapOverlay.MAX_ZOOM_LEVEL_OF_MAP,
                 AbstractMapOverlay.TILE_PIXEL_SIZE,
                 AbstractMapOverlay.FILE_TYPE_SUFFIX_PNG,
@@ -255,7 +247,7 @@ public class TileDownloaderDelegateTest {
         INetworkAvailablityCheck netAvailabilityCheck = mock(INetworkAvailablityCheck.class);
         TileIOFacade ioFacade = mock(TileIOFacade.class);
 
-        ITileSource mockTileSource =  spy(new XYTileSource("Stumbler-BaseMap-Tiles",
+        ITileSource mockTileSource = spy(new XYTileSource("Stumbler-BaseMap-Tiles",
                 null, 1, AbstractMapOverlay.MAX_ZOOM_LEVEL_OF_MAP,
                 AbstractMapOverlay.TILE_PIXEL_SIZE,
                 AbstractMapOverlay.FILE_TYPE_SUFFIX_PNG,
@@ -276,11 +268,11 @@ public class TileDownloaderDelegateTest {
     }
 
 
-
     private SerializableTile getEmptySerializableTile(String etag) throws IOException {
         // Check that we've actually downloaded the file
         return new SerializableTile(new byte[0], etag);
     }
+
     private SerializableTile getSerializableTile() throws IOException {
         // Check that we've actually downloaded the file
         File tmpFile = File.createTempFile("stile", "tmpfile");
@@ -297,5 +289,4 @@ public class TileDownloaderDelegateTest {
 
         return new SerializableTile(new File(absPath));
     }
-
 }

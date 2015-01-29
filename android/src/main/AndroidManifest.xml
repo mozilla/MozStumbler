@@ -1,36 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="org.mozilla.mozstumbler" >
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    package="org.mozilla.mozstumbler">
     <!-- ANDROID_MOCK_LOCATION -->
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-
-    <uses-feature android:name="android.hardware.sensor.accelerometer" android:required="true" />
-    <uses-feature android:name="android.hardware.location" />
-    <uses-feature android:name="android.hardware.location.gps" />
-    <uses-feature android:name="android.hardware.telephony" android:required="false" />
-    <uses-feature android:name="android.hardware.wifi" />
 
     <application
         android:name=".client.MainApp"
         android:allowBackup="true"
+        android:hardwareAccelerated="false"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/Theme.AppCompat"
         android:supportsRtl="true"
-        android:hardwareAccelerated="false" >
+        android:theme="@style/Theme.AppCompat">
         <activity
             android:name=".client.navdrawer.MainDrawerActivity"
             android:label="@string/app_name"
-            android:launchMode="singleTask"
-            >
+            android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -67,8 +51,8 @@
 
         <activity
             android:name=".client.subactivities.LeaderboardActivity"
-            android:label="@string/title_activity_leaderboard"
             android:configChanges="orientation|screenSize|keyboard"
+            android:label="@string/title_activity_leaderboard"
             android:parentActivityName=".client.navdrawer.MainDrawerActivity">
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
@@ -87,7 +71,7 @@
         <activity
             android:name=".client.subactivities.FileBugActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
-            android:parentActivityName=".client.subactivities.PreferencesScreen" >
+            android:parentActivityName=".client.subactivities.PreferencesScreen">
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -98,7 +82,7 @@
             android:name=".client.subactivities.PowerSavingScreen"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:label="@string/title_activity_power_saving_screen"
-            android:parentActivityName=".client.navdrawer.MainDrawerActivity" >
+            android:parentActivityName=".client.navdrawer.MainDrawerActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="org.mozilla.mozstumbler.client.navdrawer.MainDrawerActivity" />
@@ -107,8 +91,7 @@
         <service
             android:name=".client.ClientStumblerService"
             android:icon="@drawable/ic_launcher"
-            android:label="@string/service_name" >
-        </service>
+            android:label="@string/service_name"></service>
 
         <receiver android:name=".service.uploadthread.UploadAlarmReceiver" />
         <service android:name=".service.uploadthread.UploadAlarmReceiver$UploadAlarmService" />

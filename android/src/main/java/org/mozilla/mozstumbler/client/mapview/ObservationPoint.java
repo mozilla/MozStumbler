@@ -11,7 +11,7 @@ import com.ekito.simpleKML.model.Coordinate;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.mozilla.mozstumbler.client.ClientPrefs;
-import org.mozilla.mozstumbler.service.core.logging.Log;
+import org.mozilla.mozstumbler.service.core.logging.ClientLog;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageContract;
 import org.mozilla.mozstumbler.service.utils.NetworkInfo;
 import org.mozilla.osmdroid.util.GeoPoint;
@@ -19,13 +19,13 @@ import org.mozilla.osmdroid.util.GeoPoint;
 public class ObservationPoint implements MLSLocationGetter.MLSLocationGetterCallback {
     public final GeoPoint pointGPS;
     public GeoPoint pointMLS;
-    private JSONObject mMLSQuery;
-    private boolean mIsMLSLocationQueryRunning;
     public long mTimestamp;
     public int mWifiCount;
     public int mCellCount;
     public boolean mWasReadFromFile;
     public double mHeading;
+    private JSONObject mMLSQuery;
+    private boolean mIsMLSLocationQueryRunning;
 
     public ObservationPoint(GeoPoint pointGPS) {
         this.pointGPS = pointGPS;
@@ -47,7 +47,8 @@ public class ObservationPoint implements MLSLocationGetter.MLSLocationGetterCall
         try {
             mCellCount = ichnaeaQueryObj.getInt(DataStorageContract.ReportsColumns.CELL_COUNT);
             mWifiCount = ichnaeaQueryObj.getInt(DataStorageContract.ReportsColumns.WIFI_COUNT);
-        } catch (JSONException ex) {}
+        } catch (JSONException ex) {
+        }
     }
 
     public void fetchMLS() {
@@ -56,7 +57,7 @@ public class ObservationPoint implements MLSLocationGetter.MLSLocationGetterCall
         }
         ClientPrefs prefs = ClientPrefs.getInstanceWithoutContext();
         if (prefs == null ||
-           (prefs.getUseWifiOnly() && !NetworkInfo.getInstance().isWifiAvailable())) {
+                (prefs.getUseWifiOnly() && !NetworkInfo.getInstance().isWifiAvailable())) {
             return;
         }
 
@@ -91,7 +92,7 @@ public class ObservationPoint implements MLSLocationGetter.MLSLocationGetterCall
 
     public void errorMLSResponse(boolean stopRequesting) {
         if (stopRequesting) {
-            Log.i(ObservationPoint.class.getSimpleName(), "Error:" + mMLSQuery.toString());
+            ClientLog.i(ObservationPoint.class.getSimpleName(), "Error:" + mMLSQuery.toString());
             mMLSQuery = null;
         }
         mIsMLSLocationQueryRunning = false;

@@ -13,27 +13,38 @@ import android.os.PowerManager;
 import android.telephony.CellLocation;
 import android.util.Log;
 
-import org.mozilla.mozstumbler.service.AppGlobals;
+import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
 /*
  * Determine whether the cell location is updated when the screen is off
  * https://code.google.com/p/android/issues/detail?id=10931
  */
 public class ScreenMonitor {
-    private static final String LOG_TAG = AppGlobals.makeLogTag(ScreenMonitor.class.getName());
+    private static final String LOG_TAG = LoggerUtil.makeLogTag(ScreenMonitor.class);
 
     private static final String PREFS_FILE = ScreenMonitor.class.getSimpleName();
     private static final String LOCATION_UPDATES_COUNT_PREF = "location_updates_count";
     private static final long FIRST_LOCATION_MIN_TIME_MS = 2000;
     private static final long NO_DATA = -1;
-
-    private final Context mContext;
-
-    private boolean mScreenIsOn;
     private long mLocationUpdatesCount = NO_DATA;
+    private final Context mContext;
+    private boolean mScreenIsOn;
     private long mFirstChangeTimestamp;
 
     private CellLocation mCellLocation;
+    final BroadcastReceiver mScreenReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(final Context context, final Intent intent) {
+            if (Intent.ACTION_SCREEN_OFF.equals(intent.getAction())) {
+                mScreenIsOn = false;
+                mCellLocation = null;
+            } else if (Intent.ACTION_SCREEN_ON.equals(intent.getAction())) {
+                mScreenIsOn = true;
+                mFirstChangeTimestamp = 0;
+                mCellLocation = null;
+            }
+        }
+    };
 
     public ScreenMonitor(Context context) {
         mContext = context;
@@ -98,18 +109,4 @@ public class ScreenMonitor {
         SharedPreferences prefs = mContext.getSharedPreferences(PREFS_FILE, Context.MODE_PRIVATE);
         mLocationUpdatesCount = prefs.getLong(LOCATION_UPDATES_COUNT_PREF, NO_DATA);
     }
-
-    final BroadcastReceiver mScreenReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(final Context context, final Intent intent) {
-            if (Intent.ACTION_SCREEN_OFF.equals(intent.getAction())) {
-                mScreenIsOn = false;
-                mCellLocation = null;
-            } else if (Intent.ACTION_SCREEN_ON.equals(intent.getAction())) {
-                mScreenIsOn = true;
-                mFirstChangeTimestamp = 0;
-                mCellLocation = null;
-            }
-        }
-    };
 }

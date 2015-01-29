@@ -18,9 +18,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public class OverlayManager extends AbstractList<Overlay> {
 
-    private TilesOverlay mTilesOverlay;
-
     private final CopyOnWriteArrayList<Overlay> mOverlayList;
+    private TilesOverlay mTilesOverlay;
 
     public OverlayManager(final TilesOverlay tilesOverlay) {
         setTilesOverlay(tilesOverlay);
@@ -119,7 +118,6 @@ public class OverlayManager extends AbstractList<Overlay> {
                 overlay.draw(c, pMapView, false);
             }
         }
-
     }
 
     public void onDetach(final MapView pMapView) {

@@ -44,5 +44,4 @@ public class HttpClientFactory {
     public static HttpClient createHttpClient() {
         return mFactoryInstance.createHttpClient();
     }
-
 }

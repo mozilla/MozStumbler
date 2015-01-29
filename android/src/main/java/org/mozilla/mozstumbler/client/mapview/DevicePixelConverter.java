@@ -16,5 +16,4 @@ public class DevicePixelConverter {
     public int pxToDp(float pixels) {
         return (int) (pixels * mDisplayDensity + 0.5f);
     }
-
 }

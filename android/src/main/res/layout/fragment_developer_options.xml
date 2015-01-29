@@ -1,62 +1,60 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin">
+    android:paddingTop="@dimen/activity_vertical_margin">
 
 
     <View
         android:id="@+id/line0"
-        android:layout_height="1dp"
         android:layout_width="fill_parent"
-        android:background="#55ffffff"
-        android:layout_marginTop="10dp"
+        android:layout_height="1dp"
         android:layout_marginBottom="10dp"
-        />
+        android:layout_marginTop="10dp"
+        android:background="#55ffffff" />
 
-     <CheckBox
-         android:id="@+id/toggleSaveStumbleLogs"
-         android:layout_width="wrap_content"
-         android:layout_height="wrap_content"
-         android:text="@string/save_stumble_logs"
-         android:layout_below="@id/line0"/>
+    <CheckBox
+        android:id="@+id/toggleSaveStumbleLogs"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/line0"
+        android:text="@string/save_stumble_logs" />
 
     <View
         android:id="@+id/line1"
-        android:layout_height="1dp"
         android:layout_width="fill_parent"
-        android:background="#55ffffff"
-        android:layout_marginTop="10dp"
+        android:layout_height="1dp"
+        android:layout_below="@id/toggleSaveStumbleLogs"
         android:layout_marginBottom="10dp"
-        android:layout_below="@id/toggleSaveStumbleLogs"/>
+        android:layout_marginTop="10dp"
+        android:background="#55ffffff" />
 
     <CheckBox
         android:id="@+id/toggleSimulation"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/enable_simulation"
-        android:layout_below="@id/line1"/>
+        android:layout_below="@id/line1"
+        android:text="@string/enable_simulation" />
 
     <Button
         android:id="@+id/buttonClearSimulationDefault"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/clear_simulation_start_location"
-        android:layout_below="@+id/toggleSimulation"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"/>
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/toggleSimulation"
+        android:text="@string/clear_simulation_start_location" />
 
     <View
         android:id="@+id/line2"
-        android:layout_height="1dp"
         android:layout_width="fill_parent"
-        android:background="#55ffffff"
-        android:layout_marginTop="10dp"
+        android:layout_height="1dp"
+        android:layout_below="@id/buttonClearSimulationDefault"
         android:layout_marginBottom="10dp"
-        android:layout_below="@id/buttonClearSimulationDefault"/>
+        android:layout_marginTop="10dp"
+        android:background="#55ffffff" />
 
 
     <TextView
@@ -72,45 +70,46 @@
         android:textColor="#ff33b5e5"
         android:textSize="@dimen/font_size_for_metrics_top_title"
         android:textStyle="bold" />
+
     <LinearLayout
         android:id="@+id/layout2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/motionDetectionHeading"
-        >
-    <TextView
-        android:id="@+id/motionDetectionDistanceLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/motion_detection_options_label"
-        android:textSize="@dimen/font_size_for_metrics" />
+        android:layout_below="@id/motionDetectionHeading">
+
+        <TextView
+            android:id="@+id/motionDetectionDistanceLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/motion_detection_options_label"
+            android:textSize="@dimen/font_size_for_metrics" />
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/layout3"
-        android:layout_below="@id/layout2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/layout2"
         android:orientation="horizontal">
+
         <Spinner
             android:id="@+id/spinnerMotionDetectionDistanceMeters"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            />
+            android:layout_height="wrap_content" />
+
         <TextView
             android:id="@+id/motionDetectionTimeLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingRight="10dp"
             android:paddingLeft="10dp"
+            android:paddingRight="10dp"
             android:text="@string/motion_detection_options_conjunction"
-            android:textSize="22sp"
-           />
+            android:textSize="22sp" />
+
         <Spinner
             android:id="@+id/spinnerMotionDetectionTimeSeconds"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            />
+            android:layout_height="wrap_content" />
     </LinearLayout>
 
 </RelativeLayout>

@@ -11,14 +11,14 @@ import android.widget.Toast;
 
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.Prefs;
-import org.mozilla.mozstumbler.service.core.logging.Log;
+import org.mozilla.mozstumbler.service.core.logging.ClientLog;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.GPSScanner;
-
 import org.mozilla.mozstumbler.svclocator.ServiceLocator;
 import org.mozilla.mozstumbler.svclocator.services.ISystemClock;
+import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
 public class LocationChangeSensor extends BroadcastReceiver {
-// This class is a bit confusing because of 2 checks that need to take place.
+    // This class is a bit confusing because of 2 checks that need to take place.
 // 1) One check happens when a gps event arrives, to see if the user moved x meters in t seconds.
 // 2) The other is a timeout in case no gps event arrives during time t.
 //
@@ -29,32 +29,43 @@ public class LocationChangeSensor extends BroadcastReceiver {
 //  - DetectUnchangingLocation says movement stopped, scanning paused
 //  - Motion detector waits for motion, if motion detected, scanning starts (user assumed to be moving)
 //
-    private static final String LOG_TAG = AppGlobals.makeLogTag(BroadcastReceiver.class.getSimpleName());
+    private static final String LOG_TAG = LoggerUtil.makeLogTag(BroadcastReceiver.class);
+    public static String ACTION_LOCATION_NOT_CHANGING = AppGlobals.ACTION_NAMESPACE + ".LOCATION_UNCHANGING";
+    /// Debugging code
+    static LocationChangeSensor sDebugInstance;
     private final Context mContext;
     private final Handler mHandler = new Handler();
     private ISystemClock sysClock;
     private int mPrefMotionChangeDistanceMeters;
     private long mPrefMotionChangeTimeWindowMs;
-    private long mStartTimeMs;
-    private boolean mDoSingleLocationCheck;
-    public static String ACTION_LOCATION_NOT_CHANGING = AppGlobals.ACTION_NAMESPACE + ".LOCATION_UNCHANGING";
-    private Location mLastLocation;
-
     private final Runnable mCheckTimeout = new Runnable() {
         public void run() {
             if (isTimeWindowForMovementExceeded()) {
                 AppGlobals.guiLogInfo("GPS time window exceeded.");
-                Log.d(LOG_TAG, "GPS time window exceeded.");
+                ClientLog.d(LOG_TAG, "GPS time window exceeded.");
                 LocalBroadcastManager.getInstance(mContext).sendBroadcastSync(new Intent(ACTION_LOCATION_NOT_CHANGING));
                 return;
             }
-            Log.d(LOG_TAG, "No gps timeout yet.");
+            ClientLog.d(LOG_TAG, "No gps timeout yet.");
             scheduleTimeoutCheck(mPrefMotionChangeTimeWindowMs);
         }
     };
+    private long mStartTimeMs;
+    private boolean mDoSingleLocationCheck;
+    private Location mLastLocation;
 
-    /// Debugging code
-    static LocationChangeSensor sDebugInstance;
+    public LocationChangeSensor(Context context, BroadcastReceiver callbackReceiver) {
+        sDebugInstance = this;
+        mContext = context;
+        LocalBroadcastManager.getInstance(context).registerReceiver(callbackReceiver,
+                new IntentFilter(ACTION_LOCATION_NOT_CHANGING));
+
+        // Bind all services in
+        ServiceLocator svcLocator = ServiceLocator.getInstance();
+        sysClock = (ISystemClock) svcLocator.getService(ISystemClock.class);
+    }
+    /// ---
+
     public static void debugSendLocationUnchanging() {
         if (sDebugInstance.mLastLocation == null) {
             Toast.makeText(sDebugInstance.mContext, "No location yet", Toast.LENGTH_SHORT).show();
@@ -67,33 +78,21 @@ public class LocationChangeSensor extends BroadcastReceiver {
         intent.putExtra(GPSScanner.NEW_LOCATION_ARG_LOCATION, sDebugInstance.mLastLocation);
         LocalBroadcastManager.getInstance(sDebugInstance.mContext).sendBroadcastSync(intent);
     }
-    /// ---
-
-    public LocationChangeSensor(Context context, BroadcastReceiver callbackReceiver) {
-        sDebugInstance = this;
-        mContext = context;
-        LocalBroadcastManager.getInstance(context).registerReceiver(callbackReceiver,
-                new IntentFilter(ACTION_LOCATION_NOT_CHANGING));
-
-        // Bind all services in
-        ServiceLocator svcLocator = ServiceLocator.getInstance();
-        sysClock = (ISystemClock) svcLocator.getService(ISystemClock.class);
-    }
 
     boolean isTimeWindowForMovementExceeded() {
         if (mLastLocation == null) {
             final long timeWaited = sysClock.currentTimeMillis() - mStartTimeMs;
             final boolean expired = timeWaited > mPrefMotionChangeTimeWindowMs;
-            AppGlobals.guiLogInfo("No loc., is gps wait exceeded:" + expired + " (" + timeWaited/1000.0 + "s)");
+            AppGlobals.guiLogInfo("No loc., is gps wait exceeded:" + expired + " (" + timeWaited / 1000.0 + "s)");
             return expired;
         }
 
         final long ageLastLocation = sysClock.currentTimeMillis() - mLastLocation.getTime();
         String log = "Last loc. age: " + ageLastLocation / 1000.0 + " s, (" +
-                sysClock.currentTimeMillis()/1000 +  "-" + mLastLocation.getTime()/1000 +
-                ", max age: " + mPrefMotionChangeTimeWindowMs/1000.0 + ")";
+                sysClock.currentTimeMillis() / 1000 + "-" + mLastLocation.getTime() / 1000 +
+                ", max age: " + mPrefMotionChangeTimeWindowMs / 1000.0 + ")";
         AppGlobals.guiLogInfo(log);
-        Log.d(LOG_TAG, log);
+        ClientLog.d(LOG_TAG, log);
         return ageLastLocation > mPrefMotionChangeTimeWindowMs;
     }
 
@@ -120,7 +119,8 @@ public class LocationChangeSensor extends BroadcastReceiver {
         removeTimeoutCheck();
         try {
             LocalBroadcastManager.getInstance(mContext).unregisterReceiver(this);
-        } catch (Exception e) {}
+        } catch (Exception e) {
+        }
     }
 
     public void onReceive(Context context, Intent intent) {
@@ -143,20 +143,20 @@ public class LocationChangeSensor extends BroadcastReceiver {
         newPosition.setTime(sysClock.currentTimeMillis());
 
         if (mLastLocation == null) {
-            Log.d(LOG_TAG, "Received first location");
+            ClientLog.d(LOG_TAG, "Received first location");
             mLastLocation = newPosition;
         } else {
             double dist = mLastLocation.distanceTo(newPosition);
-            Log.d(LOG_TAG, "Computed distance: " + dist);
-            Log.d(LOG_TAG, "Pref distance: " + mPrefMotionChangeDistanceMeters);
+            ClientLog.d(LOG_TAG, "Computed distance: " + dist);
+            ClientLog.d(LOG_TAG, "Pref distance: " + mPrefMotionChangeDistanceMeters);
 
             // TODO: this pref doesn't take into account the accuracy of the location.
             if (dist > mPrefMotionChangeDistanceMeters) {
-                Log.d(LOG_TAG, "Received new location exceeding distance changed in meters pref");
+                ClientLog.d(LOG_TAG, "Received new location exceeding distance changed in meters pref");
                 mLastLocation = newPosition;
             } else if (isTimeWindowForMovementExceeded() || mDoSingleLocationCheck) {
                 String log = "Insufficient movement:" + dist + " m, " + mPrefMotionChangeDistanceMeters + " m needed.";
-                Log.d(LOG_TAG, log);
+                ClientLog.d(LOG_TAG, log);
                 AppGlobals.guiLogInfo(log);
                 mDoSingleLocationCheck = false;
                 LocalBroadcastManager.getInstance(mContext).sendBroadcastSync(new Intent(ACTION_LOCATION_NOT_CHANGING));
@@ -177,7 +177,7 @@ public class LocationChangeSensor extends BroadcastReceiver {
         final long addedDelayMs = 100;
         mHandler.postDelayed(mCheckTimeout, delay + addedDelayMs);
 
-        Log.d(LOG_TAG, "Scheduled timeout check for " + (delay / 1000.0) + " seconds");
+        ClientLog.d(LOG_TAG, "Scheduled timeout check for " + (delay / 1000.0) + " seconds");
     }
 
     boolean removeTimeoutCheck() {
@@ -185,7 +185,8 @@ public class LocationChangeSensor extends BroadcastReceiver {
         try {
             mHandler.removeCallbacks(mCheckTimeout);
             wasScheduled = true;
-        } catch (Exception e) {}
+        } catch (Exception e) {
+        }
 
         return wasScheduled;
     }

@@ -18,6 +18,7 @@ import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageMa
 import org.mozilla.mozstumbler.service.utils.NetworkInfo;
 import org.mozilla.mozstumbler.service.utils.Zipper;
 import org.mozilla.mozstumbler.svclocator.ServiceLocator;
+import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -44,15 +45,10 @@ import java.util.concurrent.atomic.AtomicLong;
 *
 * */
 public class AsyncUploader extends AsyncTask<AsyncUploadParam, AsyncProgressListenerStatusWrapper, Void> {
-    public interface AsyncUploaderListener {
-        // This is called by Android on the UI thread
-        public void onUploadProgress(boolean isUploading);
-    }
-
-    private static AsyncUploaderListener sAsyncListener;
-    private static final String LOG_TAG = AppGlobals.makeLogTag(AsyncUploader.class.getSimpleName());
     public static final AtomicLong sTotalBytesUploadedThisSession = new AtomicLong();
     public static final AtomicBoolean isUploading = new AtomicBoolean();
+    private static final String LOG_TAG = LoggerUtil.makeLogTag(AsyncUploader.class);
+    private static AsyncUploaderListener sAsyncListener;
 
     // This listener can show progress for any AsyncUploader. This global use is particularly
     // useful for UI to show progress when this has been scheduled internally in the service.
@@ -62,20 +58,20 @@ public class AsyncUploader extends AsyncTask<AsyncUploadParam, AsyncProgressList
 
     @Override
     protected Void doInBackground(AsyncUploadParam... params) {
-       if (params.length != 1) {
-           return null;
-       }
+        if (params.length != 1) {
+            return null;
+        }
 
-       AsyncUploadParam param = params[0];
-       if (!isUploading.compareAndSet(false, true)) {
-           return null;
-       }
+        AsyncUploadParam param = params[0];
+        if (!isUploading.compareAndSet(false, true)) {
+            return null;
+        }
 
-       AsyncProgressListenerStatusWrapper wrapper =
-               new AsyncProgressListenerStatusWrapper(sAsyncListener, true);
-       sAsyncListener.onUploadProgress(true);
+        AsyncProgressListenerStatusWrapper wrapper =
+                new AsyncProgressListenerStatusWrapper(sAsyncListener, true);
+        sAsyncListener.onUploadProgress(true);
 
-       publishProgress(wrapper);
+        publishProgress(wrapper);
 
         if (Prefs.getInstanceWithoutContext().isSaveStumbleLogs()) {
             try {
@@ -84,13 +80,13 @@ public class AsyncUploader extends AsyncTask<AsyncUploadParam, AsyncProgressList
                 AppGlobals.guiLogError("Error flushing in-memory reports to sdcard");
             }
         }
-       uploadReports(param);
+        uploadReports(param);
 
-       isUploading.set(false);
-       wrapper = new AsyncProgressListenerStatusWrapper(sAsyncListener, false);
-       publishProgress(wrapper);
+        isUploading.set(false);
+        wrapper = new AsyncProgressListenerStatusWrapper(sAsyncListener, false);
+        publishProgress(wrapper);
 
-       return null;
+        return null;
     }
 
     /*
@@ -139,20 +135,19 @@ public class AsyncUploader extends AsyncTask<AsyncUploadParam, AsyncProgressList
                 IResponse result;
                 if (prefs != null && prefs.isSimulateStumble()) {
 
-                   result = new HTTPResponse(200,
-                                                       new HashMap<String, List<String>>(),
-                                                       new byte[]{},
-                                                       batch.data.length);
-                   Log.i(LOG_TAG, "Simulation skipped upload.");
-
-               } else {
-                   result = mls.submit(batch.data, headers, true);
-               }
+                    result = new HTTPResponse(200,
+                            new HashMap<String, List<String>>(),
+                            new byte[]{},
+                            batch.data.length);
+                    Log.i(LOG_TAG, "Simulation skipped upload.");
+                } else {
+                    result = mls.submit(batch.data, headers, true);
+                }
 
                 if (result != null && result.isSuccessCode2XX()) {
                     totalBytesSent += result.bytesSent();
 
-                    String logMsg =  "MLS Submit: [HTTP Status:" + result.httpStatusCode() + "], [Bytes Sent:" + result.bytesSent() + "]";
+                    String logMsg = "MLS Submit: [HTTP Status:" + result.httpStatusCode() + "], [Bytes Sent:" + result.bytesSent() + "]";
                     AppGlobals.guiLogInfo(logMsg, "#FFFFCC", true, false);
 
                     dm.delete(batch.filename);
@@ -165,7 +160,7 @@ public class AsyncUploader extends AsyncTask<AsyncUploadParam, AsyncProgressList
                     if (result != null) {
                         logMsg = "HTTP non-success code: " + result.httpStatusCode();
                     }
-                    
+
                     if (result != null && result.isErrorCode400BadRequest()) {
                         logMsg += ", 400 Error, deleting bad report";
                         if (AppGlobals.guiLogMessageBuffer != null) { // if true, this is a GUI app
@@ -181,8 +176,7 @@ public class AsyncUploader extends AsyncTask<AsyncUploadParam, AsyncProgressList
 
                 batch = dm.getNextBatch();
             }
-        }
-        catch (IOException ex) {
+        } catch (IOException ex) {
             error = ex.toString();
         }
 
@@ -198,5 +192,10 @@ public class AsyncUploader extends AsyncTask<AsyncUploadParam, AsyncProgressList
                 AppGlobals.guiLogError(error + " (uploadReports)");
             }
         }
+    }
+
+    public interface AsyncUploaderListener {
+        // This is called by Android on the UI thread
+        public void onUploadProgress(boolean isUploading);
     }
 }

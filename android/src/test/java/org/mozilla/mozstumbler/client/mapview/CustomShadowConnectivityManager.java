@@ -6,15 +6,11 @@ package org.mozilla.mozstumbler.client.mapview;
 
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.support.v4.app.FragmentActivity;
 
 import org.mockito.Mockito;
-import org.robolectric.Robolectric;
 import org.robolectric.annotation.Implementation;
 import org.robolectric.annotation.Implements;
 import org.robolectric.shadows.ShadowConnectivityManager;
-
-import java.io.File;
 
 import static org.mockito.Mockito.when;
 
@@ -31,11 +27,10 @@ public class CustomShadowConnectivityManager extends ShadowConnectivityManager {
 
         // NetworkInfo doesn't provide a proper constructor, so we're just going to clobber
         // that with mockito.
-        final NetworkInfo networkInfo = Mockito.mock( NetworkInfo.class );
-        when(networkInfo.isConnected()).thenReturn( false );
+        final NetworkInfo networkInfo = Mockito.mock(NetworkInfo.class);
+        when(networkInfo.isConnected()).thenReturn(false);
         when(networkInfo.getType()).thenReturn(ConnectivityManager.TYPE_DUMMY);
 
         return networkInfo;
     }
-
 }

@@ -17,8 +17,8 @@
     <string name="yes">Oui</string>
     <string name="no">Non</string>
     <string name="about_version">Version %1$s</string>
-	<!--translations missing
-	<string name="about_openstreetmap">Map view tiles © OpenStreetMap contributors\nhttp://www.openstreetmap.org</string>
+    <!--translations missing
+    <string name="about_openstreetmap">Map view tiles © OpenStreetMap contributors\nhttp://www.openstreetmap.org</string>
     <string name="about_mapbox_title">MapBox</string>-->
     <string name="about_mapbox">En savoir plus sur notre fournisseur cartographique…</string>
     <string name="about_legal_aosp">Certaines icônes de cette application sont une reproduction du travail créé et partagé par le projet Open Source Android et sont utilisées selon les termes décrits dans la licence Creative Commons - Attribution 2.5.</string>
@@ -30,10 +30,8 @@
     <string name="upload_observations_in_queue_title">En attente</string>
 
 
-
     <string name="upload_wifi_only_title">Envoi des rapports par le Wi-Fi uniquement</string>
     <string name="upload_wifi_only_summary">Cette option réduira votre consommation de données de votre forfait.</string>
-
 
 
     <!--translations missing
@@ -41,5 +39,5 @@
     <string name="action_view_log">View Log</string>
     <string name="scroll_to_start">Scroll to Top</string>
     <string name="scroll_to_end">Scroll to End</string>-->
-    
+
 </resources>

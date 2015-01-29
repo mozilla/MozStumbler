@@ -12,12 +12,12 @@ import static junit.framework.Assert.assertEquals;
 @RunWith(RobolectricTestRunner.class)
 public class ShaUtilTest {
 
-	@Before
-	public void setUp() throws Exception {
-	}
+    @Before
+    public void setUp() throws Exception {
+    }
 
-	@Test
-	public void testHexDigest() {
+    @Test
+    public void testHexDigest() {
         String digest = ShaUtil.sha1_hex_digest("victor@crankycoder.com");
         String expected = "a0719cf708b680528765e487c027f5b462a319c5";
 

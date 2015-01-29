@@ -1,133 +1,133 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:focusableInTouchMode="true"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MapActivity" >
+    android:focusableInTouchMode="true"
+    tools:context=".MapActivity">
+
     <org.mozilla.osmdroid.views.MapView
         android:id="@+id/map"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        >
-    </org.mozilla.osmdroid.views.MapView>
+        android:layout_height="match_parent"></org.mozilla.osmdroid.views.MapView>
+
     <RelativeLayout
+        android:id="@+id/status_toolbar_layout"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:background="#66ffffff"
-        android:id="@+id/status_toolbar_layout"
-        >
+        android:background="#66ffffff">
+
         <ImageView
             android:id="@+id/fix_indicator"
             android:layout_width="35dp"
             android:layout_height="35dp"
-            android:src="@drawable/ic_gps_no_signal_flaticondotcom"
-            />
+            android:src="@drawable/ic_gps_no_signal_flaticondotcom" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/fix_indicator"
             android:layout_toEndOf="@id/fix_indicator"
-            >
+            android:layout_toRightOf="@id/fix_indicator">
+
             <LinearLayout
                 android:layout_width="40dp"
-                android:layout_height="match_parent"
-                >
+                android:layout_height="match_parent">
+
                 <TextView
                     android:id="@+id/text_satellites_used"
-                    android:textColor="@android:color/black"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:text="0"
                     android:gravity="center_vertical"
-                    android:textSize="@dimen/font_size_for_map_view_report_icon"
-                    />
+                    android:text="0"
+                    android:textColor="@android:color/black"
+                    android:textSize="@dimen/font_size_for_map_view_report_icon" />
+
                 <TextView
                     android:id="@+id/text_satellites_sep"
-                    android:textColor="@android:color/black"
                     android:layout_width="6dp"
                     android:layout_height="match_parent"
-                    android:text="@string/satellites_separator"
-                    android:gravity="bottom"
                     android:layout_marginBottom="4sp"
-                    android:textSize="12sp"
-                    />
+                    android:gravity="bottom"
+                    android:text="@string/satellites_separator"
+                    android:textColor="@android:color/black"
+                    android:textSize="12sp" />
+
                 <TextView
                     android:id="@+id/text_satellites_avail"
-                    android:textColor="@android:color/black"
                     android:layout_width="14dp"
                     android:layout_height="match_parent"
-                    tools:text="21"
-                    android:gravity="bottom"
                     android:layout_marginBottom="4sp"
+                    android:gravity="bottom"
+                    android:textColor="@android:color/black"
                     android:textSize="12sp"
-                    />
+                    tools:text="21" />
             </LinearLayout>
+
             <View
-                android:layout_height="match_parent"
                 android:layout_width="wrap_content"
-                android:layout_weight="1"
-                />
+                android:layout_height="match_parent"
+                android:layout_weight="1" />
+
             <ImageView
                 android:id="@+id/cells_indicator"
                 android:layout_width="33dp"
                 android:layout_height="33dp"
-                android:src="@drawable/ic_cell_flaticondotcom"
                 android:layout_marginLeft="-10dp"
                 android:layout_marginStart="-10dp"
-                />
+                android:src="@drawable/ic_cell_flaticondotcom" />
+
             <TextView
                 android:id="@+id/text_cells_visible"
-                android:textColor="@android:color/black"
                 android:layout_width="32dp"
                 android:layout_height="match_parent"
-                tools:text="999"
                 android:gravity="center_vertical"
+                android:textColor="@android:color/black"
                 android:textSize="@dimen/font_size_for_map_view_report_icon"
-                />
+                tools:text="999" />
+
             <View
-                android:layout_height="match_parent"
                 android:layout_width="wrap_content"
-                android:layout_weight="1"
-                />
+                android:layout_height="match_parent"
+                android:layout_weight="1" />
+
             <ImageView
                 android:id="@+id/wifi_indicator"
                 android:layout_width="40dp"
                 android:layout_height="35dp"
-                android:src="@drawable/ic_wifi_flaticondotcom"
-                android:layout_marginRight="6dp"
                 android:layout_marginEnd="6dp"
-                />
+                android:layout_marginRight="6dp"
+                android:src="@drawable/ic_wifi_flaticondotcom" />
+
             <TextView
                 android:id="@+id/text_wifis_visible"
-                android:textColor="@android:color/black"
                 android:layout_width="32dp"
                 android:layout_height="match_parent"
-                tools:text="999"
                 android:gravity="center_vertical"
+                android:textColor="@android:color/black"
                 android:textSize="@dimen/font_size_for_map_view_report_icon"
-                />
+                tools:text="999" />
+
             <View
-                android:layout_height="match_parent"
                 android:layout_width="wrap_content"
-                android:layout_weight="1"
-                />
+                android:layout_height="match_parent"
+                android:layout_weight="1" />
+
             <ImageView
                 android:id="@+id/observations_indicator"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
-                android:src="@drawable/ic_binoculars_flaticondotcom"
-                android:layout_marginRight="6dp"
+                android:layout_gravity="center"
                 android:layout_marginEnd="6dp"
-                android:layout_gravity="center" />
+                android:layout_marginRight="6dp"
+                android:src="@drawable/ic_binoculars_flaticondotcom" />
+
             <TextView
                 android:id="@+id/text_observation_count"
-                android:textColor="@android:color/black"
                 android:layout_width="50dp"
                 android:layout_height="match_parent"
-                tools:text="99999"
                 android:gravity="center_vertical"
+                android:textColor="@android:color/black"
                 android:textSize="@dimen/font_size_for_map_view_report_icon"
-                />
+                tools:text="99999" />
 
         </LinearLayout>
 
@@ -135,65 +135,64 @@
 
     <TextView
         android:id="@+id/message_area"
-        android:textColor="@android:color/black"
-        android:background="#77ffffff"
-        android:gravity="center"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/status_toolbar_layout"
+        android:layout_centerHorizontal="true"
+        android:background="#77ffffff"
+        android:gravity="center"
         android:padding="5dp"
         android:text="@string/map_offline_mode"
-        android:textSize="12sp"
-        android:layout_below="@+id/status_toolbar_layout"
-        android:layout_centerHorizontal="true" />
+        android:textColor="@android:color/black"
+        android:textSize="12sp" />
 
     <ImageButton
         android:id="@+id/my_location_button"
-        android:background="@drawable/ic_mylocation_android_assets"
         android:layout_width="54dp"
         android:layout_height="54dp"
+        android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_alignParentBottom="true"/>
+        android:background="@drawable/ic_mylocation_android_assets" />
 
     <TextView
         android:id="@+id/resolution_info_map_message"
-        android:textColor="@android:color/black"
-        android:gravity="end"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingRight="5dp"
-        android:paddingEnd="5dp"
-        android:text="@string/low_resolution_map"
-        android:textSize="10sp"
         android:layout_above="@+id/copyright_area"
+        android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:gravity="end"
+        android:paddingEnd="5dp"
+        android:paddingRight="5dp"
+        android:text="@string/low_resolution_map"
+        android:textColor="@android:color/black"
+        android:textSize="10sp" />
 
-	<!-- The copyright text is set at java\org\mozilla\mozstumbler\client\mapview\MapFragment.java showCopyright() -->
+    <!-- The copyright text is set at java\org\mozilla\mozstumbler\client\mapview\MapFragment.java showCopyright() -->
     <TextView
         android:id="@+id/copyright_area"
-        android:textColor="@android:color/black"
-        android:gravity="end"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="5dp"
-        tools:text="Copyright Placeholder"
-        android:textSize="9sp"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        />
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:gravity="end"
+        android:padding="5dp"
+        android:textColor="@android:color/black"
+        android:textSize="9sp"
+        tools:text="Copyright Placeholder" />
 
     <TextView
         android:id="@+id/scanning_paused_message"
-        android:textColor="@android:color/black"
-        android:background="#77ffffff"
-        android:gravity="center"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/message_area"
+        android:layout_centerHorizontal="true"
+        android:background="#77ffffff"
+        android:gravity="center"
         android:padding="5dp"
         android:text="@string/map_scanning_paused_no_motion"
-        android:textSize="12sp"
-        android:layout_below="@+id/message_area"
-        android:layout_centerHorizontal="true" />
+        android:textColor="@android:color/black"
+        android:textSize="12sp" />
 </RelativeLayout>

@@ -2,7 +2,7 @@ package org.mozilla.osmdroid.tileprovider;
 
 import android.content.Context;
 
-import org.mozilla.mozstumbler.service.AppGlobals;
+import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 import org.mozilla.osmdroid.tileprovider.modules.INetworkAvailablityCheck;
 import org.mozilla.osmdroid.tileprovider.modules.NetworkAvailabliltyCheck;
 import org.mozilla.osmdroid.tileprovider.modules.SmartFSProvider;
@@ -20,7 +20,7 @@ import org.mozilla.osmdroid.tileprovider.util.SimpleRegisterReceiver;
  */
 public class BetterTileProvider extends BetterMapTileProviderArray implements IMapTileProviderCallback {
 
-    private static final String LOG_TAG = AppGlobals.makeLogTag(BetterTileProvider.class.getSimpleName());
+    private static final String LOG_TAG = LoggerUtil.makeLogTag(BetterTileProvider.class);
 
     public BetterTileProvider(final Context pContext) {
         // @TODO vng - this needs to be deleted as we are getting the
@@ -75,5 +75,4 @@ public class BetterTileProvider extends BetterMapTileProviderArray implements IM
 
         mTileProviderList.add(smartProvider);
     }
-
 }

@@ -1,21 +1,17 @@
 package org.mozilla.osmdroid.tileprovider.modules;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.charset.CharacterCodingException;
 import java.util.Arrays;
 import java.util.HashMap;
 
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.fail;
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 
 @Config(emulateSdk = 18)
@@ -57,5 +53,4 @@ public class SerializableTileTest {
 
         assertTrue(Arrays.equals(tileData, newTile.getTileData()));
     }
-
 }

@@ -1,8 +1,8 @@
 package org.mozilla.osmdroid.tileprovider.modules;
 
 import org.apache.http.util.ByteArrayBuffer;
-import org.mozilla.mozstumbler.service.AppGlobals;
-import org.mozilla.mozstumbler.service.core.logging.Log;
+import org.mozilla.mozstumbler.service.core.logging.ClientLog;
+import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -10,18 +10,16 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.nio.CharBuffer;
 import java.nio.charset.CharacterCodingException;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
-import java.nio.charset.CharsetEncoder;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
  * Created by victorng on 14-10-24.
- *
+ * <p/>
  * This class represents a serializable Tile.
  */
 public class SerializableTile {
@@ -30,12 +28,9 @@ public class SerializableTile {
     // more than once a day anyway and this should be good enough to 
     // enable offline stumbles.
     public static final long CACHE_TILE_MS = 60 * 60 * 12 * 1000;
-
-    private static final String LOG_TAG =
-            AppGlobals.LOG_PREFIX + SerializableTile.class.getSimpleName();
-
+    final protected static char[] hexArray = "0123456789abcdef".toCharArray();
+    private static final String LOG_TAG = LoggerUtil.makeLogTag(SerializableTile.class);
     final byte[] FILE_HEADER = {(byte) 0xde, (byte) 0xca, (byte) 0xfb, (byte) 0xad};
-
     byte[] tData = new byte[0];
     Map<String, String> headers = new HashMap<String, String>();
     private File myFile;
@@ -47,7 +42,7 @@ public class SerializableTile {
             try {
                 fromFile(sTileFile);
             } catch (FileNotFoundException e) {
-                Log.e(LOG_TAG, "TileFile was deleted by Android during tile load.", e);
+                ClientLog.e(LOG_TAG, "TileFile was deleted by Android during tile load.", e);
                 tData = null;
             }
         }
@@ -58,6 +53,20 @@ public class SerializableTile {
         setHeader("etag", etag);
     }
 
+    public static String bytesToHex(byte[] bytes) {
+        char[] hexChars = new char[bytes.length * 2];
+        for (int j = 0; j < bytes.length; j++) {
+            int v = bytes[j] & 0xFF;
+            hexChars[j * 2] = hexArray[v >>> 4];
+            hexChars[j * 2 + 1] = hexArray[v & 0x0F];
+        }
+        return new String(hexChars);
+    }
+
+    public byte[] getTileData() {
+        return tData;
+    }
+
     public void setTileData(byte[] tileData) {
         if (tileData == null) {
             tileData = new byte[0];
@@ -65,8 +74,12 @@ public class SerializableTile {
         tData = tileData;
     }
 
-    public byte[] getTileData() {
-        return tData;
+    public void clearHeaders() {
+        headers.clear();
+    }
+
+    public Map<String, String> getHeaders() {
+        return headers;
     }
 
     public void setHeaders(Map<String, String> h) {
@@ -84,14 +97,6 @@ public class SerializableTile {
             // Always make headers lowercase
             headers.put(entry.getKey().toLowerCase(), entry.getValue());
         }
-    }
-
-    public void clearHeaders() {
-        headers.clear();
-    }
-
-    public Map<String, String> getHeaders() {
-        return headers;
     }
 
     /*
@@ -152,7 +157,7 @@ public class SerializableTile {
             fos.close();
             return true;
         } catch (IOException e) {
-            Log.w(LOG_TAG, "Error writing SerializableTile to disk");
+            ClientLog.w(LOG_TAG, "Error writing SerializableTile to disk");
             return false;
         }
     }
@@ -176,7 +181,7 @@ public class SerializableTile {
         try {
             fis.read(arr);
         } catch (IOException e) {
-            Log.e(LOG_TAG, "Error reading file into array.", e);
+            ClientLog.e(LOG_TAG, "Error reading file into array.", e);
         } finally {
             if (fis != null) {
                 try {
@@ -188,15 +193,15 @@ public class SerializableTile {
         }
 
         try {
-            myFile  = file.getAbsoluteFile();
+            myFile = file.getAbsoluteFile();
             return fromBytes(arr);
         } catch (CharacterCodingException e) {
-            Log.e(LOG_TAG, "Error decoding strings from file", e);
+            ClientLog.e(LOG_TAG, "Error decoding strings from file", e);
             return false;
         }
     }
 
-    protected boolean fromBytes(byte[] arr) throws CharacterCodingException  {
+    protected boolean fromBytes(byte[] arr) throws CharacterCodingException {
         byte[] buffer = null;
 
         Charset charsetE = Charset.forName("UTF-8");
@@ -210,7 +215,7 @@ public class SerializableTile {
 
         bb.get(buffer, 0, 4);
         if (!Arrays.equals(buffer, FILE_HEADER)) {
-            Log.w(LOG_TAG, "Unexpected header in tile file: ["+bytesToHex(buffer)+"]");
+            ClientLog.w(LOG_TAG, "Unexpected header in tile file: [" + bytesToHex(buffer) + "]");
             return false;
         }
 
@@ -221,7 +226,7 @@ public class SerializableTile {
 
         headers.clear();
 
-        for (int i=0; i < headerCount; i++) {
+        for (int i = 0; i < headerCount; i++) {
             buffer = new byte[4];
             bb.get(buffer, 0, 4);
             int keyLength = java.nio.ByteBuffer.wrap(buffer).getInt();
@@ -255,7 +260,7 @@ public class SerializableTile {
         bb.get(buffer, 0, 4);
         int contentLength = java.nio.ByteBuffer.wrap(buffer).getInt();
         if (bb.remaining() != contentLength) {
-            Log.w(LOG_TAG, "Remaining byte count does not match actual["+bb.remaining()+"] vs expected["+contentLength+"]");
+            ClientLog.w(LOG_TAG, "Remaining byte count does not match actual[" + bb.remaining() + "] vs expected[" + contentLength + "]");
             // Force data to be null on errors.
             tData = null;
             return false;
@@ -271,18 +276,6 @@ public class SerializableTile {
         return ByteBuffer.allocate(4).putInt(integer).array();
     }
 
-    final protected static char[] hexArray = "0123456789abcdef".toCharArray();
-
-    public static String bytesToHex(byte[] bytes) {
-        char[] hexChars = new char[bytes.length * 2];
-        for ( int j = 0; j < bytes.length; j++ ) {
-            int v = bytes[j] & 0xFF;
-            hexChars[j * 2] = hexArray[v >>> 4];
-            hexChars[j * 2 + 1] = hexArray[v & 0x0F];
-        }
-        return new String(hexChars);
-    }
-
     public long getCacheControl() {
         String cc = getHeader("cache-control");
         if (cc == null) {
@@ -292,7 +285,7 @@ public class SerializableTile {
         }
     }
 
-    public String getHeader(String k){
+    public String getHeader(String k) {
         return headers.get(k.toLowerCase());
     }
 

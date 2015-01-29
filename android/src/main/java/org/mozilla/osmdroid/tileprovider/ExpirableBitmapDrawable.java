@@ -8,7 +8,6 @@ import android.graphics.drawable.Drawable;
  * A {@link BitmapDrawable} for a {@link MapTile} that has a state to indicate that it's expired.
  *
  * @TODO vng: this should probably be changed to be a decorator instead of a subclass.
- *
  */
 public class ExpirableBitmapDrawable extends BitmapDrawable {
 
@@ -19,6 +18,19 @@ public class ExpirableBitmapDrawable extends BitmapDrawable {
     public ExpirableBitmapDrawable(final Bitmap pBitmap) {
         super(pBitmap);
         mState = new int[0];
+    }
+
+    public static boolean isDrawableExpired(final Drawable pTile) {
+        if (!pTile.isStateful()) {
+            return false;
+        }
+        final int[] state = pTile.getState();
+        for (int i = 0; i < state.length; i++) {
+            if (state[i] == EXPIRED) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
@@ -36,18 +48,4 @@ public class ExpirableBitmapDrawable extends BitmapDrawable {
         mState = pStateSet;
         return true;
     }
-
-    public static boolean isDrawableExpired(final Drawable pTile) {
-        if (!pTile.isStateful()) {
-            return false;
-        }
-        final int[] state = pTile.getState();
-        for (int i = 0; i < state.length; i++) {
-            if (state[i] == EXPIRED) {
-                return true;
-            }
-        }
-        return false;
-    }
-
 }

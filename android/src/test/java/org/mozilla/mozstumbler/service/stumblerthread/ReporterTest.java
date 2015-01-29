@@ -34,108 +34,6 @@ public class ReporterTest {
     private Reporter rp;
     private DataStorageManager dm;
 
-    public class StorageTracker implements DataStorageManager.StorageIsEmptyTracker {
-        public void notifyStorageStateEmpty(boolean isEmpty) {
-        }
-    }
-
-    @Before
-    public void setUp() {
-        ctx = getApplicationContext();
-
-        StorageTracker tracker = new StorageTracker();
-
-        long maxBytes = 20000;
-        int maxWeeks = 10;
-
-        // The DM is required to handle the flush() operation in the Reporter.
-        dm = DataStorageManager.createGlobalInstance(ctx, tracker, maxBytes, maxWeeks);
-
-        rp = new Reporter();
-
-        // The Reporter class needs a reference to a context
-        rp.startup(ctx);
-
-        Intent gpsUpdated = getLocationIntent(0, 0);
-        rp.onReceive(ctx, gpsUpdated);
-        assertTrue(null != rp.getGPSLocation());
-    }
-
-    @Test
-    public void testReporterWifiLimits() {
-        // Spam the Reporter with wifi data
-        ArrayList<String> bssidList = new ArrayList<String>();
-
-        for (int offset = 0; offset< StumblerBundle.MAX_WIFIS_PER_LOCATION-1; offset++) {
-            String bssid = Long.toHexString(offset | 0xabcd00000000L);
-            bssidList.add(bssid);
-        }
-        String[] bssidArray  = bssidList.toArray(new String[bssidList.size()]);
-
-
-        // This should push the reporter into a state that forces a
-        // flush on the next wifi record.
-        Intent wifiIntent = getWifiIntent(bssidArray);
-        rp.onReceive(ctx, wifiIntent);
-        assertEquals(StumblerBundle.MAX_WIFIS_PER_LOCATION-1,
-                rp.mBundle.getUnmodifiableWifiData().size());
-
-        bssidArray = new String[] { Long.toHexString(0xabcd99999999L) };
-        wifiIntent = getWifiIntent(bssidArray);
-        // This will force a flush and the bundle should go to null
-        rp.onReceive(ctx, wifiIntent);
-        assertNull(rp.mBundle);
-    }
-
-    @Test
-    public void testReporterCellLimits() {
-        // Spam the Reporter with cell data
-        ArrayList<CellInfo> cellIdList = new ArrayList<CellInfo>();
-
-        for (int offset = 0; offset< StumblerBundle.MAX_CELLS_PER_LOCATION-1; offset++) {
-            CellInfo cell = createCellInfo(1, 1, 2000 + offset, 1600199 + offset, 19);
-            cellIdList.add(cell);
-        }
-
-        Intent cellIntent = getCellIntent(cellIdList);
-        rp.onReceive(ctx, cellIntent);
-        assertEquals(StumblerBundle.MAX_CELLS_PER_LOCATION-1,
-                rp.mBundle.getUnmodifiableCellData().size());
-
-        cellIdList.clear();
-        CellInfo cell  = createCellInfo(1, 1, 2000 + StumblerBundle.MAX_CELLS_PER_LOCATION + 1,
-                1600199 + StumblerBundle.MAX_CELLS_PER_LOCATION + 1, 19);
-        cellIdList.add(cell);
-        cellIntent = getCellIntent(cellIdList);
-        // This will force a flush and the bundle should go to null
-        rp.onReceive(ctx, cellIntent);
-        assertEquals(null, rp.mBundle);
-    }
-
-    private Intent getCellIntent(ArrayList<CellInfo> cells) {
-        long curTime = System.currentTimeMillis();
-        Intent intent = new Intent(CellScanner.ACTION_CELLS_SCANNED);
-        intent.putParcelableArrayListExtra(CellScanner.ACTION_CELLS_SCANNED_ARG_CELLS, cells);
-        intent.putExtra(CellScanner.ACTION_CELLS_SCANNED_ARG_TIME, curTime);
-        return intent;
-
-    }
-
-    private Intent getWifiIntent(String[] bssids) {
-        ArrayList<ScanResult> scanResults = new ArrayList<ScanResult>();
-
-        ScanResult scan;
-        for (String bssid: bssids) {
-            scan = createScanResult(bssid, "caps", 3, 11, 10);
-            scanResults.add(scan);
-        }
-
-        Intent i = new Intent(WifiScanner.ACTION_WIFIS_SCANNED);
-        i.putParcelableArrayListExtra(WifiScanner.ACTION_WIFIS_SCANNED_ARG_RESULTS, scanResults);
-        i.putExtra(WifiScanner.ACTION_WIFIS_SCANNED_ARG_TIME, System.currentTimeMillis());
-        return i;
-    }
-
     public static CellInfo createCellInfo(int mcc, int mnc, int lac, int cid, int asu) {
         CellInfo cell = new CellInfo(TelephonyManager.PHONE_TYPE_GSM);
         Method method = getMethod(CellInfo.class, "setGsmCellInfo");
@@ -160,7 +58,7 @@ public class ReporterTest {
     }
 
     public static ScanResult createScanResult(String BSSID, String caps, int level, int frequency,
-                                        long tsf) {
+                                              long tsf) {
         Class<?> c = null;
         try {
             c = Class.forName("android.net.wifi.ScanResult");
@@ -169,8 +67,8 @@ public class ReporterTest {
         }
         Constructor[] constructors = c.getConstructors();
 
-        Constructor<?> myConstructor= null;
-        for (Constructor<?> construct: constructors) {
+        Constructor<?> myConstructor = null;
+        for (Constructor<?> construct : constructors) {
             if (construct.getParameterTypes().length == 6) {
                 myConstructor = construct;
                 break;
@@ -207,8 +105,108 @@ public class ReporterTest {
         return i;
     }
 
+    @Before
+    public void setUp() {
+        ctx = getApplicationContext();
+
+        StorageTracker tracker = new StorageTracker();
+
+        long maxBytes = 20000;
+        int maxWeeks = 10;
+
+        // The DM is required to handle the flush() operation in the Reporter.
+        dm = DataStorageManager.createGlobalInstance(ctx, tracker, maxBytes, maxWeeks);
+
+        rp = new Reporter();
+
+        // The Reporter class needs a reference to a context
+        rp.startup(ctx);
+
+        Intent gpsUpdated = getLocationIntent(0, 0);
+        rp.onReceive(ctx, gpsUpdated);
+        assertTrue(null != rp.getGPSLocation());
+    }
+
+    @Test
+    public void testReporterWifiLimits() {
+        // Spam the Reporter with wifi data
+        ArrayList<String> bssidList = new ArrayList<String>();
+
+        for (int offset = 0; offset < StumblerBundle.MAX_WIFIS_PER_LOCATION - 1; offset++) {
+            String bssid = Long.toHexString(offset | 0xabcd00000000L);
+            bssidList.add(bssid);
+        }
+        String[] bssidArray = bssidList.toArray(new String[bssidList.size()]);
+
+
+        // This should push the reporter into a state that forces a
+        // flush on the next wifi record.
+        Intent wifiIntent = getWifiIntent(bssidArray);
+        rp.onReceive(ctx, wifiIntent);
+        assertEquals(StumblerBundle.MAX_WIFIS_PER_LOCATION - 1,
+                rp.mBundle.getUnmodifiableWifiData().size());
+
+        bssidArray = new String[]{Long.toHexString(0xabcd99999999L)};
+        wifiIntent = getWifiIntent(bssidArray);
+        // This will force a flush and the bundle should go to null
+        rp.onReceive(ctx, wifiIntent);
+        assertNull(rp.mBundle);
+    }
+
+    @Test
+    public void testReporterCellLimits() {
+        // Spam the Reporter with cell data
+        ArrayList<CellInfo> cellIdList = new ArrayList<CellInfo>();
+
+        for (int offset = 0; offset < StumblerBundle.MAX_CELLS_PER_LOCATION - 1; offset++) {
+            CellInfo cell = createCellInfo(1, 1, 2000 + offset, 1600199 + offset, 19);
+            cellIdList.add(cell);
+        }
+
+        Intent cellIntent = getCellIntent(cellIdList);
+        rp.onReceive(ctx, cellIntent);
+        assertEquals(StumblerBundle.MAX_CELLS_PER_LOCATION - 1,
+                rp.mBundle.getUnmodifiableCellData().size());
+
+        cellIdList.clear();
+        CellInfo cell = createCellInfo(1, 1, 2000 + StumblerBundle.MAX_CELLS_PER_LOCATION + 1,
+                1600199 + StumblerBundle.MAX_CELLS_PER_LOCATION + 1, 19);
+        cellIdList.add(cell);
+        cellIntent = getCellIntent(cellIdList);
+        // This will force a flush and the bundle should go to null
+        rp.onReceive(ctx, cellIntent);
+        assertEquals(null, rp.mBundle);
+    }
+
+    private Intent getCellIntent(ArrayList<CellInfo> cells) {
+        long curTime = System.currentTimeMillis();
+        Intent intent = new Intent(CellScanner.ACTION_CELLS_SCANNED);
+        intent.putParcelableArrayListExtra(CellScanner.ACTION_CELLS_SCANNED_ARG_CELLS, cells);
+        intent.putExtra(CellScanner.ACTION_CELLS_SCANNED_ARG_TIME, curTime);
+        return intent;
+    }
+
+    private Intent getWifiIntent(String[] bssids) {
+        ArrayList<ScanResult> scanResults = new ArrayList<ScanResult>();
+
+        ScanResult scan;
+        for (String bssid : bssids) {
+            scan = createScanResult(bssid, "caps", 3, 11, 10);
+            scanResults.add(scan);
+        }
+
+        Intent i = new Intent(WifiScanner.ACTION_WIFIS_SCANNED);
+        i.putParcelableArrayListExtra(WifiScanner.ACTION_WIFIS_SCANNED_ARG_RESULTS, scanResults);
+        i.putExtra(WifiScanner.ACTION_WIFIS_SCANNED_ARG_TIME, System.currentTimeMillis());
+        return i;
+    }
+
     private Application getApplicationContext() {
         return Robolectric.application;
     }
 
+    public class StorageTracker implements DataStorageManager.StorageIsEmptyTracker {
+        public void notifyStorageStateEmpty(boolean isEmpty) {
+        }
+    }
 }

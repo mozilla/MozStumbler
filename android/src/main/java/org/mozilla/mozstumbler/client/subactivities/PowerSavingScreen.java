@@ -1,7 +1,7 @@
 package org.mozilla.mozstumbler.client.subactivities;
 
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -51,7 +51,7 @@ public class PowerSavingScreen extends ActionBarActivity {
         mMotionDetectionCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                Prefs.PowerSavingModeOptions isOn = (isChecked)? Prefs.PowerSavingModeOptions.On :
+                Prefs.PowerSavingModeOptions isOn = (isChecked) ? Prefs.PowerSavingModeOptions.On :
                         Prefs.PowerSavingModeOptions.Off;
                 ClientPrefs.getInstance(PowerSavingScreen.this).setPowerSavingMode(isOn);
                 final MainApp app = ((MainApp) getApplication());
@@ -65,9 +65,9 @@ public class PowerSavingScreen extends ActionBarActivity {
 
     private void setupLowBatterySpinner() {
         final SpinnerAdapter spinnerAdapter = mBatteryLevelSpinner.getAdapter();
-        assert(spinnerAdapter instanceof ArrayAdapter);
+        assert (spinnerAdapter instanceof ArrayAdapter);
         @SuppressWarnings("unchecked")
-        final ArrayAdapter<String> adapter = (ArrayAdapter<String>)spinnerAdapter;
+        final ArrayAdapter<String> adapter = (ArrayAdapter<String>) spinnerAdapter;
         final int percent = ClientPrefs.getInstance(this).getMinBatteryPercent();
         final int spinnerPosition = adapter.getPosition(percent + "%");
         mBatteryLevelSpinner.setSelection(spinnerPosition);

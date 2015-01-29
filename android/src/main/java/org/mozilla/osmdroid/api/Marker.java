@@ -4,19 +4,33 @@ import android.graphics.Bitmap;
 
 public class Marker {
 
-    public enum Anchor {
-        NONE,
-        CENTER, BOTTOM_CENTER // these are the only two supported by Google Maps v1
-    }
-
     public final double latitude;
-
     public final double longitude;
-
     /**
      * The title of the marker. If null then marker has no title.
      */
     public String title;
+    /**
+     * Snippet displayed below the title. If null then marker has no snippet.
+     */
+    public String snippet;
+    /**
+     * Resource id of marker. If zero then use default marker.
+     */
+    public int icon;
+    /**
+     * Bitmap of marker. If null then use {@link #icon}.
+     */
+    public Bitmap bitmap;
+    /*
+     * Anchor of marker. Default is {@link Anchor#BOTTOM_CENTER}.
+     */
+    public Anchor anchor;
+
+    public Marker(final double aLatitude, final double aLongitude) {
+        latitude = aLatitude;
+        longitude = aLongitude;
+    }
 
     /**
      * The title of the marker. If null then marker has no title.
@@ -29,22 +43,12 @@ public class Marker {
 
     /**
      * Snippet displayed below the title. If null then marker has no snippet.
-     */
-    public String snippet;
-
-    /**
-     * Snippet displayed below the title. If null then marker has no snippet.
      * This method returns the marker for convenient method chaining.
      */
     public Marker snippet(final String aSnippet) {
         snippet = aSnippet;
         return this;
     }
-
-    /**
-     * Resource id of marker. If zero then use default marker.
-     */
-    public int icon;
 
     /**
      * Resource id of marker. If zero then use default marker.
@@ -57,22 +61,12 @@ public class Marker {
 
     /**
      * Bitmap of marker. If null then use {@link #icon}.
-     */
-    public Bitmap bitmap;
-
-    /**
-     * Bitmap of marker. If null then use {@link #icon}.
      * This method returns the marker for convenient method chaining.
      */
     public Marker bitmap(final Bitmap aBitmap) {
         bitmap = aBitmap;
         return this;
     }
-
-    /*
-     * Anchor of marker. Default is {@link Anchor#BOTTOM_CENTER}.
-     */
-    public Anchor anchor;
 
     /**
      * Anchor of marker. Default is {@link Anchor#BOTTOM_CENTER}.
@@ -83,8 +77,8 @@ public class Marker {
         return this;
     }
 
-    public Marker(final double aLatitude, final double aLongitude) {
-        latitude = aLatitude;
-        longitude = aLongitude;
+    public enum Anchor {
+        NONE,
+        CENTER, BOTTOM_CENTER // these are the only two supported by Google Maps v1
     }
 }

@@ -8,8 +8,8 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.util.DisplayMetrics;
 
-import org.mozilla.mozstumbler.service.AppGlobals;
-import org.mozilla.mozstumbler.service.core.logging.Log;
+import org.mozilla.mozstumbler.service.core.logging.ClientLog;
+import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 import org.mozilla.osmdroid.views.util.constants.MapViewConstants;
 
 import java.io.IOException;
@@ -22,7 +22,7 @@ import java.lang.reflect.Field;
  */
 public class DefaultResourceProxyImpl implements ResourceProxy, MapViewConstants {
 
-    private static final String LOG_TAG = AppGlobals.makeLogTag(DefaultResourceProxyImpl.class.getSimpleName());
+    private static final String LOG_TAG = LoggerUtil.makeLogTag(DefaultResourceProxyImpl.class);
 
     private Resources mResources;
     private DisplayMetrics mDisplayMetrics;
@@ -39,7 +39,7 @@ public class DefaultResourceProxyImpl implements ResourceProxy, MapViewConstants
             mResources = pContext.getResources();
             mDisplayMetrics = mResources.getDisplayMetrics();
             if (DEBUGMODE) {
-                Log.d(LOG_TAG, "mDisplayMetrics=" + mDisplayMetrics);
+                ClientLog.d(LOG_TAG, "mDisplayMetrics=" + mDisplayMetrics);
             }
         }
     }
@@ -118,7 +118,7 @@ public class DefaultResourceProxyImpl implements ResourceProxy, MapViewConstants
             }
             return BitmapFactory.decodeStream(is, null, options);
         } catch (final OutOfMemoryError e) {
-            Log.e(LOG_TAG, "OutOfMemoryError getting bitmap resource: " + pResId, e);
+            ClientLog.e(LOG_TAG, "OutOfMemoryError getting bitmap resource: " + pResId, e);
             System.gc();
             // there's not much we can do here
             // - when we load a bitmap from resources we expect it to be found
@@ -164,5 +164,4 @@ public class DefaultResourceProxyImpl implements ResourceProxy, MapViewConstants
     public float getDisplayMetricsDensity() {
         return mDisplayMetrics.density;
     }
-
 }

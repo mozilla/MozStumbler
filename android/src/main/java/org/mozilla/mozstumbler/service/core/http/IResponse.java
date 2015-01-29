@@ -3,7 +3,6 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 
-
 package org.mozilla.mozstumbler.service.core.http;
 
 import java.util.List;
@@ -13,15 +12,18 @@ public interface IResponse {
     public int httpStatusCode();
 
     public String body();
+
     public byte[] bodyBytes();
 
     public int bytesSent();
 
     public boolean isSuccessCode2XX();
+
     public boolean isErrorCode4xx();
 
     Map<String, List<String>> getHeaders();
 
     public String getFirstHeader(String key);
+
     public boolean isErrorCode400BadRequest();
 }

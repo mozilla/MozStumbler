@@ -2,7 +2,6 @@ package org.mozilla.mozstumbler.service.stumblerthread.datahandling;
 
 import android.app.Application;
 import android.content.Context;
-import android.content.Intent;
 import android.location.Location;
 import android.net.wifi.ScanResult;
 import android.telephony.TelephonyManager;
@@ -12,9 +11,7 @@ import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.stumblerthread.Reporter;
-import org.mozilla.mozstumbler.service.stumblerthread.scanners.GPSScanner;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner.CellInfo;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
@@ -32,10 +29,6 @@ import static org.mozilla.mozstumbler.service.stumblerthread.ReporterTest.create
 @RunWith(RobolectricTestRunner.class)
 public class DataStorageManagerTest {
 
-    public class StorageTracker implements DataStorageManager.StorageIsEmptyTracker {
-        public void notifyStorageStateEmpty(boolean isEmpty) {
-        }
-    }
     private DataStorageManager dm;
     private Reporter rp;
     private Context ctx;
@@ -69,20 +62,20 @@ public class DataStorageManagerTest {
         StumblerBundle bundle;
 
         assertEquals(0, dm.mCurrentReports.reportsCount());
-        for (int locCount = 0; locCount < ReportBatchBuilder.MAX_REPORTS_IN_MEMORY-1; locCount++) {
+        for (int locCount = 0; locCount < ReportBatchBuilder.MAX_REPORTS_IN_MEMORY - 1; locCount++) {
             Location loc = new Location("mock");
-            loc.setLatitude(42+(locCount*0.1));
-            loc.setLongitude(45+(locCount*0.1));
+            loc.setLatitude(42 + (locCount * 0.1));
+            loc.setLongitude(45 + (locCount * 0.1));
 
             bundle = new StumblerBundle(loc, TelephonyManager.PHONE_TYPE_GSM);
 
-            for (int offset = 0; offset< StumblerBundle.MAX_WIFIS_PER_LOCATION*20; offset++) {
+            for (int offset = 0; offset < StumblerBundle.MAX_WIFIS_PER_LOCATION * 20; offset++) {
                 String bssid = Long.toHexString(offset | 0xabcd00000000L);
                 ScanResult scan = createScanResult(bssid, "caps", 3, 11, 10);
                 bundle.addWifiData(bssid, scan);
             }
 
-            for (int offset = 0; offset< StumblerBundle.MAX_CELLS_PER_LOCATION*20; offset++) {
+            for (int offset = 0; offset < StumblerBundle.MAX_CELLS_PER_LOCATION * 20; offset++) {
                 CellInfo cell = createCellInfo(1, 1, 2000 + offset, 1600199 + offset, 19);
                 String key = cell.getCellIdentity();
                 bundle.addCellData(key, cell);
@@ -96,16 +89,16 @@ public class DataStorageManagerTest {
             } catch (IOException ioEx) {
             }
         }
-        assertEquals(ReportBatchBuilder.MAX_REPORTS_IN_MEMORY-1,
+        assertEquals(ReportBatchBuilder.MAX_REPORTS_IN_MEMORY - 1,
                 dm.mCurrentReports.reportsCount());
 
 
         for (int locCount = ReportBatchBuilder.MAX_REPORTS_IN_MEMORY;
-             locCount < ReportBatchBuilder.MAX_REPORTS_IN_MEMORY+100;
+             locCount < ReportBatchBuilder.MAX_REPORTS_IN_MEMORY + 100;
              locCount++) {
             Location loc = new Location("mock");
-            loc.setLatitude(42+(locCount*0.1));
-            loc.setLongitude(45+(locCount*0.1));
+            loc.setLatitude(42 + (locCount * 0.1));
+            loc.setLongitude(45 + (locCount * 0.1));
 
             bundle = new StumblerBundle(loc, TelephonyManager.PHONE_TYPE_GSM);
 
@@ -135,4 +128,8 @@ public class DataStorageManagerTest {
         }
     }
 
+    public class StorageTracker implements DataStorageManager.StorageIsEmptyTracker {
+        public void notifyStorageStateEmpty(boolean isEmpty) {
+        }
+    }
 }

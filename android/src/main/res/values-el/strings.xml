@@ -17,8 +17,8 @@
     <string name="yes">Ναι</string>
     <string name="no">Όχι</string>
     <string name="about_version">Έκδοση:%1$s</string>
-	<!--translations missing
-	<string name="about_openstreetmap">Map view tiles © OpenStreetMap contributors\nhttp://www.openstreetmap.org</string>
+    <!--translations missing
+    <string name="about_openstreetmap">Map view tiles © OpenStreetMap contributors\nhttp://www.openstreetmap.org</string>
     <string name="about_mapbox_title">MapBox</string>-->
     <string name="about_mapbox">Μάθετε περισσότερα σχετικά με τον παροχέα χαρτογράφησής μας…</string>
     <string name="about_legal_aosp">Κάποια εικονογραφία σε αυτό το πρόγραμμα αναπαράγεται από το έργο που δημιουργείται και διαμοιράζεται από το Android Open Source Project και χρησιμοποιείτε σύμφωνα με τους όρους που περιγράφονται στην άδεια Creative Commons Attribution 2.5 .</string>
@@ -30,10 +30,8 @@
     <string name="upload_observations_in_queue_title">Στην ουρά</string>
 
 
-
     <string name="upload_wifi_only_title">Μεταφόρτωση μόνο μέσω Wi-Fi</string>
     <string name="upload_wifi_only_summary">Η επιλογή αυτή θα μειώσει τη χρήση των δεδομένων σας μέσω του δικτύου κινητής τηλεφωνίας.</string>
-
 
 
     <!--translations missing

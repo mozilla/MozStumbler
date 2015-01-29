@@ -58,53 +58,40 @@ public class ScaleBarOverlay extends Overlay implements GeoConstants {
     // ===========================================================
 
     private static final Rect sTextBoundsRect = new Rect();
+    protected final Path barPath = new Path();
+    protected final Rect latitudeBarRect = new Rect();
+    protected final Rect longitudeBarRect = new Rect();
+    private final Context context;
+    private final ResourceProxy resourceProxy;
+    public float xdpi;
+    public float ydpi;
 
-    public enum UnitsOfMeasure {
-        metric, imperial, nautical
-    }
-
+    // Internal
+    public int screenWidth;
+    public int screenHeight;
     // Defaults
     int xOffset = 10;
     int yOffset = 10;
     int minZoom = 0;
-
     UnitsOfMeasure unitsOfMeasure = UnitsOfMeasure.metric;
-
     boolean latitudeBar = true;
     boolean longitudeBar = false;
-
-    // Internal
-
-    private final Context context;
-
-    protected final Path barPath = new Path();
-    protected final Rect latitudeBarRect = new Rect();
-    protected final Rect longitudeBarRect = new Rect();
-
     private int lastZoomLevel = -1;
     private float lastLatitude = 0;
-
-    public float xdpi;
-    public float ydpi;
-    public int screenWidth;
-    public int screenHeight;
-
-    private final ResourceProxy resourceProxy;
     private Paint barPaint;
     private Paint bgPaint;
     private Paint textPaint;
-
     private boolean centred = false;
     private boolean adjustLength = false;
     private float maxLength;
 
-    // ===========================================================
-    // Constructors
-    // ===========================================================
-
     public ScaleBarOverlay(final Context context) {
         this(context, new DefaultResourceProxyImpl(context));
     }
+
+    // ===========================================================
+    // Constructors
+    // ===========================================================
 
     public ScaleBarOverlay(final Context context, final ResourceProxy pResourceProxy) {
         super(pResourceProxy);
@@ -153,7 +140,6 @@ public class ScaleBarOverlay extends Overlay implements GeoConstants {
                 this.xdpi = (float) (this.screenWidth / 2.1);
                 this.ydpi = (float) (this.screenHeight / 3.75);
             }
-
         } else if ("motorola".equals(manufacturer) && "Droid".equals(android.os.Build.MODEL)) {
             // http://www.mail-archive.com/android-developers@googlegroups.com/msg109497.html
             this.xdpi = 264;
@@ -164,10 +150,6 @@ public class ScaleBarOverlay extends Overlay implements GeoConstants {
         maxLength = 2.54f;
     }
 
-    // ===========================================================
-    // Getter & Setter
-    // ===========================================================
-
     /**
      * Sets the minimum zoom level for the scale bar to be drawn.
      *
@@ -176,6 +158,10 @@ public class ScaleBarOverlay extends Overlay implements GeoConstants {
     public void setMinZoom(final int zoom) {
         this.minZoom = zoom;
     }
+
+    // ===========================================================
+    // Getter & Setter
+    // ===========================================================
 
     /**
      * Sets the scale bar screen offset for the bar. Note: if the bar is set to be drawn centered,
@@ -208,18 +194,18 @@ public class ScaleBarOverlay extends Overlay implements GeoConstants {
     }
 
     /**
+     * Gets the units of measure to be shown in the scale bar
+     */
+    public UnitsOfMeasure getUnitsOfMeasure() {
+        return unitsOfMeasure;
+    }
+
+    /**
      * Sets the units of measure to be shown in the scale bar
      */
     public void setUnitsOfMeasure(UnitsOfMeasure unitsOfMeasure) {
         this.unitsOfMeasure = unitsOfMeasure;
         lastZoomLevel = -1; // Force redraw of scalebar
-    }
-
-    /**
-     * Gets the units of measure to be shown in the scale bar
-     */
-    public UnitsOfMeasure getUnitsOfMeasure() {
-        return unitsOfMeasure;
     }
 
     /**
@@ -329,10 +315,6 @@ public class ScaleBarOverlay extends Overlay implements GeoConstants {
         lastZoomLevel = -1; // Force redraw of scalebar
     }
 
-    // ===========================================================
-    // Methods from SuperClass/Interfaces
-    // ===========================================================
-
     @Override
     protected void draw(Canvas c, MapView mapView, boolean shadow) {
         if (shadow) {
@@ -395,12 +377,16 @@ public class ScaleBarOverlay extends Overlay implements GeoConstants {
     }
 
     // ===========================================================
-    // Methods
+    // Methods from SuperClass/Interfaces
     // ===========================================================
 
     public void disableScaleBar() {
         setEnabled(false);
     }
+
+    // ===========================================================
+    // Methods
+    // ===========================================================
 
     public void enableScaleBar() {
         setEnabled(true);
@@ -612,7 +598,6 @@ public class ScaleBarOverlay extends Overlay implements GeoConstants {
                 if (meters >= METERS_PER_STATUTE_MILE * 5) {
                     return resourceProxy.getString(ResourceProxy.string.format_distance_miles,
                             (int) (meters / METERS_PER_STATUTE_MILE));
-
                 } else if (meters >= METERS_PER_STATUTE_MILE / 5) {
                     return resourceProxy.getString(ResourceProxy.string.format_distance_miles,
                             ((int) (meters / (METERS_PER_STATUTE_MILE / 10.0))) / 10.0);
@@ -634,4 +619,7 @@ public class ScaleBarOverlay extends Overlay implements GeoConstants {
         }
     }
 
+    public enum UnitsOfMeasure {
+        metric, imperial, nautical
+    }
 }

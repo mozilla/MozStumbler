@@ -6,13 +6,13 @@ package org.mozilla.mozstumbler.service.utils;
 
 import android.util.Log;
 
-import org.mozilla.mozstumbler.service.AppGlobals;
+import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 public class ShaUtil {
-    private static final String LOG_TAG = AppGlobals.makeLogTag(ShaUtil.class.getSimpleName());
+    private static final String LOG_TAG = LoggerUtil.makeLogTag(ShaUtil.class);
 
     public static String sha1_hex_digest(String email) {
         String result = "";
@@ -22,8 +22,7 @@ public class ShaUtil {
 
         try {
             md = MessageDigest.getInstance("SHA-1");
-        }
-        catch(NoSuchAlgorithmException e) {
+        } catch (NoSuchAlgorithmException e) {
             Log.e(LOG_TAG, "Couldn't obtain SHA1 digest: " + e);
             return null;
         }
@@ -35,5 +34,4 @@ public class ShaUtil {
         }
         return result;
     }
-
 }

@@ -32,18 +32,14 @@ public class DirectedLocationOverlay extends Overlay {
     protected final Paint mAccuracyPaint = new Paint();
 
     protected final Bitmap DIRECTION_ARROW;
-
-    protected GeoPoint mLocation;
-    protected float mBearing;
-
     private final Matrix directionRotater = new Matrix();
     private final Point screenCoords = new Point();
-
     private final float DIRECTION_ARROW_CENTER_X;
     private final float DIRECTION_ARROW_CENTER_Y;
     private final int DIRECTION_ARROW_WIDTH;
     private final int DIRECTION_ARROW_HEIGHT;
-
+    protected GeoPoint mLocation;
+    protected float mBearing;
     private int mAccuracy = 0;
     private boolean mShowAccuracy = true;
 
@@ -78,12 +74,12 @@ public class DirectedLocationOverlay extends Overlay {
         this.mShowAccuracy = pShowIt;
     }
 
-    public void setLocation(final GeoPoint mp) {
-        this.mLocation = mp;
-    }
-
     public GeoPoint getLocation() {
         return this.mLocation;
+    }
+
+    public void setLocation(final GeoPoint mp) {
+        this.mLocation = mp;
     }
 
     /**
@@ -116,7 +112,7 @@ public class DirectedLocationOverlay extends Overlay {
                 final float accuracyRadius = pj.metersToEquatorPixels(this.mAccuracy);
                 /* Only draw if the DirectionArrow doesn't cover it. */
                 if (accuracyRadius > 8) {
-					/* Draw the inner shadow. */
+                    /* Draw the inner shadow. */
                     this.mAccuracyPaint.setAntiAlias(false);
                     this.mAccuracyPaint.setAlpha(30);
                     this.mAccuracyPaint.setStyle(Style.FILL);
@@ -133,7 +129,7 @@ public class DirectedLocationOverlay extends Overlay {
             }
 
 			/*
-			 * Rotate the direction-Arrow according to the bearing we are driving. And draw it to
+             * Rotate the direction-Arrow according to the bearing we are driving. And draw it to
 			 * the canvas.
 			 */
             this.directionRotater.setRotate(this.mBearing, DIRECTION_ARROW_CENTER_X,

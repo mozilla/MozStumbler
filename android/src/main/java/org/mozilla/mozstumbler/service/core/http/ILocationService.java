@@ -11,8 +11,6 @@ public interface ILocationService {
     // Submit data to MLS
     // Errors will return
     public IResponse submit(byte[] data, Map<String, String> headers, boolean precompressed);
+
     public IResponse search(byte[] data, Map<String, String> headers, boolean precompressed);
-
-
-
 }

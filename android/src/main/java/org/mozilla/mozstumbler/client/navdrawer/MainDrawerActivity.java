@@ -5,8 +5,6 @@
 package org.mozilla.mozstumbler.client.navdrawer;
 
 import android.app.AlertDialog;
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -20,7 +18,6 @@ import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.text.Html;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -39,19 +36,19 @@ import org.mozilla.mozstumbler.client.Updater;
 import org.mozilla.mozstumbler.client.mapview.MapFragment;
 import org.mozilla.mozstumbler.client.subactivities.FirstRunFragment;
 import org.mozilla.mozstumbler.client.subactivities.LeaderboardActivity;
-import org.mozilla.mozstumbler.service.AppGlobals;
+import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
 public class MainDrawerActivity
         extends ActionBarActivity
         implements IMainActivity {
 
-    private static final String LOG_TAG = AppGlobals.makeLogTag(MainDrawerActivity.class);
+    private static final String LOG_TAG = LoggerUtil.makeLogTag(MainDrawerActivity.class);
+    private static final int MENU_START_STOP = 1;
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
     private MetricsView mMetricsView;
     private MapFragment mMapFragment;
     private MenuItem mMenuItemStartStop;
-
     final CompoundButton.OnCheckedChangeListener mStartStopButtonListener =
             new CompoundButton.OnCheckedChangeListener() {
                 @Override
@@ -94,7 +91,8 @@ public class MainDrawerActivity
             }
 
             @Override
-            public void onDrawerClosed(View view) {}
+            public void onDrawerClosed(View view) {
+            }
 
             @Override
             public void onDrawerOpened(View drawerView) {
@@ -127,11 +125,7 @@ public class MainDrawerActivity
         }
 
         mMetricsView = new MetricsView(findViewById(R.id.left_drawer));
-
-
     }
-
-    private static final int MENU_START_STOP = 1;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -144,8 +138,7 @@ public class MainDrawerActivity
             s.setOnCheckedChangeListener(mStartStopButtonListener);
             mMenuItemStartStop.setActionView(s);
             mMenuItemStartStop.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-        }
-        else {
+        } else {
             MenuItemCompat.setShowAsAction(mMenuItemStartStop, MenuItemCompat.SHOW_AS_ACTION_ALWAYS);
         }
 
@@ -231,7 +224,6 @@ public class MainDrawerActivity
                 }
             }, 750);
         }
-
     }
 
     @Override
@@ -330,7 +322,7 @@ public class MainDrawerActivity
 
         CharSequence whats_new_text = getText(R.string.whats_new);
 
-        if (whats_new_text.toString().trim().length() == 0 ){
+        if (whats_new_text.toString().trim().length() == 0) {
             // Don't show the dialog if the what's new text is
             // an empty string.
             return;
@@ -351,7 +343,6 @@ public class MainDrawerActivity
         alert.show();
         TextView msgTxt = (TextView) alert.findViewById(android.R.id.message);
         msgTxt.setTextSize(12);
-
     }
 }
 

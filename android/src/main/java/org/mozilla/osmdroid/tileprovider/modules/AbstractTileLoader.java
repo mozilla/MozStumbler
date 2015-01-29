@@ -6,8 +6,8 @@ package org.mozilla.osmdroid.tileprovider.modules;
 
 import android.graphics.drawable.Drawable;
 
-import org.mozilla.mozstumbler.service.AppGlobals;
-import org.mozilla.mozstumbler.service.core.logging.Log;
+import org.mozilla.mozstumbler.service.core.logging.ClientLog;
+import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 import org.mozilla.osmdroid.tileprovider.ExpirableBitmapDrawable;
 import org.mozilla.osmdroid.tileprovider.MapTile;
 import org.mozilla.osmdroid.tileprovider.MapTileRequestState;
@@ -22,7 +22,7 @@ import java.util.Iterator;
  */
 public abstract class AbstractTileLoader implements Runnable {
 
-    private static final String LOG_TAG = AppGlobals.makeLogTag(AbstractTileLoader.class);
+    private static final String LOG_TAG = LoggerUtil.makeLogTag(AbstractTileLoader.class);
 
     private MapTileModuleProviderBase mapTileModuleProviderBase;
 
@@ -64,7 +64,7 @@ public abstract class AbstractTileLoader implements Runnable {
                 final MapTile tile = iterator.next();
                 if (!mapTileModuleProviderBase.mWorking.containsKey(tile)) {
                     if (OSMConstants.DEBUG_TILE_PROVIDERS) {
-                        Log.d(LOG_TAG, "TileLoader.nextTile() on provider: " + mapTileModuleProviderBase.getName()
+                        ClientLog.d(LOG_TAG, "TileLoader.nextTile() on provider: " + mapTileModuleProviderBase.getName()
                                 + " found tile in working queue: " + tile);
                     }
                     result = tile;
@@ -73,7 +73,7 @@ public abstract class AbstractTileLoader implements Runnable {
 
             if (result != null) {
                 if (OSMConstants.DEBUG_TILE_PROVIDERS) {
-                    Log.d(LOG_TAG, "TileLoader.nextTile() on provider: " + mapTileModuleProviderBase.getName()
+                    ClientLog.d(LOG_TAG, "TileLoader.nextTile() on provider: " + mapTileModuleProviderBase.getName()
                             + " adding tile to working queue: " + result);
                 }
                 mapTileModuleProviderBase.mWorking.put(result, mapTileModuleProviderBase.mPending.get(result));
@@ -88,7 +88,7 @@ public abstract class AbstractTileLoader implements Runnable {
      */
     protected void tileLoaded(final MapTileRequestState pState, final Drawable pDrawable) {
         if (OSMConstants.DEBUG_TILE_PROVIDERS) {
-            Log.d(LOG_TAG, "TileLoader.tileLoaded() on provider: " + mapTileModuleProviderBase.getName() + " with tile: "
+            ClientLog.d(LOG_TAG, "TileLoader.tileLoaded() on provider: " + mapTileModuleProviderBase.getName() + " with tile: "
                     + pState.getMapTile());
         }
         mapTileModuleProviderBase.removeTileFromQueues(pState.getMapTile());
@@ -101,7 +101,7 @@ public abstract class AbstractTileLoader implements Runnable {
      */
     protected void tileLoadedExpired(final MapTileRequestState pState, final Drawable pDrawable) {
         if (OSMConstants.DEBUG_TILE_PROVIDERS) {
-            Log.d(LOG_TAG, "TileLoader.tileLoadedExpired() on provider: " + mapTileModuleProviderBase.getName()
+            ClientLog.d(LOG_TAG, "TileLoader.tileLoadedExpired() on provider: " + mapTileModuleProviderBase.getName()
                     + " with tile: " + pState.getMapTile());
         }
         mapTileModuleProviderBase.removeTileFromQueues(pState.getMapTile());
@@ -110,7 +110,7 @@ public abstract class AbstractTileLoader implements Runnable {
 
     protected void tileLoadedFailed(final MapTileRequestState pState) {
         if (OSMConstants.DEBUG_TILE_PROVIDERS) {
-            Log.d(LOG_TAG, "TileLoader.tileLoadedFailed() on provider: " + mapTileModuleProviderBase.getName()
+            ClientLog.d(LOG_TAG, "TileLoader.tileLoadedFailed() on provider: " + mapTileModuleProviderBase.getName()
                     + " with tile: " + pState.getMapTile());
         }
         mapTileModuleProviderBase.removeTileFromQueues(pState.getMapTile());
@@ -129,16 +129,16 @@ public abstract class AbstractTileLoader implements Runnable {
         Drawable result = null;
         while ((state = nextTile()) != null) {
             if (OSMConstants.DEBUG_TILE_PROVIDERS) {
-                Log.d(LOG_TAG, "TileLoader.run() processing next tile: " + state.getMapTile());
+                ClientLog.d(LOG_TAG, "TileLoader.run() processing next tile: " + state.getMapTile());
             }
             try {
                 result = null;
                 result = loadTile(state);
             } catch (final CantContinueException e) {
-                Log.e(LOG_TAG, "Tile loader can't continue: " + state.getMapTile(), e);
+                ClientLog.e(LOG_TAG, "Tile loader can't continue: " + state.getMapTile(), e);
                 mapTileModuleProviderBase.clearQueue();
             } catch (final Throwable e) {
-                Log.e(LOG_TAG, "Error downloading tile: " + state.getMapTile(), e);
+                ClientLog.e(LOG_TAG, "Error downloading tile: " + state.getMapTile(), e);
             }
 
             if (result == null) {

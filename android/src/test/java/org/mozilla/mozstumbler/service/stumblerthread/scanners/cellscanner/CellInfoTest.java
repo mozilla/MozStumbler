@@ -1,16 +1,12 @@
 package org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner;
 
 
-import android.os.Build;
-import android.telephony.CellLocation;
 import android.telephony.TelephonyManager;
 import android.telephony.gsm.GsmCellLocation;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mozilla.mozstumbler.service.AppGlobals;
-import org.mozilla.mozstumbler.service.core.logging.Log;
-import org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner.CellInfo;
+import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
@@ -24,7 +20,7 @@ import static junit.framework.Assert.assertEquals;
 @RunWith(RobolectricTestRunner.class)
 public class CellInfoTest {
 
-    private static final String LOG_TAG = AppGlobals.makeLogTag(CellInfoTest.class);
+    private static final String LOG_TAG = LoggerUtil.makeLogTag(CellInfoTest.class);
 
     // Only two fields in the CellInfo struct are strings.  This just makes sure that all
     // values will map to known values or the empty string.
@@ -76,7 +72,5 @@ public class CellInfoTest {
             cellInfo.setCellLocation(gcl, networkType, "123456", 5, 5);
             assertEquals(CellInfo.CELL_RADIO_CDMA, cellInfo.getCellRadio());
         }
-
     }
-
 }

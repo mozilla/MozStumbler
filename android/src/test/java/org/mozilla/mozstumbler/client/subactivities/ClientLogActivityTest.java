@@ -2,14 +2,11 @@ package org.mozilla.mozstumbler.client.subactivities;
 
 import android.annotation.TargetApi;
 import android.content.Context;
-import android.graphics.Point;
 import android.os.Build;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mozilla.mozstumbler.service.AppGlobals;
-import org.mozilla.mozstumbler.service.core.logging.Log;
+import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
@@ -18,15 +15,13 @@ import org.robolectric.shadows.ShadowTextView;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
-import static org.junit.Assert.assertThat;
 import static org.mozilla.mozstumbler.client.subactivities.LogActivity.ConsoleView;
-import static org.robolectric.Robolectric.shadowOf;
 
 @Config(emulateSdk = 18)
 @RunWith(RobolectricTestRunner.class)
-public class LogActivityTest {
+public class ClientLogActivityTest {
 
-    private static final String LOG_TAG = AppGlobals.makeLogTag(LogActivityTest.class);
+    private static final String LOG_TAG = LoggerUtil.makeLogTag(ClientLogActivityTest.class);
 
     @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
     @Test

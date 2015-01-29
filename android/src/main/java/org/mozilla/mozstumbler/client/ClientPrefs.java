@@ -2,42 +2,31 @@ package org.mozilla.mozstumbler.client;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.widget.Toast;
 
 import org.acra.ACRA;
 import org.mozilla.mozstumbler.BuildConfig;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.Prefs;
-import org.mozilla.mozstumbler.service.core.logging.Log;
+import org.mozilla.mozstumbler.service.core.logging.ClientLog;
 import org.mozilla.mozstumbler.service.core.logging.MockAcraLog;
+import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 import org.mozilla.osmdroid.api.IGeoPoint;
 import org.mozilla.osmdroid.util.GeoPoint;
 
 public class ClientPrefs extends Prefs {
-    private static final String LOG_TAG = AppGlobals.makeLogTag(ClientPrefs.class.getSimpleName());
-    private static final String LAT_PREF = "lat";
-    private static final String LON_PREF = "lon";
-    private static final String IS_FIRST_RUN = "is_first_run";
     public static final String MAP_TILE_RESOLUTION_TYPE = "map_tile_res_options";
     public static final String KEEP_SCREEN_ON_PREF = "keep_screen_on";
     public static final String ENABLE_OPTION_TO_SHOW_MLS_ON_MAP = "enable_the_option_to_show_mls_on_map";
-    private static final String ON_MAP_MLS_DRAW_IS_ON = "actually_draw_mls_dots_on_map";
     public static final String CRASH_REPORTING = "crash_reporting";
-    private static final String DEFAULT_SIMULATION_LAT_LONG = "default_simulation_lat_lon";
-    private static final String MIN_BATTERY_PCT = "min_battery_pct";
     public static final int MIN_BATTERY_DEFAULT = 15;
     public static final String LAST_VERSION = "last_version";
-
-    public long getLastVersion() {
-        return getPrefs().getLong(LAST_VERSION, 0);
-    }
-
-    public void setDontShowChangelog() {
-        setLongPref(LAST_VERSION, BuildConfig.VERSION_CODE);
-    }
-
-
-    public enum MapTileResolutionOptions {Default, HighRes, LowRes, NoMap}
+    private static final String LOG_TAG = LoggerUtil.makeLogTag(ClientPrefs.class);
+    private static final String LAT_PREF = "lat";
+    private static final String LON_PREF = "lon";
+    private static final String IS_FIRST_RUN = "is_first_run";
+    private static final String ON_MAP_MLS_DRAW_IS_ON = "actually_draw_mls_dots_on_map";
+    private static final String DEFAULT_SIMULATION_LAT_LONG = "default_simulation_lat_lon";
+    private static final String MIN_BATTERY_PCT = "min_battery_pct";
 
     protected ClientPrefs(Context context) {
         super(context);
@@ -62,17 +51,12 @@ public class ClientPrefs extends Prefs {
         return PREFS_FILE;
     }
 
-    public synchronized void setLastMapCenter(IGeoPoint center) {
-        SharedPreferences.Editor editor = getPrefs().edit();
-        editor.putFloat(LAT_PREF, (float) center.getLatitude());
-        editor.putFloat(LON_PREF, (float) center.getLongitude());
+    public long getLastVersion() {
+        return getPrefs().getLong(LAST_VERSION, 0);
+    }
 
-        if (AppGlobals.isDebug) {
-            // Save the location as the start for simulations
-            setSimulationLat((float) center.getLatitude());
-            setSimulationLon((float) center.getLongitude());
-        }
-        apply(editor);
+    public void setDontShowChangelog() {
+        setLongPref(LAST_VERSION, BuildConfig.VERSION_CODE);
     }
 
     public void clearSimulationStart() {
@@ -86,6 +70,19 @@ public class ClientPrefs extends Prefs {
         final float lat = getPrefs().getFloat(LAT_PREF, 0);
         final float lon = getPrefs().getFloat(LON_PREF, 0);
         return new GeoPoint(lat, lon);
+    }
+
+    public synchronized void setLastMapCenter(IGeoPoint center) {
+        SharedPreferences.Editor editor = getPrefs().edit();
+        editor.putFloat(LAT_PREF, (float) center.getLatitude());
+        editor.putFloat(LON_PREF, (float) center.getLongitude());
+
+        if (AppGlobals.isDebug) {
+            // Save the location as the start for simulations
+            setSimulationLat((float) center.getLatitude());
+            setSimulationLon((float) center.getLongitude());
+        }
+        apply(editor);
     }
 
     public boolean getKeepScreenOn() {
@@ -123,21 +120,22 @@ public class ClientPrefs extends Prefs {
         setOnMapShowMLS(isEnabled);
     }
 
-    public void setCrashReportingEnabled(boolean isOn) {
-        setBoolPref(CRASH_REPORTING, isOn);
-        if (isOn) {
-            Log.d(LOG_TAG, "Enabled crash reporting");
-            ACRA.setLog(MockAcraLog.getOriginalLog());
-        } else {
-            Log.d(LOG_TAG, "Disabled crash reporting");
-            ACRA.setLog(new MockAcraLog());
-        }
-    }
-
     public boolean isCrashReportingEnabled() {
         // default to true for GITHUB build
         return getBoolPrefWithDefault(CRASH_REPORTING, BuildConfig.GITHUB);
     }
+
+    public void setCrashReportingEnabled(boolean isOn) {
+        setBoolPref(CRASH_REPORTING, isOn);
+        if (isOn) {
+            ClientLog.d(LOG_TAG, "Enabled crash reporting");
+            ACRA.setLog(MockAcraLog.getOriginalLog());
+        } else {
+            ClientLog.d(LOG_TAG, "Disabled crash reporting");
+            ACRA.setLog(new MockAcraLog());
+        }
+    }
+
     public boolean isDefaultSimulationLatLon() {
         return getBoolPrefWithDefault(DEFAULT_SIMULATION_LAT_LONG, true);
     }
@@ -153,18 +151,18 @@ public class ClientPrefs extends Prefs {
         setMapTileResolutionType(MapTileResolutionOptions.values()[mapTileResolutionType]);
     }
 
-    public void setMapTileResolutionType(MapTileResolutionOptions mapTileResolutionType) {
-        SharedPreferences.Editor editor = getPrefs().edit();
-        editor.putInt(MAP_TILE_RESOLUTION_TYPE, mapTileResolutionType.ordinal());
-        apply(editor);
-    }
-
     public MapTileResolutionOptions getMapTileResolutionType() {
         int i = getPrefs().getInt(MAP_TILE_RESOLUTION_TYPE, 0);
         if (i >= MapTileResolutionOptions.values().length) {
             i = 0;
         }
         return MapTileResolutionOptions.values()[i];
+    }
+
+    public void setMapTileResolutionType(MapTileResolutionOptions mapTileResolutionType) {
+        SharedPreferences.Editor editor = getPrefs().edit();
+        editor.putInt(MAP_TILE_RESOLUTION_TYPE, mapTileResolutionType.ordinal());
+        apply(editor);
     }
 
     public int getMinBatteryPercent() {
@@ -176,4 +174,6 @@ public class ClientPrefs extends Prefs {
         editor.putInt(MIN_BATTERY_PCT, percent);
         apply(editor);
     }
+
+    public enum MapTileResolutionOptions {Default, HighRes, LowRes, NoMap}
 }

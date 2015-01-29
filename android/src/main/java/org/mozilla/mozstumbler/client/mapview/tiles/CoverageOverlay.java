@@ -22,7 +22,7 @@ public class CoverageOverlay extends AbstractMapOverlay {
     public CoverageOverlay(LowResType type, final Context aContext, final String coverageUrl, MapView mapView) {
         super(aContext);
 
-        final int zoomLevel = (type == LowResType.HIGHER_ZOOM)?
+        final int zoomLevel = (type == LowResType.HIGHER_ZOOM) ?
                 AbstractMapOverlay.getDisplaySizeBasedMinZoomLevel() : LOW_ZOOM_LEVEL;
 
         final ITileSource coverageTileSource = new XYTileSource("Mozilla Location Service Coverage Map",
@@ -30,7 +30,7 @@ public class CoverageOverlay extends AbstractMapOverlay {
                 zoomLevel, zoomLevel,
                 AbstractMapOverlay.TILE_PIXEL_SIZE,
                 ".png",
-                new String[] { coverageUrl });
+                new String[]{coverageUrl});
         this.setLoadingBackgroundColor(Color.TRANSPARENT);
         mTileProvider.setTileRequestCompleteHandler(new SimpleInvalidationHandler(mapView));
         mTileProvider.setTileSource(coverageTileSource);

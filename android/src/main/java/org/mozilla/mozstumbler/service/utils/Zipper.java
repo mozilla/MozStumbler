@@ -6,7 +6,7 @@ package org.mozilla.mozstumbler.service.utils;
 
 import android.util.Log;
 
-import org.mozilla.mozstumbler.service.AppGlobals;
+import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -18,12 +18,7 @@ import java.util.zip.GZIPOutputStream;
 
 public class Zipper {
 
-    private static final String LOG_TAG = AppGlobals.makeLogTag(Zipper.class.getSimpleName());
-
-    public enum ZippedState {
-        eNotZipped,
-        eAlreadyZipped
-    }
+    private static final String LOG_TAG = LoggerUtil.makeLogTag(Zipper.class);
 
     /*
     Compress data using gzip, return null if compression fails.
@@ -42,7 +37,7 @@ public class Zipper {
             return null;
         } finally {
             try {
-                if (gz_outputstream != null){
+                if (gz_outputstream != null) {
                     gz_outputstream.close();
                 }
             } catch (IOException e) {
@@ -79,4 +74,8 @@ public class Zipper {
         return result.toString();
     }
 
+    public enum ZippedState {
+        eNotZipped,
+        eAlreadyZipped
+    }
 }

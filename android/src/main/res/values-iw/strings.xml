@@ -1,42 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<string name="app_name">Mozilla Stumbler</string>
-	<string name="action_about">על אודות Mozilla Stumbler</string>
-	<string name="action_preferences">העדפות</string>
-	<string name="start_scanning">התחלת הסריקה</string>
-	<string name="stop_scanning">עצירת הסריקה</string>
-	<string name="view_leaderboard">צפייה בלוח המובילים</string>
-	<string name="service_name">מאתר מוזילה</string>
-	<string name="enter_nickname">הזנת שם המשתמש (רשות)</string>
-	<string name="enter_nickname_title">כינוי: %1$s</string>
-	<string name="enter_nickname_longtext">הכינוי שלך יופיע בלוח המובילים.</string>
-	<string name="update_title">האם להוריד עדכון ל־Mozilla Stumbler?</string>
-	<string name="update_message">הגרסה המותקנת: %1$s\nהגרסה העדכנית: %2$s</string>
-	<string name="update_now">לעדכן כעת</string>
-	<string name="update_later">לעדכן מאוחר יותר</string>
-	<string name="yes">כן</string>
-	<string name="no">לא</string>
-	<string name="about_version">גרסה %1$s</string>
-	<string name="about_openstreetmap">משבצות הצגת המפה © תורמיOpenStreetMap\nhttp://www.openstreetmap.org</string>
-	<string name="about_mapbox_title">MapBox</string>
-	<string name="about_mapbox">מידע נוסף על ספק המיפוי שלנו…</string>
-	<string name="about_legal_aosp">חלק מהסימנים ביישום זה נגזרו מיצירות שנוצרו עבור Android Open Source Project ונעשה בהם שימוש בכפוף לתנאים המתוארים ברישיון Creative Commons 2.5 ייחוס.</string>
-	<string name="upload_observations_sent_title">נשלח</string>
-	<string name="metrics_observations_last_upload_time_title">תאריך העלאה אחרון:</string>
-	<string name="metrics_observations_title">תצפיות:</string>
-	<string name="metrics_observations_wifis_title">נקודות גישת Wi-Fi:</string>
-	<string name="metrics_observations_cell_towers_title">אנטנות:</string>
-	<string name="upload_observations_in_queue_title">בתור</string>
+    <string name="app_name">Mozilla Stumbler</string>
+    <string name="action_about">על אודות Mozilla Stumbler</string>
+    <string name="action_preferences">העדפות</string>
+    <string name="start_scanning">התחלת הסריקה</string>
+    <string name="stop_scanning">עצירת הסריקה</string>
+    <string name="view_leaderboard">צפייה בלוח המובילים</string>
+    <string name="service_name">מאתר מוזילה</string>
+    <string name="enter_nickname">הזנת שם המשתמש (רשות)</string>
+    <string name="enter_nickname_title">כינוי: %1$s</string>
+    <string name="enter_nickname_longtext">הכינוי שלך יופיע בלוח המובילים.</string>
+    <string name="update_title">האם להוריד עדכון ל־Mozilla Stumbler?</string>
+    <string name="update_message">הגרסה המותקנת: %1$s\nהגרסה העדכנית: %2$s</string>
+    <string name="update_now">לעדכן כעת</string>
+    <string name="update_later">לעדכן מאוחר יותר</string>
+    <string name="yes">כן</string>
+    <string name="no">לא</string>
+    <string name="about_version">גרסה %1$s</string>
+    <string name="about_openstreetmap">משבצות הצגת המפה © תורמיOpenStreetMap\nhttp://www.openstreetmap.org</string>
+    <string name="about_mapbox_title">MapBox</string>
+    <string name="about_mapbox">מידע נוסף על ספק המיפוי שלנו…</string>
+    <string name="about_legal_aosp">חלק מהסימנים ביישום זה נגזרו מיצירות שנוצרו עבור Android Open Source Project ונעשה בהם שימוש בכפוף לתנאים המתוארים ברישיון Creative Commons 2.5 ייחוס.</string>
+    <string name="upload_observations_sent_title">נשלח</string>
+    <string name="metrics_observations_last_upload_time_title">תאריך העלאה אחרון:</string>
+    <string name="metrics_observations_title">תצפיות:</string>
+    <string name="metrics_observations_wifis_title">נקודות גישת Wi-Fi:</string>
+    <string name="metrics_observations_cell_towers_title">אנטנות:</string>
+    <string name="upload_observations_in_queue_title">בתור</string>
 
 
-
-	<string name="upload_wifi_only_title">העלאה רק באמצעות Wi-Fi</string>
-	<string name="upload_wifi_only_summary">אפשרות זו תפחית את השימוש בנתונים של הרשת הסלולרית.</string>
-
+    <string name="upload_wifi_only_title">העלאה רק באמצעות Wi-Fi</string>
+    <string name="upload_wifi_only_summary">אפשרות זו תפחית את השימוש בנתונים של הרשת הסלולרית.</string>
 
 
-	<string name="title_activity_log">רישום</string>
-	<string name="action_view_log">צפייה ברישום</string>
-	<string name="scroll_to_start">גלילה להתחלה</string>
-	<string name="scroll_to_end">גלילה לסוף</string>
+    <string name="title_activity_log">רישום</string>
+    <string name="action_view_log">צפייה ברישום</string>
+    <string name="scroll_to_start">גלילה להתחלה</string>
+    <string name="scroll_to_end">גלילה לסוף</string>
 </resources>

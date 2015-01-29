@@ -1,22 +1,14 @@
 package org.mozilla.osmdroid.tileprovider.modules;
 
 import org.mozilla.mozstumbler.service.AppGlobals;
-import org.mozilla.mozstumbler.service.core.logging.Log;
+import org.mozilla.mozstumbler.service.core.logging.ClientLog;
+import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 import org.mozilla.osmdroid.tileprovider.MapTile;
 import org.mozilla.osmdroid.tileprovider.constants.OSMConstants;
 import org.mozilla.osmdroid.tileprovider.tilesource.ITileSource;
-import org.mozilla.osmdroid.tileprovider.util.StreamUtils;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -33,13 +25,13 @@ import java.util.NoSuchElementException;
  The class has been extended to do read/write of etag and cache-control.
 
  */
-public class TileIOFacade  {
+public class TileIOFacade {
 
     // ===========================================================
     // Constants
     // ===========================================================
 
-    private static final String LOG_TAG = AppGlobals.makeLogTag(TileIOFacade.class.getSimpleName());
+    private static final String LOG_TAG = LoggerUtil.makeLogTag(TileIOFacade.class);
 
     // ===========================================================
     // Fields
@@ -101,15 +93,15 @@ public class TileIOFacade  {
     // @TODO vng: this should really just take in a header defined as
     // Map<String, String> instead of the single etag header
     public SerializableTile saveFile(final ITileSource pTileSource, final MapTile pTile,
-                            final byte[] tileBytes, String etag) {
+                                     final byte[] tileBytes, String etag) {
         File parent;
 
-        File sTileFile  = new File(OSMConstants.TILE_PATH_BASE,
+        File sTileFile = new File(OSMConstants.TILE_PATH_BASE,
                 pTileSource.getTileRelativeFilenameString(pTile) + OSMConstants.MERGED_FILE_EXT);
         parent = sTileFile.getParentFile();
 
         if (!parent.exists() && !createFolderAndCheckIfExists(parent)) {
-            Log.w(LOG_TAG, "Can't create parent folder for actual serializable tile. parent [" + parent + "]");
+            ClientLog.w(LOG_TAG, "Can't create parent folder for actual serializable tile. parent [" + parent + "]");
             return null;
         }
 
@@ -131,7 +123,7 @@ public class TileIOFacade  {
             return true;
         }
         if (AppGlobals.isDebug) {
-            Log.d(LOG_TAG, "Failed to create " + pFile + " - wait and check again");
+            ClientLog.d(LOG_TAG, "Failed to create " + pFile + " - wait and check again");
         }
 
         // if create failed, wait a bit in case another thread created it
@@ -142,12 +134,12 @@ public class TileIOFacade  {
         // and then check again
         if (pFile.exists()) {
             if (AppGlobals.isDebug) {
-                Log.d(LOG_TAG, "Seems like another thread created " + pFile);
+                ClientLog.d(LOG_TAG, "Seems like another thread created " + pFile);
             }
             return true;
         } else {
             if (AppGlobals.isDebug) {
-                Log.d(LOG_TAG, "File still doesn't exist: " + pFile);
+                ClientLog.d(LOG_TAG, "File still doesn't exist: " + pFile);
             }
             return false;
         }
@@ -187,7 +179,6 @@ public class TileIOFacade  {
             // See: http://code.google.com/p/android/issues/detail?id=5807
             return true;
         }
-
     }
 
     private List<File> getDirectoryFileList(final File aDirectory) {
@@ -218,7 +209,7 @@ public class TileIOFacade  {
 
             if (mUsedCacheSpace > OSMConstants.TILE_TRIM_CACHE_SIZE_BYTES) {
 
-                Log.i(LOG_TAG, "Trimming tile cache from " + mUsedCacheSpace + " to "
+                ClientLog.i(LOG_TAG, "Trimming tile cache from " + mUsedCacheSpace + " to "
                         + OSMConstants.TILE_TRIM_CACHE_SIZE_BYTES);
 
                 final List<File> z = getDirectoryFileList(OSMConstants.TILE_PATH_BASE);
@@ -243,9 +234,8 @@ public class TileIOFacade  {
                     }
                 }
 
-                Log.i(LOG_TAG, "Finished trimming tile cache");
+                ClientLog.i(LOG_TAG, "Finished trimming tile cache");
             }
         }
     }
-
 }

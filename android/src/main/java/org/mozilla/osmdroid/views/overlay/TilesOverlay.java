@@ -13,8 +13,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
 
-import org.mozilla.mozstumbler.service.AppGlobals;
-import org.mozilla.mozstumbler.service.core.logging.Log;
+import org.mozilla.mozstumbler.service.core.logging.ClientLog;
+import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 import org.mozilla.osmdroid.ResourceProxy;
 import org.mozilla.osmdroid.tileprovider.MapTile;
 import org.mozilla.osmdroid.tileprovider.MapTileProviderBase;
@@ -34,38 +34,10 @@ import org.mozilla.osmdroid.views.Projection;
 
 public class TilesOverlay extends Overlay implements IOverlayMenuProvider {
 
-    private static final String LOG_TAG = AppGlobals.makeLogTag(TilesOverlay.class.getSimpleName());
-
     public static final int MENU_MAP_MODE = getSafeMenuId();
     public static final int MENU_TILE_SOURCE_STARTING_ID = getSafeMenuIdSequence(TileSourceFactory
             .getTileSources().size());
     public static final int MENU_OFFLINE = getSafeMenuId();
-
-    /**
-     * Current tile source
-     */
-    protected final MapTileProviderBase mTileProvider;
-
-    /* to avoid allocations during draw */
-    protected final Paint mDebugPaint = new Paint();
-    private final Rect mTileRect = new Rect();
-    private final Point mTilePoint = new Point();
-    private final Rect mViewPort = new Rect();
-    private Point mTopLeftMercator = new Point();
-    private Point mBottomRightMercator = new Point();
-    private Point mTilePointMercator = new Point();
-
-    private Projection mProjection;
-
-    private boolean mOptionsMenuEnabled = true;
-
-    /**
-     * A drawable loading tile *
-     */
-    private BitmapDrawable mLoadingTile = null;
-    private int mLoadingBackgroundColor = Color.rgb(216, 208, 208);
-    private int mLoadingLineColor = Color.rgb(200, 192, 192);
-
     /**
      * For overshooting the tile cache *
      */
@@ -77,92 +49,14 @@ public class TilesOverlay extends Overlay implements IOverlayMenuProvider {
     // cache.  The caches really need to just go away and we should
     // load directly from storage.
     public static final int OVERSHOOT_TILE_CACHE_SIZE = 0;
-
-    public TilesOverlay(final MapTileProviderBase aTileProvider, final ResourceProxy pResourceProxy) {
-        super(pResourceProxy);
-        if (aTileProvider == null) {
-            throw new IllegalArgumentException(
-                    "You must pass a valid tile provider to the tiles overlay.");
-        }
-        this.mTileProvider = aTileProvider;
-    }
-
-    @Override
-    public void onDetach(final MapView pMapView) {
-        this.mTileProvider.detach();
-    }
-
-    public int getMinimumZoomLevel() {
-        return mTileProvider.getMinimumZoomLevel();
-    }
-
-    public int getMaximumZoomLevel() {
-        return mTileProvider.getMaximumZoomLevel();
-    }
-
+    private static final String LOG_TAG = LoggerUtil.makeLogTag(TilesOverlay.class);
     /**
-     * Whether to use the network connection if it's available.
+     * Current tile source
      */
-    public boolean useDataConnection() {
-        return mTileProvider.useDataConnection();
-    }
-
-    /**
-     * Set whether to use the network connection if it's available.
-     *
-     * @param aMode if true use the network connection if it's available. if false don't use the
-     *              network connection even if it's available.
-     */
-    public void setUseDataConnection(final boolean aMode) {
-        mTileProvider.setUseDataConnection(aMode);
-    }
-
-    @Override
-    protected void draw(Canvas c, MapView osmv, boolean shadow) {
-
-        if (DEBUGMODE) {
-            Log.d(LOG_TAG, "onDraw(" + shadow + ")");
-        }
-
-        if (shadow) {
-            return;
-        }
-
-        Projection projection = osmv.getProjection();
-
-        // Get the area we are drawing to
-        Rect screenRect = projection.getScreenRect();
-        projection.toMercatorPixels(screenRect.left, screenRect.top, mTopLeftMercator);
-        projection.toMercatorPixels(screenRect.right, screenRect.bottom, mBottomRightMercator);
-        mViewPort.set(mTopLeftMercator.x, mTopLeftMercator.y, mBottomRightMercator.x,
-                mBottomRightMercator.y);
-
-        // Draw the tiles!
-        drawTiles(c, projection, projection.getZoomLevel(), TileSystem.getTileSize(), mViewPort);
-    }
-
-    /**
-     * This is meant to be a "pure" tile drawing function that doesn't take into account
-     * osmdroid-specific characteristics (like osmdroid's canvas's having 0,0 as the center rather
-     * than the upper-left corner). Once the tile is ready to be drawn, it is passed to
-     * onTileReadyToDraw where custom manipulations can be made before drawing the tile.
-     */
-    public void drawTiles(final Canvas c, final Projection projection, final int zoomLevel,
-                          final int tileSizePx, final Rect viewPort) {
-
-        mProjection = projection;
-        mTileLooper.loop(c, zoomLevel, tileSizePx, viewPort);
-
-        // draw a cross at center in debug mode
-        if (DEBUGMODE) {
-            // final GeoPoint center = osmv.getMapCenter();
-            final Point centerPoint = new Point(viewPort.centerX(), viewPort.centerY());
-            c.drawLine(centerPoint.x, centerPoint.y - 9, centerPoint.x, centerPoint.y + 9, mDebugPaint);
-            c.drawLine(centerPoint.x - 9, centerPoint.y, centerPoint.x + 9, centerPoint.y, mDebugPaint);
-        }
-
-    }
-
+    protected final MapTileProviderBase mTileProvider;
+    /* to avoid allocations during draw */
+    protected final Paint mDebugPaint = new Paint();
+    private final Rect mTileRect = new Rect();
     private final TileLooper mTileLooper = new TileLooper() {
         @Override
         public void initialiseLoop(final int pZoomLevel, final int pTileSizePx) {
@@ -217,6 +111,103 @@ public class TilesOverlay extends Overlay implements IOverlayMenuProvider {
         public void finaliseLoop() {
         }
     };
+    private final Point mTilePoint = new Point();
+    private final Rect mViewPort = new Rect();
+    private Point mTopLeftMercator = new Point();
+    private Point mBottomRightMercator = new Point();
+    private Point mTilePointMercator = new Point();
+    private Projection mProjection;
+    private boolean mOptionsMenuEnabled = true;
+    /**
+     * A drawable loading tile *
+     */
+    private BitmapDrawable mLoadingTile = null;
+    private int mLoadingBackgroundColor = Color.rgb(216, 208, 208);
+    private int mLoadingLineColor = Color.rgb(200, 192, 192);
+
+    public TilesOverlay(final MapTileProviderBase aTileProvider, final ResourceProxy pResourceProxy) {
+        super(pResourceProxy);
+        if (aTileProvider == null) {
+            throw new IllegalArgumentException(
+                    "You must pass a valid tile provider to the tiles overlay.");
+        }
+        this.mTileProvider = aTileProvider;
+    }
+
+    @Override
+    public void onDetach(final MapView pMapView) {
+        this.mTileProvider.detach();
+    }
+
+    public int getMinimumZoomLevel() {
+        return mTileProvider.getMinimumZoomLevel();
+    }
+
+    public int getMaximumZoomLevel() {
+        return mTileProvider.getMaximumZoomLevel();
+    }
+
+    /**
+     * Whether to use the network connection if it's available.
+     */
+    public boolean useDataConnection() {
+        return mTileProvider.useDataConnection();
+    }
+
+    /**
+     * Set whether to use the network connection if it's available.
+     *
+     * @param aMode if true use the network connection if it's available. if false don't use the
+     *              network connection even if it's available.
+     */
+    public void setUseDataConnection(final boolean aMode) {
+        mTileProvider.setUseDataConnection(aMode);
+    }
+
+    @Override
+    protected void draw(Canvas c, MapView osmv, boolean shadow) {
+
+        if (DEBUGMODE) {
+            ClientLog.d(LOG_TAG, "onDraw(" + shadow + ")");
+        }
+
+        if (shadow) {
+            return;
+        }
+
+        Projection projection = osmv.getProjection();
+
+        // Get the area we are drawing to
+        Rect screenRect = projection.getScreenRect();
+        projection.toMercatorPixels(screenRect.left, screenRect.top, mTopLeftMercator);
+        projection.toMercatorPixels(screenRect.right, screenRect.bottom, mBottomRightMercator);
+        mViewPort.set(mTopLeftMercator.x, mTopLeftMercator.y, mBottomRightMercator.x,
+                mBottomRightMercator.y);
+
+        // Draw the tiles!
+        drawTiles(c, projection, projection.getZoomLevel(), TileSystem.getTileSize(), mViewPort);
+    }
+
+    /**
+     * This is meant to be a "pure" tile drawing function that doesn't take into account
+     * osmdroid-specific characteristics (like osmdroid's canvas's having 0,0 as the center rather
+     * than the upper-left corner). Once the tile is ready to be drawn, it is passed to
+     * onTileReadyToDraw where custom manipulations can be made before drawing the tile.
+     */
+    public void drawTiles(final Canvas c, final Projection projection, final int zoomLevel,
+                          final int tileSizePx, final Rect viewPort) {
+
+        mProjection = projection;
+        mTileLooper.loop(c, zoomLevel, tileSizePx, viewPort);
+
+        // draw a cross at center in debug mode
+        if (DEBUGMODE) {
+            // final GeoPoint center = osmv.getMapCenter();
+            final Point centerPoint = new Point(viewPort.centerX(), viewPort.centerY());
+            c.drawLine(centerPoint.x, centerPoint.y - 9, centerPoint.x, centerPoint.y + 9, mDebugPaint);
+            c.drawLine(centerPoint.x - 9, centerPoint.y, centerPoint.x + 9, centerPoint.y, mDebugPaint);
+        }
+    }
 
     protected void onTileReadyToDraw(final Canvas c, final Drawable currentMapTile,
                                      final Rect tileRect) {
@@ -227,13 +218,13 @@ public class TilesOverlay extends Overlay implements IOverlayMenuProvider {
     }
 
     @Override
-    public void setOptionsMenuEnabled(final boolean pOptionsMenuEnabled) {
-        this.mOptionsMenuEnabled = pOptionsMenuEnabled;
+    public boolean isOptionsMenuEnabled() {
+        return this.mOptionsMenuEnabled;
     }
 
     @Override
-    public boolean isOptionsMenuEnabled() {
-        return this.mOptionsMenuEnabled;
+    public void setOptionsMenuEnabled(final boolean pOptionsMenuEnabled) {
+        this.mOptionsMenuEnabled = pOptionsMenuEnabled;
     }
 
     @Override
@@ -348,7 +339,7 @@ public class TilesOverlay extends Overlay implements IOverlayMenuProvider {
                 mLoadingTile = new BitmapDrawable(bitmap);
             } catch (final OutOfMemoryError e) {
                 // OOM is 'normal' for bitmap operations on Android
-                Log.e(LOG_TAG, "OutOfMemoryError getting loading tile", e);
+                ClientLog.e(LOG_TAG, "OutOfMemoryError getting loading tile", e);
                 System.gc();
             }
         }
@@ -365,5 +356,4 @@ public class TilesOverlay extends Overlay implements IOverlayMenuProvider {
             }
         }
     }
-
 }

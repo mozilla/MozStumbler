@@ -31,18 +31,6 @@ public abstract class PersistentIntentService extends Service {
     private String mName;
     private boolean mRedelivery;
 
-    private final class ServiceHandler extends Handler {
-        public ServiceHandler(Looper looper) {
-            super(looper);
-        }
-
-        @Override
-        public void handleMessage(Message msg) {
-            onHandleIntent((Intent) msg.obj);
-            // stopSelf(msg.arg1); <-- modified from original file
-        }
-    }
-
     public PersistentIntentService(String name) {
         super();
         mName = name;
@@ -81,5 +69,17 @@ public abstract class PersistentIntentService extends Service {
     }
 
     protected abstract void onHandleIntent(Intent intent);
+
+    private final class ServiceHandler extends Handler {
+        public ServiceHandler(Looper looper) {
+            super(looper);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            onHandleIntent((Intent) msg.obj);
+            // stopSelf(msg.arg1); <-- modified from original file
+        }
+    }
 }
 

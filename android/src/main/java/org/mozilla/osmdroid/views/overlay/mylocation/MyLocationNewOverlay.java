@@ -17,8 +17,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 
-import org.mozilla.mozstumbler.service.AppGlobals;
-import org.mozilla.mozstumbler.service.core.logging.Log;
+import org.mozilla.mozstumbler.service.core.logging.ClientLog;
+import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 import org.mozilla.osmdroid.DefaultResourceProxyImpl;
 import org.mozilla.osmdroid.ResourceProxy;
 import org.mozilla.osmdroid.api.IMapController;
@@ -39,7 +39,7 @@ import java.util.LinkedList;
  */
 public class MyLocationNewOverlay extends Overlay implements IMyLocationConsumer,
         IOverlayMenuProvider, Snappable {
-    private static final String LOG_TAG = AppGlobals.makeLogTag(MyLocationNewOverlay.class.getSimpleName());
+    public static final int MENU_MY_LOCATION = getSafeMenuId();
 
     // ===========================================================
     // Constants
@@ -48,47 +48,36 @@ public class MyLocationNewOverlay extends Overlay implements IMyLocationConsumer
     // ===========================================================
     // Fields
     // ===========================================================
-
+    private static final String LOG_TAG = LoggerUtil.makeLogTag(MyLocationNewOverlay.class);
     protected final Paint mPaint = new Paint();
     protected final Paint mCirclePaint = new Paint();
-
     protected final Bitmap mPersonBitmap;
     protected final Bitmap mDirectionArrowBitmap;
-
     protected final MapView mMapView;
-
+    /**
+     * Coordinates the feet of the person are located scaled for display density.
+     */
+    protected final PointF mPersonHotspot;
+    protected final float mDirectionArrowCenterX;
+    protected final float mDirectionArrowCenterY;
     private final IMapController mMapController;
-    public IMyLocationProvider mMyLocationProvider;
-
     private final LinkedList<Runnable> mRunOnFirstFix = new LinkedList<Runnable>();
     private final Point mMapCoordsProjected = new Point();
     private final Point mMapCoordsTranslated = new Point();
     private final Handler mHandler;
     private final Object mHandlerToken = new Object();
-
-    private Location mLocation;
     private final GeoPoint mGeoPoint = new GeoPoint(0, 0); // for reuse
-    private boolean mIsLocationEnabled = false;
-    protected boolean mIsFollowing = false; // follow location updates
-    protected boolean mDrawAccuracyEnabled = true;
-
-    /**
-     * Coordinates the feet of the person are located scaled for display density.
-     */
-    protected final PointF mPersonHotspot;
-
-    protected final float mDirectionArrowCenterX;
-    protected final float mDirectionArrowCenterY;
-
-    public static final int MENU_MY_LOCATION = getSafeMenuId();
-
-    private boolean mOptionsMenuEnabled = true;
-
     // to avoid allocations during onDraw
     private final float[] mMatrixValues = new float[9];
     private final Matrix mMatrix = new Matrix();
     private final Rect mMyLocationRect = new Rect();
     private final Rect mMyLocationPreviousRect = new Rect();
+    public IMyLocationProvider mMyLocationProvider;
+    protected boolean mIsFollowing = false; // follow location updates
+    protected boolean mDrawAccuracyEnabled = true;
+    private Location mLocation;
+    private boolean mIsLocationEnabled = false;
+    private boolean mOptionsMenuEnabled = true;
 
     // ===========================================================
     // Constructors
@@ -139,19 +128,19 @@ public class MyLocationNewOverlay extends Overlay implements IMyLocationConsumer
     /**
      * If enabled, an accuracy circle will be drawn around your current position.
      *
-     * @param drawAccuracyEnabled whether the accuracy circle will be enabled
+     * @return true if enabled, false otherwise
      */
-    public void setDrawAccuracyEnabled(final boolean drawAccuracyEnabled) {
-        mDrawAccuracyEnabled = drawAccuracyEnabled;
+    public boolean isDrawAccuracyEnabled() {
+        return mDrawAccuracyEnabled;
     }
 
     /**
      * If enabled, an accuracy circle will be drawn around your current position.
      *
-     * @return true if enabled, false otherwise
+     * @param drawAccuracyEnabled whether the accuracy circle will be enabled
      */
-    public boolean isDrawAccuracyEnabled() {
-        return mDrawAccuracyEnabled;
+    public void setDrawAccuracyEnabled(final boolean drawAccuracyEnabled) {
+        mDrawAccuracyEnabled = drawAccuracyEnabled;
     }
 
     public IMyLocationProvider getMyLocationProvider() {
@@ -303,7 +292,7 @@ public class MyLocationNewOverlay extends Overlay implements IMyLocationConsumer
             final double yDiff = y - mMapCoordsTranslated.y;
             boolean snap = xDiff * xDiff + yDiff * yDiff < 64;
             if (DEBUGMODE) {
-                Log.d(LOG_TAG, "snap=" + snap);
+                ClientLog.d(LOG_TAG, "snap=" + snap);
             }
             return snap;
         } else {
@@ -325,13 +314,13 @@ public class MyLocationNewOverlay extends Overlay implements IMyLocationConsumer
     // ===========================================================
 
     @Override
-    public void setOptionsMenuEnabled(final boolean pOptionsMenuEnabled) {
-        this.mOptionsMenuEnabled = pOptionsMenuEnabled;
+    public boolean isOptionsMenuEnabled() {
+        return this.mOptionsMenuEnabled;
     }
 
     @Override
-    public boolean isOptionsMenuEnabled() {
-        return this.mOptionsMenuEnabled;
+    public void setOptionsMenuEnabled(final boolean pOptionsMenuEnabled) {
+        this.mOptionsMenuEnabled = pOptionsMenuEnabled;
     }
 
     @Override

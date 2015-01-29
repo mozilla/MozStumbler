@@ -16,9 +16,8 @@ import java.util.LinkedList;
  * evicts a tile, it goes back into the pool.
  */
 public class BitmapPool {
-    final LinkedList<Bitmap> mPool = new LinkedList<Bitmap>();
-
     private static BitmapPool sInstance;
+    final LinkedList<Bitmap> mPool = new LinkedList<Bitmap>();
 
     public static BitmapPool getInstance() {
         if (sInstance == null) {

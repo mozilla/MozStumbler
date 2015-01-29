@@ -45,5 +45,4 @@ public class NetworkAvailabliltyCheck implements INetworkAvailablityCheck {
         return (mConnectionManager.requestRouteToHost(ConnectivityManager.TYPE_WIFI, hostAddress) || mConnectionManager
                 .requestRouteToHost(ConnectivityManager.TYPE_MOBILE, hostAddress));
     }
-
 }

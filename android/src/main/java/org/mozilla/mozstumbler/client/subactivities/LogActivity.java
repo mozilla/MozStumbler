@@ -24,7 +24,8 @@ import android.widget.TextView;
 
 import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.service.AppGlobals;
-import org.mozilla.mozstumbler.service.core.logging.Log;
+import org.mozilla.mozstumbler.service.core.logging.ClientLog;
+import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
 import java.lang.ref.WeakReference;
 import java.util.LinkedList;
@@ -33,112 +34,13 @@ import java.util.TimerTask;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class LogActivity extends ActionBarActivity {
-    private static String LOG_TAG = AppGlobals.makeLogTag(LogActivity.class.getSimpleName());
+    private static final int MAX_SIZE = 200;
+    static ConsoleView sConsoleView;
+    private static String LOG_TAG = LoggerUtil.makeLogTag(LogActivity.class);
     private static LinkedList<String> buffer = new LinkedList<String>();
     private static int sLongLinesCounter;
-    private static final int MAX_SIZE = 200;
     private static LogMessageReceiver sInstance;
-
-    public static class LogMessageReceiver extends BroadcastReceiver {
-
-        // Ensure that the message buffer used by the GUI is accessed only on the main thread
-        static class AddToBufferOnMain extends Handler {
-            WeakReference<LogMessageReceiver> mParentClass;
-
-            public AddToBufferOnMain(WeakReference<LogMessageReceiver> parent) {
-                mParentClass = parent;
-            }
-
-            public void handleMessage(Message m) {
-                String msg = null;
-                do {
-                    msg = AppGlobals.guiLogMessageBuffer.poll();
-                    if (mParentClass.get() != null) {
-                        mParentClass.get().addMessageToBuffer(msg);
-                    }
-                } while (msg != null);
-            }
-        }
-
-        Timer mFlushMessagesTimer = new Timer();
-        AddToBufferOnMain mMainThreadHandler;
-
-        public static void createGlobalInstance(Context context) {
-            sInstance = new LogMessageReceiver(context);
-            sInstance.mMainThreadHandler = new AddToBufferOnMain(new WeakReference<LogMessageReceiver>(sInstance));
-            AppGlobals.guiLogMessageBuffer = new ConcurrentLinkedQueue<String>();
-        }
-
-        LogMessageReceiver(Context context) {
-            LocalBroadcastManager.getInstance(context).registerReceiver(this,
-                    new IntentFilter(AppGlobals.ACTION_GUI_LOG_MESSAGE));
-
-            final int kMillis = 1000 * 3;
-            mFlushMessagesTimer.scheduleAtFixedRate(new TimerTask() {
-                @Override
-                public void run() {
-                    mMainThreadHandler.obtainMessage().sendToTarget();
-                }
-            }, kMillis, kMillis);
-        }
-
-        void addMessageToBuffer(String s) {
-            if (s == null) {
-                return;
-            }
-
-            if (buffer.size() > MAX_SIZE) {
-                buffer.removeFirst();
-            }
-
-            // size of log is: 1000 * 30 + 200 * 470 = 30 kb + 94 kb, should be a very safe size
-
-            final int kMaxCharsOfLongerLines = 1000;
-            final int kMaxCharsOfTruncatedLine = 200;
-            final int kLongLinesAllowedBeforeTruncate = 30;
-
-            if (s.length() > kMaxCharsOfTruncatedLine) {
-                sLongLinesCounter++;
-
-                if (sLongLinesCounter == kLongLinesAllowedBeforeTruncate) {
-                    String msg = "LOG VIEWER REACHED " + kLongLinesAllowedBeforeTruncate +" LONG MESSAGES. TRUNCATING MESSAGES.";
-                    buffer.add(msg);
-                    if (sConsoleView != null) {
-                        sConsoleView.println(msg);
-                    }
-                }
-            }
-
-            final boolean isTruncating = sLongLinesCounter >= kLongLinesAllowedBeforeTruncate;
-
-            final int maxChars = isTruncating? kMaxCharsOfTruncatedLine : kMaxCharsOfLongerLines;
-            if (s.length() > maxChars && !s.startsWith(AppGlobals.NO_TRUNCATE_FLAG)) {
-                // 1/3 of max length, ellipse, then last 2/3 of max length
-                s = s.substring(0, maxChars / 3) + " ... " + s.substring(s.length() - 1 - maxChars * 2/3);
-            }
-
-            String prev = (buffer.size() > 0) ? buffer.getLast() : null;
-            if (prev != null && prev.length() > 10 && s.length() > 10) {
-                if (prev.substring(10).equals(s.substring(10))) {
-                    Log.d(LOG_TAG, "Message is repeated: " + s);
-                    return;
-                }
-            }
-            buffer.add(s);
-            if (sConsoleView != null) {
-                sConsoleView.println(s);
-            }
-        }
-
-        @Override
-        public void onReceive(Context c, Intent intent) {
-            String s = intent.getStringExtra(AppGlobals.ACTION_GUI_LOG_MESSAGE_EXTRA);
-            addMessageToBuffer(s);
-        }
-    }
-
     ConsoleView mConsoleView;
-    static ConsoleView sConsoleView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -151,73 +53,8 @@ public class LogActivity extends ActionBarActivity {
     protected void onResume() {
         super.onResume();
         sConsoleView = mConsoleView;
-        for (String s: buffer) {
+        for (String s : buffer) {
             mConsoleView.println(s);
-        }
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        mConsoleView.clear();
-        sConsoleView = null;
-    }
-
-    public static class ConsoleView extends ScrollView {
-        private static final String LOG_TAG = AppGlobals.makeLogTag(ConsoleView.class);
-        public TextView tv;
-        boolean enable_scroll = true;
-
-        void init(Context context) {
-            tv = new TextView(context);
-            addView(tv);
-            tv.setTextSize(13.0f);
-            tv.setClickable(false);
-            enableScroll(true);
-        }
-
-        public ConsoleView(Context context) {
-            super(context);
-            init(context);
-        }
-
-        public ConsoleView(Context context, AttributeSet attrs)
-        {
-            super(context, attrs);
-            init(context);
-        }
-        public ConsoleView(Context context, AttributeSet attrs, int defStyle) {
-            super(context, attrs, defStyle);
-            init(context);
-        }
-
-        public void enableScroll(boolean v) {
-            this.enable_scroll = v;
-        }
-
-        public void print(String str){
-            tv.append(Html.fromHtml(str + "<br />"));
-
-            if (enable_scroll) {
-                scrollTo(0, tv.getBottom());
-            }
-        }
-
-        public void println(String str){
-            print(str + "\n");
-        }
-
-        public void clear() {
-            tv.setText("");
-            this.scrollTo(0, 0);
-        }
-
-        @Override
-        protected void onScrollChanged(int x, int y, int oldx, int oldy) {
-            super.onScrollChanged(x, y, oldx, oldy);
-            int diff = tv.getHeight() - (y + getHeight());
-            boolean isAtBottom = diff <= 0;
-            enableScroll(isAtBottom);
         }
     }
 
@@ -242,6 +79,170 @@ public class LogActivity extends ActionBarActivity {
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    public static class LogMessageReceiver extends BroadcastReceiver {
+
+        Timer mFlushMessagesTimer = new Timer();
+        AddToBufferOnMain mMainThreadHandler;
+
+        LogMessageReceiver(Context context) {
+            LocalBroadcastManager.getInstance(context).registerReceiver(this,
+                    new IntentFilter(AppGlobals.ACTION_GUI_LOG_MESSAGE));
+
+            final int kMillis = 1000 * 3;
+            mFlushMessagesTimer.scheduleAtFixedRate(new TimerTask() {
+                @Override
+                public void run() {
+                    mMainThreadHandler.obtainMessage().sendToTarget();
+                }
+            }, kMillis, kMillis);
+        }
+
+        public static void createGlobalInstance(Context context) {
+            sInstance = new LogMessageReceiver(context);
+            sInstance.mMainThreadHandler = new AddToBufferOnMain(new WeakReference<LogMessageReceiver>(sInstance));
+            AppGlobals.guiLogMessageBuffer = new ConcurrentLinkedQueue<String>();
+        }
+
+        void addMessageToBuffer(String s) {
+            if (s == null) {
+                return;
+            }
+
+            if (buffer.size() > MAX_SIZE) {
+                buffer.removeFirst();
+            }
+
+            // size of log is: 1000 * 30 + 200 * 470 = 30 kb + 94 kb, should be a very safe size
+
+            final int kMaxCharsOfLongerLines = 1000;
+            final int kMaxCharsOfTruncatedLine = 200;
+            final int kLongLinesAllowedBeforeTruncate = 30;
+
+            if (s.length() > kMaxCharsOfTruncatedLine) {
+                sLongLinesCounter++;
+
+                if (sLongLinesCounter == kLongLinesAllowedBeforeTruncate) {
+                    String msg = "LOG VIEWER REACHED " + kLongLinesAllowedBeforeTruncate + " LONG MESSAGES. TRUNCATING MESSAGES.";
+                    buffer.add(msg);
+                    if (sConsoleView != null) {
+                        sConsoleView.println(msg);
+                    }
+                }
+            }
+
+            final boolean isTruncating = sLongLinesCounter >= kLongLinesAllowedBeforeTruncate;
+
+            final int maxChars = isTruncating ? kMaxCharsOfTruncatedLine : kMaxCharsOfLongerLines;
+            if (s.length() > maxChars && !s.startsWith(AppGlobals.NO_TRUNCATE_FLAG)) {
+                // 1/3 of max length, ellipse, then last 2/3 of max length
+                s = s.substring(0, maxChars / 3) + " ... " + s.substring(s.length() - 1 - maxChars * 2 / 3);
+            }
+
+            String prev = (buffer.size() > 0) ? buffer.getLast() : null;
+            if (prev != null && prev.length() > 10 && s.length() > 10) {
+                if (prev.substring(10).equals(s.substring(10))) {
+                    ClientLog.d(LOG_TAG, "Message is repeated: " + s);
+                    return;
+                }
+            }
+            buffer.add(s);
+            if (sConsoleView != null) {
+                sConsoleView.println(s);
+            }
+        }
+
+        @Override
+        public void onReceive(Context c, Intent intent) {
+            String s = intent.getStringExtra(AppGlobals.ACTION_GUI_LOG_MESSAGE_EXTRA);
+            addMessageToBuffer(s);
+        }
+
+        // Ensure that the message buffer used by the GUI is accessed only on the main thread
+        static class AddToBufferOnMain extends Handler {
+            WeakReference<LogMessageReceiver> mParentClass;
+
+            public AddToBufferOnMain(WeakReference<LogMessageReceiver> parent) {
+                mParentClass = parent;
+            }
+
+            public void handleMessage(Message m) {
+                String msg = null;
+                do {
+                    msg = AppGlobals.guiLogMessageBuffer.poll();
+                    if (mParentClass.get() != null) {
+                        mParentClass.get().addMessageToBuffer(msg);
+                    }
+                } while (msg != null);
+            }
+        }
+    }
+
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mConsoleView.clear();
+        sConsoleView = null;
+    }
+
+    public static class ConsoleView extends ScrollView {
+        private static final String LOG_TAG = LoggerUtil.makeLogTag(ConsoleView.class);
+        public TextView tv;
+        boolean enable_scroll = true;
+
+        public ConsoleView(Context context) {
+            super(context);
+            init(context);
+        }
+
+        public ConsoleView(Context context, AttributeSet attrs) {
+            super(context, attrs);
+            init(context);
+        }
+
+        public ConsoleView(Context context, AttributeSet attrs, int defStyle) {
+            super(context, attrs, defStyle);
+            init(context);
+        }
+
+        void init(Context context) {
+            tv = new TextView(context);
+            addView(tv);
+            tv.setTextSize(13.0f);
+            tv.setClickable(false);
+            enableScroll(true);
+        }
+
+        public void enableScroll(boolean v) {
+            this.enable_scroll = v;
+        }
+
+        public void print(String str) {
+            tv.append(Html.fromHtml(str + "<br />"));
+
+            if (enable_scroll) {
+                scrollTo(0, tv.getBottom());
+            }
+        }
+
+        public void println(String str) {
+            print(str + "\n");
+        }
+
+        public void clear() {
+            tv.setText("");
+            this.scrollTo(0, 0);
+        }
+
+        @Override
+        protected void onScrollChanged(int x, int y, int oldx, int oldy) {
+            super.onScrollChanged(x, y, oldx, oldy);
+            int diff = tv.getHeight() - (y + getHeight());
+            boolean isAtBottom = diff <= 0;
+            enableScroll(isAtBottom);
         }
     }
 }

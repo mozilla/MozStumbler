@@ -1,8 +1,8 @@
 // Created by plusminus on 19:14:08 - 20.10.2008
 package org.mozilla.osmdroid.tileprovider.util;
 
-import org.mozilla.mozstumbler.service.AppGlobals;
-import org.mozilla.mozstumbler.service.core.logging.Log;
+import org.mozilla.mozstumbler.service.core.logging.ClientLog;
+import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -15,9 +15,8 @@ public class StreamUtils {
     // Constants
     // ===========================================================
 
-    private static final String LOG_TAG = AppGlobals.makeLogTag(StreamUtils.class.getSimpleName());
-
     public static final int IO_BUFFER_SIZE = 8 * 1024;
+    private static final String LOG_TAG = LoggerUtil.makeLogTag(StreamUtils.class);
 
     // ===========================================================
     // Fields
@@ -75,7 +74,7 @@ public class StreamUtils {
             try {
                 stream.close();
             } catch (final IOException e) {
-                Log.e(LOG_TAG, "Could not close stream", e);
+                ClientLog.e(LOG_TAG, "Could not close stream", e);
             }
         }
     }

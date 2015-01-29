@@ -16,6 +16,7 @@ import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.AppGlobals.ActiveOrPassiveStumbling;
 import org.mozilla.mozstumbler.service.stumblerthread.blocklist.BSSIDBlockList;
 import org.mozilla.mozstumbler.service.stumblerthread.blocklist.SSIDBlockList;
+import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +24,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class WifiScanner  {
+public class WifiScanner {
     public static final String ACTION_BASE = AppGlobals.ACTION_NAMESPACE + ".WifiScanner.";
     public static final String ACTION_WIFIS_SCANNED = ACTION_BASE + "WIFIS_SCANNED";
     public static final String ACTION_WIFIS_SCANNED_ARG_RESULTS = "scan_results";
@@ -33,20 +34,34 @@ public class WifiScanner  {
     public static final int STATUS_ACTIVE = 1;
     public static final int STATUS_WIFI_DISABLED = -1;
 
-    private static final String LOG_TAG = AppGlobals.makeLogTag(WifiScanner.class.getSimpleName());
+    private static final String LOG_TAG = LoggerUtil.makeLogTag(WifiScanner.class);
     private static final long WIFI_MIN_UPDATE_TIME = 5000; // milliseconds
-
-    private boolean mStarted;
     private final Context mAppContext;
+    private final WifiManagerProxy wifiManagerProxy;
+    private boolean mStarted;
     private WifiLock mWifiLock;
     private Timer mWifiScanTimer;
     private AtomicInteger mVisibleAPs = new AtomicInteger();
 
-    private final WifiManagerProxy wifiManagerProxy;
-
     public WifiScanner(Context appContext) {
         mAppContext = appContext;
         wifiManagerProxy = new WifiManagerProxy(mAppContext);
+    }
+
+    public static boolean shouldLog(ScanResult scanResult) {
+        if (SSIDBlockList.isOptOut(scanResult)) {
+            Log.d(LOG_TAG, "Blocked opt-out SSID");
+            return false;
+        }
+        if (BSSIDBlockList.contains(scanResult)) {
+            Log.w(LOG_TAG, "Blocked BSSID: " + scanResult);
+            return false;
+        }
+        if (SSIDBlockList.contains(scanResult)) {
+            Log.w(LOG_TAG, "Blocked SSID: " + scanResult);
+            return false;
+        }
+        return true;
     }
 
     private boolean isScanEnabled() {
@@ -148,7 +163,7 @@ public class WifiScanner  {
                     stop(); // set mWifiScanTimer to null
                     return;
                 }
-                 if (AppGlobals.isDebug) {
+                if (AppGlobals.isDebug) {
                     Log.d(LOG_TAG, "WiFi Scanning Timer fired");
                 }
                 wifiManagerProxy.runWifiScan();
@@ -174,22 +189,6 @@ public class WifiScanner  {
         mVisibleAPs.set(0);
     }
 
-    public static boolean shouldLog(ScanResult scanResult) {
-        if (SSIDBlockList.isOptOut(scanResult)) {
-            Log.d(LOG_TAG, "Blocked opt-out SSID");
-            return false;
-        }
-        if (BSSIDBlockList.contains(scanResult)) {
-            Log.w(LOG_TAG, "Blocked BSSID: " + scanResult);
-            return false;
-        }
-        if (SSIDBlockList.contains(scanResult)) {
-            Log.w(LOG_TAG, "Blocked SSID: " + scanResult);
-            return false;
-        }
-        return true;
-    }
-
     private void reportScanResults(ArrayList<ScanResult> scanResults) {
         if (scanResults.isEmpty()) {
             return;
@@ -211,7 +210,7 @@ public class WifiScanner  {
                 deactivatePeriodicScan();
             }
         } else if (WifiManager.SCAN_RESULTS_AVAILABLE_ACTION.equals(action)) {
-            final List<ScanResult> scanResultList =  wifiManagerProxy.getScanResults();
+            final List<ScanResult> scanResultList = wifiManagerProxy.getScanResults();
             if (scanResultList == null) {
                 return;
             }
@@ -227,5 +226,4 @@ public class WifiScanner  {
             reportScanResults(scanResults);
         }
     }
-
 }

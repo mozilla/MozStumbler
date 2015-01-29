@@ -3,10 +3,6 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package org.mozilla.mozstumbler.svclocator;
 
-import org.mozilla.mozstumbler.service.core.http.IHttpUtil;
-import org.mozilla.mozstumbler.svclocator.services.IAppWidgetManagerProxy;
-import org.mozilla.mozstumbler.svclocator.services.ISystemClock;
-
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
 
@@ -14,33 +10,18 @@ public class ServiceConfig extends HashMap<Class<?>, Object> {
 
     private static final long serialVersionUID = 1111111111L;
 
-    public static ServiceConfig defaultServiceConfig() {
-
-        ServiceConfig result = new ServiceConfig();
-
-        // All classes here must have an argument free constructor.
-        result.put(ISystemClock.class,
-                load("org.mozilla.mozstumbler.svclocator.services.SystemClock"));
-        result.put(IAppWidgetManagerProxy.class,
-                load("org.mozilla.mozstumbler.svclocator.services.AppWidgetManagerProxy"));
-        result.put(IHttpUtil.class,
-                load("org.mozilla.mozstumbler.service.core.http.HttpUtil"));
-
-        return result;
-    }
-
     public static Object load(String className) {
 
         Class<?> c = null;
         try {
             c = Class.forName(className);
         } catch (ClassNotFoundException e) {
-            throw new RuntimeException("Error loading ["+className+"] class");
+            throw new RuntimeException("Error loading [" + className + "] class");
         }
         Constructor[] constructors = c.getConstructors();
 
-        Constructor<?> myConstructor= null;
-        for (Constructor<?> construct: constructors) {
+        Constructor<?> myConstructor = null;
+        for (Constructor<?> construct : constructors) {
             if (construct.getParameterTypes().length == 0) {
                 myConstructor = construct;
                 break;

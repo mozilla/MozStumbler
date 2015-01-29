@@ -12,5 +12,4 @@ public interface IHttpClientFactory {
      * Create an instance of {@link HttpClient}.
      */
     HttpClient createHttpClient();
-
 }

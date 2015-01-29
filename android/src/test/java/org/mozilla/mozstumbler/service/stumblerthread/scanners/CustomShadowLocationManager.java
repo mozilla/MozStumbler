@@ -52,9 +52,8 @@ public class CustomShadowLocationManager extends ShadowLocationManager {
             registeredListeners.put(provider, new LinkedList<LocationListener>());
         }
 
-        for (LocationListener listener: registeredListeners.get(provider)) {
+        for (LocationListener listener : registeredListeners.get(provider)) {
             listener.onLocationChanged(loc);
         }
     }
-
 }

@@ -16,17 +16,17 @@ import android.graphics.Point;
 public final class TileSystem {
 
     /**
-     * @see microsoft.mappoint.TileSystem#setTileSize(int)
-     */
-    public static void setTileSize(final int tileSize) {
-        microsoft.mappoint.TileSystem.setTileSize(tileSize);
-    }
-
-    /**
      * @see microsoft.mappoint.TileSystem#getTileSize()
      */
     public static int getTileSize() {
         return microsoft.mappoint.TileSystem.getTileSize();
+    }
+
+    /**
+     * @see microsoft.mappoint.TileSystem#setTileSize(int)
+     */
+    public static void setTileSize(final int tileSize) {
+        microsoft.mappoint.TileSystem.setTileSize(tileSize);
     }
 
     /**

@@ -4,11 +4,7 @@
 
 package org.mozilla.mozstumbler.test.fixtures;
 
-import org.mozilla.mozstumbler.service.AppGlobals;
-import org.mozilla.mozstumbler.service.core.logging.Log;
-
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 
 public class FixtureLoader {
@@ -17,7 +13,7 @@ public class FixtureLoader {
 
      Returns null on error loading the test fixture.
      */
-    public static byte[] loadResource(String path)  {
+    public static byte[] loadResource(String path) {
         int nRead;
         byte[] data = new byte[16384];
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();

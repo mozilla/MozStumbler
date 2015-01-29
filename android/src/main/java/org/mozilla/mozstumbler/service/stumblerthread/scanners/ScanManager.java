@@ -10,15 +10,16 @@ import android.content.Intent;
 import android.location.Location;
 import android.support.v4.content.LocalBroadcastManager;
 
-import org.mozilla.mozstumbler.service.AppGlobals.ActiveOrPassiveStumbling;
 import org.mozilla.mozstumbler.service.AppGlobals;
+import org.mozilla.mozstumbler.service.AppGlobals.ActiveOrPassiveStumbling;
 import org.mozilla.mozstumbler.service.Prefs;
-import org.mozilla.mozstumbler.service.core.logging.Log;
+import org.mozilla.mozstumbler.service.core.logging.ClientLog;
 import org.mozilla.mozstumbler.service.stumblerthread.Reporter;
 import org.mozilla.mozstumbler.service.stumblerthread.motiondetection.LocationChangeSensor;
 import org.mozilla.mozstumbler.service.stumblerthread.motiondetection.MotionSensor;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner.CellScanner;
 import org.mozilla.mozstumbler.service.utils.BatteryCheckReceiver;
+import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
 import java.util.Date;
 import java.util.Timer;
@@ -27,11 +28,9 @@ import java.util.TimerTask;
 public class ScanManager {
     public static final String ACTION_SCAN_PAUSED_USER_MOTIONLESS = AppGlobals.ACTION_NAMESPACE + ".NOTIFY_USER_MOTIONLESS";
     public static final String ACTION_EXTRA_IS_PAUSED = "IS_PAUSED";
-    private static final String LOG_TAG = AppGlobals.makeLogTag(ScanManager.class.getSimpleName());
-    private Timer mPassiveModeFlushTimer;
-
+    private static final String LOG_TAG = LoggerUtil.makeLogTag(ScanManager.class);
     private static Context mAppContext;
-
+    private Timer mPassiveModeFlushTimer;
     private boolean mIsScanning;
     private GPSScanner mGPSScanner;
     private WifiScanner mWifiScanner;
@@ -39,12 +38,7 @@ public class ScanManager {
     private ActiveOrPassiveStumbling mStumblingMode = ActiveOrPassiveStumbling.ACTIVE_STUMBLING;
 
     private BatteryCheckReceiver mPassiveModeBatteryChecker;
-    private enum PassiveModeBatteryState { OK, LOW, IGNORE_BATTERY_STATE }
     private PassiveModeBatteryState mPassiveModeBatteryState;
-    private LocationChangeSensor mLocationChangeSensor;
-    private MotionSensor mMotionSensor;
-    private boolean mIsMotionlessPausedState;
-
     private BatteryCheckReceiver.BatteryCheckCallback mBatteryCheckCallback = new BatteryCheckReceiver.BatteryCheckCallback() {
         @Override
         public void batteryCheckCallback(BatteryCheckReceiver receiver) {
@@ -53,17 +47,60 @@ public class ScanManager {
             }
             final int kMinBatteryPct = 15;
             boolean isLow = receiver.isBatteryNotChargingAndLessThan(kMinBatteryPct);
-            mPassiveModeBatteryState = isLow? PassiveModeBatteryState.LOW : PassiveModeBatteryState.OK;
+            mPassiveModeBatteryState = isLow ? PassiveModeBatteryState.LOW : PassiveModeBatteryState.OK;
+        }
+    };
+    private LocationChangeSensor mLocationChangeSensor;
+    private MotionSensor mMotionSensor;
+    private boolean mIsMotionlessPausedState;
+    // After DetectUnchangingLocation reports the user is not moving, and the scanning pauses,
+    // then use MotionSensor to determine when to wake up and start scanning again.
+    private final BroadcastReceiver mDetectUserIdleReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (!isScanning() ||
+                    Prefs.getInstance(mAppContext).getPowerSavingMode() == Prefs.PowerSavingModeOptions.Off) {
+                return;
+            }
+            stopScanning();
+            mIsMotionlessPausedState = true;
+            if (AppGlobals.isDebug) {
+                ClientLog.d(LOG_TAG, "MotionSensor started");
+            }
+            mMotionSensor.start();
+
+            Intent sendIntent = new Intent(ACTION_SCAN_PAUSED_USER_MOTIONLESS);
+            sendIntent.putExtra(ACTION_EXTRA_IS_PAUSED, mIsMotionlessPausedState);
+            LocalBroadcastManager.getInstance(mAppContext).sendBroadcastSync(sendIntent);
+        }
+    };
+    private final BroadcastReceiver mDetectMotionReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (isScanning() || !mIsMotionlessPausedState) {
+                return;
+            }
+            startScanning(context);
+            mMotionSensor.stop();
+
+            if (Prefs.getInstance(mAppContext).getPowerSavingMode() == Prefs.PowerSavingModeOptions.Aggressive) {
+                mLocationChangeSensor.quickCheckForFalsePositiveAfterMotionSensorMovement();
+            }
+
+            Intent sendIntent = new Intent(ACTION_SCAN_PAUSED_USER_MOTIONLESS);
+            sendIntent.putExtra(ACTION_EXTRA_IS_PAUSED, mIsMotionlessPausedState);
+            LocalBroadcastManager.getInstance(mAppContext).sendBroadcastSync(sendIntent);
         }
     };
 
-    public ScanManager() {}
+    public ScanManager() {
+    }
 
     // By default, if the battery level is low, then the service stops scanning, however the client
     // can disable this and perform more complex logic
     public void setShouldStopPassiveScanningOnBatteryLow(boolean shouldStop) {
-        mPassiveModeBatteryState = shouldStop? PassiveModeBatteryState.OK :
-                                               PassiveModeBatteryState.IGNORE_BATTERY_STATE;
+        mPassiveModeBatteryState = shouldStop ? PassiveModeBatteryState.OK :
+                PassiveModeBatteryState.IGNORE_BATTERY_STATE;
     }
 
     public void newPassiveGpsLocation() {
@@ -72,7 +109,7 @@ public class ScanManager {
         }
 
         if (AppGlobals.isDebug) {
-            Log.d(LOG_TAG, "New passive location");
+            ClientLog.d(LOG_TAG, "New passive location");
         }
 
         mWifiScanner.start(ActiveOrPassiveStumbling.PASSIVE_STUMBLING);
@@ -114,7 +151,7 @@ public class ScanManager {
     }
 
     public synchronized void startScanning(Context ctx) {
-        Log.d(LOG_TAG, "ScanManager::startScanning");
+        ClientLog.d(LOG_TAG, "ScanManager::startScanning");
 
         if (isScanning()) {
             return;
@@ -122,7 +159,7 @@ public class ScanManager {
 
         mAppContext = ctx.getApplicationContext();
         if (mAppContext == null) {
-            Log.w(LOG_TAG, "No app context available.");
+            ClientLog.w(LOG_TAG, "No app context available.");
             return;
         }
 
@@ -141,10 +178,10 @@ public class ScanManager {
             // Simulation contexts are only allowed for debug builds.
             Prefs prefs = Prefs.getInstanceWithoutContext();
             if (prefs != null) {
-                Log.i(LOG_TAG, "ScanManager::startScanning simulation pref = " + prefs.isSimulateStumble() );
+                ClientLog.i(LOG_TAG, "ScanManager::startScanning simulation pref = " + prefs.isSimulateStumble());
                 if (prefs.isSimulateStumble()) {
                     mAppContext = new SimulationContext(mAppContext);
-                    Log.d(LOG_TAG, "ScanManager using SimulateStumbleContextWrapper");
+                    ClientLog.d(LOG_TAG, "ScanManager using SimulateStumbleContextWrapper");
                 }
             }
         }
@@ -169,13 +206,13 @@ public class ScanManager {
         }
 
         if (mAppContext instanceof SimulationContext) {
-            ((SimulationContext)mAppContext).deactivateSimulation();
+            ((SimulationContext) mAppContext).deactivateSimulation();
         }
         // Reset the application context to the unwrapped version
         mAppContext = mAppContext.getApplicationContext();
 
         if (AppGlobals.isDebug) {
-            Log.d(LOG_TAG, "Scanning stopped");
+            ClientLog.d(LOG_TAG, "Scanning stopped");
         }
 
         mIsMotionlessPausedState = false;
@@ -226,46 +263,5 @@ public class ScanManager {
         return (mGPSScanner == null) ? new Location("null") : mGPSScanner.getLocation();
     }
 
-    // After DetectUnchangingLocation reports the user is not moving, and the scanning pauses,
-    // then use MotionSensor to determine when to wake up and start scanning again.
-    private final BroadcastReceiver mDetectUserIdleReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (!isScanning() ||
-                Prefs.getInstance(mAppContext).getPowerSavingMode() == Prefs.PowerSavingModeOptions.Off) {
-                return;
-            }
-            stopScanning();
-            mIsMotionlessPausedState = true;
-            if (AppGlobals.isDebug) {
-                Log.d(LOG_TAG, "MotionSensor started");
-            }
-            mMotionSensor.start();
-
-            Intent sendIntent = new Intent(ACTION_SCAN_PAUSED_USER_MOTIONLESS);
-            sendIntent.putExtra(ACTION_EXTRA_IS_PAUSED, mIsMotionlessPausedState);
-            LocalBroadcastManager.getInstance(mAppContext).sendBroadcastSync(sendIntent);
-        }
-    };
-
-    private final BroadcastReceiver mDetectMotionReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (isScanning() || !mIsMotionlessPausedState) {
-                return;
-            }
-            startScanning(context);
-            mMotionSensor.stop();
-
-            if (Prefs.getInstance(mAppContext).getPowerSavingMode() == Prefs.PowerSavingModeOptions.Aggressive) {
-                mLocationChangeSensor.quickCheckForFalsePositiveAfterMotionSensorMovement();
-            }
-
-            Intent sendIntent = new Intent(ACTION_SCAN_PAUSED_USER_MOTIONLESS);
-            sendIntent.putExtra(ACTION_EXTRA_IS_PAUSED, mIsMotionlessPausedState);
-            LocalBroadcastManager.getInstance(mAppContext).sendBroadcastSync(sendIntent);
-        }
-    };
-
-
+    private enum PassiveModeBatteryState {OK, LOW, IGNORE_BATTERY_STATE}
 }

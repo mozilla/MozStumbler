@@ -10,8 +10,8 @@ import java.util.Map;
 // other implementations.
 //
 public class LruCache<A, B> extends LinkedHashMap<A, B> {
-    private final int maxEntries;
     static final long serialVersionUID = 42L;
+    private final int maxEntries;
 
     public LruCache(final int maxEntries) {
         super(maxEntries + 1, 1.0f, true);

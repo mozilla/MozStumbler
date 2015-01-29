@@ -18,10 +18,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.mozilla.mozstumbler.client.mapview.MapFragment;
 import org.mozilla.mozstumbler.client.mapview.ObservationPoint;
-import org.mozilla.mozstumbler.service.AppGlobals;
-import org.mozilla.mozstumbler.service.core.logging.Log;
+import org.mozilla.mozstumbler.service.core.logging.ClientLog;
 import org.mozilla.mozstumbler.service.stumblerthread.Reporter;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.StumblerBundle;
+import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 import org.mozilla.osmdroid.util.GeoPoint;
 
 import java.lang.ref.WeakReference;
@@ -30,24 +30,23 @@ import java.util.LinkedList;
 
 public class ObservedLocationsReceiver extends BroadcastReceiver {
 
-    private static final String LOG_TAG = AppGlobals.makeLogTag(ObservedLocationsReceiver.class.getSimpleName());
-    private WeakReference<MapFragment> mMapActivity = new WeakReference<MapFragment>(null);
-    private final LinkedList<ObservationPoint> mCollectionPoints = new LinkedList<ObservationPoint>();
-    private final LinkedList<ObservationPoint> mQueuedForMLS = new LinkedList<ObservationPoint>();
+    private static final String LOG_TAG = LoggerUtil.makeLogTag(ObservedLocationsReceiver.class);
     private static final int MAX_QUEUED_MLS_POINTS_TO_FETCH = 10;
     private static final long FREQ_FETCH_MLS_MS = 5 * 1000;
+    private static ObservedLocationsReceiver sInstance;
+    private final LinkedList<ObservationPoint> mCollectionPoints = new LinkedList<ObservationPoint>();
+    private final LinkedList<ObservationPoint> mQueuedForMLS = new LinkedList<ObservationPoint>();
     private final Handler mHandler = new Handler(Looper.getMainLooper());
 
     // Upper bound on the size of the linked lists of points, for memory and performance safety.
     // On older devices, store fewer observations
-    private final int MAX_SIZE_OF_POINT_LISTS = (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH)?
-                                                5000 : 2500;
+    private final int MAX_SIZE_OF_POINT_LISTS = (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) ?
+            5000 : 2500;
+    private WeakReference<MapFragment> mMapActivity = new WeakReference<MapFragment>(null);
 
     private ObservedLocationsReceiver() {
         mHandler.postDelayed(mFetchMLSRunnable, FREQ_FETCH_MLS_MS);
     }
-
-    private static ObservedLocationsReceiver sInstance;
 
     public static void createGlobalInstance(Context context) {
         sInstance = new ObservedLocationsReceiver();
@@ -64,7 +63,14 @@ public class ObservedLocationsReceiver extends BroadcastReceiver {
         return mCollectionPoints;
     }
 
-    private final Runnable mFetchMLSRunnable = new Runnable() {
+    // Must call when map activity stopped, to clear the reference to the map activity object
+    public void removeMapActivity() {
+        setMapActivity(null);
+    }
+
+    private synchronized MapFragment getMapActivity() {
+        return mMapActivity.get();
+    }    private final Runnable mFetchMLSRunnable = new Runnable() {
         @Override
         public void run() {
             synchronized (ObservedLocationsReceiver.this) {
@@ -74,7 +80,7 @@ public class ObservedLocationsReceiver extends BroadcastReceiver {
                 }
                 mHandler.postDelayed(mFetchMLSRunnable, FREQ_FETCH_MLS_MS);
                 if (mQueuedForMLS.size() < 1 ||
-                    !prefs.getOnMapShowMLS()) {
+                        !prefs.getOnMapShowMLS()) {
                     return;
                 }
                 int count = 0;
@@ -98,15 +104,6 @@ public class ObservedLocationsReceiver extends BroadcastReceiver {
     // Must be called by map activity when it is showing to get points displayed
     public synchronized void setMapActivity(MapFragment m) {
         mMapActivity = new WeakReference<MapFragment>(m);
-    }
-
-    // Must call when map activity stopped, to clear the reference to the map activity object
-    public void removeMapActivity() {
-        setMapActivity(null);
-    }
-
-    private synchronized MapFragment getMapActivity() {
-        return mMapActivity.get();
     }
 
     @Override
@@ -145,7 +142,7 @@ public class ObservedLocationsReceiver extends BroadcastReceiver {
                 }
             }
         } catch (JSONException e) {
-            Log.w(LOG_TAG, "Failed to convert bundle to JSON: " + e);
+            ClientLog.w(LOG_TAG, "Failed to convert bundle to JSON: " + e);
         }
 
         while (mCollectionPoints.size() > MAX_SIZE_OF_POINT_LISTS) {
@@ -176,4 +173,6 @@ public class ObservedLocationsReceiver extends BroadcastReceiver {
 
         getMapActivity().newObservationPoint(mCollectionPoints.getLast());
     }
+
+
 }

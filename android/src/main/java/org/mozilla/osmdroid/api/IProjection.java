@@ -48,5 +48,4 @@ public interface IProjection {
      * Get the coordinates of the most south-westerly visible point of the map.
      */
     IGeoPoint getSouthWest();
-
 }

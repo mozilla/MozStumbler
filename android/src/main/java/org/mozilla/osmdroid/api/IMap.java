@@ -53,14 +53,14 @@ public interface IMap {
     boolean zoomOut();
 
     /**
-     * Whether to show the "my location" dot on the map
-     */
-    void setMyLocationEnabled(boolean enabled);
-
-    /**
      * Whether the map is currently showing the "my location" dot
      */
     boolean isMyLocationEnabled();
+
+    /**
+     * Whether to show the "my location" dot on the map
+     */
+    void setMyLocationEnabled(boolean enabled);
 
     /**
      * Get the map projection

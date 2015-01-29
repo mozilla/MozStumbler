@@ -29,10 +29,8 @@
     <string name="upload_observations_in_queue_title">ในคิว</string>
 
 
-
     <string name="upload_wifi_only_title">อัพโหลดเฉพาะเวลาต่อ Wi-Fi</string>
     <string name="upload_wifi_only_summary">ค่านี้จะช่วยลดการใช้ข้อมูลผ่านเครือข่ายมือถือ</string>
-
 
 
     <string name="title_activity_log">บันทึก</string>

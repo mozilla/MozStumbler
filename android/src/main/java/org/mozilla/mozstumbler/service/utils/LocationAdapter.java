@@ -10,13 +10,14 @@ import android.util.Log;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.mozilla.mozstumbler.service.AppGlobals;
+import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
 /*
     A simple adapter for deserializing JSON to Location objects
  */
 public class LocationAdapter {
 
-    private static final String LOG_TAG = AppGlobals.makeLogTag(LocationAdapter.class.getSimpleName());
+    private static final String LOG_TAG = LoggerUtil.makeLogTag(LocationAdapter.class);
 
     private static final String JSON_LATITUDE = "lat";
     private static final String JSON_LONGITUDE = "lon";
@@ -30,7 +31,6 @@ public class LocationAdapter {
         }
         return null;
     }
-
 
 
     public static Location fromJSON(JSONObject jsonObj) {
@@ -69,5 +69,4 @@ public class LocationAdapter {
         }
         return result;
     }
-
 }

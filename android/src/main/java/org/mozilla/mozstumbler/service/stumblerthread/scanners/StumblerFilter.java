@@ -7,7 +7,7 @@ package org.mozilla.mozstumbler.service.stumblerthread.scanners;
 import android.location.Location;
 import android.util.Log;
 
-import org.mozilla.mozstumbler.service.AppGlobals;
+import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
 /*
 
@@ -16,7 +16,7 @@ import org.mozilla.mozstumbler.service.AppGlobals;
 
  */
 public final class StumblerFilter {
-    private static final String LOG_TAG = AppGlobals.makeLogTag(StumblerFilter.class.getSimpleName());
+    private static final String LOG_TAG = LoggerUtil.makeLogTag(StumblerFilter.class);
     private static final double MAX_ALTITUDE = 8848;      // Mount Everest's altitude in meters
     private static final double MIN_ALTITUDE = -418;      // Dead Sea's altitude in meters
     private static final float MAX_SPEED = 340.29f;   // Mach 1 in meters/second

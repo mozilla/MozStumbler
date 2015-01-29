@@ -40,7 +40,9 @@ public class HttpUtil implements IHttpUtil {
     private static final String USER_AGENT_HEADER = "User-Agent";
     private final String userAgent;
 
+    @SuppressWarnings("unused")
     public HttpUtil() {
+        // This is instantiated through reflection for the ServiceLocator
         this((Prefs.getInstanceWithoutContext() != null) ?
                 Prefs.getInstanceWithoutContext().getUserAgent() : "user-agent-not-set-properly");
     }

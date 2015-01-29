@@ -12,6 +12,7 @@ import android.hardware.TriggerEventListener;
 import android.os.Build;
 import android.support.v4.content.LocalBroadcastManager;
 
+import org.acra.ACRA;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
@@ -96,7 +97,38 @@ public class MotionSensor {
                         return;
                     }
                     AppGlobals.guiLogInfo("Major motion detected.");
-                    LocalBroadcastManager.getInstance(mContext).sendBroadcastSync(new Intent(ACTION_USER_MOTION_DETECTED));
+
+                    LocalBroadcastManager localBroadcastManager = null;
+
+                    if (mContext == null) {
+                        NullPointerException npe = new NullPointerException("mContext == null");
+                        ACRA.getErrorReporter().handleException(npe);
+                        return;
+                    }
+                    try {
+                        localBroadcastManager = LocalBroadcastManager.getInstance(mContext);
+                    } catch (NullPointerException npe) {
+                        String ctxName = "NULL";
+                        if (mContext != null ) {
+                            ctxName = mContext.toString();
+                        }
+                        ACRA.getErrorReporter().putCustomData("mContext", ctxName);
+
+                        // Send the report (Stack trace will say "Requested by Developer"
+                        // That should set apart manual reports from actual crashes
+                        ACRA.getErrorReporter().handleException(npe);
+                        return;
+                    }
+
+                    if (localBroadcastManager == null) {
+                        NullPointerException npe = new NullPointerException("localBroadcastManager == null");
+                        // Send the report (Stack trace will say "Requested by Developer"
+                        // That should set apart manual reports from actual crashes
+                        ACRA.getErrorReporter().handleException(npe);
+                        return;
+                    }
+
+                    localBroadcastManager.sendBroadcastSync(new Intent(ACTION_USER_MOTION_DETECTED));
                     mSensorManager.requestTriggerSensor(this, mSignificantMotionSensor);
                 }
             };

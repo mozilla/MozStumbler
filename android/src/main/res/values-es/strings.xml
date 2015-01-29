@@ -72,7 +72,7 @@
     <string name="file_bug_description_hint">Información detallada sobre el fallo que se informa (lo que sucede, cuando sucede, etc.)</string>
     <string name="file_bug_reproduction">Réplica del fallo:</string>
     <string name="file_bug_reproduction_hint">Explica los pasos para replicar el fallo.</string>
-    <string name="file_bug_report_info">Mediante el envío de este informe, también se va a enviar información sobre el estado actual de tu dispositivo. Esta información se utilizará para limitar el origen del fallo. Los informes de fallos para los errores que provocados por cuelgues se envían automáticamente si la opción \ "Habilitar informador de fallos \" está habilitada. Si encuentras fallos que no provocan cuelgues, por favor háznoslos saber a través de este formulario.</string>
+    <string name="file_bug_report_info">Mediante el envío de este informe, también se va a enviar información sobre el estado actual de tu dispositivo. Esta información se utilizará para limitar el origen del fallo. Los informes de fallos para los errores que provocados por cuelgues se envían automáticamente si la opción \"%1$s\" está habilitada. Si encuentras fallos que no provocan cuelgues, por favor háznoslos saber a través de este formulario.</string>
     <string name="file_bug_send">Enviar un reporte de fallo</string>
     <string name="file_bug_type">Tipo de fallo:</string>
 
@@ -165,8 +165,6 @@
     <string name="save_stumble_logs">Guardar registros de Stumble</string>
     <string name="create_log_archive_failure">No se puede crear directorio de archivo para los registros</string>
     <string name="create_log_archive_success">Los registros deben guardarse en:</string>
-    <string name="category_power_saving">Ahorro de energía</string>
-    <string name="power_saving_mode">Detección de movimiento</string>
     <string name="power_saving_mode_summary">Hace una pausa en la exploración si no se está moviendo, y comienza de nuevo cuando detecta movimiento.</string>
     <string name="power_saving_title">Ahorro de energía</string>
     <string name="stop_at_x_battery">Detener con %1$d%% de batería</string>
@@ -174,12 +172,6 @@
     <string name="change_power_saving">Cambiar</string>
     <string name="on">Encendido</string>
     <string name="off">Apagado</string>
-
-    <string-array name="power_saving_mode_options">
-        <item>Apagado</item>
-        <item>Encendido</item>
-        <item>Encendido, con ahorro de energía extra</item>
-    </string-array>
 
     <string name="title_activity_power_saving_screen">Opciones de ahorro de energía</string>
     <string name="sensor_type_legacy">Tu dispositivo solamente tiene sensores heredados. Puede que no quieras utilizar esta función si tienes dificultad al volver a poner en marcha la aplicación con el movimiento.</string>

@@ -129,7 +129,7 @@
     <string name="enable_option_show_mls_on_map">啟用 MLS 位置查詢</string>
     <string name="enable_option_show_mls_on_map_summary">在您的報告中顯示 Mozilla Location Service (MLS) 的位置。</string>
     <!-- enable_option_show_mls_on_map_detailed_info: %1$s refers to upload_wifi_only_title -->
-    <string name="enable_option_show_mls_on_map_summary">多用一些電力、記憶體與網路用量，就可在每次回報中包含您掃到的 MLS 位置。MLS 位置在地圖上會以紅點顯示，並將回報點用線連結起來。但若您開啟「僅在使用 Wi-Fi 時自動上傳資料」的話，就不會透過行動數據連線來查詢位置。</string>
+    <string name="enable_option_show_mls_on_map_detailed_info">多用一些電力、記憶體與網路用量，就可在每次回報中包含您掃到的 MLS 位置。MLS 位置在地圖上會以紅點顯示，並將回報點用線連結起來。但若您開啟「僅在使用 Wi-Fi 時自動上傳資料」的話，就不會透過行動數據連線來查詢位置。</string>
     <string name="cell_plus_wifi_observation">觀測到 Wi-Fi 與行動網路基地台</string>
     <string name="cell_only_observation">僅觀測到行動網路基地台</string>
     <string name="wifi_only_observation">僅觀測到 Wi-Fi 基地台</string>

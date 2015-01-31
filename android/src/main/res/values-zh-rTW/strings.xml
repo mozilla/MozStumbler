@@ -172,7 +172,7 @@
     <string name="stop_at_x_battery">在電力剩餘 %1$d%% 時停止</string>
     <string name="motion_detection_onoff">動態偵測 %1$s</string>
     <string name="change_power_saving">變更</string>
-    <string name="on">開<string>
+    <string name="on">開</string>
     <string name="off">關</string>
 
     <string name="title_activity_power_saving_screen">省電選項</string>

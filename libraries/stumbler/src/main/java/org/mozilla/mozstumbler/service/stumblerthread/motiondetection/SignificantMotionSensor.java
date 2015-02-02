@@ -16,8 +16,14 @@ import android.support.v4.content.LocalBroadcastManager;
 
 import org.acra.ACRA;
 import org.mozilla.mozstumbler.service.AppGlobals;
+import org.mozilla.mozstumbler.svclocator.ServiceLocator;
+import org.mozilla.mozstumbler.svclocator.services.log.ILogger;
+import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
 public class SignificantMotionSensor implements IMotionSensor {
+
+    ILogger Log = (ILogger) ServiceLocator.getInstance().getService(ILogger.class);
+    private final static String LOG_TAG = LoggerUtil.makeLogTag(SignificantMotionSensor.class);
 
     private final Context mAppContext;
     private Sensor mSignificantMotionSensor;
@@ -94,8 +100,6 @@ public class SignificantMotionSensor implements IMotionSensor {
                     }
 
                     localBroadcastManager.sendBroadcastSync(new Intent(MotionSensor.ACTION_USER_MOTION_DETECTED));
-
-
                     mSensorManager.requestTriggerSensor(this, mSignificantMotionSensor);
                 }
             };

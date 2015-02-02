@@ -26,11 +26,6 @@ public class LegacyMotionSensorTest {
 
         Context ctx = Robolectric.application;
 
-        // Setup a ShadowSensorManager
-        SensorManager sensorManager = (SensorManager)
-                Robolectric.application.getSystemService(Context.SENSOR_SERVICE);
-        ShadowSensorManager shadowSensorManager = shadowOf(sensorManager);
-
         LegacyMotionSensor lms = new LegacyMotionSensor(ctx);
         assertNotNull(lms.mSensorManager);
 

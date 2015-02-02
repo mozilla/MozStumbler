@@ -27,7 +27,7 @@ public class MotionSensor {
     private Sensor mSignificantMotionSensor;
     private boolean mStopSignificantMotionSensor;
 
-    public MotionSensor(Context context, BroadcastReceiver callbackReceiver) {
+    public MotionSensor(Context context) {
         sDebugInstance = this;
         mContext = context;
         mStopSignificantMotionSensor = false;
@@ -36,11 +36,6 @@ public class MotionSensor {
         if (mSensorManager == null) {
             AppGlobals.guiLogInfo("No sensor manager.");
             return;
-        }
-
-        if (callbackReceiver != null) {
-            LocalBroadcastManager.getInstance(context).registerReceiver(callbackReceiver,
-                    new IntentFilter(ACTION_USER_MOTION_DETECTED));
         }
 
         mSignificantMotionSensor = getSignificantMotionSensor(context);

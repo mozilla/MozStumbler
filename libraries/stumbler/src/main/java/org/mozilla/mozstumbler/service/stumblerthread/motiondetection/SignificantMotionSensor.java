@@ -14,6 +14,7 @@ import android.hardware.TriggerEventListener;
 import android.os.Build;
 import android.support.v4.content.LocalBroadcastManager;
 
+import org.acra.ACRA;
 import org.mozilla.mozstumbler.service.AppGlobals;
 
 public class SignificantMotionSensor implements IMotionSensor {
@@ -60,7 +61,41 @@ public class SignificantMotionSensor implements IMotionSensor {
                         return;
                     }
                     AppGlobals.guiLogInfo("Major motion detected.");
-                    LocalBroadcastManager.getInstance(mAppContext).sendBroadcastSync(new Intent(MotionSensor.ACTION_USER_MOTION_DETECTED));
+
+
+                    LocalBroadcastManager localBroadcastManager = null;
+
+                    if (mAppContext == null) {
+                        NullPointerException npe = new NullPointerException("mAppContext == null");
+                        ACRA.getErrorReporter().handleException(npe);
+                        return;
+                    }
+                    try {
+                        localBroadcastManager = LocalBroadcastManager.getInstance(mAppContext);
+                    } catch (NullPointerException npe) {
+                        String ctxName = "NULL";
+                        if (mAppContext != null ) {
+                            ctxName = mAppContext.toString();
+                        }
+                        ACRA.getErrorReporter().putCustomData("mAppContext", ctxName);
+
+                        // Send the report (Stack trace will say "Requested by Developer"
+                        // That should set apart manual reports from actual crashes
+                        ACRA.getErrorReporter().handleException(npe);
+                        return;
+                    }
+
+                    if (localBroadcastManager == null) {
+                        NullPointerException npe = new NullPointerException("localBroadcastManager == null");
+                        // Send the report (Stack trace will say "Requested by Developer"
+                        // That should set apart manual reports from actual crashes
+                        ACRA.getErrorReporter().handleException(npe);
+                        return;
+                    }
+
+                    localBroadcastManager.sendBroadcastSync(new Intent(MotionSensor.ACTION_USER_MOTION_DETECTED));
+
+
                     mSensorManager.requestTriggerSensor(this, mSignificantMotionSensor);
                 }
             };

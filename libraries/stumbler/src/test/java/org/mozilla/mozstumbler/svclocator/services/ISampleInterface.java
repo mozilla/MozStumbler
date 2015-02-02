@@ -25,6 +25,8 @@ public interface ISampleInterface {
 
     double getDouble();
 
+    void voidMethod();
+
     Integer getBoxedInteger();
 
     ServiceLocator getServiceLocator();

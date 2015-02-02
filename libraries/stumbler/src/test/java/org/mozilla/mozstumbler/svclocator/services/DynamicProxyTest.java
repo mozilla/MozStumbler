@@ -35,6 +35,8 @@ public class DynamicProxyTest {
         assertTrue(0 == Double.compare(t.getDouble(), (double) 0));
         assertEquals('\u0000', t.getChar());
 
+        t.voidMethod();
+
         assertFalse(t.getBool());
 
         //assertNull(t.getServiceLocator());

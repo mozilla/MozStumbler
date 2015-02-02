@@ -32,6 +32,8 @@ public class Updater {
     private static final String LOG_TAG = LoggerUtil.makeLogTag(Updater.class);
     private static final String LATEST_URL = "https://github.com/mozilla/MozStumbler/releases/latest";
     private static final String APK_URL_FORMAT = "https://github.com/mozilla/MozStumbler/releases/download/v%s/MozStumbler-v%s.apk";
+    private static final long UPDATE_CHECK_FREQ = 6 * 60 * 60 * 1000; // 6 hours
+    private static long sLastUpdateCheck = 0;
 
     public Updater() {
     }
@@ -40,11 +42,21 @@ public class Updater {
         return !NetworkInfo.getInstance().isWifiAvailable() && ClientPrefs.getInstance(c).getUseWifiOnly();
     }
 
+    public boolean checkForUpdatesRateLimited(final Activity activity, String api_key) {
+        if (System.currentTimeMillis() - sLastUpdateCheck < UPDATE_CHECK_FREQ) {
+            return false;
+        }
+        return this.checkForUpdates(activity, api_key);
+    }
 
     public boolean checkForUpdates(final Activity activity, String api_key) {
 
         // No API Key means skip the update
         if (api_key == null || api_key.equals("")) {
+            return false;
+        }
+
+        if (!NetworkInfo.getInstance().isConnected()) {
             return false;
         }
 
@@ -99,6 +111,7 @@ public class Updater {
             }
         }.execute();
 
+        sLastUpdateCheck = System.currentTimeMillis();
         return true;
     }
 

@@ -121,7 +121,7 @@ public class MainDrawerActivity
 
         if (BuildConfig.GITHUB) {
             Updater upd = new Updater();
-            upd.checkForUpdatesRateLimited(this, BuildConfig.MOZILLA_API_KEY);
+            upd.checkForUpdates(this, BuildConfig.MOZILLA_API_KEY);
         }
 
         mMetricsView = new MetricsView(findViewById(R.id.left_drawer));

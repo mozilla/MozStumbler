@@ -43,15 +43,10 @@ public class Updater {
     }
 
 
-    public boolean checkForUpdatesRateLimited(final Activity activity, String api_key) {
+    public boolean checkForUpdates(final Activity activity, String api_key) {
         if (System.currentTimeMillis() - sLastUpdateCheck < UPDATE_CHECK_FREQ) {
             return false;
         }
-        return this.checkForUpdates(activity, api_key);
-    }
-
-
-    public boolean checkForUpdates(final Activity activity, String api_key) {
 
         // No API Key means skip the update
         if (api_key == null || api_key.equals("")) {

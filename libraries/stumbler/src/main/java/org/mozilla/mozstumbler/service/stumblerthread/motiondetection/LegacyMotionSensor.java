@@ -14,7 +14,7 @@ import android.util.FloatMath;
 
 import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
-public class LegacyMotionSensor {
+public class LegacyMotionSensor implements IMotionSensor {
     private static final String LOG_TAG = LoggerUtil.makeLogTag(LegacyMotionSensor.class);
     // I'm assuming 30 iterations is good enough to get convergence.
     private static int iterations_for_convergence = 30;
@@ -41,6 +41,7 @@ public class LegacyMotionSensor {
     private int mMovementCountWithinTimeWindow;
     private float[] gravity = {0, 0, 0};
     private float[] linear_acceleration = {0, 0, 0};
+    private boolean isActive;
 
     public LegacyMotionSensor(Context ctx) {
         mAppContext = ctx;
@@ -107,7 +108,8 @@ public class LegacyMotionSensor {
         }
     }
 
-    void start() {
+    @Override
+    public void start() {
         mSensorManager.registerListener(mSensorEventListener,
                 mSensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION),
                 SensorManager.SENSOR_DELAY_NORMAL);
@@ -119,9 +121,18 @@ public class LegacyMotionSensor {
         mSensorManager.registerListener(mSensorEventListener,
                 mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
                 SensorManager.SENSOR_DELAY_NORMAL);
+        
+        isActive = true;
     }
 
-    void stop() {
+    @Override
+    public void stop() {
         mSensorManager.unregisterListener(mSensorEventListener);
+        isActive = false;
+    }
+
+    @Override
+    public boolean isActive() {
+        return isActive;
     }
 }

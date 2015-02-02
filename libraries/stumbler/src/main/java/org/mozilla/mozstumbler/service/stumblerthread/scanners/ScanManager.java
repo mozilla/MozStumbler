@@ -7,6 +7,7 @@ package org.mozilla.mozstumbler.service.stumblerthread.scanners;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.location.Location;
 import android.support.v4.content.LocalBroadcastManager;
 
@@ -171,7 +172,12 @@ public class ScanManager {
         mLocationChangeSensor.start();
 
         if (mMotionSensor == null) {
-            mMotionSensor = new MotionSensor(mAppContext, mDetectMotionReceiver);
+            if (mDetectMotionReceiver != null) {
+                LocalBroadcastManager.getInstance(mAppContext).registerReceiver(mDetectMotionReceiver,
+                        new IntentFilter(MotionSensor.ACTION_USER_MOTION_DETECTED));
+            }
+
+            mMotionSensor = new MotionSensor(mAppContext);
         }
 
         if (AppGlobals.isDebug) {

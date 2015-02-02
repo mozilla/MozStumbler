@@ -25,6 +25,11 @@ android {
         minSdkVersion 10
         targetSdkVersion 18
     }
+
+    lintOptions {
+        disable 'MissingTranslation'
+        abortOnError false
+    }
 }
 
 apply plugin: 'android-unit-test'
@@ -49,5 +54,10 @@ dependencies {
 
     compile "com.android.support:support-v4:21.0.+"
     compile 'com.android.support:appcompat-v7:19.1.0'
+
+    // Acralyzer crash reports
+    compile('ch.acra:acra:4.5.0') {
+        exclude group: 'org.json'
+    }
 
 }

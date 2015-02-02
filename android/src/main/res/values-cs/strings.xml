@@ -1,56 +1,202 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Mozilla Stumbler</string>
-    <string name="action_about">O Aplikaci</string>
-    <string name="action_preferences">Nastavení</string>
-    <!--<string name="action_upload_observations">Upload observations</string> translation missing-->
-    <string name="start_scanning">Spusť vyhledávání</string>
-    <string name="stop_scanning">Zastav vyhledávání</string>
-    <string name="view_leaderboard">Zobraz žebříček</string>
-    <string name="service_name">Mozilla Stumbler</string>
-    <!--<string name="wifi_disabled">0 (Wi-Fi disabled)</string> translation missing-->
-    <!--translations missing
-    <string name="cells_scanned">Cells Scanned: %1$d</string>
-    <string name="cells_visible">Cells Visible: %1$d</string>-->
-    <string name="enter_nickname">Vložte jméno (nepovinné)</string>
-    <string name="enter_nickname_title">Jméno: %1$s</string>
-    <string name="enter_nickname_longtext">Vaše jméno se zobrazí v žebříčku.</string>
 
-    <!--translations missing
-    <string name="update_title">Stáhnout novou verzi Mozilla Stumbleru?</string>
-    <string name="update_message">Nainstalovana verze: %1$s\nPoslední verze: %2$s</string>
+    <!--<string name="app_name">Mozilla Stumbler</string>-->
+    <string name="action_about">O aplikaci</string>
+    <string name="action_preferences">Nastavení</string>
+    <string name="start_scanning">Spustit sběr dat</string>
+    <string name="stop_scanning">Zastavit sběr dat</string>
+    <string name="view_leaderboard">Zobrazit žebříček</string>
+    <!--<string name="service_name">Mozilla Stumbler</string>-->
+    <string name="notification_scanning">Mozilla Stumbler sbírá data</string>
+    <string name="notification_paused">Mozilla Stumbler je pozastavený</string>
+    <string name="enter_nickname">Vložte přezdívku (nepovinné)</string>
+    <string name="enter_nickname_title">Přezdívka: %1$s</string>
+    <string name="enter_nickname_longtext">Vaše přezdívka se zobrazí v žebříčku.</string>
+    <string name="update_title">Stáhnout aktualizaci Mozilla Stumbler?</string>
+    <string name="update_message">Nainstalovaná verze: %1$s\nNejnovější verze: %2$s</string>
     <string name="update_now">Aktualizovat nyní</string>
     <string name="update_later">Aktualizovat později</string>
-    <string name="">Pozice nenalezena</string>
-    -->
     <string name="yes">Ano</string>
     <string name="no">Ne</string>
     <string name="about_version">Verze %1$s</string>
-    <!--translations missing
-    <string name="about_openstreetmap">Map view tiles © OpenStreetMap contributors\nhttp://www.openstreetmap.org</string>
-    <string name="about_mapbox_title">MapBox</string>-->
-    <string name="about_mapbox">Zjistit více informací o mapových datech…</string>
-    <!--<string name="about_legal_aosp">Some iconography in this app is reproduced from work created and shared by the Android Open Source Project and used according to terms described in the Creative Commons 2.5 Attribution License.</string> translation missing-->
-    <!--translations missing
-    <string name="upload_observations_sent_title">Sent</string>
-    <string name="metrics_observations_last_upload_time_title">Last Upload Time:</string>
-    <string name="metrics_observations_title">Observations:</string>
-    <string name="metrics_observations_wifis_title">Wi-Fi Access Points:</string>
-    <string name="metrics_observations_cell_towers_title">Cells:</string>
-    <string name="upload_observations_in_queue_title">In queue</string>
+    <string name="about_openstreetmap">Mapové podklady\n© přispěvatelé OpenStreetMap\nhttp://www.openstreetmap.org</string>
+    <!--<string name="about_mapbox_title">MapBox</string>-->
+    <string name="about_mapbox">Zjistit více na http://www.mapbox.com</string>
+    <string name="about_legal_aosp">Některé ikony v této aplikaci jsou vytvořeny podle Android Open Source Project a použity v souladu s podmínkami Creative Commons 2.5 Attribution License.</string>
+    <!--<string name="about_legal_flaticons">GPS, cell tower, Wi-Fi, and binoculars icons made by Freepik from http://www.flaticon.com under license: https://creativecommons.org/licenses/by-nd/3.0</string>-->
+    <string name="upload_observations_sent_title">Již odesláno</string>
+    <string name="metrics_observations_last_upload_time_title">Naposledy odesláno:</string>
+    <string name="metrics_observations_last_upload_time_never">nikdy</string>
+    <!--
+    Do not just copy those plurals, please check what is needed for your language.
+    http://developer.android.com/guide/topics/resources/string-resource.html#Plurals
+    -->
+    <plurals name="time_diff_seconds">
+        <item quantity="one">nyní</item>
+        <item quantity="few">před chvílí</item>
+        <item quantity="other">před chvílí</item>
+    </plurals>
+    <plurals name="time_diff_minutes">
+        <item quantity="one">před minutou</item>
+        <item quantity="few">před %s minutami</item>
+        <item quantity="other">před %s minutami</item>
+    </plurals>
+    <plurals name="time_diff_hours">
+        <item quantity="one">před hodinou</item>
+        <item quantity="few">před %s hodinami</item>
+        <item quantity="other">před %d hodinami</item>
+    </plurals>
+    <plurals name="time_diff_days">
+        <item quantity="one">před jedním dnem</item>
+        <item quantity="few">před %d dny</item>
+        <item quantity="other">před %d dny</item>
+    </plurals>
 
+    <string name="metrics_notification_text">Reporty:%1$d Buňky:%2$d Wi-Fi sítě:%3$d</string>
+    <string name="metrics_notification_extraline">Naposledy odesláno: %1$s</string>
+    <string name="metrics_observations_title">Reporty:</string>
+    <string name="metrics_observations_wifis_title">Wi-Fi sítě:</string>
+    <string name="metrics_observations_cell_towers_title">Sítě operátora:</string>
+    <string name="upload_observations_in_queue_title">K odeslání</string>
+    <string name="upload_wifi_only_title">Automatické odeslání pouze přes Wi-Fi</string>
+    <string name="upload_wifi_only_summary">Toto volba sníží spotřebu vašich mobilních dat. Klepnutím na tlačítko pro odeslání se data odešlou vždy.</string>
+    <string name="metrics_activity_title">Metriky</string>
+    <string name="metrics_this_session">Současná relace</string>
+    <string name="drawer_map_option_show_mls_locations">Zobrazit umístění MLS</string>
+    <!--<string name="title_activity_log">Log</string>-->
+    <string name="action_file_bug">Nahlásit chybu</string>
+    <!--<string name="file_bug_sender_name">Your Name:</string>
+    <string name="file_bug_sender_name_hint">Optional</string>
+    <string name="file_bug_sender_email">Your Email:</string>
+    <string name="file_bug_sender_email_hint">Optional</string>
+    <string name="file_bug_name">Bug Title:</string>
+    <string name="file_bug_name_hint">Descriptive title for the bug</string>
+    <string name="file_bug_description">Bug Description:</string>
+    <string name="file_bug_description_hint">Detailed information about the bug being reported (what happens, when it happens, etc.)</string>
+    <string name="file_bug_reproduction">Bug Reproduction:</string>
+    <string name="file_bug_reproduction_hint">Steps explaining how to reproduce the bug.</string>-->
+    <!-- file_bug_report_info: %1$s refers to enable_crash_reporting -->
+    <!--<string name="file_bug_report_info">By sending this report, you will also send information regarding the current state of your device. This information will be used to narrow down the cause of the bug. Bug reports for bugs that result in a crash are sent automatically if the option \"%1$s\" is enabled. If you encounter bugs that do not result in a crash, please report them through this form.</string>
+    <string name="file_bug_send">Send Bug Report</string>
+    <string name="file_bug_type">Bug Type:</string>-->
 
+    <!--<string-array name="file_bug_type_list">
+        <item>Cosmetic</item>
+        <item>Performance</item>
+        <item>Compatibility</item>
+        <item>Functionality</item>
+        <item>Feature Request</item>
+        <item>Other</item>
+    </string-array>-->
 
-    <string name="upload_observations_button">Upload</string>
-    <string name="upload_observations_dialog_title">Upload observations</string>
-    <string name="upload_wifi_only_title">Upload only on Wi-Fi</string>
-    <string name="upload_wifi_only_summary">This option will reduce your data usage over the cellular network.</string>
-	
+    <!--<string name="file_bug_toast_success">Bug Report Sent\n Thank you!</string>
+    <string name="file_bug_missing_field">This field is required!</string>-->
+    <string name="action_view_log">Zobrazit Log</string>
+    <string name="scroll_to_start">Nahoru</string>
+    <string name="scroll_to_end">Dolů</string>
+    <string name="kml_file_title">KML soubor s reporty</string>
+    <string name="kml_file_load">Načíst KML soubor</string>
+    <string name="kml_file_save">Uložit KML soubor</string>
+    <string name="kml_file_description">Uložit/Načíst reporty (umístění, Wi-Fi a počty buněk) pro ladění.</string>
+    <string name="kml_file_saved_name">Uložený soubor:</string>
+    <string name="keep_screen_on_title">Při sběru dat ponechat zapnutý displej</string>
+    <string name="keep_screen_on_summary">Pokud je aplikace v popředí a probíhá sběr dat, ponechat zapnutý displej.</string>
+    <string name="delete_all">Smazat vše</string>
+    <string name="are_you_sure">Jste si jisti?</string>
+    <string name="loading_kml">Načítání KML</string>
+    <string name="saving_kml">Ukládání KML</string>
+    <string name="mozstumbler_kml_file">Mozilla Stumbler KML soubor</string>
+    <string name="share_file">Sdílet soubor</string>
+    <string name="load_file">Načíst soubor</string>
+    <string name="delete_file">Smazat soubor</string>
+    <string name="kml_file_saved">KML uloženo</string>
+    <string name="share_after_kml_saved">Soubor byl uložen ve vašem zařízení, chcete jej sdílet?</string>
+    <string name="enter_email">Vložte e-mailovou adresu (nepovinné)</string>
+    <string name="enter_email_title">E-mail: %1$s</string>
+    <string name="enter_email_longtext">Vaše e-mailová adresa nebude nikde zobrazována a je použita pouze pro vaše vlastní reporty.</string>
+    <!--<string name="drawer_open">Show drawer</string>
+    <string name="drawer_close">Close drawer</string>-->
+    <string name="title_activity_leaderboard">Žebříček</string>
+    <string name="drawer_map_layers_title">Legenda mapy</string>
+    <string name="first_run_message_part1">Mozilla Location Service je otevřená služba pro určení pozice pomocí Wi-Fi a mobilních sítí.</string>
+    <string name="first_run_message_part2">Přečtěte si naše <a href="https://location.services.mozilla.com/privacy">zásady ochrany soukromí</a> a poté můžete začít sbírat data a přispět daty z vaší současné pozice.</string>
+    <string name="first_run_start_stumbling">Začít sbírat data</string>
+    <string name="first_run_welcome_to_mozstumbler">Vítejte v aplikaci Mozilla Stumbler</string>
+    <string name="map_unavailable">Mapu nelze zobrazit, jelikož nebyla nalezena žádné úložiště na SD kartě.\nStále ale můžete sbírat data.</string>
+    <string name="map_offline_mode">Mapa nebude aktualizována bez internetového připojení,\nnicméně data můžete stále sbírat.</string>
+    <string name="map_copyright_fdroid">Tiles Courtesy of MapQuest\n© přispěvatelé OpenStreetMap</string>
+    <string name="map_copyright_moz">© MapBox © přispěvatelé OpenStreetMap</string>
+    <string name="action_developer">Vývojář</string>
+    <string name="developer_title">Vývojář</string>
+    <!--<string name="enable_option_show_mls_on_map">Enable MLS location queries</string>-->
+    <!--<string name="enable_option_show_mls_on_map_summary">Show Mozilla Location Service (MLS) locations for your reports.</string>-->
+    <!-- enable_option_show_mls_on_map_detailed_info: %1$s refers to upload_wifi_only_title -->
+    <!--<string name="enable_option_show_mls_on_map_detailed_info">At the cost of a bit more energy, memory and network usage, the MLS location is shown for each report. This is shown on the map as a red dot for the MLS location, with a line to its report. However, it will not query locations over mobile data connections if \"%1$s\" is enabled.</string>-->
+    <string name="cell_plus_wifi_observation">report Wi-Fi + mobilní sítě</string>
+    <string name="cell_only_observation">report pouze mobilní sítě</string>
+    <string name="wifi_only_observation">report pouze Wi-Fi</string>
+    <string name="mls_location_observation">pozice MLS</string>
+    <string name="low_resolution_map">Mapa s nízkými detaily</string>
+    <string name="map_turned_off">Vypnout zobrazování mapy</string>
+    <string name="map_tile_resolution_options_label">Detaily mapy:</string>
+    <string name="map_tile_resolution_options_label_dynamic">Detaily mapy: %1$s</string>
+    <string name="map_tile_resolution_options_summary">Nízké detaily sníží spotřebu dat.</string>
+    <string name="enable_crash_reporting">Povolit hlášení pádů</string>
+    <string name="enable_simulation">Povolit simulaci</string>
+    <string name="clear_simulation_start_location">Smazat výchozí pozici simulace</string>
+    <string name="privacy_policy">Ochrana soukromí:</string>
+    <string name="satellites_separator">/</string>
+    <string name="must_uninstall_to_update">Před aktualizací na novou verzi aplikaci nejprve odinstalujte.</string>
+    <string name="category_leaderboard">Žebříček</string>
+    <string name="category_network_usage">Využití sítě</string>
+    <string name="category_display">Displej</string>
+    <string name="reset_simulation_start">Výchozí pozice simulace byla obnovena</string>
+    <string name="category_crashreport">Hlášení chyb</string>
 
+    <string-array name="map_tile_resolution_options">
+        <item>Vysoké (Wi-Fi) / nízké (mobilní)</item>
+        <item>Pouze vysoké</item>
+        <item>Pouze nízké</item>
+        <item>Žádná mapa</item>
+    </string-array>
 
+    <string name="low_battery_title">Zastavit sběr dat při nízkém stavu baterie</string>
+    <string name="battery_percent_options_label">Zastavit, pokud stav baterie klesne na:</string>
+    <string name="motion_detection_title">Detekce pohybu</string>
+    <string name="motion_detection_options_label">Pozastavit sběr dat, pokud se nepohnete o</string>
+    <string name="motion_detection_options_conjunction">za</string>
+    <string name="map_scanning_paused_no_motion">Pozice je beze změny, sběr dat pozastaven.</string>
+    <string name="save_stumble_logs">Uložit logy</string>
+    <string name="create_log_archive_failure">Nelze vytvořit adresář pro archiv logů</string>
+    <string name="create_log_archive_success">Logy budou ukládány do:</string>
+    <string name="power_saving_mode_summary">Pozastaví sběr dat, pokud nejste v pohybu a opět jej spustí, jakmile bude nějaký pohyb zaznamenán.</string>
+    <string name="power_saving_title">Spotřeba energie</string>
+    <string name="stop_at_x_battery">Zastavit při %1$d%%</string>
+    <string name="motion_detection_onoff">Detekce pohybu %1$s</string>
+    <string name="change_power_saving">Změnit</string>
+    <string name="on">Zapnuto</string>
+    <string name="off">Vypnuto</string>
 
-    <string name="title_activity_log">Log</string>
-    <string name="action_view_log">View Log</string>
-    <string name="scroll_to_start">Scroll to Top</string>
-    <string name="scroll_to_end">Scroll to End</string>-->
+    <string name="title_activity_power_saving_screen">Nastavení spotřeby energie</string>
+    <string name="sensor_type_legacy">Vaše zařízení má pouze starší senzory. Pokud se po opětovném pohybu sběr dat automaticky nespustí, vypněte tuto volbu.</string>
+    <string name="sensor_type_significant_motion">Vaše zařízení má senzor pohybu, doporučené nastavení detekce pohybu je \'Zapnuto\'.</string>
+
+    <string name="ok">OK</string>
+    <string name="whats_new_title">Co je nového</string>
+<!--<string name="whats_new">
+<b>v1.6.1 (includes v1.6.0 changes)</b>
+\n<li>More conservative power saving to address the problem where the stumbler does not wake up from sleep.</li>
+\n<li>New power saving options in drawer, motion sensing defaults to on only for devices with a significant motion sensor</li>
+\n<li>Home screen widget removed temporarily due to performance problem</li>
+\n<li>Better offline map support</li>
+\n<li>Wifi blocklist updates</li>
+\n<li>No more logging of opt-out SSIDs</li>
+\n<li>Translation updates for Taiwanese, Finnish, German, and Polish</li>
+\n<li>You can now file a bug through the settings panel.</li>
+\n<li>Option to export all stumble logs into your SDCARD for your own analysis.</li>
+\n<li>Public notification support added for Android 5.</li>
+\n<li>New testing infrastructure for developers</li>
+\n<li>Simulation mode added to the developer options.</li>
+</string>-->
 </resources>

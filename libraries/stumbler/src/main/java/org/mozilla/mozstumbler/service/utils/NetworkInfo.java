@@ -12,23 +12,23 @@ import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
 public final class NetworkInfo {
     private static final String LOG_TAG = LoggerUtil.makeLogTag(NetworkInfo.class);
-    static NetworkInfo sInstance;
+    static NetworkInfo instance;
     ConnectivityManager mConnectivityManager;
 
-    private NetworkInfo() {
-    }
+    // must be private as createGlobalInstance() is the entry point.
+    private NetworkInfo(){};
 
     /* Created at startup by app, or service, using a context. */
     public static synchronized void createGlobalInstance(Context context) {
         getInstance();
-        sInstance.mConnectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        instance.mConnectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
     }
 
     public static synchronized NetworkInfo getInstance() {
-        if (sInstance == null) {
-            sInstance = new NetworkInfo();
+        if (instance == null) {
+            instance = new NetworkInfo();
         }
-        return sInstance;
+        return instance;
     }
 
     public synchronized boolean isConnected() {

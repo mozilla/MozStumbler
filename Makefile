@@ -1,6 +1,9 @@
-test: unittest
+test: libtest unittest
 	./gradlew copyTestResources
 	./gradlew testGithubUnittest --info
+
+libtest:
+	cd libraries/stumbler; ./gradlew test
 
 unittest:
 	./gradlew assembleGithubUnittest
@@ -23,7 +26,8 @@ fdroid:
 	sh rename_release.sh fdroid-release
 
 clean:
-	rm -rf outputs/*
+	rm -rf outputs
+	rm -rf libraries/stumbler/build
 	./gradlew clean
 
 install_debug:

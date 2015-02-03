@@ -71,9 +71,6 @@ public class UpdaterTest {
         clock.setCurrentTime(now);
 
         assertTrue(upd.checkForUpdates(activity, "anything_else"));
-        now += Updater.UPDATE_CHECK_FREQ_MS;
-        clock.setCurrentTime(now);
-
         assertEquals("1.3.0", upd.stripBuildHostName("1.3.0.Victors-MBPr"));
         assertEquals("1.3.0", upd.stripBuildHostName("1.3.0"));
     }
@@ -95,14 +92,6 @@ public class UpdaterTest {
 
         // wifi is always unavailable
         doReturn(false).when(upd).wifiExclusiveAndUnavailable(Mockito.any(Context.class));
-
-        assertFalse(upd.checkForUpdates(activity, ""));
-        now += Updater.UPDATE_CHECK_FREQ_MS;
-        clock.setCurrentTime(now);
-
-        assertFalse(upd.checkForUpdates(activity, null));
-        now += Updater.UPDATE_CHECK_FREQ_MS;
-        clock.setCurrentTime(now);
 
         assertTrue(upd.checkForUpdates(activity, "anything_else"));
         now += Updater.UPDATE_CHECK_FREQ_MS;

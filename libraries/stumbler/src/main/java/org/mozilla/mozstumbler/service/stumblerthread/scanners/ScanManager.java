@@ -53,10 +53,10 @@ public class ScanManager {
     private LocationChangeSensor mLocationChangeSensor;
     private MotionSensor mMotionSensor;
 
-    private enum ScannerState {
+    enum ScannerState {
         STOPPED, STARTED, STARTED_BUT_PAUSED_MOTIONLESS
     }
-    private ScannerState mScannerState = ScannerState.STOPPED;
+     ScannerState mScannerState = ScannerState.STOPPED;
 
     // After DetectUnchangingLocation reports the user is not moving, and the scanning pauses,
     // then use MotionSensor to determine when to wake up and start scanning again.
@@ -67,8 +67,7 @@ public class ScanManager {
                     Prefs.getInstance(mAppContext).getPowerSavingMode() == Prefs.PowerSavingModeOptions.Off) {
                 return;
             }
-            stopScanning();
-            mScannerState = ScannerState.STARTED_BUT_PAUSED_MOTIONLESS;
+            pauseScanning();
 
             if (AppGlobals.isDebug) {
                 ClientLog.d(LOG_TAG, "MotionSensor started");
@@ -210,13 +209,23 @@ public class ScanManager {
         }
     }
 
+    private synchronized boolean pauseScanning() {
+        if (isStopped()) {
+            return false;
+        }
+        mScannerState = ScannerState.STARTED_BUT_PAUSED_MOTIONLESS;
+        return stopAllScanners();
+    }
+
     public synchronized boolean stopScanning() {
         if (isStopped()) {
             return false;
         }
-
         mScannerState = ScannerState.STOPPED;
+        return stopAllScanners();
+    }
 
+    private boolean stopAllScanners() {
         if (mAppContext instanceof SimulationContext) {
             ((SimulationContext) mAppContext).deactivateSimulation();
         }

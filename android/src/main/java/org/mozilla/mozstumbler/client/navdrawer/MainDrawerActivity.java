@@ -160,7 +160,7 @@ public class MainDrawerActivity
         if (svc == null) {
             return;
         }
-        if (svc.isScanning()) {
+        if (!svc.isStopped()) {
             keepScreenOn(ClientPrefs.getInstance(this).getKeepScreenOn());
         } else {
             keepScreenOn(false);

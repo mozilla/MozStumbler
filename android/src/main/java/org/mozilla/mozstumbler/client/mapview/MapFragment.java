@@ -469,7 +469,7 @@ public class MapFragment extends android.support.v4.app.Fragment
 
         final ClientStumblerService service = getApplication().getService();
         float alpha = 0.5f;
-        if (service != null && service.isScanning()) {
+        if (service != null && !service.isStopped()) {
             alpha = 1.0f;
         }
         v.setAlpha(alpha);

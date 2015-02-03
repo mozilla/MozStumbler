@@ -6,7 +6,9 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.hardware.SensorManager;
 import android.net.wifi.ScanResult;
+import android.os.Handler;
 import android.support.v4.content.LocalBroadcastManager;
+import android.widget.Toast;
 
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.WifiScanner;
@@ -95,6 +97,7 @@ WifiScanner mScanner;
             if (common >= (Math.max(mWifiListWhenStarted.size(), results.size()) * kPercentMatch)) {
                 Intent sendIntent = new Intent(LocationChangeSensor.ACTION_LOCATION_NOT_CHANGING);
                 LocalBroadcastManager.getInstance(mAppContext).sendBroadcastSync(sendIntent);
+                Toast.makeText(mAppContext, "same wifi", Toast.LENGTH_SHORT).show();
             }
 
             // unregister and stop the scanner
@@ -119,5 +122,16 @@ WifiScanner mScanner;
             LocalBroadcastManager.getInstance(mAppContext).registerReceiver(b2, new IntentFilter(WifiScanner.ACTION_WIFIS_SCANNED));
             mScanner.start(AppGlobals.ActiveOrPassiveStumbling.ACTIVE_STUMBLING);
         }
+
+        Runnable runnable = new Runnable() {
+            public void run() {
+                if (mScanner != null) {
+                    mScanner.stop();
+                }
+                unregister();
+            }
+        };
+        final long kWaitForWifiResultsMs = 20 * 1000;
+        new Handler().postDelayed(runnable, kWaitForWifiResultsMs);
     }
 }

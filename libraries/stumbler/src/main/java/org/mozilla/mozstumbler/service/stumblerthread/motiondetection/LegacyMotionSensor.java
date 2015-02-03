@@ -33,8 +33,8 @@ public class LegacyMotionSensor implements IMotionSensor {
     };
     private final Context mAppContext;
     // A few sensor movements are required within a time window before we say there is user motion.
-    private final int TIME_WINDOW_MS = 1000;
-    private final int MOVEMENTS_REQUIRED_IN_TIME_WINDOW = 3;
+    private final int TIME_WINDOW_MS = 2000;
+    private final int MOVEMENTS_REQUIRED_IN_TIME_WINDOW = 4;
     private final float alpha = (float) 0.8;
     public float computed_gravity = 0;
     private long mLastTimeThereWasMovementMs;
@@ -53,32 +53,26 @@ public class LegacyMotionSensor implements IMotionSensor {
      Real SensorEvent instances cannot be constructed on a test platform.
      */
     public void sensorChanged(int sensorType, float[] event_values) {
-        if (sensorType == Sensor.TYPE_ACCELEROMETER) {
-            gravity[0] = alpha * gravity[0] + (1 - alpha) * event_values[0];
-            gravity[1] = alpha * gravity[1] + (1 - alpha) * event_values[1];
-            gravity[2] = alpha * gravity[2] + (1 - alpha) * event_values[2];
+        gravity[0] = alpha * gravity[0] + (1 - alpha) * event_values[0];
+        gravity[1] = alpha * gravity[1] + (1 - alpha) * event_values[1];
+        gravity[2] = alpha * gravity[2] + (1 - alpha) * event_values[2];
 
-            linear_acceleration[0] = event_values[0] - gravity[0];
-            linear_acceleration[1] = event_values[1] - gravity[1];
-            linear_acceleration[2] = event_values[2] - gravity[2];
+        linear_acceleration[0] = event_values[0] - gravity[0];
+        linear_acceleration[1] = event_values[1] - gravity[1];
+        linear_acceleration[2] = event_values[2] - gravity[2];
 
-            computed_gravity = FloatMath.sqrt(gravity[0] * gravity[0] +
-                    gravity[1] * gravity[1] +
-                    gravity[2] * gravity[2]);
+        computed_gravity = FloatMath.sqrt(gravity[0] * gravity[0] +
+                gravity[1] * gravity[1] +
+                gravity[2] * gravity[2]);
 
-            if (iterations_for_convergence > 0) {
-                // We don't use an epsilon to detect convergence because imperically
-                // devices don't seem to comply to the 0.05m/s^2 error that Google
-                // specifies.  The Motorola XT1032 seems to get ~10.10 m/s^s for gravity
-                // when it's tilted to stand on it's edge.  When laid flat,
-                // it gets pretty close with 9.89m/s^2 which is still far from 9.81m/s^2
-                iterations_for_convergence--;
-                return;
-            }
-        } else {
-            linear_acceleration[0] = event_values[0];
-            linear_acceleration[1] = event_values[1];
-            linear_acceleration[2] = event_values[2];
+        if (iterations_for_convergence > 0) {
+            // We don't use an epsilon to detect convergence because empirically
+            // devices don't seem to comply to the 0.05m/s^2 error that Google
+            // specifies.  The Motorola XT1032 seems to get ~10.10 m/s^s for gravity
+            // when it's tilted to stand on it's edge.  When laid flat,
+            // it gets pretty close with 9.89m/s^2 which is still far from 9.81m/s^2
+            iterations_for_convergence--;
+            return;
         }
 
         float x = linear_acceleration[0];
@@ -87,7 +81,6 @@ public class LegacyMotionSensor implements IMotionSensor {
 
         final float accel = FloatMath.sqrt(x * x + y * y + z * z);
 
-        // I found this to be a very low threshold, slight movements of the device are greater than 1.0.
         // False positives are fine, what we don't want is devices that can't be woken up easily.
         final float arbitraryThresholdForMovement = 1.0f;
 
@@ -110,14 +103,6 @@ public class LegacyMotionSensor implements IMotionSensor {
 
     @Override
     public void start() {
-        mSensorManager.registerListener(mSensorEventListener,
-                mSensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION),
-                SensorManager.SENSOR_DELAY_NORMAL);
-
-        // Some devices are really terrible. The Moto G XT1032 should respond to the
-        // TYPE_LINEAR_ACCELERATION, but will only respond to the TYPE_ACCELEROMETER (API 3).
-        // Luckily, both event types emit the same struct.  Who knows why there are two
-        // different constants.
         mSensorManager.registerListener(mSensorEventListener,
                 mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
                 SensorManager.SENSOR_DELAY_NORMAL);

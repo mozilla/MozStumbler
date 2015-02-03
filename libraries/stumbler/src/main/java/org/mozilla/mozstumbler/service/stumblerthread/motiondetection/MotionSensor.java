@@ -1,12 +1,19 @@
 package org.mozilla.mozstumbler.service.stumblerthread.motiondetection;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.hardware.SensorManager;
+import android.net.wifi.ScanResult;
 import android.support.v4.content.LocalBroadcastManager;
 
 import org.mozilla.mozstumbler.service.AppGlobals;
+import org.mozilla.mozstumbler.service.stumblerthread.scanners.WifiScanner;
 import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MotionSensor {
 
@@ -18,6 +25,10 @@ public class MotionSensor {
 
     private IMotionSensor motionSensor;
     private static MotionSensor sDebugInstance;
+
+    private List<String> mWifiListWhenStarted = new ArrayList<String>();
+
+WifiScanner mScanner;
 
     public MotionSensor(Context appCtx) {
         mAppContext = appCtx;
@@ -51,11 +62,62 @@ public class MotionSensor {
         return SignificantMotionSensor.getSensor(appCtx) != null;
     }
 
+    void unregister() {
+        try {
+            LocalBroadcastManager.getInstance(mAppContext).unregisterReceiver(b1);
+        } catch (Exception ex) {}
+        try {
+            LocalBroadcastManager.getInstance(mAppContext).unregisterReceiver(b2);
+        } catch (Exception ex) {}
+    }
+
+    BroadcastReceiver b1 = new BroadcastReceiver() {
+        public void onReceive(Context context, Intent intent) {
+            List<ScanResult> results = intent.getParcelableArrayListExtra(WifiScanner.ACTION_WIFIS_SCANNED_ARG_RESULTS);
+            for (ScanResult r : results){
+                mWifiListWhenStarted.add(r.BSSID);
+            }
+            mScanner.stop();
+            unregister();
+        }
+    };
+    BroadcastReceiver b2 = new BroadcastReceiver() {
+        public void onReceive(Context context, Intent intent) {
+            List<ScanResult> results = intent.getParcelableArrayListExtra(WifiScanner.ACTION_WIFIS_SCANNED_ARG_RESULTS);
+            int common = 0;
+            for (ScanResult r : results) {
+                if (mWifiListWhenStarted.contains(r.BSSID)) {
+                    common++;
+                }
+            }
+            double kPercentMatch = 0.5;
+            // if more than 50% match, then we assume the user hasn't moved
+            if (common >= (Math.max(mWifiListWhenStarted.size(), results.size()) * kPercentMatch)) {
+                Intent sendIntent = new Intent(LocationChangeSensor.ACTION_LOCATION_NOT_CHANGING);
+                LocalBroadcastManager.getInstance(mAppContext).sendBroadcastSync(sendIntent);
+            }
+
+            // unregister and stop the scanner
+            mScanner.stop();
+            unregister();
+        }
+    };
+
     public void start() {
         motionSensor.start();
+        if (mScanner == null) {
+            mScanner = new WifiScanner(mAppContext);
+        }
+        unregister();
+        LocalBroadcastManager.getInstance(mAppContext).registerReceiver(b1, new IntentFilter(WifiScanner.ACTION_WIFIS_SCANNED));
+        mScanner.start(AppGlobals.ActiveOrPassiveStumbling.ACTIVE_STUMBLING);
     }
 
     public void stop() {
         motionSensor.stop();
+        if (mScanner != null) {
+            LocalBroadcastManager.getInstance(mAppContext).registerReceiver(b2, new IntentFilter(WifiScanner.ACTION_WIFIS_SCANNED));
+            mScanner.start(AppGlobals.ActiveOrPassiveStumbling.ACTIVE_STUMBLING);
+        }
     }
 }

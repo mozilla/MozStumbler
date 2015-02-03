@@ -23,9 +23,9 @@ public class SignificantMotionSensor implements IMotionSensor {
     private Sensor mSignificantMotionSensor;
     private boolean mStopSignificantMotionSensor;
     static SensorManager mSensorManager;
+    private final LegacyMotionSensor mLegacyFallbackSensor;
 
     public static SignificantMotionSensor getSensor(Context appCtx) {
-
         mSensorManager = (SensorManager) appCtx.getSystemService(Context.SENSOR_SERVICE);
         Sensor significantSensor;
         if (mSensorManager == null) {
@@ -46,11 +46,14 @@ public class SignificantMotionSensor implements IMotionSensor {
         mStopSignificantMotionSensor = false;
         mSignificantMotionSensor = significantSensor;
         mAppContext = appCtx;
+        mLegacyFallbackSensor = new LegacyMotionSensor(appCtx);
     }
 
     @Override
     public void start() {
         mStopSignificantMotionSensor = false;
+
+        mLegacyFallbackSensor.start();
 
         if (Build.VERSION.SDK_INT >= 18) {
             final TriggerEventListener tr = new TriggerEventListener() {
@@ -61,7 +64,6 @@ public class SignificantMotionSensor implements IMotionSensor {
                         return;
                     }
                     AppGlobals.guiLogInfo("Major motion detected.");
-
 
                     LocalBroadcastManager localBroadcastManager = null;
 
@@ -107,6 +109,7 @@ public class SignificantMotionSensor implements IMotionSensor {
     @Override
     public void stop() {
         mStopSignificantMotionSensor = true;
+        mLegacyFallbackSensor.stop();
     }
 
     @Override

@@ -57,6 +57,9 @@ public class SampleImplementation implements ISampleInterface {
     }
 
     @Override
+    public void voidMethod() { }
+
+    @Override
     public ServiceLocator getServiceLocator() {
         return ServiceLocator.getInstance();
     }

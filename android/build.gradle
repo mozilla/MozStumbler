@@ -239,6 +239,7 @@ dependencies {
     compile "org.apache.james:apache-mime4j:0.6"
 
     compile project(':libraries:stumbler')
+    testCompile project(':libraries:stumbler')
 }
 
 

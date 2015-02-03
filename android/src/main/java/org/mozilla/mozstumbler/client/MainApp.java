@@ -78,7 +78,7 @@ public class MainApp extends Application
     private final BroadcastReceiver mReceivePausedOrUnpausedState = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
             mIsScanningPausedDueToNoMotion =
-                intent.getAction().equals(ScanManager.ACTION_SCAN_PAUSED_USER_MOTIONLESS) && !mStumblerService.isStopped();
+                intent.getAction().equals(ScanManager.ACTION_SCAN_PAUSED_USER_MOTIONLESS);
 
             new Handler(context.getMainLooper()).post(new Runnable() {
                 public void run() {

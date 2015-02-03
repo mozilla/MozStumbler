@@ -75,9 +75,11 @@ public class MainApp extends Application
     private ServiceBroadcastReceiver mReceiver;
     private WeakReference<IMainActivity> mMainActivity = new WeakReference<IMainActivity>(null);
     private boolean mIsScanningPausedDueToNoMotion;
-    private final BroadcastReceiver mReceivePausedState = new BroadcastReceiver() {
+    private final BroadcastReceiver mReceivePausedOrUnpausedState = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
-            mIsScanningPausedDueToNoMotion = intent.getBooleanExtra(ScanManager.ACTION_EXTRA_IS_PAUSED, false);
+            mIsScanningPausedDueToNoMotion =
+                intent.getAction().equals(ScanManager.ACTION_SCAN_PAUSED_USER_MOTIONLESS);
+
             new Handler(context.getMainLooper()).post(new Runnable() {
                 public void run() {
                     updateMotionDetected();
@@ -226,8 +228,9 @@ public class MainApp extends Application
         Intent intent = new Intent(this, ClientStumblerService.class);
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
 
-        LocalBroadcastManager.getInstance(this).
-                registerReceiver(mReceivePausedState, new IntentFilter(ScanManager.ACTION_SCAN_PAUSED_USER_MOTIONLESS));
+        LocalBroadcastManager lbm = LocalBroadcastManager.getInstance(this);
+        lbm.registerReceiver(mReceivePausedOrUnpausedState, new IntentFilter(ScanManager.ACTION_SCAN_UNPAUSED_USER_MOVED));
+        lbm.registerReceiver(mReceivePausedOrUnpausedState, new IntentFilter(ScanManager.ACTION_SCAN_PAUSED_USER_MOTIONLESS));
     }
 
     private void checkSimulationPermission() {
@@ -323,7 +326,7 @@ public class MainApp extends Application
         if (mStumblerService == null) {
             return false;
         }
-        return mStumblerService.isScanning() || mIsScanningPausedDueToNoMotion;
+        return !mStumblerService.isStopped();
     }
 
     public void showDeveloperDialog(Activity activity) {

@@ -28,11 +28,10 @@ import java.util.TimerTask;
 
 public class ScanManager {
     public static final String ACTION_SCAN_PAUSED_USER_MOTIONLESS = AppGlobals.ACTION_NAMESPACE + ".NOTIFY_USER_MOTIONLESS";
-    public static final String ACTION_EXTRA_IS_PAUSED = "IS_PAUSED";
+    public static final String ACTION_SCAN_UNPAUSED_USER_MOVED = AppGlobals.ACTION_NAMESPACE + ".NOTIFY_USER_MOVED";
     private static final String LOG_TAG = LoggerUtil.makeLogTag(ScanManager.class);
     private static Context mAppContext;
     private Timer mPassiveModeFlushTimer;
-    private boolean mIsScanning;
     private GPSScanner mGPSScanner;
     private WifiScanner mWifiScanner;
     private CellScanner mCellScanner;
@@ -53,34 +52,40 @@ public class ScanManager {
     };
     private LocationChangeSensor mLocationChangeSensor;
     private MotionSensor mMotionSensor;
-    private boolean mIsMotionlessPausedState;
+
+    enum ScannerState {
+        STOPPED, STARTED, STARTED_BUT_PAUSED_MOTIONLESS
+    }
+     ScannerState mScannerState = ScannerState.STOPPED;
+
     // After DetectUnchangingLocation reports the user is not moving, and the scanning pauses,
     // then use MotionSensor to determine when to wake up and start scanning again.
     private final BroadcastReceiver mDetectUserIdleReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (!isScanning() ||
+            if (isStopped() ||
                     Prefs.getInstance(mAppContext).getPowerSavingMode() == Prefs.PowerSavingModeOptions.Off) {
                 return;
             }
-            stopScanning();
-            mIsMotionlessPausedState = true;
+            pauseScanning();
+
             if (AppGlobals.isDebug) {
                 ClientLog.d(LOG_TAG, "MotionSensor started");
             }
             mMotionSensor.start();
 
             Intent sendIntent = new Intent(ACTION_SCAN_PAUSED_USER_MOTIONLESS);
-            sendIntent.putExtra(ACTION_EXTRA_IS_PAUSED, mIsMotionlessPausedState);
             LocalBroadcastManager.getInstance(mAppContext).sendBroadcastSync(sendIntent);
         }
     };
+
     private final BroadcastReceiver mDetectMotionReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (isScanning() || !mIsMotionlessPausedState) {
+            if (mScannerState != ScannerState.STARTED_BUT_PAUSED_MOTIONLESS ) {
                 return;
             }
+            mScannerState = ScannerState.STOPPED; // To ensure startScanning() runs
             startScanning(context);
             mMotionSensor.stop();
 
@@ -88,8 +93,7 @@ public class ScanManager {
                 mLocationChangeSensor.quickCheckForFalsePositiveAfterMotionSensorMovement();
             }
 
-            Intent sendIntent = new Intent(ACTION_SCAN_PAUSED_USER_MOTIONLESS);
-            sendIntent.putExtra(ACTION_EXTRA_IS_PAUSED, mIsMotionlessPausedState);
+            Intent sendIntent = new Intent(ACTION_SCAN_UNPAUSED_USER_MOVED);
             LocalBroadcastManager.getInstance(mAppContext).sendBroadcastSync(sendIntent);
         }
     };
@@ -154,7 +158,7 @@ public class ScanManager {
     public synchronized void startScanning(Context ctx) {
         ClientLog.d(LOG_TAG, "ScanManager::startScanning");
 
-        if (isScanning()) {
+        if (!isStopped()) {
             return;
         }
 
@@ -164,7 +168,7 @@ public class ScanManager {
             return;
         }
 
-        mIsMotionlessPausedState = false;
+        mScannerState = ScannerState.STARTED;
 
         if (mLocationChangeSensor == null) {
             mLocationChangeSensor = new LocationChangeSensor(mAppContext, mDetectUserIdleReceiver);
@@ -203,14 +207,25 @@ public class ScanManager {
 
             // in passive mode, these scans are started by passive gps notifications
         }
-        mIsScanning = true;
+    }
+
+    private synchronized boolean pauseScanning() {
+        if (isStopped()) {
+            return false;
+        }
+        mScannerState = ScannerState.STARTED_BUT_PAUSED_MOTIONLESS;
+        return stopAllScanners();
     }
 
     public synchronized boolean stopScanning() {
-        if (!this.isScanning() && !mIsMotionlessPausedState) {
+        if (isStopped()) {
             return false;
         }
+        mScannerState = ScannerState.STOPPED;
+        return stopAllScanners();
+    }
 
+    private boolean stopAllScanners() {
         if (mAppContext instanceof SimulationContext) {
             ((SimulationContext) mAppContext).deactivateSimulation();
         }
@@ -221,7 +236,6 @@ public class ScanManager {
             ClientLog.d(LOG_TAG, "Scanning stopped");
         }
 
-        mIsMotionlessPausedState = false;
         mLocationChangeSensor.stop();
         mMotionSensor.stop();
 
@@ -241,12 +255,11 @@ public class ScanManager {
         mWifiScanner = null;
         mCellScanner = null;
 
-        mIsScanning = false;
         return true;
     }
 
-    public synchronized boolean isScanning() {
-        return mIsScanning;
+    public synchronized boolean isStopped() {
+        return mScannerState == ScannerState.STOPPED;
     }
 
     public int getVisibleAPCount() {

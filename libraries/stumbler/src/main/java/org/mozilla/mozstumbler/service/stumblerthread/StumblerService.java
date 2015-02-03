@@ -53,8 +53,8 @@ public class StumblerService extends PersistentIntentService
         super(name);
     }
 
-    public synchronized boolean isScanning() {
-        return mScanManager.isScanning();
+    public synchronized boolean isStopped() {
+        return mScanManager.isStopped();
     }
 
     public synchronized void startScanning() {
@@ -121,7 +121,7 @@ public class StumblerService extends PersistentIntentService
     public void onDestroy() {
         super.onDestroy();
 
-        if (!isScanning()) {
+        if (isStopped()) {
             return;
         }
 

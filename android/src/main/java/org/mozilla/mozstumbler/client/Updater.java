@@ -19,6 +19,7 @@ import org.mozilla.mozstumbler.service.core.http.IHttpUtil;
 import org.mozilla.mozstumbler.service.core.http.IResponse;
 import org.mozilla.mozstumbler.service.utils.NetworkInfo;
 import org.mozilla.mozstumbler.svclocator.ServiceLocator;
+import org.mozilla.mozstumbler.svclocator.services.ISystemClock;
 import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
 import java.io.File;
@@ -32,9 +33,8 @@ public class Updater {
     private static final String LOG_TAG = LoggerUtil.makeLogTag(Updater.class);
     private static final String LATEST_URL = "https://github.com/mozilla/MozStumbler/releases/latest";
     private static final String APK_URL_FORMAT = "https://github.com/mozilla/MozStumbler/releases/download/v%s/MozStumbler-v%s.apk";
-
-    public Updater() {
-    }
+    public static final long UPDATE_CHECK_FREQ_MS = 6 * 60 * 60 * 1000; // 6 hours
+    static long sLastUpdateCheck = 0;
 
     public boolean wifiExclusiveAndUnavailable(Context c) {
         return !NetworkInfo.getInstance().isWifiAvailable() && ClientPrefs.getInstance(c).getUseWifiOnly();
@@ -43,8 +43,18 @@ public class Updater {
 
     public boolean checkForUpdates(final Activity activity, String api_key) {
 
+        ISystemClock clock = (ISystemClock) ServiceLocator.getInstance().getService(ISystemClock.class);
+
+        if (clock.currentTimeMillis() - sLastUpdateCheck < UPDATE_CHECK_FREQ_MS) {
+            return false;
+        }
+
         // No API Key means skip the update
         if (api_key == null || api_key.equals("")) {
+            return false;
+        }
+
+        if (!NetworkInfo.getInstance().isConnected()) {
             return false;
         }
 
@@ -99,6 +109,7 @@ public class Updater {
             }
         }.execute();
 
+        sLastUpdateCheck = clock.currentTimeMillis();
         return true;
     }
 

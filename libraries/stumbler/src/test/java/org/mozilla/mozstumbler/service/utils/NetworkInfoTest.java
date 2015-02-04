@@ -32,7 +32,6 @@ public class NetworkInfoTest {
     }
 
     @Test
-    @Config(shadows = {MyShadowConnectivityManager.class})
     public void testIsConnectedNoConnManager() {
         // Test that the isConnected method doesn't bomb out without a connection manager
 
@@ -42,6 +41,7 @@ public class NetworkInfoTest {
     }
 
     @Test
+    @Config(shadows = {MyShadowConnectivityManager.class})
     public void testIsConnectedWithGlobal() {
         NetworkInfo.createGlobalInstance(ctx);
         NetworkInfo ni = NetworkInfo.getInstance();

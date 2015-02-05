@@ -21,7 +21,12 @@ public final class NetworkInfo {
     /* Created at startup by app, or service, using a context. */
     public static synchronized void createGlobalInstance(Context context) {
         getInstance();
-        instance.mConnectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        // getSystemService() should be called on the application context instead of any context.
+        // This enables us to replace the system service using robolectric.
+        instance.mConnectivityManager = (ConnectivityManager) context
+                                .getApplicationContext()
+                                .getSystemService(Context.CONNECTIVITY_SERVICE);
     }
 
     public static synchronized NetworkInfo getInstance() {

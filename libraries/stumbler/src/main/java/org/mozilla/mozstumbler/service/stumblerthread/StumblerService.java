@@ -58,7 +58,6 @@ public class StumblerService extends PersistentIntentService
     }
 
     public synchronized void startScanning() {
-
         mScanManager.startScanning(this);
     }
 
@@ -157,7 +156,7 @@ public class StumblerService extends PersistentIntentService
 
     // This is the entry point for the stumbler thread.
     @Override
-    protected void onHandleIntent(Intent intent) {
+    public void onHandleIntent(Intent intent) {
         // Do init() in all cases, there is no cost, whereas it is easy to add code that depends on this.
         init();
 

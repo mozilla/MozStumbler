@@ -33,6 +33,8 @@ public class PassiveServiceReceiver extends BroadcastReceiver {
     // |adb shell setprop log.tag.PassiveStumbler DEBUG|
     static final String LOG_TAG = "PassiveStumbler";
 
+
+
     @Override
     public void onReceive(Context context, Intent intent) {
         if (intent == null) {
@@ -77,4 +79,19 @@ public class PassiveServiceReceiver extends BroadcastReceiver {
         startServiceIntent.putExtra(StumblerService.ACTION_EXTRA_USER_AGENT, userAgent);
         context.startService(startServiceIntent);
     }
+
+    public static Intent createStartIntent(String moz_api_key, String user_agent) {
+        Intent intent = new Intent("org.mozilla.mozstumbler.STUMBLER_PREF");
+        intent.putExtra("enabled", true);
+        intent.putExtra("moz_mozilla_api_key", moz_api_key);
+        intent.putExtra("user_agent", user_agent);
+        return intent;
+    }
+
+    public static Intent createStopIntent() {
+        Intent intent = new Intent("org.mozilla.mozstumbler.STUMBLER_PREF");
+        intent.putExtra("enabled", false);
+        return intent;
+    }
+
 }

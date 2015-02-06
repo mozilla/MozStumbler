@@ -10,7 +10,7 @@ import android.util.Log;
 
 import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
-public final class NetworkInfo {
+public class NetworkInfo {
     private static final String LOG_TAG = LoggerUtil.makeLogTag(NetworkInfo.class);
     static NetworkInfo instance;
     ConnectivityManager mConnectivityManager;

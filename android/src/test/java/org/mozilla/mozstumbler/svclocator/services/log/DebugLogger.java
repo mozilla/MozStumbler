@@ -6,11 +6,17 @@ package org.mozilla.mozstumbler.svclocator.services.log;
 
 import android.support.v4.util.CircularArray;
 
+import org.robolectric.shadows.ShadowLog;
+
 /*
  This is a proxy around the android logger so that we can see what the heck
  is happening when we run under test.
  */
 public class DebugLogger implements ILogger {
+
+    static {
+        ShadowLog.stream = System.out;
+    }
 
     public static CircularArray<String> messageBuffer = new CircularArray<String>(10);
 

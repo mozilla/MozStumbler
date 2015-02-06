@@ -70,6 +70,7 @@ public class MapFragment extends android.support.v4.app.Fragment
     private static final String LOG_TAG = LoggerUtil.makeLogTag(MapFragment.class);
     private static final String COVERAGE_REDIRECT_URL = "https://location.services.mozilla.com/map.json";
     private static final String ZOOM_KEY = "zoom";
+    private static final int LOWEST_UNLIMITED_ZOOM = 6;
     private static final int DEFAULT_ZOOM = 13;
     private static final int DEFAULT_ZOOM_AFTER_FIX = 16;
     private static final String LAT_KEY = "latitude";
@@ -133,7 +134,6 @@ public class MapFragment extends android.support.v4.app.Fragment
         mMap = (MapView) mRootView.findViewById(R.id.map);
         mMap.setBuiltInZoomControls(true);
         mMap.setMultiTouchControls(true);
-        mMap.setMinZoomLevel(AbstractMapOverlay.getDisplaySizeBasedMinZoomLevel());
     }
 
     private void initializeCenterMeListener() {
@@ -558,6 +558,12 @@ public class MapFragment extends android.support.v4.app.Fragment
         setShowMLS(prefs.getOnMapShowMLS());
 
         mObservationPointsOverlay.zoomChanged(mMap);
+        ClientPrefs cp = ClientPrefs.getInstance(mRootView.getContext());
+        if (!cp.isMapZoomLimited()) {
+            mMap.setMinZoomLevel(LOWEST_UNLIMITED_ZOOM);
+        } else {
+            mMap.setMinZoomLevel(AbstractMapOverlay.getDisplaySizeBasedMinZoomLevel());
+        }
         mMap.postInvalidate();
     }
 

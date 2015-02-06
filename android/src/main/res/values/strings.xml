@@ -195,5 +195,5 @@
 \n<li>New testing infrastructure for developers</li>
 \n<li>Simulation mode added to the developer options.</li>
 </string>
-    <string name="limit_map_zoom">Limit map zoom</string>
+    <string name="limit_map_zoom">Limit zooming out on map</string>
 </resources>

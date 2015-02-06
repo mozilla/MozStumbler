@@ -58,6 +58,8 @@ public class AsyncUploader extends AsyncTask<AsyncUploadParam, AsyncProgressList
 
     @Override
     protected Void doInBackground(AsyncUploadParam... params) {
+        AsyncProgressListenerStatusWrapper wrapper;
+
         if (params.length != 1) {
             return null;
         }
@@ -67,11 +69,12 @@ public class AsyncUploader extends AsyncTask<AsyncUploadParam, AsyncProgressList
             return null;
         }
 
-        AsyncProgressListenerStatusWrapper wrapper =
-                new AsyncProgressListenerStatusWrapper(sAsyncListener, true);
-        sAsyncListener.onUploadProgress(true);
+        if (sAsyncListener != null) {
+             wrapper = new AsyncProgressListenerStatusWrapper(sAsyncListener, true);
+            sAsyncListener.onUploadProgress(true);
+            publishProgress(wrapper);
+        }
 
-        publishProgress(wrapper);
 
         if (Prefs.getInstanceWithoutContext().isSaveStumbleLogs()) {
             try {
@@ -83,8 +86,10 @@ public class AsyncUploader extends AsyncTask<AsyncUploadParam, AsyncProgressList
         uploadReports(param);
 
         isUploading.set(false);
-        wrapper = new AsyncProgressListenerStatusWrapper(sAsyncListener, false);
-        publishProgress(wrapper);
+        if (sAsyncListener != null) {
+            wrapper = new AsyncProgressListenerStatusWrapper(sAsyncListener, false);
+            publishProgress(wrapper);
+        }
 
         return null;
     }

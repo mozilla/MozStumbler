@@ -90,7 +90,7 @@ public class ScanManager {
             mMotionSensor.stop();
 
             if (Prefs.getInstance(mAppContext).getPowerSavingMode() == Prefs.PowerSavingModeOptions.Aggressive) {
-                mLocationChangeSensor.quickCheckForFalsePositiveAfterMotionSensorMovement();
+              ////  mLocationChangeSensor.quickCheckForFalsePositiveAfterMotionSensorMovement();
             }
 
             Intent sendIntent = new Intent(ACTION_SCAN_UNPAUSED_USER_MOVED);

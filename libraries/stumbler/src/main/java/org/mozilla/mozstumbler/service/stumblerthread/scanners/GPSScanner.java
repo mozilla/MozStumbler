@@ -96,43 +96,37 @@ public class GPSScanner implements LocationListener {
 
         reportLocationLost();
 
-        mGPSListener = new GpsStatus.Listener() {
-            public void onGpsStatusChanged(int event) {
-                if (event == GpsStatus.GPS_EVENT_SATELLITE_STATUS) {
-                    GpsStatus status = getLocationManager().getGpsStatus(null);
-                    Iterable<GpsSatellite> sats = status.getSatellites();
+        if (mGPSListener == null) {
+            mGPSListener = new GpsStatus.Listener() {
+                public void onGpsStatusChanged(int event) {
+                    if (event == GpsStatus.GPS_EVENT_SATELLITE_STATUS) {
+                        GpsStatus status = getLocationManager().getGpsStatus(null);
 
-                    int satellites = 0;
-                    int fixes = 0;
-
-                    for (GpsSatellite sat : sats) {
-                        satellites++;
-                        if (sat.usedInFix()) {
-                            fixes++;
+                        int fixes = 0;
+                        for (GpsSatellite sat : status.getSatellites()) {
+                            if (sat.usedInFix()) {
+                                fixes++;
+                            }
                         }
-                    }
 
-                    if (fixes < MIN_SAT_USED_IN_FIX) {
+                        if (fixes < MIN_SAT_USED_IN_FIX) {
+                            reportLocationLost();
+                        }
+                    } else if (event == GpsStatus.GPS_EVENT_STOPPED) {
                         reportLocationLost();
                     }
-                } else if (event == GpsStatus.GPS_EVENT_STOPPED) {
-                    reportLocationLost();
                 }
-            }
-        };
+            };
 
-        lm.addGpsStatusListener(mGPSListener);
+            lm.addGpsStatusListener(mGPSListener);
+        }
     }
+
 
     public void stop() {
         LocationManager lm = getLocationManager();
         lm.removeUpdates(this);
-        reportLocationLost();
-
-        if (mGPSListener != null) {
-            lm.removeGpsStatusListener(mGPSListener);
-            mGPSListener = null;
-        }
+        //reportLocationLost();
     }
 
     public int getLocationCount() {

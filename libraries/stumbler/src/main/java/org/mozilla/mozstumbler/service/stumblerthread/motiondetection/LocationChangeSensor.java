@@ -51,7 +51,6 @@ public class LocationChangeSensor extends BroadcastReceiver {
         }
     };
     private long mStartTimeMs;
-    private boolean mDoSingleLocationCheck;
     private Location mLastLocation;
 
     public LocationChangeSensor(Context context, BroadcastReceiver callbackReceiver) {
@@ -72,7 +71,7 @@ public class LocationChangeSensor extends BroadcastReceiver {
             return;
         }
 
-        sDebugInstance.mDoSingleLocationCheck = true;
+        //sDebugInstance.mDoSingleLocationCheck = true;
         Intent intent = new Intent(GPSScanner.ACTION_GPS_UPDATED);
         intent.putExtra(Intent.EXTRA_SUBJECT, GPSScanner.SUBJECT_NEW_LOCATION);
         intent.putExtra(GPSScanner.NEW_LOCATION_ARG_LOCATION, sDebugInstance.mLastLocation);
@@ -154,18 +153,17 @@ public class LocationChangeSensor extends BroadcastReceiver {
             if (dist > mPrefMotionChangeDistanceMeters) {
                 ClientLog.d(LOG_TAG, "Received new location exceeding distance changed in meters pref");
                 mLastLocation = newPosition;
-            } else if (isTimeWindowForMovementExceeded() || mDoSingleLocationCheck) {
+            } else if (isTimeWindowForMovementExceeded()) {
                 String log = "Insufficient movement:" + dist + " m, " + mPrefMotionChangeDistanceMeters + " m needed.";
                 ClientLog.d(LOG_TAG, log);
                 AppGlobals.guiLogInfo(log);
-                mDoSingleLocationCheck = false;
+
                 LocalBroadcastManager.getInstance(mContext).sendBroadcastSync(new Intent(ACTION_LOCATION_NOT_CHANGING));
                 removeTimeoutCheck();
                 return;
             }
         }
 
-        mDoSingleLocationCheck = false;
         scheduleTimeoutCheck(mPrefMotionChangeTimeWindowMs);
     }
 
@@ -182,26 +180,9 @@ public class LocationChangeSensor extends BroadcastReceiver {
 
     boolean removeTimeoutCheck() {
         boolean wasScheduled = false;
-        try {
-            mHandler.removeCallbacks(mCheckTimeout);
-            wasScheduled = true;
-        } catch (Exception e) {
-        }
-
+        mHandler.removeCallbacks(null);
+        wasScheduled = true;
         return wasScheduled;
-    }
-
-    public void quickCheckForFalsePositiveAfterMotionSensorMovement() {
-        // False positives for movement are common, particularly for the legacy sensor.
-        // Without this check, a false positive cause scanning to run for mPrefMotionChangeTimeWindowMs (2 mins default).
-        // We don't need to wait the full time window before concluding the user has not moved.
-        // This check waits 20 seconds for location change, if no change, go back to paused.
-        long kWaitTimeMs = 1000 * 20;
-        if (kWaitTimeMs > mPrefMotionChangeTimeWindowMs && mPrefMotionChangeTimeWindowMs > 100) {
-            kWaitTimeMs = mPrefMotionChangeTimeWindowMs - 100;
-        }
-        mDoSingleLocationCheck = true;
-        scheduleTimeoutCheck(kWaitTimeMs);
     }
 
     Location testing_getLastLocation() {

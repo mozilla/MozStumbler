@@ -7,8 +7,6 @@ package org.mozilla.mozstumbler.service.stumblerthread.blocklist;
 import android.net.wifi.ScanResult;
 
 public final class SSIDBlockList {
-    private static String[] sPrefixList = new String[]{};
-    private static String[] sSuffixList = new String[]{};
     private static String sOptOut = "_nomap"; // Google's SSID opt-out
 
     private SSIDBlockList() {
@@ -23,18 +21,6 @@ public final class SSIDBlockList {
         String SSID = scanResult.SSID;
         if (SSID == null) {
             return true; // no SSID?
-        }
-
-        for (String prefix : sPrefixList) {
-            if (SSID.startsWith(prefix)) {
-                return true; // blocked!
-            }
-        }
-
-        for (String suffix : sSuffixList) {
-            if (SSID.endsWith(suffix)) {
-                return true; // blocked!
-            }
         }
 
         return false; // OK

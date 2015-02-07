@@ -4,6 +4,7 @@
 package org.mozilla.mozstumbler.client;
 
 import android.content.Context;
+import android.net.ConnectivityManager;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -31,10 +32,12 @@ import static org.mockito.Mockito.spy;
 @RunWith(RobolectricTestRunner.class)
 public class UpdaterTest {
 
+    private Context ctx;
     private MainDrawerActivity activity;
 
     @Before
     public void setUp() throws Exception {
+        ctx = Robolectric.application;
         activity = Robolectric.newInstanceOf(MainDrawerActivity.class);
         Updater.sLastUpdateCheck = 0;
     }
@@ -59,16 +62,14 @@ public class UpdaterTest {
         ServiceLocator.getInstance().putService(IHttpUtil.class, mockHttp);
         ServiceLocator.getInstance().putService(ISystemClock.class, clock);
 
-        // wifi is always unavailable
+        // network is always available
         doReturn(false).when(upd).wifiExclusiveAndUnavailable(Mockito.any(Context.class));
 
         assertFalse(upd.checkForUpdates(activity, ""));
-        now += Updater.UPDATE_CHECK_FREQ_MS;
-        clock.setCurrentTime(now);
+        assertEquals(0, Updater.sLastUpdateCheck);
 
         assertFalse(upd.checkForUpdates(activity, null));
-        now += Updater.UPDATE_CHECK_FREQ_MS;
-        clock.setCurrentTime(now);
+        assertEquals(0, Updater.sLastUpdateCheck);
 
         assertTrue(upd.checkForUpdates(activity, "anything_else"));
         assertEquals("1.3.0", upd.stripBuildHostName("1.3.0.Victors-MBPr"));
@@ -76,6 +77,7 @@ public class UpdaterTest {
     }
 
     @Test
+    @Config(shadows = {MyShadowConnectivityManager.class})
     public void testUpdaterThrottlesRequests() {
         IHttpUtil mockHttp = new MockHttpUtil();
 
@@ -90,9 +92,11 @@ public class UpdaterTest {
         ServiceLocator.getInstance().putService(IHttpUtil.class, mockHttp);
         ServiceLocator.getInstance().putService(ISystemClock.class, clock);
 
-        // wifi is always unavailable
-        doReturn(false).when(upd).wifiExclusiveAndUnavailable(Mockito.any(Context.class));
+        ConnectivityManager connectivityManager = (ConnectivityManager) ctx.getSystemService(Context.CONNECTIVITY_SERVICE);
+        MyShadowConnectivityManager shadowConnManager = (MyShadowConnectivityManager) Robolectric.shadowOf(connectivityManager);
 
+        shadowConnManager.setConnectedFlag(true);
+        doReturn(false).when(upd).wifiExclusiveAndUnavailable(Mockito.any(Context.class));
         assertTrue(upd.checkForUpdates(activity, "anything_else"));
         now += Updater.UPDATE_CHECK_FREQ_MS;
         clock.setCurrentTime(now);
@@ -100,6 +104,43 @@ public class UpdaterTest {
 
         // This should fail as the clock hasn't been pushed forward
         assertFalse(upd.checkForUpdates(activity, "anything_else"));
+    }
+
+    @Test
+    @Config(shadows = {MyShadowConnectivityManager.class})
+    public void testUpdaterNetworkCheck() {
+        IHttpUtil mockHttp = new MockHttpUtil();
+
+        Updater upd = new Updater();
+        upd = spy(upd);
+
+        // Setup mocks.
+        // Replace the HTTP client and clock
+        MockSystemClock clock = new MockSystemClock();
+        long now = System.currentTimeMillis();
+        clock.setCurrentTime(now);
+        ServiceLocator.getInstance().putService(IHttpUtil.class, mockHttp);
+        ServiceLocator.getInstance().putService(ISystemClock.class, clock);
+
+        ConnectivityManager connectivityManager = (ConnectivityManager) ctx.getSystemService(Context.CONNECTIVITY_SERVICE);
+        MyShadowConnectivityManager shadowConnManager = (MyShadowConnectivityManager) Robolectric.shadowOf(connectivityManager);
+
+        // This should fail as network is not available, last update time should not be modified
+        shadowConnManager.setConnectedFlag(false);
+        doReturn(false).when(upd).wifiExclusiveAndUnavailable(Mockito.any(Context.class));
+        assertFalse(upd.checkForUpdates(activity, "anything_else"));
+        assertEquals(0, Updater.sLastUpdateCheck);
+
+        // This should fail because of wifi-only, last update time should not be modified
+        shadowConnManager.setConnectedFlag(true);
+        doReturn(true).when(upd).wifiExclusiveAndUnavailable(Mockito.any(Context.class));
+        assertFalse(upd.checkForUpdates(activity, "anything_else"));
+        assertEquals(0, Updater.sLastUpdateCheck);
+
+        shadowConnManager.setConnectedFlag(true);
+        doReturn(false).when(upd).wifiExclusiveAndUnavailable(Mockito.any(Context.class));
+        assertTrue(upd.checkForUpdates(activity, "anything_else"));
+        assertEquals(now, Updater.sLastUpdateCheck);
     }
 
 

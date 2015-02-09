@@ -12,6 +12,8 @@ import android.support.v4.content.LocalBroadcastManager;
 
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.Prefs;
+import org.mozilla.mozstumbler.svclocator.ServiceLocator;
+import org.mozilla.mozstumbler.svclocator.services.log.ILogger;
 import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
 import java.util.HashMap;
@@ -21,6 +23,8 @@ public class MotionSensor {
 
     public static final String ACTION_USER_MOTION_DETECTED = AppGlobals.ACTION_NAMESPACE + ".USER_MOVE";
     private static final String LOG_TAG = LoggerUtil.makeLogTag(MotionSensor.class);
+    private static final ILogger Log = (ILogger) ServiceLocator.getInstance().getService(ILogger.class);
+
     /// Testing code
     private final SensorManager mSensorManager;
     private final Context mAppContext;

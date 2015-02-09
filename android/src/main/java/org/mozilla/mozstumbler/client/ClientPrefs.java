@@ -27,6 +27,7 @@ public class ClientPrefs extends Prefs {
     private static final String ON_MAP_MLS_DRAW_IS_ON = "actually_draw_mls_dots_on_map";
     private static final String DEFAULT_SIMULATION_LAT_LONG = "default_simulation_lat_lon";
     private static final String MIN_BATTERY_PCT = "min_battery_pct";
+    private static final String IS_MAP_ZOOM_LIMITED = "limited_zoom";
 
     protected ClientPrefs(Context context) {
         super(context);
@@ -176,4 +177,12 @@ public class ClientPrefs extends Prefs {
     }
 
     public enum MapTileResolutionOptions {Default, HighRes, LowRes, NoMap}
+
+    public boolean isMapZoomLimited() {
+        return getBoolPrefWithDefault(IS_MAP_ZOOM_LIMITED, true);
+    }
+
+    public void setIsMapZoomLimited(boolean isOn) {
+        setBoolPref(IS_MAP_ZOOM_LIMITED, isOn);
+    }
 }

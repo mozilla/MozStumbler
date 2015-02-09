@@ -54,6 +54,8 @@ public class DynamicProxy implements InvocationHandler {
                     return (float) 0;
                 } else if (canonName.equals("double")) {
                     return (double) 0;
+                } else if (canonName.equals("void")) {
+                    return null;
                 }
                 throw new RuntimeException("Unknown type: [" + canonName + "]");
             } else {

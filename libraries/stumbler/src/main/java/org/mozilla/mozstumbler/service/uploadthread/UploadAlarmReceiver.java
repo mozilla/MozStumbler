@@ -87,6 +87,9 @@ public class UploadAlarmReceiver extends BroadcastReceiver {
 
         @Override
         protected void onHandleIntent(Intent intent) {
+            if (intent == null) {
+                return;
+            }
             boolean isRepeating = intent.getBooleanExtra(EXTRA_IS_REPEATING, true);
             if (DataStorageManager.getInstance() == null) {
                 DataStorageManager.createGlobalInstance(this, null);
@@ -112,10 +115,6 @@ public class UploadAlarmReceiver extends BroadcastReceiver {
                 }
             }
 
-            // @TODO: Check the buildtype to see if we're running in Client mode
-            // or inside of Fennec.  If we're in Client mode, we should send a
-            // signal to MainApp that we want to initiate
-            // an upload instead of doing it right here.
             if (NetworkInfo.getInstance().isWifiAvailable()) {
                 Log.d(LOG_TAG, "Alarm upload(), call AsyncUploader");
 

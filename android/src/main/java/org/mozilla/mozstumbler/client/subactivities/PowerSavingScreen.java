@@ -1,10 +1,22 @@
 package org.mozilla.mozstumbler.client.subactivities;
 
+import android.annotation.TargetApi;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.RadioGroup;
@@ -17,8 +29,12 @@ import org.mozilla.mozstumbler.client.ClientPrefs;
 import org.mozilla.mozstumbler.client.MainApp;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.Prefs;
+import org.mozilla.mozstumbler.service.stumblerthread.motiondetection.MotionSensor;
+import org.mozilla.mozstumbler.service.stumblerthread.motiondetection.SignificantMotionSensor;
 
 public class PowerSavingScreen extends ActionBarActivity {
+
+    TestSignificantMotionDialog mTester = new TestSignificantMotionDialog();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +44,12 @@ public class PowerSavingScreen extends ActionBarActivity {
         setupMotionDetectionCheckbox();
         setupLowBatterySpinner();
         setupSensorRadio();
+
+        if (Build.VERSION.SDK_INT >= 18) {
+            mTester.setupTestMotionButton();
+        } else {
+            findViewById(R.id.testSignificantMotionSensor).setVisibility(View.INVISIBLE);
+        }
     }
 
     private void setupSensorRadio() {
@@ -79,8 +101,6 @@ public class PowerSavingScreen extends ActionBarActivity {
         });
     }
 
-
-
     private void setupLowBatterySpinner() {
         Spinner batteryLevelSpinner = (Spinner) findViewById(R.id.spinnerBatteryPercent);
         final SpinnerAdapter spinnerAdapter = batteryLevelSpinner.getAdapter();
@@ -102,4 +122,63 @@ public class PowerSavingScreen extends ActionBarActivity {
             }
         });
     }
+
+    class TestSignificantMotionDialog {
+        private AlertDialog mDialogMotionTesting;
+        private SignificantMotionSensor mSigSensor;
+
+        BroadcastReceiver mReceiver = new BroadcastReceiver() {
+            public void onReceive(Context context, Intent intent) {
+                if (mDialogMotionTesting != null) {
+                    mDialogMotionTesting.dismiss();
+                    mDialogMotionTesting = null;
+
+                    Context c = PowerSavingScreen.this;
+                    AlertDialog.Builder builder = new AlertDialog.Builder(c)
+                            .setTitle(c.getString(R.string.test_significant_sensor_dialog_title))
+                            .setMessage(getString(R.string.test_significant_sensor_confirmed_working))
+                            .setNegativeButton(c.getString(android.R.string.ok),
+                                    new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
+                                            dialog.cancel();
+                                        }});
+
+                    builder.create().show();
+                }
+            }
+        };
+
+        private void setupTestMotionButton() {
+            Button button = (Button) findViewById(R.id.testSignificantMotionSensor);
+            button.setOnClickListener(new View.OnClickListener() {
+                @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
+                public void onClick(View v) {
+                    Context c = PowerSavingScreen.this;
+                    AlertDialog.Builder builder = new AlertDialog.Builder(c)
+                            .setTitle(c.getString(R.string.test_significant_sensor_dialog_title))
+                            .setMessage(c.getString(R.string.test_significant_sensor_dialog_message))
+                            .setOnDismissListener(new DialogInterface.OnDismissListener() {
+                                public void onDismiss(DialogInterface dialog) {
+                                    mSigSensor.stop();
+                                    mDialogMotionTesting = null;
+                                }
+                            })
+                            .setNegativeButton(c.getString(android.R.string.cancel),
+                                    new Dialog.OnClickListener() {
+                                        public void onClick(DialogInterface di, int which) {
+                                            di.dismiss();
+                                        }
+                                    });
+                    mDialogMotionTesting = builder.create();
+                    mDialogMotionTesting.show();
+                }
+            });
+
+            LocalBroadcastManager.getInstance(PowerSavingScreen.this).registerReceiver(mReceiver,
+                    new IntentFilter(MotionSensor.ACTION_USER_MOTION_DETECTED));
+            mSigSensor = SignificantMotionSensor.getSensor(PowerSavingScreen.this);
+            mSigSensor.start();
+        }
+    }
+
 }

@@ -39,6 +39,7 @@ import static org.mockito.Mockito.spy;
 
 @Config(emulateSdk = 18)
 @RunWith(RobolectricTestRunner.class)
+@SuppressWarnings("unchecked")
 public class TileDownloaderDelegateTest {
 
     private static final String testUrl = "http://not.a.real.url/";
@@ -143,7 +144,7 @@ public class TileDownloaderDelegateTest {
         // We can only check the capture *after* the delegate's downloadTile method has been called.
         // verify that the etag was passed into the hashmap
         assertTrue(argument.getValue().containsKey("If-None-Match"));
-        String actualEtag = (String) argument.getValue().get("If-None-Match");
+        String actualEtag = argument.getValue().get("If-None-Match");
         assertEquals(actualEtag, expectedEtag);
     }
 
@@ -200,7 +201,7 @@ public class TileDownloaderDelegateTest {
         // We can only check the capture *after* the delegate's downloadTile method has been called.
         // verify that the etag was passed into the hashmap
         assertTrue(argument.getValue().containsKey("If-None-Match"));
-        String actualEtag = (String) argument.getValue().get("If-None-Match");
+        String actualEtag = argument.getValue().get("If-None-Match");
         assertEquals(actualEtag, expectedEtag);
 
         // The etag on the SerializableTile should have been cleared.

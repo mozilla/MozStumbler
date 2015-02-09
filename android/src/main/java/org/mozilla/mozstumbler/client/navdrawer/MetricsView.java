@@ -149,8 +149,8 @@ public class MetricsView {
 
         tv = (TextView) mView.findViewById(R.id.textview_motion_detection);
         final String onOrOff = isMotionSensorOn ?
-                mView.getResources().getString(R.string.off) :
-                mView.getResources().getString(R.string.on);
+                mView.getResources().getString(R.string.on) :
+                mView.getResources().getString(R.string.off);
 
         s = String.format(mView.getResources().getString(R.string.motion_detection_onoff),
                 onOrOff);

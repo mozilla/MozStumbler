@@ -175,8 +175,8 @@
     <string name="off">Off</string>
 
     <string name="title_activity_power_saving_screen">Power Saving Options</string>
-    <string name="sensor_type_legacy">Your device has legacy sensors only. You may not want to use this feature if you have difficulty unpausing the app on motion.</string>
-    <string name="sensor_type_significant_motion">Your device has a significant motion sensor, motion detection \'on\' is the recommended setting.</string>
+    <string name="sensor_type_legacy">Your device does not have a significant motion sensor.</string>
+    <string name="sensor_type_significant_motion">The significant motion sensor offers the best power saving, but may not work on all devices. If scanning stays paused when you are moving, do not use this sensor type.</string>
 
     <string name="ok">OK</string>
     <string name="whats_new_title">What\'s New</string>

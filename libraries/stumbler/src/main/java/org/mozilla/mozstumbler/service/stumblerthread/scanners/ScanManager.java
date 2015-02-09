@@ -63,8 +63,7 @@ public class ScanManager {
     private final BroadcastReceiver mDetectUserIdleReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (isStopped() ||
-                    Prefs.getInstance(mAppContext).getPowerSavingMode() == Prefs.PowerSavingModeOptions.Off) {
+            if (isStopped() || Prefs.getInstance(mAppContext).getIsMotionSensorEnabled() ) {
                 return;
             }
             pauseScanning();
@@ -89,9 +88,9 @@ public class ScanManager {
             startScanning(context);
             mMotionSensor.stop();
 
-            if (Prefs.getInstance(mAppContext).getPowerSavingMode() == Prefs.PowerSavingModeOptions.Aggressive) {
+            ///if (Prefs.getInstance(mAppContext).getPowerSavingMode() == Prefs.PowerSavingModeOptions.Aggressive) {
               ////  mLocationChangeSensor.quickCheckForFalsePositiveAfterMotionSensorMovement();
-            }
+            ///}
 
             Intent sendIntent = new Intent(ACTION_SCAN_UNPAUSED_USER_MOVED);
             LocalBroadcastManager.getInstance(mAppContext).sendBroadcastSync(sendIntent);

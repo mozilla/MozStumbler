@@ -48,6 +48,7 @@ public class SignificantMotionSensor implements IMotionSensor {
         }
         return null;
     }
+
     private SignificantMotionSensor(Context appCtx, Sensor significantSensor) {
         mStopSignificantMotionSensor = false;
         mSignificantMotionSensor = significantSensor;

@@ -6,6 +6,7 @@ import android.hardware.SensorManager;
 import android.support.v4.content.LocalBroadcastManager;
 
 import org.mozilla.mozstumbler.service.AppGlobals;
+import org.mozilla.mozstumbler.service.Prefs;
 import org.mozilla.mozstumbler.svclocator.ServiceLocator;
 import org.mozilla.mozstumbler.svclocator.services.log.ILogger;
 import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
@@ -39,8 +40,20 @@ public class MotionSensor {
         // If no TYPE_SIGNIFICANT_MOTION is available, use alternate means to sense motion
         if (motionSensor == null) {
             motionSensor = new LegacyMotionSensor(mAppContext);
-            AppGlobals.guiLogInfo("Device has legacy motion sensor.");
         }
+        setTypeFromPrefs();
+    }
+
+    private void setTypeFromPrefs() {
+        if (Prefs.getInstance(mAppContext).getIsMotionSensorTypeSignificant()) {
+            motionSensor = SignificantMotionSensor.getSensor(mAppContext);
+        }
+    }
+
+    // Call when the scanning has stopped (not when paused).
+    // This class can use this event to update its state
+    public void scannerFullyStopped() {
+        setTypeFromPrefs();
     }
 
     public static void debugMotionDetected() {

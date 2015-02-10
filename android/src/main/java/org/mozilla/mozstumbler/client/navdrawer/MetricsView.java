@@ -139,7 +139,7 @@ public class MetricsView {
     }
 
     void updatePowerSavingsLabels() {
-        boolean isMotionSensorOn = ClientPrefs.getInstance(mView.getContext()).getIsMotionSensorEnabled();
+        boolean isMotionSensorOn = ClientPrefs.getInstance(mView.getContext()).isMotionSensorEnabled();
         int battPct = ClientPrefs.getInstance(mView.getContext()).getMinBatteryPercent();
 
         TextView tv = (TextView) mView.findViewById(R.id.textview_stop_at_battery);

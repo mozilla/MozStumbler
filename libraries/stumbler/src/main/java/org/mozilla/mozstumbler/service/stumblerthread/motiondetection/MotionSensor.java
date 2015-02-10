@@ -45,7 +45,7 @@ public class MotionSensor {
     }
 
     private void setTypeFromPrefs() {
-        if (Prefs.getInstance(mAppContext).getIsMotionSensorTypeSignificant()) {
+        if (Prefs.getInstance(mAppContext).isMotionSensorTypeSignificant()) {
             motionSensor = SignificantMotionSensor.getSensor(mAppContext);
         }
     }

@@ -303,8 +303,7 @@
                 android:layout_alignEnd="@+id/cell_plus_wifi_layout"
                 android:layout_alignRight="@+id/cell_plus_wifi_layout"
                 android:layout_marginBottom="4dp"
-                android:maxHeight="34dp"
-                android:minHeight="34dp"
+                android:minHeight="0dp"
                 android:text="@string/change_power_saving" />
 
             <TextView

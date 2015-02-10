@@ -88,7 +88,7 @@
         android:id="@+id/titleUseSensor"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Use sensor:"
+        android:text="@string/title_use_sensor"
         android:layout_below="@id/linearLayout"
         android:textSize="18sp"
         />
@@ -102,14 +102,14 @@
             android:enabled="false"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Accelerometer"
+            android:text="@string/sensor_name_accelerometer"
             android:id="@+id/radioAccelerometer"
             android:checked="true" />
 
         <RadioButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Significant motion"
+            android:text="@string/sensor_name_significant_motion"
             android:id="@+id/radioSignificant"
             android:checked="false"
             android:enabled="false"/>
@@ -121,10 +121,20 @@
         android:paddingBottom="10dp"
         android:paddingTop="20dp"
         android:text="@string/sensor_type_legacy"
-        android:textSize="14sp"
+        style="@android:style/TextAppearance.Small"
         android:textStyle="bold"
         android:layout_below="@id/radioGroupSensorType"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
+
+    <Button
+        android:id="@+id/testSignificantMotionSensor"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/message_sensor_type"
+        android:text="@string/button_test_significant_motion_sensor"
+        android:minHeight="0dp"
+        style="@android:style/TextAppearance.Small"
+        />
 
 </RelativeLayout>

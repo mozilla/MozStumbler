@@ -264,19 +264,19 @@ public class Prefs {
         apply(editor);
     }
 
-    public boolean getIsMotionSensorEnabled() {
+    public boolean isMotionSensorEnabled() {
         return getPrefs().getBoolean(MOTION_SENSOR_ENABLED, true);
     }
 
-    public void setIsMotionSensorEnabled(boolean on) {
+    public void setMotionSensorEnabled(boolean on) {
         setBoolPref(MOTION_SENSOR_ENABLED, on);
     }
 
-    public boolean getIsMotionSensorTypeSignificant() {
+    public boolean isMotionSensorTypeSignificant() {
         return getBoolPrefWithDefault(MOTION_SENSOR_IS_SIGNIFICANT_TYPE, false);
     }
 
-    public void setIsMotionSensorTypeSignificant(boolean on) {
+    public void setMotionSensorTypeSignificant(boolean on) {
         setBoolPref(MOTION_SENSOR_IS_SIGNIFICANT_TYPE, on);
     }
 }

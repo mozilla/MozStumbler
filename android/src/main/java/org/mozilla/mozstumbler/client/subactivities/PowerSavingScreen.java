@@ -53,14 +53,14 @@ public class PowerSavingScreen extends ActionBarActivity {
 
     private void setupSensorRadio() {
         RadioGroup radioGroupSensorType = (RadioGroup) findViewById(R.id.radioGroupSensorType);
-        if (ClientPrefs.getInstance(this).getIsMotionSensorTypeSignificant()) {
+        if (ClientPrefs.getInstance(this).isMotionSensorTypeSignificant()) {
             radioGroupSensorType.check(R.id.radioSignificant);
         }
 
         radioGroupSensorType.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 boolean isAccelerometer = (checkedId == R.id.radioAccelerometer);
-                ClientPrefs.getInstance(PowerSavingScreen.this).setIsMotionSensorTypeSignificant(!isAccelerometer);
+                ClientPrefs.getInstance(PowerSavingScreen.this).setMotionSensorTypeSignificant(!isAccelerometer);
                 resetScanningToReflectChanges();
             }
         });
@@ -82,14 +82,14 @@ public class PowerSavingScreen extends ActionBarActivity {
     }
 
     private void setupMotionDetectionCheckbox() {
-        boolean isOn = ClientPrefs.getInstance(this).getIsMotionSensorEnabled();
+        boolean isOn = ClientPrefs.getInstance(this).isMotionSensorEnabled();
         CheckBox motionDetectionCheckbox = (CheckBox) findViewById(R.id.checkbox_motion_detection);
         motionDetectionCheckbox.setChecked(isOn);
         motionDetectionOptionsEnable(isOn);
         motionDetectionCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                ClientPrefs.getInstance(PowerSavingScreen.this).setIsMotionSensorEnabled(isChecked);
+                ClientPrefs.getInstance(PowerSavingScreen.this).setMotionSensorEnabled(isChecked);
                 resetScanningToReflectChanges();
                 motionDetectionOptionsEnable(isChecked);
             }

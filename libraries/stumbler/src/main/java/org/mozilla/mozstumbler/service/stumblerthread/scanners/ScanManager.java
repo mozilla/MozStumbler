@@ -63,7 +63,7 @@ public class ScanManager {
     private final BroadcastReceiver mDetectUserIdleReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (isStopped() || !Prefs.getInstance(mAppContext).getIsMotionSensorEnabled() ) {
+            if (isStopped() || !Prefs.getInstance(mAppContext).isMotionSensorEnabled() ) {
                 return;
             }
             pauseScanning();

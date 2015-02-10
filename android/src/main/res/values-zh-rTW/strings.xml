@@ -176,8 +176,8 @@
     <string name="off">關</string>
 
     <string name="title_activity_power_saving_screen">省電選項</string>
-    <string name="sensor_type_legacy">您的裝置中僅有傳統的感測器，可能造成您在移動時無法暫停觀測，您可能不會想要使用此功能。</string>
-    <string name="sensor_type_significant_motion">您的裝置中有顯著運動感測器，建議您「開啟」動態偵測選項。</string>
+    <!-- <string name="sensor_type_legacy"></string>
+    <string name="sensor_type_significant_motion"></string> -->
 
     <string name="ok">確定</string>
     <string name="whats_new_title">有什麼新鮮事</string>

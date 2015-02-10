@@ -18,7 +18,9 @@ public class Prefs {
     public static final String NICKNAME_PREF = "nickname";
     public static final String EMAIL_PREF = "email";
     public static final String WIFI_ONLY = "wifi_only";
-    public static final String POWER_SAVING_MODE = "power_saving_mode_type";
+    public static final String MOTION_SENSOR_IS_SIGNIFICANT_TYPE = "motion_sensor_is_significant";
+    public static final String MOTION_SENSOR_ENABLED = "motion_sensor_enabled";
+
     protected static final String PREFS_FILE = Prefs.class.getSimpleName();
     private static final String LOG_TAG = LoggerUtil.makeLogTag(Prefs.class);
     private static final String USER_AGENT_PREF = "user-agent";
@@ -262,20 +264,19 @@ public class Prefs {
         apply(editor);
     }
 
-    public PowerSavingModeOptions getPowerSavingMode() {
-        int defaultSetting = AppGlobals.hasSignificantMotionSensor ? 1 : 0;
-        int i = getPrefs().getInt(POWER_SAVING_MODE, defaultSetting);
-        if (i >= PowerSavingModeOptions.values().length) {
-            i = 0;
-        }
-        return PowerSavingModeOptions.values()[i];
+    public boolean getIsMotionSensorEnabled() {
+        return getPrefs().getBoolean(MOTION_SENSOR_ENABLED, true);
     }
 
-    public void setPowerSavingMode(PowerSavingModeOptions mode) {
-        SharedPreferences.Editor editor = getPrefs().edit();
-        editor.putInt(POWER_SAVING_MODE, mode.ordinal());
-        apply(editor);
+    public void setIsMotionSensorEnabled(boolean on) {
+        setBoolPref(MOTION_SENSOR_ENABLED, on);
     }
 
-    public enum PowerSavingModeOptions {Off, On, Aggressive}
+    public boolean getIsMotionSensorTypeSignificant() {
+        return getBoolPrefWithDefault(MOTION_SENSOR_IS_SIGNIFICANT_TYPE, false);
+    }
+
+    public void setIsMotionSensorTypeSignificant(boolean on) {
+        setBoolPref(MOTION_SENSOR_IS_SIGNIFICANT_TYPE, on);
+    }
 }

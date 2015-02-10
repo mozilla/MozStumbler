@@ -139,7 +139,7 @@ public class MetricsView {
     }
 
     void updatePowerSavingsLabels() {
-        Prefs.PowerSavingModeOptions opt = ClientPrefs.getInstance(mView.getContext()).getPowerSavingMode();
+        boolean isMotionSensorOn = ClientPrefs.getInstance(mView.getContext()).getIsMotionSensorEnabled();
         int battPct = ClientPrefs.getInstance(mView.getContext()).getMinBatteryPercent();
 
         TextView tv = (TextView) mView.findViewById(R.id.textview_stop_at_battery);
@@ -148,9 +148,9 @@ public class MetricsView {
         tv.setText(s);
 
         tv = (TextView) mView.findViewById(R.id.textview_motion_detection);
-        final String onOrOff = (opt == Prefs.PowerSavingModeOptions.Off) ?
-                mView.getResources().getString(R.string.off) :
-                mView.getResources().getString(R.string.on);
+        final String onOrOff = isMotionSensorOn ?
+                mView.getResources().getString(R.string.on) :
+                mView.getResources().getString(R.string.off);
 
         s = String.format(mView.getResources().getString(R.string.motion_detection_onoff),
                 onOrOff);

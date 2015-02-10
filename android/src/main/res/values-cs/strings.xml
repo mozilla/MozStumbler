@@ -179,9 +179,10 @@
     <string name="off">Vypnuto</string>
 
     <string name="title_activity_power_saving_screen">Nastavení spotřeby energie</string>
+    <!--
     <string name="sensor_type_legacy">Vaše zařízení má pouze starší senzory. Pokud se po opětovném pohybu sběr dat automaticky nespustí, vypněte tuto volbu.</string>
     <string name="sensor_type_significant_motion">Vaše zařízení má senzor pohybu, doporučené nastavení detekce pohybu je \'Zapnuto\'.</string>
-
+    -->
     <string name="ok">OK</string>
     <string name="whats_new_title">Co je nového</string>
 <!--<string name="whats_new">

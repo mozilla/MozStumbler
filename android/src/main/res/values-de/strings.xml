@@ -167,9 +167,10 @@
     <string name="off">aus</string>
 
     <string name="title_activity_power_saving_screen">Energiesparoptionen</string>
+    <!--
     <string name="sensor_type_legacy">Ihr Gerät besitzt nur ältere Sensoren. Sie sollten diese Funktion deaktivieren, wenn das Scannen beim Bewegen nicht fortgesetzt wird.</string>
     <string name="sensor_type_significant_motion">Ihr Gerät besitzt einen Sensor zur Erkennung signifikanter Bewegungen. Die empfohlene Einstellung ist Bewegungserkennung \"an\".</string>
-
+    -->
     <string name="ok">OK</string>
     <string name="whats_new_title">Änderungen</string>
     <!-- <string name="whats_new"></string> -->

@@ -8,6 +8,7 @@ import android.app.Dialog;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
@@ -19,9 +20,18 @@ import android.widget.TextView;
 import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.client.ClientPrefs;
 import org.mozilla.mozstumbler.client.MainApp;
+import org.mozilla.mozstumbler.svclocator.ServiceLocator;
+import org.mozilla.mozstumbler.svclocator.services.log.ILogger;
+import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
 public class FirstRunFragment extends DialogFragment {
+
+    private static ILogger Log = (ILogger) ServiceLocator.getInstance().getService(ILogger.class);
+    private static final String LOG_TAG = LoggerUtil.makeLogTag(FirstRunFragment.class);
     private static FirstRunFragment mInstance;
+
+    View root;
+
 
     public static void showInstance(FragmentManager fm) {
         if (mInstance == null) {
@@ -37,7 +47,7 @@ public class FirstRunFragment extends DialogFragment {
         getDialog().getWindow().setBackgroundDrawable(new ColorDrawable(0xaa000000));
         getDialog().setCanceledOnTouchOutside(false);
 
-        View root = inflater.inflate(R.layout.fragment_first_run, container, false);
+        root = inflater.inflate(R.layout.fragment_first_run, container, false);
 
         TextView tv = (TextView) root.findViewById(R.id.textview2);
         tv.setMovementMethod(LinkMovementMethod.getInstance());
@@ -46,7 +56,15 @@ public class FirstRunFragment extends DialogFragment {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((MainApp) getActivity().getApplication()).startScanning();
+                FragmentActivity thisActivity = getActivity();
+                if (thisActivity == null) {
+                    return;
+                }
+                MainApp theApp = (MainApp) thisActivity.getApplication();
+                if (theApp == null) {
+                    return;
+                }
+                theApp.startScanning();
                 ClientPrefs.getInstance(getActivity()).setFirstRun(false);
 
                 Dialog d = getDialog();

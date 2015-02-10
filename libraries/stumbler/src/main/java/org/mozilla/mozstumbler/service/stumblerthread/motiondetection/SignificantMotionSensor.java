@@ -31,7 +31,6 @@ public class SignificantMotionSensor implements IMotionSensor {
     static SensorManager mSensorManager;
 
     public static SignificantMotionSensor getSensor(Context appCtx) {
-
         mSensorManager = (SensorManager) appCtx.getSystemService(Context.SENSOR_SERVICE);
         Sensor significantSensor;
         if (mSensorManager == null) {
@@ -48,6 +47,7 @@ public class SignificantMotionSensor implements IMotionSensor {
         }
         return null;
     }
+
     private SignificantMotionSensor(Context appCtx, Sensor significantSensor) {
         mStopSignificantMotionSensor = false;
         mSignificantMotionSensor = significantSensor;
@@ -67,7 +67,6 @@ public class SignificantMotionSensor implements IMotionSensor {
                         return;
                     }
                     AppGlobals.guiLogInfo("Major motion detected.");
-
 
                     LocalBroadcastManager localBroadcastManager = null;
 

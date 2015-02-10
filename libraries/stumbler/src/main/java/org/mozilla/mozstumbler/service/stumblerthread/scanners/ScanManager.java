@@ -63,8 +63,7 @@ public class ScanManager {
     private final BroadcastReceiver mDetectUserIdleReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (isStopped() ||
-                    Prefs.getInstance(mAppContext).getPowerSavingMode() == Prefs.PowerSavingModeOptions.Off) {
+            if (isStopped() || !Prefs.getInstance(mAppContext).getIsMotionSensorEnabled() ) {
                 return;
             }
             pauseScanning();
@@ -88,10 +87,6 @@ public class ScanManager {
             mScannerState = ScannerState.STOPPED; // To ensure startScanning() runs
             startScanning(context);
             mMotionSensor.stop();
-
-            if (Prefs.getInstance(mAppContext).getPowerSavingMode() == Prefs.PowerSavingModeOptions.Aggressive) {
-                mLocationChangeSensor.quickCheckForFalsePositiveAfterMotionSensorMovement();
-            }
 
             Intent sendIntent = new Intent(ACTION_SCAN_UNPAUSED_USER_MOVED);
             LocalBroadcastManager.getInstance(mAppContext).sendBroadcastSync(sendIntent);
@@ -176,10 +171,8 @@ public class ScanManager {
         mLocationChangeSensor.start();
 
         if (mMotionSensor == null) {
-            if (mDetectMotionReceiver != null) {
-                LocalBroadcastManager.getInstance(mAppContext).registerReceiver(mDetectMotionReceiver,
+            LocalBroadcastManager.getInstance(mAppContext).registerReceiver(mDetectMotionReceiver,
                         new IntentFilter(MotionSensor.ACTION_USER_MOTION_DETECTED));
-            }
 
             mMotionSensor = new MotionSensor(mAppContext);
         }
@@ -222,6 +215,7 @@ public class ScanManager {
             return false;
         }
         mScannerState = ScannerState.STOPPED;
+        mMotionSensor.scannerFullyStopped();
         return stopAllScanners();
     }
 

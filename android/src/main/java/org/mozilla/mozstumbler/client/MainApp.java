@@ -150,7 +150,7 @@ public class MainApp extends Application
     public void onCreate() {
         super.onCreate();
         // The following line triggers the initialization of ACRA
-        ACRA.init(this);
+       // ACRA.init(this);
 
         // Bootstrap the service locator with the default list of services
         ServiceLocator.newRoot(defaultServiceConfig());

@@ -21,7 +21,7 @@ public class MotionSensor {
     private final SensorManager mSensorManager;
     private final Context mAppContext;
 
-    private IMotionSensor motionSensor;
+    private IMotionSensor mMotionSensor;
     private static MotionSensor sDebugInstance;
 
     public MotionSensor(Context appCtx) {
@@ -35,18 +35,14 @@ public class MotionSensor {
 
         sDebugInstance = this;
 
-        motionSensor = SignificantMotionSensor.getSensor(mAppContext);
-
-        // If no TYPE_SIGNIFICANT_MOTION is available, use alternate means to sense motion
-        if (motionSensor == null) {
-            motionSensor = new LegacyMotionSensor(mAppContext);
-        }
         setTypeFromPrefs();
     }
 
     private void setTypeFromPrefs() {
         if (Prefs.getInstance(mAppContext).isMotionSensorTypeSignificant()) {
-            motionSensor = SignificantMotionSensor.getSensor(mAppContext);
+            mMotionSensor = SignificantMotionSensor.getSensor(mAppContext);
+        } else {
+            mMotionSensor = new LegacyMotionSensor(mAppContext);
         }
     }
 
@@ -57,7 +53,7 @@ public class MotionSensor {
     }
 
     public static void debugMotionDetected() {
-        if (!sDebugInstance.motionSensor.isActive()) {
+        if (!sDebugInstance.mMotionSensor.isActive()) {
             return;
         }
         AppGlobals.guiLogInfo("TEST: Major motion detected.");
@@ -69,10 +65,10 @@ public class MotionSensor {
     }
 
     public void start() {
-        motionSensor.start();
+        mMotionSensor.start();
     }
 
     public void stop() {
-        motionSensor.stop();
+        mMotionSensor.stop();
     }
 }

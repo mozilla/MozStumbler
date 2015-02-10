@@ -53,6 +53,8 @@ public class LocationChangeSensor extends BroadcastReceiver {
     private long mStartTimeMs;
     private boolean mDoSingleLocationCheck;
     private Location mLastLocation;
+    // Package scoped for testing
+    boolean mIsCheckTimeoutPosted;
 
     public LocationChangeSensor(Context context, BroadcastReceiver callbackReceiver) {
         sDebugInstance = this;
@@ -176,19 +178,14 @@ public class LocationChangeSensor extends BroadcastReceiver {
         // trigger this earlier than requested (by a fraction of a second).
         final long addedDelayMs = 100;
         mHandler.postDelayed(mCheckTimeout, delay + addedDelayMs);
+        mIsCheckTimeoutPosted = true;
 
         ClientLog.d(LOG_TAG, "Scheduled timeout check for " + (delay / 1000.0) + " seconds");
     }
 
-    boolean removeTimeoutCheck() {
-        boolean wasScheduled = false;
-        try {
-            mHandler.removeCallbacks(mCheckTimeout);
-            wasScheduled = true;
-        } catch (Exception e) {
-        }
-
-        return wasScheduled;
+    void removeTimeoutCheck() {
+        mHandler.removeCallbacks(mCheckTimeout);
+        mIsCheckTimeoutPosted = false;
     }
 
     public void quickCheckForFalsePositiveAfterMotionSensorMovement() {

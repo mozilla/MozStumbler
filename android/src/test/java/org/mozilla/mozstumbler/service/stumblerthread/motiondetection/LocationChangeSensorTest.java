@@ -96,7 +96,8 @@ public class LocationChangeSensorTest {
         locationChangeSensor.removeTimeoutCheck();
 
         setPosition(0, 0);
-        assertTrue(locationChangeSensor.removeTimeoutCheck());
+        assertTrue(locationChangeSensor.mIsCheckTimeoutPosted);
+        locationChangeSensor.removeTimeoutCheck();
     }
 
     @Test

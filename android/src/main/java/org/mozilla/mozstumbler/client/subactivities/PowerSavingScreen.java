@@ -62,6 +62,7 @@ public class PowerSavingScreen extends ActionBarActivity {
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 boolean isAccelerometer = (checkedId == R.id.radioAccelerometer);
                 ClientPrefs.getInstance(PowerSavingScreen.this).setIsMotionSensorTypeSignificant(!isAccelerometer);
+                resetScanning();
             }
         });
 
@@ -91,14 +92,18 @@ public class PowerSavingScreen extends ActionBarActivity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 ClientPrefs.getInstance(PowerSavingScreen.this).setIsMotionSensorEnabled(isChecked);
-                final MainApp app = ((MainApp) getApplication());
-                if (app.isScanningOrPaused()) {
-                    app.stopScanning();
-                    app.startScanning();
-                }
+                resetScanning();
                 motionDetectionOptionsEnable(isChecked);
             }
         });
+    }
+
+    private void resetScanning() {
+        final MainApp app = ((MainApp) getApplication());
+        if (app.isScanningOrPaused()) {
+            app.stopScanning();
+            app.startScanning();
+        }
     }
 
     private void setupLowBatterySpinner() {

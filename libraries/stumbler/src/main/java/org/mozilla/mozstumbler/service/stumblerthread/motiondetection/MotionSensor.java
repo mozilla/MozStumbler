@@ -13,6 +13,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.Prefs;
 import org.mozilla.mozstumbler.svclocator.ServiceLocator;
+import org.mozilla.mozstumbler.svclocator.services.SystemClock;
 import org.mozilla.mozstumbler.svclocator.services.log.ILogger;
 import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
@@ -40,18 +41,6 @@ public class MotionSensor {
         }
     };
 
-    // To handle the scenario where a person's GPS location is unchanging, yet they keep moving
-    // and triggering the accelerometer (walking with the device in-pocket), sleep for progressively
-    // longer periods after repeatedly triggering the motion sensor.
-    // Once the GPS location changes, this delay is reset back to zero.
-    private static final Map<Integer, Long> sTimesNotMovedAndSleepMs = new HashMap<Integer, Long>();
-    static {
-        sTimesNotMovedAndSleepMs.put(5, 30 * 1000L);
-        sTimesNotMovedAndSleepMs.put(25, 60 * 1000L);
-        sTimesNotMovedAndSleepMs.put(50, 120 * 1000L);
-    }
-
-
     public MotionSensor(Context appCtx) {
         mAppContext = appCtx;
         mQuickCheck = new QuickCheckGPSLocationChanged(mAppContext);
@@ -64,12 +53,17 @@ public class MotionSensor {
 
         sDebugInstance = this;
 
-        motionSensor = SignificantMotionSensor.getSensor(mAppContext);
+        setTypeFromPrefs();
+    }
+
+    private void setTypeFromPrefs() {
+        if (Prefs.getInstance(mAppContext).getIsMotionSensorTypeSignificant()) {
+            motionSensor = SignificantMotionSensor.getSensor(mAppContext);
+        }
 
         // If no TYPE_SIGNIFICANT_MOTION is available, use alternate means to sense motion
         if (motionSensor == null) {
             motionSensor = new LegacyMotionSensor(mAppContext);
-            AppGlobals.guiLogInfo("Device has legacy motion sensor.");
         }
     }
 
@@ -101,12 +95,12 @@ public class MotionSensor {
 
         long delay = 0;
         if (!isSignificantMotionSensorEnabled()) {
-            for (Map.Entry<Integer, Long> entry : sTimesNotMovedAndSleepMs.entrySet()) {
-                if (mQuickCheck.getSuccessiveTimesNotMoved() >= entry.getKey()) {
-                    delay = entry.getValue();
-                    AppGlobals.guiLogInfo("Sleep for " + delay + "ms", "green", false, false);
-                }
+            if (mQuickCheck.isGPSStillWarm()) {
+                delay = 30 * 1000;
+            } else {
+                delay = 60 * 1000;
             }
+            AppGlobals.guiLogInfo("Sleep for " + delay + "ms", "green", false, false);
         }
         mIsStartMotionSensorRunnableScheduled = true;
         mHandler.postDelayed(mStartMotionSensorRunnable, delay);
@@ -123,11 +117,15 @@ public class MotionSensor {
         mIsStartMotionSensorRunnableScheduled = false;
 
         motionSensor.stop();
-        mQuickCheck.start();
+
+        if (mQuickCheck.isGPSStillWarm()) {
+            mQuickCheck.start();
+        }
     }
 
     public void scannerFullyStopped() {
-        mQuickCheck.resetSuccessiveTimesNotMovedCount();
+        mQuickCheck.reset();
+        setTypeFromPrefs();
     }
 
     QuickCheckGPSLocationChanged mQuickCheck;
@@ -136,7 +134,7 @@ public class MotionSensor {
         final Handler handler = new Handler();
         private Location mLastLocation;
         private final long mMinMotionChangeDistanceMeters = 30;
-        private int successiveTimesNotMoved;
+        private long mTimeStartedMs;
 
         LocationListener mListener = new LocationListener() {
             public void onLocationChanged(Location location) {
@@ -146,12 +144,9 @@ public class MotionSensor {
                 }
                 double dist = mLastLocation.distanceTo(location);
                 if (dist < mMinMotionChangeDistanceMeters) {
-                    successiveTimesNotMoved++;
                     Intent sendIntent = new Intent(LocationChangeSensor.ACTION_LOCATION_NOT_CHANGING);
                     LocalBroadcastManager.getInstance(mContext).sendBroadcastSync(sendIntent);
                     AppGlobals.guiLogInfo("not moved", "green", true, false);
-                } else {
-                    successiveTimesNotMoved = 0;
                 }
             }
 
@@ -166,6 +161,10 @@ public class MotionSensor {
 
         void updateLocation() {
             stop();
+
+            if (mTimeStartedMs == 0) {
+                reset();
+            }
 
             LocationManager lm = (LocationManager)mContext.getSystemService(Context.LOCATION_SERVICE);
             mLastLocation = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
@@ -184,7 +183,7 @@ public class MotionSensor {
                 public void run() {
                     stop();
                 }
-            }, 20 * 1000);
+            }, 30 * 1000);
         }
 
         void stop() {
@@ -193,12 +192,16 @@ public class MotionSensor {
             handler.removeCallbacks(null);
         }
 
-        public void resetSuccessiveTimesNotMovedCount() {
-            successiveTimesNotMoved = 0;
+        public void reset() {
+            mTimeStartedMs = System.currentTimeMillis();
         }
 
-        public int getSuccessiveTimesNotMoved() {
-            return successiveTimesNotMoved;
+        public boolean isGPSStillWarm() {
+            if (mTimeStartedMs == 0) {
+                reset();
+            }
+            final long twoHours = 2 * 60 * 60 * 1000;
+            return System.currentTimeMillis() - mTimeStartedMs < twoHours;
         }
     }
 }

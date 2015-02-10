@@ -180,15 +180,8 @@ public class LocationChangeSensor extends BroadcastReceiver {
         ClientLog.d(LOG_TAG, "Scheduled timeout check for " + (delay / 1000.0) + " seconds");
     }
 
-    boolean removeTimeoutCheck() {
-        boolean wasScheduled = false;
-        try {
-            mHandler.removeCallbacks(mCheckTimeout);
-            wasScheduled = true;
-        } catch (Exception e) {
-        }
-
-        return wasScheduled;
+    private void removeTimeoutCheck() {
+        mHandler.removeCallbacks(mCheckTimeout);
     }
 
     public void quickCheckForFalsePositiveAfterMotionSensorMovement() {

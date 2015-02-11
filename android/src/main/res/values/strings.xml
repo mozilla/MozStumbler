@@ -203,4 +203,5 @@
     <string name="sensor_name_significant_motion">Significant motion</string>
     <string name="sensor_name_accelerometer">Accelerometer</string>
     <string name="title_use_sensor">Use sensor:</string>
+    <string name="limit_map_zoom_summary">Reduces the network data used by the map view.</string>
 </resources>

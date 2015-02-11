@@ -17,6 +17,8 @@ import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceGroup;
 import android.text.TextUtils;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 
 import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.client.ClientPrefs;
@@ -31,6 +33,7 @@ public class PreferencesScreen extends PreferenceActivity {
     private CheckBoxPreference mKeepScreenOn;
     private CheckBoxPreference mEnableShowMLSLocations;
     private CheckBoxPreference mCrashReportsOn;
+    private CheckBoxPreference mLimitMapZoom;
     private ListPreference mMapTileDetail;
 
     private ClientPrefs getPrefs() {
@@ -56,6 +59,8 @@ public class PreferencesScreen extends PreferenceActivity {
         int valueIndex = ClientPrefs.getInstance(this).getMapTileResolutionType().ordinal();
         mMapTileDetail.setValueIndex(valueIndex);
         updateMapDetailTitle(valueIndex);
+
+        mLimitMapZoom = (CheckBoxPreference) getPreferenceManager().findPreference(ClientPrefs.IS_MAP_ZOOM_LIMITED);
 
         setPreferenceListener();
         setButtonListeners();
@@ -182,6 +187,13 @@ public class PreferencesScreen extends PreferenceActivity {
                 int i = mMapTileDetail.findIndexOfValue(newValue.toString());
                 getPrefs().setMapTileResolutionType(i);
                 updateMapDetailTitle(i);
+                return true;
+            }
+        });
+        mLimitMapZoom.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                getPrefs().setIsMapZoomLimited(newValue.equals(true));
                 return true;
             }
         });

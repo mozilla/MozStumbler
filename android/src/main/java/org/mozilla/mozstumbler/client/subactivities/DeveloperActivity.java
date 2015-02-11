@@ -106,24 +106,11 @@ public class DeveloperActivity extends ActionBarActivity {
             // Setup for any logical group of config options should self contained in their
             // own methods.  This is mostly to help with merges in the event that multiple
             // source branches update the developer options.
-            setupLimitZoom();
             setupSaveJSONLogs();
             setupSimulationPreference();
             setupLocationChangeSpinners();
 
             return mRootView;
-        }
-
-        private void setupLimitZoom() {
-            boolean isLimited = ClientPrefs.getInstanceWithoutContext().isMapZoomLimited();
-            CheckBox button = (CheckBox) mRootView.findViewById(R.id.toggleLimitedMapZoom);
-            button.setChecked(isLimited);
-            button.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-                    ClientPrefs.getInstance(mRootView.getContext()).setIsMapZoomLimited(isChecked);
-                }
-            });
         }
 
         private void setupSaveJSONLogs() {

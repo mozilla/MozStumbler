@@ -29,6 +29,11 @@
             android:key="map_tile_res_options"
             android:summary="@string/map_tile_resolution_options_summary"
             android:title="@string/map_tile_resolution_options_label" />
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="limited_zoom"
+            android:summary="@string/limit_map_zoom_summary"
+            android:title="@string/limit_map_zoom" />
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/category_display">

@@ -25,8 +25,6 @@ public class Prefs {
     private static final String LOG_TAG = LoggerUtil.makeLogTag(Prefs.class);
     private static final String USER_AGENT_PREF = "user-agent";
     private static final String VALUES_VERSION_PREF = "values_version";
-    private static final String LAT_PREF = "lat_pref";
-    private static final String LON_PREF = "lon_pref";
     private static final String FIREFOX_SCAN_ENABLED = "firefox_scan_on";
     private static final String MOZ_API_KEY = "moz_api_key";
     private static final String LAST_ATTEMPTED_UPLOAD_TIME = "last_attempted_upload_time";

@@ -109,8 +109,32 @@ public class DeveloperActivity extends ActionBarActivity {
             setupSaveJSONLogs();
             setupSimulationPreference();
             setupLocationChangeSpinners();
-
+            setupMinPauseTime();
             return mRootView;
+        }
+
+        private void setupMinPauseTime() {
+            ClientPrefs cPrefs = ClientPrefs.getInstance(mRootView.getContext());
+            final String[] timeArray = {"5 s", "10 s", "20 s", "30 s", "60 s", "120 s"};
+            final ArrayAdapter<String> timeAdapter =
+                    new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_spinner_item, timeArray);
+            final Spinner timeSpinner = (Spinner) mRootView.findViewById(R.id.spinnerMotionDetectionPauseTimeSeconds);
+            timeSpinner.setAdapter(timeAdapter);
+            final int time = (int) cPrefs.getMotionDetectionMinPauseTime();
+            timeSpinner.setSelection(findIndexOf(time, timeArray));
+
+            timeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View arg1, int position, long id) {
+                    String item = parent.getItemAtPosition(position).toString();
+                    int val = Integer.valueOf(item.substring(0, item.indexOf(" ")));
+                    Prefs.getInstance(mRootView.getContext()).setMotionDetectionMinPauseTime(val);
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> arg0) {
+                }
+            });
         }
 
         private void setupSaveJSONLogs() {

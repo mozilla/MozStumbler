@@ -40,7 +40,7 @@ public class MotionSensor {
 
     public MotionSensor(Context appCtx) {
         mAppContext = appCtx;
-        mQuickCheck = new QuickCheckGPSLocationChanged(mAppContext);
+        mFalsePositiveFilter = new FalsePositiveFilter(mAppContext);
 
         mSensorManager = (SensorManager) mAppContext.getSystemService(Context.SENSOR_SERVICE);
         if (mSensorManager == null) {
@@ -79,11 +79,6 @@ public class MotionSensor {
         return SignificantMotionSensor.getSensor(appCtx) != null;
     }
 
-    private boolean isSignificantMotionSensorEnabled() {
-        return hasSignificantMotionSensor(mAppContext) &&
-               Prefs.getInstance(mAppContext).isMotionSensorTypeSignificant();
-    }
-
     public void start() {
         if (!Prefs.getInstance(mAppContext).isMotionSensorEnabled() ||
                 mMotionSensor.isActive() ||
@@ -93,19 +88,15 @@ public class MotionSensor {
 
         mHandler.removeCallbacks(mStartMotionSensorRunnable);
 
-        long delay = 0;
-        if (!isSignificantMotionSensorEnabled()) {
-            if (mQuickCheck.isGPSStillWarm()) {
-                delay = 30 * 1000;
-            } else {
-                delay = 60 * 1000;
-            }
-            AppGlobals.guiLogInfo("Sleep for " + delay + "ms", "green", false, false);
-        }
+        long delay = Prefs.getInstance(mAppContext).getMotionDetectionMinPauseTime() * 1000;
+        // During this sleep period, all motion is ignored, this ensures that even if the motion sensor
+        // keeps falsely triggering, waking the scanning, and then pausing again, there will still
+        // be some guaranteed battery savings because of this sleep.
+        AppGlobals.guiLogInfo("Sleep for " + delay + "ms", "green", false, false);
         mIsStartMotionSensorRunnableScheduled = true;
         mHandler.postDelayed(mStartMotionSensorRunnable, delay);
 
-        mQuickCheck.updateLocation();
+        mFalsePositiveFilter.updateLocation();
     }
 
     public void stop() {
@@ -118,13 +109,15 @@ public class MotionSensor {
 
         mMotionSensor.stop();
 
-        if (mQuickCheck.isGPSStillWarm()) {
-            mQuickCheck.start();
+        if (mFalsePositiveFilter.isGPSStillWarm()) {
+            mFalsePositiveFilter.start();
         }
     }
 
-    QuickCheckGPSLocationChanged mQuickCheck;
-    private static class QuickCheckGPSLocationChanged {
+    // Try to filter false positives by quickly checking to see if the user location has changed.
+    // If the GPS has gone cold (~2 hours), then stop using this filter.
+    FalsePositiveFilter mFalsePositiveFilter;
+    private static class FalsePositiveFilter {
         final Context mContext;
         final Handler handler = new Handler();
         private Location mLastLocation;
@@ -150,7 +143,7 @@ public class MotionSensor {
             public void onProviderDisabled(String provider) {}
         };
 
-        public QuickCheckGPSLocationChanged(Context mAppContext) {
+        public FalsePositiveFilter(Context mAppContext) {
             mContext = mAppContext;
         }
 

@@ -36,6 +36,7 @@ public class Prefs {
 
     private static final String MOTION_CHANGE_DISTANCE_METERS = "motion_change_distance";
     private static final String MOTION_CHANGE_TIME_WINDOW_SECONDS = "motion_change_time";
+    private static final String MOTION_SENSOR_MIN_PAUSE_SECONDS = "motion_sensor_min_pause_sec";
 
     private static final String SAVE_STUMBLE_LOGS = "save_stumble_logs";
     protected static Prefs sInstance;
@@ -276,5 +277,15 @@ public class Prefs {
 
     public void setMotionSensorTypeSignificant(boolean on) {
         setBoolPref(MOTION_SENSOR_IS_SIGNIFICANT_TYPE, on);
+    }
+
+    public void setMotionDetectionMinPauseTime(long seconds) {
+        SharedPreferences.Editor editor = getPrefs().edit();
+        editor.putLong(MOTION_SENSOR_MIN_PAUSE_SECONDS, seconds);
+        apply(editor);
+    }
+
+    public long getMotionDetectionMinPauseTime() {
+        return getPrefs().getLong(MOTION_SENSOR_MIN_PAUSE_SECONDS, 20);
     }
 }

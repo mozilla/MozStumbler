@@ -6,20 +6,10 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin">
 
-
-    <View
-        android:id="@+id/line0"
-        android:layout_width="fill_parent"
-        android:layout_height="1dp"
-        android:layout_marginBottom="10dp"
-        android:layout_marginTop="10dp"
-        android:background="#55ffffff" />
-
     <CheckBox
         android:id="@+id/toggleSaveStumbleLogs"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/line0"
         android:text="@string/save_stumble_logs" />
 
     <View
@@ -110,6 +100,23 @@
             android:id="@+id/spinnerMotionDetectionTimeSeconds"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/layout3">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Minimum pause time:"/>
+
+        <Spinner
+            android:id="@+id/spinnerMotionDetectionPauseTimeSeconds"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
     </LinearLayout>
 
 </RelativeLayout>

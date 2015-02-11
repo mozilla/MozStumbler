@@ -8,23 +8,7 @@
 
 
     <View
-        android:id="@+id/line"
-        android:layout_width="fill_parent"
-        android:layout_height="1dp"
-        android:layout_marginBottom="10dp"
-        android:layout_marginTop="10dp"
-        android:background="#55ffffff" />
-
-    <CheckBox
-        android:id="@+id/toggleLimitedMapZoom"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/line"
-        android:text="@string/limit_map_zoom" />
-
-    <View
         android:id="@+id/line0"
-        android:layout_below="@id/toggleLimitedMapZoom"
         android:layout_width="fill_parent"
         android:layout_height="1dp"
         android:layout_marginBottom="10dp"

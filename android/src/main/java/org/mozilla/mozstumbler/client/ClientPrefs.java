@@ -20,6 +20,7 @@ public class ClientPrefs extends Prefs {
     public static final String CRASH_REPORTING = "crash_reporting";
     public static final int MIN_BATTERY_DEFAULT = 15;
     public static final String LAST_VERSION = "last_version";
+    public static final String IS_MAP_ZOOM_LIMITED = "limited_zoom";
     private static final String LOG_TAG = LoggerUtil.makeLogTag(ClientPrefs.class);
     private static final String LAT_PREF = "lat";
     private static final String LON_PREF = "lon";
@@ -27,7 +28,6 @@ public class ClientPrefs extends Prefs {
     private static final String ON_MAP_MLS_DRAW_IS_ON = "actually_draw_mls_dots_on_map";
     private static final String DEFAULT_SIMULATION_LAT_LONG = "default_simulation_lat_lon";
     private static final String MIN_BATTERY_PCT = "min_battery_pct";
-    private static final String IS_MAP_ZOOM_LIMITED = "limited_zoom";
 
     protected ClientPrefs(Context context) {
         super(context);

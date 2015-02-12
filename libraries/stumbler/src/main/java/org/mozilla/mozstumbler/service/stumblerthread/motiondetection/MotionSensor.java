@@ -120,12 +120,12 @@ public class MotionSensor {
     FalsePositiveFilter mFalsePositiveFilter;
     private static class FalsePositiveFilter {
         private final Context mContext;
-        private final Handler handler = new Handler();
+        private final Handler mHandler = new Handler();
         private Location mLastLocation;
         private final long mMinMotionChangeDistanceMeters = 10;
         private long mTimeStartedMs;
 
-        private final Runnable mRunnable = new Runnable() {
+        private final Runnable mStopListeningTimer = new Runnable() {
             public void run() {
                 stop();
             }
@@ -181,13 +181,13 @@ public class MotionSensor {
             LocationManager lm = (LocationManager)mContext.getSystemService(Context.LOCATION_SERVICE);
             lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, mListener);
 
-            handler.postDelayed(mRunnable, 30 * 1000);
+            mHandler.postDelayed(mStopListeningTimer, 30 * 1000);
         }
 
         void stop() {
             LocationManager lm = (LocationManager)mContext.getSystemService(Context.LOCATION_SERVICE);
             lm.removeUpdates(mListener);
-            handler.removeCallbacks(mRunnable);
+            mHandler.removeCallbacks(mStopListeningTimer);
         }
 
         private void setTime() {

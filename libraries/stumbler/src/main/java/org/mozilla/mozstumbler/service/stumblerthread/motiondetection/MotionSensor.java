@@ -65,6 +65,7 @@ public class MotionSensor {
     // This class can use this event to update its state
     public void scannerFullyStopped() {
         setTypeFromPrefs();
+        mFalsePositiveFilter.reset();
     }
 
     public static void debugMotionDetected() {
@@ -118,11 +119,17 @@ public class MotionSensor {
     // If the GPS has gone cold (~2 hours), then stop using this filter.
     FalsePositiveFilter mFalsePositiveFilter;
     private static class FalsePositiveFilter {
-        final Context mContext;
-        final Handler handler = new Handler();
+        private final Context mContext;
+        private final Handler handler = new Handler();
         private Location mLastLocation;
-        private final long mMinMotionChangeDistanceMeters = 30;
+        private final long mMinMotionChangeDistanceMeters = 10;
         private long mTimeStartedMs;
+
+        private final Runnable mRunnable = new Runnable() {
+            public void run() {
+                stop();
+            }
+        };
 
         LocationListener mListener = new LocationListener() {
             public void onLocationChanged(Location location) {
@@ -131,10 +138,14 @@ public class MotionSensor {
                     return;
                 }
                 double dist = mLastLocation.distanceTo(location);
+                AppGlobals.guiLogInfo("Distance moved: " + String.format("%.1f", dist) + " m", "green", false, false);
+
                 if (dist < mMinMotionChangeDistanceMeters) {
+                    AppGlobals.guiLogInfo("not moved", "green", true, false);
                     Intent sendIntent = new Intent(LocationChangeSensor.ACTION_LOCATION_NOT_CHANGING);
                     LocalBroadcastManager.getInstance(mContext).sendBroadcastSync(sendIntent);
-                    AppGlobals.guiLogInfo("not moved", "green", true, false);
+                } else {
+                    reset();
                 }
             }
 
@@ -151,11 +162,14 @@ public class MotionSensor {
             stop();
 
             if (mTimeStartedMs == 0) {
-                reset();
+                setTime();
             }
 
-            LocationManager lm = (LocationManager)mContext.getSystemService(Context.LOCATION_SERVICE);
-            mLastLocation = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            if (mLastLocation == null) {
+                AppGlobals.guiLogInfo("Updated location for false pos. filter");
+                LocationManager lm = (LocationManager)mContext.getSystemService(Context.LOCATION_SERVICE);
+                mLastLocation = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            }
         }
 
         void start() {
@@ -167,27 +181,28 @@ public class MotionSensor {
             LocationManager lm = (LocationManager)mContext.getSystemService(Context.LOCATION_SERVICE);
             lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, mListener);
 
-            handler.postDelayed(new Runnable() {
-                public void run() {
-                    stop();
-                }
-            }, 30 * 1000);
+            handler.postDelayed(mRunnable, 30 * 1000);
         }
 
         void stop() {
             LocationManager lm = (LocationManager)mContext.getSystemService(Context.LOCATION_SERVICE);
             lm.removeUpdates(mListener);
-            handler.removeCallbacks(null);
+            handler.removeCallbacks(mRunnable);
         }
 
-        public void reset() {
+        private void setTime() {
             ISystemClock clock = (ISystemClock) ServiceLocator.getInstance().getService(ISystemClock.class);
             mTimeStartedMs = clock.currentTimeMillis();
         }
 
+        public void reset() {
+            mTimeStartedMs = 0;
+            mLastLocation = null;
+        }
+
         public boolean isGPSStillWarm() {
             if (mTimeStartedMs == 0) {
-                reset();
+                setTime();
             }
             final long twoHours = 2 * 60 * 60 * 1000;
             ISystemClock clock = (ISystemClock) ServiceLocator.getInstance().getService(ISystemClock.class);

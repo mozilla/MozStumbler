@@ -1,3 +1,5 @@
+Please refer to the wiki for detailed documentation.
+
 MozStumbler
 [![Build Status](https://travis-ci.org/mozilla/MozStumbler.png)](https://travis-ci.org/mozilla/MozStumbler.png)
 

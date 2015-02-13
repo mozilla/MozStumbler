@@ -10,11 +10,9 @@ import android.util.Log;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.Prefs;
 import org.mozilla.mozstumbler.service.core.http.HTTPResponse;
-import org.mozilla.mozstumbler.service.core.http.IHttpUtil;
 import org.mozilla.mozstumbler.service.core.http.ILocationService;
 import org.mozilla.mozstumbler.service.core.http.IResponse;
 import org.mozilla.mozstumbler.service.core.http.MLS;
-import org.mozilla.mozstumbler.service.core.logging.ClientLog;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageManager;
 import org.mozilla.mozstumbler.service.utils.NetworkInfo;
 import org.mozilla.mozstumbler.service.utils.Zipper;
@@ -50,6 +48,7 @@ public class AsyncUploader extends AsyncTask<AsyncUploadParam, AsyncProgressList
     public static final AtomicBoolean isUploading = new AtomicBoolean();
     private static final String LOG_TAG = LoggerUtil.makeLogTag(AsyncUploader.class);
     private static AsyncUploaderListener sAsyncListener;
+    ILocationService mls = (ILocationService) ServiceLocator.getInstance().getService(ILocationService.class);
 
     // This listener can show progress for any AsyncUploader. This global use is particularly
     // useful for UI to show progress when this has been scheduled internally in the service.
@@ -124,7 +123,6 @@ public class AsyncUploader extends AsyncTask<AsyncUploadParam, AsyncProgressList
             return;
         }
 
-        ILocationService mls = (ILocationService) ServiceLocator.getInstance().getService(ILocationService.class);
         DataStorageManager dm = DataStorageManager.getInstance();
 
         String error = null;

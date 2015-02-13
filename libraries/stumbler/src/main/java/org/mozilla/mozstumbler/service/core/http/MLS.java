@@ -14,13 +14,11 @@ public class MLS implements ILocationService {
     public static final String EMAIL_HEADER = "X-Email";
     private static final String SEARCH_URL = "https://location.services.mozilla.com/v1/search";
     private static final String SUBMIT_URL = "https://location.services.mozilla.com/v1/submit";
-    final IHttpUtil httpDelegate;
+    final IHttpUtil httpDelegate = (IHttpUtil) ServiceLocator.getInstance().getService(IHttpUtil.class);
 
     private String mozApiKey;
 
-    public MLS() {
-        httpDelegate = (IHttpUtil) ServiceLocator.getInstance().getService(IHttpUtil.class);
-    }
+    public MLS() {}
 
     public IResponse submit(byte[] data, Map<String, String> headers, boolean precompressed) {
         if (mozApiKey == null) {

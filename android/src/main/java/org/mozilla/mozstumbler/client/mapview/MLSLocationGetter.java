@@ -10,10 +10,8 @@ import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.mozilla.mozstumbler.service.core.http.IHttpUtil;
 import org.mozilla.mozstumbler.service.core.http.ILocationService;
 import org.mozilla.mozstumbler.service.core.http.IResponse;
-import org.mozilla.mozstumbler.service.core.http.MLS;
 import org.mozilla.mozstumbler.service.utils.LocationAdapter;
 import org.mozilla.mozstumbler.svclocator.ServiceLocator;
 import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;

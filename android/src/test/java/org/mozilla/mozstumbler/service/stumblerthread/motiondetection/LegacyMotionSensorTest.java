@@ -102,15 +102,12 @@ public class LegacyMotionSensorTest {
     public void testFalsePositiveFilterInitialization() {
         MotionSensor motionSensor = new MotionSensor(Robolectric.application);
         clock.setCurrentTime(1000);
-        assertTrue(motionSensor.mFalsePositiveFilter.mTimeStartedMs == 0);
+        assertTrue(motionSensor.mFalsePositiveFilter.mLastLocation == null);
         motionSensor.start();
         motionSensor.mFalsePositiveFilter.mLastLocation = getNextGPSLocation();
-        assertTrue(motionSensor.mFalsePositiveFilter.mTimeStartedMs > 0);
         motionSensor.stop();
-        assertTrue(motionSensor.mFalsePositiveFilter.mTimeStartedMs > 0);
         assertTrue(motionSensor.mFalsePositiveFilter.mLastLocation != null);
         motionSensor.scannerFullyStopped();
-        assertTrue(motionSensor.mFalsePositiveFilter.mTimeStartedMs == 0);
         assertTrue(motionSensor.mFalsePositiveFilter.mLastLocation == null);
     }
 

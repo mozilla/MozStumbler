@@ -22,7 +22,7 @@ public class MotionSensor {
     public static final String ACTION_USER_MOTION_DETECTED = AppGlobals.ACTION_NAMESPACE + ".USER_MOVE";
     private static final String LOG_TAG = LoggerUtil.makeLogTag(MotionSensor.class);
     private static final ILogger Log = (ILogger) ServiceLocator.getInstance().getService(ILogger.class);
-
+    static final long GPS_WARM_TIME_MS = 2 * 60 * 60 * 1000; // after this, the GPS is considered cold
     /// Testing code
     private final SensorManager mSensorManager;
     private final Context mAppContext;
@@ -118,12 +118,12 @@ public class MotionSensor {
     // Try to filter false positives by quickly checking to see if the user location has changed.
     // If the GPS has gone cold (~2 hours), then stop using this filter.
     FalsePositiveFilter mFalsePositiveFilter;
-    private static class FalsePositiveFilter {
+    static class FalsePositiveFilter {
         private final Context mContext;
         private final Handler mHandler = new Handler();
-        private Location mLastLocation;
+        Location mLastLocation;
         private final long mMinMotionChangeDistanceMeters = 10;
-        private long mTimeStartedMs;
+        long mTimeStartedMs;
 
         private final Runnable mStopListeningTimer = new Runnable() {
             public void run() {
@@ -204,9 +204,8 @@ public class MotionSensor {
             if (mTimeStartedMs == 0) {
                 setTime();
             }
-            final long twoHours = 2 * 60 * 60 * 1000;
             ISystemClock clock = (ISystemClock) ServiceLocator.getInstance().getService(ISystemClock.class);
-            return clock.currentTimeMillis() - mTimeStartedMs < twoHours;
+            return clock.currentTimeMillis() - mTimeStartedMs < GPS_WARM_TIME_MS;
         }
     }
 }

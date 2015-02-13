@@ -28,7 +28,10 @@ public class MLSLocationGetter extends AsyncTask<String, Void, Location> {
     private static final String RESPONSE_OK_TEXT = "ok";
     private static AtomicInteger sRequestCounter = new AtomicInteger(0);
     private final int MAX_REQUESTS = 10;
-    private ILocationService mls;
+    private ILocationService mls = (ILocationService)
+                                    ServiceLocator.getInstance()
+                                            .getService(ILocationService.class);
+
     private MLSLocationGetterCallback mCallback;
     private byte[] mQueryMLSBytes;
     private boolean mIsBadRequest;
@@ -36,9 +39,6 @@ public class MLSLocationGetter extends AsyncTask<String, Void, Location> {
     public MLSLocationGetter(MLSLocationGetterCallback callback, JSONObject mlsQueryObj) {
         mCallback = callback;
         mQueryMLSBytes = mlsQueryObj.toString().getBytes();
-
-        IHttpUtil httpUtil = (IHttpUtil) ServiceLocator.getInstance().getService(IHttpUtil.class);
-        mls = new MLS(httpUtil);
     }
 
     @Override

@@ -14,6 +14,7 @@ import org.mozilla.mozstumbler.service.core.http.IHttpUtil;
 import org.mozilla.mozstumbler.service.core.http.ILocationService;
 import org.mozilla.mozstumbler.service.core.http.IResponse;
 import org.mozilla.mozstumbler.service.core.http.MLS;
+import org.mozilla.mozstumbler.service.core.logging.ClientLog;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageManager;
 import org.mozilla.mozstumbler.service.utils.NetworkInfo;
 import org.mozilla.mozstumbler.service.utils.Zipper;
@@ -123,8 +124,7 @@ public class AsyncUploader extends AsyncTask<AsyncUploadParam, AsyncProgressList
             return;
         }
 
-        IHttpUtil httpUtil = (IHttpUtil) ServiceLocator.getInstance().getService(IHttpUtil.class);
-        ILocationService mls = new MLS(httpUtil);
+        ILocationService mls = (ILocationService) ServiceLocator.getInstance().getService(ILocationService.class);
         DataStorageManager dm = DataStorageManager.getInstance();
 
         String error = null;
@@ -154,6 +154,7 @@ public class AsyncUploader extends AsyncTask<AsyncUploadParam, AsyncProgressList
 
                     String logMsg = "MLS Submit: [HTTP Status:" + result.httpStatusCode() + "], [Bytes Sent:" + result.bytesSent() + "]";
                     AppGlobals.guiLogInfo(logMsg, "#FFFFCC", true, false);
+                    Log.d(LOG_TAG, logMsg);
 
                     dm.delete(batch.filename);
 

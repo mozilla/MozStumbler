@@ -33,6 +33,7 @@ import org.mozilla.mozstumbler.client.util.NotificationUtil;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.Prefs;
 import org.mozilla.mozstumbler.service.core.http.IHttpUtil;
+import org.mozilla.mozstumbler.service.core.http.ILocationService;
 import org.mozilla.mozstumbler.service.core.logging.MockAcraLog;
 import org.mozilla.mozstumbler.service.stumblerthread.Reporter;
 import org.mozilla.mozstumbler.service.stumblerthread.motiondetection.MotionSensor;
@@ -100,9 +101,10 @@ public class MainApp extends Application
         // All classes here must have an argument free constructor.
         result.put(IHttpUtil.class,
                 ServiceConfig.load("org.mozilla.mozstumbler.service.core.http.HttpUtil"));
-        // All classes here must have an argument free constructor.
         result.put(ISystemClock.class,
                 ServiceConfig.load("org.mozilla.mozstumbler.svclocator.services.SystemClock"));
+        result.put(ILocationService.class,
+                ServiceConfig.load("org.mozilla.mozstumbler.service.core.http.MLS"));
 
         if (BuildConfig.BUILD_TYPE.equals("unittest")) {
             result.put(ILogger.class, ServiceConfig.load("org.mozilla.mozstumbler.svclocator.services.log.DebugLogger"));

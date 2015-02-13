@@ -194,9 +194,10 @@ public class MotionSensor {
                 AppGlobals.guiLogInfo("Updated location for false pos. filter");
                 LocationManager lm = (LocationManager)mContext.getSystemService(Context.LOCATION_SERVICE);
                 mLastLocation = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                // set the time to now, as if the location at *now* is this GPS location
-
-                mLastLocation.setTime(mClock.currentTimeMillis());
+                if (mLastLocation != null) {
+                    // set the time to now, as if the location at *now* is this GPS location
+                    mLastLocation.setTime(mClock.currentTimeMillis());
+                }
             }
 
             if (mLastLocation == null) {

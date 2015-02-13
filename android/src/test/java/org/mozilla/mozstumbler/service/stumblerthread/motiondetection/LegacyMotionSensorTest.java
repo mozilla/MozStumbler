@@ -8,9 +8,14 @@ import android.hardware.Sensor;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Build;
+import android.util.Log;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mozilla.mozstumbler.service.Prefs;
+import org.mozilla.mozstumbler.svclocator.ServiceLocator;
+import org.mozilla.mozstumbler.svclocator.services.ISystemClock;
 import org.mozilla.mozstumbler.svclocator.services.MockSystemClock;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
@@ -23,7 +28,14 @@ import static junit.framework.Assert.assertTrue;
 @RunWith(RobolectricTestRunner.class)
 public class LegacyMotionSensorTest {
 
-    MockSystemClock clock = new MockSystemClock();
+    MockSystemClock clock;
+    final long ONE_SEC_MS = 1000;
+
+    @Before
+    public void setup() {
+        clock = new MockSystemClock();
+        ServiceLocator.getInstance().putService(ISystemClock.class, clock);
+    }
 
     @Test
     public void testConvergence() {
@@ -124,5 +136,51 @@ public class LegacyMotionSensorTest {
         assertTrue(motionSensor.mFalsePositiveFilter.mLastLocation == null);
     }
 
+    private long howLongUntilMotionSensorRun(long motionDetectDefaultPauseTimeMs, MotionSensor motionSensor) {
+        long i = ONE_SEC_MS;
+        for (; i < motionDetectDefaultPauseTimeMs + ONE_SEC_MS; i += ONE_SEC_MS) {
+            Robolectric.pauseMainLooper();
+            Robolectric.idleMainLooper(ONE_SEC_MS);
+            if (!motionSensor.mIsStartMotionSensorRunnableScheduled) {
+                break;
+            }
+        }
+        return i;
+    }
 
+    @Test
+    public void testIncrementalDelayStartingMotionSensor() {
+        MotionSensor motionSensor = new MotionSensor(Robolectric.application);
+        clock.setCurrentTime(ONE_SEC_MS);
+        motionSensor.start();
+        assertTrue(motionSensor.mIsStartMotionSensorRunnableScheduled);
+        Robolectric.runUiThreadTasksIncludingDelayedTasks();
+        assertTrue(!motionSensor.mIsStartMotionSensorRunnableScheduled);
+        motionSensor.stop();
+
+        final long delayMs = Prefs.getInstance(Robolectric.application).getMotionDetectionMinPauseTime() * ONE_SEC_MS;
+        motionSensor.mFalsePositiveFilter.mLastLocation = getNextGPSLocation();
+        motionSensor.mFalsePositiveFilter.mLastLocation.setTime(ONE_SEC_MS);
+
+        clock.setCurrentTime(motionSensor.mFalsePositiveFilter.mLastLocation.getTime() + 60 * ONE_SEC_MS);
+        motionSensor.start();
+        assertTrue(motionSensor.mIsStartMotionSensorRunnableScheduled);
+        long howLong = howLongUntilMotionSensorRun(delayMs, motionSensor);
+        // check that it is within 1 sec of expected
+        assertTrue(Math.abs(delayMs / 5 - howLong) < ONE_SEC_MS);
+
+        motionSensor.stop();
+        clock.setCurrentTime(motionSensor.mFalsePositiveFilter.mLastLocation.getTime() + 60 * ONE_SEC_MS * 4);
+        motionSensor.start();
+        assertTrue(motionSensor.mIsStartMotionSensorRunnableScheduled);
+        howLong = howLongUntilMotionSensorRun(delayMs, motionSensor);
+        assertTrue(Math.abs(delayMs * 4/5 - howLong) < ONE_SEC_MS);
+
+        motionSensor.stop();
+        clock.setCurrentTime(motionSensor.mFalsePositiveFilter.mLastLocation.getTime() + 60 * ONE_SEC_MS * 999);
+        motionSensor.start();
+        assertTrue(motionSensor.mIsStartMotionSensorRunnableScheduled);
+        howLong = howLongUntilMotionSensorRun(delayMs, motionSensor);
+        assertTrue(Math.abs(delayMs - howLong) < ONE_SEC_MS);
+    }
 }

@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Mozilla Stumbler</string>
+    <!-- <string name="app_name">Mozilla Stumbler</string> -->
     <string name="action_about">Über Mozilla Stumbler</string>
     <string name="action_preferences">Einstellungen</string>
     <string name="start_scanning">Scanvorgang starten</string>
     <string name="stop_scanning">Scanvorgang stoppen</string>
     <string name="view_leaderboard">Bestenliste ansehen</string>
-    <string name="service_name">Mozilla Stumbler</string>
+    <!-- <string name="service_name">Mozilla Stumbler</string> -->
     <string name="notification_scanning">Mozilla Stumbler scannt</string>
     <string name="notification_paused">Mozilla Stumbler ist pausiert</string>
     <string name="enter_nickname">Namen eingeben (optional)</string>
@@ -167,11 +167,19 @@
     <string name="off">aus</string>
 
     <string name="title_activity_power_saving_screen">Energiesparoptionen</string>
-    <!--
-    <string name="sensor_type_legacy">Ihr Gerät besitzt nur ältere Sensoren. Sie sollten diese Funktion deaktivieren, wenn das Scannen beim Bewegen nicht fortgesetzt wird.</string>
-    <string name="sensor_type_significant_motion">Ihr Gerät besitzt einen Sensor zur Erkennung signifikanter Bewegungen. Die empfohlene Einstellung ist Bewegungserkennung \"an\".</string>
-    -->
+    <string name="sensor_type_legacy">Ihr Gerät besitzt keinen Sensor zur Erkennung signifikanter Bewegungen.</string>
+    <string name="sensor_type_significant_motion">Der Sensor zur Erkennung signifikanter Bewegungen bietet die besten Energiesparmöglichkeiten, aber er funktioniert nicht auf allen Geräten. Benutzen Sie diesen Sensortyp nicht, wenn das Scannen trotz Bewegung pausiert bleibt.</string>
+
     <string name="ok">OK</string>
     <string name="whats_new_title">Änderungen</string>
     <!-- <string name="whats_new"></string> -->
+    <string name="limit_map_zoom">Karte Herauszoomen limitieren</string>
+    <string name="test_significant_sensor_dialog_title">Sensor für signifikante Bewegungen testen</string>
+    <string name="test_significant_sensor_dialog_message">Bleiben Sie stehen, laufen Sie dann 1 Minute lang.\n\nWarte auf Bewegung &#8230;</string>
+    <string name="test_significant_sensor_confirmed_working">Bewegung erkannt.\nDer Sensor funktioniert korrekt.</string>
+    <string name="button_test_significant_motion_sensor">Sensor für signifikante Bewegungen testen</string>
+    <string name="sensor_name_significant_motion">Signifikante Bewegung</string>
+    <string name="sensor_name_accelerometer">Beschleunigungssensor</string>
+    <string name="title_use_sensor">Sensor benutzen:</string>
+    <string name="limit_map_zoom_summary">Reduziert den Datenverbrauch der Kartenansicht.</string>
 </resources>

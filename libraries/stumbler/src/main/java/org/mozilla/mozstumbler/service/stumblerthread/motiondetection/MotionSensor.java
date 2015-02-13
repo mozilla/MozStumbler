@@ -22,6 +22,7 @@ public class MotionSensor {
     public static final String ACTION_USER_MOTION_DETECTED = AppGlobals.ACTION_NAMESPACE + ".USER_MOVE";
     private static final String LOG_TAG = LoggerUtil.makeLogTag(MotionSensor.class);
     private static final ILogger Log = (ILogger) ServiceLocator.getInstance().getService(ILogger.class);
+    static final long TIME_UNTIL_GPS_GOES_COLD = 2 * 60 * 60 * 1000; // 2 hours
 
     /// Testing code
     private final SensorManager mSensorManager;
@@ -65,6 +66,7 @@ public class MotionSensor {
     // This class can use this event to update its state
     public void scannerFullyStopped() {
         setTypeFromPrefs();
+        mFalsePositiveFilter.reset();
     }
 
     public static void debugMotionDetected() {
@@ -88,15 +90,29 @@ public class MotionSensor {
 
         mHandler.removeCallbacks(mStartMotionSensorRunnable);
 
-        long delay = Prefs.getInstance(mAppContext).getMotionDetectionMinPauseTime() * 1000;
+        long delayMs = Prefs.getInstance(mAppContext).getMotionDetectionMinPauseTime() * 1000;
+        final long pausedMs = mFalsePositiveFilter.timeSinceInitialGPS();
+        if (pausedMs < 5 * 60 * 1000) {
+            // The paused motion sensor has a huge benefit in the case where I am walking around frequently
+            // in an office, and keep triggering motion with no location change. However, I don't like that when
+            // the motion sensor starts the first time, it sleeps the full amount. For example, I could be
+            // actively stumbling, get stopped at a streetlight, scanning pauses for a forced 20s, and I get
+            // an unnecessary gap in the data. This code ensures that the pause time is ramped up over a 5 min
+            // period. So, the first pause is 1/5 of the <>MinPauseTime, at 2 mins of no location change
+            // the pause time is 2/5. After 5 mins, the full pause time is used.
+            final double mins = (pausedMs < 60 * 1000)? 1 : pausedMs / 1000 / 60.0; // 1.0 to 5.0
+            delayMs *= mins / 5.0;
+        }
+
         // During this sleep period, all motion is ignored, this ensures that even if the motion sensor
         // keeps falsely triggering, waking the scanning, and then pausing again, there will still
         // be some guaranteed battery savings because of this sleep.
-        AppGlobals.guiLogInfo("Sleep for " + delay + "ms", "green", false, false);
-        mIsStartMotionSensorRunnableScheduled = true;
-        mHandler.postDelayed(mStartMotionSensorRunnable, delay);
+        AppGlobals.guiLogInfo("Sleep for " + delayMs + "ms", "green", false, false);
 
-        mFalsePositiveFilter.updateLocation();
+        mIsStartMotionSensorRunnableScheduled = true;
+        mHandler.postDelayed(mStartMotionSensorRunnable, delayMs);
+
+        mFalsePositiveFilter.stop();
     }
 
     public void stop() {
@@ -109,20 +125,33 @@ public class MotionSensor {
 
         mMotionSensor.stop();
 
-        if (mFalsePositiveFilter.isGPSStillWarm()) {
+        if (mFalsePositiveFilter.timeSinceInitialGPS() < TIME_UNTIL_GPS_GOES_COLD) {
             mFalsePositiveFilter.start();
         }
     }
 
     // Try to filter false positives by quickly checking to see if the user location has changed.
-    // If the GPS has gone cold (~2 hours), then stop using this filter.
+    // If the GPS has gone cold (~2 hours), then stop using this filter, as this class relies
+    // on getting a GPS in 30 seconds or less.
     FalsePositiveFilter mFalsePositiveFilter;
-    private static class FalsePositiveFilter {
-        final Context mContext;
-        final Handler handler = new Handler();
-        private Location mLastLocation;
-        private final long mMinMotionChangeDistanceMeters = 30;
-        private long mTimeStartedMs;
+    static class FalsePositiveFilter {
+        private final Context mContext;
+        private final Handler mHandler = new Handler();
+        private final ISystemClock mClock = (ISystemClock) ServiceLocator.getInstance().getService(ISystemClock.class);
+        Location mLastLocation;
+
+        // Movement less than this is considered a false positive
+        private final int MIN_DISTANCE_CHANGE_METERS = 10;
+
+        // Only wait 30s for a location, after this, stop trying to filter the false positive
+        // as without access to a GPS loc in 30s, this class can't quickly determine movement.
+        private final long MAX_TIME_TO_WAIT_FOR_GPS_MS =  30 * 1000;
+
+        private final Runnable mStopListeningTimer = new Runnable() {
+            public void run() {
+                stop();
+            }
+        };
 
         LocationListener mListener = new LocationListener() {
             public void onLocationChanged(Location location) {
@@ -131,10 +160,14 @@ public class MotionSensor {
                     return;
                 }
                 double dist = mLastLocation.distanceTo(location);
-                if (dist < mMinMotionChangeDistanceMeters) {
+                AppGlobals.guiLogInfo("Distance moved: " + String.format("%.1f", dist) + " m", "green", false, false);
+
+                if (dist < MIN_DISTANCE_CHANGE_METERS) {
+                    AppGlobals.guiLogInfo("not moved", "green", true, false);
                     Intent sendIntent = new Intent(LocationChangeSensor.ACTION_LOCATION_NOT_CHANGING);
                     LocalBroadcastManager.getInstance(mContext).sendBroadcastSync(sendIntent);
-                    AppGlobals.guiLogInfo("not moved", "green", true, false);
+                } else {
+                    reset();
                 }
             }
 
@@ -143,55 +176,48 @@ public class MotionSensor {
             public void onProviderDisabled(String provider) {}
         };
 
-        public FalsePositiveFilter(Context mAppContext) {
+        FalsePositiveFilter(Context mAppContext) {
             mContext = mAppContext;
         }
 
-        void updateLocation() {
-            stop();
-
-            if (mTimeStartedMs == 0) {
-                reset();
+        long timeSinceInitialGPS() {
+            if (mLastLocation == null) {
+                return 0;
             }
-
-            LocationManager lm = (LocationManager)mContext.getSystemService(Context.LOCATION_SERVICE);
-            mLastLocation = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            return mClock.currentTimeMillis() - mLastLocation.getTime();
         }
 
         void start() {
             stop();
 
             if (mLastLocation == null) {
+                AppGlobals.guiLogInfo("Updated location for false pos. filter");
+                LocationManager lm = (LocationManager)mContext.getSystemService(Context.LOCATION_SERVICE);
+                mLastLocation = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                if (mLastLocation != null) {
+                    // set the time to now, as if the location at *now* is this GPS location
+                    mLastLocation.setTime(mClock.currentTimeMillis());
+                }
+            }
+
+            if (mLastLocation == null) {
                 return;
             }
+
             LocationManager lm = (LocationManager)mContext.getSystemService(Context.LOCATION_SERVICE);
             lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, mListener);
 
-            handler.postDelayed(new Runnable() {
-                public void run() {
-                    stop();
-                }
-            }, 30 * 1000);
+            mHandler.postDelayed(mStopListeningTimer, MAX_TIME_TO_WAIT_FOR_GPS_MS);
         }
 
         void stop() {
             LocationManager lm = (LocationManager)mContext.getSystemService(Context.LOCATION_SERVICE);
             lm.removeUpdates(mListener);
-            handler.removeCallbacks(null);
+            mHandler.removeCallbacks(mStopListeningTimer);
         }
 
-        public void reset() {
-            ISystemClock clock = (ISystemClock) ServiceLocator.getInstance().getService(ISystemClock.class);
-            mTimeStartedMs = clock.currentTimeMillis();
-        }
-
-        public boolean isGPSStillWarm() {
-            if (mTimeStartedMs == 0) {
-                reset();
-            }
-            final long twoHours = 2 * 60 * 60 * 1000;
-            ISystemClock clock = (ISystemClock) ServiceLocator.getInstance().getService(ISystemClock.class);
-            return clock.currentTimeMillis() - mTimeStartedMs < twoHours;
+        void reset() {
+            mLastLocation = null;
         }
     }
 }

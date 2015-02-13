@@ -181,7 +181,6 @@ public class ScanManager {
             // Simulation contexts are only allowed for debug builds.
             Prefs prefs = Prefs.getInstanceWithoutContext();
             if (prefs != null) {
-                ClientLog.i(LOG_TAG, "ScanManager::startScanning simulation pref = " + prefs.isSimulateStumble());
                 if (prefs.isSimulateStumble()) {
                     mAppContext = new SimulationContext(mAppContext);
                     ClientLog.d(LOG_TAG, "ScanManager using SimulateStumbleContextWrapper");

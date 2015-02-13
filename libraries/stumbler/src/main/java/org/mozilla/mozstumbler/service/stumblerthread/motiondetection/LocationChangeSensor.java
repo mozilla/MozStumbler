@@ -51,7 +51,6 @@ public class LocationChangeSensor extends BroadcastReceiver {
         }
     };
     private long mStartTimeMs;
-    private boolean mDoSingleLocationCheck;
     private Location mLastLocation;
     // Package scoped for testing
     boolean mIsCheckTimeoutPosted;
@@ -68,16 +67,17 @@ public class LocationChangeSensor extends BroadcastReceiver {
     }
     /// ---
 
+    static final String DEBUG_SEND_UNCHANGING_LOC = "debug-send-unchanging-location";
     public static void debugSendLocationUnchanging() {
         if (sDebugInstance.mLastLocation == null) {
             Toast.makeText(sDebugInstance.mContext, "No location yet", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        sDebugInstance.mDoSingleLocationCheck = true;
         Intent intent = new Intent(GPSScanner.ACTION_GPS_UPDATED);
         intent.putExtra(Intent.EXTRA_SUBJECT, GPSScanner.SUBJECT_NEW_LOCATION);
         intent.putExtra(GPSScanner.NEW_LOCATION_ARG_LOCATION, sDebugInstance.mLastLocation);
+        intent.putExtra(DEBUG_SEND_UNCHANGING_LOC, true);
         LocalBroadcastManager.getInstance(sDebugInstance.mContext).sendBroadcastSync(intent);
     }
 
@@ -152,22 +152,22 @@ public class LocationChangeSensor extends BroadcastReceiver {
             ClientLog.d(LOG_TAG, "Computed distance: " + dist);
             ClientLog.d(LOG_TAG, "Pref distance: " + mPrefMotionChangeDistanceMeters);
 
+            boolean forceTimeout = intent.hasExtra(DEBUG_SEND_UNCHANGING_LOC);
+
             // TODO: this pref doesn't take into account the accuracy of the location.
             if (dist > mPrefMotionChangeDistanceMeters) {
                 ClientLog.d(LOG_TAG, "Received new location exceeding distance changed in meters pref");
                 mLastLocation = newPosition;
-            } else if (isTimeWindowForMovementExceeded() || mDoSingleLocationCheck) {
+            } else if (isTimeWindowForMovementExceeded() || forceTimeout) {
                 String log = "Insufficient movement:" + dist + " m, " + mPrefMotionChangeDistanceMeters + " m needed.";
                 ClientLog.d(LOG_TAG, log);
                 AppGlobals.guiLogInfo(log);
-                mDoSingleLocationCheck = false;
                 LocalBroadcastManager.getInstance(mContext).sendBroadcastSync(new Intent(ACTION_LOCATION_NOT_CHANGING));
                 removeTimeoutCheck();
                 return;
             }
         }
 
-        mDoSingleLocationCheck = false;
         scheduleTimeoutCheck(mPrefMotionChangeTimeWindowMs);
     }
 
@@ -188,18 +188,6 @@ public class LocationChangeSensor extends BroadcastReceiver {
         mIsCheckTimeoutPosted = false;
     }
 
-    public void quickCheckForFalsePositiveAfterMotionSensorMovement() {
-        // False positives for movement are common, particularly for the legacy sensor.
-        // Without this check, a false positive cause scanning to run for mPrefMotionChangeTimeWindowMs (2 mins default).
-        // We don't need to wait the full time window before concluding the user has not moved.
-        // This check waits 20 seconds for location change, if no change, go back to paused.
-        long kWaitTimeMs = 1000 * 20;
-        if (kWaitTimeMs > mPrefMotionChangeTimeWindowMs && mPrefMotionChangeTimeWindowMs > 100) {
-            kWaitTimeMs = mPrefMotionChangeTimeWindowMs - 100;
-        }
-        mDoSingleLocationCheck = true;
-        scheduleTimeoutCheck(kWaitTimeMs);
-    }
 
     Location testing_getLastLocation() {
         return mLastLocation;

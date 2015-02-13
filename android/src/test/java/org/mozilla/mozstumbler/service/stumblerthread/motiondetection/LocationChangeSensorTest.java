@@ -205,7 +205,6 @@ public class LocationChangeSensorTest {
         assertTrue(receivedIntent.size() == 0);
 
         ClientLog.d(LOG_TAG, "Movement that exceeds distance threshold while in paused state.");
-        locationChangeSensor.quickCheckForFalsePositiveAfterMotionSensorMovement();
         setPosition(x + 0.1, y);
 
         fakeWait(tick / 2);

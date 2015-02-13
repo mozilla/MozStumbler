@@ -22,7 +22,8 @@ public class MotionSensor {
     public static final String ACTION_USER_MOTION_DETECTED = AppGlobals.ACTION_NAMESPACE + ".USER_MOVE";
     private static final String LOG_TAG = LoggerUtil.makeLogTag(MotionSensor.class);
     private static final ILogger Log = (ILogger) ServiceLocator.getInstance().getService(ILogger.class);
-    static final long GPS_WARM_TIME_MS = 2 * 60 * 60 * 1000; // after this, the GPS is considered cold
+    static final long TIME_UNTIL_GPS_GOES_COLD = 2 * 60 * 60 * 1000; // 2 hours
+
     /// Testing code
     private final SensorManager mSensorManager;
     private final Context mAppContext;
@@ -124,7 +125,6 @@ public class MotionSensor {
 
         mMotionSensor.stop();
 
-        final long TIME_UNTIL_GPS_GOES_COLD = 2 * 60 * 60 * 1000; // 2 hours
         if (mFalsePositiveFilter.timeSinceInitialGPS() < TIME_UNTIL_GPS_GOES_COLD) {
             mFalsePositiveFilter.start();
         }
@@ -137,6 +137,7 @@ public class MotionSensor {
     static class FalsePositiveFilter {
         private final Context mContext;
         private final Handler mHandler = new Handler();
+        private final ISystemClock mClock = (ISystemClock) ServiceLocator.getInstance().getService(ISystemClock.class);
         Location mLastLocation;
 
         // Movement less than this is considered a false positive
@@ -183,8 +184,7 @@ public class MotionSensor {
             if (mLastLocation == null) {
                 return 0;
             }
-            ISystemClock clock = (ISystemClock) ServiceLocator.getInstance().getService(ISystemClock.class);
-            return clock.currentTimeMillis() - mLastLocation.getTime();
+            return mClock.currentTimeMillis() - mLastLocation.getTime();
         }
 
         void start() {
@@ -195,8 +195,8 @@ public class MotionSensor {
                 LocationManager lm = (LocationManager)mContext.getSystemService(Context.LOCATION_SERVICE);
                 mLastLocation = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
                 // set the time to now, as if the location at *now* is this GPS location
-                ISystemClock clock = (ISystemClock) ServiceLocator.getInstance().getService(ISystemClock.class);
-                mLastLocation.setTime(clock.currentTimeMillis());
+
+                mLastLocation.setTime(mClock.currentTimeMillis());
             }
 
             if (mLastLocation == null) {

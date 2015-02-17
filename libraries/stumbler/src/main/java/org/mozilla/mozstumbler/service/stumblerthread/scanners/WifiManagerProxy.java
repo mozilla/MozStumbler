@@ -10,6 +10,7 @@ import android.os.Build;
 
 import org.mozilla.mozstumbler.service.Prefs;
 import org.mozilla.mozstumbler.service.core.logging.ClientLog;
+import org.mozilla.mozstumbler.svclocator.ServiceLocator;
 import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
 import java.util.LinkedList;
@@ -54,11 +55,16 @@ public class WifiManagerProxy extends BroadcastReceiver {
     public List<ScanResult> getScanResults() {
         if (Prefs.getInstance(mAppContext).isSimulateStumble()) {
             LinkedList<ScanResult> result = new LinkedList<ScanResult>();
-            SimulationContext ctx;
+
+            ISimulatorService simSvc = (ISimulatorService) ServiceLocator.getInstance()
+                    .getService(ISimulatorService.class);
+
             try {
+                List<ScanResult> wifiBlock = simSvc.getNextMockWifiBlock();
                 // fetch scan results from the context
-                ctx = ((SimulationContext) mAppContext);
-                result.addAll(ctx.getNextMockWifiBlock());
+                if (wifiBlock != null) {
+                    result.addAll(wifiBlock);
+                }
             } catch (ClassCastException ex) {
                 ClientLog.e(LOG_TAG, "Simulation was enabled, but invalid context was found", ex);
             }
@@ -97,7 +103,7 @@ public class WifiManagerProxy extends BroadcastReceiver {
     }
 
     public void onReceive(Context c, Intent intent) {
-        // TODO: this is the hook we need to call to send in fake
+        // this is the hook we need to call to send in fake
         // Wifi signals.
         // WifiScanner will expect and intent with
         // action ==  WifiManager.SCAN_RESULTS_AVAILABLE_ACTION

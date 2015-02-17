@@ -16,9 +16,6 @@ import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.AppGlobals.ActiveOrPassiveStumbling;
 import org.mozilla.mozstumbler.service.Prefs;
 import org.mozilla.mozstumbler.service.stumblerthread.Reporter;
-import org.mozilla.mozstumbler.svclocator.ServiceLocator;
-import org.mozilla.mozstumbler.svclocator.services.log.ILogger;
-import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -28,9 +25,6 @@ import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class CellScanner {
-    private ILogger Log = (ILogger) ServiceLocator.getInstance().getService(ILogger.class);
-    private static final String LOG_TAG = LoggerUtil.makeLogTag(CellScanner.class);
-
     public static final String ACTION_BASE = AppGlobals.ACTION_NAMESPACE + ".CellScanner.";
     public static final String ACTION_CELLS_SCANNED = ACTION_BASE + "CELLS_SCANNED";
     public static final String ACTION_CELLS_SCANNED_ARG_CELLS = "cells";
@@ -48,8 +42,8 @@ public class CellScanner {
 
     public CellScanner(Context appCtx) {
         mAppContext = appCtx;
-        if (AppGlobals.isDebug && Prefs.getInstance(appCtx).isSimulateStumble()) {
-            mSimpleCellScanner = new MockSimpleCellScanner(mAppContext);
+        if (AppGlobals.isDebug && Prefs.getInstance(mAppContext).isSimulateStumble()) {
+            mSimpleCellScanner = new MockSimpleCellScanner();
         } else {
             mSimpleCellScanner = new SimpleCellScannerImplementation(mAppContext);
         }

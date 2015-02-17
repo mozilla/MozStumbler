@@ -106,7 +106,8 @@ public class ScreenMonitor {
     }
 
     private void load() {
-        SharedPreferences prefs = mContext.getSharedPreferences(PREFS_FILE, Context.MODE_PRIVATE);
+        SharedPreferences prefs = mContext
+                                    .getSharedPreferences(PREFS_FILE, Context.MODE_PRIVATE);
         mLocationUpdatesCount = prefs.getLong(LOCATION_UPDATES_COUNT_PREF, NO_DATA);
     }
 }

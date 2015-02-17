@@ -5,11 +5,9 @@
 package org.mozilla.mozstumbler.service.stumblerthread.scanners;
 
 import android.content.Context;
-import android.content.ContextWrapper;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.wifi.ScanResult;
-import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Handler;
 import android.os.SystemClock;
@@ -18,6 +16,8 @@ import android.telephony.TelephonyManager;
 import org.mozilla.mozstumbler.service.Prefs;
 import org.mozilla.mozstumbler.service.core.logging.ClientLog;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner.CellInfo;
+import org.mozilla.mozstumbler.svclocator.ServiceLocator;
+import org.mozilla.mozstumbler.svclocator.services.log.ILogger;
 import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
 import java.lang.reflect.Constructor;
@@ -26,38 +26,48 @@ import java.lang.reflect.Method;
 import java.util.LinkedList;
 import java.util.List;
 
-public class SimulationContext extends ContextWrapper {
+@SuppressWarnings("unused")
+public class SimulatorService implements ISimulatorService {
+    private static final ILogger Log = (ILogger) ServiceLocator.getInstance()
+            .getService(ILogger.class);
+    private static final String LOG_TAG = LoggerUtil.makeLogTag(SimulatorService.class);
 
-    public final static int SIMULATION_PING_INTERVAL = 1000 * 1; // Every second
-    private static final String LOG_TAG = LoggerUtil.makeLogTag(SimulationContext.class);
-    final boolean REQUIRED_NETWORK = false;
-    final boolean REQUIRES_SATELLITE = false;
-    final boolean REQUIRES_CELL = false;
-    final boolean HAS_MONETARY_COST = false;
-    final boolean SUPPORTS_ALTITUDE = false;
-    final boolean SUPPORTS_SPEED = false;
-    final boolean SUPPORTS_BEARING = false;
-    final int POWER_REQUIREMENT = 0;
-    final int ACCURACY = 5;
-    private final WifiManager wifiManager;
+    public final static int SIMULATION_PING_INTERVAL = 500 * 1; // Every half second
+
+    private Context ctx;
     Handler handler = new Handler();
+
     private double mLon;
     private double mLat;
+
     private LocationManager locationManager;
+
     private boolean keepRunning;
-    private Object nextWifiBlock;
-    private List<CellInfo> nextCellBlock;
 
-    public SimulationContext(Context context) {
-        super(context);
+    @SuppressWarnings("unused")
+    public SimulatorService() {}
 
-        mLat = Prefs.getInstance(context).getSimulationLat();
-        mLon = Prefs.getInstance(context).getSimulationLon();
 
-        locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-        wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+    @Override
+    public synchronized void startSimulation(Context c) {
+        ctx = c.getApplicationContext();
+
+        mLat = Prefs.getInstance(ctx).getSimulationLat();
+        mLon = Prefs.getInstance(ctx).getSimulationLon();
+
+        locationManager = (LocationManager) ctx.getSystemService(Context.LOCATION_SERVICE);
 
         // Register test provider for GPS
+        final boolean REQUIRED_NETWORK = false;
+        final boolean REQUIRES_SATELLITE = false;
+        final boolean REQUIRES_CELL = false;
+        final boolean HAS_MONETARY_COST = false;
+        final boolean SUPPORTS_ALTITUDE = false;
+        final boolean SUPPORTS_SPEED = false;
+        final boolean SUPPORTS_BEARING = false;
+        final int POWER_REQUIREMENT = 0;
+        final int ACCURACY = 5;
+
         locationManager.addTestProvider(LocationManager.GPS_PROVIDER,
                 REQUIRED_NETWORK, REQUIRES_SATELLITE,
                 REQUIRES_CELL, HAS_MONETARY_COST, SUPPORTS_ALTITUDE, SUPPORTS_SPEED,
@@ -65,25 +75,8 @@ public class SimulationContext extends ContextWrapper {
         locationManager.setTestProviderEnabled(LocationManager.GPS_PROVIDER,
                 true);
 
-        startRepeatingTask();
-    }
+        keepRunning = true;
 
-    public synchronized void deactivateSimulation() {
-        keepRunning = false;
-
-        try {
-            if (locationManager != null) {
-                locationManager.removeTestProvider(LocationManager.GPS_PROVIDER);
-            }
-        } catch (IllegalArgumentException ex) {
-            // no test provider was registered.  Shouldn't happen but it's totally safe.
-        }
-    }
-
-    void startRepeatingTask() {
-        synchronized (this) {
-            keepRunning = true;
-        }
 
         handler.postDelayed(new Runnable() {
             public void run() {
@@ -103,6 +96,21 @@ public class SimulationContext extends ContextWrapper {
         }, SIMULATION_PING_INTERVAL);
     }
 
+    @Override
+    public synchronized void stopSimulation() {
+        keepRunning = false;
+
+        try {
+            if (locationManager != null) {
+                locationManager.removeTestProvider(LocationManager.GPS_PROVIDER);
+            }
+        } catch (IllegalArgumentException ex) {
+            // no test provider was registered.  Shouldn't happen but it's totally safe.
+        }
+    }
+
+
+    @Override
     public Location getNextGPSLocation() {
         Location mockLocation = new Location(LocationManager.GPS_PROVIDER); // a string
         mockLocation.setLatitude(mLat);
@@ -119,19 +127,9 @@ public class SimulationContext extends ContextWrapper {
         mLat += 0.00003;
         mLon += 0.00003;
 
-        return mockLocation;
-    }
+        return mockLocation;    }
 
-    public Object getSystemService(String name) {
-        if (name.equals(Context.LOCATION_SERVICE)) {
-            return locationManager;
-        }
-        return super.getSystemService(name);
-    }
-
-    /*
-     This returns the next fake wifi block of data
-     */
+    @Override
     public List<ScanResult> getNextMockWifiBlock() {
         LinkedList<ScanResult> resultList = new LinkedList<ScanResult>();
 
@@ -151,6 +149,7 @@ public class SimulationContext extends ContextWrapper {
         return resultList;
     }
 
+    @Override
     public List<CellInfo> getNextMockCellBlock() {
         LinkedList<CellInfo> result = new LinkedList<CellInfo>();
 
@@ -181,6 +180,7 @@ public class SimulationContext extends ContextWrapper {
         return null;
     }
 
+
     private CellInfo makeCellInfo(int mcc, int mnc, int lac, int cid, int asu) throws IllegalAccessException, InvocationTargetException {
         CellInfo cell = new CellInfo(TelephonyManager.PHONE_TYPE_GSM);
         Method method = getMethod(CellInfo.class, "setGsmCellInfo");
@@ -200,4 +200,3 @@ public class SimulationContext extends ContextWrapper {
         return null;
     }
 }
-

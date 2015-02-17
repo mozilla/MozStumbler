@@ -12,6 +12,8 @@ import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.client.DateTimeUtils;
 import org.mozilla.mozstumbler.client.MainApp;
 import org.mozilla.mozstumbler.client.navdrawer.MainDrawerActivity;
+import org.mozilla.mozstumbler.svclocator.ServiceLocator;
+import org.mozilla.mozstumbler.svclocator.services.ISystemClock;
 
 public class NotificationUtil {
     public static final int NOTIFICATION_ID = 1;
@@ -51,7 +53,10 @@ public class NotificationUtil {
         String uploadLine = mContext.getString(R.string.metrics_notification_extraline);
         uploadLine = String.format(uploadLine, uploadtime);
 
-        sLastUpdateTime = System.currentTimeMillis();
+        ISystemClock clock = (ISystemClock) ServiceLocator.getInstance()
+                                           .getService(ISystemClock.class);
+
+        sLastUpdateTime = clock.currentTimeMillis();
 
         return new NotificationCompat.Builder(mContext)
                 .setSmallIcon(R.drawable.ic_status_scanning)

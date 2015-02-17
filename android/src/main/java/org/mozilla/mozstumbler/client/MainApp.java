@@ -37,6 +37,7 @@ import org.mozilla.mozstumbler.service.core.http.ILocationService;
 import org.mozilla.mozstumbler.service.core.logging.MockAcraLog;
 import org.mozilla.mozstumbler.service.stumblerthread.Reporter;
 import org.mozilla.mozstumbler.service.stumblerthread.motiondetection.MotionSensor;
+import org.mozilla.mozstumbler.service.stumblerthread.scanners.ISimulatorService;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.ScanManager;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.WifiScanner;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner.CellScanner;
@@ -105,6 +106,8 @@ public class MainApp extends Application
                 ServiceConfig.load("org.mozilla.mozstumbler.svclocator.services.SystemClock"));
         result.put(ILocationService.class,
                 ServiceConfig.load("org.mozilla.mozstumbler.service.core.http.MLS"));
+        result.put(ISimulatorService.class,
+                ServiceConfig.load("org.mozilla.mozstumbler.service.stumblerthread.scanners.SimulatorService"));
 
         if (BuildConfig.BUILD_TYPE.equals("unittest")) {
             result.put(ILogger.class, ServiceConfig.load("org.mozilla.mozstumbler.svclocator.services.log.DebugLogger"));

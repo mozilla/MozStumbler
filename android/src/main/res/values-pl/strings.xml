@@ -52,6 +52,7 @@
         <item quantity="few">%d dni temu</item>
         <item quantity="other">%d dni temu</item>
     </plurals>
+
     <string name="metrics_notification_text">Obserwacje: %1$d Sieci komórkowe: %2$d Sieci Wi-Fi: %3$d</string>
     <string name="metrics_notification_extraline">Ostatnio wysłano: %1$s</string>
     <string name="metrics_observations_title">Obserwacje:</string>
@@ -64,7 +65,6 @@
     <string name="metrics_this_session">Bieżąca sesja</string>
     <string name="drawer_map_option_show_mls_locations">Wyświetlanie położeń MLS</string>
     <string name="title_activity_log">Dziennik</string>
-
     <string name="action_file_bug">Zgłoś błąd</string>
     <string name="file_bug_sender_name">Imię i nazwisko:</string>
     <string name="file_bug_sender_name_hint">Opcjonalne</string>
@@ -80,6 +80,7 @@
     <string name="file_bug_report_info">Wysyłając to zgłoszenie, wysłane zostaną także informacje o obecnym stanie urządzenia. Zostaną one użyte do znalezienia przyczyny występowania błędu. Zgłoszenia błędów powodujących awarie są wysyłane automatycznie, jeśli włączono opcję \"%1$s\". Błędy niepowodujące awarii można zgłaszać za pomocą tego formularza.</string>
     <string name="file_bug_send">Wyślij zgłoszenie błędu</string>
     <string name="file_bug_type">Rodzaj błędu:</string>
+
     <string-array name="file_bug_type_list">
         <item>Kosmetyczny</item>
         <item>Wydajność</item>
@@ -88,9 +89,9 @@
         <item>Prośba o nową funkcję</item>
         <item>Inny</item>
     </string-array>
+
     <string name="file_bug_toast_success">Wysłano zgłoszenie błędu\n Dziękujemy!</string>
     <string name="file_bug_missing_field">To pole jest wymagane.</string>
-
     <string name="action_view_log">Wyświetl dziennik</string>
     <string name="scroll_to_start">Przewiń do góry</string>
     <string name="scroll_to_end">Przewiń na dół</string>
@@ -137,7 +138,7 @@
     <string name="wifi_only_observation">Obserwacje tylko sieci Wi-Fi</string>
     <string name="mls_location_observation">Położenie MLS</string>
     <string name="low_resolution_map">Mapa o niskiej szczegółowości</string>
-    <string name="map_turned_off">Wyłączenie wyświetlania mapy</string>
+    <string name="map_turned_off">Bez wyświetlania mapy</string>
     <string name="map_tile_resolution_options_label">Szczegółowość mapy:</string>
     <string name="map_tile_resolution_options_label_dynamic">Szczegółowość mapy: %1$s</string>
     <string name="map_tile_resolution_options_summary">Niska szczegółowość zmniejsza zużycie danych.</string>
@@ -152,23 +153,59 @@
     <string name="category_display">Wyświetlanie</string>
     <string name="reset_simulation_start">Przywrócono pozycję startową symulacji</string>
     <string name="category_crashreport">Zgłaszanie awarii</string>
+
     <string-array name="map_tile_resolution_options">
         <item>Wysoka (Wi-Fi) / niska (sieć komórkowa)</item>
         <item>Tylko o wysokiej szczegółowości</item>
         <item>Tylko o niskiej szczegółowości</item>
         <item>Bez mapy</item>
     </string-array>
+
     <string name="low_battery_title">Zatrzymywanie skanowania na niskim poziomie naładowania akumulatora</string>
     <string name="battery_percent_options_label">Zatrzymywanie na poziomie:</string>
     <string name="motion_detection_title">Wykrywanie ruchu</string>
     <string name="motion_detection_options_label">Wstrzymywanie skanowania, jeśli nie pokonano</string>
     <string name="motion_detection_options_conjunction">przez</string>
     <string name="map_scanning_paused_no_motion">Położenie się nie zmienia, wstrzymano skanowanie.</string>
-
     <string name="save_stumble_logs">Zapisz dzienniki wykrywania</string>
     <string name="create_log_archive_failure">Nie można utworzyć katalogu archiwum dla dzienników</string>
     <string name="create_log_archive_success">Dzienniki zostaną zapisane w:</string>
-    <string name="power_saving_title">Oszczędzanie zasilania</string>
     <string name="power_saving_mode_summary">Wstrzymuje i wznawia aplikację po wykryciu bezruchu.</string>
+    <string name="power_saving_title">Oszczędzanie zasilania</string>
+    <string name="stop_at_x_battery">Zatrzymywanie, kiedy poziom naładowania akumulatora wynosi: %1$d%%</string>
+    <string name="motion_detection_onoff">Wykrywanie ruchu: %1$s</string>
+    <string name="change_power_saving">Zmień</string>
+    <string name="on">Włączone</string>
+    <string name="off">Wyłączone</string>
 
+    <string name="title_activity_power_saving_screen">Opcje oszczędzania zasilania</string>
+    <string name="sensor_type_legacy">Urządzenie nie posiada znaczącego czujnika ruchu.</string>
+    <string name="sensor_type_significant_motion">Znaczący czujnik ruchu umożliwia najlepsze oszczędzanie zasilania, ale może nie działać na wszystkich urządzeniach.</string>
+
+    <string name="ok">OK</string>
+    <string name="whats_new_title">Co nowego</string>
+<string name="whats_new">
+<b>1.6.1 (w tym zmiany w wersji 1.6.0)</b>
+\n<li>Bardziej zachowawcze oszczędzanie zasilania, aby naprawić problem nieprzebudzania z trybu uśpienia.</li>
+\n<li>Nowe opcje oszczędzania zasilania w menu, domyślnie włączone wykrywanie ruchu tylko na urządzeniach posiadających znaczący czujnik ruchu.</li>
+\n<li>Tymczasowo usunięto widżet ekranu domowego z powodu problemów z wydajnością.</li>
+\n<li>Lepsza obsługa mapy w trybie offline.</li>
+\n<li>Aktualizacje listy blokowania sieci Wi-Fi.</li>
+\n<li>Wykluczone SSID nie są już zapisywane w dzienniku.</li>
+\n<li>Aktualizacje tłumaczeń dla języka tradycyjnego chińskiego, fińskiego, niemieckiego i polskiego.</li>
+\n<li>Można teraz zgłaszać błędy przez panel ustawień.</li>
+\n<li>Opcja eksportowania wszystkich dzienników skanowania na kartę SD do samodzielnej analizy.</li>
+\n<li>Dodano obsługę publicznych powiadomień w Androidzie 5.</li>
+\n<li>Nowa infrastruktura testowania dla programistów.</li>
+\n<li>Dodano tryb symulacji do opcji programistycznych.</li>
+</string>
+    <string name="limit_map_zoom">Ograniczenie oddalania mapy</string>
+    <string name="test_significant_sensor_dialog_title">Test znaczącego czujnika ruchu</string>
+    <string name="test_significant_sensor_dialog_message">Proszę stać w miejscu, po czym chodzić przez jedną minutę.\n\nWykrywanie ruchu: &#8230;</string>
+    <string name="test_significant_sensor_confirmed_working">Wykryto ruch.\nCzujnik działa poprawnie.</string>
+    <string name="button_test_significant_motion_sensor">Przetestuj znaczący czujnik ruchu</string>
+    <string name="sensor_name_significant_motion">Znaczący ruch</string>
+    <string name="sensor_name_accelerometer">Przyspieszeniomierz</string>
+    <string name="title_use_sensor">Użycie czujnika:</string>
+    <string name="limit_map_zoom_summary">Zmniejsza zużycie danych przez widok mapy.</string>
 </resources>

@@ -5,8 +5,9 @@
 package org.mozilla.mozstumbler.svclocator.services.log;
 
 import android.support.v4.util.CircularArray;
+import android.util.Log;
 
-import org.robolectric.shadows.ShadowLog;
+import java.lang.reflect.Field;
 
 /*
  This is a proxy around the android logger so that we can see what the heck
@@ -14,8 +15,21 @@ import org.robolectric.shadows.ShadowLog;
  */
 public class DebugLogger implements ILogger {
 
+    private static final String LOG_TAG = LoggerUtil.makeLogTag(DebugLogger.class);
+
     static {
-        ShadowLog.stream = System.out;
+        try {
+            @SuppressWarnings("all")
+            final Field field = Class.forName("org.robolectric.shadows.ShadowLog").getDeclaredField("stream");
+            // Allow modification on the field
+            field.setAccessible(true);
+            // Get
+            final Object oldValue = field.get(Class.forName("java.io.PrintStream"));
+            // Sets the field to the new value
+            field.set(oldValue, System.out);
+        } catch (Exception e) {
+            Log.d(LOG_TAG, "Can't reroute android.util.Log to robolectric");
+        }
     }
 
     public static CircularArray<String> messageBuffer = new CircularArray<String>(10);

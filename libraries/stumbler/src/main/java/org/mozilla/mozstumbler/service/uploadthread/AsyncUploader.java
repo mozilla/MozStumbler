@@ -10,7 +10,6 @@ import android.util.Log;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.Prefs;
 import org.mozilla.mozstumbler.service.core.http.HTTPResponse;
-import org.mozilla.mozstumbler.service.core.http.IHttpUtil;
 import org.mozilla.mozstumbler.service.core.http.ILocationService;
 import org.mozilla.mozstumbler.service.core.http.IResponse;
 import org.mozilla.mozstumbler.service.core.http.MLS;
@@ -49,6 +48,7 @@ public class AsyncUploader extends AsyncTask<AsyncUploadParam, AsyncProgressList
     public static final AtomicBoolean isUploading = new AtomicBoolean();
     private static final String LOG_TAG = LoggerUtil.makeLogTag(AsyncUploader.class);
     private static AsyncUploaderListener sAsyncListener;
+    ILocationService mls = (ILocationService) ServiceLocator.getInstance().getService(ILocationService.class);
 
     // This listener can show progress for any AsyncUploader. This global use is particularly
     // useful for UI to show progress when this has been scheduled internally in the service.
@@ -123,8 +123,6 @@ public class AsyncUploader extends AsyncTask<AsyncUploadParam, AsyncProgressList
             return;
         }
 
-        IHttpUtil httpUtil = (IHttpUtil) ServiceLocator.getInstance().getService(IHttpUtil.class);
-        ILocationService mls = new MLS(httpUtil);
         DataStorageManager dm = DataStorageManager.getInstance();
 
         String error = null;
@@ -154,6 +152,7 @@ public class AsyncUploader extends AsyncTask<AsyncUploadParam, AsyncProgressList
 
                     String logMsg = "MLS Submit: [HTTP Status:" + result.httpStatusCode() + "], [Bytes Sent:" + result.bytesSent() + "]";
                     AppGlobals.guiLogInfo(logMsg, "#FFFFCC", true, false);
+                    Log.d(LOG_TAG, logMsg);
 
                     dm.delete(batch.filename);
 

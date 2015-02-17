@@ -118,7 +118,7 @@ public class PassiveServiceReceiverTest {
         final String MOZ_API_KEY = "a_moz_api_key";
         final String USER_AGENT = "custom_user_agent";
 
-        Intent intent = PassiveServiceReceiver.createStartIntent(MOZ_API_KEY, USER_AGENT);
+        Intent intent = PassiveServiceReceiver.createStartIntent(appCtx, MOZ_API_KEY, USER_AGENT);
 
         ArgumentCaptor<Intent> intentCaptor = ArgumentCaptor.forClass(Intent.class);
 
@@ -156,7 +156,7 @@ public class PassiveServiceReceiverTest {
         // StumblerService::onHandleIntent for us, so we'll just push it down ourselves.
         final String MOZ_API_KEY = "a_moz_api_key";
         final String USER_AGENT = "custom_user_agent";
-        Intent intent = PassiveServiceReceiver.createStartIntent(MOZ_API_KEY, USER_AGENT);
+        Intent intent = PassiveServiceReceiver.createStartIntent(appCtx, MOZ_API_KEY, USER_AGENT);
 
         StumblerService ss = new StumblerService();
 
@@ -190,7 +190,7 @@ public class PassiveServiceReceiverTest {
 
 
         // Check that a stop request stops the service
-        Intent intent = PassiveServiceReceiver.createStopIntent();
+        Intent intent = PassiveServiceReceiver.createStopIntent(appCtx);
         PassiveServiceReceiver psr = new PassiveServiceReceiver();
         psr.onReceive(appCtx, intent);
 

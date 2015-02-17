@@ -27,6 +27,11 @@ public class ClientLog {
         AppGlobals.guiLogInfo(logTag + ":" + s);
     }
 
+    public static void i(String logTag, String msg, String color, boolean isBold, boolean doNotTruncateLongString) {
+        svcLogger.i(logTag, msg);
+        AppGlobals.guiLogInfo(logTag + ":" + msg, color, isBold, doNotTruncateLongString);
+    }
+
     public static void d(String logTag, String s) {
         svcLogger.d(logTag, s);
     }

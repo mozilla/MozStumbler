@@ -4,11 +4,14 @@
 
 package org.mozilla.mozstumbler.service.stumblerthread.datahandling;
 
+import android.app.Service;
 import android.content.Context;
 
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.core.logging.ClientLog;
 import org.mozilla.mozstumbler.service.utils.Zipper;
+import org.mozilla.mozstumbler.svclocator.ServiceLocator;
+import org.mozilla.mozstumbler.svclocator.services.log.ILogger;
 import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
 import java.io.File;
@@ -40,6 +43,9 @@ import java.util.TimerTask;
  * when the service is destroyed.
  */
 public class DataStorageManager {
+    ILogger Log = (ILogger) ServiceLocator.getInstance().getService(ILogger.class);
+    private static final String LOG_TAG = LoggerUtil.makeLogTag(DataStorageManager.class);
+
     public static final String MOZ_STUMBLER_RELPATH = "mozstumbler";
     static final String SEP_REPORT_COUNT = "-r";
     static final String SEP_WIFI_COUNT = "-w";
@@ -47,7 +53,6 @@ public class DataStorageManager {
     static final String SEP_TIME_MS = "-t";
     static final String FILENAME_PREFIX = "reports";
     static final String MEMORY_BUFFER_NAME = "in memory send buffer";
-    private static final String LOG_TAG = LoggerUtil.makeLogTag(DataStorageManager.class);
     // Used to cap the amount of data stored. When this limit is hit, no more data is saved to disk
     // until the data is uploaded, or and data exceeds DEFAULT_MAX_WEEKS_DATA_ON_DISK.
     private static final long DEFAULT_MAX_BYTES_STORED_ON_DISK = 1024 * 250; // 250 KiB max by default
@@ -55,7 +60,7 @@ public class DataStorageManager {
     // for long-term storage, and so if ANY data on disk is this old, ALL data is wiped as a privacy mechanism.
     private static final int DEFAULT_MAX_WEEKS_DATA_ON_DISK = 2;
     protected static DataStorageManager sInstance;
-    protected final File mReportsDir;
+    final File mReportsDir;
     final ReportBatchBuilder mCurrentReports = new ReportBatchBuilder();
     // Set to the default value specified above.
     private final long mMaxBytesDiskStorage;

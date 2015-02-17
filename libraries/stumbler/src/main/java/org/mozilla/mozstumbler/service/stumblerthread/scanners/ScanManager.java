@@ -20,6 +20,8 @@ import org.mozilla.mozstumbler.service.stumblerthread.motiondetection.LocationCh
 import org.mozilla.mozstumbler.service.stumblerthread.motiondetection.MotionSensor;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner.CellScanner;
 import org.mozilla.mozstumbler.service.utils.BatteryCheckReceiver;
+import org.mozilla.mozstumbler.svclocator.ServiceLocator;
+import org.mozilla.mozstumbler.svclocator.services.log.ILogger;
 import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
 import java.util.Date;
@@ -29,7 +31,10 @@ import java.util.TimerTask;
 public class ScanManager {
     public static final String ACTION_SCAN_PAUSED_USER_MOTIONLESS = AppGlobals.ACTION_NAMESPACE + ".NOTIFY_USER_MOTIONLESS";
     public static final String ACTION_SCAN_UNPAUSED_USER_MOVED = AppGlobals.ACTION_NAMESPACE + ".NOTIFY_USER_MOVED";
+
+    private ILogger Log = (ILogger) ServiceLocator.getInstance().getService(ILogger.class);
     private static final String LOG_TAG = LoggerUtil.makeLogTag(ScanManager.class);
+
     private static Context mAppContext;
     private Timer mPassiveModeFlushTimer;
     private GPSScanner mGPSScanner;
@@ -159,7 +164,9 @@ public class ScanManager {
 
         mAppContext = ctx.getApplicationContext();
         if (mAppContext == null) {
-            ClientLog.w(LOG_TAG, "No app context available.");
+            ClientLog.e(LOG_TAG,
+                    "No app context available.",
+                    new NullPointerException("Application Context could not be acquired."));
             return;
         }
 
@@ -196,8 +203,9 @@ public class ScanManager {
         if (mStumblingMode == ActiveOrPassiveStumbling.ACTIVE_STUMBLING) {
             mWifiScanner.start(mStumblingMode);
             mCellScanner.start(mStumblingMode);
-
             // in passive mode, these scans are started by passive gps notifications
+        } else {
+            Log.d(LOG_TAG, "Wifi and Cell Scanners are not engaged with passive mode.");
         }
     }
 

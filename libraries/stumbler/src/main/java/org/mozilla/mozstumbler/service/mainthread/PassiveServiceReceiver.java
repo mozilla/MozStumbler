@@ -49,7 +49,7 @@ public class PassiveServiceReceiver extends BroadcastReceiver {
         final String action = intent.getAction();
         final boolean isIntentFromHostApp = (action != null) && action.contains(".STUMBLER_PREF");
         if (!isIntentFromHostApp) {
-            Log.d(LOG_TAG, "Stumbler: received intent external to host app");
+            Log.d(LOG_TAG, "Stumbler: received intent external to host app ["+action+"]");
             Intent startServiceIntent = new Intent(context, StumblerService.class);
             startServiceIntent.putExtra(StumblerService.ACTION_NOT_FROM_HOST_APP, true);
             context.startService(startServiceIntent);
@@ -80,16 +80,18 @@ public class PassiveServiceReceiver extends BroadcastReceiver {
         context.startService(startServiceIntent);
     }
 
-    public static Intent createStartIntent(String moz_api_key, String user_agent) {
-        Intent intent = new Intent("org.mozilla.mozstumbler.STUMBLER_PREF");
+    public static Intent createStartIntent(Context ctx, String moz_api_key, String user_agent) {
+        Intent intent = new Intent(ctx, StumblerService.class);
+        intent.setAction("org.mozilla.mozstumbler.STUMBLER_PREF");
         intent.putExtra("enabled", true);
         intent.putExtra("moz_mozilla_api_key", moz_api_key);
         intent.putExtra("user_agent", user_agent);
         return intent;
     }
 
-    public static Intent createStopIntent() {
-        Intent intent = new Intent("org.mozilla.mozstumbler.STUMBLER_PREF");
+    public static Intent createStopIntent(Context ctx) {
+        Intent intent = new Intent(ctx, StumblerService.class);
+        intent.setAction("org.mozilla.mozstumbler.STUMBLER_PREF");
         intent.putExtra("enabled", false);
         return intent;
     }

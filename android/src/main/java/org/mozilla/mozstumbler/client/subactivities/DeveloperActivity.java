@@ -110,9 +110,22 @@ public class DeveloperActivity extends ActionBarActivity {
             setupSimulationPreference();
             setupLocationChangeSpinners();
             setupMinPauseTime();
+            setupLimitZoom();
             return mRootView;
         }
 
+        private void setupLimitZoom() {
+            boolean isLimited = ClientPrefs.getInstanceWithoutContext().isMapZoomLimited();
+            CheckBox button = (CheckBox) mRootView.findViewById(R.id.toggleLimitedMapZoom);
+            button.setChecked(isLimited);
+            button.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                    ClientPrefs.getInstance(mRootView.getContext()).setIsMapZoomLimited(isChecked);
+                }
+            });
+        }
+        
         private void setupMinPauseTime() {
             ClientPrefs cPrefs = ClientPrefs.getInstance(mRootView.getContext());
             final String[] timeArray = {"5 s", "10 s", "20 s", "30 s", "60 s", "120 s"};

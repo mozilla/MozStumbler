@@ -33,7 +33,7 @@ public class PreferencesScreen extends PreferenceActivity {
     private CheckBoxPreference mKeepScreenOn;
     private CheckBoxPreference mEnableShowMLSLocations;
     private CheckBoxPreference mCrashReportsOn;
-    private CheckBoxPreference mLimitMapZoom;
+    //private CheckBoxPreference mLimitMapZoom;
     private ListPreference mMapTileDetail;
 
     private ClientPrefs getPrefs() {
@@ -60,7 +60,7 @@ public class PreferencesScreen extends PreferenceActivity {
         mMapTileDetail.setValueIndex(valueIndex);
         updateMapDetailTitle(valueIndex);
 
-        mLimitMapZoom = (CheckBoxPreference) getPreferenceManager().findPreference(ClientPrefs.IS_MAP_ZOOM_LIMITED);
+        //mLimitMapZoom = (CheckBoxPreference) getPreferenceManager().findPreference(ClientPrefs.IS_MAP_ZOOM_LIMITED);
 
         setPreferenceListener();
         setButtonListeners();
@@ -190,13 +190,15 @@ public class PreferencesScreen extends PreferenceActivity {
                 return true;
             }
         });
-        mLimitMapZoom.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
-            @Override
-            public boolean onPreferenceChange(Preference preference, Object newValue) {
-                getPrefs().setIsMapZoomLimited(newValue.equals(true));
-                return true;
-            }
-        });
+
+//        bug #1476
+//        mLimitMapZoom.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+//            @Override
+//            public boolean onPreferenceChange(Preference preference, Object newValue) {
+//                getPrefs().setIsMapZoomLimited(newValue.equals(true));
+//                return true;
+//            }
+//        });
     }
 
     private void setNicknamePreferenceTitle(String nickname) {

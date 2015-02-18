@@ -4,10 +4,9 @@
 
 package org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner;
 
-import android.content.Context;
-
 import org.mozilla.mozstumbler.service.core.logging.ClientLog;
-import org.mozilla.mozstumbler.service.stumblerthread.scanners.SimulationContext;
+import org.mozilla.mozstumbler.service.stumblerthread.scanners.ISimulatorService;
+import org.mozilla.mozstumbler.svclocator.ServiceLocator;
 import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
 import java.util.LinkedList;
@@ -18,11 +17,9 @@ public class MockSimpleCellScanner implements ISimpleCellScanner {
 
     private static final String LOG_TAG = LoggerUtil.makeLogTag(MockSimpleCellScanner.class);
 
-    private final Context mAppContext;
     private boolean started = false;
 
-    public MockSimpleCellScanner(Context appCtx) {
-        mAppContext = appCtx;
+    public MockSimpleCellScanner() {
     }
 
     @Override
@@ -42,14 +39,15 @@ public class MockSimpleCellScanner implements ISimpleCellScanner {
 
     @Override
     public List<CellInfo> getCellInfo() {
-
         LinkedList<CellInfo> result = new LinkedList<CellInfo>();
 
-        SimulationContext ctx;
-
+        ISimulatorService simSvc = (ISimulatorService) ServiceLocator.getInstance()
+                                        .getService(ISimulatorService.class);
         try {
-            ctx = (SimulationContext) mAppContext;
-            result.addAll(ctx.getNextMockCellBlock());
+            List<CellInfo> cellBlock = simSvc.getNextMockCellBlock();
+            if (cellBlock != null) {
+                result.addAll(cellBlock);
+            }
         } catch (ClassCastException ex) {
             ClientLog.e(LOG_TAG, "Error getting the proper context", ex);
         }

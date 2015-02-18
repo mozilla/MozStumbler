@@ -20,7 +20,6 @@ import org.mozilla.mozstumbler.service.stumblerthread.motiondetection.CustomSens
 import org.mozilla.mozstumbler.svclocator.ServiceLocator;
 import org.mozilla.mozstumbler.svclocator.services.log.DebugLogger;
 import org.mozilla.mozstumbler.svclocator.services.log.ILogger;
-import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
@@ -39,12 +38,7 @@ import static org.mockito.Mockito.verify;
         shadows = {CustomSensorManager.class})
 public class PassiveServiceReceiverTest {
 
-
-    private static final String LOG_TAG = LoggerUtil.makeLogTag(PassiveServiceReceiverTest.class);
-    private ILogger Log = (ILogger) ServiceLocator.getInstance().getService(ILogger.class);
-
     private Context appCtx;
-
 
     @Before
     public void setUp() {
@@ -58,6 +52,7 @@ public class PassiveServiceReceiverTest {
 
     public void doAndroidTest(Intent intent) {
         PassiveServiceReceiver psr = new PassiveServiceReceiver();
+
         // Robolectric won't hand off messages using the BroadcastReceiver
         // and LocalBroadcastManager, so just manually call onReceive
         psr.onReceive(appCtx, intent);
@@ -150,6 +145,8 @@ public class PassiveServiceReceiverTest {
 
     @Test
     public void testStumblerServiceOnHandleIntent() {
+        // This just checks that we can run all the way through the PassiveServiceReceiver's
+        // onHandle method.
 
         // Ok, so now we need to see that the intent is actually processed correctly by
         // StumblerService.  robolectric doesn't pass the start intent down to
@@ -163,6 +160,10 @@ public class PassiveServiceReceiverTest {
         // Stub out startScanning as we don't want to actually engage any of GPSScanner, WifiScanner
         ss = spy(ss);
         doNothing().when(ss).startScanning();
+
+        // We need to no-op this as the StumblerService won't have an application context yet
+        // and binding in the BatteryCheckReceiver is just going to NPE on us.
+        doNothing().when(ss).setPassiveMode();
 
         ss.onHandleIntent(intent);
 

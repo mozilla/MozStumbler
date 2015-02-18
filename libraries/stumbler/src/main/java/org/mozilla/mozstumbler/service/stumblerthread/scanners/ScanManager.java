@@ -37,9 +37,11 @@ public class ScanManager {
 
     private static Context mAppContext;
     private Timer mPassiveModeFlushTimer;
+
     private GPSScanner mGPSScanner;
     private WifiScanner mWifiScanner;
     private CellScanner mCellScanner;
+
     private ActiveOrPassiveStumbling mStumblingMode = ActiveOrPassiveStumbling.ACTIVE_STUMBLING;
 
     private BatteryCheckReceiver mPassiveModeBatteryChecker;
@@ -90,7 +92,7 @@ public class ScanManager {
                 return;
             }
             mScannerState = ScannerState.STOPPED; // To ensure startScanning() runs
-            startScanning(context);
+            startScanning();
             mMotionSensor.stop();
 
             Intent sendIntent = new Intent(ACTION_SCAN_UNPAUSED_USER_MOVED);
@@ -98,8 +100,12 @@ public class ScanManager {
         }
     };
 
-    public ScanManager() {
+    public ScanManager() {}
+
+    public void initContext(Context appCtx) {
+        mAppContext = appCtx;
     }
+
 
     // By default, if the battery level is low, then the service stops scanning, however the client
     // can disable this and perform more complex logic
@@ -155,18 +161,18 @@ public class ScanManager {
                 ActiveOrPassiveStumbling.ACTIVE_STUMBLING;
     }
 
-    public synchronized void startScanning(Context ctx) {
+    private synchronized boolean pauseScanning() {
+        if (isStopped()) {
+            return false;
+        }
+        mScannerState = ScannerState.STARTED_BUT_PAUSED_MOTIONLESS;
+        return stopAllScanners();
+    }
+
+    public synchronized void startScanning() {
         ClientLog.d(LOG_TAG, "ScanManager::startScanning");
 
         if (!isStopped()) {
-            return;
-        }
-
-        mAppContext = ctx.getApplicationContext();
-        if (mAppContext == null) {
-            ClientLog.e(LOG_TAG,
-                    "No app context available.",
-                    new NullPointerException("Application Context could not be acquired."));
             return;
         }
 
@@ -179,7 +185,7 @@ public class ScanManager {
 
         if (mMotionSensor == null) {
             LocalBroadcastManager.getInstance(mAppContext).registerReceiver(mDetectMotionReceiver,
-                new IntentFilter(MotionSensor.ACTION_USER_MOTION_DETECTED));
+                    new IntentFilter(MotionSensor.ACTION_USER_MOTION_DETECTED));
 
             mMotionSensor = new MotionSensor(mAppContext);
         }
@@ -189,7 +195,9 @@ public class ScanManager {
             Prefs prefs = Prefs.getInstanceWithoutContext();
             if (prefs != null) {
                 if (prefs.isSimulateStumble()) {
-                    mAppContext = new SimulationContext(mAppContext);
+                    ISimulatorService simSvc  = (ISimulatorService) ServiceLocator.getInstance().getService(ISimulatorService.class);
+                    simSvc.startSimulation(mAppContext);
+
                     ClientLog.d(LOG_TAG, "ScanManager using SimulateStumbleContextWrapper");
                 }
             }
@@ -209,14 +217,6 @@ public class ScanManager {
         }
     }
 
-    private synchronized boolean pauseScanning() {
-        if (isStopped()) {
-            return false;
-        }
-        mScannerState = ScannerState.STARTED_BUT_PAUSED_MOTIONLESS;
-        return stopAllScanners();
-    }
-
     public synchronized boolean stopScanning() {
         if (isStopped()) {
             return false;
@@ -227,11 +227,9 @@ public class ScanManager {
     }
 
     private boolean stopAllScanners() {
-        if (mAppContext instanceof SimulationContext) {
-            ((SimulationContext) mAppContext).deactivateSimulation();
-        }
-        // Reset the application context to the unwrapped version
-        mAppContext = mAppContext.getApplicationContext();
+        ISimulatorService sim = (ISimulatorService) ServiceLocator.getInstance()
+                                                            .getService(ISimulatorService.class);
+        sim.stopSimulation(); // this is always safe as it's a lazy dynamic proxy
 
         if (AppGlobals.isDebug) {
             ClientLog.d(LOG_TAG, "Scanning stopped");
@@ -251,10 +249,6 @@ public class ScanManager {
         if (mCellScanner != null) {
             mCellScanner.stop();
         }
-
-        mGPSScanner = null;
-        mWifiScanner = null;
-        mCellScanner = null;
 
         return true;
     }

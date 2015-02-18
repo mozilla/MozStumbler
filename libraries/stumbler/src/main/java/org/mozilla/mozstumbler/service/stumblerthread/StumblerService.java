@@ -58,7 +58,7 @@ public class StumblerService extends PersistentIntentService
     }
 
     public synchronized void startScanning() {
-        mScanManager.startScanning(this);
+        mScanManager.startScanning();
     }
 
     public synchronized Prefs getPrefs(Context c) {
@@ -105,7 +105,9 @@ public class StumblerService extends PersistentIntentService
         Prefs.getInstance(this);
         NetworkInfo.createGlobalInstance(this);
         DataStorageManager.createGlobalInstance(this, this);
+
         mReporter.startup(this);
+        mScanManager.initContext(this.getApplicationContext());
     }
 
     // Called from the main thread.
@@ -161,7 +163,7 @@ public class StumblerService extends PersistentIntentService
         init();
 
         // Post-init(), set the mode to passive.
-        mScanManager.setPassiveMode(true);
+        setPassiveMode();
 
         if (intent == null) {
             return;
@@ -187,7 +189,6 @@ public class StumblerService extends PersistentIntentService
             final long timeNow = System.currentTimeMillis();
 
             if (timeNow - lastAttemptedTime < PASSIVE_UPLOAD_FREQ_GUARD_MSEC) {
-                // TODO Consider telemetry to track this.
                 if (AppGlobals.isDebug) {
                     Log.d(LOG_TAG, "Upload attempt too frequent.");
                 }
@@ -212,6 +213,10 @@ public class StumblerService extends PersistentIntentService
         }
 
         startScanning();
+    }
+
+    public void setPassiveMode() {
+        mScanManager.setPassiveMode(true);
     }
 
     // Note that in passive mode, having data isn't an upload trigger, it is triggered by the start intent

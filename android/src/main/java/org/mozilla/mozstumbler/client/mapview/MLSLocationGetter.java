@@ -10,6 +10,7 @@ import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.core.http.ILocationService;
 import org.mozilla.mozstumbler.service.core.http.IResponse;
 import org.mozilla.mozstumbler.service.utils.LocationAdapter;
@@ -48,6 +49,7 @@ public class MLSLocationGetter extends AsyncTask<String, Void, Location> {
         }
 
         IResponse resp = mls.search(mQueryMLSBytes, null, false);
+
         if (resp == null) {
             Log.i(LOG_TAG, "Error processing search request");
             return null;
@@ -63,19 +65,8 @@ public class MLSLocationGetter extends AsyncTask<String, Void, Location> {
         try {
             response = new JSONObject(resp.body());
         } catch (JSONException e) {
-            Log.e(LOG_TAG, "Error deserializing JSON", e);
-            return null;
-        }
-
-        String status = "";
-        try {
-            status = response.getString("status");
-        } catch (JSONException ex) {
-            Log.e(LOG_TAG, "Error deserializing status from JSON");
-            return null;
-        }
-
-        if (!status.equals(RESPONSE_OK_TEXT)) {
+            Log.e(LOG_TAG, "Error deserializing JSON. " + e.toString(), e);
+            Log.i(LOG_TAG, "JSON Body: " + resp.body());
             return null;
         }
 

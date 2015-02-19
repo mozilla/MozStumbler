@@ -150,7 +150,7 @@ public class AsyncUploader extends AsyncTask<AsyncUploadParam, AsyncProgressList
                 if (result != null && result.isSuccessCode2XX()) {
                     totalBytesSent += result.bytesSent();
 
-                    String logMsg = "MLS Submit: [HTTP Status:" + result.httpStatusCode() + "], [Bytes Sent:" + result.bytesSent() + "]";
+                    String logMsg = "MLS geosubmit: [HTTP Status:" + result.httpStatusCode() + "], [Bytes Sent:" + result.bytesSent() + "]";
                     AppGlobals.guiLogInfo(logMsg, "#FFFFCC", true, false);
                     Log.d(LOG_TAG, logMsg);
 

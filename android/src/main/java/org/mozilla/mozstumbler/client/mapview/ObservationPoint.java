@@ -14,9 +14,16 @@ import org.mozilla.mozstumbler.client.ClientPrefs;
 import org.mozilla.mozstumbler.service.core.logging.ClientLog;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageContract;
 import org.mozilla.mozstumbler.service.utils.NetworkInfo;
+import org.mozilla.mozstumbler.svclocator.ServiceLocator;
+import org.mozilla.mozstumbler.svclocator.services.log.ILogger;
+import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 import org.mozilla.osmdroid.util.GeoPoint;
 
 public class ObservationPoint implements MLSLocationGetter.MLSLocationGetterCallback {
+
+    private static final ILogger Log = (ILogger) ServiceLocator.getInstance().getService(ILogger.class);
+    private static final String LOG_TAG = LoggerUtil.makeLogTag(ObservationPoint.class);
+
     public final GeoPoint pointGPS;
     public GeoPoint pointMLS;
     public long mTimestamp;
@@ -45,9 +52,10 @@ public class ObservationPoint implements MLSLocationGetter.MLSLocationGetterCall
 
     public void setCounts(JSONObject ichnaeaQueryObj) {
         try {
-            mCellCount = ichnaeaQueryObj.getInt(DataStorageContract.ReportsColumns.CELL_COUNT);
-            mWifiCount = ichnaeaQueryObj.getInt(DataStorageContract.ReportsColumns.WIFI_COUNT);
+            mCellCount = ichnaeaQueryObj.getJSONArray(DataStorageContract.ReportsColumns.CELL).length();
+            mWifiCount = ichnaeaQueryObj.getJSONArray(DataStorageContract.ReportsColumns.WIFI).length();
         } catch (JSONException ex) {
+            Log.w(LOG_TAG, "Unable to set count length: " + ex.toString());
         }
     }
 

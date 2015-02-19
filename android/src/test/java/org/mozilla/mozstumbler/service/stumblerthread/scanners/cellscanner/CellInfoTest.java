@@ -4,11 +4,17 @@ package org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner;
 import android.telephony.TelephonyManager;
 import android.telephony.gsm.GsmCellLocation;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static junit.framework.Assert.assertEquals;
 
@@ -73,4 +79,6 @@ public class CellInfoTest {
             assertEquals(CellInfo.CELL_RADIO_CDMA, cellInfo.getCellRadio());
         }
     }
+
+
 }

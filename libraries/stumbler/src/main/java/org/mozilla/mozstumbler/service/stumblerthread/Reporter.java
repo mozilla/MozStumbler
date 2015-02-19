@@ -24,6 +24,8 @@ import org.mozilla.mozstumbler.service.stumblerthread.scanners.GPSScanner;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.WifiScanner;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner.CellInfo;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner.CellScanner;
+import org.mozilla.mozstumbler.svclocator.ServiceLocator;
+import org.mozilla.mozstumbler.svclocator.services.log.ILogger;
 import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
 import java.io.IOException;
@@ -32,10 +34,13 @@ import java.util.List;
 import java.util.Set;
 
 public final class Reporter extends BroadcastReceiver implements IReporter {
+
+    private static final ILogger Log = (ILogger) ServiceLocator.getInstance().getService(ILogger.class);
+    private static final String LOG_TAG = LoggerUtil.makeLogTag(Reporter.class);
+
     public static final String ACTION_FLUSH_TO_BUNDLE = AppGlobals.ACTION_NAMESPACE + ".FLUSH";
     public static final String ACTION_NEW_BUNDLE = AppGlobals.ACTION_NAMESPACE + ".NEW_BUNDLE";
     public static final String NEW_BUNDLE_ARG_BUNDLE = "bundle";
-    private static final String LOG_TAG = LoggerUtil.makeLogTag(Reporter.class);
     private final Set<String> mUniqueAPs = new HashSet<String>();
     private final Set<String> mUniqueCells = new HashSet<String>();
     StumblerBundle mBundle;
@@ -172,8 +177,12 @@ public final class Reporter extends BroadcastReceiver implements IReporter {
 
         try {
             mlsObj = mBundle.toMLSJSON();
-            wifiCount = mlsObj.getInt(DataStorageContract.ReportsColumns.WIFI_COUNT);
-            cellCount = mlsObj.getInt(DataStorageContract.ReportsColumns.CELL_COUNT);
+            if (mlsObj.has(DataStorageContract.ReportsColumns.WIFI)) {
+                wifiCount = mlsObj.getJSONArray(DataStorageContract.ReportsColumns.WIFI).length();
+            }
+            if (mlsObj.has(DataStorageContract.ReportsColumns.CELL)) {
+                cellCount = mlsObj.getJSONArray(DataStorageContract.ReportsColumns.CELL).length();
+            }
         } catch (JSONException e) {
             ClientLog.w(LOG_TAG, "Failed to convert bundle to JSON: " + e);
             mBundle = null;

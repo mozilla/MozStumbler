@@ -87,46 +87,56 @@ public final class StumblerBundle implements Parcelable {
 
     public JSONObject toMLSJSON() throws JSONException {
         JSONObject item = new JSONObject();
-        item.put(DataStorageContract.ReportsColumns.TIME, mGpsPosition.getTime());
         item.put(DataStorageContract.ReportsColumns.LAT, Math.floor(mGpsPosition.getLatitude() * 1.0E6) / 1.0E6);
         item.put(DataStorageContract.ReportsColumns.LON, Math.floor(mGpsPosition.getLongitude() * 1.0E6) / 1.0E6);
-
-        if (mGpsPosition.hasAccuracy()) {
-            item.put(DataStorageContract.ReportsColumns.ACCURACY, (int) Math.ceil(mGpsPosition.getAccuracy()));
-        }
 
         if (mGpsPosition.hasAltitude()) {
             item.put(DataStorageContract.ReportsColumns.ALTITUDE, Math.round(mGpsPosition.getAltitude()));
         }
 
-        if (mPhoneType == TelephonyManager.PHONE_TYPE_GSM) {
-            item.put(DataStorageContract.ReportsColumns.RADIO, "gsm");
-        } else if (mPhoneType == TelephonyManager.PHONE_TYPE_CDMA) {
-            item.put(DataStorageContract.ReportsColumns.RADIO, "cdma");
-        } else {
-            // issue #598. investigate this case further in future
-            item.put(DataStorageContract.ReportsColumns.RADIO, "");
+        item.put(DataStorageContract.ReportsColumns.TIME, mGpsPosition.getTime());
+
+        if (mGpsPosition.hasAccuracy()) {
+            // Note that Android does not support an accuracy measurement specific to altitude
+            item.put(DataStorageContract.ReportsColumns.ACCURACY, (int) Math.ceil(mGpsPosition.getAccuracy()));
         }
 
-        JSONArray cellJSON = new JSONArray();
-        for (CellInfo c : mCellData.values()) {
-            JSONObject obj = c.toJSONObject();
-            cellJSON.put(obj);
+        /* Skip adding 'heading'
+
+            The heading field denotes the direction of travel of the device and is specified in
+            degrees, where 0° ≤ heading < 360°, counting clockwise relative to the true north.
+            If the device cannot provide heading information or the device is stationary,
+            the field should be omitted.
+
+            Adding heading is tricky and problematic.  We might be able to do this by taking a delta
+            between two relatively high precision locations, but I'm skeptical that the
+        */
+
+        if (mCellData.size() > 0) {
+            JSONArray cellJSON = new JSONArray();
+
+            for (CellInfo c : mCellData.values()) {
+                JSONObject obj = c.toJSONObject();
+                cellJSON.put(obj);
+            }
+            item.put(DataStorageContract.ReportsColumns.CELL, cellJSON);
         }
 
-        item.put(DataStorageContract.ReportsColumns.CELL, cellJSON);
-        item.put(DataStorageContract.ReportsColumns.CELL_COUNT, cellJSON.length());
-
-        JSONArray wifis = new JSONArray();
-        for (ScanResult s : mWifiData.values()) {
-            JSONObject wifiEntry = new JSONObject();
-            wifiEntry.put("key", s.BSSID);
-            wifiEntry.put("frequency", s.frequency);
-            wifiEntry.put("signal", s.level);
-            wifis.put(wifiEntry);
+        if (mWifiData.size() > 0) {
+            JSONArray wifis = new JSONArray();
+            for (ScanResult s : mWifiData.values()) {
+                JSONObject wifiEntry = new JSONObject();
+                wifiEntry.put("macAddress", s.BSSID);
+                if (s.frequency != 0) {
+                    wifiEntry.put("frequency", s.frequency);
+                }
+                if (s.level != 0) {
+                    wifiEntry.put("signalStrength", s.level);
+                }
+                wifis.put(wifiEntry);
+            }
+            item.put(DataStorageContract.ReportsColumns.WIFI, wifis);
         }
-        item.put(DataStorageContract.ReportsColumns.WIFI, wifis);
-        item.put(DataStorageContract.ReportsColumns.WIFI_COUNT, wifis.length());
 
         return item;
     }

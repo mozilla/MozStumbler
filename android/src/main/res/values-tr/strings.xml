@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Mozilla Stumbler</string>
+    <string name="action_about">Mozilla Stumbler Hakkında</string>
+    <string name="action_preferences">Ayarlar</string>
+    <string name="start_scanning">Taramayı Başlat</string>
+    <string name="stop_scanning">Taramayı Durdur</string>
+    <string name="view_leaderboard">Puan Durumunu Göster</string>
+    <string name="service_name">Mozilla Stumbler</string>
+    <string name="notification_scanning">Mozilla Stumbler tarama yapıyor</string>
+    <string name="notification_paused">Mozilla Stumbler duraklatıldı</string>
+    <string name="enter_nickname">Takma adınızı yazın (isteğe bağlı)</string>
+    <string name="enter_nickname_title">Takma ad: %1$s</string>
+    <string name="enter_nickname_longtext">Takma adınız puan durumunda gözükecek.</string>
+    <string name="update_title">Mozilla Stumbler güncellemesi indirilsin mi?</string>
+    <string name="update_message">Kurulu sürüm: %1$s\nSon sürüm: %2$s</string>
+    <string name="update_now">Şimdi Güncelle</string>
+    <string name="update_later">Sonra Güncelle</string>
+    <string name="yes">Evet</string>
+    <string name="no">Hayır</string>
+    <string name="about_version">%1$s sürümü</string>
+    <string name="about_openstreetmap">Harita parçaları\n© OpenStreetMap\'e katkıda bulunanlar\nhttp://www.openstreetmap.org</string>
+    <string name="about_mapbox_title">MapBox</string>
+    <string name="about_mapbox">Daha fazlasını öğrenin: http://www.mapbox.com</string>
+    <string name="about_legal_aosp">Bu uygualamadaki bazı simgeler Android Açık Kaynak Projesi tarafından yapılan ve paylaşılan; Creative Commons 2.5 Atıf Lisansı koşulları doğrultusunda kullanılan simgelerden üretilmiştir.</string>
+    <string name="about_legal_flaticons">GPS, baz istasyonu, kablosuz ağ ve dürbün simgeleri Freepik tarafından (http://www.flaticon.com) bu lisans koşullarında üretilmiştir: https://creativecommons.org/licenses/by-nd/3.0</string>
+    <string name="upload_observations_sent_title">Hâlihazırda gönderilmiş</string>
+    <string name="metrics_observations_last_upload_time_title">Son gönderme:</string>
+    <string name="metrics_observations_last_upload_time_never">hiç</string>
+    <!--
+    Do not just copy those plurals, please check what is needed for your language.
+    http://developer.android.com/guide/topics/resources/string-resource.html#Plurals
+    -->
+    <plurals name="time_diff_seconds">
+        <item quantity="one">şimdi</item>
+        <item quantity="other">az önce</item>
+    </plurals>
+    <plurals name="time_diff_minutes">
+        <item quantity="one">bir dk önce</item>
+        <item quantity="other">%d dk önce</item>
+    </plurals>
+    <plurals name="time_diff_hours">
+        <item quantity="one">one saat önce</item>
+        <item quantity="other">%d saat önce</item>
+    </plurals>
+    <plurals name="time_diff_days">
+        <item quantity="one">one gün önce</item>
+        <item quantity="other">%d gün önce</item>
+    </plurals>
+
+    <string name="metrics_notification_text">Rapor:%1$d Baz ist.:%2$d Kablosuz ağ:%3$d</string>
+    <string name="metrics_notification_extraline">Son gönderme: %1$s</string>
+    <string name="metrics_observations_title">Rapor:</string>
+    <string name="metrics_observations_wifis_title">Kablosuz ağ:</string>
+    <string name="metrics_observations_cell_towers_title">Baz istasyonu:</string>
+    <string name="upload_observations_in_queue_title">Göndermeye hazır</string>
+    <string name="upload_wifi_only_title">Sadece kablosuz ağa bağlıyken gönder</string>
+    <string name="upload_wifi_only_summary">Bu seçenek telefon ağındaki veri kullanımını azaltır. Ölçüm bölümündeki gönderme düğmesi ise her zaman rapor gönderilmesini sağlar.</string>
+    <string name="metrics_activity_title">Ölçüm</string>
+    <string name="metrics_this_session">Mevcut oturum</string>
+    <string name="drawer_map_option_show_mls_locations">MKH konumlarını göster</string>
+    <string name="title_activity_log">Kayıt</string>
+    <string name="action_file_bug">Arıza Bildir</string>
+    <string name="file_bug_sender_name">Adınız:</string>
+    <string name="file_bug_sender_name_hint">İsteğe Bağlı</string>
+    <string name="file_bug_sender_email">E-Posta Adresiniz:</string>
+    <string name="file_bug_sender_email_hint">İsteğe Bağlı</string>
+    <string name="file_bug_name">Arıza Başlığı:</string>
+    <string name="file_bug_name_hint">Arızayı tanımlayan başlık</string>
+    <string name="file_bug_description">Arıza Tarifi:</string>
+    <string name="file_bug_description_hint">Bildirilen arızayla ilgili ayrıntılı bilgi (ne oluyor, ne zaman oluyor vb.)</string>
+    <string name="file_bug_reproduction">Arızanın Yeniden Yaşanması:</string>
+    <string name="file_bug_reproduction_hint">Arızayı hangi adımları takip ederek tekrar görebiliriz.</string>
+    <!-- file_bug_report_info: %1$s refers to enable_crash_reporting -->
+    <string name="file_bug_report_info">Bu raporu göndererek cihazınızın mevcut durumuyla ilgili bilgileri de göndereceksiniz. Bu bilgi arıza nedenini belirlerken nedenlerini daraltmak için kullanılacak. Eğer \"%1$s\" seçeneği işaretliyse, çökmeye neden olan arızalar kendiliğinden gönderilir. Çökmeye neden olmayan arızalarla karşılaşırsanız, bunları lütfen bu form aracılığıyla bildirin.</string>
+    <string name="file_bug_send">Arıza Bildirimi Gönder</string>
+    <string name="file_bug_type">Arıza Tipi:</string>
+
+    <string-array name="file_bug_type_list">
+        <item>Görünüm</item>
+        <item>Başarım (performans)</item>
+        <item>Uyumluluk</item>
+        <item>İşlevlilik</item>
+        <item>Yeni Özellik İsteği</item>
+        <item>Diğer</item>
+    </string-array>
+
+    <string name="file_bug_toast_success">Arıza Bildirimi Yapıldı\n Teşekkürler!</string>
+    <string name="file_bug_missing_field">Bu alanın doldurulması zorunlu!</string>
+    <string name="action_view_log">Kayıtlara Bak</string>
+    <string name="scroll_to_start">En Üste Kay</string>
+    <string name="scroll_to_end">En Alta Kay</string>
+    <string name="kml_file_title">KML Rapor Dosyası</string>
+    <string name="kml_file_load">KML Dosyası Yükle</string>
+    <string name="kml_file_save">KML Dosyası Kaydet</string>
+    <string name="kml_file_description">Hata ayıklamak için raporları (konum, kablosuz ağ + baz istasyonu sayımı) kaydedin veya yükleyin.</string>
+    <string name="kml_file_saved_name">Kaydedilen Dosya:</string>
+    <string name="keep_screen_on_title">Tarama sırasında ekranı açık tut</string>
+    <string name="keep_screen_on_summary">Tarama etkin ve uygulama ön plandayken ekranı sürekli açık tutar.</string>
+    <string name="delete_all">Tümünü sil</string>
+    <string name="are_you_sure">Emin misiniz?</string>
+    <string name="loading_kml">KML yükleniyor</string>
+    <string name="saving_kml">KML kaydediliyor</string>
+    <string name="mozstumbler_kml_file">Mozilla Stumbler KML dosyası</string>
+    <string name="share_file">Dosyayı paylaş</string>
+    <string name="load_file">Dosyayı yükle</string>
+    <string name="delete_file">Dosyayı sil</string>
+    <string name="kml_file_saved">KML Kaydedildi</string>
+    <string name="share_after_kml_saved">Dosya cihaza kaydedildi. Dosyayı paylaşmak ister misiniz?</string>
+    <string name="enter_email">E-posta adresinizi yazın (isteğe bağlı)</string>
+    <string name="enter_email_title">E-posta: %1$s</string>
+    <string name="enter_email_longtext">E-posta adresiniz hiçbir zaman başkalarına gösterilmez ve sadece raporlarınız için kullanılır.</string>
+    <string name="drawer_open">Sürgüyü göster</string>
+    <string name="drawer_close">Sürgüyü kapat</string>
+    <string name="title_activity_leaderboard">Puan Durumu</string>
+    <string name="drawer_map_layers_title">Harita Göstergesi</string>
+    <string name="first_run_message_part1">Mozilla Konum Hizmeti kablosuz ağları ve baz istasyonlarını kullanarak cihazların konumunu bulmaya yarayan açık bir hizmettir.</string>
+    <string name="first_run_message_part2"><a href="https://location.services.mozilla.com/privacy">Gizlilik politikamızı</a> okuyun ve geçerli konumunuzu bildirmek için veri toplamaya başlayın.</string>
+    <string name="first_run_start_stumbling">Taramaya Başla</string>
+    <string name="first_run_welcome_to_mozstumbler">Mozilla Stumbler\'a Hoş Geldiniz</string>
+    <string name="map_unavailable">Harita gösterilemiyor, çünkü cihaza takılı hafıza kartı yok.\nBuna rağmen veri toplayabilirsiniz.</string>
+    <string name="map_offline_mode">İnternet bağlantısı olmadan harita güncellenmeyecek,\nancak buna rağmen veri toplayabilirsiniz.</string>
+    <string name="map_copyright_fdroid">Harita Parçalarını Sağlayanlar: MapQuest\n© OpenStreetMap\'e katkıda bulunanlar</string>
+    <string name="map_copyright_moz">© MapBox © OpenStreetMap\'e katkıda bulunanlar</string>
+    <string name="action_developer">Geliştirici</string>
+    <string name="developer_title">Geliştirici</string>
+    <string name="enable_option_show_mls_on_map">MKH konum sorgularını etkinleştir</string>
+    <string name="enable_option_show_mls_on_map_summary">Raporlarınızda Mozilla Konum Hizmeti (MKH) konumlarını göster.</string>
+    <!-- enable_option_show_mls_on_map_detailed_info: %1$s refers to upload_wifi_only_title -->
+    <string name="enable_option_show_mls_on_map_detailed_info">Biraz daha enerji, bellek ve ağ kullanımı pahasına, MKH konumları her raporda gösterilir. MKH konumu haritada kırmızı nokta olarak ve düz çizgiyle raporlarına bağlı olarak gösterilir. Eğer \"%1$s\" seçiliyse ağ bağlantısı kullanılırken sorgu yapılmayacak.</string>
+    <string name="cell_plus_wifi_observation">Kablosuz ağ + baz istasyonu</string>
+    <string name="cell_only_observation">Sadece baz istasyonu</string>
+    <string name="wifi_only_observation">Sadece kablosuz ağ</string>
+    <string name="mls_location_observation">MKH konumu</string>
+    <string name="low_resolution_map">Az ayrıntılı harita</string>
+    <string name="map_turned_off">Harita kapalı</string>
+    <string name="map_tile_resolution_options_label">Harita ayrıntısı:</string>
+    <string name="map_tile_resolution_options_label_dynamic">Harita ayrıntısı: %1$s</string>
+    <string name="map_tile_resolution_options_summary">Az ayrıntılı harita ağdaki veri kullanımını azaltır.</string>
+    <string name="enable_crash_reporting">Çökme bildirimini etkinleştir</string>
+    <string name="enable_simulation">Simülasyonu etkinleştir</string>
+    <string name="clear_simulation_start_location">Simülasyon başlama noktasını temizle</string>
+    <string name="privacy_policy">Gizlilik politikası:</string>
+    <string name="satellites_separator">/</string>
+    <string name="must_uninstall_to_update">Yeni sürümü kurmak için önce eskisini kaldırmalısınız.</string>
+    <string name="category_leaderboard">Puan Durumu</string>
+    <string name="category_network_usage">Ağ kullanımı</string>
+    <string name="category_display">Görünüm</string>
+    <string name="reset_simulation_start">Simülasyon başlama noktası sıfırlandı</string>
+    <string name="category_crashreport">Çökme bildirimi</string>
+
+    <string-array name="map_tile_resolution_options">
+        <item>Yüksek (kablosuz ağ) / düşük (baz ist.)</item>
+        <item>Sadece yüksek ayrıntılı</item>
+        <item>Sadece düşük ayrıntılı</item>
+        <item>Harita yok</item>
+    </string-array>
+
+    <string name="low_battery_title">Pil zayıfsa veri toplamayı bırak</string>
+    <string name="battery_percent_options_label">Pil seviyesi bu noktaya gelince dur:</string>
+    <string name="motion_detection_title">Hareket Algılama</string>
+    <string name="motion_detection_options_label">Hareket edilmiyorsa veri toplamaya ara ver</string>
+    <string name="motion_detection_options_conjunction">in</string>
+    <string name="map_scanning_paused_no_motion">Konum değişmiyor; tarama durakladı.</string>
+    <string name="save_stumble_logs">Tarama verilerini göster</string>
+    <string name="create_log_archive_failure">Kayıtlar için arşiv dizini yaratılamıyor</string>
+    <string name="create_log_archive_success">Kayıtların kaydedileceği yer:</string>
+    <string name="power_saving_mode_summary">Hareket yoksa taramaya ara verilir; hareket algılandığında taramaya geri dönülür.</string>
+    <string name="power_saving_title">Güç Tasarrufu</string>
+    <string name="stop_at_x_battery">%%1$d% pil seviyesinde dur</string>
+    <string name="motion_detection_onoff">Hareket algılama %1$s</string>
+    <string name="change_power_saving">Değiştir</string>
+    <string name="on">açık</string>
+    <string name="off">kapalı</string>
+
+    <string name="title_activity_power_saving_screen">Güç Tasarruf Seçenekleri</string>
+    <string name="sensor_type_legacy">Cihazınızın önemli bir hareket algılayıcısı yok.</string>
+    <string name="sensor_type_significant_motion">Önemli hareket algılayıcısı en iyi güç tasarrufunu sağlar, ancak tüm cihazlarda çalışmayabilir.</string>
+
+    <string name="ok">Tamam</string>
+    <string name="whats_new_title">Neler Yeni?</string>
+<string name="whats_new">
+<b>v1.6.1 (includes v1.6.0 changes)</b>
+\n<li>More conservative power saving to address the problem where the stumbler does not wake up from sleep.</li>
+\n<li>New power saving options in drawer, motion sensing defaults to on only for devices with a significant motion sensor</li>
+\n<li>Home screen widget removed temporarily due to performance problem</li>
+\n<li>Better offline map support</li>
+\n<li>Wifi blocklist updates</li>
+\n<li>No more logging of opt-out SSIDs</li>
+\n<li>Translation updates for Taiwanese, Finnish, German, and Polish</li>
+\n<li>You can now file a bug through the settings panel.</li>
+\n<li>Option to export all stumble logs into your SDCARD for your own analysis.</li>
+\n<li>Public notification support added for Android 5.</li>
+\n<li>New testing infrastructure for developers</li>
+\n<li>Simulation mode added to the developer options.</li>
+</string>
+    <string name="limit_map_zoom">Haritadan uzaklaşmayı sınırla</string>
+    <string name="test_significant_sensor_dialog_title">Önemli Hareket Algılayıcıyı Sına</string>
+    <string name="test_significant_sensor_dialog_message">Sabit durun, ardından 1 dk boyunca yürüyün.\n\nHareket algılanıyor &#8230;</string>
+    <string name="test_significant_sensor_confirmed_working">Hareket algılandı.\nAlgılayıcı düzgün çalışıyor.</string>
+    <string name="button_test_significant_motion_sensor">Önemli hareket algılayıcıyı sına</string>
+    <string name="sensor_name_significant_motion">Önemli hareket</string>
+    <string name="sensor_name_accelerometer">İvme ölçer</string>
+    <string name="title_use_sensor">Algılayıcı kullan:</string>
+    <string name="limit_map_zoom_summary">Harita görünümünde kullanılacak ağ verisini azaltır.</string>
+</resources>

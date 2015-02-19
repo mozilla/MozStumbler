@@ -20,7 +20,7 @@
     <string name="yes">Evet</string>
     <string name="no">Hayır</string>
     <string name="about_version">%1$s sürümü</string>
-    <string name="about_openstreetmap">Harita parçaları\n© OpenStreetMap'e katkıda bulunanlar\nhttp://www.openstreetmap.org</string>
+    <string name="about_openstreetmap">Harita parçaları\n© OpenStreetMap\'e katkıda bulunanlar\nhttp://www.openstreetmap.org</string>
     <string name="about_mapbox_title">MapBox</string>
     <string name="about_mapbox">Daha fazlasını öğrenin: http://www.mapbox.com</string>
     <string name="about_legal_aosp">Bu uygualamadaki bazı simgeler Android Açık Kaynak Projesi tarafından yapılan ve paylaşılan; Creative Commons 2.5 Atıf Lisansı koşulları doğrultusunda kullanılan simgelerden üretilmiştir.</string>
@@ -118,11 +118,11 @@
     <string name="first_run_message_part1">Mozilla Konum Hizmeti kablosuz ağları ve baz istasyonlarını kullanarak cihazların konumunu bulmaya yarayan açık bir hizmettir.</string>
     <string name="first_run_message_part2"><a href="https://location.services.mozilla.com/privacy">Gizlilik politikamızı</a> okuyun ve geçerli konumunuzu bildirmek için veri toplamaya başlayın.</string>
     <string name="first_run_start_stumbling">Taramaya Başla</string>
-    <string name="first_run_welcome_to_mozstumbler">Mozilla Stumbler'a Hoş Geldiniz</string>
+    <string name="first_run_welcome_to_mozstumbler">Mozilla Stumbler\'a Hoş Geldiniz</string>
     <string name="map_unavailable">Harita gösterilemiyor, çünkü cihaza takılı hafıza kartı yok.\nBuna rağmen veri toplayabilirsiniz.</string>
     <string name="map_offline_mode">İnternet bağlantısı olmadan harita güncellenmeyecek,\nancak buna rağmen veri toplayabilirsiniz.</string>
-    <string name="map_copyright_fdroid">Harita Parçalarını Sağlayanlar: MapQuest\n© OpenStreetMap'e katkıda bulunanlar</string>
-    <string name="map_copyright_moz">© MapBox © OpenStreetMap'e katkıda bulunanlar</string>
+    <string name="map_copyright_fdroid">Harita Parçalarını Sağlayanlar: MapQuest\n© OpenStreetMap\'e katkıda bulunanlar</string>
+    <string name="map_copyright_moz">© MapBox © OpenStreetMap\'e katkıda bulunanlar</string>
     <string name="action_developer">Geliştirici</string>
     <string name="developer_title">Geliştirici</string>
     <string name="enable_option_show_mls_on_map">MKH konum sorgularını etkinleştir</string>

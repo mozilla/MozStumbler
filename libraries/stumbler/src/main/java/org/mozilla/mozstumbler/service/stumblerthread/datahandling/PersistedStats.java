@@ -3,6 +3,12 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package org.mozilla.mozstumbler.service.stumblerthread.datahandling;
 
+import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
+import android.widget.Button;
+
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.utils.TelemetryWrapper;
 
@@ -13,11 +19,15 @@ import java.io.IOException;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
-class PersistedStats {
+public class PersistedStats {
     private final File mStatsFile;
+    private final Context mContext;
 
-    public PersistedStats(String baseDir) {
+    public static final String ACTION_PERSISTENT_SYNC_STATUS_UPDATED = AppGlobals.ACTION_NAMESPACE + ".PERSISTENT_SYNC_STATUS_UPDATED";
+    public static final String EXTRAS_PERSISTENT_SYNC_STATUS_UPDATED = ACTION_PERSISTENT_SYNC_STATUS_UPDATED + ".EXTRA";
+    public PersistedStats(String baseDir, Context context) {
         mStatsFile = new File(baseDir, "upload_stats.ini");
+        mContext = context;
     }
 
     public synchronized Properties readSyncStats() throws IOException {
@@ -40,7 +50,7 @@ class PersistedStats {
             return;
         }
 
-        final Properties properties = readSyncStats();
+        Properties properties = readSyncStats();
         final long time = System.currentTimeMillis();
         final long lastUploadTime = Long.parseLong(properties.getProperty(DataStorageContract.Stats.KEY_LAST_UPLOAD_TIME, "0"));
         final long storedObsPerDay = Long.parseLong(properties.getProperty(DataStorageContract.Stats.KEY_OBSERVATIONS_PER_DAY, "0"));
@@ -57,7 +67,7 @@ class PersistedStats {
             }
         }
 
-        writeSyncStats(time,
+        Properties newProps = writeSyncStats(time,
                 Long.parseLong(properties.getProperty(DataStorageContract.Stats.KEY_BYTES_SENT, "0")) + bytesSent,
                 Long.parseLong(properties.getProperty(DataStorageContract.Stats.KEY_OBSERVATIONS_SENT, "0")) + reports,
                 Long.parseLong(properties.getProperty(DataStorageContract.Stats.KEY_CELLS_SENT, "0")) + cells,
@@ -65,9 +75,15 @@ class PersistedStats {
                 observationsToday);
 
 
-        final long lastUploadMs = Long.parseLong(properties.getProperty(DataStorageContract.Stats.KEY_LAST_UPLOAD_TIME, "0"));
-        final int timeDiffSec = Long.valueOf((time - lastUploadMs) / 1000).intValue();
-        if (lastUploadMs > 0 && timeDiffSec > 0) {
+        Intent intent = new Intent();
+        intent.setAction(ACTION_PERSISTENT_SYNC_STATUS_UPDATED);
+        Bundle extras = new Bundle();
+        extras.putSerializable(EXTRAS_PERSISTENT_SYNC_STATUS_UPDATED, newProps);
+        intent.putExtras(extras);
+        LocalBroadcastManager.getInstance(mContext).sendBroadcast(intent);
+
+        final int timeDiffSec = Long.valueOf((time - lastUploadTime) / 1000).intValue();
+        if (lastUploadTime > 0 && timeDiffSec > 0) {
             TelemetryWrapper.addToHistogram(AppGlobals.TELEMETRY_TIME_BETWEEN_UPLOADS_SEC, timeDiffSec);
             TelemetryWrapper.addToHistogram(AppGlobals.TELEMETRY_BYTES_UPLOADED_PER_SEC, Long.valueOf(bytesSent).intValue() / timeDiffSec);
         }
@@ -77,11 +93,11 @@ class PersistedStats {
         TelemetryWrapper.addToHistogram(AppGlobals.TELEMETRY_CELLS_PER_UPLOAD, Long.valueOf(cells).intValue());
     }
 
-    public synchronized void writeSyncStats(long time, long bytesSent, long totalObs,
+    private synchronized Properties writeSyncStats(long time, long bytesSent, long totalObs,
                                             long totalCells, long totalWifis, long obsPerDay) throws IOException {
         final FileOutputStream out = new FileOutputStream(mStatsFile);
+        final Properties props = new Properties();
         try {
-            final Properties props = new Properties();
             props.setProperty(DataStorageContract.Stats.KEY_LAST_UPLOAD_TIME, String.valueOf(time));
             props.setProperty(DataStorageContract.Stats.KEY_BYTES_SENT, String.valueOf(bytesSent));
             props.setProperty(DataStorageContract.Stats.KEY_OBSERVATIONS_SENT, String.valueOf(totalObs));
@@ -93,5 +109,6 @@ class PersistedStats {
         } finally {
             out.close();
         }
+        return props;
     }
 }

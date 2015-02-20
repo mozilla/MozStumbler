@@ -5,13 +5,17 @@
 package org.mozilla.mozstumbler.client.navdrawer;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.LightingColorFilter;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -24,14 +28,17 @@ import android.widget.TextView;
 import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.client.ClientPrefs;
 import org.mozilla.mozstumbler.client.DateTimeUtils;
+import org.mozilla.mozstumbler.client.QueuedCountsTracker;
 import org.mozilla.mozstumbler.client.subactivities.PowerSavingScreen;
 import org.mozilla.mozstumbler.client.subactivities.PreferencesScreen;
 import org.mozilla.mozstumbler.client.util.NotificationUtil;
 import org.mozilla.mozstumbler.service.Prefs;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageContract;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageManager;
+import org.mozilla.mozstumbler.service.stumblerthread.datahandling.PersistedStats;
 import org.mozilla.mozstumbler.service.uploadthread.AsyncUploadParam;
 import org.mozilla.mozstumbler.service.uploadthread.AsyncUploader;
+import org.mozilla.mozstumbler.service.utils.PersistentIntentService;
 import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
 import java.io.IOException;
@@ -65,8 +72,19 @@ public class MetricsView {
     private boolean mHasQueuedObservations;
     private boolean buttonIsSyncIcon;
 
+    private Properties mPersistedStats;
+
     public MetricsView(View view) {
         mView = view;
+
+        LocalBroadcastManager.getInstance(mView.getContext()).registerReceiver(
+                new BroadcastReceiver() {
+                    public void onReceive(Context context, Intent intent) {
+                        Bundle bundle = intent.getExtras();
+                        mPersistedStats = (Properties) bundle.get(PersistedStats.EXTRAS_PERSISTENT_SYNC_STATUS_UPDATED);
+                    }
+                },
+                new IntentFilter(PersistedStats.ACTION_PERSISTENT_SYNC_STATUS_UPDATED));
 
         mOnMapShowMLS = (CheckBox) mView.findViewById(R.id.checkBox_show_mls);
         mOnMapShowMLS.setVisibility(View.GONE);
@@ -208,8 +226,8 @@ public class MetricsView {
 
         updatePowerSavingsLabels();
 
-        updateQueuedStats(dm);
-        updateSentStats(dm);
+        updateQueuedStats();
+        updateSentStats();
         updateThisSessionStats();
 
         setUploadButtonToSyncing(AsyncUploader.isUploading.get());
@@ -250,7 +268,7 @@ public class MetricsView {
         mLastUpdateTimeView.setText(value);
     }
 
-    private void updateSentStats(DataStorageManager dataStorageManager) {
+    private void updateSentStats() {
 
         final long bytesUploadedThisSession = AsyncUploader.sTotalBytesUploadedThisSession.get();
 
@@ -260,22 +278,18 @@ public class MetricsView {
         }
         mTotalBytesUploadedThisSession_lastDisplayed = bytesUploadedThisSession;
 
-        try {
-            Properties props = dataStorageManager.readSyncStats();
-            String sent = props.getProperty(DataStorageContract.Stats.KEY_OBSERVATIONS_SENT, "0");
-            String bytes = props.getProperty(DataStorageContract.Stats.KEY_BYTES_SENT, "0");
+        if (mPersistedStats != null) {
+            String sent = mPersistedStats.getProperty(DataStorageContract.Stats.KEY_OBSERVATIONS_SENT, "0");
+            String bytes = mPersistedStats.getProperty(DataStorageContract.Stats.KEY_BYTES_SENT, "0");
             String value = String.format(mObservationAndSize, Integer.parseInt(sent), formatKb(Long.parseLong(bytes)));
             mAllTimeObservationsSentView.setText(value);
-
-            mLastUploadTime = Long.parseLong(props.getProperty(DataStorageContract.Stats.KEY_LAST_UPLOAD_TIME, "0"));
-            updateLastUploadedLabel();
-        } catch (IOException ex) {
-            Log.e(LOG_TAG, "Exception in updateSentStats()", ex);
+            mLastUploadTime = Long.parseLong(mPersistedStats.getProperty(DataStorageContract.Stats.KEY_LAST_UPLOAD_TIME, "0"));
         }
+        updateLastUploadedLabel();
     }
 
-    private void updateQueuedStats(DataStorageManager dataStorageManager) {
-        DataStorageManager.QueuedCounts q = dataStorageManager.getQueuedCounts();
+    private void updateQueuedStats() {
+        QueuedCountsTracker.QueuedCounts q = QueuedCountsTracker.getInstance().getQueuedCounts();
         String val = String.format(mObservationAndSize, q.mReportCount, formatKb(q.mBytes));
         mQueuedObservationsView.setText(val);
 

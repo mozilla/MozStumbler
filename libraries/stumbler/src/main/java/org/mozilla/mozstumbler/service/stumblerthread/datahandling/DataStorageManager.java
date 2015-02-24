@@ -86,7 +86,7 @@ public class DataStorageManager {
         mFileList = new ReportFileList();
         mFileList.update(mReportsDir);
 
-        mPersistedOnDiskUploadStats = new PersistedStats(baseDir);
+        mPersistedOnDiskUploadStats = new PersistedStats(baseDir, c);
     }
 
     public static String getStorageDir(Context c) {
@@ -156,33 +156,41 @@ public class DataStorageManager {
         return Long.parseLong(name.substring(s, e));
     }
 
-    /* Some data is calculated on-demand, don't abuse this function */
-    public synchronized QueuedCounts getQueuedCounts() {
+    public synchronized int getQueuedReportCount() {
         int reportCount = mFileList.mReportCount + mCurrentReports.reportsCount();
-        int wifiCount = mFileList.mWifiCount + mCurrentReports.wifiCount;
-        int cellCount = mFileList.mCellCount + mCurrentReports.cellCount;
-        long byteLength = 0;
-
-        if (mCurrentReports.reportsCount() > 0) {
-            byte[] bytes;
-            bytes = Zipper.zipData(mCurrentReports.finalizeReports().getBytes());
-            if (bytes == null) {
-                ClientLog.e(LOG_TAG, "Error compressing current reports queued", new RuntimeException("GZip Failure"));
-            } else {
-                byteLength += bytes.length;
-            }
-            if (mFileList.mReportCount > 0) {
-                byteLength += mFileList.mFilesOnDiskBytes;
-            }
-        }
-
         if (mCurrentReportsSendBuffer != null) {
             reportCount += mCurrentReportsSendBuffer.reportCount;
-            wifiCount += mCurrentReportsSendBuffer.wifiCount;
-            cellCount += mCurrentReportsSendBuffer.cellCount;
+        }
+        return reportCount;
+    }
+
+    public synchronized int getQueuedWifiCount() {
+        int count = mFileList.mWifiCount + mCurrentReports.wifiCount;
+        if (mCurrentReportsSendBuffer != null) {
+            count += mCurrentReportsSendBuffer.wifiCount;
+        }
+        return count;
+    }
+
+    public synchronized int getQueuedCellCount() {
+        int count = mFileList.mCellCount + mCurrentReports.cellCount;
+        if (mCurrentReportsSendBuffer != null) {
+            count += mCurrentReportsSendBuffer.cellCount;
+        }
+        return count;
+    }
+
+    public synchronized byte[] getCurrentReportsRawBytes() {
+        return (mCurrentReports.reportsCount() < 1) ? null :
+                mCurrentReports.finalizeReports().getBytes();
+    }
+
+    public synchronized long getQueuedZippedDataSize() {
+        long byteLength = mFileList.mFilesOnDiskBytes;
+        if (mCurrentReportsSendBuffer != null) {
             byteLength += mCurrentReportsSendBuffer.data.length;
         }
-        return new QueuedCounts(reportCount, wifiCount, cellCount, byteLength);
+        return byteLength;
     }
 
     public synchronized int getMaxWeeksStored() {
@@ -376,31 +384,15 @@ public class DataStorageManager {
         }
     }
 
-    public synchronized Properties readSyncStats() throws IOException {
-        return mPersistedOnDiskUploadStats.readSyncStats();
-    }
-
     public synchronized void incrementSyncStats(long bytesSent, long reports, long cells, long wifis) throws IOException {
         mPersistedOnDiskUploadStats.incrementSyncStats(bytesSent, reports, cells, wifis);
+
     }
 
     public interface StorageIsEmptyTracker {
         public void notifyStorageStateEmpty(boolean isEmpty);
     }
 
-    public static class QueuedCounts {
-        public final int mReportCount;
-        public final int mWifiCount;
-        public final int mCellCount;
-        public final long mBytes;
-
-        QueuedCounts(int reportCount, int wifiCount, int cellCount, long bytes) {
-            this.mReportCount = reportCount;
-            this.mWifiCount = wifiCount;
-            this.mCellCount = cellCount;
-            this.mBytes = bytes;
-        }
-    }
 
     protected static class ReportFileList {
         File[] mFiles;

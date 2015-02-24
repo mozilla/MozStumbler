@@ -13,42 +13,39 @@ public class ReportBatchBuilder {
     // Once this size is reached, data is persisted to disk, mCurrentReports is cleared.
     public static final int MAX_REPORTS_IN_MEMORY = 50;
     private static final String LOG_TAG = LoggerUtil.makeLogTag(ReportBatchBuilder.class);
-    private final ArrayList<String> reports = new ArrayList<String>();
     public int wifiCount;
     public int cellCount;
-
+    StringBuilder reportString;
+    int reportCount;
     public int reportsCount() {
-        return reports.size();
+        return reportCount;
     }
 
     String finalizeReports() {
-        final String kPrefix = "{\"items\":[";
         final String kSuffix = "]}";
-        final StringBuilder sb = new StringBuilder(kPrefix);
-        String sep = "";
-        final String separator = ",";
-        if (reports != null) {
-            for (String s : reports) {
-                sb.append(sep).append(s);
-                sep = separator;
-            }
-        }
-
-        final String result = sb.append(kSuffix).toString();
-        return result;
+        return reportString.toString() + kSuffix;
     }
 
     public void clearReports() {
-        reports.clear();
+        reportCount = 0;
+        reportString = null;
     }
 
     public void addReport(String report) {
-        if (reports.size() == MAX_REPORTS_IN_MEMORY) {
+        if (reportCount == MAX_REPORTS_IN_MEMORY) {
             // This can happen in the event that serializing reports to disk fails
             // and the reports list is never cleared.
             return;
         }
-        reports.add(report);
+        reportCount++;
+
+        if (reportString == null) {
+            final String kPrefix = "{\"items\":[";
+            reportString = new StringBuilder(kPrefix);
+            reportString.append(report);
+        } else {
+            reportString.append("," + report);
+        }
     }
 
     public boolean maxReportsReached() {

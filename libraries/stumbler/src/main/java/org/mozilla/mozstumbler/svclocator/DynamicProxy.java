@@ -20,14 +20,23 @@ public class DynamicProxy implements InvocationHandler {
         this.svcDefinition = svcDef;
     }
 
-    @Override
-    public Object invoke(Object proxy, Method method, Object[] args)
-            throws Throwable {
+    /*
+    Gets an instance of the delegate
+     */
+    private synchronized Object getInstance() {
         if (this.impl == null) {
             this.impl = ServiceLocator.getInstance().getDirectService(this.svcDefinition);
         }
+        return this.impl;
+    }
 
-        if (this.impl == null) {
+    @Override
+    public Object invoke(Object proxy, Method method, Object[] args)
+            throws Throwable {
+
+        Object obj = getInstance();
+
+        if (obj == null) {
             // return a reasonable default for primitive types
             // and a NULL for anything that's not primitive.
 
@@ -77,6 +86,6 @@ public class DynamicProxy implements InvocationHandler {
                 throw new IllegalStateException(String.valueOf(method));
             }
         }
-        return method.invoke(impl, args);
+        return method.invoke(obj, args);
     }
 }

@@ -33,7 +33,7 @@ public class ServiceLocator {
     /*
      Call this method with an interface class to get a lazily bound proxy to the service.
      */
-    public Object getService(Class<?> svcDefinition) {
+    public synchronized Object getService(Class<?> svcDefinition) {
         return Proxy.newProxyInstance(svcDefinition.getClassLoader(),
                 new Class<?>[]{svcDefinition},
                 new DynamicProxy(svcDefinition));
@@ -43,7 +43,7 @@ public class ServiceLocator {
      You almost certainly don't want to be calling this.  Use getService instead to get a lazily
      bound proxy instance.
      */
-    public Object getDirectService(Class<?> svcInterface) {
+    public synchronized Object getDirectService(Class<?> svcInterface) {
         Object result = null;
 
         if (svcMap.containsKey(svcInterface)) {
@@ -56,7 +56,7 @@ public class ServiceLocator {
         return result;
     }
 
-    public void putService(Class<?> svcInterface, Object obj) {
+    public synchronized void putService(Class<?> svcInterface, Object obj) {
         svcMap.put(svcInterface, obj);
     }
 }

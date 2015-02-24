@@ -16,7 +16,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -34,11 +33,9 @@ import org.mozilla.mozstumbler.client.subactivities.PreferencesScreen;
 import org.mozilla.mozstumbler.client.util.NotificationUtil;
 import org.mozilla.mozstumbler.service.Prefs;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageContract;
-import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageManager;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.PersistedStats;
 import org.mozilla.mozstumbler.service.uploadthread.AsyncUploadParam;
 import org.mozilla.mozstumbler.service.uploadthread.AsyncUploader;
-import org.mozilla.mozstumbler.service.utils.PersistentIntentService;
 import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
 import java.io.IOException;
@@ -213,11 +210,6 @@ public class MetricsView {
     }
 
     public void update() {
-        DataStorageManager dm = DataStorageManager.getInstance();
-        if (dm == null) {
-            return;
-        }
-
         if (ClientPrefs.getInstance(mView.getContext()).isOptionEnabledToShowMLSOnMap()) {
             mOnMapShowMLS.setVisibility(View.VISIBLE);
         } else {

@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
-import android.widget.Button;
 
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.utils.TelemetryWrapper;
@@ -27,7 +26,7 @@ public class PersistedStats {
     public static final String EXTRAS_PERSISTENT_SYNC_STATUS_UPDATED = ACTION_PERSISTENT_SYNC_STATUS_UPDATED + ".EXTRA";
     public PersistedStats(String baseDir, Context context) {
         mStatsFile = new File(baseDir, "upload_stats.ini");
-        mContext = context;
+        mContext = context.getApplicationContext();
     }
 
     public synchronized Properties readSyncStats() throws IOException {
@@ -74,6 +73,9 @@ public class PersistedStats {
                 Long.parseLong(properties.getProperty(DataStorageContract.Stats.KEY_WIFIS_SENT, "0")) + wifis,
                 observationsToday);
 
+        if (newProps == null || newProps.keySet().size() < 1) {
+            return;
+        }
 
         Intent intent = new Intent();
         intent.setAction(ACTION_PERSISTENT_SYNC_STATUS_UPDATED);

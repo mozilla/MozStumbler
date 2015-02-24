@@ -6,7 +6,6 @@ package org.mozilla.mozstumbler.service.uploadthread;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -15,19 +14,17 @@ import org.mockito.ArgumentCaptor;
 import org.mozilla.mozstumbler.service.utils.NetworkInfo;
 import org.mozilla.mozstumbler.service.utils.NetworkInfoTestUtil;
 import org.mozilla.mozstumbler.svclocator.ServiceLocator;
-import org.mozilla.mozstumbler.svclocator.services.log.DebugLogger;
+import org.mozilla.mozstumbler.svclocator.services.log.UnittestLogger;
 import org.mozilla.mozstumbler.svclocator.services.log.ILogger;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
 import static junit.framework.Assert.assertTrue;
-import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.robolectric.bytecode.ShadowWrangler.shadowOf;
 
 @RunWith(RobolectricTestRunner.class)
 @Config(emulateSdk = 18)
@@ -35,7 +32,7 @@ public class UploadAlarmReceiverTest {
 
     @Before
     public void setUp() {
-        ServiceLocator.getInstance().putService(ILogger.class, new DebugLogger());
+        ServiceLocator.getInstance().putService(ILogger.class, new UnittestLogger());
     }
 
     @Test

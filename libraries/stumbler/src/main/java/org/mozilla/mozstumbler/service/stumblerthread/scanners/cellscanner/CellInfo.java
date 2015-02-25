@@ -36,8 +36,8 @@ public class CellInfo implements Parcelable {
     private int mCid;
     private int mLac;
 
-    public void setSignalStrength(int mSignalStrength) {
-        this.mSignalStrength = mSignalStrength;
+    public void setSignalStrength(int signalStrength) {
+        mSignalStrength = signalStrength;
     }
 
     private int mSignalStrength;

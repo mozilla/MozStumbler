@@ -66,7 +66,9 @@ public class MLSLocationGetter extends AsyncTask<String, Void, Location> {
             response = new JSONObject(resp.body());
         } catch (JSONException e) {
             Log.e(LOG_TAG, "Error deserializing JSON. " + e.toString(), e);
-            Log.i(LOG_TAG, "JSON Body: " + resp.body());
+            if (AppGlobals.isDebug) {
+                Log.d(LOG_TAG, "JSON Body: " + resp.body());
+            }
             return null;
         }
 

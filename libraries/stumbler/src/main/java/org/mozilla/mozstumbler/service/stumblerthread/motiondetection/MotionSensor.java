@@ -147,9 +147,20 @@ public class MotionSensor {
         // as without access to a GPS loc in 30s, this class can't quickly determine movement.
         private final long MAX_TIME_TO_WAIT_FOR_GPS_MS =  30 * 1000;
 
+        // After the accelerometer triggers, the FalsePositiveFilter needs to wait a few seconds to
+        // allow for user movement before checking location.
+        private final long DELAY_START_TO_ALLOW_MOVEMENT_MS = 5000;
+
         private final Runnable mStopListeningTimer = new Runnable() {
             public void run() {
                 stop();
+            }
+        };
+
+        private final Runnable mStartListeningTimer = new Runnable() {
+            public void run() {
+                LocationManager lm = (LocationManager)mContext.getSystemService(Context.LOCATION_SERVICE);
+                lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, mListener);
             }
         };
 
@@ -163,7 +174,7 @@ public class MotionSensor {
                 AppGlobals.guiLogInfo("Distance moved: " + String.format("%.1f", dist) + " m", "green", false, false);
 
                 if (dist < MIN_DISTANCE_CHANGE_METERS) {
-                    AppGlobals.guiLogInfo("not moved", "green", true, false);
+                    AppGlobals.guiLogInfo("False positive. not moved.", "green", true, false);
                     Intent sendIntent = new Intent(LocationChangeSensor.ACTION_LOCATION_NOT_CHANGING);
                     LocalBroadcastManager.getInstance(mContext).sendBroadcastSync(sendIntent);
                 } else {
@@ -204,9 +215,7 @@ public class MotionSensor {
                 return;
             }
 
-            LocationManager lm = (LocationManager)mContext.getSystemService(Context.LOCATION_SERVICE);
-            lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, mListener);
-
+            mHandler.postDelayed(mStartListeningTimer, DELAY_START_TO_ALLOW_MOVEMENT_MS);
             mHandler.postDelayed(mStopListeningTimer, MAX_TIME_TO_WAIT_FOR_GPS_MS);
         }
 
@@ -214,6 +223,7 @@ public class MotionSensor {
             LocationManager lm = (LocationManager)mContext.getSystemService(Context.LOCATION_SERVICE);
             lm.removeUpdates(mListener);
             mHandler.removeCallbacks(mStopListeningTimer);
+            mHandler.removeCallbacks(mStartListeningTimer);
         }
 
         void reset() {

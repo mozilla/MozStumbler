@@ -21,6 +21,8 @@ import org.mozilla.mozstumbler.client.mapview.ObservationPoint;
 import org.mozilla.mozstumbler.service.core.logging.ClientLog;
 import org.mozilla.mozstumbler.service.stumblerthread.Reporter;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.StumblerBundle;
+import org.mozilla.mozstumbler.svclocator.ServiceLocator;
+import org.mozilla.mozstumbler.svclocator.services.log.ILogger;
 import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 import org.mozilla.osmdroid.util.GeoPoint;
 
@@ -30,7 +32,10 @@ import java.util.LinkedList;
 
 public class ObservedLocationsReceiver extends BroadcastReceiver {
 
+    private static final ILogger Log = (ILogger) ServiceLocator.getInstance().getService(ILogger.class);
     private static final String LOG_TAG = LoggerUtil.makeLogTag(ObservedLocationsReceiver.class);
+
+
     private static final int MAX_QUEUED_MLS_POINTS_TO_FETCH = 10;
     private static final long FREQ_FETCH_MLS_MS = 5 * 1000;
     private static ObservedLocationsReceiver sInstance;
@@ -130,11 +135,13 @@ public class ObservedLocationsReceiver extends BroadcastReceiver {
         ObservationPoint observation = new ObservationPoint(new GeoPoint(position));
 
         try {
-            JSONObject jsonBundle = bundle.toMLSJSON();
+            JSONObject jsonBundle = bundle.toMLSGeolocate();
             observation.setCounts(jsonBundle);
 
             boolean getInfoForMLS = prefs.isOptionEnabledToShowMLSOnMap();
             if (getInfoForMLS) {
+                // Uncomment this for debug builds
+                //Log.d(LOG_TAG, "geolocate: " + jsonBundle);
                 observation.setMLSQuery(jsonBundle);
 
                 if (mQueuedForMLS.size() < MAX_SIZE_OF_POINT_LISTS) {

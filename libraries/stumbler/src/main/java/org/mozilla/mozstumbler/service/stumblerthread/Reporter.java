@@ -176,7 +176,7 @@ public final class Reporter extends BroadcastReceiver implements IReporter {
         }
 
         try {
-            mlsObj = mBundle.toMLSJSON();
+            mlsObj = mBundle.toMLSGeosubmit();
             if (mlsObj.has(DataStorageContract.ReportsColumns.WIFI)) {
                 wifiCount = mlsObj.getJSONArray(DataStorageContract.ReportsColumns.WIFI).length();
             }

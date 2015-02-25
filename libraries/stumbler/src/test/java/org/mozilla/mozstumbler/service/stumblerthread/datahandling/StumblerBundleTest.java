@@ -25,10 +25,50 @@ import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.List;
 
+import static junit.framework.Assert.assertTrue;
+
 
 @Config(emulateSdk = 18)
 @RunWith(RobolectricTestRunner.class)
 public class StumblerBundleTest {
+
+
+    protected JSONObject getExpectedGeoLocate() throws JSONException {
+        List<JSONObject> wifiList = new ArrayList<JSONObject>();
+
+        JSONObject wifi = new JSONObject();
+        wifi.put("macAddress", "01:23:45:67:89:ab");
+        wifiList.add(wifi);
+        wifi = new JSONObject();
+        wifi.put("macAddress", "23:45:67:89:ab:cd");
+        wifiList.add(wifi);
+        JSONArray wifiArray = new JSONArray(wifiList);
+
+        JSONObject stumbleBlob = new JSONObject();
+        stumbleBlob.put("wifiAccessPoints", wifiArray);
+
+        List<JSONObject> cellTowerList = new ArrayList<JSONObject>();
+        JSONObject cellTower = new JSONObject();
+        cellTower.put("cellId", 12345);
+        cellTower.put("radioType", "lte");
+        cellTower.put("locationAreaCode", 2);
+        cellTower.put("mobileCountryCode", 208);
+        cellTower.put("mobileNetworkCode", 1);
+        cellTower.put("signalStrength", -51);
+        cellTower.put("timingAdvance", 1);
+        cellTower.put("asu", 31);
+        cellTowerList.add(cellTower);
+
+        JSONArray cellTowerArray = new JSONArray(cellTowerList);
+
+        stumbleBlob.put(DataStorageContract.ReportsColumns.CELL, cellTowerArray);
+
+        stumbleBlob.put(DataStorageContract.ReportsColumns.TIME, 1405602028568L);
+        stumbleBlob.put(DataStorageContract.ReportsColumns.LON, -43.5f);
+        stumbleBlob.put(DataStorageContract.ReportsColumns.LAT, -22.5f);
+
+        return stumbleBlob;
+    }
 
 
     protected JSONObject getExpectedReportBatch() throws JSONException {
@@ -63,6 +103,15 @@ public class StumblerBundleTest {
 
         JSONArray cellTowerArray = new JSONArray(cellTowerList);
 
+        stumbleBlob.put(DataStorageContract.ReportsColumns.CELL, cellTowerArray);
+
+        stumbleBlob.put(DataStorageContract.ReportsColumns.TIME, 1405602028568L);
+        stumbleBlob.put(DataStorageContract.ReportsColumns.ALTITUDE, 202.9f);
+        stumbleBlob.put(DataStorageContract.ReportsColumns.LON, -43.5f);
+        stumbleBlob.put(DataStorageContract.ReportsColumns.LAT, -22.5f);
+        stumbleBlob.put(DataStorageContract.ReportsColumns.ACCURACY, 20.5f);
+
+
         List<JSONObject> itemsList= new ArrayList<JSONObject>();
         itemsList.add(stumbleBlob);
 
@@ -72,13 +121,19 @@ public class StumblerBundleTest {
     }
 
     @Test
-    public void testToJson() throws JSONException {
+    public void testToGeosubmitJSON() throws JSONException {
         JSONObject expectedJson = getExpectedReportBatch();
 
         Location mockLocation = new Location(LocationManager.GPS_PROVIDER); // a string
-        mockLocation.setLatitude(-22.7);
-        mockLocation.setLongitude(-43.4);
+        mockLocation.setLatitude(-22.5f);
+        mockLocation.setLongitude(-43.5f);
         mockLocation.setTime(1405602028568L);
+        mockLocation.setAccuracy(20.5f);
+        mockLocation.setAltitude(202.9f);
+
+        assertTrue(mockLocation.hasAccuracy());
+        assertTrue(mockLocation.hasAltitude());
+
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
             mockLocation.setElapsedRealtimeNanos(SystemClock.elapsedRealtimeNanos());
@@ -94,22 +149,62 @@ public class StumblerBundleTest {
 
         CellInfo cellInfo = createLteCellInfo(208, 1, 12345, CellInfo.UNKNOWN_CID, 2, 31, 1);
 
+        bundle.addCellData(cellInfo.getCellIdentity(), cellInfo);
+
         List<StumblerBundle> bundleList = new ArrayList<StumblerBundle>();
         bundleList.add(bundle);
 
         ReportBatchBuilder rbb = new ReportBatchBuilder();
         for (StumblerBundle b: bundleList) {
-            rbb.addReport(b.toMLSJSON().toString(4));
+            rbb.addReport(b.toMLSGeosubmit().toString(4));
         }
 
         String finalReport = rbb.finalizeReports();
         JSONObject actualJson = new JSONObject(finalReport);
 
-        JSONAssert.assertEquals(expectedJson, actualJson, false);
+        System.out.println("Actual JSON with accuracy and location: " + actualJson.toString(2));
+        System.out.println("Expected JSON with accuracy and location: " + expectedJson.toString(2));
 
 
+        JSONAssert.assertEquals(expectedJson, actualJson, true);
     }
 
+
+    @Test
+    public void testToGeolocateJSON() throws JSONException {
+        JSONObject expectedJson = getExpectedGeoLocate();
+
+        Location mockLocation = new Location(LocationManager.GPS_PROVIDER); // a string
+        mockLocation.setLatitude(-22.5f);
+        mockLocation.setLongitude(-43.5f);
+        mockLocation.setTime(1405602028568L);
+        mockLocation.setAccuracy(20.5f);
+        mockLocation.setAltitude(202.9f);
+
+        assertTrue(mockLocation.hasAccuracy());
+        assertTrue(mockLocation.hasAltitude());
+
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            mockLocation.setElapsedRealtimeNanos(SystemClock.elapsedRealtimeNanos());
+        }
+
+        StumblerBundle bundle = new StumblerBundle(mockLocation,
+                TelephonyManager.PHONE_TYPE_GSM);
+
+        for (String bssid: new String[]{"01:23:45:67:89:ab", "23:45:67:89:ab:cd"}){
+            ScanResult scanResult = createScanResult(bssid, "", 0, 0, 0);
+            bundle.addWifiData(bssid, scanResult);
+        }
+
+        CellInfo cellInfo = createLteCellInfo(208, 1, 12345, CellInfo.UNKNOWN_CID, 2, 31, 1);
+
+        bundle.addCellData(cellInfo.getCellIdentity(), cellInfo);
+
+        JSONObject geoLocateJSON = bundle.toMLSGeolocate();
+
+        JSONAssert.assertEquals(expectedJson, geoLocateJSON, true);
+    }
 
     public static CellInfo createLteCellInfo(int mcc,
                                              int mnc,

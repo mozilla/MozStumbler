@@ -10,7 +10,6 @@ import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.core.http.ILocationService;
 import org.mozilla.mozstumbler.service.core.http.IResponse;
 import org.mozilla.mozstumbler.service.utils.LocationAdapter;
@@ -24,7 +23,6 @@ This class provides MLS locations by calling HTTP methods against the MLS.
  */
 public class MLSLocationGetter extends AsyncTask<String, Void, Location> {
     private static final String LOG_TAG = LoggerUtil.makeLogTag(MLSLocationGetter.class);
-    private static final String RESPONSE_OK_TEXT = "ok";
     private static AtomicInteger sRequestCounter = new AtomicInteger(0);
     private final int MAX_REQUESTS = 10;
     private ILocationService mls = (ILocationService)

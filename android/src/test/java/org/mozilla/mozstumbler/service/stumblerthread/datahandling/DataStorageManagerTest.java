@@ -81,7 +81,7 @@ public class DataStorageManagerTest {
                 bundle.addCellData(key, cell);
             }
 
-            JSONObject mlsObj = bundle.toMLSJSON();
+            JSONObject mlsObj = bundle.toMLSGeosubmit();
             int wifiCount = mlsObj.getJSONArray(DataStorageContract.ReportsColumns.WIFI).length();
             int cellCount = mlsObj.getJSONArray(DataStorageContract.ReportsColumns.CELL).length();
             try {
@@ -115,7 +115,7 @@ public class DataStorageManagerTest {
                 bundle.addCellData(key, cell);
             }
 
-            JSONObject mlsObj = bundle.toMLSJSON();
+            JSONObject mlsObj = bundle.toMLSGeosubmit();
             int wifiCount = mlsObj.getJSONArray(DataStorageContract.ReportsColumns.WIFI).length();
             int cellCount = mlsObj.getJSONArray(DataStorageContract.ReportsColumns.CELL).length();
             try {

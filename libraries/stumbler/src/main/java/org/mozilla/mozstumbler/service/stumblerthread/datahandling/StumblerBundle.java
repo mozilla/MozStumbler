@@ -85,22 +85,23 @@ public final class StumblerBundle implements Parcelable {
         return Collections.unmodifiableMap(mCellData);
     }
 
-    public JSONObject toMLSJSON() throws JSONException {
-        JSONObject item = new JSONObject();
-        item.put(DataStorageContract.ReportsColumns.LAT, Math.floor(mGpsPosition.getLatitude() * 1.0E6) / 1.0E6);
-        item.put(DataStorageContract.ReportsColumns.LON, Math.floor(mGpsPosition.getLongitude() * 1.0E6) / 1.0E6);
-
+    public JSONObject toMLSGeosubmit() throws JSONException {
+        JSONObject item = toMLSGeolocate();
         if (mGpsPosition.hasAltitude()) {
             item.put(DataStorageContract.ReportsColumns.ALTITUDE, (float) mGpsPosition.getAltitude());
         }
-
-        item.put(DataStorageContract.ReportsColumns.TIME, mGpsPosition.getTime());
-
         if (mGpsPosition.hasAccuracy()) {
             // Note that Android does not support an accuracy measurement specific to altitude
             item.put(DataStorageContract.ReportsColumns.ACCURACY, (float) mGpsPosition.getAccuracy());
         }
+        return item;
+    }
 
+    public JSONObject toMLSGeolocate() throws JSONException {
+        JSONObject item = new JSONObject();
+        item.put(DataStorageContract.ReportsColumns.LAT, Math.floor(mGpsPosition.getLatitude() * 1.0E6) / 1.0E6);
+        item.put(DataStorageContract.ReportsColumns.LON, Math.floor(mGpsPosition.getLongitude() * 1.0E6) / 1.0E6);
+        item.put(DataStorageContract.ReportsColumns.TIME, mGpsPosition.getTime());
         /* Skip adding 'heading'
 
             The heading field denotes the direction of travel of the device and is specified in
@@ -140,6 +141,7 @@ public final class StumblerBundle implements Parcelable {
 
         return item;
     }
+
 
     public boolean hasMaxWifisPerLocation() {
         return mWifiData.size() == MAX_WIFIS_PER_LOCATION;

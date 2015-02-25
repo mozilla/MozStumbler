@@ -69,13 +69,13 @@ public class CellInfoTest {
 
         netTypes = new int[]{TelephonyManager.NETWORK_TYPE_UNKNOWN, 32432789};
         for (int networkType : netTypes) {
-            cellInfo.setCellLocation(gcl, networkType, "123456", 5, 5);
+            cellInfo.setCellLocation(gcl, networkType, "123456", 5);
             assertEquals("", cellInfo.getCellRadio());
         }
 
         netTypes = new int[]{TelephonyManager.NETWORK_TYPE_EVDO_0};
         for (int networkType : netTypes) {
-            cellInfo.setCellLocation(gcl, networkType, "123456", 5, 5);
+            cellInfo.setCellLocation(gcl, networkType, "123456", 5);
             assertEquals(CellInfo.CELL_RADIO_CDMA, cellInfo.getCellRadio());
         }
     }

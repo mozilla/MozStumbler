@@ -91,14 +91,14 @@ public final class StumblerBundle implements Parcelable {
         item.put(DataStorageContract.ReportsColumns.LON, Math.floor(mGpsPosition.getLongitude() * 1.0E6) / 1.0E6);
 
         if (mGpsPosition.hasAltitude()) {
-            item.put(DataStorageContract.ReportsColumns.ALTITUDE, Math.round(mGpsPosition.getAltitude()));
+            item.put(DataStorageContract.ReportsColumns.ALTITUDE, (float) mGpsPosition.getAltitude());
         }
 
         item.put(DataStorageContract.ReportsColumns.TIME, mGpsPosition.getTime());
 
         if (mGpsPosition.hasAccuracy()) {
             // Note that Android does not support an accuracy measurement specific to altitude
-            item.put(DataStorageContract.ReportsColumns.ACCURACY, (int) Math.ceil(mGpsPosition.getAccuracy()));
+            item.put(DataStorageContract.ReportsColumns.ACCURACY, (float) mGpsPosition.getAccuracy());
         }
 
         /* Skip adding 'heading'

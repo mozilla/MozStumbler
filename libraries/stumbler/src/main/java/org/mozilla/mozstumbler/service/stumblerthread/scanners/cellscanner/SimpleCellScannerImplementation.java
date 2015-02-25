@@ -41,8 +41,8 @@ public class SimpleCellScannerImplementation implements ISimpleCellScanner {
     protected TelephonyManager mTelephonyManager;
     protected boolean mIsStarted;
     protected int mPhoneType;
-    protected volatile int mSignalStrength = CellInfo.UNKNOWN_SIGNAL;
-    protected volatile int mCdmaDbm = CellInfo.UNKNOWN_SIGNAL;
+
+    protected volatile int mSignalStrength = CellInfo.UNKNOWN_SIGNAL_STRENGTH;
 
     private PhoneStateListener mPhoneStateListener;
 
@@ -99,7 +99,7 @@ public class SimpleCellScannerImplementation implements ISimpleCellScanner {
                 if (ss.isGsm()) {
                     mSignalStrength = ss.getGsmSignalStrength();
                 } else {
-                    mCdmaDbm = ss.getCdmaDbm();
+                    mSignalStrength = ss.getCdmaDbm();
                 }
             }
         };
@@ -113,8 +113,7 @@ public class SimpleCellScannerImplementation implements ISimpleCellScanner {
         if (mTelephonyManager != null && mPhoneStateListener != null) {
             mTelephonyManager.listen(mPhoneStateListener, PhoneStateListener.LISTEN_NONE);
         }
-        mSignalStrength = CellInfo.UNKNOWN_SIGNAL;
-        mCdmaDbm = CellInfo.UNKNOWN_SIGNAL;
+        mSignalStrength = CellInfo.UNKNOWN_SIGNAL_STRENGTH;
     }
 
     @Override
@@ -156,12 +155,10 @@ public class SimpleCellScannerImplementation implements ISimpleCellScanner {
         try {
             final CellInfo info = new CellInfo(mPhoneType);
             final int signalStrength = mSignalStrength;
-            final int cdmaDbm = mCdmaDbm;
             info.setCellLocation(currentCell,
                     mTelephonyManager.getNetworkType(),
                     getNetworkOperator(),
-                    signalStrength == CellInfo.UNKNOWN_SIGNAL ? null : signalStrength,
-                    cdmaDbm == CellInfo.UNKNOWN_SIGNAL ? null : cdmaDbm);
+                    signalStrength == CellInfo.UNKNOWN_SIGNAL_STRENGTH ? null : signalStrength);
             return info;
         } catch (IllegalArgumentException iae) {
             Log.e(LOG_TAG, "Skip invalid or incomplete CellLocation: " + currentCell, iae);
@@ -179,8 +176,7 @@ public class SimpleCellScannerImplementation implements ISimpleCellScanner {
         List<CellInfo> records = new ArrayList<CellInfo>(cells.size());
         for (NeighboringCellInfo nci : cells) {
             try {
-                final CellInfo record = new CellInfo(mPhoneType);
-                record.setNeighboringCellInfo(nci, networkOperator);
+                final CellInfo record = new CellInfo(mPhoneType, nci, networkOperator);
                 if (record.isCellRadioValid()) {
                     records.add(record);
                 }

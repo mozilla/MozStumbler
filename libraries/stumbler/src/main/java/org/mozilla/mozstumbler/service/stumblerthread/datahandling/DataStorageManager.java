@@ -57,7 +57,7 @@ public class DataStorageManager {
     // Used as a safeguard to ensure stumbling data is not persisted. The intended use case of the stumbler lib is not
     // for long-term storage, and so if ANY data on disk is this old, ALL data is wiped as a privacy mechanism.
     private static final int DEFAULT_MAX_WEEKS_DATA_ON_DISK = 2;
-    protected static DataStorageManager sInstance;
+    public static DataStorageManager sInstance;
     final File mReportsDir;
     final ReportBatchBuilder mCurrentReports = new ReportBatchBuilder();
     // Set to the default value specified above.
@@ -215,6 +215,10 @@ public class DataStorageManager {
             final String filename = MEMORY_BUFFER_NAME;
 
             String report = mCurrentReports.finalizeReports();
+            // Uncomment this block when debugging the report blobs
+            // Log.d(LOG_TAG, "geosubmit report: " + report);
+            // end debug blob
+
             final byte[] data = Zipper.zipData(report.getBytes());
             final int wifiCount = mCurrentReports.wifiCount;
             final int cellCount = mCurrentReports.cellCount;
@@ -311,6 +315,11 @@ public class DataStorageManager {
             return;
         }
         String report = mCurrentReports.finalizeReports();
+        // Uncomment this block when debugging the report blobs
+        // Log.d(LOG_TAG, "geosubmit report: " + report);
+        // end debug blob
+
+
         final byte[] bytes = Zipper.zipData(report.getBytes());
         saveToDisk(bytes, mCurrentReports.reportsCount(), mCurrentReports.wifiCount, mCurrentReports.cellCount);
         clearCurrentReports();

@@ -228,7 +228,6 @@ public class MainApp extends Application
 
             public void onServiceDisconnected(ComponentName className) {
                 mStumblerService = null;
-                Log.d(LOG_TAG, "Service disconnected", new Exception());
             }
         };
 

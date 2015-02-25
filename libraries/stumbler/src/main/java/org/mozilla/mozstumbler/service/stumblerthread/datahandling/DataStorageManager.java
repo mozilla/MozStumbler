@@ -4,7 +4,6 @@
 
 package org.mozilla.mozstumbler.service.stumblerthread.datahandling;
 
-import android.app.Service;
 import android.content.Context;
 
 import org.mozilla.mozstumbler.service.AppGlobals;
@@ -18,7 +17,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.util.Properties;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -221,10 +219,6 @@ public class DataStorageManager {
             final int wifiCount = mCurrentReports.wifiCount;
             final int cellCount = mCurrentReports.cellCount;
 
-            if (AppGlobals.isDebug) {
-                Log.d(LOG_TAG, "Finalized report: " + report);
-            }
-
             clearCurrentReports();
             final ReportBatch result = new ReportBatch(filename, data, currentReportsCount, wifiCount, cellCount);
             mCurrentReportsSendBuffer = result;
@@ -317,9 +311,6 @@ public class DataStorageManager {
             return;
         }
         String report = mCurrentReports.finalizeReports();
-        if (AppGlobals.isDebug) {
-            Log.d(LOG_TAG, "Finalized report: " + report);
-        }
         final byte[] bytes = Zipper.zipData(report.getBytes());
         saveToDisk(bytes, mCurrentReports.reportsCount(), mCurrentReports.wifiCount, mCurrentReports.cellCount);
         clearCurrentReports();

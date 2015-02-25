@@ -82,13 +82,14 @@ public class DataStorageManagerTest {
             }
 
             JSONObject mlsObj = bundle.toMLSJSON();
-            int wifiCount = mlsObj.getInt(DataStorageContract.ReportsColumns.WIFI_COUNT);
-            int cellCount = mlsObj.getInt(DataStorageContract.ReportsColumns.CELL_COUNT);
+            int wifiCount = mlsObj.getJSONArray(DataStorageContract.ReportsColumns.WIFI).length();
+            int cellCount = mlsObj.getJSONArray(DataStorageContract.ReportsColumns.CELL).length();
             try {
                 dm.insert(mlsObj.toString(), wifiCount, cellCount);
             } catch (IOException ioEx) {
             }
         }
+
         assertEquals(ReportBatchBuilder.MAX_REPORTS_IN_MEMORY - 1,
                 dm.mCurrentReports.reportsCount());
 
@@ -115,8 +116,8 @@ public class DataStorageManagerTest {
             }
 
             JSONObject mlsObj = bundle.toMLSJSON();
-            int wifiCount = mlsObj.getInt(DataStorageContract.ReportsColumns.WIFI_COUNT);
-            int cellCount = mlsObj.getInt(DataStorageContract.ReportsColumns.CELL_COUNT);
+            int wifiCount = mlsObj.getJSONArray(DataStorageContract.ReportsColumns.WIFI).length();
+            int cellCount = mlsObj.getJSONArray(DataStorageContract.ReportsColumns.CELL).length();
             try {
                 dm.insert(mlsObj.toString(), wifiCount, cellCount);
             } catch (FileNotFoundException fex) {

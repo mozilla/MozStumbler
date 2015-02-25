@@ -15,14 +15,8 @@ public final class DataStorageContract {
         public static final String TIME = "timestamp";
         public static final String ACCURACY = "accuracy";
         public static final String ALTITUDE = "altitude";
-        public static final String ALTITUDE_ACCURACY = "altitudeAccuracy";
-        public static final String RADIO = "radioType";
         public static final String CELL = "cellTowers";
         public static final String WIFI = "wifiAccessPoints";
-
-        // cell and wifi count are not persisted to disk
-        //public static final String CELL_COUNT = "cell_count";
-        //public static final String WIFI_COUNT = "wifi_count";
     }
 
     public static class Stats {

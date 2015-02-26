@@ -142,13 +142,14 @@ public class MotionSensor {
         private LocationListener mNetworkLocationListener = new LocationListener() {
             public void onLocationChanged(Location location) {
                 if (mLastLocation == null) {
-                    return;
+                    mLastLocation = location;
                 }
 
                 if (location.distanceTo(mLastLocation) > DIST_THRESHOLD_M) {
                     AppGlobals.guiLogInfo("MotionSensor.NetworkLocationChangeDetector triggered.");
                     Intent sendIntent = new Intent(ACTION_USER_MOTION_DETECTED);
                     LocalBroadcastManager.getInstance(mContext).sendBroadcastSync(sendIntent);
+                    mLastLocation = location;
                 }
             }
 
@@ -163,11 +164,12 @@ public class MotionSensor {
 
             if (mLastLocation == null) {
                 mLastLocation = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                if (mLastLocation == null) {
+                    mLastLocation = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+                }
             }
 
-            if (mLastLocation != null) {
-                lm.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, mNetworkLocationListener);
-            }
+            lm.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, mNetworkLocationListener);
         }
 
         public void stop() {

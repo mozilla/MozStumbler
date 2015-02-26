@@ -9,7 +9,6 @@ import android.net.wifi.ScanResult;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.telephony.TelephonyManager;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -30,17 +29,16 @@ public final class StumblerBundle implements Parcelable {
     public static final int MAX_WIFIS_PER_LOCATION = 200;
     /* The maximum number of cells in a single observation */
     public static final int MAX_CELLS_PER_LOCATION = 50;
-    private final int mPhoneType;
     private final Location mGpsPosition;
     private final Map<String, ScanResult> mWifiData;
     private final Map<String, CellInfo> mCellData;
 
-    public StumblerBundle(Location position, int phoneType) {
+    public StumblerBundle(Location position) {
         mGpsPosition = position;
-        mPhoneType = phoneType;
         mWifiData = new HashMap<String, ScanResult>();
         mCellData = new HashMap<String, CellInfo>();
     }
+
 
     @Override
     public int describeContents() {
@@ -64,7 +62,6 @@ public final class StumblerBundle implements Parcelable {
         out.writeBundle(wifiBundle);
         out.writeBundle(cellBundle);
         out.writeParcelable(mGpsPosition, 0);
-        out.writeInt(mPhoneType);
     }
 
     public Location getGpsPosition() {
@@ -85,51 +82,63 @@ public final class StumblerBundle implements Parcelable {
         return Collections.unmodifiableMap(mCellData);
     }
 
-    public JSONObject toMLSJSON() throws JSONException {
+    public JSONObject toMLSGeosubmit() throws JSONException {
+        JSONObject item = toMLSGeolocate();
+        if (mGpsPosition.hasAltitude()) {
+            item.put(DataStorageContract.ReportsColumns.ALTITUDE, (float) mGpsPosition.getAltitude());
+        }
+        if (mGpsPosition.hasAccuracy()) {
+            // Note that Android does not support an accuracy measurement specific to altitude
+            item.put(DataStorageContract.ReportsColumns.ACCURACY, mGpsPosition.getAccuracy());
+        }
+        return item;
+    }
+
+    public JSONObject toMLSGeolocate() throws JSONException {
         JSONObject item = new JSONObject();
-        item.put(DataStorageContract.ReportsColumns.TIME, mGpsPosition.getTime());
         item.put(DataStorageContract.ReportsColumns.LAT, Math.floor(mGpsPosition.getLatitude() * 1.0E6) / 1.0E6);
         item.put(DataStorageContract.ReportsColumns.LON, Math.floor(mGpsPosition.getLongitude() * 1.0E6) / 1.0E6);
+        item.put(DataStorageContract.ReportsColumns.TIME, mGpsPosition.getTime());
+        /* Skip adding 'heading'
 
-        if (mGpsPosition.hasAccuracy()) {
-            item.put(DataStorageContract.ReportsColumns.ACCURACY, (int) Math.ceil(mGpsPosition.getAccuracy()));
+            The heading field denotes the direction of travel of the device and is specified in
+            degrees, where 0° ≤ heading < 360°, counting clockwise relative to the true north.
+            If the device cannot provide heading information or the device is stationary,
+            the field should be omitted.
+
+            Adding heading is tricky and problematic.  We might be able to do this by taking a delta
+            between two relatively high precision locations, but I'm skeptical that the
+        */
+
+        if (mCellData.size() > 0) {
+            JSONArray cellJSON = new JSONArray();
+
+            for (CellInfo c : mCellData.values()) {
+                JSONObject obj = c.toJSONObject();
+                cellJSON.put(obj);
+            }
+            item.put(DataStorageContract.ReportsColumns.CELL, cellJSON);
         }
 
-        if (mGpsPosition.hasAltitude()) {
-            item.put(DataStorageContract.ReportsColumns.ALTITUDE, Math.round(mGpsPosition.getAltitude()));
+        if (mWifiData.size() > 0) {
+            JSONArray wifis = new JSONArray();
+            for (ScanResult s : mWifiData.values()) {
+                JSONObject wifiEntry = new JSONObject();
+                wifiEntry.put("macAddress", s.BSSID);
+                if (s.frequency != 0) {
+                    wifiEntry.put("frequency", s.frequency);
+                }
+                if (s.level != 0) {
+                    wifiEntry.put("signalStrength", s.level);
+                }
+                wifis.put(wifiEntry);
+            }
+            item.put(DataStorageContract.ReportsColumns.WIFI, wifis);
         }
-
-        if (mPhoneType == TelephonyManager.PHONE_TYPE_GSM) {
-            item.put(DataStorageContract.ReportsColumns.RADIO, "gsm");
-        } else if (mPhoneType == TelephonyManager.PHONE_TYPE_CDMA) {
-            item.put(DataStorageContract.ReportsColumns.RADIO, "cdma");
-        } else {
-            // issue #598. investigate this case further in future
-            item.put(DataStorageContract.ReportsColumns.RADIO, "");
-        }
-
-        JSONArray cellJSON = new JSONArray();
-        for (CellInfo c : mCellData.values()) {
-            JSONObject obj = c.toJSONObject();
-            cellJSON.put(obj);
-        }
-
-        item.put(DataStorageContract.ReportsColumns.CELL, cellJSON);
-        item.put(DataStorageContract.ReportsColumns.CELL_COUNT, cellJSON.length());
-
-        JSONArray wifis = new JSONArray();
-        for (ScanResult s : mWifiData.values()) {
-            JSONObject wifiEntry = new JSONObject();
-            wifiEntry.put("key", s.BSSID);
-            wifiEntry.put("frequency", s.frequency);
-            wifiEntry.put("signal", s.level);
-            wifis.put(wifiEntry);
-        }
-        item.put(DataStorageContract.ReportsColumns.WIFI, wifis);
-        item.put(DataStorageContract.ReportsColumns.WIFI_COUNT, wifis.length());
 
         return item;
     }
+
 
     public boolean hasMaxWifisPerLocation() {
         return mWifiData.size() == MAX_WIFIS_PER_LOCATION;

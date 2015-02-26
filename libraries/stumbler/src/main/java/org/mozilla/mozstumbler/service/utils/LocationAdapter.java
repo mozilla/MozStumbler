@@ -13,30 +13,24 @@ import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
 /*
-    A simple adapter for deserializing JSON to Location objects
+    A simple adapter for deserializing JSON to Location objects from the
+    geolocate API.
+
+    https://developers.google.com/maps/documentation/business/geolocation/#responses
+
  */
 public class LocationAdapter {
 
     private static final String LOG_TAG = LoggerUtil.makeLogTag(LocationAdapter.class);
 
     private static final String JSON_LATITUDE = "lat";
-    private static final String JSON_LONGITUDE = "lon";
+    private static final String JSON_LONGITUDE = "lng";
     private static final String JSON_ACCURACY = "accuracy";
-
-    public static Location fromJSONText(String text) {
-        try {
-            return fromJSON(new JSONObject(text));
-        } catch (JSONException e) {
-            Log.e(LOG_TAG, "Error deserializing JSON", e);
-        }
-        return null;
-    }
-
 
     public static Location fromJSON(JSONObject jsonObj) {
         Location location = new Location(AppGlobals.LOCATION_ORIGIN_INTERNAL);
         location.setLatitude(getLat(jsonObj));
-        location.setLongitude(getLon(jsonObj));
+        location.setLongitude(getLng(jsonObj));
         location.setAccuracy(getAccuracy(jsonObj));
         return location;
     }
@@ -46,24 +40,28 @@ public class LocationAdapter {
     an object that you can access lat/long/accuracy
     Use an adapter pattern
     */
-    private static float getLat(JSONObject jsonObject) {
-        return getFloat(jsonObject, JSON_LATITUDE);
+    public static float getLat(JSONObject jsonObject) {
+        return getFloat(jsonObject, JSON_LATITUDE, true);
     }
 
-    private static float getLon(JSONObject jsonObject) {
-        return getFloat(jsonObject, JSON_LONGITUDE);
-    }
-
-
-    private static float getAccuracy(JSONObject jsonObject) {
-        return getFloat(jsonObject, JSON_ACCURACY);
+    public static float getLng(JSONObject jsonObject) {
+        return getFloat(jsonObject, JSON_LONGITUDE, true);
     }
 
 
-    private static float getFloat(JSONObject jsonObject, String field_name) {
+    public static float getAccuracy(JSONObject jsonObject) {
+        return getFloat(jsonObject, JSON_ACCURACY, false);
+    }
+
+
+    private static float getFloat(JSONObject jsonObject, String field_name, boolean useLocation) {
         float result = 0f;
         try {
-            result = Float.parseFloat(jsonObject.getString(field_name));
+            if (useLocation) {
+                result = Float.parseFloat(jsonObject.getJSONObject("location").getString(field_name));
+            } else {
+                result = Float.parseFloat(jsonObject.getString(field_name));
+            }
         } catch (JSONException e) {
             Log.e(LOG_TAG, "Error decoding " + field_name + " from JSON: ", e);
         }

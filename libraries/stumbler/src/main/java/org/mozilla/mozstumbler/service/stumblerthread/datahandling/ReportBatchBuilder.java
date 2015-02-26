@@ -1,13 +1,13 @@
-package org.mozilla.mozstumbler.service.stumblerthread.datahandling;
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+ package org.mozilla.mozstumbler.service.stumblerthread.datahandling;
 
 import org.mozilla.mozstumbler.service.Prefs;
 import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
-import java.util.ArrayList;
 
-/**
- * Created by victorng on 14-11-20.
- */
 public class ReportBatchBuilder {
     // The max number of reports stored in the mCurrentReports. Each report is a GPS location plus wifi and cell scan.
     // Once this size is reached, data is persisted to disk, mCurrentReports is cleared.

@@ -11,7 +11,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.svclocator.ServiceLocator;
-import org.mozilla.mozstumbler.svclocator.services.log.DebugLogger;
+import org.mozilla.mozstumbler.svclocator.services.log.UnittestLogger;
 import org.mozilla.mozstumbler.svclocator.services.log.ILogger;
 import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 import org.robolectric.RobolectricTestRunner;
@@ -32,7 +32,7 @@ public class FirstRunFragmentTest {
 
     @Before
     public void setUp() {
-        ServiceLocator.getInstance().putService(ILogger.class, new DebugLogger());
+        ServiceLocator.getInstance().putService(ILogger.class, new UnittestLogger());
     }
 
     @Test

@@ -10,16 +10,13 @@ public final class DataStorageContract {
     }
 
     public static class ReportsColumns {
-        public static final String LAT = "lat";
-        public static final String LON = "lon";
+        public static final String LAT = "latitude";
+        public static final String LON = "longitude";
         public static final String TIME = "timestamp";
         public static final String ACCURACY = "accuracy";
         public static final String ALTITUDE = "altitude";
-        public static final String RADIO = "radio";
-        public static final String CELL = "cell";
-        public static final String WIFI = "wifi";
-        public static final String CELL_COUNT = "cell_count";
-        public static final String WIFI_COUNT = "wifi_count";
+        public static final String CELL = "cellTowers";
+        public static final String WIFI = "wifiAccessPoints";
     }
 
     public static class Stats {

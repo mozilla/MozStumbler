@@ -67,7 +67,7 @@ public class DataStorageManagerTest {
             loc.setLatitude(42 + (locCount * 0.1));
             loc.setLongitude(45 + (locCount * 0.1));
 
-            bundle = new StumblerBundle(loc, TelephonyManager.PHONE_TYPE_GSM);
+            bundle = new StumblerBundle(loc);
 
             for (int offset = 0; offset < StumblerBundle.MAX_WIFIS_PER_LOCATION * 20; offset++) {
                 String bssid = Long.toHexString(offset | 0xabcd00000000L);
@@ -81,14 +81,15 @@ public class DataStorageManagerTest {
                 bundle.addCellData(key, cell);
             }
 
-            JSONObject mlsObj = bundle.toMLSJSON();
-            int wifiCount = mlsObj.getInt(DataStorageContract.ReportsColumns.WIFI_COUNT);
-            int cellCount = mlsObj.getInt(DataStorageContract.ReportsColumns.CELL_COUNT);
+            JSONObject mlsObj = bundle.toMLSGeosubmit();
+            int wifiCount = mlsObj.getJSONArray(DataStorageContract.ReportsColumns.WIFI).length();
+            int cellCount = mlsObj.getJSONArray(DataStorageContract.ReportsColumns.CELL).length();
             try {
                 dm.insert(mlsObj.toString(), wifiCount, cellCount);
             } catch (IOException ioEx) {
             }
         }
+
         assertEquals(ReportBatchBuilder.MAX_REPORTS_IN_MEMORY - 1,
                 dm.mCurrentReports.reportsCount());
 
@@ -100,7 +101,7 @@ public class DataStorageManagerTest {
             loc.setLatitude(42 + (locCount * 0.1));
             loc.setLongitude(45 + (locCount * 0.1));
 
-            bundle = new StumblerBundle(loc, TelephonyManager.PHONE_TYPE_GSM);
+            bundle = new StumblerBundle(loc);
 
             for (int offset = 0; offset < StumblerBundle.MAX_WIFIS_PER_LOCATION * 20; offset++) {
                 String bssid = Long.toHexString(offset | 0xabcd00000000L);
@@ -114,9 +115,9 @@ public class DataStorageManagerTest {
                 bundle.addCellData(key, cell);
             }
 
-            JSONObject mlsObj = bundle.toMLSJSON();
-            int wifiCount = mlsObj.getInt(DataStorageContract.ReportsColumns.WIFI_COUNT);
-            int cellCount = mlsObj.getInt(DataStorageContract.ReportsColumns.CELL_COUNT);
+            JSONObject mlsObj = bundle.toMLSGeosubmit();
+            int wifiCount = mlsObj.getJSONArray(DataStorageContract.ReportsColumns.WIFI).length();
+            int cellCount = mlsObj.getJSONArray(DataStorageContract.ReportsColumns.CELL).length();
             try {
                 dm.insert(mlsObj.toString(), wifiCount, cellCount);
             } catch (FileNotFoundException fex) {

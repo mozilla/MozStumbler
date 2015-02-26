@@ -23,7 +23,6 @@ This class provides MLS locations by calling HTTP methods against the MLS.
  */
 public class MLSLocationGetter extends AsyncTask<String, Void, Location> {
     private static final String LOG_TAG = LoggerUtil.makeLogTag(MLSLocationGetter.class);
-    private static final String RESPONSE_OK_TEXT = "ok";
     private static AtomicInteger sRequestCounter = new AtomicInteger(0);
     private final int MAX_REQUESTS = 10;
     private ILocationService mls = (ILocationService)
@@ -48,6 +47,7 @@ public class MLSLocationGetter extends AsyncTask<String, Void, Location> {
         }
 
         IResponse resp = mls.search(mQueryMLSBytes, null, false);
+
         if (resp == null) {
             Log.i(LOG_TAG, "Error processing search request");
             return null;
@@ -63,19 +63,7 @@ public class MLSLocationGetter extends AsyncTask<String, Void, Location> {
         try {
             response = new JSONObject(resp.body());
         } catch (JSONException e) {
-            Log.e(LOG_TAG, "Error deserializing JSON", e);
-            return null;
-        }
-
-        String status = "";
-        try {
-            status = response.getString("status");
-        } catch (JSONException ex) {
-            Log.e(LOG_TAG, "Error deserializing status from JSON");
-            return null;
-        }
-
-        if (!status.equals(RESPONSE_OK_TEXT)) {
+            Log.e(LOG_TAG, "Error deserializing JSON. " + e.toString(), e);
             return null;
         }
 

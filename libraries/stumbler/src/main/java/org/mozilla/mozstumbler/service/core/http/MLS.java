@@ -12,8 +12,8 @@ import java.util.Map;
 public class MLS implements ILocationService {
     public static final String NICKNAME_HEADER = "X-Nickname";
     public static final String EMAIL_HEADER = "X-Email";
-    private static final String SEARCH_URL = "https://location.services.mozilla.com/v1/search";
-    private static final String SUBMIT_URL = "https://location.services.mozilla.com/v1/submit";
+    private static final String SEARCH_URL = "https://location.services.mozilla.com/v1/geolocate";
+    private static final String SUBMIT_URL = "https://location.services.mozilla.com/v1/geosubmit";
     final IHttpUtil httpDelegate = (IHttpUtil) ServiceLocator.getInstance().getService(IHttpUtil.class);
 
     private String mozApiKey;

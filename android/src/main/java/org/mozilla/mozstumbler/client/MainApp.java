@@ -110,6 +110,8 @@ public class MainApp extends Application
                 ServiceConfig.load("org.mozilla.mozstumbler.service.stumblerthread.scanners.SimulatorService"));
 
         if (BuildConfig.BUILD_TYPE.equals("unittest")) {
+            result.put(ILogger.class, ServiceConfig.load("org.mozilla.mozstumbler.svclocator.services.log.UnittestLogger"));
+        } else if (BuildConfig.BUILD_TYPE.equals("debug")) {
             result.put(ILogger.class, ServiceConfig.load("org.mozilla.mozstumbler.svclocator.services.log.DebugLogger"));
         } else {
             result.put(ILogger.class, ServiceConfig.load("org.mozilla.mozstumbler.svclocator.services.log.ProductionLogger"));
@@ -226,7 +228,6 @@ public class MainApp extends Application
 
             public void onServiceDisconnected(ComponentName className) {
                 mStumblerService = null;
-                Log.d(LOG_TAG, "Service disconnected", new Exception());
             }
         };
 

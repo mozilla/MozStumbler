@@ -18,7 +18,7 @@ import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.stumblerthread.StumblerService;
 import org.mozilla.mozstumbler.service.stumblerthread.motiondetection.CustomSensorManager;
 import org.mozilla.mozstumbler.svclocator.ServiceLocator;
-import org.mozilla.mozstumbler.svclocator.services.log.DebugLogger;
+import org.mozilla.mozstumbler.svclocator.services.log.UnittestLogger;
 import org.mozilla.mozstumbler.svclocator.services.log.ILogger;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
@@ -45,7 +45,7 @@ public class PassiveServiceReceiverTest {
         appCtx = spy(Robolectric.application);
 
         // Setup the debug logger
-        ServiceLocator.getInstance().putService(ILogger.class, new DebugLogger());
+        ServiceLocator.getInstance().putService(ILogger.class, new UnittestLogger());
 
         StumblerService.sFirefoxStumblingEnabled.set(false);
     }

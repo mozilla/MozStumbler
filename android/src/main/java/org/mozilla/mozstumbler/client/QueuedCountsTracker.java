@@ -6,6 +6,8 @@ package org.mozilla.mozstumbler.client;
 
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageManager;
 import org.mozilla.mozstumbler.service.utils.Zipper;
+import org.mozilla.mozstumbler.svclocator.ServiceLocator;
+import org.mozilla.mozstumbler.svclocator.services.ISystemClock;
 
 // Tracks counts of queued data for reporting in the UI
 public class QueuedCountsTracker {
@@ -38,7 +40,13 @@ public class QueuedCountsTracker {
     private QueuedCountsTracker() {}
 
     private long getInMemoryReportsUploadBytes() {
+        ISystemClock clock = (ISystemClock) ServiceLocator.getInstance().getService(ISystemClock.class);
+
         DataStorageManager dsm = DataStorageManager.getInstance();
+        if (dsm == null) {
+            return 0;
+        }
+
         byte[] bytes = dsm.getCurrentReportsRawBytes();
         if (bytes == null) {
             mCachedByteCount = 0;
@@ -46,11 +54,11 @@ public class QueuedCountsTracker {
         }
 
         final long kTimeGapMs = 2000;
-        if (System.currentTimeMillis() - mPrevAccessTimeMs < kTimeGapMs) {
+        if (clock.currentTimeMillis() - mPrevAccessTimeMs < kTimeGapMs) {
             return mCachedByteCount;
         }
 
-        mPrevAccessTimeMs = System.currentTimeMillis();
+        mPrevAccessTimeMs = clock.currentTimeMillis();
 
         bytes = Zipper.zipData(bytes);
         if (bytes == null) {
@@ -64,6 +72,9 @@ public class QueuedCountsTracker {
     /* Some data is calculated on-demand, don't abuse this function */
     public QueuedCounts getQueuedCounts() {
         DataStorageManager dsm = DataStorageManager.getInstance();
+        if (dsm == null ) {
+            return new QueuedCounts(0, 0, 0, 0);
+        }
         long byteLength = getInMemoryReportsUploadBytes() +  dsm.getQueuedZippedDataSize();
         return new QueuedCounts(dsm.getQueuedReportCount(),
                 dsm.getQueuedWifiCount(),

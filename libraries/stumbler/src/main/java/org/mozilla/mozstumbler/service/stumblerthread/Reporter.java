@@ -11,7 +11,6 @@ import android.content.IntentFilter;
 import android.location.Location;
 import android.net.wifi.ScanResult;
 import android.support.v4.content.LocalBroadcastManager;
-import android.telephony.TelephonyManager;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -24,6 +23,8 @@ import org.mozilla.mozstumbler.service.stumblerthread.scanners.GPSScanner;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.WifiScanner;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner.CellInfo;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner.CellScanner;
+import org.mozilla.mozstumbler.svclocator.ServiceLocator;
+import org.mozilla.mozstumbler.svclocator.services.log.ILogger;
 import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
 import java.io.IOException;
@@ -32,16 +33,18 @@ import java.util.List;
 import java.util.Set;
 
 public final class Reporter extends BroadcastReceiver implements IReporter {
+
+    private static final ILogger Log = (ILogger) ServiceLocator.getInstance().getService(ILogger.class);
+    private static final String LOG_TAG = LoggerUtil.makeLogTag(Reporter.class);
+
     public static final String ACTION_FLUSH_TO_BUNDLE = AppGlobals.ACTION_NAMESPACE + ".FLUSH";
     public static final String ACTION_NEW_BUNDLE = AppGlobals.ACTION_NAMESPACE + ".NEW_BUNDLE";
     public static final String NEW_BUNDLE_ARG_BUNDLE = "bundle";
-    private static final String LOG_TAG = LoggerUtil.makeLogTag(Reporter.class);
     private final Set<String> mUniqueAPs = new HashSet<String>();
     private final Set<String> mUniqueCells = new HashSet<String>();
     StumblerBundle mBundle;
     private boolean mIsStarted;
     private Context mContext;
-    private int mPhoneType;
     private int mObservationCount = 0;
 
     public Reporter() {
@@ -53,16 +56,7 @@ public final class Reporter extends BroadcastReceiver implements IReporter {
         }
 
         mContext = context.getApplicationContext();
-        TelephonyManager tm = (TelephonyManager) mContext.getSystemService(Context.TELEPHONY_SERVICE);
-        if (tm != null) {
-            mPhoneType = tm.getPhoneType();
-        } else {
-            ClientLog.d(LOG_TAG, "No telephony manager.");
-            mPhoneType = TelephonyManager.PHONE_TYPE_NONE;
-        }
-
         mIsStarted = true;
-
         mBundle = null;
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(WifiScanner.ACTION_WIFIS_SCANNED);
@@ -104,7 +98,7 @@ public final class Reporter extends BroadcastReceiver implements IReporter {
             // Only create StumblerBundle instances if the position exists
             if (newPosition != null) {
                 flush();
-                mBundle = new StumblerBundle(newPosition, mPhoneType);
+                mBundle = new StumblerBundle(newPosition);
             }
         } else if (subject.equals(GPSScanner.SUBJECT_LOCATION_LOST)) {
             flush();
@@ -171,9 +165,13 @@ public final class Reporter extends BroadcastReceiver implements IReporter {
         }
 
         try {
-            mlsObj = mBundle.toMLSJSON();
-            wifiCount = mlsObj.getInt(DataStorageContract.ReportsColumns.WIFI_COUNT);
-            cellCount = mlsObj.getInt(DataStorageContract.ReportsColumns.CELL_COUNT);
+            mlsObj = mBundle.toMLSGeosubmit();
+            if (mlsObj.has(DataStorageContract.ReportsColumns.WIFI)) {
+                wifiCount = mlsObj.getJSONArray(DataStorageContract.ReportsColumns.WIFI).length();
+            }
+            if (mlsObj.has(DataStorageContract.ReportsColumns.CELL)) {
+                cellCount = mlsObj.getJSONArray(DataStorageContract.ReportsColumns.CELL).length();
+            }
         } catch (JSONException e) {
             ClientLog.w(LOG_TAG, "Failed to convert bundle to JSON: " + e);
             mBundle = null;

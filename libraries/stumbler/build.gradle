@@ -41,6 +41,12 @@ androidUnitTest {
 dependencies {
     androidTestCompile 'junit:junit:4.10'
     testCompile        'junit:junit:4.10'
+
+    androidTestCompile  'org.skyscreamer:jsonassert:1.2.3'
+    testCompile         'org.skyscreamer:jsonassert:1.2.3'
+    androidTestCompile  'com.google.code.gson:gson:2.3.1'
+    testCompile         'com.google.code.gson:gson:2.3.1'
+
     androidTestCompile 'org.robolectric:robolectric:2.4'
     testCompile        'org.robolectric:robolectric:2.4'
 

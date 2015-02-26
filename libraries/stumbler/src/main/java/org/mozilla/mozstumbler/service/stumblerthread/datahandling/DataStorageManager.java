@@ -4,7 +4,6 @@
 
 package org.mozilla.mozstumbler.service.stumblerthread.datahandling;
 
-import android.app.Service;
 import android.content.Context;
 
 import org.mozilla.mozstumbler.service.AppGlobals;
@@ -18,7 +17,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.util.Properties;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -59,7 +57,7 @@ public class DataStorageManager {
     // Used as a safeguard to ensure stumbling data is not persisted. The intended use case of the stumbler lib is not
     // for long-term storage, and so if ANY data on disk is this old, ALL data is wiped as a privacy mechanism.
     private static final int DEFAULT_MAX_WEEKS_DATA_ON_DISK = 2;
-    protected static DataStorageManager sInstance;
+    public static DataStorageManager sInstance;
     final File mReportsDir;
     final ReportBatchBuilder mCurrentReports = new ReportBatchBuilder();
     // Set to the default value specified above.
@@ -215,9 +213,16 @@ public class DataStorageManager {
 
         if (currentReportsCount > 0) {
             final String filename = MEMORY_BUFFER_NAME;
-            final byte[] data = Zipper.zipData(mCurrentReports.finalizeReports().getBytes());
+
+            String report = mCurrentReports.finalizeReports();
+            // Uncomment this block when debugging the report blobs
+            //Log.d(LOG_TAG, "PII geosubmit report: " + report);
+            // end debug blob
+
+            final byte[] data = Zipper.zipData(report.getBytes());
             final int wifiCount = mCurrentReports.wifiCount;
             final int cellCount = mCurrentReports.cellCount;
+
             clearCurrentReports();
             final ReportBatch result = new ReportBatch(filename, data, currentReportsCount, wifiCount, cellCount);
             mCurrentReportsSendBuffer = result;
@@ -309,7 +314,13 @@ public class DataStorageManager {
         if (mCurrentReports.reportsCount() < 1) {
             return;
         }
-        final byte[] bytes = Zipper.zipData(mCurrentReports.finalizeReports().getBytes());
+        String report = mCurrentReports.finalizeReports();
+        // Uncomment this block when debugging the report blobs
+        //Log.d(LOG_TAG, "PII geosubmit report: " + report);
+        // end debug blob
+
+
+        final byte[] bytes = Zipper.zipData(report.getBytes());
         saveToDisk(bytes, mCurrentReports.reportsCount(), mCurrentReports.wifiCount, mCurrentReports.cellCount);
         clearCurrentReports();
     }

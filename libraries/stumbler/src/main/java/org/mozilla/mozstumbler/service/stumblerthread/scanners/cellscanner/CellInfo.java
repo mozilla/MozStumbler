@@ -19,31 +19,55 @@ import org.json.JSONObject;
 import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
 public class CellInfo implements Parcelable {
-    public static final String RADIO_GSM = "gsm";
-    public static final String RADIO_CDMA = "cdma";
     public static final String CELL_RADIO_UNKNOWN = "";
     public static final String CELL_RADIO_GSM = "gsm";
-    public static final String CELL_RADIO_UMTS = "umts";
+    public static final String CELL_RADIO_WCDMA = "wcdma";
     public static final String CELL_RADIO_CDMA = "cdma";
     public static final String CELL_RADIO_LTE = "lte";
+
     public static final int UNKNOWN_CID = -1;
-    public static final int UNKNOWN_SIGNAL = -1000;
+    public static final int UNKNOWN_LAC = -1;
+    public static final int UNKNOWN_SIGNAL_STRENGTH = -1000;
+    public static final int UNKNOWN_ASU = -1;
+
     private static final String LOG_TAG = LoggerUtil.makeLogTag(CellInfo.class);
-    private String mRadio;
+
     private String mCellRadio;
 
     private int mMcc;
     private int mMnc;
     private int mCid;
     private int mLac;
-    private int mSignal;
+
+    public void setSignalStrength(int signalStrength) {
+        mSignalStrength = signalStrength;
+    }
+
+    private int mSignalStrength;
     private int mAsu;
     private int mTa;
     private int mPsc;
 
-    public CellInfo(int phoneType) {
+    public CellInfo() {
         reset();
-        setRadio(phoneType);
+    }
+
+    /*
+     This constructor is only used when building CellInfo for a neighbouring cell.
+     */
+    public CellInfo(NeighboringCellInfo nci, String networkOperator) {
+        reset();
+        mCellRadio = getCellRadioTypeName(nci.getNetworkType());
+        setNetworkOperator(networkOperator);
+
+        if (nci.getLac() >= 0) mLac = nci.getLac();
+
+        if (nci.getCid() >= 0) mCid = nci.getCid();
+        if (nci.getPsc() >= 0) mPsc = nci.getPsc();
+
+        if (nci.getRssi() != NeighboringCellInfo.UNKNOWN_RSSI) {
+            mSignalStrength = nci.getRssi();
+        }
     }
 
     static String getCellRadioTypeName(int networkType) {
@@ -55,14 +79,14 @@ public class CellInfo implements Parcelable {
                 return CELL_RADIO_GSM;
 
             // If the network is either UMTS or any high-data-rate variant of it, the radio
-            // field should be specified as `umts`. This includes `UMTS`, `HSPA`, `HSDPA`,
+            // field should be specified as `wcdma`. This includes `UMTS`, `HSPA`, `HSDPA`,
             // `HSPA+` and `HSUPA`.
             case TelephonyManager.NETWORK_TYPE_UMTS:
             case TelephonyManager.NETWORK_TYPE_HSDPA:
             case TelephonyManager.NETWORK_TYPE_HSUPA:
             case TelephonyManager.NETWORK_TYPE_HSPA:
             case TelephonyManager.NETWORK_TYPE_HSPAP:
-                return CELL_RADIO_UMTS;
+                return CELL_RADIO_WCDMA;
 
             case TelephonyManager.NETWORK_TYPE_LTE:
                 return CELL_RADIO_LTE;
@@ -88,10 +112,10 @@ public class CellInfo implements Parcelable {
     private static String getRadioTypeName(int phoneType) {
         switch (phoneType) {
             case TelephonyManager.PHONE_TYPE_CDMA:
-                return RADIO_CDMA;
+                return CELL_RADIO_CDMA;
 
             case TelephonyManager.PHONE_TYPE_GSM:
-                return RADIO_GSM;
+                return CELL_RADIO_GSM;
 
             default:
                 Log.e(LOG_TAG, "", new IllegalArgumentException("Unexpected phone type: " + phoneType));
@@ -106,14 +130,6 @@ public class CellInfo implements Parcelable {
 
     public boolean isCellRadioValid() {
         return mCellRadio != null && (mCellRadio.length() > 0) && !mCellRadio.equals("0");
-    }
-
-    public String getRadio() {
-        return mRadio;
-    }
-
-    void setRadio(int phoneType) {
-        mRadio = getRadioTypeName(phoneType);
     }
 
     public String getCellRadio() {
@@ -144,15 +160,26 @@ public class CellInfo implements Parcelable {
         final JSONObject obj = new JSONObject();
 
         try {
-            obj.put("radio", getCellRadio());
-            obj.put("mcc", mMcc);
-            obj.put("mnc", mMnc);
-            if (mLac != UNKNOWN_CID) obj.put("lac", mLac);
-            if (mCid != UNKNOWN_CID) obj.put("cid", mCid);
-            if (mSignal != UNKNOWN_SIGNAL) obj.put("signal", mSignal);
-            if (mAsu != UNKNOWN_SIGNAL) obj.put("asu", mAsu);
-            if (mTa != UNKNOWN_CID) obj.put("ta", mTa);
+            obj.put("radioType", getCellRadio());
+
+           // Bug #1510
+           // if (mCid != UNKNOWN_CID) {
+                obj.put("cellId", mCid);
+            //}
+
+            // Bug #1510
+            //if (mLac != UNKNOWN_LAC) {
+                obj.put("locationAreaCode", mLac);
+            //}
+
+            obj.put("mobileCountryCode", mMcc);
+            obj.put("mobileNetworkCode", mMnc);
+
+            if (mSignalStrength != UNKNOWN_SIGNAL_STRENGTH) obj.put("signalStrength", mSignalStrength);
+            if (mTa != UNKNOWN_CID) obj.put("timingAdvance", mTa);
             if (mPsc != UNKNOWN_CID) obj.put("psc", mPsc);
+            if (mAsu != UNKNOWN_ASU) obj.put("asu", mAsu);
+
         } catch (JSONException jsonE) {
             throw new IllegalStateException(jsonE);
         }
@@ -161,8 +188,7 @@ public class CellInfo implements Parcelable {
     }
 
     public String getCellIdentity() {
-        return getRadio()
-                + " " + getCellRadio()
+        return getCellRadio()
                 + " " + getMcc()
                 + " " + getMnc()
                 + " " + getLac()
@@ -177,54 +203,33 @@ public class CellInfo implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(mRadio);
         dest.writeString(mCellRadio);
         dest.writeInt(mMcc);
         dest.writeInt(mMnc);
         dest.writeInt(mCid);
         dest.writeInt(mLac);
-        dest.writeInt(mSignal);
+        dest.writeInt(mSignalStrength);
         dest.writeInt(mAsu);
         dest.writeInt(mTa);
         dest.writeInt(mPsc);
     }
 
     void reset() {
-        mRadio = RADIO_GSM;
         mCellRadio = CELL_RADIO_GSM;
         mMcc = UNKNOWN_CID;
         mMnc = UNKNOWN_CID;
-        mLac = UNKNOWN_CID;
+        mLac = UNKNOWN_LAC;
         mCid = UNKNOWN_CID;
-        mSignal = UNKNOWN_SIGNAL;
-        mAsu = UNKNOWN_SIGNAL;
+        mSignalStrength = UNKNOWN_SIGNAL_STRENGTH;
+        mAsu = UNKNOWN_ASU;
         mTa = UNKNOWN_CID;
         mPsc = UNKNOWN_CID;
-    }
-
-    void setNeighboringCellInfo(NeighboringCellInfo nci, String networkOperator) {
-        final int lac, cid, psc, rssi;
-
-        reset();
-        mCellRadio = getCellRadioTypeName(nci.getNetworkType());
-        setNetworkOperator(networkOperator);
-
-        lac = nci.getLac();
-        cid = nci.getCid();
-        psc = nci.getPsc();
-        rssi = nci.getRssi();
-
-        if (lac >= 0) mLac = lac;
-        if (cid >= 0) mCid = cid;
-        if (psc >= 0) mPsc = psc;
-        if (rssi != NeighboringCellInfo.UNKNOWN_RSSI) mAsu = rssi;
     }
 
     void setCellLocation(CellLocation cl,
                          int networkType,
                          String networkOperator,
-                         Integer gsmSignalStrength,
-                         Integer cdmaRssi) {
+                         Integer signalStrength) {
         if (cl instanceof GsmCellLocation) {
             final int lac, cid;
             final GsmCellLocation gcl = (GsmCellLocation) cl;
@@ -243,8 +248,8 @@ public class CellInfo implements Parcelable {
                 if (psc >= 0) mPsc = psc;
             }
 
-            if (gsmSignalStrength != null) {
-                mAsu = gsmSignalStrength;
+            if (signalStrength != null) {
+                mSignalStrength = signalStrength;
             }
         } else if (cl instanceof CdmaCellLocation) {
             final CdmaCellLocation cdl = (CdmaCellLocation) cl;
@@ -259,28 +264,28 @@ public class CellInfo implements Parcelable {
             mLac = cdl.getNetworkId();
             mCid = cdl.getBaseStationId();
 
-            if (cdmaRssi != null) {
-                mSignal = cdmaRssi;
+            if (signalStrength != null) {
+                mSignalStrength = signalStrength;
             }
         } else {
             throw new IllegalArgumentException("Unexpected CellLocation type: " + cl.getClass().getName());
         }
     }
 
-    void setGsmCellInfo(int mcc, int mnc, int lac, int cid, int asu) {
+    public void setGsmCellInfo(int mcc, int mnc, int lac, int cid, int asu) {
         mCellRadio = CELL_RADIO_GSM;
         mMcc = mcc != Integer.MAX_VALUE ? mcc : UNKNOWN_CID;
         mMnc = mnc != Integer.MAX_VALUE ? mnc : UNKNOWN_CID;
-        mLac = lac != Integer.MAX_VALUE ? lac : UNKNOWN_CID;
+        mLac = lac != Integer.MAX_VALUE ? lac : UNKNOWN_LAC;
         mCid = cid != Integer.MAX_VALUE ? cid : UNKNOWN_CID;
         mAsu = asu;
     }
 
-    public void setWcmdaCellInfo(int mcc, int mnc, int lac, int cid, int psc, int asu) {
-        mCellRadio = CELL_RADIO_UMTS;
+    public void setWcdmaCellInfo(int mcc, int mnc, int lac, int cid, int psc, int asu) {
+        mCellRadio = CELL_RADIO_WCDMA;
         mMcc = mcc != Integer.MAX_VALUE ? mcc : UNKNOWN_CID;
         mMnc = mnc != Integer.MAX_VALUE ? mnc : UNKNOWN_CID;
-        mLac = lac != Integer.MAX_VALUE ? lac : UNKNOWN_CID;
+        mLac = lac != Integer.MAX_VALUE ? lac : UNKNOWN_LAC;
         mCid = cid != Integer.MAX_VALUE ? cid : UNKNOWN_CID;
         mPsc = psc != Integer.MAX_VALUE ? psc : UNKNOWN_CID;
         mAsu = asu;
@@ -290,18 +295,18 @@ public class CellInfo implements Parcelable {
      * @param mcc Mobile Country Code, Integer.MAX_VALUE if unknown
      * @param mnc Mobile Network Code, Integer.MAX_VALUE if unknown
      * @param ci  Cell Identity, Integer.MAX_VALUE if unknown
-     * @param pci Physical Cell Id, Integer.MAX_VALUE if unknown
-     * @param tac Tracking Area Code, Integer.MAX_VALUE if unknown
+     * @param psc Physical Cell Id, Integer.MAX_VALUE if unknown
+     * @param lac Tracking Area Code, Integer.MAX_VALUE if unknown
      * @param asu Arbitrary strength unit
      * @param ta  Timing advance
      */
-    void setLteCellInfo(int mcc, int mnc, int ci, int pci, int tac, int asu, int ta) {
+    public void setLteCellInfo(int mcc, int mnc, int ci, int psc, int lac, int asu, int ta) {
         mCellRadio = CELL_RADIO_LTE;
         mMcc = mcc != Integer.MAX_VALUE ? mcc : UNKNOWN_CID;
         mMnc = mnc != Integer.MAX_VALUE ? mnc : UNKNOWN_CID;
-        mLac = tac != Integer.MAX_VALUE ? tac : UNKNOWN_CID;
+        mLac = lac != Integer.MAX_VALUE ? lac : UNKNOWN_LAC;
         mCid = ci != Integer.MAX_VALUE ? ci : UNKNOWN_CID;
-        mPsc = pci != Integer.MAX_VALUE ? pci : UNKNOWN_CID;
+        mPsc = psc != Integer.MAX_VALUE ? psc : UNKNOWN_CID;
         mAsu = asu;
         mTa = ta;
     }
@@ -309,9 +314,9 @@ public class CellInfo implements Parcelable {
     void setCdmaCellInfo(int baseStationId, int networkId, int systemId, int dbm) {
         mCellRadio = CELL_RADIO_CDMA;
         mMnc = systemId != Integer.MAX_VALUE ? systemId : UNKNOWN_CID;
-        mLac = networkId != Integer.MAX_VALUE ? networkId : UNKNOWN_CID;
+        mLac = networkId != Integer.MAX_VALUE ? networkId : UNKNOWN_LAC;
         mCid = baseStationId != Integer.MAX_VALUE ? baseStationId : UNKNOWN_CID;
-        mSignal = dbm;
+        mSignalStrength = dbm;
     }
 
     void setNetworkOperator(String mccMnc) {
@@ -331,13 +336,12 @@ public class CellInfo implements Parcelable {
             return false;
         }
         CellInfo ci = (CellInfo) o;
-        return mRadio.equals(ci.mRadio)
-                && mCellRadio.equals(ci.mCellRadio)
+        return mCellRadio.equals(ci.mCellRadio)
                 && mMcc == ci.mMcc
                 && mMnc == ci.mMnc
                 && mCid == ci.mCid
                 && mLac == ci.mLac
-                && mSignal == ci.mSignal
+                && mSignalStrength == ci.mSignalStrength
                 && mAsu == ci.mAsu
                 && mTa == ci.mTa
                 && mPsc == ci.mPsc;
@@ -345,14 +349,15 @@ public class CellInfo implements Parcelable {
 
     @Override
     public int hashCode() {
+
+        // WTH???
         int result = 17;
-        result = 31 * result + mRadio.hashCode();
         result = 31 * result + mCellRadio.hashCode();
         result = 31 * result + mMcc;
         result = 31 * result + mMnc;
         result = 31 * result + mCid;
         result = 31 * result + mLac;
-        result = 31 * result + mSignal;
+        result = 31 * result + mSignalStrength;
         result = 31 * result + mAsu;
         result = 31 * result + mTa;
         result = 31 * result + mPsc;

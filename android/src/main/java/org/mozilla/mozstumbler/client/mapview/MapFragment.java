@@ -254,11 +254,6 @@ public class MapFragment extends android.support.v4.app.Fragment
         return (MainApp) getActivity().getApplication();
     }
 
-    public LocationManager getLocationManager() {
-        return (LocationManager) getActivity().getApplicationContext().
-                getSystemService(Context.LOCATION_SERVICE);
-    }
-
     private void initCoverageTiles(String coverageUrl) {
         ClientLog.i(LOG_TAG, "initCoverageTiles: " + coverageUrl);
         mCoverageTilesOverlayLowZoom = new CoverageOverlay(CoverageOverlay.LowResType.LOWER_ZOOM,

@@ -6,6 +6,7 @@ package org.mozilla.mozstumbler.client;
 
 import android.content.Context;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.ClientDataStorageManager;
@@ -34,11 +35,14 @@ public class QueuedCountsTrackerTest {
         }
     }
 
+    @Before
+    public void setup() {
+        DataStorageManager.sInstance = null;
+    }
+
     @Test
     public void testNoDataStorageManager() {
         QueuedCountsTracker qct = QueuedCountsTracker.getInstance();
-
-        assertNull(DataStorageManager.getInstance());
 
         QueuedCountsTracker.QueuedCounts qc = qct.getQueuedCounts();
         assertNotNull(qc);

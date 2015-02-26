@@ -13,6 +13,7 @@ import org.json.JSONObject;
 import org.mozilla.mozstumbler.client.ClientPrefs;
 import org.mozilla.mozstumbler.service.core.logging.ClientLog;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageContract;
+import org.mozilla.mozstumbler.service.stumblerthread.datahandling.StumblerBundle;
 import org.mozilla.mozstumbler.service.utils.NetworkInfo;
 import org.mozilla.mozstumbler.svclocator.ServiceLocator;
 import org.mozilla.mozstumbler.svclocator.services.log.ILogger;
@@ -46,8 +47,14 @@ public class ObservationPoint implements MLSLocationGetter.MLSLocationGetterCall
         /*mTimestamp = timestamp;*/
     }
 
-    public void setMLSQuery(JSONObject ichnaeaQueryObj) {
-        mMLSQuery = ichnaeaQueryObj;
+    public void setMLSQuery(StumblerBundle stumbleBundle) {
+        try {
+            mMLSQuery = stumbleBundle.toMLSGeolocate();
+            //Log.d(LOG_TAG, "PII geolocate: " + mMLSQuery.toString(2));
+
+        } catch (JSONException e) {
+            ClientLog.w(LOG_TAG, "Failed to convert bundle to JSON: " + e);
+        }
     }
 
     public void setCounts(JSONObject ichnaeaQueryObj) {

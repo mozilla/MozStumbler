@@ -139,8 +139,7 @@ public class StumblerBundleTest {
             mockLocation.setElapsedRealtimeNanos(SystemClock.elapsedRealtimeNanos());
         }
 
-        StumblerBundle bundle = new StumblerBundle(mockLocation,
-                TelephonyManager.PHONE_TYPE_GSM);
+        StumblerBundle bundle = new StumblerBundle(mockLocation);
 
         for (String bssid: new String[]{"01:23:45:67:89:ab", "23:45:67:89:ab:cd"}){
             ScanResult scanResult = createScanResult(bssid, "", 0, 0, 0);
@@ -189,8 +188,7 @@ public class StumblerBundleTest {
             mockLocation.setElapsedRealtimeNanos(SystemClock.elapsedRealtimeNanos());
         }
 
-        StumblerBundle bundle = new StumblerBundle(mockLocation,
-                TelephonyManager.PHONE_TYPE_GSM);
+        StumblerBundle bundle = new StumblerBundle(mockLocation);
 
         for (String bssid: new String[]{"01:23:45:67:89:ab", "23:45:67:89:ab:cd"}){
             ScanResult scanResult = createScanResult(bssid, "", 0, 0, 0);
@@ -213,7 +211,7 @@ public class StumblerBundleTest {
                                              int lac,
                                              int asu,
                                              int ta) {
-        CellInfo cell = new CellInfo(TelephonyManager.PHONE_TYPE_GSM);
+        CellInfo cell = new CellInfo();
         cell.setLteCellInfo(mcc, mnc, cid, psc, lac, asu, ta);
         cell.setSignalStrength(-51);
 

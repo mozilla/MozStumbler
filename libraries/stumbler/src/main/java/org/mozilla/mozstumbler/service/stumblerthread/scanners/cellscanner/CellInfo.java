@@ -32,7 +32,6 @@ public class CellInfo implements Parcelable {
 
     private static final String LOG_TAG = LoggerUtil.makeLogTag(CellInfo.class);
 
-    private String mRadio;
     private String mCellRadio;
 
     private int mMcc;
@@ -49,15 +48,14 @@ public class CellInfo implements Parcelable {
     private int mTa;
     private int mPsc;
 
-    public CellInfo(int phoneType) {
+    public CellInfo() {
         reset();
-        setRadio(phoneType);
     }
 
-    public CellInfo(int phoneType, NeighboringCellInfo nci, String networkOperator) {
-        reset();
-        setRadio(phoneType);
-
+    /*
+     This constructor is only used when building CellInfo for a neighbouring cell.
+     */
+    public CellInfo(NeighboringCellInfo nci, String networkOperator) {
         reset();
         mCellRadio = getCellRadioTypeName(nci.getNetworkType());
         setNetworkOperator(networkOperator);
@@ -134,14 +132,6 @@ public class CellInfo implements Parcelable {
         return mCellRadio != null && (mCellRadio.length() > 0) && !mCellRadio.equals("0");
     }
 
-    public String getRadio() {
-        return mRadio;
-    }
-
-    void setRadio(int phoneType) {
-        mRadio = getRadioTypeName(phoneType);
-    }
-
     public String getCellRadio() {
         return mCellRadio;
     }
@@ -171,13 +161,16 @@ public class CellInfo implements Parcelable {
 
         try {
             obj.put("radioType", getCellRadio());
-            if (mCid != UNKNOWN_CID ) {
-                obj.put("cellId", mCid);
-            }
 
-            if (mLac != UNKNOWN_LAC) {
+           // Bug #1510
+           // if (mCid != UNKNOWN_CID) {
+                obj.put("cellId", mCid);
+            //}
+
+            // Bug #1510
+            //if (mLac != UNKNOWN_LAC) {
                 obj.put("locationAreaCode", mLac);
-            }
+            //}
 
             obj.put("mobileCountryCode", mMcc);
             obj.put("mobileNetworkCode", mMnc);
@@ -195,8 +188,7 @@ public class CellInfo implements Parcelable {
     }
 
     public String getCellIdentity() {
-        return getRadio()
-                + " " + getCellRadio()
+        return getCellRadio()
                 + " " + getMcc()
                 + " " + getMnc()
                 + " " + getLac()
@@ -211,7 +203,6 @@ public class CellInfo implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(mRadio);
         dest.writeString(mCellRadio);
         dest.writeInt(mMcc);
         dest.writeInt(mMnc);
@@ -224,7 +215,6 @@ public class CellInfo implements Parcelable {
     }
 
     void reset() {
-        mRadio = CELL_RADIO_GSM;
         mCellRadio = CELL_RADIO_GSM;
         mMcc = UNKNOWN_CID;
         mMnc = UNKNOWN_CID;
@@ -291,7 +281,7 @@ public class CellInfo implements Parcelable {
         mAsu = asu;
     }
 
-    public void setWcmdaCellInfo(int mcc, int mnc, int lac, int cid, int psc, int asu) {
+    public void setWcdmaCellInfo(int mcc, int mnc, int lac, int cid, int psc, int asu) {
         mCellRadio = CELL_RADIO_WCDMA;
         mMcc = mcc != Integer.MAX_VALUE ? mcc : UNKNOWN_CID;
         mMnc = mnc != Integer.MAX_VALUE ? mnc : UNKNOWN_CID;
@@ -346,8 +336,7 @@ public class CellInfo implements Parcelable {
             return false;
         }
         CellInfo ci = (CellInfo) o;
-        return mRadio.equals(ci.mRadio)
-                && mCellRadio.equals(ci.mCellRadio)
+        return mCellRadio.equals(ci.mCellRadio)
                 && mMcc == ci.mMcc
                 && mMnc == ci.mMnc
                 && mCid == ci.mCid
@@ -360,8 +349,9 @@ public class CellInfo implements Parcelable {
 
     @Override
     public int hashCode() {
+
+        // WTH???
         int result = 17;
-        result = 31 * result + mRadio.hashCode();
         result = 31 * result + mCellRadio.hashCode();
         result = 31 * result + mMcc;
         result = 31 * result + mMnc;

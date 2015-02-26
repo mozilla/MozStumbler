@@ -40,7 +40,6 @@ public class SimpleCellScannerImplementation implements ISimpleCellScanner {
     protected GetAllCellInfoScannerImpl mGetAllInfoCellScanner;
     protected TelephonyManager mTelephonyManager;
     protected boolean mIsStarted;
-    protected int mPhoneType;
 
     protected volatile int mSignalStrength = CellInfo.UNKNOWN_SIGNAL_STRENGTH;
 
@@ -85,11 +84,13 @@ public class SimpleCellScannerImplementation implements ISimpleCellScanner {
                 // This is almost certainly a tablet or some other wifi only device.
                 return;
             }
-            mPhoneType = mTelephonyManager.getPhoneType();
-            if (mPhoneType == TelephonyManager.PHONE_TYPE_NONE ||
-                    mPhoneType == TelephonyManager.PHONE_TYPE_SIP) {
-                // This is almost certainly a tablet or some other wifi only device.
-                return;
+
+            switch (mTelephonyManager.getPhoneType()) {
+                case TelephonyManager.PHONE_TYPE_NONE:
+                case TelephonyManager.PHONE_TYPE_SIP:
+                    // This is almost certainly a tablet or some other wifi only device.
+                    return;
+
             }
         }
 
@@ -153,7 +154,7 @@ public class SimpleCellScannerImplementation implements ISimpleCellScanner {
         }
 
         try {
-            final CellInfo info = new CellInfo(mPhoneType);
+            final CellInfo info = new CellInfo();
             final int signalStrength = mSignalStrength;
             info.setCellLocation(currentCell,
                     mTelephonyManager.getNetworkType(),
@@ -176,7 +177,7 @@ public class SimpleCellScannerImplementation implements ISimpleCellScanner {
         List<CellInfo> records = new ArrayList<CellInfo>(cells.size());
         for (NeighboringCellInfo nci : cells) {
             try {
-                final CellInfo record = new CellInfo(mPhoneType, nci, networkOperator);
+                final CellInfo record = new CellInfo(nci, networkOperator);
                 if (record.isCellRadioValid()) {
                     records.add(record);
                 }
@@ -196,9 +197,9 @@ public class SimpleCellScannerImplementation implements ISimpleCellScanner {
                 observedCell instanceof CellInfoWcdma) {
             CellIdentityWcdma ident = ((CellInfoWcdma) observedCell).getCellIdentity();
             if (ident.getMnc() != Integer.MAX_VALUE && ident.getMcc() != Integer.MAX_VALUE) {
-                CellInfo cell = new CellInfo(tm.getPhoneType());
+                CellInfo cell = new CellInfo();
                 CellSignalStrengthWcdma strength = ((CellInfoWcdma) observedCell).getCellSignalStrength();
-                cell.setWcmdaCellInfo(ident.getMcc(),
+                cell.setWcdmaCellInfo(ident.getMcc(),
                         ident.getMnc(),
                         ident.getLac(),
                         ident.getCid(),
@@ -224,7 +225,7 @@ public class SimpleCellScannerImplementation implements ISimpleCellScanner {
             CellIdentityGsm ident = ((CellInfoGsm) observedCell).getCellIdentity();
             if (ident.getMcc() != Integer.MAX_VALUE && ident.getMnc() != Integer.MAX_VALUE) {
                 CellSignalStrengthGsm strength = ((CellInfoGsm) observedCell).getCellSignalStrength();
-                CellInfo cell = new CellInfo(tm.getPhoneType());
+                CellInfo cell = new CellInfo();
                 cell.setGsmCellInfo(ident.getMcc(),
                         ident.getMnc(),
                         ident.getLac(),
@@ -234,7 +235,7 @@ public class SimpleCellScannerImplementation implements ISimpleCellScanner {
                 added = true;
             }
         } else if (observedCell instanceof CellInfoCdma) {
-            CellInfo cell = new CellInfo(tm.getPhoneType());
+            CellInfo cell = new CellInfo();
             CellIdentityCdma ident = ((CellInfoCdma) observedCell).getCellIdentity();
             CellSignalStrengthCdma strength = ((CellInfoCdma) observedCell).getCellSignalStrength();
             cell.setCdmaCellInfo(ident.getBasestationId(),
@@ -246,7 +247,7 @@ public class SimpleCellScannerImplementation implements ISimpleCellScanner {
         } else if (observedCell instanceof CellInfoLte) {
             CellIdentityLte ident = ((CellInfoLte) observedCell).getCellIdentity();
             if (ident.getMnc() != Integer.MAX_VALUE && ident.getMcc() != Integer.MAX_VALUE) {
-                CellInfo cell = new CellInfo(tm.getPhoneType());
+                CellInfo cell = new CellInfo();
                 CellSignalStrengthLte strength = ((CellInfoLte) observedCell).getCellSignalStrength();
                 cell.setLteCellInfo(ident.getMcc(),
                         ident.getMnc(),

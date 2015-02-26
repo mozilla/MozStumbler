@@ -31,10 +31,12 @@ public class ReporterTest {
 
     private Context ctx;
     private Reporter rp;
+
+    @SuppressWarnings("unused")
     private DataStorageManager dm;
 
     public static CellInfo createCellInfo(int mcc, int mnc, int lac, int cid, int asu) {
-        CellInfo cell = new CellInfo(TelephonyManager.PHONE_TYPE_GSM);
+        CellInfo cell = new CellInfo();
         cell.setGsmCellInfo(mcc, mnc, lac, cid, asu);
         return cell;
     }

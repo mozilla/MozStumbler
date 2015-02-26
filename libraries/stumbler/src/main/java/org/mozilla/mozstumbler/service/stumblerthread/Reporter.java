@@ -11,7 +11,6 @@ import android.content.IntentFilter;
 import android.location.Location;
 import android.net.wifi.ScanResult;
 import android.support.v4.content.LocalBroadcastManager;
-import android.telephony.TelephonyManager;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -46,7 +45,6 @@ public final class Reporter extends BroadcastReceiver implements IReporter {
     StumblerBundle mBundle;
     private boolean mIsStarted;
     private Context mContext;
-    private int mPhoneType;
     private int mObservationCount = 0;
 
     public Reporter() {
@@ -58,16 +56,7 @@ public final class Reporter extends BroadcastReceiver implements IReporter {
         }
 
         mContext = context.getApplicationContext();
-        TelephonyManager tm = (TelephonyManager) mContext.getSystemService(Context.TELEPHONY_SERVICE);
-        if (tm != null) {
-            mPhoneType = tm.getPhoneType();
-        } else {
-            ClientLog.d(LOG_TAG, "No telephony manager.");
-            mPhoneType = TelephonyManager.PHONE_TYPE_NONE;
-        }
-
         mIsStarted = true;
-
         mBundle = null;
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(WifiScanner.ACTION_WIFIS_SCANNED);
@@ -109,7 +98,7 @@ public final class Reporter extends BroadcastReceiver implements IReporter {
             // Only create StumblerBundle instances if the position exists
             if (newPosition != null) {
                 flush();
-                mBundle = new StumblerBundle(newPosition, mPhoneType);
+                mBundle = new StumblerBundle(newPosition);
             }
         } else if (subject.equals(GPSScanner.SUBJECT_LOCATION_LOST)) {
             flush();

@@ -135,14 +135,11 @@ public class ObservedLocationsReceiver extends BroadcastReceiver {
         ObservationPoint observation = new ObservationPoint(new GeoPoint(position));
 
         try {
-            JSONObject jsonBundle = bundle.toMLSGeolocate();
-            observation.setCounts(jsonBundle);
+            observation.setCounts(bundle.toMLSGeosubmit());
 
             boolean getInfoForMLS = prefs.isOptionEnabledToShowMLSOnMap();
             if (getInfoForMLS) {
-                // Uncomment this for debug builds
-                //Log.d(LOG_TAG, "geolocate: " + jsonBundle);
-                observation.setMLSQuery(jsonBundle);
+                observation.setMLSQuery(bundle);
 
                 if (mQueuedForMLS.size() < MAX_SIZE_OF_POINT_LISTS) {
                     mQueuedForMLS.addFirst(observation);

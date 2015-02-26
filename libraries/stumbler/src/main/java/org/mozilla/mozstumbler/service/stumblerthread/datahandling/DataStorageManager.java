@@ -216,7 +216,7 @@ public class DataStorageManager {
 
             String report = mCurrentReports.finalizeReports();
             // Uncomment this block when debugging the report blobs
-            //Log.d(LOG_TAG, "geosubmit report: " + report);
+            //Log.d(LOG_TAG, "PII geosubmit report: " + report);
             // end debug blob
 
             final byte[] data = Zipper.zipData(report.getBytes());
@@ -316,7 +316,7 @@ public class DataStorageManager {
         }
         String report = mCurrentReports.finalizeReports();
         // Uncomment this block when debugging the report blobs
-        //Log.d(LOG_TAG, "geosubmit report: " + report);
+        //Log.d(LOG_TAG, "PII geosubmit report: " + report);
         // end debug blob
 
 

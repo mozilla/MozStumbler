@@ -9,7 +9,6 @@ import android.net.wifi.ScanResult;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.telephony.TelephonyManager;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -30,17 +29,16 @@ public final class StumblerBundle implements Parcelable {
     public static final int MAX_WIFIS_PER_LOCATION = 200;
     /* The maximum number of cells in a single observation */
     public static final int MAX_CELLS_PER_LOCATION = 50;
-    private final int mPhoneType;
     private final Location mGpsPosition;
     private final Map<String, ScanResult> mWifiData;
     private final Map<String, CellInfo> mCellData;
 
-    public StumblerBundle(Location position, int phoneType) {
+    public StumblerBundle(Location position) {
         mGpsPosition = position;
-        mPhoneType = phoneType;
         mWifiData = new HashMap<String, ScanResult>();
         mCellData = new HashMap<String, CellInfo>();
     }
+
 
     @Override
     public int describeContents() {
@@ -64,7 +62,6 @@ public final class StumblerBundle implements Parcelable {
         out.writeBundle(wifiBundle);
         out.writeBundle(cellBundle);
         out.writeParcelable(mGpsPosition, 0);
-        out.writeInt(mPhoneType);
     }
 
     public Location getGpsPosition() {
@@ -92,7 +89,7 @@ public final class StumblerBundle implements Parcelable {
         }
         if (mGpsPosition.hasAccuracy()) {
             // Note that Android does not support an accuracy measurement specific to altitude
-            item.put(DataStorageContract.ReportsColumns.ACCURACY, (float) mGpsPosition.getAccuracy());
+            item.put(DataStorageContract.ReportsColumns.ACCURACY, mGpsPosition.getAccuracy());
         }
         return item;
     }

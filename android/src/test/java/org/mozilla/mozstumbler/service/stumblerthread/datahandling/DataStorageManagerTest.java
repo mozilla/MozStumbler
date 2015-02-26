@@ -67,7 +67,7 @@ public class DataStorageManagerTest {
             loc.setLatitude(42 + (locCount * 0.1));
             loc.setLongitude(45 + (locCount * 0.1));
 
-            bundle = new StumblerBundle(loc, TelephonyManager.PHONE_TYPE_GSM);
+            bundle = new StumblerBundle(loc);
 
             for (int offset = 0; offset < StumblerBundle.MAX_WIFIS_PER_LOCATION * 20; offset++) {
                 String bssid = Long.toHexString(offset | 0xabcd00000000L);
@@ -101,7 +101,7 @@ public class DataStorageManagerTest {
             loc.setLatitude(42 + (locCount * 0.1));
             loc.setLongitude(45 + (locCount * 0.1));
 
-            bundle = new StumblerBundle(loc, TelephonyManager.PHONE_TYPE_GSM);
+            bundle = new StumblerBundle(loc);
 
             for (int offset = 0; offset < StumblerBundle.MAX_WIFIS_PER_LOCATION * 20; offset++) {
                 String bssid = Long.toHexString(offset | 0xabcd00000000L);

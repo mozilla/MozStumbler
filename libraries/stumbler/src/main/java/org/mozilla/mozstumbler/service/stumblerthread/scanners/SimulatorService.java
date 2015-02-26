@@ -154,7 +154,9 @@ public class SimulatorService implements ISimulatorService {
         LinkedList<CellInfo> result = new LinkedList<CellInfo>();
 
         try {
-            result.add(makeCellInfo(1, 1, 60330, 1660199, 19));
+            CellInfo cell = new CellInfo();
+            cell.setGsmCellInfo(1, 1, 60330, 1660199, 19);
+            result.add(cell);
         } catch (Exception e) {
             ClientLog.e(LOG_TAG, "Error creating a mock CellInfo block", e);
         }
@@ -180,23 +182,4 @@ public class SimulatorService implements ISimulatorService {
         return null;
     }
 
-
-    private CellInfo makeCellInfo(int mcc, int mnc, int lac, int cid, int asu) throws IllegalAccessException, InvocationTargetException {
-        CellInfo cell = new CellInfo(TelephonyManager.PHONE_TYPE_GSM);
-        Method method = getMethod(CellInfo.class, "setGsmCellInfo");
-        assert (method != null);
-        method.invoke(cell, mcc, mnc, lac, cid, asu);
-        return cell;
-    }
-
-    private Method getMethod(Class<?> c, String name) {
-        Method[] methods = c.getDeclaredMethods();
-        for (Method m : methods) {
-            if (m.getName().contains(name)) {
-                m.setAccessible(true);
-                return m;
-            }
-        }
-        return null;
-    }
 }

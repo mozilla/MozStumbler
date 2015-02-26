@@ -23,7 +23,7 @@ public class MotionSensor {
     private static final String LOG_TAG = LoggerUtil.makeLogTag(MotionSensor.class);
     private static final ILogger Log = (ILogger) ServiceLocator.getInstance().getService(ILogger.class);
     static final long TIME_UNTIL_GPS_GOES_COLD = 2 * 60 * 60 * 1000; // 2 hours
-
+    private final NetworkLocationChangeDetector mNetworkLocationChangeDetector = new NetworkLocationChangeDetector();
     /// Testing code
     private final SensorManager mSensorManager;
     private final Context mAppContext;
@@ -113,6 +113,8 @@ public class MotionSensor {
         mHandler.postDelayed(mStartMotionSensorRunnable, delayMs);
 
         mFalsePositiveFilter.stop();
+
+        mNetworkLocationChangeDetector.start(mAppContext);
     }
 
     public void stop() {
@@ -128,7 +130,55 @@ public class MotionSensor {
         if (mFalsePositiveFilter.timeSinceInitialGPS() < TIME_UNTIL_GPS_GOES_COLD) {
             mFalsePositiveFilter.start();
         }
+
+        mNetworkLocationChangeDetector.stop();
     }
+
+    static class NetworkLocationChangeDetector {
+        Location mLastLocation;
+        Context mContext;
+        private float DIST_THRESHOLD_M = 30.0f;
+
+        private LocationListener mNetworkLocationListener = new LocationListener() {
+            public void onLocationChanged(Location location) {
+                if (mLastLocation == null) {
+                    mLastLocation = location;
+                }
+
+                if (location.distanceTo(mLastLocation) > DIST_THRESHOLD_M) {
+                    AppGlobals.guiLogInfo("MotionSensor.NetworkLocationChangeDetector triggered.");
+                    Intent sendIntent = new Intent(ACTION_USER_MOTION_DETECTED);
+                    LocalBroadcastManager.getInstance(mContext).sendBroadcastSync(sendIntent);
+                    mLastLocation = location;
+                }
+            }
+
+            public void onStatusChanged(String provider, int status, Bundle extras) {}
+            public void onProviderEnabled(String provider) {}
+            public void onProviderDisabled(String provider) {}
+        };
+
+        public void start(Context c) {
+            mContext = c;
+            LocationManager lm = (LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
+
+            if (mLastLocation == null) {
+                mLastLocation = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                if (mLastLocation == null) {
+                    mLastLocation = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+                }
+            }
+
+            lm.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, mNetworkLocationListener);
+        }
+
+        public void stop() {
+            LocationManager lm = (LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
+            lm.removeUpdates(mNetworkLocationListener);
+            mLastLocation = null;
+        }
+    }
+
 
     // Try to filter false positives by quickly checking to see if the user location has changed.
     // If the GPS has gone cold (~2 hours), then stop using this filter, as this class relies

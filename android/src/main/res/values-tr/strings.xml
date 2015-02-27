@@ -168,7 +168,7 @@
     <string name="create_log_archive_success">Kayıtların kaydedileceği yer:</string>
     <string name="power_saving_mode_summary">Hareket yoksa taramaya ara verilir; hareket algılandığında taramaya geri dönülür.</string>
     <string name="power_saving_title">Güç Tasarrufu</string>
-    <string name="stop_at_x_battery">%%1$d% pil seviyesinde dur</string>
+    <string name="stop_at_x_battery">%1$d%% pil seviyesinde dur</string>
     <string name="motion_detection_onoff">Hareket algılama %1$s</string>
     <string name="change_power_saving">Değiştir</string>
     <string name="on">açık</string>

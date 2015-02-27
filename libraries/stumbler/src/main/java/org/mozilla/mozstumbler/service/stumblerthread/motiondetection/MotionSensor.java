@@ -173,6 +173,9 @@ public class MotionSensor {
         }
 
         public void stop() {
+            if (mContext == null) {
+                return;
+            }
             LocationManager lm = (LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
             lm.removeUpdates(mNetworkLocationListener);
             mLastLocation = null;

@@ -15,7 +15,6 @@ import android.os.Looper;
 import android.support.v4.content.LocalBroadcastManager;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 import org.mozilla.mozstumbler.client.mapview.MapFragment;
 import org.mozilla.mozstumbler.client.mapview.ObservationPoint;
 import org.mozilla.mozstumbler.service.core.logging.ClientLog;

@@ -111,7 +111,7 @@ public class KMLFragment extends Fragment
         }
     }
 
-    public void onReadComplete(LinkedList<ObservationPoint> points, File file) {
+    public void onReadComplete(File file) {
         showProgress(false, null);
     }
 

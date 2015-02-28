@@ -162,7 +162,7 @@
     </string-array>
 
     <string name="low_battery_title">Zastavit sběr dat při nízkém stavu baterie</string>
-    <string name="battery_percent_options_label">Zastavit, pokud stav baterie klesne na:</string>
+    <string name="battery_percent_options_label">Zastavit při stavu baterie:</string>
     <string name="motion_detection_title">Detekce pohybu</string>
     <string name="motion_detection_options_label">Pozastavit sběr dat, pokud se nepohnete o</string>
     <string name="motion_detection_options_conjunction">za</string>

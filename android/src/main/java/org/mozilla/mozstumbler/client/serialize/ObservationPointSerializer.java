@@ -110,11 +110,11 @@ public class ObservationPointSerializer extends AsyncTask<Void, Void, Boolean> {
         placemark.setStyleSelector(styleSelector);
     }
 
-    boolean writeOut(LinkedList<ObservationPoint> points, File outFile) {
+    synchronized boolean writeOut(File outFile) {
         List<Feature> gpsFeatures = new LinkedList<Feature>();
         List<Feature> mlsFeatures = new LinkedList<Feature>();
         int idCounter = 0;
-        for (ObservationPoint observationPoint : points) {
+        for (ObservationPoint observationPoint : mPointList) {
             if (observationPoint.mWifiCount < 1 && observationPoint.mCellCount < 1) {
                 // This point is in-progress in terms of scanning, don't write it out
                 continue;
@@ -202,7 +202,7 @@ public class ObservationPointSerializer extends AsyncTask<Void, Void, Boolean> {
         return name.equals(GPS_NAME);
     }
 
-    boolean readIn(LinkedList<ObservationPoint> points, File file) {
+    synchronized boolean readIn(File file) {
         Serializer kmlSerializer = new Serializer();
         Kml kml;
         try {
@@ -272,7 +272,7 @@ public class ObservationPointSerializer extends AsyncTask<Void, Void, Boolean> {
                 observationPoint.mWasReadFromFile = true;
 
                 if (isGps) {
-                    points.add(observationPoint);
+                    mPointList.add(observationPoint);
                     gpsList.put(placemark.getId(), observationPoint);
                 } else {
                     mlsList.put(placemark.getId(), coordinate);
@@ -293,9 +293,9 @@ public class ObservationPointSerializer extends AsyncTask<Void, Void, Boolean> {
     @Override
     protected Boolean doInBackground(Void... params) {
         if (mMode == Mode.WRITE) {
-            return writeOut(mPointList, mFile);
+            return writeOut(mFile);
         } else {
-            return readIn(mPointList, mFile);
+            return readIn(mFile);
         }
     }
 
@@ -314,7 +314,7 @@ public class ObservationPointSerializer extends AsyncTask<Void, Void, Boolean> {
         if (mMode == Mode.WRITE) {
             listener.onWriteComplete(mFile);
         } else {
-            listener.onReadComplete(mPointList, mFile);
+            listener.onReadComplete(mFile);
         }
     }
 
@@ -323,7 +323,7 @@ public class ObservationPointSerializer extends AsyncTask<Void, Void, Boolean> {
     public interface IListener {
         public void onWriteComplete(File file);
 
-        public void onReadComplete(LinkedList<ObservationPoint> points, File file);
+        public void onReadComplete(File file);
 
         public void onError();
     }

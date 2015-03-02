@@ -15,7 +15,6 @@ import android.os.Looper;
 import android.support.v4.content.LocalBroadcastManager;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 import org.mozilla.mozstumbler.client.mapview.MapFragment;
 import org.mozilla.mozstumbler.client.mapview.ObservationPoint;
 import org.mozilla.mozstumbler.service.core.logging.ClientLog;
@@ -64,8 +63,16 @@ public class ObservedLocationsReceiver extends BroadcastReceiver {
         return sInstance;
     }
 
-    public LinkedList<ObservationPoint> getObservationPoints() {
-        return mCollectionPoints;
+    /*
+     This returns a copy of the observation points so that we don't care about concurrency.
+     */
+    public synchronized LinkedList<ObservationPoint> getObservationPoints() {
+        // Return a copy so that we don't need to care about locking
+        LinkedList<ObservationPoint> results = new LinkedList<ObservationPoint>();
+        for (ObservationPoint pt: mCollectionPoints) {
+            results.add(pt);
+        }
+        return results;
     }
 
     // Must call when map activity stopped, to clear the reference to the map activity object
@@ -112,7 +119,7 @@ public class ObservedLocationsReceiver extends BroadcastReceiver {
     }
 
     @Override
-    public synchronized void onReceive(Context context, Intent intent) {
+    public void onReceive(Context context, Intent intent) {
         ClientPrefs prefs = ClientPrefs.getInstanceWithoutContext();
         if (prefs == null) {
             return;
@@ -149,14 +156,16 @@ public class ObservedLocationsReceiver extends BroadcastReceiver {
             ClientLog.w(LOG_TAG, "Failed to convert bundle to JSON: " + e);
         }
 
-        while (mCollectionPoints.size() > MAX_SIZE_OF_POINT_LISTS) {
-            mCollectionPoints.removeFirst();
-        }
+        synchronized(mCollectionPoints) {
+            while (mCollectionPoints.size() > MAX_SIZE_OF_POINT_LISTS) {
+                mCollectionPoints.removeFirst();
+            }
 
-        if (mCollectionPoints.size() > 0) {
-            observation.mHeading = observation.pointGPS.bearingTo(mCollectionPoints.getLast().pointGPS);
+            if (mCollectionPoints.size() > 0) {
+                observation.mHeading = observation.pointGPS.bearingTo(mCollectionPoints.getLast().pointGPS);
+            }
+            mCollectionPoints.addLast(observation);
         }
-        mCollectionPoints.addLast(observation);
 
         if (getMapActivity() == null) {
             return;
@@ -170,13 +179,15 @@ public class ObservedLocationsReceiver extends BroadcastReceiver {
         });
     }
 
-    private synchronized void addObservationPointToMap() {
+    private void addObservationPointToMap() {
         if (getMapActivity() == null) {
             return;
         }
 
-        getMapActivity().newObservationPoint(mCollectionPoints.getLast());
-    }
+        synchronized(mCollectionPoints) {
+            getMapActivity().newObservationPoint(mCollectionPoints.getLast());
+        }
+     }
 
 
 }

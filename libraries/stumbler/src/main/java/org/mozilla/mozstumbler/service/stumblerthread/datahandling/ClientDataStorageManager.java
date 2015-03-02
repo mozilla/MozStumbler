@@ -34,6 +34,7 @@ public class ClientDataStorageManager extends DataStorageManager {
     // DataStorageManager.  Sorta.  You can't really override static methods.
     public static synchronized DataStorageManager createGlobalInstance(Context context, StorageIsEmptyTracker tracker,
                                                                        long maxBytesStoredOnDisk, int maxWeeksDataStored) {
+
         if (sInstance == null) {
             sInstance = new ClientDataStorageManager(context, tracker, maxBytesStoredOnDisk, maxWeeksDataStored);
         }

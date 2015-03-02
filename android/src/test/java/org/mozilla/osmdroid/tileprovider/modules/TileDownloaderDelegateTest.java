@@ -36,6 +36,8 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 @Config(emulateSdk = 18)
 @RunWith(RobolectricTestRunner.class)
@@ -266,6 +268,49 @@ public class TileDownloaderDelegateTest {
 
         // We should have null here
         assertNull(delegate.downloadTile(sTile, mockTileSource, tile));
+    }
+
+    @Test
+    public void testHttp598SocketError() throws BitmapTileSourceBase.LowMemoryException, IOException {
+        INetworkAvailablityCheck netAvailabilityCheck = mock(INetworkAvailablityCheck.class);
+        TileIOFacade ioFacade = mock(TileIOFacade.class);
+
+        ITileSource mockTileSource = spy(new XYTileSource("Stumbler-BaseMap-Tiles",
+                null, 1, AbstractMapOverlay.MAX_ZOOM_LEVEL_OF_MAP,
+                AbstractMapOverlay.TILE_PIXEL_SIZE,
+                AbstractMapOverlay.FILE_TYPE_SUFFIX_PNG,
+                new String[]{testUrl}));
+        doReturn(testUrl).when(mockTileSource).getTileURLString((MapTile) anyObject());
+
+        MapTile tile = mock(MapTile.class);
+
+        TileDownloaderDelegate delegate = spy(new TileDownloaderDelegate(netAvailabilityCheck, ioFacade));
+
+        doReturn(false).when(delegate).networkIsUnavailable();
+        doReturn(false).when(delegate).urlIs404Cached(anyString());
+
+        SerializableTile sTile = getSerializableTile();
+        assertTrue(sTile.getTileData().length > 0);
+
+        // Clobber the IHttpUtil class so that the response is just the bytes from fixture data
+        IHttpUtil mockHttp = mock(IHttpUtil.class);
+        IResponse http598 = spy(IResponse.class);
+
+        // set the 598 status code and the content body
+        doReturn(598).when(http598).httpStatusCode();
+
+        // Always return the mock 598 object we just cooked up
+        doReturn(http598).when(mockHttp).get(anyString(),
+                (Map<String, String>) anyObject());
+
+        ServiceLocator.getInstance().putService(IHttpUtil.class, mockHttp);
+
+        // No data should have come back
+        assertNull(delegate.downloadTile(sTile, mockTileSource, tile));
+
+        // Make sure that the Http Client was actually called, there are multiple exit points
+        // in the TileDownloaderDelegate
+        verify(mockHttp, times(1)).get((String)anyObject(),(Map<String, String>)anyObject());
     }
 
 

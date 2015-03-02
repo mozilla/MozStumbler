@@ -65,7 +65,7 @@ public class DataStorageManager {
     // Set to the default value specified above.
     private final int mMaxWeeksStored;
     private final StorageIsEmptyTracker mTracker;
-    private final PersistedStats mPersistedOnDiskUploadStats;
+    protected final PersistedStats mPersistedOnDiskUploadStats;
     protected ReportBatch mCurrentReportsSendBuffer;
     protected ReportFileList mFileList;
     private ReportBatchIterator mReportBatchIterator;

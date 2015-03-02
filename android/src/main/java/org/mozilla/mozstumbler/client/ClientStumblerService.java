@@ -14,6 +14,7 @@ import android.util.Log;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.stumblerthread.StumblerService;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.ClientDataStorageManager;
+import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageManager;
 import org.mozilla.mozstumbler.service.utils.BatteryCheckReceiver;
 import org.mozilla.mozstumbler.service.utils.BatteryCheckReceiver.BatteryCheckCallback;
 import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;

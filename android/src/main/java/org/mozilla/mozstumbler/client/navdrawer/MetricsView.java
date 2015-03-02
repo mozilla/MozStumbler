@@ -64,7 +64,6 @@ public class MetricsView {
     private final View mView;
     private final String mObservationAndSize = "%1$d  %2$s";
     private WeakReference<IMapLayerToggleListener> mMapLayerToggleListener = new WeakReference<IMapLayerToggleListener>(null);
-    private long mTotalBytesUploadedThisSession_lastDisplayed = -1;
     private long mLastUploadTime = 0;
     private boolean mHasQueuedObservations;
     private boolean buttonIsSyncIcon;
@@ -79,6 +78,7 @@ public class MetricsView {
                     public void onReceive(Context context, Intent intent) {
                         Bundle bundle = intent.getExtras();
                         mPersistedStats = (Properties) bundle.get(PersistedStats.EXTRAS_PERSISTENT_SYNC_STATUS_UPDATED);
+                        updateSentStats();
                     }
                 },
                 new IntentFilter(PersistedStats.ACTION_PERSISTENT_SYNC_STATUS_UPDATED));
@@ -261,15 +261,6 @@ public class MetricsView {
     }
 
     private void updateSentStats() {
-
-        final long bytesUploadedThisSession = AsyncUploader.sTotalBytesUploadedThisSession.get();
-
-        if (mTotalBytesUploadedThisSession_lastDisplayed == bytesUploadedThisSession) {
-            // no need to update
-            return;
-        }
-        mTotalBytesUploadedThisSession_lastDisplayed = bytesUploadedThisSession;
-
         if (mPersistedStats != null) {
             String sent = mPersistedStats.getProperty(DataStorageContract.Stats.KEY_OBSERVATIONS_SENT, "0");
             String bytes = mPersistedStats.getProperty(DataStorageContract.Stats.KEY_BYTES_SENT, "0");

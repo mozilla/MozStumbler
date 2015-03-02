@@ -22,6 +22,8 @@ public class ClientDataStorageManager extends DataStorageManager {
 
     private ClientDataStorageManager(Context c, StorageIsEmptyTracker tracker, long maxBytesStoredOnDisk, int maxWeeksDataStored) {
         super(c, tracker, maxBytesStoredOnDisk, maxWeeksDataStored);
+
+        mPersistedOnDiskUploadStats.forceBroadcastOfSyncStats();
     }
 
     public static String sdcardArchivePath() {

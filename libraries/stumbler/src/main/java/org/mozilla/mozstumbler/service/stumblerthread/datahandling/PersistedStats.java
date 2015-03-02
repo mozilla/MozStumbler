@@ -29,6 +29,12 @@ public class PersistedStats {
         mContext = context.getApplicationContext();
     }
 
+    void forceBroadcastOfSyncStats() {
+        try {
+            sendToListeners(readSyncStats());
+        } catch (IOException ex) {}
+    }
+
     public synchronized Properties readSyncStats() throws IOException {
         if (!mStatsFile.exists()) {
             return new Properties();
@@ -73,16 +79,7 @@ public class PersistedStats {
                 Long.parseLong(properties.getProperty(DataStorageContract.Stats.KEY_WIFIS_SENT, "0")) + wifis,
                 observationsToday);
 
-        if (newProps == null || newProps.keySet().size() < 1) {
-            return;
-        }
-
-        Intent intent = new Intent();
-        intent.setAction(ACTION_PERSISTENT_SYNC_STATUS_UPDATED);
-        Bundle extras = new Bundle();
-        extras.putSerializable(EXTRAS_PERSISTENT_SYNC_STATUS_UPDATED, newProps);
-        intent.putExtras(extras);
-        LocalBroadcastManager.getInstance(mContext).sendBroadcast(intent);
+        sendToListeners(newProps);
 
         final int timeDiffSec = Long.valueOf((time - lastUploadTime) / 1000).intValue();
         if (lastUploadTime > 0 && timeDiffSec > 0) {
@@ -93,6 +90,19 @@ public class PersistedStats {
         TelemetryWrapper.addToHistogram(AppGlobals.TELEMETRY_OBSERVATIONS_PER_UPLOAD, Long.valueOf(reports).intValue());
         TelemetryWrapper.addToHistogram(AppGlobals.TELEMETRY_WIFIS_PER_UPLOAD, Long.valueOf(wifis).intValue());
         TelemetryWrapper.addToHistogram(AppGlobals.TELEMETRY_CELLS_PER_UPLOAD, Long.valueOf(cells).intValue());
+    }
+
+    private void sendToListeners(Properties newProps) {
+        if (newProps == null || newProps.keySet().size() < 1) {
+            return;
+        }
+
+        Intent intent = new Intent();
+        intent.setAction(ACTION_PERSISTENT_SYNC_STATUS_UPDATED);
+        Bundle extras = new Bundle();
+        extras.putSerializable(EXTRAS_PERSISTENT_SYNC_STATUS_UPDATED, newProps);
+        intent.putExtras(extras);
+        LocalBroadcastManager.getInstance(mContext).sendBroadcast(intent);
     }
 
     private synchronized Properties writeSyncStats(long time, long bytesSent, long totalObs,

@@ -161,6 +161,9 @@ public class MotionSensor {
         public void start(Context c) {
             mContext = c;
             LocationManager lm = (LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
+            if (!lm.getAllProviders().contains(LocationManager.NETWORK_PROVIDER)) {
+                return;
+            }
 
             if (mLastLocation == null) {
                 mLastLocation = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);

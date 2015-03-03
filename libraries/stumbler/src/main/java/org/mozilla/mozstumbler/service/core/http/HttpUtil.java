@@ -147,7 +147,7 @@ public class HttpUtil implements IHttpUtil {
             url = new URL(urlString);
         } catch (MalformedURLException e) {
             ClientLog.e(LOG_TAG, "Bad URL", e);
-            return null;
+            return new HTTPResponse(404, 0);
         }
 
         if (headers == null) {
@@ -160,12 +160,11 @@ public class HttpUtil implements IHttpUtil {
                 httpURLConnection.setInstanceFollowRedirects(false);
             }
             httpURLConnection.setConnectTimeout(5000); // set timeout to 5 seconds
-
             httpURLConnection.setRequestMethod(HTTP_METHOD);
             httpURLConnection.setRequestProperty(USER_AGENT_HEADER, userAgent);
         } catch (IOException e) {
             ClientLog.e(LOG_TAG, "Couldn't open a connection: ", e);
-            return null;
+            return new HTTPResponse(598, 0);
         }
 
         // Workaround for a bug in Android mHttpURLConnection. When the library
@@ -190,7 +189,7 @@ public class HttpUtil implements IHttpUtil {
         } finally {
             httpURLConnection.disconnect();
         }
-        return null;
+        return new HTTPResponse(598, 0);
     }
 
     @Override

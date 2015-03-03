@@ -95,8 +95,8 @@ public class TileDownloaderDelegate {
         if (AppGlobals.isDebug) {
             ClientLog.d(LOG_TAG, "Got a response: " + resp.httpStatusCode());
         }
+
         if (resp == null) {
-            ClientLog.w(LOG_TAG, "A NULL response was returned from the HTTP client.  This should never have happened.");
             return null;
         }
 
@@ -117,8 +117,6 @@ public class TileDownloaderDelegate {
         if (resp.httpStatusCode() != 200) {
             if (resp.httpStatusCode() == 404) {
                 HTTP404_CACHE.put(tileURLString, System.currentTimeMillis() + ONE_HOUR_MS);
-            } else {
-                ClientLog.w(LOG_TAG, "Unexpected response from tile server: [" + resp.httpStatusCode() + "]");
             }
 
             // @TODO vng: This is a hack so that we skip over anything that errors from the mozilla

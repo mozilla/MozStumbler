@@ -5,6 +5,7 @@ import org.mozilla.mozstumbler.service.core.logging.ClientLog;
 import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
 import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -16,6 +17,11 @@ public class HTTPResponse implements IResponse {
     private final byte[] bodyBytes;
     private final int bytesSent;
     private final Map<String, List<String>> headers;
+
+    public HTTPResponse(int responseCode, int txByteLength)
+    {
+        this(responseCode, new HashMap<String, List<String>>(), new byte[]{}, txByteLength);
+    }
 
     public HTTPResponse(int responseCode, Map<String, List<String>> headerFields, byte[] contentBody, int txByteLength) {
         statusCode = responseCode;

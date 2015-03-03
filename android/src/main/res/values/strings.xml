@@ -181,19 +181,16 @@
     <string name="ok">OK</string>
     <string name="whats_new_title">What\'s New</string>
 <string name="whats_new">
-<b>v1.6.1 (includes v1.6.0 changes)</b>
-\n<li>More conservative power saving to address the problem where the stumbler does not wake up from sleep.</li>
-\n<li>New power saving options in drawer, motion sensing defaults to on only for devices with a significant motion sensor</li>
-\n<li>Home screen widget removed temporarily due to performance problem</li>
-\n<li>Better offline map support</li>
-\n<li>Wifi blocklist updates</li>
-\n<li>No more logging of opt-out SSIDs</li>
-\n<li>Translation updates for Taiwanese, Finnish, German, and Polish</li>
-\n<li>You can now file a bug through the settings panel.</li>
-\n<li>Option to export all stumble logs into your SDCARD for your own analysis.</li>
-\n<li>Public notification support added for Android 5.</li>
-\n<li>New testing infrastructure for developers</li>
-\n<li>Simulation mode added to the developer options.</li>
+<b>Power Saving features:</b>
+\n<li>New options screen for testing your motion sensor</li>
+\n<li>Better motion sensor code for the Galaxy S5 and other devices which either lack a significant motion sensor or have buggy sensors.</li>
+\n
+\n<b>Updated Translations:</b>
+\n<li>Polish</li>
+\n<li>German</li>
+\n<li>Chinese (Taiwan) zh-tw</li>
+\n<li>Czech</li>
+\n<li>Turkish</li>
 </string>
     <string name="limit_map_zoom">Limit zooming out on map</string>
     <string name="test_significant_sensor_dialog_title">Test Significant Motion Sensor</string>

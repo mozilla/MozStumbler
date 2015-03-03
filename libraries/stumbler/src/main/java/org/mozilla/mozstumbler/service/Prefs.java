@@ -8,11 +8,15 @@ import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Build.VERSION;
 import android.text.TextUtils;
 import android.util.Log;
 
+import org.mozilla.mozstumbler.service.stumblerthread.motiondetection.SignificantMotionSensor;
 import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
+
+import java.util.regex.Pattern;
 
 public class Prefs {
     public static final String NICKNAME_PREF = "nickname";
@@ -42,6 +46,8 @@ public class Prefs {
     protected static Prefs sInstance;
     private final SharedPreferences mSharedPrefs;
 
+    private final boolean mSignificantMotionDefaultValue;
+
     protected Prefs(Context context) {
         mSharedPrefs = context.getSharedPreferences(PREFS_FILE, Context.MODE_MULTI_PROCESS | Context.MODE_PRIVATE);
         if (getPrefs().getInt(VALUES_VERSION_PREF, -1) != AppGlobals.appVersionCode) {
@@ -55,6 +61,19 @@ public class Prefs {
             getPrefs().edit().putInt(VALUES_VERSION_PREF, AppGlobals.appVersionCode).commit();
             getPrefs().edit().commit();
         }
+
+        boolean defaultSetting = false;
+        try {
+            if (SignificantMotionSensor.getSensor(context) != null) {
+                String device = android.os.Build.MODEL.toLowerCase();
+                String pattern = "(nexus \\d)|(android one)";
+                if (Pattern.compile(pattern).matcher(device).find()) {
+                    // Most users aren't going to know to switch this setting to on, set the default for known good devices
+                    defaultSetting = true;
+                }
+            }
+        } catch (Exception ex) {} 
+        mSignificantMotionDefaultValue = defaultSetting;
     }
 
     // Allows code without a context handle to grab the prefs. The caller must null check the return value.
@@ -272,7 +291,7 @@ public class Prefs {
     }
 
     public boolean isMotionSensorTypeSignificant() {
-        return getBoolPrefWithDefault(MOTION_SENSOR_IS_SIGNIFICANT_TYPE, false);
+        return getBoolPrefWithDefault(MOTION_SENSOR_IS_SIGNIFICANT_TYPE, mSignificantMotionDefaultValue);
     }
 
     public void setMotionSensorTypeSignificant(boolean on) {

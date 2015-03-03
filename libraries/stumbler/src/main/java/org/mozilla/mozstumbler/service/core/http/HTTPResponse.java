@@ -20,10 +20,7 @@ public class HTTPResponse implements IResponse {
 
     public HTTPResponse(int responseCode, int txByteLength)
     {
-        statusCode = responseCode;
-        bodyBytes = new byte[]{};
-        bytesSent = txByteLength;
-        headers = new HashMap<String, List<String>>();
+        this(responseCode, new HashMap<String, List<String>>(), new byte[]{}, txByteLength);
     }
 
     public HTTPResponse(int responseCode, Map<String, List<String>> headerFields, byte[] contentBody, int txByteLength) {

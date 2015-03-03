@@ -22,6 +22,8 @@ public class ClientDataStorageManager extends DataStorageManager {
 
     private ClientDataStorageManager(Context c, StorageIsEmptyTracker tracker, long maxBytesStoredOnDisk, int maxWeeksDataStored) {
         super(c, tracker, maxBytesStoredOnDisk, maxWeeksDataStored);
+
+        mPersistedOnDiskUploadStats.forceBroadcastOfSyncStats();
     }
 
     public static String sdcardArchivePath() {
@@ -32,6 +34,7 @@ public class ClientDataStorageManager extends DataStorageManager {
     // DataStorageManager.  Sorta.  You can't really override static methods.
     public static synchronized DataStorageManager createGlobalInstance(Context context, StorageIsEmptyTracker tracker,
                                                                        long maxBytesStoredOnDisk, int maxWeeksDataStored) {
+
         if (sInstance == null) {
             sInstance = new ClientDataStorageManager(context, tracker, maxBytesStoredOnDisk, maxWeeksDataStored);
         }

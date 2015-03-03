@@ -63,14 +63,16 @@ public class Prefs {
         }
 
         boolean defaultSetting = false;
-        if (SignificantMotionSensor.getSensor(context) != null) {
-            String device = android.os.Build.MODEL.toLowerCase();
-            String pattern = "(nexus \\d)|(android one)";
-            if (Pattern.compile(pattern).matcher(device).find()) {
-                // Most users aren't going to know to switch this setting to on, set the default for known good devices
-                defaultSetting = true;
+        try {
+            if (SignificantMotionSensor.getSensor(context) != null) {
+                String device = android.os.Build.MODEL.toLowerCase();
+                String pattern = "(nexus \\d)|(android one)";
+                if (Pattern.compile(pattern).matcher(device).find()) {
+                    // Most users aren't going to know to switch this setting to on, set the default for known good devices
+                    defaultSetting = true;
+                }
             }
-        }
+        } catch (Exception ex) {} 
         mSignificantMotionDefaultValue = defaultSetting;
     }
 

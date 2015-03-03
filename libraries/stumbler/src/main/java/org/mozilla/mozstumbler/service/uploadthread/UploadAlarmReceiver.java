@@ -45,8 +45,10 @@ public class UploadAlarmReceiver extends BroadcastReceiver {
         // this is to stop scheduleAlarm from constantly rescheduling, not to guard cancellation.
         sIsAlreadyScheduled = false;
         AlarmManager alarmManager = (AlarmManager) c.getSystemService(Context.ALARM_SERVICE);
-        PendingIntent pi = createIntent(c, isRepeating);
-        alarmManager.cancel(pi);
+        if (alarmManager != null) {
+            PendingIntent pi = createIntent(c, isRepeating);
+            alarmManager.cancel(pi);
+        }
     }
 
     public static void scheduleAlarm(Context c, long secondsToWait, boolean isRepeating) {
@@ -59,6 +61,9 @@ public class UploadAlarmReceiver extends BroadcastReceiver {
 
         sIsAlreadyScheduled = true;
         AlarmManager alarmManager = (AlarmManager) c.getSystemService(Context.ALARM_SERVICE);
+        if (alarmManager == null) {
+            return;
+        }
         PendingIntent pi = createIntent(c, isRepeating);
 
         long triggerAtMs = System.currentTimeMillis() + intervalMsec;

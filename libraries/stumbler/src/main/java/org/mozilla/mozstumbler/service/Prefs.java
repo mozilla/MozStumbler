@@ -8,11 +8,14 @@ import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Build.VERSION;
 import android.text.TextUtils;
 import android.util.Log;
 
 import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
+
+import java.util.regex.Pattern;
 
 public class Prefs {
     public static final String NICKNAME_PREF = "nickname";
@@ -272,7 +275,16 @@ public class Prefs {
     }
 
     public boolean isMotionSensorTypeSignificant() {
-        return getBoolPrefWithDefault(MOTION_SENSOR_IS_SIGNIFICANT_TYPE, false);
+        String device = android.os.Build.MODEL.toLowerCase();
+        boolean defaultSetting = false;
+        String pattern = "nexus \\d";
+        if (Build.VERSION.SDK_INT >= 18 &&
+            Pattern.compile(pattern).matcher(device).find()) {
+            // Most users aren't going to know to switch this setting to on, set the default for known good devices
+            defaultSetting = true;
+        }
+
+        return getBoolPrefWithDefault(MOTION_SENSOR_IS_SIGNIFICANT_TYPE, defaultSetting);
     }
 
     public void setMotionSensorTypeSignificant(boolean on) {

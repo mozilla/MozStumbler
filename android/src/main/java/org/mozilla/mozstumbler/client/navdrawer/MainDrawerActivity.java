@@ -36,6 +36,7 @@ import org.mozilla.mozstumbler.client.Updater;
 import org.mozilla.mozstumbler.client.mapview.MapFragment;
 import org.mozilla.mozstumbler.client.subactivities.FirstRunFragment;
 import org.mozilla.mozstumbler.client.subactivities.LeaderboardActivity;
+import org.mozilla.mozstumbler.client.util.NotificationUtil;
 import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
 public class MainDrawerActivity
@@ -265,6 +266,11 @@ public class MainDrawerActivity
 
                 updateStartStopMenuItemState();
                 updateNumberDisplay(updateMetrics);
+
+                if (getApp().isScanningOrPaused()) {
+                    NotificationUtil notification = new NotificationUtil(getApplicationContext());
+                    notification.update();
+                }
             }
         });
     }
@@ -282,9 +288,13 @@ public class MainDrawerActivity
         mMapFragment.formatTextView(R.id.text_observation_count, "%d", observationCount);
 
         if (updateMetrics) {
-            mMetricsView.setObservationCount(observationCount, service.getUniqueCellCount(),
-                    service.getUniqueAPCount(), getApp().isScanningOrPaused());
+            int cells = service.getUniqueCellCount();
+            int wifis = service.getUniqueAPCount();
+            mMetricsView.setObservationCount(observationCount, cells, wifis);
             mMetricsView.update();
+
+            NotificationUtil notification = new NotificationUtil(getApplicationContext());
+            notification.setMetrics(observationCount, cells, wifis);
         }
     }
 

@@ -38,7 +38,6 @@ import org.mozilla.mozstumbler.service.uploadthread.AsyncUploadParam;
 import org.mozilla.mozstumbler.service.uploadthread.AsyncUploader;
 import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
-import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.Properties;
 
@@ -275,6 +274,9 @@ public class MetricsView {
             String value = String.format(mObservationAndSize, Integer.parseInt(sent), formatKb(Long.parseLong(bytes)));
             mAllTimeObservationsSentView.setText(value);
             mLastUploadTime = Long.parseLong(mPersistedStats.getProperty(DataStorageContract.Stats.KEY_LAST_UPLOAD_TIME, "0"));
+
+            NotificationUtil notification = new NotificationUtil(mView.getContext().getApplicationContext());
+            notification.setUploadTime(mLastUploadTime);
         }
         updateLastUploadedLabel();
     }
@@ -294,13 +296,10 @@ public class MetricsView {
         }
     };
 
-    public void setObservationCount(int observations, int cells, int wifis, boolean isActive) {
+    public void setObservationCount(int observations, int cells, int wifis) {
         sThisSessionObservationsCount = observations;
         sThisSessionUniqueCellCount = cells;
         sThisSessionUniqueWifiCount = wifis;
-
-        NotificationUtil util = new NotificationUtil(mView.getContext().getApplicationContext());
-        util.updateMetrics(observations, cells, wifis, mLastUploadTime, isActive);
     }
 
     public interface IMapLayerToggleListener {

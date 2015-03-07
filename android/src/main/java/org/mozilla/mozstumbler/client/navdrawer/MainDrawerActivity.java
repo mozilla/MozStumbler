@@ -373,6 +373,11 @@ public class MainDrawerActivity
     }
 
     @Override
+    public void start() {
+        mMapFragment.start();
+    }
+
+    @Override
     public void stop() {
         mMapFragment.stop();
     }

@@ -25,7 +25,7 @@ class MapLocationListener {
     private static final String LOG_TAG = LoggerUtil.makeLogTag(MapLocationListener.class);
     private final WeakReference<MapFragment> mMapActivity;
     private final LocationUpdateListener mNetworkLocationListener =
-            new LocationUpdateListener(LocationManager.NETWORK_PROVIDER, 1000, null);
+            new LocationUpdateListener(LocationManager.NETWORK_PROVIDER, 5000, null);
     private final ReceivedLocationCallback mReceivedGpsLocation = new ReceivedLocationCallback() {
         @Override
         public void receivedLocation() {
@@ -35,6 +35,8 @@ class MapLocationListener {
     };
     private final LocationUpdateListener mGpsLocationListener =
             new LocationUpdateListener(LocationManager.GPS_PROVIDER, 5000, mReceivedGpsLocation);
+    private final LocationUpdateListener mPassiveLocationListener =
+            new LocationUpdateListener(LocationManager.PASSIVE_PROVIDER, 1000, null);
     private LocationManager mLocationManager;
     private final GpsStatus.Listener mSatelliteListener = new GpsStatus.Listener() {
         public void onGpsStatusChanged(int event) {
@@ -70,6 +72,7 @@ class MapLocationListener {
             return;
         }
 
+        // the GPS status listener is invoked if any GPS location listener is active
         mLocationManager.addGpsStatusListener(mSatelliteListener);
 
         Location lastLoc = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
@@ -85,12 +88,8 @@ class MapLocationListener {
         if (app == null) {
             return;
         }
-        if (app.isIsScanningPausedDueToNoMotion()) {
-            pauseGpsUpdates(true);
-        } else {
-            enableLocationListener(true, mNetworkLocationListener);
-            enableLocationListener(true, mGpsLocationListener);
-        }
+        enableActiveLocationUpdates(!app.isIsScanningPausedDueToNoMotion());
+        enableLocationListener(true, mPassiveLocationListener);
     }
 
     private void enableLocationListener(boolean isEnabled, LocationUpdateListener listener) {
@@ -117,13 +116,21 @@ class MapLocationListener {
         }
 
         mLocationManager.removeGpsStatusListener(mSatelliteListener);
-        enableLocationListener(false, mGpsLocationListener);
-        enableLocationListener(false, mNetworkLocationListener);
+        enableActiveLocationUpdates(false);
+        enableLocationListener(false, mPassiveLocationListener);
     }
 
-    public void pauseGpsUpdates(boolean isGpsOff) {
-        enableLocationListener(!isGpsOff, mGpsLocationListener);
-        enableLocationListener(true, mNetworkLocationListener);
+    public void enableActiveLocationUpdates(boolean enable) {
+        if (enable) {
+            // enable NetworkLocationListener first because GpsLocationListener will disable it
+            enableLocationListener(true, mNetworkLocationListener);
+            enableLocationListener(true, mGpsLocationListener);
+        } else {
+            // disable GpsLocationListener first because it might enable NetworkLocationListener
+            enableLocationListener(false, mGpsLocationListener);
+            enableLocationListener(false, mNetworkLocationListener);
+        }
+
     }
 
     interface ReceivedLocationCallback {

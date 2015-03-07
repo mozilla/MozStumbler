@@ -10,7 +10,6 @@ import android.content.res.Configuration;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.location.Location;
-import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
@@ -674,20 +673,25 @@ public class MapFragment extends android.support.v4.app.Fragment
         }
     }
 
-    public void showPausedDueToNoMotionMessage(boolean show) {
-        mRootView.findViewById(R.id.scanning_paused_message).setVisibility(show ? View.VISIBLE : View.INVISIBLE);
+    public void showPausedDueToNoMotionMessage(boolean paused) {
+        mRootView.findViewById(R.id.scanning_paused_message).setVisibility(paused ? View.VISIBLE : View.INVISIBLE);
         if (mMapLocationListener != null) {
-            mMapLocationListener.pauseGpsUpdates(show);
+            mMapLocationListener.enableActiveLocationUpdates(!paused);
         }
         updateGPSInfo(0, 0);
         dimToolbar();
     }
 
+    public void start() {
+        if (mMapLocationListener != null) {
+            mMapLocationListener.enableActiveLocationUpdates(true);
+        }
+    }
+
     public void stop() {
         mRootView.findViewById(R.id.scanning_paused_message).setVisibility(View.INVISIBLE);
         if (mMapLocationListener != null) {
-            mMapLocationListener.removeListener();
-            mMapLocationListener = null;
+            mMapLocationListener.enableActiveLocationUpdates(false);
         }
         updateGPSInfo(0, 0);
         dimToolbar();

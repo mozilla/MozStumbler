@@ -69,7 +69,7 @@ public class ClientDataStorageManagerTest {
 
         MockSystemClock clock = new MockSystemClock();
 
-        final long ARBITRARY_CLOCK_TIME = 12150;
+        final long ARBITRARY_CLOCK_TIME = 0;
         clock.setCurrentTime(ARBITRARY_CLOCK_TIME);
 
         ServiceLocator.getInstance().putService(ISystemClock.class, clock);

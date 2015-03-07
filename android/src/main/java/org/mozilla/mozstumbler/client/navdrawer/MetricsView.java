@@ -262,6 +262,14 @@ public class MetricsView {
 
     private void updateSentStats() {
         if (mPersistedStats != null) {
+            long lastUpload = Long.parseLong(mPersistedStats
+                    .getProperty(DataStorageContract.Stats.KEY_LAST_UPLOAD_TIME, "0"));
+
+            if (lastUpload == 0) {
+                // Don't update anything if a zero is captured for last upload time
+                return;
+            }
+
             String sent = mPersistedStats.getProperty(DataStorageContract.Stats.KEY_OBSERVATIONS_SENT, "0");
             String bytes = mPersistedStats.getProperty(DataStorageContract.Stats.KEY_BYTES_SENT, "0");
             String value = String.format(mObservationAndSize, Integer.parseInt(sent), formatKb(Long.parseLong(bytes)));

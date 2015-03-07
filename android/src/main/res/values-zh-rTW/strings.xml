@@ -83,7 +83,7 @@
         <item>效能問題</item>
         <item>相容性問題</item>
         <item>功能問題</item>
-        <item>要求加入新功能</item>
+        <item>功能請求</item>
         <item>其他</item>
     </string-array>
 
@@ -176,24 +176,30 @@
     <string name="off">關</string>
 
     <string name="title_activity_power_saving_screen">省電選項</string>
-    <!-- <string name="sensor_type_legacy"></string>
-    <string name="sensor_type_significant_motion"></string> -->
+    <string name="sensor_type_legacy">您的裝置沒有顯著運動感測器。</string>
+    <string name="sensor_type_significant_motion">顯著運動感測器的省電效果最好，但不是在每台裝置上都能用。</string>
 
     <string name="ok">確定</string>
     <string name="whats_new_title">有什麼新鮮事</string>
     <string name="whats_new">
-        <b>v1.6.1（包含 v1.6.0 變更）</b>
-        \n<li>更保守地省電，以解決 Stumbler 無法從睡眠中喚醒的問題。</li>
-        \n<li>在抽屜中新增省電選項，僅預設為內建顯著運動感測器的裝置開啟動態偵測功能。</li>
-        \n<li>因為效能問題，暫時移除主畫面小工具。</li>
-        \n<li>改善支援離線地圖</li>
-        \n<li>更新 Wi-Fi 觀測黑名單</li>
-        \n<li>不再紀錄不想被觀測到的 SSID</li>
-        \n<li>正體中文、芬蘭文、德文、波蘭文翻譯更新</li>
-        \n<li>您現在可以從設定面板中回報 Bug。</li>
-        \n<li>新增可匯出所有觀測記錄到 SD 卡的選項，讓您自行分析。</li>
-        \n<li>支援 Android 5 的公開通知訊息。</li>
-        \n<li>為開發者提供新的測試架構</li>
-        \n<li>在開發者選項中新增了模擬模式。</li>
+        <b>省電功能</b>
+        \n<li>讓您測試動態感測器的新選項畫面。</li>
+        \n<li>為 Galaxy S5 及其他缺少顯著運動感測器，或感測器不夠穩定的裝置改善動態感測程式。</li>
+        \n
+        \n<b>更新翻譯</b>
+        \n<li>波蘭文</li>
+        \n<li>德文</li>
+        \n<li>正體中文</li>
+        \n<li>捷克文</li>
+        \n<li>土耳其文</li>
     </string>
+    <string name="limit_map_zoom">限制縮小地圖</string>
+    <string name="test_significant_sensor_dialog_title">測試顯著運動感測器</string>
+    <string name="test_significant_sensor_dialog_message">先站直，然後持續走路一分鐘。\n\n偵測移動中&#8230;</string>
+    <string name="test_significant_sensor_confirmed_working">偵測到移動。\n感測器功能正常。</string>
+    <string name="button_test_significant_motion_sensor">測試顯著運動感測器</string>
+    <string name="sensor_name_significant_motion">顯著運動感測器</string>
+    <string name="sensor_name_accelerometer">加速度感測器</string>
+    <string name="title_use_sensor">使用感測器:</string>
+    <string name="limit_map_zoom_summary">減少地圖所使用的網路數據量。</string>
 </resources>

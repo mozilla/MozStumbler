@@ -21,12 +21,10 @@ import org.mozilla.osmdroid.views.MapView;
 import org.mozilla.osmdroid.views.Projection;
 import org.mozilla.osmdroid.views.overlay.Overlay;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
-import java.util.ListIterator;
 
 class ObservationPointsOverlay extends Overlay {
     private static final String LOG_TAG = LoggerUtil.makeLogTag(ObservationPointsOverlay.class);
@@ -166,12 +164,7 @@ class ObservationPointsOverlay extends Overlay {
 
         final Point gps = new Point();
 
-        ArrayList<HashMap.Entry<Integer, ObservationPoint>> arrayList =
-                new ArrayList<HashMap.Entry<Integer, ObservationPoint>>(mHashedGrid.entrySet());
-        ListIterator<HashMap.Entry<Integer, ObservationPoint>> revIterator =
-                arrayList.listIterator(mHashedGrid.size());
-        while (revIterator.hasPrevious()) {
-            HashMap.Entry<Integer, ObservationPoint> entry = revIterator.previous();
+        for (HashMap.Entry<Integer, ObservationPoint> entry : mHashedGrid.entrySet()) {
             ObservationPoint point = entry.getValue();
             pj.toPixels(point.pointGPS, gps);
 
@@ -201,9 +194,7 @@ class ObservationPointsOverlay extends Overlay {
 
         // Draw as a 2nd layer over the observation points
         final Point mls = new Point();
-        revIterator = arrayList.listIterator(mHashedGrid.size());
-        while (revIterator.hasPrevious()) {
-            HashMap.Entry<Integer, ObservationPoint> entry = revIterator.previous();
+        for (HashMap.Entry<Integer, ObservationPoint> entry : mHashedGrid.entrySet()) {
             ObservationPoint point = entry.getValue();
             if (point.pointMLS != null) {
                 pj.toPixels(point.pointGPS, gps);

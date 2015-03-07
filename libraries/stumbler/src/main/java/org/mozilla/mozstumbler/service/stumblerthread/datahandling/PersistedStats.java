@@ -42,7 +42,7 @@ public class PersistedStats {
 
     public synchronized Properties readSyncStats() throws IOException {
         if (!mStatsFile.exists()) {
-            return createStatsProp(clock.currentTimeMillis(), 0, 0, 0, 0, 0);
+            return createStatsProp(0, 0, 0, 0, 0, 0);
         }
 
         final FileInputStream input = new FileInputStream(mStatsFile);

@@ -312,6 +312,10 @@ public class MainApp extends Application
                 .penaltyLog().build());
     }
 
+    public boolean isScanning() {
+        return scannerState == ScannerState.STARTED;
+    }
+
     public boolean isScanningOrPaused() {
          return scannerState == ScannerState.STARTED_BUT_PAUSED_MOTIONLESS ||
                  scannerState == ScannerState.STARTED;

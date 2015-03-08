@@ -158,7 +158,7 @@ public class WifiScanner {
             @Override
             public void run() {
                 if (stumblingMode == ActiveOrPassiveStumbling.PASSIVE_STUMBLING &&
-                        mPassiveScanCount++ > AppGlobals.PASSIVE_MODE_MAX_SCANS_PER_GPS) {
+                        ++mPassiveScanCount > AppGlobals.PASSIVE_MODE_MAX_SCANS_PER_GPS) {
                     mPassiveScanCount = 0;
                     stop(); // set mWifiScanTimer to null
                     return;

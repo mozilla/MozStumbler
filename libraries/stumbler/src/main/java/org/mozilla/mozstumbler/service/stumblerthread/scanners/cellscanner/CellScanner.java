@@ -84,7 +84,7 @@ public class CellScanner {
                 }
 
                 if (stumblingMode == ActiveOrPassiveStumbling.PASSIVE_STUMBLING &&
-                        mPassiveScanCount++ > AppGlobals.PASSIVE_MODE_MAX_SCANS_PER_GPS) {
+                        ++mPassiveScanCount > AppGlobals.PASSIVE_MODE_MAX_SCANS_PER_GPS) {
                     mPassiveScanCount = 0;
                     stop();
                     return;

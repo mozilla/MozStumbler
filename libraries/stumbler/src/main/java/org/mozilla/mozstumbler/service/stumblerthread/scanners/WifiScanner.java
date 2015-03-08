@@ -35,7 +35,7 @@ public class WifiScanner {
     public static final int STATUS_WIFI_DISABLED = -1;
 
     private static final String LOG_TAG = LoggerUtil.makeLogTag(WifiScanner.class);
-    private static final long WIFI_MIN_UPDATE_TIME = 5000; // milliseconds
+    private static final long WIFI_MIN_UPDATE_TIME = 4000; // milliseconds
     private final Context mAppContext;
     private final WifiManagerProxy wifiManagerProxy;
     private boolean mStarted;

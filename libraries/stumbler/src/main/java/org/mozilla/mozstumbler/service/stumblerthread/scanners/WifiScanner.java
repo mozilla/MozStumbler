@@ -39,6 +39,7 @@ public class WifiScanner {
     private final Context mAppContext;
     private final WifiManagerProxy wifiManagerProxy;
     private boolean mStarted;
+    private AtomicInteger mPassiveScanCount = new AtomicInteger();
     private WifiLock mWifiLock;
     private Timer mWifiScanTimer;
     private AtomicInteger mVisibleAPs = new AtomicInteger();
@@ -73,6 +74,8 @@ public class WifiScanner {
     }
 
     public synchronized void start(final ActiveOrPassiveStumbling stumblingMode) {
+        mPassiveScanCount.set(0);
+
         if (mStarted) {
             return;
         }
@@ -153,13 +156,11 @@ public class WifiScanner {
         // Ensure that we are constantly scanning for new access points.
         mWifiScanTimer = new Timer();
         mWifiScanTimer.schedule(new TimerTask() {
-            int mPassiveScanCount;
 
             @Override
             public void run() {
                 if (stumblingMode == ActiveOrPassiveStumbling.PASSIVE_STUMBLING &&
-                        ++mPassiveScanCount > AppGlobals.PASSIVE_MODE_MAX_SCANS_PER_GPS) {
-                    mPassiveScanCount = 0;
+                        mPassiveScanCount.incrementAndGet() > AppGlobals.PASSIVE_MODE_MAX_SCANS_PER_GPS) {
                     stop(); // set mWifiScanTimer to null
                     return;
                 }

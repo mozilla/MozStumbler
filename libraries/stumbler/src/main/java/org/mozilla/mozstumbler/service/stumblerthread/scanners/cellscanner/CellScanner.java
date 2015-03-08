@@ -23,6 +23,7 @@ import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class CellScanner {
     public static final String ACTION_BASE = AppGlobals.ACTION_NAMESPACE + ".CellScanner.";
@@ -39,6 +40,7 @@ public class CellScanner {
     private final ISimpleCellScanner mSimpleCellScanner;
     private Timer mCellScanTimer;
     private Handler mBroadcastScannedHandler;
+    private AtomicInteger mPassiveScanCount = new AtomicInteger();
 
     public CellScanner(Context appCtx) {
         mAppContext = appCtx;
@@ -53,6 +55,8 @@ public class CellScanner {
         if (!mSimpleCellScanner.isSupportedOnThisDevice()) {
             return;
         }
+
+        mPassiveScanCount.set(0);
 
         if (mCellScanTimer != null) {
             return;
@@ -75,7 +79,6 @@ public class CellScanner {
         mCellScanTimer = new Timer();
 
         mCellScanTimer.schedule(new TimerTask() {
-            int mPassiveScanCount;
 
             @Override
             public void run() {
@@ -84,8 +87,7 @@ public class CellScanner {
                 }
 
                 if (stumblingMode == ActiveOrPassiveStumbling.PASSIVE_STUMBLING &&
-                        ++mPassiveScanCount > AppGlobals.PASSIVE_MODE_MAX_SCANS_PER_GPS) {
-                    mPassiveScanCount = 0;
+                        mPassiveScanCount.incrementAndGet() > AppGlobals.PASSIVE_MODE_MAX_SCANS_PER_GPS) {
                     stop();
                     return;
                 }

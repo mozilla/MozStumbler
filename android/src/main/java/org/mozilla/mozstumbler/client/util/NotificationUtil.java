@@ -104,4 +104,11 @@ public class NotificationUtil {
             update();
         }
     }
+
+    // Will update the last uploaded label without rate-limiting the update. Therefore ensure
+    // this is being called only when the upload label actually needs updating.
+    public void updateLastUploadedLabel(long value) {
+        sUploadTime = value;
+        update();
+    }
 }

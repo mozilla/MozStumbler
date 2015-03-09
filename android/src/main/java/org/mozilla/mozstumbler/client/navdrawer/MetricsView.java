@@ -258,6 +258,9 @@ public class MetricsView {
             value = DateTimeUtils.prettyPrintTimeDiff(mLastUploadTime, context.getResources());
         }
         mLastUpdateTimeView.setText(value);
+
+        NotificationUtil nm = new NotificationUtil(mView.getContext());
+        nm.updateLastUploadedLabel(mLastUploadTime);
     }
 
     private void updateSentStats() {

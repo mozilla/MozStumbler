@@ -27,6 +27,7 @@ import android.widget.TextView;
 import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.client.ClientPrefs;
 import org.mozilla.mozstumbler.client.DateTimeUtils;
+import org.mozilla.mozstumbler.client.MainApp;
 import org.mozilla.mozstumbler.client.QueuedCountsTracker;
 import org.mozilla.mozstumbler.client.subactivities.PowerSavingScreen;
 import org.mozilla.mozstumbler.client.subactivities.PreferencesScreen;
@@ -251,6 +252,17 @@ public class MetricsView {
         return "(" + (Math.round(kb * 10.0f) / 10.0f) + " KB)";
     }
 
+    private boolean isScanningOrPaused() {
+        if (mView.getContext() instanceof Activity) {
+            Activity activity = (Activity) mView.getContext();
+            if (activity.getApplication() != null) {
+                MainApp app = (MainApp) activity.getApplication();
+                return app.isScanningOrPaused();
+            }
+        }
+        return false;
+    }
+
     private void updateLastUploadedLabel() {
         Context context = mView.getContext();
         String value = context.getString(R.string.metrics_observations_last_upload_time_never);
@@ -259,8 +271,10 @@ public class MetricsView {
         }
         mLastUpdateTimeView.setText(value);
 
-        NotificationUtil nm = new NotificationUtil(mView.getContext());
-        nm.updateLastUploadedLabel(mLastUploadTime);
+        if (isScanningOrPaused()) {
+            NotificationUtil nm = new NotificationUtil(mView.getContext());
+            nm.updateLastUploadedLabel(mLastUploadTime);
+        }
     }
 
     private void updateSentStats() {

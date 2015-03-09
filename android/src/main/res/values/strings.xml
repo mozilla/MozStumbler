@@ -179,19 +179,6 @@
     <string name="sensor_type_significant_motion">The significant motion sensor offers the best power saving, but may not work on all devices.</string>
 
     <string name="ok">OK</string>
-    <string name="whats_new_title">What\'s New</string>
-<string name="whats_new">
-<b>Power Saving features:</b>
-\n<li>New options screen for testing your motion sensor</li>
-\n<li>Better motion sensor code for the Galaxy S5 and other devices which either lack a significant motion sensor or have buggy sensors.</li>
-\n
-\n<b>Updated Translations:</b>
-\n<li>Polish</li>
-\n<li>German</li>
-\n<li>Chinese (Taiwan) zh-tw</li>
-\n<li>Czech</li>
-\n<li>Turkish</li>
-</string>
     <string name="limit_map_zoom">Limit zooming out on map</string>
     <string name="test_significant_sensor_dialog_title">Test Significant Motion Sensor</string>
     <string name="test_significant_sensor_dialog_message">Stand still, then walk for 1 minute.\n\nDetecting movement &#8230;</string>

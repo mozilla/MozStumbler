@@ -185,19 +185,4 @@
     -->
     <string name="ok">OK</string>
     <string name="whats_new_title">Co je nového</string>
-<!--<string name="whats_new">
-<b>v1.6.1 (includes v1.6.0 changes)</b>
-\n<li>More conservative power saving to address the problem where the stumbler does not wake up from sleep.</li>
-\n<li>New power saving options in drawer, motion sensing defaults to on only for devices with a significant motion sensor</li>
-\n<li>Home screen widget removed temporarily due to performance problem</li>
-\n<li>Better offline map support</li>
-\n<li>Wifi blocklist updates</li>
-\n<li>No more logging of opt-out SSIDs</li>
-\n<li>Translation updates for Taiwanese, Finnish, German, and Polish</li>
-\n<li>You can now file a bug through the settings panel.</li>
-\n<li>Option to export all stumble logs into your SDCARD for your own analysis.</li>
-\n<li>Public notification support added for Android 5.</li>
-\n<li>New testing infrastructure for developers</li>
-\n<li>Simulation mode added to the developer options.</li>
-</string>-->
 </resources>

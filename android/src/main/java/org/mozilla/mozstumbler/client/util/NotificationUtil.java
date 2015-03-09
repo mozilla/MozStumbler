@@ -21,7 +21,7 @@ public class NotificationUtil {
     private static String sStopTitle;
     private static int sObservations, sCells, sWifis;
     private static long sUploadTime, sDisplayTime, sLastUpdateTime;
-    private static boolean sIsPaused, sNeedsUpdate;
+    private static boolean sIsPaused;
     private final Context mContext;
 
     public NotificationUtil(Context context) {
@@ -57,7 +57,6 @@ public class NotificationUtil {
                                            .getService(ISystemClock.class);
 
         sLastUpdateTime = clock.currentTimeMillis();
-        sNeedsUpdate = false;
 
         return new NotificationCompat.Builder(mContext)
                 .setSmallIcon(R.drawable.ic_status_scanning)
@@ -74,7 +73,7 @@ public class NotificationUtil {
                 .build();
     }
 
-    private void forceUpdate() {
+    private void update() {
         Notification notification = build();
         NotificationManager nm = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
         nm.notify(NOTIFICATION_ID, notification);
@@ -90,32 +89,19 @@ public class NotificationUtil {
     public void setPaused(boolean isPaused) {
         sIsPaused = isPaused;
         sDisplayTime = System.currentTimeMillis();
-        forceUpdate();
+        update();
     }
 
-    public void setMetrics(int observations, int cells, int wifis) {
+    public void updateMetrics(int observations, int cells, int wifis, long uploadtime, boolean isActive) {
         sObservations = observations;
         sCells = cells;
         sWifis = wifis;
-        sNeedsUpdate = true;
-    }
-
-    public void setUploadTime(long uploadtime) {
         sUploadTime = uploadtime;
-        sNeedsUpdate = true;
-    }
-
-    public void update() {
-        if (!sNeedsUpdate) {
-            return;
-        }
 
         long diffLastUpdate = System.currentTimeMillis() - sLastUpdateTime;
         boolean isUpdateAnimated = Build.VERSION.SDK_INT < 21;
-        if (isUpdateAnimated && diffLastUpdate < UPDATE_FREQUENCY) {
-            return;
+        if (isActive && (!isUpdateAnimated || diffLastUpdate > UPDATE_FREQUENCY)) {
+            update();
         }
-
-        forceUpdate();
     }
 }

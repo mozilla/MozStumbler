@@ -184,21 +184,6 @@
 
     <string name="ok">OK</string>
     <string name="whats_new_title">Co nowego</string>
-<string name="whats_new">
-<b>1.6.1 (w tym zmiany w wersji 1.6.0)</b>
-\n<li>Bardziej zachowawcze oszczędzanie zasilania, aby naprawić problem nieprzebudzania z trybu uśpienia.</li>
-\n<li>Nowe opcje oszczędzania zasilania w menu, domyślnie włączone wykrywanie ruchu tylko na urządzeniach posiadających znaczący czujnik ruchu.</li>
-\n<li>Tymczasowo usunięto widżet ekranu domowego z powodu problemów z wydajnością.</li>
-\n<li>Lepsza obsługa mapy w trybie offline.</li>
-\n<li>Aktualizacje listy blokowania sieci Wi-Fi.</li>
-\n<li>Wykluczone SSID nie są już zapisywane w dzienniku.</li>
-\n<li>Aktualizacje tłumaczeń dla języka tradycyjnego chińskiego, fińskiego, niemieckiego i polskiego.</li>
-\n<li>Można teraz zgłaszać błędy przez panel ustawień.</li>
-\n<li>Opcja eksportowania wszystkich dzienników skanowania na kartę SD do samodzielnej analizy.</li>
-\n<li>Dodano obsługę publicznych powiadomień w Androidzie 5.</li>
-\n<li>Nowa infrastruktura testowania dla programistów.</li>
-\n<li>Dodano tryb symulacji do opcji programistycznych.</li>
-</string>
     <string name="limit_map_zoom">Ograniczenie oddalania mapy</string>
     <string name="test_significant_sensor_dialog_title">Test znaczącego czujnika ruchu</string>
     <string name="test_significant_sensor_dialog_message">Proszę stać w miejscu, po czym chodzić przez jedną minutę.\n\nWykrywanie ruchu: &#8230;</string>

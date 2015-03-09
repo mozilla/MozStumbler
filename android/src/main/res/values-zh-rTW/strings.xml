@@ -181,19 +181,5 @@
 
     <string name="ok">確定</string>
     <string name="whats_new_title">有什麼新鮮事</string>
-    <string name="whats_new">
-        <b>v1.6.1（包含 v1.6.0 變更）</b>
-        \n<li>更保守地省電，以解決 Stumbler 無法從睡眠中喚醒的問題。</li>
-        \n<li>在抽屜中新增省電選項，僅預設為內建顯著運動感測器的裝置開啟動態偵測功能。</li>
-        \n<li>因為效能問題，暫時移除主畫面小工具。</li>
-        \n<li>改善支援離線地圖</li>
-        \n<li>更新 Wi-Fi 觀測黑名單</li>
-        \n<li>不再紀錄不想被觀測到的 SSID</li>
-        \n<li>正體中文、芬蘭文、德文、波蘭文翻譯更新</li>
-        \n<li>您現在可以從設定面板中回報 Bug。</li>
-        \n<li>新增可匯出所有觀測記錄到 SD 卡的選項，讓您自行分析。</li>
-        \n<li>支援 Android 5 的公開通知訊息。</li>
-        \n<li>為開發者提供新的測試架構</li>
-        \n<li>在開發者選項中新增了模擬模式。</li>
-    </string>
+
 </resources>

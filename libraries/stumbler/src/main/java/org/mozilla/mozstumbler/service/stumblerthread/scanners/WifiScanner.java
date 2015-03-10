@@ -74,6 +74,7 @@ public class WifiScanner {
     }
 
     public synchronized void start(final ActiveOrPassiveStumbling stumblingMode) {
+        // If the scan timer is active, this will reset the number of times it has run
         mPassiveScanCount.set(0);
 
         if (mStarted) {

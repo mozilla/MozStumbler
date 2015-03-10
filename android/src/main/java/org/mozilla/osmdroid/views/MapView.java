@@ -406,6 +406,7 @@ public class MapView extends ViewGroup implements IMapView, MapViewConstants,
      */
     public void setMinZoomLevel(Integer zoomLevel) {
         mMinimumZoomLevel = zoomLevel;
+        this.checkZoomButtons();
     }
 
     /**
@@ -422,6 +423,7 @@ public class MapView extends ViewGroup implements IMapView, MapViewConstants,
      */
     public void setMaxZoomLevel(Integer zoomLevel) {
         mMaximumZoomLevel = zoomLevel;
+        this.checkZoomButtons();
     }
 
     public boolean canZoomIn() {

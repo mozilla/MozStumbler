@@ -162,14 +162,14 @@ public class CellInfo implements Parcelable {
         try {
             obj.put("radioType", getCellRadio());
 
-           // Bug #1510
-           // if (mCid != UNKNOWN_CID) {
-                obj.put("cellId", mCid);
+            // Bug #1510
+            // if (mCid != UNKNOWN_CID) {
+            obj.put("cellId", mCid);
             //}
 
             // Bug #1510
             //if (mLac != UNKNOWN_LAC) {
-                obj.put("locationAreaCode", mLac);
+            obj.put("locationAreaCode", mLac);
             //}
 
             obj.put("mobileCountryCode", mMcc);

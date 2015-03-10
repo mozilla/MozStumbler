@@ -9,7 +9,6 @@ import android.location.LocationManager;
 import android.net.wifi.ScanResult;
 import android.os.Build;
 import android.os.SystemClock;
-import android.telephony.TelephonyManager;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -64,6 +63,7 @@ public class StumblerBundleTest {
         stumbleBlob.put(DataStorageContract.ReportsColumns.CELL, cellTowerArray);
 
         stumbleBlob.put(DataStorageContract.ReportsColumns.TIME, 1405602028568L);
+        stumbleBlob.put("radioType", "lte");
         stumbleBlob.put(DataStorageContract.ReportsColumns.LON, -43.5f);
         stumbleBlob.put(DataStorageContract.ReportsColumns.LAT, -22.5f);
 
@@ -71,7 +71,7 @@ public class StumblerBundleTest {
     }
 
 
-    protected JSONObject getExpectedReportBatch() throws JSONException {
+    protected JSONObject getExpectedGeosubmit() throws JSONException {
 
         List<JSONObject> wifiList = new ArrayList<JSONObject>();
 
@@ -122,7 +122,7 @@ public class StumblerBundleTest {
 
     @Test
     public void testToGeosubmitJSON() throws JSONException {
-        JSONObject expectedJson = getExpectedReportBatch();
+        JSONObject expectedJson = getExpectedGeosubmit();
 
         Location mockLocation = new Location(LocationManager.GPS_PROVIDER); // a string
         mockLocation.setLatitude(-22.5f);
@@ -199,9 +199,9 @@ public class StumblerBundleTest {
 
         bundle.addCellData(cellInfo.getCellIdentity(), cellInfo);
 
-        JSONObject geoLocateJSON = bundle.toMLSGeolocate();
+        JSONObject actualJson = bundle.toMLSGeolocate();
 
-        JSONAssert.assertEquals(expectedJson, geoLocateJSON, true);
+        JSONAssert.assertEquals(expectedJson, actualJson, true);
     }
 
     public static CellInfo createLteCellInfo(int mcc,

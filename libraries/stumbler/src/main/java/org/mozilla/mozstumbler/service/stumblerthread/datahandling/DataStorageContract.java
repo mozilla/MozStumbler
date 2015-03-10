@@ -17,6 +17,7 @@ public final class DataStorageContract {
         public static final String ALTITUDE = "altitude";
         public static final String CELL = "cellTowers";
         public static final String WIFI = "wifiAccessPoints";
+        public static final String RADIO = "radioType";
     }
 
     public static class Stats {

@@ -18,8 +18,8 @@ import org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner.CellI
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * A StumblerBundle contains stumbling data related to a single GPS lat/long fix.
@@ -30,13 +30,13 @@ public final class StumblerBundle implements Parcelable {
     /* The maximum number of cells in a single observation */
     public static final int MAX_CELLS_PER_LOCATION = 50;
     private final Location mGpsPosition;
-    private final Map<String, ScanResult> mWifiData;
-    private final Map<String, CellInfo> mCellData;
+    private final TreeMap<String, ScanResult> mWifiData;
+    private final TreeMap<String, CellInfo> mCellData;
 
     public StumblerBundle(Location position) {
         mGpsPosition = position;
-        mWifiData = new HashMap<String, ScanResult>();
-        mCellData = new HashMap<String, CellInfo>();
+        mWifiData = new TreeMap<String, ScanResult>();
+        mCellData = new TreeMap<String, CellInfo>();
     }
 
 
@@ -83,22 +83,12 @@ public final class StumblerBundle implements Parcelable {
     }
 
     public JSONObject toMLSGeosubmit() throws JSONException {
-        JSONObject item = toMLSGeolocate();
-        if (mGpsPosition.hasAltitude()) {
-            item.put(DataStorageContract.ReportsColumns.ALTITUDE, (float) mGpsPosition.getAltitude());
-        }
-        if (mGpsPosition.hasAccuracy()) {
-            // Note that Android does not support an accuracy measurement specific to altitude
-            item.put(DataStorageContract.ReportsColumns.ACCURACY, mGpsPosition.getAccuracy());
-        }
-        return item;
-    }
+        JSONObject headerFields = new JSONObject();
+        headerFields.put(DataStorageContract.ReportsColumns.LAT, Math.floor(mGpsPosition.getLatitude() * 1.0E6) / 1.0E6);
+        headerFields.put(DataStorageContract.ReportsColumns.LON, Math.floor(mGpsPosition.getLongitude() * 1.0E6) / 1.0E6);
+        headerFields.put(DataStorageContract.ReportsColumns.TIME, mGpsPosition.getTime());
 
-    public JSONObject toMLSGeolocate() throws JSONException {
-        JSONObject item = new JSONObject();
-        item.put(DataStorageContract.ReportsColumns.LAT, Math.floor(mGpsPosition.getLatitude() * 1.0E6) / 1.0E6);
-        item.put(DataStorageContract.ReportsColumns.LON, Math.floor(mGpsPosition.getLongitude() * 1.0E6) / 1.0E6);
-        item.put(DataStorageContract.ReportsColumns.TIME, mGpsPosition.getTime());
+
         /* Skip adding 'heading'
 
             The heading field denotes the direction of travel of the device and is specified in
@@ -117,7 +107,7 @@ public final class StumblerBundle implements Parcelable {
                 JSONObject obj = c.toJSONObject();
                 cellJSON.put(obj);
             }
-            item.put(DataStorageContract.ReportsColumns.CELL, cellJSON);
+            headerFields.put(DataStorageContract.ReportsColumns.CELL, cellJSON);
         }
 
         if (mWifiData.size() > 0) {
@@ -133,12 +123,70 @@ public final class StumblerBundle implements Parcelable {
                 }
                 wifis.put(wifiEntry);
             }
-            item.put(DataStorageContract.ReportsColumns.WIFI, wifis);
+            headerFields.put(DataStorageContract.ReportsColumns.WIFI, wifis);
         }
 
-        return item;
+        if (mGpsPosition.hasAltitude()) {
+            headerFields.put(DataStorageContract.ReportsColumns.ALTITUDE, (float) mGpsPosition.getAltitude());
+        }
+        if (mGpsPosition.hasAccuracy()) {
+            // Note that Android does not support an accuracy measurement specific to altitude
+            headerFields.put(DataStorageContract.ReportsColumns.ACCURACY, mGpsPosition.getAccuracy());
+        }
+        return headerFields;
     }
 
+    public JSONObject toMLSGeolocate() throws JSONException {
+        JSONObject headerFields = new JSONObject();
+        headerFields.put(DataStorageContract.ReportsColumns.LAT, Math.floor(mGpsPosition.getLatitude() * 1.0E6) / 1.0E6);
+        headerFields.put(DataStorageContract.ReportsColumns.LON, Math.floor(mGpsPosition.getLongitude() * 1.0E6) / 1.0E6);
+        headerFields.put(DataStorageContract.ReportsColumns.TIME, mGpsPosition.getTime());
+
+        /* Skip adding 'heading'
+
+            The heading field denotes the direction of travel of the device and is specified in
+            degrees, where 0° ≤ heading < 360°, counting clockwise relative to the true north.
+            If the device cannot provide heading information or the device is stationary,
+            the field should be omitted.
+
+            Adding heading is tricky and problematic.  We might be able to do this by taking a delta
+            between two relatively high precision locations, but I'm skeptical that the
+        */
+
+        if (mCellData.size() > 0) {
+            headerFields.put(DataStorageContract.ReportsColumns.RADIO, firstRadioType());
+
+            JSONArray cellJSON = new JSONArray();
+
+            for (CellInfo c : mCellData.values()) {
+                JSONObject obj = c.toJSONObject();
+                cellJSON.put(obj);
+            }
+            headerFields.put(DataStorageContract.ReportsColumns.CELL, cellJSON);
+        }
+
+        if (mWifiData.size() > 0) {
+            JSONArray wifis = new JSONArray();
+            for (ScanResult s : mWifiData.values()) {
+                JSONObject wifiEntry = new JSONObject();
+                wifiEntry.put("macAddress", s.BSSID);
+                if (s.frequency != 0) {
+                    wifiEntry.put("frequency", s.frequency);
+                }
+                if (s.level != 0) {
+                    wifiEntry.put("signalStrength", s.level);
+                }
+                wifis.put(wifiEntry);
+            }
+            headerFields.put(DataStorageContract.ReportsColumns.WIFI, wifis);
+        }
+
+        return headerFields;
+    }
+
+    private String firstRadioType() {
+        return mCellData.firstEntry().getValue().getCellRadio();
+    }
 
     public boolean hasMaxWifisPerLocation() {
         return mWifiData.size() == MAX_WIFIS_PER_LOCATION;

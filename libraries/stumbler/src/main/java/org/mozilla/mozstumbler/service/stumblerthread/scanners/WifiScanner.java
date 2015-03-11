@@ -38,7 +38,7 @@ public class WifiScanner {
     private final Context mAppContext;
     private final WifiManagerProxy wifiManagerProxy;
     private boolean mStarted;
-    private AtomicInteger mPassiveScanCount = new AtomicInteger();
+    private AtomicInteger mScanCount = new AtomicInteger();
     private WifiLock mWifiLock;
     private Timer mWifiScanTimer;
     private AtomicInteger mVisibleAPs = new AtomicInteger();
@@ -74,7 +74,7 @@ public class WifiScanner {
 
     public synchronized void start() {
         // If the scan timer is active, this will reset the number of times it has run
-        mPassiveScanCount.set(0);
+        mScanCount.set(0);
 
         if (mStarted) {
             return;
@@ -159,7 +159,7 @@ public class WifiScanner {
 
             @Override
             public void run() {
-                if (mPassiveScanCount.incrementAndGet() > AppGlobals.PASSIVE_MODE_MAX_SCANS_PER_GPS) {
+                if (mScanCount.incrementAndGet() > AppGlobals.MAX_SCANS_PER_GPS) {
                     stop(); // set mWifiScanTimer to null
                     return;
                 }

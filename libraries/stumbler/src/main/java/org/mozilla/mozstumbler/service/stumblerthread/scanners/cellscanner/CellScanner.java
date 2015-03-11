@@ -39,7 +39,7 @@ public class CellScanner {
     private final ISimpleCellScanner mSimpleCellScanner;
     private Timer mCellScanTimer;
     private Handler mBroadcastScannedHandler;
-    private AtomicInteger mPassiveScanCount = new AtomicInteger();
+    private AtomicInteger mScanCount = new AtomicInteger();
 
     public CellScanner(Context appCtx) {
         mAppContext = appCtx;
@@ -56,7 +56,7 @@ public class CellScanner {
         }
 
         // If the scan timer is active, this will reset the number of times it has run
-        mPassiveScanCount.set(0);
+        mScanCount.set(0);
 
         if (mCellScanTimer != null) {
             return;
@@ -86,7 +86,7 @@ public class CellScanner {
                     return;
                 }
 
-                if (mPassiveScanCount.incrementAndGet() > AppGlobals.PASSIVE_MODE_MAX_SCANS_PER_GPS) {
+                if (mScanCount.incrementAndGet() > AppGlobals.MAX_SCANS_PER_GPS) {
                     stop();
                     return;
                 }

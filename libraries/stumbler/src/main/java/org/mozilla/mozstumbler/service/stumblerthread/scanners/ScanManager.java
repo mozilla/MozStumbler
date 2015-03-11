@@ -36,7 +36,7 @@ public class ScanManager {
     private static final String LOG_TAG = LoggerUtil.makeLogTag(ScanManager.class);
 
     private static Context mAppContext;
-    private Timer mPassiveModeFlushTimer;
+    private Timer mFlushTimer;
 
     // how often to flush a leftover bundle to the reports table
     // If there is a bundle, and nothing happens for 10sec, then flush it
@@ -121,7 +121,7 @@ public class ScanManager {
                 PassiveModeBatteryState.IGNORE_BATTERY_STATE;
     }
 
-    public void newPassiveGpsLocation() {
+    public void newGpsLocation() {
         if (mPassiveModeBatteryState == PassiveModeBatteryState.LOW) {
             return;
         }
@@ -129,14 +129,14 @@ public class ScanManager {
         mWifiScanner.start();
         mCellScanner.start();
 
-        if (mPassiveModeFlushTimer != null) {
-            mPassiveModeFlushTimer.cancel();
+        if (mFlushTimer != null) {
+            mFlushTimer.cancel();
         }
 
         Date when = new Date();
         when.setTime(when.getTime() + FLUSH_RATE_MS);
-        mPassiveModeFlushTimer = new Timer();
-        mPassiveModeFlushTimer.schedule(new TimerTask() {
+        mFlushTimer = new Timer();
+        mFlushTimer.schedule(new TimerTask() {
             @Override
             public void run() {
                 Intent flush = new Intent(Reporter.ACTION_FLUSH_TO_BUNDLE);

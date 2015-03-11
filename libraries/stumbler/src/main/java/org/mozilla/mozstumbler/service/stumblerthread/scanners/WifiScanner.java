@@ -35,10 +35,11 @@ public class WifiScanner {
     public static final int STATUS_WIFI_DISABLED = -1;
 
     private static final String LOG_TAG = LoggerUtil.makeLogTag(WifiScanner.class);
-    private static final long WIFI_MIN_UPDATE_TIME = 5000; // milliseconds
+    private static final long WIFI_MIN_UPDATE_TIME = 4000; // milliseconds
     private final Context mAppContext;
     private final WifiManagerProxy wifiManagerProxy;
     private boolean mStarted;
+    private AtomicInteger mPassiveScanCount = new AtomicInteger();
     private WifiLock mWifiLock;
     private Timer mWifiScanTimer;
     private AtomicInteger mVisibleAPs = new AtomicInteger();
@@ -73,6 +74,9 @@ public class WifiScanner {
     }
 
     public synchronized void start(final ActiveOrPassiveStumbling stumblingMode) {
+        // If the scan timer is active, this will reset the number of times it has run
+        mPassiveScanCount.set(0);
+
         if (mStarted) {
             return;
         }
@@ -153,13 +157,11 @@ public class WifiScanner {
         // Ensure that we are constantly scanning for new access points.
         mWifiScanTimer = new Timer();
         mWifiScanTimer.schedule(new TimerTask() {
-            int mPassiveScanCount;
 
             @Override
             public void run() {
                 if (stumblingMode == ActiveOrPassiveStumbling.PASSIVE_STUMBLING &&
-                        mPassiveScanCount++ > AppGlobals.PASSIVE_MODE_MAX_SCANS_PER_GPS) {
-                    mPassiveScanCount = 0;
+                        mPassiveScanCount.incrementAndGet() > AppGlobals.PASSIVE_MODE_MAX_SCANS_PER_GPS) {
                     stop(); // set mWifiScanTimer to null
                     return;
                 }

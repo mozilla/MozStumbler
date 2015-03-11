@@ -38,6 +38,13 @@ public class ScanManager {
     private static Context mAppContext;
     private Timer mPassiveModeFlushTimer;
 
+    // how often to flush a leftover bundle to the reports table
+    // If there is a bundle, and nothing happens for 10sec, then flush it
+    // MAX_SCANS_PER_GPS    is 2
+    // CELL_MIN_UPDATE_TIME is 1sec
+    // WIFI_MIN_UPDATE_TIME is 4sec
+    private static final int FLUSH_RATE_MS = 10000; // 10 sec
+
     private GPSScanner mGPSScanner;
     private WifiScanner mWifiScanner;
     private CellScanner mCellScanner;
@@ -126,16 +133,12 @@ public class ScanManager {
         mWifiScanner.start(ActiveOrPassiveStumbling.PASSIVE_STUMBLING);
         mCellScanner.start(ActiveOrPassiveStumbling.PASSIVE_STUMBLING);
 
-        // how often to flush a leftover bundle to the reports table
-        // If there is a bundle, and nothing happens for 10sec, then flush it
-        final int flushRate_ms = 10000;
-
         if (mPassiveModeFlushTimer != null) {
             mPassiveModeFlushTimer.cancel();
         }
 
         Date when = new Date();
-        when.setTime(when.getTime() + flushRate_ms);
+        when.setTime(when.getTime() + FLUSH_RATE_MS);
         mPassiveModeFlushTimer = new Timer();
         mPassiveModeFlushTimer.schedule(new TimerTask() {
             @Override

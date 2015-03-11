@@ -120,8 +120,8 @@
     <string name="action_developer">Entwickler</string>
     <string name="developer_title">Entwickler</string>
     <string name="enable_option_show_mls_on_map">MLS Ortungsabfragen aktivieren</string>
-    <string name="enable_option_show_mls_on_map_summary">Mozilla Location Service (MLS) Standorte für Ihre Berichte anzeigen.</string>
-    <string name="enable_option_show_mls_on_map_detailed_info">Auf Kosten von ein wenig mehr Energie-, Speicher- und Datenverbrauch wird für jeden Bericht der MLS Standort angezeigt. Dieser wird auf der Karte als roter Punkt, mit einer Verbindungslinie zum zugehörigen Bericht, angezeigt. Es werden jedoch keine Standorte über mobile Datenverbindungen abgefragt, wenn \"%1$s\" aktiviert ist.</string>
+    <string name="enable_option_show_mls_on_map_summary">Geschätzte Mozilla Location Service (MLS) Standorte für jeden Bericht abrufen und anzeigen.</string>
+    <string name="enable_option_show_mls_on_map_detailed_info">Auf Kosten von ein wenig mehr Speicher- und Datenverbrauch wird für jeden Bericht der MLS Standort angezeigt - d.h. Ihre geschätzte Position basierend auf bereits gesammelten Daten.\nDieser wird auf der Karte als roter Punkt, mit einer Verbindungslinie zum zugehörigen Bericht, angezeigt. Je näher dieser sich an Ihrer tatsächlichen GPS Position befindet, desto präziser ist der Mozilla Location Service. Weiteres Scannen verbessert die Präzision.\nEs werden jedoch keine Standorte über mobile Datenverbindungen abgefragt, wenn \"%1$s\" aktiviert ist.</string>
     <string name="cell_plus_wifi_observation">WLAN + Funkzellen Bericht</string>
     <string name="cell_only_observation">Nur Funkzellen Bericht</string>
     <string name="wifi_only_observation">Nur WLAN Bericht</string>

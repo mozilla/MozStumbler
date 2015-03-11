@@ -13,7 +13,6 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import org.mozilla.mozstumbler.service.AppGlobals;
-import org.mozilla.mozstumbler.service.AppGlobals.ActiveOrPassiveStumbling;
 import org.mozilla.mozstumbler.service.stumblerthread.blocklist.BSSIDBlockList;
 import org.mozilla.mozstumbler.service.stumblerthread.blocklist.SSIDBlockList;
 import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
@@ -73,7 +72,7 @@ public class WifiScanner {
         return wifiManagerProxy.getScanResults();
     }
 
-    public synchronized void start(final ActiveOrPassiveStumbling stumblingMode) {
+    public synchronized void start() {
         // If the scan timer is active, this will reset the number of times it has run
         mPassiveScanCount.set(0);
 
@@ -83,7 +82,7 @@ public class WifiScanner {
         mStarted = true;
 
         if (isScanEnabled()) {
-            activatePeriodicScan(stumblingMode);
+            activatePeriodicScan();
         }
 
         wifiManagerProxy.registerReceiver(this);
@@ -102,7 +101,7 @@ public class WifiScanner {
 
         if (WifiManager.WIFI_STATE_CHANGED_ACTION.equals(action)) {
             if (isScanEnabled()) {
-                activatePeriodicScan(ActiveOrPassiveStumbling.ACTIVE_STUMBLING);
+                activatePeriodicScan();
             } else {
                 deactivatePeriodicScan();
             }
@@ -142,7 +141,7 @@ public class WifiScanner {
         return STATUS_ACTIVE;
     }
 
-    synchronized void activatePeriodicScan(final ActiveOrPassiveStumbling stumblingMode) {
+    synchronized void activatePeriodicScan() {
         if (mWifiScanTimer != null) {
             return;
         }
@@ -160,8 +159,7 @@ public class WifiScanner {
 
             @Override
             public void run() {
-                if (stumblingMode == ActiveOrPassiveStumbling.PASSIVE_STUMBLING &&
-                        mPassiveScanCount.incrementAndGet() > AppGlobals.PASSIVE_MODE_MAX_SCANS_PER_GPS) {
+                if (mPassiveScanCount.incrementAndGet() > AppGlobals.PASSIVE_MODE_MAX_SCANS_PER_GPS) {
                     stop(); // set mWifiScanTimer to null
                     return;
                 }
@@ -207,7 +205,7 @@ public class WifiScanner {
 
         if (WifiManager.WIFI_STATE_CHANGED_ACTION.equals(action)) {
             if (isScanEnabled()) {
-                activatePeriodicScan(ActiveOrPassiveStumbling.ACTIVE_STUMBLING);
+                activatePeriodicScan();
             } else {
                 deactivatePeriodicScan();
             }

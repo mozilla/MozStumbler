@@ -201,9 +201,7 @@ public class GPSScanner implements LocationListener {
         reportNewLocationReceived(location);
         mLocationCount++;
 
-        if (mIsPassiveMode) {
-            mScanManager.newPassiveGpsLocation();
-        }
+        mScanManager.newPassiveGpsLocation();
 
         if (timeDeltaMs > 0) {
             TelemetryWrapper.addToHistogram(AppGlobals.TELEMETRY_TIME_BETWEEN_RECEIVED_LOCATIONS_SEC,

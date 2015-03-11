@@ -126,12 +126,8 @@ public class ScanManager {
             return;
         }
 
-        if (AppGlobals.isDebug) {
-            ClientLog.d(LOG_TAG, "New passive location");
-        }
-
-        mWifiScanner.start(ActiveOrPassiveStumbling.PASSIVE_STUMBLING);
-        mCellScanner.start(ActiveOrPassiveStumbling.PASSIVE_STUMBLING);
+        mWifiScanner.start();
+        mCellScanner.start();
 
         if (mPassiveModeFlushTimer != null) {
             mPassiveModeFlushTimer.cancel();
@@ -211,13 +207,6 @@ public class ScanManager {
         mCellScanner = new CellScanner(mAppContext);
 
         mGPSScanner.start(mStumblingMode);
-        if (mStumblingMode == ActiveOrPassiveStumbling.ACTIVE_STUMBLING) {
-            mWifiScanner.start(mStumblingMode);
-            mCellScanner.start(mStumblingMode);
-            // in passive mode, these scans are started by passive gps notifications
-        } else {
-            Log.d(LOG_TAG, "Wifi and Cell Scanners are not engaged with passive mode.");
-        }
     }
 
     public synchronized boolean stopScanning() {

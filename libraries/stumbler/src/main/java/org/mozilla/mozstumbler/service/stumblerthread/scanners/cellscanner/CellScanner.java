@@ -13,7 +13,6 @@ import android.os.Message;
 import android.support.v4.content.LocalBroadcastManager;
 
 import org.mozilla.mozstumbler.service.AppGlobals;
-import org.mozilla.mozstumbler.service.AppGlobals.ActiveOrPassiveStumbling;
 import org.mozilla.mozstumbler.service.Prefs;
 import org.mozilla.mozstumbler.service.stumblerthread.Reporter;
 
@@ -51,7 +50,7 @@ public class CellScanner {
         }
     }
 
-    public void start(final ActiveOrPassiveStumbling stumblingMode) {
+    public void start() {
         if (!mSimpleCellScanner.isSupportedOnThisDevice()) {
             return;
         }
@@ -87,8 +86,7 @@ public class CellScanner {
                     return;
                 }
 
-                if (stumblingMode == ActiveOrPassiveStumbling.PASSIVE_STUMBLING &&
-                        mPassiveScanCount.incrementAndGet() > AppGlobals.PASSIVE_MODE_MAX_SCANS_PER_GPS) {
+                if (mPassiveScanCount.incrementAndGet() > AppGlobals.PASSIVE_MODE_MAX_SCANS_PER_GPS) {
                     stop();
                     return;
                 }

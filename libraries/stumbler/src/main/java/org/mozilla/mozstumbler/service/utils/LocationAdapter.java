@@ -35,6 +35,13 @@ public class LocationAdapter {
         return location;
     }
 
+    public static Location fromJSON_LatLngOnly(JSONObject jsonObj) {
+        Location location = new Location(AppGlobals.LOCATION_ORIGIN_INTERNAL);
+        location.setLatitude(getLat(jsonObj));
+        location.setLongitude(getLng(jsonObj));
+        return location;
+    }
+
     /*
     We should deserialize the JSONObject in one shot and provide
     an object that you can access lat/long/accuracy
@@ -54,7 +61,7 @@ public class LocationAdapter {
     }
 
 
-    private static float getFloat(JSONObject jsonObject, String field_name, boolean useLocation) {
+    public static float getFloat(JSONObject jsonObject, String field_name, boolean useLocation) {
         float result = 0f;
         try {
             if (useLocation) {

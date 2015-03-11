@@ -1,6 +1,7 @@
 package org.mozilla.osmdroid.tileprovider;
 
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.core.logging.ClientLog;
@@ -111,7 +112,7 @@ public class LRUMapTileCache {
             if (size() > mCapacity) {
                 final MapTile eldest = aEldest.getKey();
                 if (AppGlobals.isDebug) {
-                    ClientLog.d(LOG_TAG, "Remove old tile: " + eldest);
+                    Log.v(LOG_TAG, "Remove old tile: " + eldest);
                 }
                 remove(eldest);
                 // don't return true because we've already removed it

@@ -166,7 +166,7 @@ public class WifiScanner {
                     return;
                 }
                 if (AppGlobals.isDebug) {
-                    Log.d(LOG_TAG, "WiFi Scanning Timer fired");
+                    Log.v(LOG_TAG, "WiFi Scanning Timer fired");
                 }
                 wifiManagerProxy.runWifiScan();
             }

@@ -5,6 +5,7 @@
 package org.mozilla.mozstumbler.client.mapview;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Canvas;
@@ -83,6 +84,7 @@ public class MapFragment extends android.support.v4.app.Fragment
     private boolean mFirstLocationFix;
     private boolean mUserPanning = false;
     private ObservationPointsOverlay mObservationPointsOverlay;
+    private CellPointsOverlay mCellPointsOverlay;
     private MapLocationListener mMapLocationListener;
     private LowResMapOverlay mLowResMapOverlayHighZoom;
     private LowResMapOverlay mLowResMapOverlayLowZoom;
@@ -172,6 +174,7 @@ public class MapFragment extends android.support.v4.app.Fragment
                 updateOverlayBaseLayer(z);
                 updateOverlayCoverageLayer(z);
                 mObservationPointsOverlay.zoomChanged(mMap);
+                mCellPointsOverlay.zoomChanged(mMap);
                 return true;
             }
 
@@ -190,6 +193,9 @@ public class MapFragment extends android.support.v4.app.Fragment
 
         mObservationPointsOverlay = new ObservationPointsOverlay(mRootView.getContext());
         mMap.getOverlays().add(mObservationPointsOverlay);
+
+        mCellPointsOverlay = new CellPointsOverlay(mRootView.getContext(), mMap);
+        mMap.getOverlays().add(mCellPointsOverlay);
     }
 
     private void initializeLastLocation(Bundle savedInstanceState) {
@@ -553,6 +559,8 @@ public class MapFragment extends android.support.v4.app.Fragment
         setShowMLS(prefs.getOnMapShowMLS());
 
         mObservationPointsOverlay.zoomChanged(mMap);
+        mCellPointsOverlay.zoomChanged(mMap);
+
         ClientPrefs cp = ClientPrefs.getInstance(mRootView.getContext());
         if (!cp.isMapZoomLimited()) {
             mMap.setMinZoomLevel(LOWEST_UNLIMITED_ZOOM);

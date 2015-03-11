@@ -32,6 +32,11 @@ public class ScanManager {
     public static final String ACTION_SCAN_PAUSED_USER_MOTIONLESS = AppGlobals.ACTION_NAMESPACE + ".NOTIFY_USER_MOTIONLESS";
     public static final String ACTION_SCAN_UNPAUSED_USER_MOVED = AppGlobals.ACTION_NAMESPACE + ".NOTIFY_USER_MOVED";
 
+    public static final String SCANSTATE_STARTED = AppGlobals.ACTION_NAMESPACE + ".SCANSTATE_STARTED";
+    public static final String SCANSTATE_STOPPED = AppGlobals.ACTION_NAMESPACE + ".SCANSTATE_STOPPED";
+    public static final String SCANSTATE_STARTED_BUT_PAUSED_MOTIONLESS = AppGlobals.ACTION_NAMESPACE + ".SCANSTATE_STARTED_BUT_PAUSED_MOTIONLESS";
+
+
     private ILogger Log = (ILogger) ServiceLocator.getInstance().getService(ILogger.class);
     private static final String LOG_TAG = LoggerUtil.makeLogTag(ScanManager.class);
 
@@ -67,10 +72,11 @@ public class ScanManager {
     private LocationChangeSensor mLocationChangeSensor;
     private MotionSensor mMotionSensor;
 
-    enum ScannerState {
+    public static enum ScannerState {
         STOPPED, STARTED, STARTED_BUT_PAUSED_MOTIONLESS
     }
-     ScannerState mScannerState = ScannerState.STOPPED;
+
+    private ScannerState mScannerState = ScannerState.STOPPED;
 
     // After DetectUnchangingLocation reports the user is not moving, and the scanning pauses,
     // then use MotionSensor to determine when to wake up and start scanning again.
@@ -98,7 +104,9 @@ public class ScanManager {
             if (mScannerState != ScannerState.STARTED_BUT_PAUSED_MOTIONLESS ) {
                 return;
             }
-            mScannerState = ScannerState.STOPPED; // To ensure startScanning() runs
+
+            broadcastScanState(ScannerState.STOPPED);
+
             startScanning();
             mMotionSensor.stop();
 
@@ -106,6 +114,23 @@ public class ScanManager {
             LocalBroadcastManager.getInstance(mAppContext).sendBroadcastSync(sendIntent);
         }
     };
+
+    private void broadcastScanState(ScannerState scanState) {
+        mScannerState = scanState;
+
+        String action = "";
+        if (scanState == ScannerState.STOPPED) {
+            action = SCANSTATE_STOPPED;
+        } else if (scanState == ScannerState.STARTED_BUT_PAUSED_MOTIONLESS) {
+            action = SCANSTATE_STARTED_BUT_PAUSED_MOTIONLESS;
+        } else if (scanState == ScannerState.STARTED) {
+            action = SCANSTATE_STARTED;
+        } else {
+            throw new RuntimeException("Unrecognized scan state: " + scanState);
+        }
+        Log.i(LOG_TAG, "Broadcasting scan state == " + action);
+        LocalBroadcastManager.getInstance(mAppContext).sendBroadcast(new Intent(action));
+    }
 
     public ScanManager() {}
 
@@ -168,7 +193,9 @@ public class ScanManager {
         if (isStopped()) {
             return false;
         }
-        mScannerState = ScannerState.STARTED_BUT_PAUSED_MOTIONLESS;
+
+        broadcastScanState(ScannerState.STARTED_BUT_PAUSED_MOTIONLESS);
+
         return stopAllScanners();
     }
 
@@ -179,7 +206,7 @@ public class ScanManager {
             return;
         }
 
-        mScannerState = ScannerState.STARTED;
+        broadcastScanState(ScannerState.STARTED);
 
         if (mLocationChangeSensor == null) {
             mLocationChangeSensor = new LocationChangeSensor(mAppContext, mDetectUserIdleReceiver);
@@ -224,7 +251,7 @@ public class ScanManager {
         if (isStopped()) {
             return false;
         }
-        mScannerState = ScannerState.STOPPED;
+        broadcastScanState(ScannerState.STOPPED);
         mMotionSensor.scannerFullyStopped();
         return stopAllScanners();
     }

@@ -4,8 +4,6 @@
 
 package org.mozilla.mozstumbler.client.navdrawer;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Build;
@@ -17,14 +15,12 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
-import android.text.Html;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.CompoundButton;
 import android.widget.Switch;
-import android.widget.TextView;
 
 import org.mozilla.mozstumbler.BuildConfig;
 import org.mozilla.mozstumbler.R;
@@ -36,13 +32,17 @@ import org.mozilla.mozstumbler.client.Updater;
 import org.mozilla.mozstumbler.client.mapview.MapFragment;
 import org.mozilla.mozstumbler.client.subactivities.FirstRunFragment;
 import org.mozilla.mozstumbler.client.subactivities.LeaderboardActivity;
+import org.mozilla.mozstumbler.svclocator.ServiceLocator;
+import org.mozilla.mozstumbler.svclocator.services.log.ILogger;
 import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
 public class MainDrawerActivity
         extends ActionBarActivity
         implements IMainActivity {
 
+    private ILogger Log = (ILogger) ServiceLocator.getInstance().getService(ILogger.class);
     private static final String LOG_TAG = LoggerUtil.makeLogTag(MainDrawerActivity.class);
+
     private static final int MENU_START_STOP = 1;
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
@@ -156,11 +156,7 @@ public class MainDrawerActivity
             return;
         }
 
-        ClientStumblerService svc = app.getService();
-        if (svc == null) {
-            return;
-        }
-        if (!svc.isStopped()) {
+        if (!app.isStopped()) {
             keepScreenOn(ClientPrefs.getInstance(this).getKeepScreenOn());
         } else {
             keepScreenOn(false);

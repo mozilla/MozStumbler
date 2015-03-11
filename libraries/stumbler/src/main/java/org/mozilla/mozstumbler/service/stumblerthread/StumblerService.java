@@ -53,7 +53,7 @@ public class StumblerService extends PersistentIntentService
         super(name);
     }
 
-    public synchronized boolean isStopped() {
+    private synchronized boolean isStopped() {
         return mScanManager.isStopped();
     }
 

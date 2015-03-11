@@ -58,6 +58,9 @@ public class CellScanner {
         // If the scan timer is active, this will reset the number of times it has run
         mScanCount.set(0);
 
+        // clear cells on next scan
+        mReportWasFlushed.set(true);
+
         if (mCellScanTimer != null) {
             return;
         }
@@ -126,8 +129,6 @@ public class CellScanner {
     }
 
     public synchronized void stop() {
-        mReportWasFlushed.set(false);
-        clearCells();
         LocalBroadcastManager.getInstance(mAppContext).unregisterReceiver(mReportFlushedReceiver);
 
         if (mCellScanTimer != null) {

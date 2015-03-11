@@ -185,8 +185,6 @@ public class WifiScanner {
 
         mWifiScanTimer.cancel();
         mWifiScanTimer = null;
-
-        mVisibleAPs.set(0);
     }
 
     private void reportScanResults(ArrayList<ScanResult> scanResults) {

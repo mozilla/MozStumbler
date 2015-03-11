@@ -92,10 +92,6 @@ public class TileDownloaderDelegate {
         }
         IResponse resp = httpClient.get(tileURLString, headers);
 
-        if (AppGlobals.isDebug) {
-            ClientLog.d(LOG_TAG, "Got a response: " + resp.httpStatusCode());
-        }
-
         if (resp == null) {
             return null;
         }
@@ -140,9 +136,6 @@ public class TileDownloaderDelegate {
 
         // write the data using the TileIOFacade
         serializableTile = tileIOFacade.saveFile(tileSource, tile, tileBytes, etag);
-        if (AppGlobals.isDebug) {
-            ClientLog.d(LOG_TAG, "serializableTile == " + serializableTile);
-        }
         byte[] data = serializableTile.getTileData();
         return tileSource.getDrawable(data);
     }

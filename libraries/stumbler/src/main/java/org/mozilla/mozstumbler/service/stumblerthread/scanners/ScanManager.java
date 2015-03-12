@@ -32,9 +32,29 @@ public class ScanManager {
     public static final String ACTION_SCAN_PAUSED_USER_MOTIONLESS = AppGlobals.ACTION_NAMESPACE + ".NOTIFY_USER_MOTIONLESS";
     public static final String ACTION_SCAN_UNPAUSED_USER_MOVED = AppGlobals.ACTION_NAMESPACE + ".NOTIFY_USER_MOVED";
 
-    public static final String SCANSTATE_STARTED = AppGlobals.ACTION_NAMESPACE + ".SCANSTATE_STARTED";
-    public static final String SCANSTATE_STOPPED = AppGlobals.ACTION_NAMESPACE + ".SCANSTATE_STOPPED";
-    public static final String SCANSTATE_STARTED_BUT_PAUSED_MOTIONLESS = AppGlobals.ACTION_NAMESPACE + ".SCANSTATE_STARTED_BUT_PAUSED_MOTIONLESS";
+    public static enum ScannerState {
+        STOPPED, STARTED, STARTED_BUT_PAUSED_MOTIONLESS;
+
+        public static final String NAMESPACE = "org.mozilla.mozstumbler.scanner.state";
+
+        @Override
+        public String toString() {
+            return NAMESPACE+ this.name();
+        }
+
+        public static ScannerState fromString(String name)  {
+            try {
+                return ScannerState.valueOf(name.substring(ScannerState.NAMESPACE.length()));
+            } catch (IllegalArgumentException iae) {
+                return null;
+            }
+        }
+    }
+
+    // Convenience strings so that we don't have to keep invoking tostring()
+    private static final String SCANSTATE_STARTED = ScannerState.STARTED.toString();
+    private static final String SCANSTATE_STOPPED = ScannerState.STOPPED.toString();
+    private static final String SCANSTATE_STARTED_BUT_PAUSED_MOTIONLESS = ScannerState.STARTED_BUT_PAUSED_MOTIONLESS.toString();
 
 
     private ILogger Log = (ILogger) ServiceLocator.getInstance().getService(ILogger.class);
@@ -72,9 +92,7 @@ public class ScanManager {
     private LocationChangeSensor mLocationChangeSensor;
     private MotionSensor mMotionSensor;
 
-    public static enum ScannerState {
-        STOPPED, STARTED, STARTED_BUT_PAUSED_MOTIONLESS
-    }
+
 
     private ScannerState mScannerState = ScannerState.STOPPED;
 
@@ -118,16 +136,7 @@ public class ScanManager {
     private void broadcastScanState(ScannerState scanState) {
         mScannerState = scanState;
 
-        String action = "";
-        if (scanState == ScannerState.STOPPED) {
-            action = SCANSTATE_STOPPED;
-        } else if (scanState == ScannerState.STARTED_BUT_PAUSED_MOTIONLESS) {
-            action = SCANSTATE_STARTED_BUT_PAUSED_MOTIONLESS;
-        } else if (scanState == ScannerState.STARTED) {
-            action = SCANSTATE_STARTED;
-        } else {
-            throw new RuntimeException("Unrecognized scan state: " + scanState);
-        }
+        String action = scanState.toString();
         Log.i(LOG_TAG, "Broadcasting scan state == " + action);
         LocalBroadcastManager.getInstance(mAppContext).sendBroadcast(new Intent(action));
     }

@@ -4,19 +4,25 @@
 
 package org.mozilla.mozstumbler.client;
 
+import android.app.Notification;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Binder;
 import android.os.IBinder;
 import android.os.Looper;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 
+import org.mozilla.mozstumbler.R;
+import org.mozilla.mozstumbler.client.util.NotificationUtil;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.stumblerthread.StumblerService;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.ClientDataStorageManager;
-import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageManager;
 import org.mozilla.mozstumbler.service.utils.BatteryCheckReceiver;
 import org.mozilla.mozstumbler.service.utils.BatteryCheckReceiver.BatteryCheckCallback;
+import org.mozilla.mozstumbler.svclocator.ServiceLocator;
+import org.mozilla.mozstumbler.svclocator.services.log.ILogger;
 import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
 // Used as a bound service (with foreground priority) in Mozilla Stumbler, a.k.a. active scanning mode.
@@ -25,6 +31,30 @@ import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 // -- Binding functions are commented in this class as being unused in the stand-alone service mode.
 public class ClientStumblerService extends StumblerService {
     private static final String LOG_TAG = LoggerUtil.makeLogTag(StumblerService.class);
+    private static final ILogger Log = (ILogger) ServiceLocator.getInstance().getService(ILogger.class);
+
+    public static enum RequestChangeScannerState {
+        START, STOP;
+
+        public static final String NAMESPACE = "org.mozilla.mozstumbler.clientstumblerservice.state";
+
+        @Override
+        public String toString() {
+            return NAMESPACE+ this.name();
+        }
+
+        public static RequestChangeScannerState fromString(String name)  {
+            try {
+                return RequestChangeScannerState.valueOf(name.substring(RequestChangeScannerState.NAMESPACE.length()));
+            } catch (IllegalArgumentException iae) {
+                return null;
+            }
+        }
+    }
+
+    private static final String START_FOREGROUND_SCANNING = RequestChangeScannerState.START.toString();
+    private static final String STOP_FOREGROUND_SCANNING = RequestChangeScannerState.STOP.toString();
+
     private final IBinder mBinder = new StumblerBinder();
     private final BatteryCheckCallback mBatteryCheckCallback = new BatteryCheckCallback() {
         private boolean waitForBatteryOkBeforeSendingNotification;
@@ -44,13 +74,46 @@ public class ClientStumblerService extends StumblerService {
     };
     private BatteryCheckReceiver mBatteryChecker;
 
+    private final BroadcastReceiver startStopScanReceiver = new BroadcastReceiver() {
+        // This captures state change from the ScanManager
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            if (intent == null) {
+                return;
+            }
+            RequestChangeScannerState newRunState = RequestChangeScannerState.fromString(intent.getAction());
+
+            if (newRunState != null) {
+                if (newRunState.equals(RequestChangeScannerState.START)) {
+                    startScanning();
+                } else if (newRunState.equals(RequestChangeScannerState.STOP)) {
+                    stopScanning();
+                }
+            }
+        };
+    };
+
+
     // Service binding is not used in stand-alone passive mode.
     @Override
     public IBinder onBind(Intent intent) {
         if (AppGlobals.isDebug) {
             Log.d(LOG_TAG, "onBind");
         }
+
+        registerIntentFilters();
         return mBinder;
+    }
+
+    private void registerIntentFilters() {
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(START_FOREGROUND_SCANNING);
+        intentFilter.addAction(STOP_FOREGROUND_SCANNING);
+        LocalBroadcastManager
+                .getInstance(getApplicationContext())
+                .registerReceiver(startStopScanReceiver,
+                        intentFilter);
     }
 
     // Service binding is not used in stand-alone passive mode.
@@ -78,10 +141,14 @@ public class ClientStumblerService extends StumblerService {
         if (mBatteryChecker != null) {
             mBatteryChecker.stop();
         }
+
+        stopForeground(true);
     }
 
     @Override
     public synchronized void startScanning() {
+        foregroundNotification();
+
         super.startScanning();
 
         if (mBatteryChecker == null) {
@@ -89,6 +156,29 @@ public class ClientStumblerService extends StumblerService {
         }
 
         mBatteryChecker.start();
+    }
+
+    private void foregroundNotification() {
+        NotificationUtil nm = new NotificationUtil(this.getApplicationContext());
+        Notification notification = nm.buildNotification(getString(R.string.stop_scanning));
+        startForeground(NotificationUtil.NOTIFICATION_ID, notification);
+    }
+
+    public static void startForegroundScanning(Context ctx) {
+        Intent startIntent = new Intent(ctx, ClientStumblerService.class);
+        startIntent.setAction(START_FOREGROUND_SCANNING);
+
+        // TODO: change this eventually to use startService and adjust the BroadcastReceiver
+        // code and move it into an onHandleIntent block
+        LocalBroadcastManager.getInstance(ctx).sendBroadcastSync(startIntent);
+    }
+
+    public static void stopForegroundScanning(Context ctx) {
+        Intent startIntent = new Intent(ctx, ClientStumblerService.class);
+        startIntent.setAction(STOP_FOREGROUND_SCANNING);
+
+        // TODO: change this eventually to use stopService
+        LocalBroadcastManager.getInstance(ctx).sendBroadcastSync(startIntent);
     }
 
     // Service binding is not used in stand-alone passive mode.

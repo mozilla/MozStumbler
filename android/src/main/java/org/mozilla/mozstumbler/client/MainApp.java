@@ -307,16 +307,7 @@ public class MainApp extends Application
     }
 
     public void startScanning() {
-        if (mStumblerService == null) {
-            return;
-        }
-        NotificationUtil nm = new NotificationUtil(this.getApplicationContext());
-        Notification notification = nm.buildNotification(getString(R.string.stop_scanning));
-
-        // TODO: change this to an intent broadcast
-        mStumblerService.startForeground(NotificationUtil.NOTIFICATION_ID, notification);
-        // TODO: change this to an intent broadcast
-        mStumblerService.startScanning();
+        ClientStumblerService.startForegroundScanning(this.getApplicationContext());
 
         if (mMainActivity.get() != null) {
             mMainActivity.get().updateUiOnMainThread(false);
@@ -324,17 +315,9 @@ public class MainApp extends Application
     }
 
     public void stopScanning() {
-        if (mStumblerService == null) {
-            return;
-        }
-
         mIsScanningPausedDueToNoMotion = false;
 
-        // TODO: change this to an intent broadcast
-        mStumblerService.stopScanning();
-
-        // TODO: change this to an intent broadcast
-        mStumblerService.stopForeground(true);
+        ClientStumblerService.stopForegroundScanning(this.getApplicationContext());
 
         if (mMainActivity.get() != null) {
             mMainActivity.get().updateUiOnMainThread(false);
@@ -419,10 +402,6 @@ public class MainApp extends Application
     }
 
     public void updateMotionDetected() {
-        if (mStumblerService == null) {
-            return;
-        }
-
         AppGlobals.guiLogInfo("Is motionless: " + mIsScanningPausedDueToNoMotion);
 
         NotificationUtil util = new NotificationUtil(this.getApplicationContext());

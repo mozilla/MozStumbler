@@ -9,7 +9,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.os.AsyncTask;
-import android.util.Log;
 
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.Prefs;
@@ -18,6 +17,8 @@ import org.mozilla.mozstumbler.service.stumblerthread.scanners.ScanManager;
 import org.mozilla.mozstumbler.service.uploadthread.UploadAlarmReceiver;
 import org.mozilla.mozstumbler.service.utils.NetworkInfo;
 import org.mozilla.mozstumbler.service.utils.PersistentIntentService;
+import org.mozilla.mozstumbler.svclocator.ServiceLocator;
+import org.mozilla.mozstumbler.svclocator.services.log.ILogger;
 import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
 import java.io.IOException;
@@ -28,13 +29,16 @@ import java.util.concurrent.atomic.AtomicBoolean;
 //
 public class StumblerService extends PersistentIntentService
         implements DataStorageManager.StorageIsEmptyTracker {
+
+    private static final String LOG_TAG = LoggerUtil.makeLogTag(StumblerService.class);
+    private static ILogger Log = (ILogger) ServiceLocator.getInstance().getService(ILogger.class);
+
     public static final String ACTION_BASE = AppGlobals.ACTION_NAMESPACE;
     public static final String ACTION_START_PASSIVE = ACTION_BASE + ".START_PASSIVE";
     public static final String ACTION_EXTRA_MOZ_API_KEY = ACTION_BASE + ".MOZKEY";
     public static final String ACTION_EXTRA_USER_AGENT = ACTION_BASE + ".USER_AGENT";
     public static final String ACTION_NOT_FROM_HOST_APP = ACTION_BASE + ".NOT_FROM_HOST";
     public static final AtomicBoolean sFirefoxStumblingEnabled = new AtomicBoolean();
-    private static final String LOG_TAG = LoggerUtil.makeLogTag(StumblerService.class);
     // This is a delay before the single-shot upload is attempted. The number is arbitrary
     // and used to avoid startup tasks bunching up.
     private static final int DELAY_IN_SEC_BEFORE_STARTING_UPLOAD_IN_PASSIVE_MODE = 2;

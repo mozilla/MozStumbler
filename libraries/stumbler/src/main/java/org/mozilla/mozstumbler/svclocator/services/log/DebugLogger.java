@@ -11,6 +11,11 @@ public class DebugLogger implements ILogger {
         android.util.Log.w(logTag, s);
     }
 
+    @Override
+    public void e(String logTag, String s) {
+        android.util.Log.e(logTag, s);
+    }
+
     public String e(String logTag, String s, Throwable e) {
         if (e instanceof OutOfMemoryError) {
             // These are usually going to be OutOfMemoryErrors

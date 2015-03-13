@@ -42,6 +42,7 @@ import org.mozilla.mozstumbler.service.core.http.IHttpUtil;
 import org.mozilla.mozstumbler.service.core.logging.ClientLog;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.GPSScanner;
 import org.mozilla.mozstumbler.svclocator.ServiceLocator;
+import org.mozilla.mozstumbler.svclocator.services.log.ILogger;
 import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 import org.mozilla.osmdroid.ResourceProxy;
 import org.mozilla.osmdroid.api.IGeoPoint;
@@ -67,7 +68,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class MapFragment extends android.support.v4.app.Fragment
         implements MetricsView.IMapLayerToggleListener {
 
+    private static final ILogger Log = (ILogger) ServiceLocator.getInstance().getService(ILogger.class);
     private static final String LOG_TAG = LoggerUtil.makeLogTag(MapFragment.class);
+
     private static final String COVERAGE_REDIRECT_URL = "https://location.services.mozilla.com/map.json";
     private static final String ZOOM_KEY = "zoom";
     private static final int LOWEST_UNLIMITED_ZOOM = 6;
@@ -462,9 +465,9 @@ public class MapFragment extends android.support.v4.app.Fragment
         }
         View v = mRootView.findViewById(R.id.status_toolbar_layout);
 
-        final ClientStumblerService service = getApplication().getService();
+        final MainApp app = getApplication();
         float alpha = 0.5f;
-        if (service != null && !service.isStopped()) {
+        if (app != null && !app.isStopped()) {
             alpha = 1.0f;
         }
         v.setAlpha(alpha);
@@ -472,9 +475,6 @@ public class MapFragment extends android.support.v4.app.Fragment
 
     public void toggleScanning(MenuItem menuItem) {
         MainApp app = getApplication();
-        if (app.getService() == null) {
-            return;
-        }
 
         boolean isScanning = app.isScanningOrPaused();
         if (isScanning) {

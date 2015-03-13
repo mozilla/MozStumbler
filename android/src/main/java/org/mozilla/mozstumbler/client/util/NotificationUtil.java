@@ -14,8 +14,16 @@ import org.mozilla.mozstumbler.client.MainApp;
 import org.mozilla.mozstumbler.client.navdrawer.MainDrawerActivity;
 import org.mozilla.mozstumbler.svclocator.ServiceLocator;
 import org.mozilla.mozstumbler.svclocator.services.ISystemClock;
+import org.mozilla.mozstumbler.svclocator.services.log.ILogger;
+import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
 public class NotificationUtil {
+
+    private static final ILogger Log = (ILogger) ServiceLocator
+                                                    .getInstance()
+                                                    .getService(ILogger.class);
+    private static final String LOG_TAG = LoggerUtil.makeLogTag(NotificationUtil.class);
+
     public static final int NOTIFICATION_ID = 1;
     private static final long UPDATE_FREQUENCY = 60 * 1000;
     private static String sStopTitle;
@@ -29,7 +37,10 @@ public class NotificationUtil {
     }
 
     private Notification build() {
-        PendingIntent turnOffIntent = PendingIntent.getBroadcast(mContext, 0, new Intent(MainApp.INTENT_TURN_OFF), 0);
+        PendingIntent turnOffIntent = PendingIntent.getBroadcast(mContext,
+                                                                0,
+                                                                new Intent(MainApp.INTENT_TURN_OFF),
+                                                                0);
 
         Intent notificationIntent = new Intent(mContext, MainDrawerActivity.class);
         notificationIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_FROM_BACKGROUND);
@@ -73,10 +84,17 @@ public class NotificationUtil {
                 .build();
     }
 
-    private void update() {
+    void update() {
         Notification notification = build();
         NotificationManager nm = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
+        if (nm == null) {
+            // This really *shouldn't* happen, but we get this on some devices. See :
+            // https://github.com/mozilla/MozStumbler/issues/1564
+            Log.d(LOG_TAG, "Couldn't acquire notification service");
+            return;
+        }
         nm.notify(NOTIFICATION_ID, notification);
+
     }
 
     public Notification buildNotification(String stopTitle) {

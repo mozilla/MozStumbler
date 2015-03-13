@@ -162,10 +162,6 @@ public class MainApp extends Application
         return ClientPrefs.getInstance(c);
     }
 
-    public ClientStumblerService getService() {
-        return mStumblerService;
-    }
-
     public void setMainActivity(IMainActivity mainActivity) {
         mMainActivity = new WeakReference<IMainActivity>(mainActivity);
     }

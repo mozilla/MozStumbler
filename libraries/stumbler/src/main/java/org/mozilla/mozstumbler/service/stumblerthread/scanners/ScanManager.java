@@ -36,7 +36,7 @@ public class ScanManager {
     private static final String LOG_TAG = LoggerUtil.makeLogTag(ScanManager.class);
 
     private static Context mAppContext;
-    private Timer mPassiveModeFlushTimer;
+    private Timer mFlushTimer;
 
     // how often to flush a leftover bundle to the reports table
     // If there is a bundle, and nothing happens for 10sec, then flush it
@@ -121,26 +121,22 @@ public class ScanManager {
                 PassiveModeBatteryState.IGNORE_BATTERY_STATE;
     }
 
-    public void newPassiveGpsLocation() {
+    public void newGpsLocation() {
         if (mPassiveModeBatteryState == PassiveModeBatteryState.LOW) {
             return;
         }
 
-        if (AppGlobals.isDebug) {
-            ClientLog.d(LOG_TAG, "New passive location");
-        }
+        mWifiScanner.start();
+        mCellScanner.start();
 
-        mWifiScanner.start(ActiveOrPassiveStumbling.PASSIVE_STUMBLING);
-        mCellScanner.start(ActiveOrPassiveStumbling.PASSIVE_STUMBLING);
-
-        if (mPassiveModeFlushTimer != null) {
-            mPassiveModeFlushTimer.cancel();
+        if (mFlushTimer != null) {
+            mFlushTimer.cancel();
         }
 
         Date when = new Date();
         when.setTime(when.getTime() + FLUSH_RATE_MS);
-        mPassiveModeFlushTimer = new Timer();
-        mPassiveModeFlushTimer.schedule(new TimerTask() {
+        mFlushTimer = new Timer();
+        mFlushTimer.schedule(new TimerTask() {
             @Override
             public void run() {
                 Intent flush = new Intent(Reporter.ACTION_FLUSH_TO_BUNDLE);
@@ -211,13 +207,6 @@ public class ScanManager {
         mCellScanner = new CellScanner(mAppContext);
 
         mGPSScanner.start(mStumblingMode);
-        if (mStumblingMode == ActiveOrPassiveStumbling.ACTIVE_STUMBLING) {
-            mWifiScanner.start(mStumblingMode);
-            mCellScanner.start(mStumblingMode);
-            // in passive mode, these scans are started by passive gps notifications
-        } else {
-            Log.d(LOG_TAG, "Wifi and Cell Scanners are not engaged with passive mode.");
-        }
     }
 
     public synchronized boolean stopScanning() {

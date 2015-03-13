@@ -7,9 +7,7 @@ package org.mozilla.mozstumbler.client;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Application;
-import android.app.Notification;
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -17,7 +15,6 @@ import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Handler;
-import android.os.IBinder;
 import android.os.StrictMode;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
@@ -53,7 +50,6 @@ import org.mozilla.osmdroid.tileprovider.constants.TileFilePath;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.mozilla.mozstumbler.service.stumblerthread.scanners.ScanManager.*;
 
@@ -66,17 +62,15 @@ import static org.mozilla.mozstumbler.service.stumblerthread.scanners.ScanManage
         formUriBasicAuthPassword = BuildConfig.ACRA_PASS)
 public class MainApp extends Application
         implements AsyncUploader.AsyncUploaderListener {
-    public static final AtomicBoolean isUploading = new AtomicBoolean();
+
 
     public static final String NOTIFICATION_STOP = "org.mozilla.mozstumbler.notification.stop";
-
     public static final String ACTION_BASE = AppGlobals.ACTION_NAMESPACE + ".MainApp.";
     public static final String ACTION_LOW_BATTERY = ACTION_BASE + ".LOW_BATTERY";
+
+
     private static boolean sHasBootedOnce;
     private final String LOG_TAG = LoggerUtil.makeLogTag(MainApp.class);
-    private final long MAX_BYTES_DISK_STORAGE = 1000 * 1000 * 20; // 20MB for Mozilla Stumbler by default, is ok?
-    private final int MAX_WEEKS_OLD_STORED = 4;
-    private ClientStumblerService mStumblerService;
     private ServiceConnection mConnection;
     private ServiceBroadcastReceiver mReceiver;
     private WeakReference<IMainActivity> mMainActivity = new WeakReference<IMainActivity>(null);
@@ -84,7 +78,6 @@ public class MainApp extends Application
 
     // These track the state of the currently running service
     private ScanManager.ScannerState scannerState = ScannerState.STOPPED;
-
 
     boolean isStumblerStopped() {
         return scannerState == ScannerState.STOPPED;
@@ -156,10 +149,6 @@ public class MainApp extends Application
         boolean b = sHasBootedOnce;
         sHasBootedOnce = true;
         return b;
-    }
-
-    public ClientPrefs getPrefs(Context c) {
-        return ClientPrefs.getInstance(c);
     }
 
     public void setMainActivity(IMainActivity mainActivity) {
@@ -245,34 +234,8 @@ public class MainApp extends Application
         mReceiver = new ServiceBroadcastReceiver();
         mReceiver.register();
 
-        // Start the stumbling service last after all the intent listeners have been registered.
-
-        mConnection = new ServiceConnection() {
-            public void onServiceConnected(ComponentName className, IBinder binder) {
-                // binder can be null, android is terrible.
-                if (binder == null) {
-                    return;
-                }
-
-                ClientStumblerService.StumblerBinder serviceBinder = (ClientStumblerService.StumblerBinder) binder;
-                mStumblerService = serviceBinder.getServiceAndInitialize(Thread.currentThread(),
-                        MAX_BYTES_DISK_STORAGE, MAX_WEEKS_OLD_STORED);
-
-                Log.d(LOG_TAG, "Service connected");
-                if (mMainActivity.get() != null) {
-                    mMainActivity.get().updateUiOnMainThread(true);
-                }
-            }
-
-            public void onServiceDisconnected(ComponentName className) {
-                mStumblerService = null;
-            }
-        };
-
         Intent intent = new Intent(this, ClientStumblerService.class);
-        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
-
-
+        this.getApplicationContext().startService(intent);
     }
 
     private void checkSimulationPermission() {
@@ -294,7 +257,6 @@ public class MainApp extends Application
             unbindService(mConnection);
         }
         mConnection = null;
-        mStumblerService = null;
         if (mReceiver != null) {
             mReceiver.unregister();
         }
@@ -373,27 +335,6 @@ public class MainApp extends Application
     public void keepScreenOnPrefChanged(boolean isEnabled) {
         if (mMainActivity.get() != null) {
             mMainActivity.get().keepScreenOn(isEnabled);
-        }
-    }
-
-    @Override
-    public void onLowMemory() {
-        super.onLowMemory();
-
-        if (mStumblerService != null) {
-            // TODO: change this to an intent broadcast
-            mStumblerService.handleLowMemoryNotification();
-        }
-    }
-
-    @TargetApi(14)
-    @Override
-    public void onTrimMemory(int level) {
-        super.onTrimMemory(level);
-
-        if (mStumblerService != null) {
-            // TODO: change this to an intent broadcast
-            mStumblerService.handleLowMemoryNotification();
         }
     }
 

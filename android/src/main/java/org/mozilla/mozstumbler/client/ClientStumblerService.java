@@ -9,9 +9,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.os.Binder;
 import android.os.IBinder;
-import android.os.Looper;
 import android.support.v4.content.LocalBroadcastManager;
 
 import org.mozilla.mozstumbler.R;
@@ -32,6 +30,9 @@ import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 public class ClientStumblerService extends StumblerService {
     private static final String LOG_TAG = LoggerUtil.makeLogTag(StumblerService.class);
     private static final ILogger Log = (ILogger) ServiceLocator.getInstance().getService(ILogger.class);
+
+    public final long MAX_BYTES_DISK_STORAGE = 1000 * 1000 * 20; // 20MB for Mozilla Stumbler by default, is ok?
+    public final int MAX_WEEKS_OLD_STORED = 4;
 
     public static enum RequestChangeScannerState {
         START, STOP;
@@ -55,7 +56,6 @@ public class ClientStumblerService extends StumblerService {
     private static final String START_FOREGROUND_SCANNING = RequestChangeScannerState.START.toString();
     private static final String STOP_FOREGROUND_SCANNING = RequestChangeScannerState.STOP.toString();
 
-    private final IBinder mBinder = new StumblerBinder();
     private final BatteryCheckCallback mBatteryCheckCallback = new BatteryCheckCallback() {
         private boolean waitForBatteryOkBeforeSendingNotification;
 
@@ -93,18 +93,6 @@ public class ClientStumblerService extends StumblerService {
             }
         };
     };
-
-
-    // Service binding is not used in stand-alone passive mode.
-    @Override
-    public IBinder onBind(Intent intent) {
-        if (AppGlobals.isDebug) {
-            Log.d(LOG_TAG, "onBind");
-        }
-
-        registerIntentFilters();
-        return mBinder;
-    }
 
     private void registerIntentFilters() {
         IntentFilter intentFilter = new IntentFilter();
@@ -181,26 +169,21 @@ public class ClientStumblerService extends StumblerService {
         LocalBroadcastManager.getInstance(ctx).sendBroadcastSync(startIntent);
     }
 
-    // Service binding is not used in stand-alone passive mode.
-    public final class StumblerBinder extends Binder {
-        // Only to be used in the non-standalone, non-passive case (Mozilla Stumbler). In the passive standalone usage
-        // of this class, everything, including initialization, is done on its dedicated thread
-        // This function is written to enforce the contract of its usage, and will throw if called from the wrong thread
-        public ClientStumblerService getServiceAndInitialize(Thread callingThread,
-                                                             long maxBytesOnDisk,
-                                                             int maxWeeksOld) {
-            if (Looper.getMainLooper().getThread() != callingThread) {
-                throw new RuntimeException("Only call from main thread");
-            }
-            ClientDataStorageManager.createGlobalInstance(ClientStumblerService.this,
-                    ClientStumblerService.this, maxBytesOnDisk, maxWeeksOld);
-            init();
-            return ClientStumblerService.this;
-        }
-
-        public ClientStumblerService getService() {
-            return ClientStumblerService.this;
-        }
+    public static void broadcastLowMemory(Context ctx) {
+        Intent startIntent = new Intent(ctx, ClientStumblerService.class);
+        startIntent.setAction(HANDLE_LOW_MEMORY);
+        LocalBroadcastManager.getInstance(ctx).sendBroadcastSync(startIntent);
     }
+
+    @Override
+    protected void init() {
+        registerIntentFilters();
+        ClientDataStorageManager.createGlobalInstance(ClientStumblerService.this,
+                ClientStumblerService.this,
+                MAX_BYTES_DISK_STORAGE,
+                MAX_WEEKS_OLD_STORED);
+        super.init();
+    }
+
 }
 

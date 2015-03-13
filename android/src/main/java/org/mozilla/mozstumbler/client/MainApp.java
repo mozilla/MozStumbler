@@ -79,10 +79,6 @@ public class MainApp extends Application
     // These track the state of the currently running service
     private ScanManager.ScannerState scannerState = ScannerState.STOPPED;
 
-    boolean isStumblerStopped() {
-        return scannerState == ScannerState.STOPPED;
-    }
-
     private final BroadcastReceiver scannerStateReceiver = new BroadcastReceiver() {
         // This captures state change from the ScanManager
         @Override

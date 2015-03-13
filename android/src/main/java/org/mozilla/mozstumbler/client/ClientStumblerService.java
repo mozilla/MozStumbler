@@ -9,7 +9,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
 
 import org.mozilla.mozstumbler.R;
@@ -41,7 +40,7 @@ public class ClientStumblerService extends StumblerService {
 
         @Override
         public String toString() {
-            return NAMESPACE+ this.name();
+            return NAMESPACE + this.name();
         }
 
         public static RequestChangeScannerState fromString(String name)  {

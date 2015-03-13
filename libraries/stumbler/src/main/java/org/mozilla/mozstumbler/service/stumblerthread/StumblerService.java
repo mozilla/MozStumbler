@@ -5,10 +5,13 @@
 package org.mozilla.mozstumbler.service.stumblerthread;
 
 import android.annotation.TargetApi;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.location.Location;
 import android.os.AsyncTask;
+import android.support.v4.content.LocalBroadcastManager;
 
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.Prefs;
@@ -49,6 +52,44 @@ public class StumblerService extends PersistentIntentService
     protected final ScanManager mScanManager = new ScanManager();
     protected final IReporter mReporter = new Reporter();
 
+
+    private final AtomicBoolean initializeIntentFilters = new AtomicBoolean(false);
+
+    private final BroadcastReceiver visibleCountRequestReceiver = new BroadcastReceiver() {
+        // This captures state change from the ScanManager
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent == null) {
+                return;
+            } else if (!intent.getAction().startsWith(StumblerServiceIntentActions.SVC_REQ_NS)) {
+                return;
+            }
+
+            if (intent.getAction().equals(StumblerServiceIntentActions.SVC_REQ_VISIBLE_AP)) {
+                broadcastCount(StumblerServiceIntentActions.SVC_RESP_VISIBLE_AP, getVisibleAPCount());
+            } else if (intent.getAction().equals(StumblerServiceIntentActions.SVC_REQ_VISIBLE_CELL)) {
+                broadcastCount(StumblerServiceIntentActions.SVC_RESP_VISIBLE_CELL, getVisibleCellCount());
+            } else if (intent.getAction().equals(StumblerServiceIntentActions.SVC_REQ_OBSERVATION_PT)) {
+                broadcastCount(StumblerServiceIntentActions.SVC_RESP_OBSERVATION_PT, getObservationCount());
+            } else if (intent.getAction().equals(StumblerServiceIntentActions.SVC_REQ_UNIQUE_CELL_COUNT)) {
+                broadcastCount(StumblerServiceIntentActions.SVC_RESP_UNIQUE_CELL_COUNT, getUniqueCellCount());
+            } else if (intent.getAction().equals(StumblerServiceIntentActions.SVC_REQ_UNIQUE_WIFI_COUNT)) {
+                broadcastCount(StumblerServiceIntentActions.SVC_RESP_UNIQUE_WIFI_COUNT, getUniqueAPCount());
+            }
+
+        };
+    };
+
+    /*
+    Make a blocking synchronous response to requests for metrics.
+     */
+    private void broadcastCount(String svcRespVisibleAp, int visibleAPCount) {
+        Intent intent = new Intent(svcRespVisibleAp);
+        intent.putExtra("count", visibleAPCount);
+        LocalBroadcastManager.getInstance(this.getApplicationContext()).sendBroadcastSync(intent);
+    }
+
+
     public StumblerService() {
         this("StumblerService");
     }
@@ -69,35 +110,28 @@ public class StumblerService extends PersistentIntentService
         return Prefs.getInstance(c);
     }
 
-    public synchronized int getLocationCount() {
-        return mScanManager.getLocationCount();
-    }
-
     public synchronized Location getLocation() {
         return mScanManager.getLocation();
     }
 
-    public synchronized int getObservationCount() {
+    private synchronized int getObservationCount() {
         return mReporter.getObservationCount();
     }
 
-    public synchronized int getWifiStatus() {
-        return mScanManager.getWifiStatus();
-    }
-
-    public synchronized int getUniqueAPCount() {
+    private synchronized int getUniqueAPCount() {
         return mReporter.getUniqueAPCount();
     }
 
-    public synchronized int getVisibleAPCount() {
+    private synchronized int getVisibleAPCount() {
         return mScanManager.getVisibleAPCount();
     }
 
-    public synchronized int getVisibleCellInfoCount() {
+
+    private synchronized int getVisibleCellCount() {
         return mScanManager.getVisibleCellInfoCount();
     }
 
-    public synchronized int getUniqueCellCount() {
+    private synchronized int getUniqueCellCount() {
         return mReporter.getUniqueCellCount();
     }
 
@@ -105,7 +139,21 @@ public class StumblerService extends PersistentIntentService
     // use (i.e. Fennec), init() can be called from this class's dedicated thread.
     // Safe to call more than once, ensure added code complies with that intent.
     protected void init() {
-        // Don't remove, ensures that a Prefs instance is available for internal classes that call Prefs.getInstanceWithoutContext()
+
+        if (!initializeIntentFilters.getAndSet(true)) {
+            IntentFilter filter = new IntentFilter();
+            filter.addAction(StumblerServiceIntentActions.SVC_REQ_VISIBLE_AP);
+            filter.addAction(StumblerServiceIntentActions.SVC_REQ_VISIBLE_CELL);
+            filter.addAction(StumblerServiceIntentActions.SVC_REQ_OBSERVATION_PT);
+            filter.addAction(StumblerServiceIntentActions.SVC_REQ_UNIQUE_CELL_COUNT);
+            filter.addAction(StumblerServiceIntentActions.SVC_REQ_UNIQUE_WIFI_COUNT);
+            LocalBroadcastManager.getInstance(getApplicationContext())
+                    .registerReceiver(visibleCountRequestReceiver,
+                            filter);
+        }
+
+        // Don't remove, ensures that a Prefs instance is available for internal classes
+        // that call Prefs.getInstanceWithoutContext()
         Prefs.getInstance(this);
         NetworkInfo.createGlobalInstance(this);
         DataStorageManager.createGlobalInstance(this, this);

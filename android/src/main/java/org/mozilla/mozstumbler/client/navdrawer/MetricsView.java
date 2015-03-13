@@ -218,7 +218,6 @@ public class MetricsView {
         }
 
         updatePowerSavingsLabels();
-
         updateQueuedStats();
         updateSentStats();
         updateThisSessionStats();
@@ -311,13 +310,17 @@ public class MetricsView {
         }
     };
 
-    public void setObservationCount(int observations, int cells, int wifis, boolean isActive) {
+    public void setObservationCount(int observations, int cells, int wifis) {
         sThisSessionObservationsCount = observations;
         sThisSessionUniqueCellCount = cells;
         sThisSessionUniqueWifiCount = wifis;
 
         NotificationUtil util = new NotificationUtil(mView.getContext().getApplicationContext());
-        util.updateMetrics(observations, cells, wifis, mLastUploadTime, isActive);
+        util.updateMetrics(sThisSessionObservationsCount,
+                sThisSessionUniqueCellCount,
+                sThisSessionUniqueWifiCount,
+                mLastUploadTime,
+                isScanningOrPaused());
     }
 
     public interface IMapLayerToggleListener {

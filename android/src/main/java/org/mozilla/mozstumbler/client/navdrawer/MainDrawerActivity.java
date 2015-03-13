@@ -4,7 +4,10 @@
 
 package org.mozilla.mozstumbler.client.navdrawer;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
@@ -12,6 +15,7 @@ import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
@@ -25,16 +29,18 @@ import android.widget.Switch;
 import org.mozilla.mozstumbler.BuildConfig;
 import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.client.ClientPrefs;
-import org.mozilla.mozstumbler.client.ClientStumblerService;
 import org.mozilla.mozstumbler.client.IMainActivity;
 import org.mozilla.mozstumbler.client.MainApp;
 import org.mozilla.mozstumbler.client.Updater;
 import org.mozilla.mozstumbler.client.mapview.MapFragment;
 import org.mozilla.mozstumbler.client.subactivities.FirstRunFragment;
 import org.mozilla.mozstumbler.client.subactivities.LeaderboardActivity;
+import org.mozilla.mozstumbler.service.stumblerthread.StumblerServiceIntentActions;
 import org.mozilla.mozstumbler.svclocator.ServiceLocator;
 import org.mozilla.mozstumbler.svclocator.services.log.ILogger;
 import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class MainDrawerActivity
         extends ActionBarActivity
@@ -57,6 +63,41 @@ public class MainDrawerActivity
                 }
             };
 
+
+    // These are counts that come back from the service on request
+    private int mSvcVisibleAP = 0;
+    private int mSvcVisibleCell = 0;
+    private int mSvcObservationPoints = 0;
+    private int mSvcUniqueCell = 0;
+    private int mSvcUniqueAP = 0;
+
+    private final BroadcastReceiver svcStatsRespReceiver = new BroadcastReceiver() {
+        // This captures state change from the ScanManager
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent == null) {
+                return;
+            } else if (!intent.getAction().startsWith(StumblerServiceIntentActions.SVC_RESP_NS)) {
+                return;
+            }
+
+            int count = intent.getIntExtra("count", 0);
+            if (intent.getAction().equals(StumblerServiceIntentActions.SVC_RESP_VISIBLE_AP)) {
+                mSvcVisibleAP = count;
+            } else if (intent.getAction().equals(StumblerServiceIntentActions.SVC_RESP_VISIBLE_CELL)) {
+                mSvcVisibleCell = count;
+            } else if (intent.getAction().equals(StumblerServiceIntentActions.SVC_RESP_OBSERVATION_PT)) {
+                mSvcObservationPoints = count;
+            } else if (intent.getAction().equals(StumblerServiceIntentActions.SVC_RESP_UNIQUE_CELL_COUNT)) {
+                mSvcUniqueCell = count;
+            } else if (intent.getAction().equals(StumblerServiceIntentActions.SVC_RESP_UNIQUE_WIFI_COUNT)) {
+                mSvcUniqueAP = count;
+            }
+        };
+    };
+    private AtomicBoolean initializeIntentFilters = new AtomicBoolean(false);
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,6 +108,19 @@ public class MainDrawerActivity
 
     private void init() {
         assert (findViewById(android.R.id.content) != null);
+
+        if (!initializeIntentFilters.getAndSet(true)) {
+            IntentFilter filter = new IntentFilter();
+            filter.addAction(StumblerServiceIntentActions.SVC_RESP_VISIBLE_AP);
+            filter.addAction(StumblerServiceIntentActions.SVC_RESP_VISIBLE_CELL);
+            filter.addAction(StumblerServiceIntentActions.SVC_RESP_OBSERVATION_PT);
+            filter.addAction(StumblerServiceIntentActions.SVC_RESP_UNIQUE_CELL_COUNT);
+            filter.addAction(StumblerServiceIntentActions.SVC_RESP_UNIQUE_WIFI_COUNT);
+            LocalBroadcastManager.getInstance(getApplicationContext())
+                    .registerReceiver(svcStatsRespReceiver,
+                            filter);
+        }
+
 
         if (Build.VERSION.SDK_INT > 10) {
             getWindow().setFlags(
@@ -268,22 +322,34 @@ public class MainDrawerActivity
     }
 
     private void updateNumberDisplay(boolean updateMetrics) {
-        ClientStumblerService service = getApp().getService();
-        if (service == null) {
-            return;
-        }
+        // TODO: this is silly.  we can just ask for everything in one
+        // request.
+        broadcastSvcDataRequest(StumblerServiceIntentActions.SVC_REQ_VISIBLE_CELL);
+        broadcastSvcDataRequest(StumblerServiceIntentActions.SVC_REQ_VISIBLE_AP);
+        broadcastSvcDataRequest(StumblerServiceIntentActions.SVC_REQ_OBSERVATION_PT);
+        broadcastSvcDataRequest(StumblerServiceIntentActions.SVC_REQ_UNIQUE_CELL_COUNT);
+        broadcastSvcDataRequest(StumblerServiceIntentActions.SVC_REQ_UNIQUE_WIFI_COUNT);
 
-        mMapFragment.formatTextView(R.id.text_cells_visible, "%d", service.getVisibleCellInfoCount());
-        mMapFragment.formatTextView(R.id.text_wifis_visible, "%d", service.getVisibleAPCount());
-
-        int observationCount = service.getObservationCount();
-        mMapFragment.formatTextView(R.id.text_observation_count, "%d", observationCount);
+        // TODO: the actual write to a particular UI field can probably be dispatched in the
+        // BroadcastReceiver
+        mMapFragment.formatTextView(R.id.text_cells_visible, "%d", mSvcVisibleCell);
+        mMapFragment.formatTextView(R.id.text_wifis_visible, "%d", mSvcVisibleAP);
+        mMapFragment.formatTextView(R.id.text_observation_count, "%d", mSvcObservationPoints);
 
         if (updateMetrics) {
-            mMetricsView.setObservationCount(observationCount, service.getUniqueCellCount(),
-                    service.getUniqueAPCount(), getApp().isScanningOrPaused());
+            mMetricsView.setObservationCount(mSvcObservationPoints,
+                    mSvcUniqueCell,
+                    mSvcUniqueAP);
             mMetricsView.update();
         }
+    }
+
+    /*
+    Make a blocking synchronous request to fetch some stats from the stumbler service.
+     */
+    private void broadcastSvcDataRequest(String svcStatsRequestAction) {
+        Intent intent = new Intent(svcStatsRequestAction);
+        LocalBroadcastManager.getInstance(this.getApplicationContext()).sendBroadcastSync(intent);
     }
 
     @Override

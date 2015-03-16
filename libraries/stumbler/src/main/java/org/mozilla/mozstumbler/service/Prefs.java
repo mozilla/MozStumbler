@@ -66,7 +66,7 @@ public class Prefs {
         try {
             if (SignificantMotionSensor.getSensor(context) != null) {
                 String device = android.os.Build.MODEL.toLowerCase();
-                String pattern = "(nexus \\d)|(A0001)";
+                String pattern = "(nexus \\d)|(a0001)";
                 if (Pattern.compile(pattern).matcher(device).find()) {
                     // Most users aren't going to know to switch this setting to on, set the default for known good devices
                     defaultSetting = true;

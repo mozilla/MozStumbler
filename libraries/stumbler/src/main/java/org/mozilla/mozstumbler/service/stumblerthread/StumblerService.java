@@ -41,9 +41,6 @@ public class StumblerService extends PersistentIntentService
     public static final String ACTION_EXTRA_MOZ_API_KEY = ACTION_BASE + ".MOZKEY";
     public static final String ACTION_EXTRA_USER_AGENT = ACTION_BASE + ".USER_AGENT";
     public static final String ACTION_NOT_FROM_HOST_APP = ACTION_BASE + ".NOT_FROM_HOST";
-    public static String HANDLE_LOW_MEMORY = "org.mozilla.mozstumbler.service.stumblerthread.low_mem";
-
-
     public static final AtomicBoolean sFirefoxStumblingEnabled = new AtomicBoolean();
     // This is a delay before the single-shot upload is attempted. The number is arbitrary
     // and used to avoid startup tasks bunching up.
@@ -79,6 +76,7 @@ public class StumblerService extends PersistentIntentService
             } else if (intent.getAction().equals(StumblerServiceIntentActions.SVC_REQ_UNIQUE_WIFI_COUNT)) {
                 broadcastCount(StumblerServiceIntentActions.SVC_RESP_UNIQUE_WIFI_COUNT, getUniqueAPCount());
             }
+
         };
     };
 
@@ -90,6 +88,7 @@ public class StumblerService extends PersistentIntentService
         intent.putExtra("count", visibleAPCount);
         LocalBroadcastManager.getInstance(this.getApplicationContext()).sendBroadcastSync(intent);
     }
+
 
     public StumblerService() {
         this("StumblerService");
@@ -105,6 +104,10 @@ public class StumblerService extends PersistentIntentService
 
     public synchronized void startScanning() {
         mScanManager.startScanning();
+    }
+
+    public synchronized Prefs getPrefs(Context c) {
+        return Prefs.getInstance(c);
     }
 
     public synchronized Location getLocation() {
@@ -290,7 +293,7 @@ public class StumblerService extends PersistentIntentService
         handleLowMemoryNotification();
     }
 
-    private void handleLowMemoryNotification() {
+    public void handleLowMemoryNotification() {
         DataStorageManager manager = DataStorageManager.getInstance();
         if (manager == null) {
             return;

@@ -285,6 +285,10 @@ public class ScanManager {
         return mScannerState == ScannerState.STOPPED;
     }
 
+    public synchronized boolean isScanning() {
+        return mScannerState == ScannerState.STARTED;
+    }
+
     public int getVisibleAPCount() {
         return (mWifiScanner == null) ? 0 : mWifiScanner.getVisibleAPCount();
     }

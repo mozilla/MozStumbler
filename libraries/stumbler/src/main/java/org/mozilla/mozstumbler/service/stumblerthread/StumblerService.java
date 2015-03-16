@@ -103,6 +103,10 @@ public class StumblerService extends PersistentIntentService
         return mScanManager.isStopped();
     }
 
+    public synchronized boolean isScanning() {
+        return mScanManager.isScanning();
+    }
+
     public synchronized void startScanning() {
         mScanManager.startScanning();
     }

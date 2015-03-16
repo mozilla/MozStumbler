@@ -332,8 +332,9 @@ public class MainDrawerActivity
 
         // TODO: the actual write to a particular UI field can probably be dispatched in the
         // BroadcastReceiver
-        mMapFragment.formatTextView(R.id.text_cells_visible, "%d", mSvcVisibleCell);
-        mMapFragment.formatTextView(R.id.text_wifis_visible, "%d", mSvcVisibleAP);
+        final boolean active = getApp().isScanning();
+        mMapFragment.formatTextView(R.id.text_cells_visible, "%d", active ? mSvcVisibleCell : 0);
+        mMapFragment.formatTextView(R.id.text_wifis_visible, "%d", active ? mSvcVisibleAP : 0);
         mMapFragment.formatTextView(R.id.text_observation_count, "%d", mSvcObservationPoints);
 
         if (updateMetrics) {

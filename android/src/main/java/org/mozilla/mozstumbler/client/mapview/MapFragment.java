@@ -467,7 +467,7 @@ public class MapFragment extends android.support.v4.app.Fragment
 
         final MainApp app = getApplication();
         float alpha = 0.5f;
-        if (app != null && !app.isStopped()) {
+        if (app != null && app.isScanning()) {
             alpha = 1.0f;
         }
         v.setAlpha(alpha);
@@ -665,6 +665,8 @@ public class MapFragment extends android.support.v4.app.Fragment
         if (mMapLocationListener != null) {
             mMapLocationListener.pauseGpsUpdates(show);
         }
+        updateGPSInfo(0, 0);
+        dimToolbar();
     }
 
     public void stop() {
@@ -673,6 +675,8 @@ public class MapFragment extends android.support.v4.app.Fragment
             mMapLocationListener.removeListener();
             mMapLocationListener = null;
         }
+        updateGPSInfo(0, 0);
+        dimToolbar();
     }
 
     public static enum NoMapAvailableMessage {eHideNoMapMessage, eNoMapDueToNoAccessibleStorage, eNoMapDueToNoInternet}

@@ -22,7 +22,6 @@ public class NotificationUtil {
     private static final ILogger Log = (ILogger) ServiceLocator
                                                     .getInstance()
                                                     .getService(ILogger.class);
-
     private static final String LOG_TAG = LoggerUtil.makeLogTag(NotificationUtil.class);
 
     public static final int NOTIFICATION_ID = 1;

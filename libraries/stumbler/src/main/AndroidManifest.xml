@@ -15,7 +15,7 @@
 
     <uses-feature
         android:name="android.hardware.sensor.accelerometer"
-        android:required="true" />
+        android:required="false" />
     <uses-feature android:name="android.hardware.location" />
     <uses-feature android:name="android.hardware.location.gps" />
     <uses-feature

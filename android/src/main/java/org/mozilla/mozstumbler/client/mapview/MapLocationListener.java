@@ -13,6 +13,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.widget.Toast;
 
+import org.mozilla.mozstumbler.client.MainApp;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.core.logging.ClientLog;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.GPSScanner;
@@ -80,7 +81,11 @@ class MapLocationListener {
             mMapActivity.get().setUserPositionAt(lastLoc);
         }
 
-        if (mapFragment.getApplication().isIsScanningPausedDueToNoMotion()) {
+        MainApp app = mapFragment.getApplication();
+        if (app == null) {
+            return;
+        }
+        if (app.isIsScanningPausedDueToNoMotion()) {
             pauseGpsUpdates(true);
         } else {
             enableLocationListener(true, mNetworkLocationListener);

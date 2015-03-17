@@ -114,7 +114,11 @@ public class MapFragment extends android.support.v4.app.Fragment
       it out when the class is under test.
      */
     void doOnCreateView(Bundle savedInstanceState) {
-        AbstractMapOverlay.setDisplayBasedMinimumZoomLevel(getApplication());
+        MainApp app = getApplication();
+        if (app == null) {
+            return;
+        }
+        AbstractMapOverlay.setDisplayBasedMinimumZoomLevel(app);
         showMapNotAvailableMessage(NoMapAvailableMessage.eHideNoMapMessage);
 
         hideLowResMapMessage();
@@ -123,8 +127,7 @@ public class MapFragment extends android.support.v4.app.Fragment
         initializeMapOverlays();
         initializeVisibleCounts();
         initializeListeners();
-        showPausedDueToNoMotionMessage(getApplication().isIsScanningPausedDueToNoMotion());
-
+        showPausedDueToNoMotionMessage(app.isIsScanningPausedDueToNoMotion());
         showCopyright();
     }
 
@@ -254,7 +257,11 @@ public class MapFragment extends android.support.v4.app.Fragment
     }
 
     MainApp getApplication() {
-        return (MainApp) getActivity().getApplication();
+        FragmentActivity activity = getActivity();
+        if (activity == null) {
+            return null;
+        }
+        return (MainApp) activity.getApplication();
     }
 
     private void initCoverageTiles(String coverageUrl) {
@@ -475,7 +482,9 @@ public class MapFragment extends android.support.v4.app.Fragment
 
     public void toggleScanning(MenuItem menuItem) {
         MainApp app = getApplication();
-
+        if (app == null) {
+            return;
+        }
         boolean isScanning = app.isScanningOrPaused();
         if (isScanning) {
             app.stopScanning();
@@ -589,7 +598,12 @@ public class MapFragment extends android.support.v4.app.Fragment
         }
         ObservedLocationsReceiver observer = ObservedLocationsReceiver.getInstance();
         observer.removeMapActivity();
-        mHighLowBandwidthChecker.unregister(this.getApplication());
+
+        MainApp app = getApplication();
+        if (app == null) {
+            return;
+        }
+        mHighLowBandwidthChecker.unregister(app);
     }
 
     private void removeLayer(Overlay layer) {

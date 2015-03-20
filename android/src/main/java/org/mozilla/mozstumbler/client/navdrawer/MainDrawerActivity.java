@@ -250,7 +250,7 @@ public class MainDrawerActivity
     @Override
     public void onPostResume() {
         super.onPostResume();
-        mMetricsView.update();
+        updateNumberDisplay(true);
 
         ClientPrefs prefs = ClientPrefs.getInstance(this);
         if (prefs.isFirstRun()) {

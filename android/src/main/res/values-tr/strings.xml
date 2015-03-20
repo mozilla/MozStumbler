@@ -8,8 +8,8 @@
     <string name="stop_scanning">Taramayı Durdur</string>
     <string name="view_leaderboard">Puan Durumunu Göster</string>
     <string name="service_name">Mozilla Stumbler</string>
-    <string name="notification_scanning">Mozilla Stumbler tarama yapıyor</string>
-    <string name="notification_paused">Mozilla Stumbler duraklatıldı</string>
+    <string name="notification_scanning">%1$s tarama yapıyor</string>
+    <string name="notification_paused">%1$s duraklatıldı</string>
     <string name="enter_nickname">Takma adınızı yazın (isteğe bağlı)</string>
     <string name="enter_nickname_title">Takma ad: %1$s</string>
     <string name="enter_nickname_longtext">Takma adınız puan durumunda gözükecek.</string>

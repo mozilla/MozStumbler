@@ -8,8 +8,8 @@
     <string name="stop_scanning">Zastavit sběr dat</string>
     <string name="view_leaderboard">Zobrazit žebříček</string>
     <!--<string name="service_name">Mozilla Stumbler</string>-->
-    <string name="notification_scanning">Mozilla Stumbler sbírá data</string>
-    <string name="notification_paused">Mozilla Stumbler je pozastavený</string>
+    <string name="notification_scanning">%1$s sbírá data</string>
+    <string name="notification_paused">%1$s je pozastavený</string>
     <string name="enter_nickname">Vložte přezdívku (nepovinné)</string>
     <string name="enter_nickname_title">Přezdívka: %1$s</string>
     <string name="enter_nickname_longtext">Vaše přezdívka se zobrazí v žebříčku.</string>

@@ -39,7 +39,6 @@ import org.mozilla.mozstumbler.service.uploadthread.AsyncUploadParam;
 import org.mozilla.mozstumbler.service.uploadthread.AsyncUploader;
 import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
-import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.Properties;
 
@@ -69,7 +68,7 @@ public class MetricsView {
     private boolean mHasQueuedObservations;
     private boolean buttonIsSyncIcon;
 
-    private Properties mPersistedStats;
+    private static Properties sPersistedStats;
 
     public MetricsView(View view) {
         mView = view;
@@ -78,7 +77,7 @@ public class MetricsView {
                 new BroadcastReceiver() {
                     public void onReceive(Context context, Intent intent) {
                         Bundle bundle = intent.getExtras();
-                        mPersistedStats = (Properties) bundle.get(PersistedStats.EXTRAS_PERSISTENT_SYNC_STATUS_UPDATED);
+                        sPersistedStats = (Properties) bundle.get(PersistedStats.EXTRAS_PERSISTENT_SYNC_STATUS_UPDATED);
                         updateSentStats();
                     }
                 },
@@ -277,8 +276,8 @@ public class MetricsView {
     }
 
     private void updateSentStats() {
-        if (mPersistedStats != null) {
-            long lastUpload = Long.parseLong(mPersistedStats
+        if (sPersistedStats != null) {
+            long lastUpload = Long.parseLong(sPersistedStats
                     .getProperty(DataStorageContract.Stats.KEY_LAST_UPLOAD_TIME, "0"));
 
             if (lastUpload == 0) {
@@ -286,11 +285,11 @@ public class MetricsView {
                 return;
             }
 
-            String sent = mPersistedStats.getProperty(DataStorageContract.Stats.KEY_OBSERVATIONS_SENT, "0");
-            String bytes = mPersistedStats.getProperty(DataStorageContract.Stats.KEY_BYTES_SENT, "0");
+            String sent = sPersistedStats.getProperty(DataStorageContract.Stats.KEY_OBSERVATIONS_SENT, "0");
+            String bytes = sPersistedStats.getProperty(DataStorageContract.Stats.KEY_BYTES_SENT, "0");
             String value = String.format(mObservationAndSize, Integer.parseInt(sent), formatKb(Long.parseLong(bytes)));
             mAllTimeObservationsSentView.setText(value);
-            mLastUploadTime = Long.parseLong(mPersistedStats.getProperty(DataStorageContract.Stats.KEY_LAST_UPLOAD_TIME, "0"));
+            mLastUploadTime = Long.parseLong(sPersistedStats.getProperty(DataStorageContract.Stats.KEY_LAST_UPLOAD_TIME, "0"));
         }
         updateLastUploadedLabel();
     }

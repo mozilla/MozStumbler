@@ -49,12 +49,10 @@ public class NotificationUtil {
                 notificationIntent,
                 PendingIntent.FLAG_CANCEL_CURRENT);
 
-        String title;
-        if (sIsPaused) {
-            title = mContext.getString(R.string.notification_paused);
-        } else {
-            title = mContext.getString(R.string.notification_scanning);
-        }
+        String appname = mContext.getString(R.string.app_name);
+        int titleId = sIsPaused ? R.string.notification_paused : R.string.notification_scanning;
+        String title = String.format(mContext.getString(titleId), appname);
+
         String metrics = mContext.getString(R.string.metrics_notification_text);
         metrics = String.format(metrics, sObservations, sCells, sWifis);
 

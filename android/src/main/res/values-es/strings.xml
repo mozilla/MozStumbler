@@ -8,8 +8,8 @@
     <string name="stop_scanning">Detener escaneo</string>
     <string name="view_leaderboard">Ver tabla de posiciones</string>
     <string name="service_name">Mozilla Stumbler</string>
-    <string name="notification_scanning">Mozilla Stumbler está escaneando</string>
-    <string name="notification_paused">Mozilla Stumbler está pausado</string>
+    <string name="notification_scanning">%1$s está escaneando</string>
+    <string name="notification_paused">%1$s está pausado</string>
     <string name="enter_nickname">Ingresa tu apodo (opcional)</string>
     <string name="enter_nickname_title">Apodo: %1$s</string>
     <string name="enter_nickname_longtext">Tu apodo aparecerá en la tabla de posiciones.</string>

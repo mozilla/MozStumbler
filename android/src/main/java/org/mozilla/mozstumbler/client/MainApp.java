@@ -431,6 +431,7 @@ public class MainApp extends Application
                 intentFilter.addAction(WifiScanner.ACTION_WIFIS_SCANNED);
                 intentFilter.addAction(CellScanner.ACTION_CELLS_SCANNED);
                 intentFilter.addAction(Reporter.ACTION_NEW_BUNDLE);
+                intentFilter.addAction(ACTION_SCAN_PAUSED_USER_MOTIONLESS);
                 intentFilter.addAction(ACTION_LOW_BATTERY);
                 LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(this, intentFilter);
 

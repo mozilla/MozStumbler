@@ -683,11 +683,16 @@ public class MapFragment extends android.support.v4.app.Fragment
         dimToolbar();
     }
 
+    public void start() {
+        if (mMapLocationListener != null) {
+            mMapLocationListener.setActiveLocationUpdatesEnabled(true);
+        }
+    }
+
     public void stop() {
         mRootView.findViewById(R.id.scanning_paused_message).setVisibility(View.INVISIBLE);
         if (mMapLocationListener != null) {
-            mMapLocationListener.removeListener();
-            mMapLocationListener = null;
+            mMapLocationListener.setActiveLocationUpdatesEnabled(false);
         }
         updateGPSInfo(0, 0);
         dimToolbar();

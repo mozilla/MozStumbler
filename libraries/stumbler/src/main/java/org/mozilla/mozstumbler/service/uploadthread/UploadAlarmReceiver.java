@@ -33,6 +33,8 @@ public class UploadAlarmReceiver extends BroadcastReceiver {
     private static final String LOG_TAG = LoggerUtil.makeLogTag(UploadAlarmReceiver.class);
     private static final String EXTRA_IS_REPEATING = "is_repeating";
     private static boolean sIsAlreadyScheduled;
+    private static int sSecondsToWait;
+    private static boolean sIsRepeating;
 
     private static PendingIntent createIntent(Context c, boolean isRepeating) {
         Intent intent = new Intent(c, UploadAlarmReceiver.class);
@@ -40,21 +42,29 @@ public class UploadAlarmReceiver extends BroadcastReceiver {
         return PendingIntent.getBroadcast(c, 0, intent, 0);
     }
 
-    public static void cancelAlarm(Context c, boolean isRepeating) {
+    public static void cancelAlarm(Context c) {
         Log.d(LOG_TAG, "cancelAlarm");
         // this is to stop scheduleAlarm from constantly rescheduling, not to guard cancellation.
         sIsAlreadyScheduled = false;
         AlarmManager alarmManager = (AlarmManager) c.getSystemService(Context.ALARM_SERVICE);
         if (alarmManager != null) {
-            PendingIntent pi = createIntent(c, isRepeating);
+            PendingIntent pi = createIntent(c, sIsRepeating);
             alarmManager.cancel(pi);
         }
     }
 
-    public static void scheduleAlarm(Context c, long secondsToWait, boolean isRepeating) {
+    // This has a guard against constantly rescheduling the alarm into the future, which is
+    // if the secondsToWait and isRepeating are unchanged from the previous call, don't reschedule the alarm.
+    public static void scheduleAlarm(Context c, int secondsToWait, boolean isRepeating) {
         if (sIsAlreadyScheduled) {
-            return;
+            if (secondsToWait == sSecondsToWait && isRepeating == sIsRepeating) {
+                return;
+            }
+            cancelAlarm(c);
         }
+
+        sSecondsToWait = secondsToWait;
+        sIsRepeating = isRepeating;
 
         long intervalMsec = secondsToWait * 1000;
         Log.d(LOG_TAG, "schedule alarm (ms):" + intervalMsec);
@@ -101,11 +111,11 @@ public class UploadAlarmReceiver extends BroadcastReceiver {
             if (DataStorageManager.getInstance() == null) {
                 DataStorageManager.createGlobalInstance(this, null);
             }
-            upload(isRepeating);
+            upload();
         }
 
-        void upload(boolean isRepeating) {
-            if (!isRepeating) {
+        void upload() {
+            if (!sIsRepeating) {
                 sIsAlreadyScheduled = false;
             }
 
@@ -117,7 +127,7 @@ public class UploadAlarmReceiver extends BroadcastReceiver {
                 long msPerWeek = 604800 * 1000;
                 if (currentTime - oldestMs > maxWeeks * msPerWeek) {
                     DataStorageManager.getInstance().deleteAll();
-                    UploadAlarmReceiver.cancelAlarm(this, isRepeating);
+                    UploadAlarmReceiver.cancelAlarm(this);
                     return;
                 }
             }

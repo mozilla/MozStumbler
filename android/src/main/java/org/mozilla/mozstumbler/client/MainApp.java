@@ -307,6 +307,7 @@ public class MainApp extends Application
 
         if (mMainActivity.get() != null) {
             mMainActivity.get().updateUiOnMainThread(false);
+            mMainActivity.get().start();
         }
     }
 

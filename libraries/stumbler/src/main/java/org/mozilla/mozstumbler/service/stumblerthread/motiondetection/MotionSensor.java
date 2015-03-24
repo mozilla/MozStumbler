@@ -135,22 +135,15 @@ public class MotionSensor {
     }
 
     static class NetworkLocationChangeDetector {
-        Location mLastLocation;
         Context mContext;
-        private float DIST_THRESHOLD_M = 30.0f;
+        private static final float DIST_THRESHOLD_M = 30.0f;
+        private static final long TIME_INTERVAL_MS = 30000;
 
         private LocationListener mNetworkLocationListener = new LocationListener() {
             public void onLocationChanged(Location location) {
-                if (mLastLocation == null) {
-                    mLastLocation = location;
-                }
-
-                if (location.distanceTo(mLastLocation) > DIST_THRESHOLD_M) {
-                    AppGlobals.guiLogInfo("MotionSensor.NetworkLocationChangeDetector triggered.");
-                    Intent sendIntent = new Intent(ACTION_USER_MOTION_DETECTED);
-                    LocalBroadcastManager.getInstance(mContext).sendBroadcastSync(sendIntent);
-                    mLastLocation = location;
-                }
+                AppGlobals.guiLogInfo("MotionSensor.NetworkLocationChangeDetector triggered.");
+                Intent sendIntent = new Intent(ACTION_USER_MOTION_DETECTED);
+                LocalBroadcastManager.getInstance(mContext).sendBroadcastSync(sendIntent);
             }
 
             public void onStatusChanged(String provider, int status, Bundle extras) {}
@@ -165,14 +158,7 @@ public class MotionSensor {
                 return;
             }
 
-            if (mLastLocation == null) {
-                mLastLocation = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                if (mLastLocation == null) {
-                    mLastLocation = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-                }
-            }
-
-            lm.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, mNetworkLocationListener);
+            lm.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, TIME_INTERVAL_MS, DIST_THRESHOLD_M, mNetworkLocationListener);
         }
 
         public void stop() {
@@ -181,7 +167,6 @@ public class MotionSensor {
             }
             LocationManager lm = (LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
             lm.removeUpdates(mNetworkLocationListener);
-            mLastLocation = null;
         }
     }
 

@@ -53,11 +53,18 @@ android {
 }
 
 Properties properties = new Properties()
-properties.load(project.rootProject.file('bintray.properties').newDataInputStream())
+File bintrayFile = project.rootProject.file('bintray.properties')
+if (bintrayFile.exists()) {
+    properties.load(bintrayFile.newDataInputStream())
+} else {
+    properties = null
+}
 
 bintray {
-    user = properties.getProperty("bintray.user")
-    key = properties.getProperty("bintray.apikey")
+    if (properties != null) {
+        user = properties.getProperty("bintray.user")
+        key = properties.getProperty("bintray.apikey")
+    }
     configurations = ['archives']
     pkg {
         repo = "libMozStumbler"
@@ -92,7 +99,7 @@ install {
                     developer {
                         id 'garvankeeley'
                         name 'Garvan Keeley'
-                        email 'garvank@victor@crankycoder.com'
+                        email 'garvankeeley@gmail.com'
                     }
                     developer {
                         id 'crankycoder'

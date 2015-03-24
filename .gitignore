@@ -9,6 +9,7 @@ gen
 build
 local.properties
 gradle.properties
+bintray.properties
 
 # ignore vim swap files
 *.sw?

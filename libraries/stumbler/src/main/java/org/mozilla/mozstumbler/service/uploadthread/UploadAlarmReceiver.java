@@ -55,10 +55,10 @@ public class UploadAlarmReceiver extends BroadcastReceiver {
 
     // This has a guard against constantly rescheduling the alarm into the future, which is
     // if the secondsToWait and isRepeating are unchanged from the previous call, don't reschedule the alarm.
-    public static void scheduleAlarm(Context c, int secondsToWait, boolean isRepeating) {
+    public static boolean scheduleAlarm(Context c, int secondsToWait, boolean isRepeating) {
         if (sIsAlreadyScheduled) {
             if (secondsToWait == sSecondsToWait && isRepeating == sIsRepeating) {
-                return;
+                return false;
             }
             cancelAlarm(c);
         }
@@ -72,7 +72,7 @@ public class UploadAlarmReceiver extends BroadcastReceiver {
         sIsAlreadyScheduled = true;
         AlarmManager alarmManager = (AlarmManager) c.getSystemService(Context.ALARM_SERVICE);
         if (alarmManager == null) {
-            return;
+            return false;
         }
         PendingIntent pi = createIntent(c, isRepeating);
 
@@ -82,6 +82,7 @@ public class UploadAlarmReceiver extends BroadcastReceiver {
         } else {
             alarmManager.set(AlarmManager.RTC, triggerAtMs, pi);
         }
+        return true;
     }
 
     @Override

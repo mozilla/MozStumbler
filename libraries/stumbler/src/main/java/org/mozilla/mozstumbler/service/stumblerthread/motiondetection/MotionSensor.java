@@ -138,12 +138,31 @@ public class MotionSensor {
         Context mContext;
         private static final float DIST_THRESHOLD_M = 30.0f;
         private static final long TIME_INTERVAL_MS = 30000;
+        private Location mLastLocation;
 
         private LocationListener mNetworkLocationListener = new LocationListener() {
             public void onLocationChanged(Location location) {
-                AppGlobals.guiLogInfo("MotionSensor.NetworkLocationChangeDetector triggered.");
+                if (mLastLocation == null) {
+                    // Use the first location change to init the location. This means an initial movement
+                    // can be missed, and a subsequent movement is required. However this is the most reliable
+                    // means of initializing the location.
+                    mLastLocation = location;
+                    return;
+                }
+
+                final int distanceMeters = Math.round(location.distanceTo(mLastLocation));
+                if (distanceMeters < DIST_THRESHOLD_M) {
+                    // The threshold set in requestLocationUpdates is unreliable, I have seen false triggers, check here instead
+                    return;
+                }
+
+                AppGlobals.guiLogInfo("MotionSensor.NetworkLocationChangeDetector triggered. (" + distanceMeters + "m)");
                 Intent sendIntent = new Intent(ACTION_USER_MOTION_DETECTED);
                 LocalBroadcastManager.getInstance(mContext).sendBroadcastSync(sendIntent);
+
+                // Under expected usage, after the motion detection broadcast, this class goes through a stop()/start() cycle,
+                // which sets mLastLocation to null. In case someone wants to use this class differently, we update mLastLocation here.
+                mLastLocation = location;
             }
 
             public void onStatusChanged(String provider, int status, Bundle extras) {}
@@ -153,12 +172,13 @@ public class MotionSensor {
 
         public void start(Context c) {
             mContext = c;
+            mLastLocation = null;
             LocationManager lm = (LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
             if (!lm.getAllProviders().contains(LocationManager.NETWORK_PROVIDER)) {
                 return;
             }
 
-            lm.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, TIME_INTERVAL_MS, DIST_THRESHOLD_M, mNetworkLocationListener);
+            lm.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, TIME_INTERVAL_MS, 0, mNetworkLocationListener);
         }
 
         public void stop() {

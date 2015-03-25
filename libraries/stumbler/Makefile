@@ -3,3 +3,6 @@ all:
 
 test:
 	./gradlew test
+
+upload:
+	./gradlew bintrayUpload

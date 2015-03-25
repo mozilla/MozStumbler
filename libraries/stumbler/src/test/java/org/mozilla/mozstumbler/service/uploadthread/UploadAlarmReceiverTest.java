@@ -4,6 +4,7 @@
 
 package org.mozilla.mozstumbler.service.uploadthread;
 
+import android.app.AlarmManager;
 import android.content.Context;
 import android.content.Intent;
 
@@ -19,7 +20,12 @@ import org.mozilla.mozstumbler.svclocator.services.log.ILogger;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
+import org.robolectric.shadows.ShadowAlarmManager;
 
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
@@ -91,7 +97,32 @@ public class UploadAlarmReceiverTest {
         uas.onHandleIntent(new Intent("any_other_intent"));
 
         // verify that the upload() method was invoked once.
-        verify(uas, times(1)).upload(true);
+        verify(uas, times(1)).upload();
+    }
+
+
+    @Test
+    public void testRescheduleChangedAlarm_issue1592() {
+        Context ctx = Robolectric.application;
+
+        AlarmManager alarmManager = (AlarmManager) Robolectric
+                                        .application
+                                        .getSystemService(Context.ALARM_SERVICE);
+        ShadowAlarmManager shadowAlarmManager = Robolectric.shadowOf(alarmManager);
+
+        assertNull(shadowAlarmManager.getNextScheduledAlarm());
+
+        final int interval = 10000;
+        assertTrue(UploadAlarmReceiver.scheduleAlarm(ctx, interval, true));
+
+        ShadowAlarmManager.ScheduledAlarm nextAlarm = shadowAlarmManager.getNextScheduledAlarm();
+        assertNotNull(nextAlarm);
+        assertEquals(nextAlarm.interval/1000, interval);
+
+        assertFalse(UploadAlarmReceiver.scheduleAlarm(ctx, interval, true));
+
+        assertTrue(UploadAlarmReceiver.scheduleAlarm(ctx, interval*2, false));
+
     }
 
 

@@ -143,14 +143,26 @@ public class MotionSensor {
         private LocationListener mNetworkLocationListener = new LocationListener() {
             public void onLocationChanged(Location location) {
                 if (mLastLocation == null) {
+                    // Use the first location change to init the location. This means an initial movement
+                    // can be missed, and a subsequent movement is required. However this is the most reliable
+                    // means of initializing the location.
                     mLastLocation = location;
                     return;
                 }
 
-                AppGlobals.guiLogInfo("MotionSensor.NetworkLocationChangeDetector triggered. (" +
-                    Math.round(location.distanceTo(mLastLocation)) + "m)");
+                final int distanceMeters = Math.round(location.distanceTo(mLastLocation));
+                if (distanceMeters < DIST_THRESHOLD_M) {
+                    // The threshold set in requestLocationUpdates is unreliable, I have seen false triggers, check here instead
+                    return;
+                }
+
+                AppGlobals.guiLogInfo("MotionSensor.NetworkLocationChangeDetector triggered. (" + distanceMeters + "m)");
                 Intent sendIntent = new Intent(ACTION_USER_MOTION_DETECTED);
                 LocalBroadcastManager.getInstance(mContext).sendBroadcastSync(sendIntent);
+
+                // Under expected usage, after the motion detection broadcast, this class goes through a stop()/start() cycle,
+                // which sets mLastLocation to null. In case someone wants to use this class differently, we update mLastLocation here.
+                mLastLocation = location;
             }
 
             public void onStatusChanged(String provider, int status, Bundle extras) {}
@@ -166,7 +178,7 @@ public class MotionSensor {
                 return;
             }
 
-            lm.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, TIME_INTERVAL_MS, DIST_THRESHOLD_M, mNetworkLocationListener);
+            lm.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, TIME_INTERVAL_MS, 0, mNetworkLocationListener);
         }
 
         public void stop() {

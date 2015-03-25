@@ -123,8 +123,6 @@ android {
         }
 
         release {
-            minifyEnabled true
-            proguardFile 'proguard.cfg'
             signingConfig signingConfigs.release
         }
 

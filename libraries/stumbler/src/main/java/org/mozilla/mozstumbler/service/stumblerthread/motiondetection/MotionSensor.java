@@ -138,10 +138,17 @@ public class MotionSensor {
         Context mContext;
         private static final float DIST_THRESHOLD_M = 30.0f;
         private static final long TIME_INTERVAL_MS = 30000;
+        private Location mLastLocation;
 
         private LocationListener mNetworkLocationListener = new LocationListener() {
             public void onLocationChanged(Location location) {
-                AppGlobals.guiLogInfo("MotionSensor.NetworkLocationChangeDetector triggered.");
+                if (mLastLocation == null) {
+                    mLastLocation = location;
+                    return;
+                }
+
+                AppGlobals.guiLogInfo("MotionSensor.NetworkLocationChangeDetector triggered. (" +
+                    Math.round(location.distanceTo(mLastLocation)) + "m)");
                 Intent sendIntent = new Intent(ACTION_USER_MOTION_DETECTED);
                 LocalBroadcastManager.getInstance(mContext).sendBroadcastSync(sendIntent);
             }
@@ -153,6 +160,7 @@ public class MotionSensor {
 
         public void start(Context c) {
             mContext = c;
+            mLastLocation = null;
             LocationManager lm = (LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
             if (!lm.getAllProviders().contains(LocationManager.NETWORK_PROVIDER)) {
                 return;

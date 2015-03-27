@@ -35,6 +35,8 @@ class MapLocationListener {
     };
     private final LocationUpdateListener mGpsLocationListener =
             new LocationUpdateListener(LocationManager.GPS_PROVIDER, 5000, mReceivedGpsLocation);
+    private final LocationUpdateListener mPassiveLocationListener =
+            new LocationUpdateListener(LocationManager.PASSIVE_PROVIDER, 1000, null);
     private LocationManager mLocationManager;
     private final GpsStatus.Listener mSatelliteListener = new GpsStatus.Listener() {
         public void onGpsStatusChanged(int event) {
@@ -90,6 +92,7 @@ class MapLocationListener {
         } else {
             setActiveLocationUpdatesEnabled(true);
         }
+        enableLocationListener(true, mPassiveLocationListener);
     }
 
     private void enableLocationListener(boolean isEnabled, LocationUpdateListener listener) {
@@ -117,6 +120,7 @@ class MapLocationListener {
 
         mLocationManager.removeGpsStatusListener(mSatelliteListener);
         setActiveLocationUpdatesEnabled(false);
+        enableLocationListener(false, mPassiveLocationListener);
     }
 
     public void setActiveLocationUpdatesEnabled(boolean enable) {

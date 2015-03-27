@@ -88,8 +88,7 @@ class MapLocationListener {
         if (app.isIsScanningPausedDueToNoMotion()) {
             pauseGpsUpdates(true);
         } else {
-            enableLocationListener(true, mNetworkLocationListener);
-            enableLocationListener(true, mGpsLocationListener);
+            setActiveLocationUpdatesEnabled(true);
         }
     }
 
@@ -117,8 +116,19 @@ class MapLocationListener {
         }
 
         mLocationManager.removeGpsStatusListener(mSatelliteListener);
-        enableLocationListener(false, mGpsLocationListener);
-        enableLocationListener(false, mNetworkLocationListener);
+        setActiveLocationUpdatesEnabled(false);
+    }
+
+    public void setActiveLocationUpdatesEnabled(boolean enable) {
+        if (enable) {
+            // enable NetworkLocationListener first because GpsLocationListener will disable it
+            enableLocationListener(true, mNetworkLocationListener);
+            enableLocationListener(true, mGpsLocationListener);
+        } else {
+            // disable GpsLocationListener first because it might enable NetworkLocationListener
+            enableLocationListener(false, mGpsLocationListener);
+            enableLocationListener(false, mNetworkLocationListener);
+        }
     }
 
     public void pauseGpsUpdates(boolean isGpsOff) {

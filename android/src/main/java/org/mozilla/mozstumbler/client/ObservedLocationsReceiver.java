@@ -82,7 +82,9 @@ public class ObservedLocationsReceiver extends BroadcastReceiver {
 
     private synchronized MapFragment getMapActivity() {
         return mMapActivity.get();
-    }    private final Runnable mFetchMLSRunnable = new Runnable() {
+    }
+
+    private final Runnable mFetchMLSRunnable = new Runnable() {
         @Override
         public void run() {
             synchronized (ObservedLocationsReceiver.this) {
@@ -91,8 +93,7 @@ public class ObservedLocationsReceiver extends BroadcastReceiver {
                     return;
                 }
                 mHandler.postDelayed(mFetchMLSRunnable, FREQ_FETCH_MLS_MS);
-                if (mQueuedForMLS.size() < 1 ||
-                        !prefs.getOnMapShowMLS()) {
+                if (mQueuedForMLS.size() < 1 || !prefs.getOnMapShowMLS()) {
                     return;
                 }
                 int count = 0;

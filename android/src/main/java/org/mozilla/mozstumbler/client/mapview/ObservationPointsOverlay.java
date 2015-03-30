@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.ListIterator;
 
 class ObservationPointsOverlay extends Overlay {
@@ -122,15 +123,17 @@ class ObservationPointsOverlay extends Overlay {
         mHashedGrid = new LinkedHashMap<Integer, ObservationPoint>();
         mHashedGridAnchorPoint = new Point(mapView.getScrollX(), mapView.getScrollY());
         final Projection pj = mapView.getProjection();
-        LinkedList<ObservationPoint> points = ObservedLocationsReceiver.getInstance().getObservationPoints();
-        final Iterator<ObservationPoint> i = points.iterator();
-        final Point gps = new Point();
-        ObservationPoint point;
-        Point zero = new Point(0, 0);
-        while (i.hasNext()) {
-            point = i.next();
-            pj.toPixels(point.pointGPS, gps);
-            addToGridHash(point, gps, zero);
+        List<ObservationPoint> points = ObservedLocationsReceiver.getInstance().getObservationPoints_callerMustLock();
+        synchronized (points) {
+            final Iterator<ObservationPoint> i = points.iterator();
+            final Point gps = new Point();
+            ObservationPoint point;
+            Point zero = new Point(0, 0);
+            while (i.hasNext()) {
+                point = i.next();
+                pj.toPixels(point.pointGPS, gps);
+                addToGridHash(point, gps, zero);
+            }
         }
     }
 
@@ -148,72 +151,74 @@ class ObservationPointsOverlay extends Overlay {
 
     protected void draw(Canvas c, MapView osmv, boolean shadow) {
         final long endTime = SystemClock.uptimeMillis() + DRAW_TIME_MILLIS;
-        LinkedList<ObservationPoint> points = ObservedLocationsReceiver.getInstance().getObservationPoints();
-        if (shadow || points.size() < 1) {
-            return;
-        }
-
-        final Projection pj = osmv.getProjection();
-        final float radiusInnerRing = mSize3px;
-
-        int count = 0;
-        // The overlay occupies the entire screen, so this returns the screen (0,0,w,h).
-        Rect clip = c.getClipBounds();
-
-        if (mHashedGrid == null || mHashedGrid.size() < 1) {
-            return;
-        }
-
-        final Point gps = new Point();
-
-        ArrayList<HashMap.Entry<Integer, ObservationPoint>> arrayList =
-                new ArrayList<HashMap.Entry<Integer, ObservationPoint>>(mHashedGrid.entrySet());
-        ListIterator<HashMap.Entry<Integer, ObservationPoint>> revIterator =
-                arrayList.listIterator(mHashedGrid.size());
-        while (revIterator.hasPrevious()) {
-            HashMap.Entry<Integer, ObservationPoint> entry = revIterator.previous();
-            ObservationPoint point = entry.getValue();
-            pj.toPixels(point.pointGPS, gps);
-
-            if (!clip.contains(gps.x, gps.y)) {
-                continue;
+        List<ObservationPoint> points = ObservedLocationsReceiver.getInstance().getObservationPoints_callerMustLock();
+        synchronized (points) {
+            if (shadow || points.size() < 1) {
+                return;
             }
 
-            boolean hasWifiScan = point.mWifiCount > 0;
-            boolean hasCellScan = point.mCellCount > 0;
+            final Projection pj = osmv.getProjection();
+            final float radiusInnerRing = mSize3px;
 
-            if (hasWifiScan && !hasCellScan) {
-                drawWifiScan(c, gps);
-            } else if (hasCellScan && !hasWifiScan) {
-                drawCellScan(c, gps);
-            } else {
-                drawDot(c, gps, radiusInnerRing, mGreenPaint, mBlackStrokePaint);
+            int count = 0;
+            // The overlay occupies the entire screen, so this returns the screen (0,0,w,h).
+            Rect clip = c.getClipBounds();
+
+            if (mHashedGrid == null || mHashedGrid.size() < 1) {
+                return;
             }
 
-            if ((++count % TIME_CHECK_MULTIPLE == 0) && (SystemClock.uptimeMillis() > endTime)) {
-                break;
-            }
-        }
+            final Point gps = new Point();
 
-        if (!mOnMapShowMLS) {
-            return;
-        }
-
-        // Draw as a 2nd layer over the observation points
-        final Point mls = new Point();
-        revIterator = arrayList.listIterator(mHashedGrid.size());
-        while (revIterator.hasPrevious()) {
-            HashMap.Entry<Integer, ObservationPoint> entry = revIterator.previous();
-            ObservationPoint point = entry.getValue();
-            if (point.pointMLS != null) {
+            ArrayList<HashMap.Entry<Integer, ObservationPoint>> arrayList =
+                    new ArrayList<HashMap.Entry<Integer, ObservationPoint>>(mHashedGrid.entrySet());
+            ListIterator<HashMap.Entry<Integer, ObservationPoint>> revIterator =
+                    arrayList.listIterator(mHashedGrid.size());
+            while (revIterator.hasPrevious()) {
+                HashMap.Entry<Integer, ObservationPoint> entry = revIterator.previous();
+                ObservationPoint point = entry.getValue();
                 pj.toPixels(point.pointGPS, gps);
-                pj.toPixels(point.pointMLS, mls);
-                drawDot(c, mls, radiusInnerRing - 1, mRedPaint, mBlackStrokePaintThin);
-                c.drawLine(gps.x, gps.y, mls.x, mls.y, mBlackMLSLinePaint);
+
+                if (!clip.contains(gps.x, gps.y)) {
+                    continue;
+                }
+
+                boolean hasWifiScan = point.mWifiCount > 0;
+                boolean hasCellScan = point.mCellCount > 0;
+
+                if (hasWifiScan && !hasCellScan) {
+                    drawWifiScan(c, gps);
+                } else if (hasCellScan && !hasWifiScan) {
+                    drawCellScan(c, gps);
+                } else {
+                    drawDot(c, gps, radiusInnerRing, mGreenPaint, mBlackStrokePaint);
+                }
+
+                if ((++count % TIME_CHECK_MULTIPLE == 0) && (SystemClock.uptimeMillis() > endTime)) {
+                    break;
+                }
             }
 
-            if ((++count % TIME_CHECK_MULTIPLE == 0) && (SystemClock.uptimeMillis() > endTime)) {
-                break;
+            if (!mOnMapShowMLS) {
+                return;
+            }
+
+            // Draw as a 2nd layer over the observation points
+            final Point mls = new Point();
+            revIterator = arrayList.listIterator(mHashedGrid.size());
+            while (revIterator.hasPrevious()) {
+                HashMap.Entry<Integer, ObservationPoint> entry = revIterator.previous();
+                ObservationPoint point = entry.getValue();
+                if (point.pointMLS != null) {
+                    pj.toPixels(point.pointGPS, gps);
+                    pj.toPixels(point.pointMLS, mls);
+                    drawDot(c, mls, radiusInnerRing - 1, mRedPaint, mBlackStrokePaintThin);
+                    c.drawLine(gps.x, gps.y, mls.x, mls.y, mBlackMLSLinePaint);
+                }
+
+                if ((++count % TIME_CHECK_MULTIPLE == 0) && (SystemClock.uptimeMillis() > endTime)) {
+                    break;
+                }
             }
         }
     }

@@ -52,7 +52,8 @@ public class KMLFragment extends Fragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mRootView = inflater.inflate(R.layout.fragment_kml, container, false);
-        mPointsToWrite = ObservedLocationsReceiver.getInstance().getObservationPoints();
+        mPointsToWrite =
+            new LinkedList<ObservationPoint>(ObservedLocationsReceiver.getInstance().getObservationPoints_callerMustLock());
         mProgressDialog = new WeakReference<ProgressDialog>(null);
         mSavedFileLocation = (TextView) mRootView.findViewById(R.id.textViewSavedFile);
 

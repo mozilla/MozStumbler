@@ -5,12 +5,14 @@ package org.mozilla.mozstumbler.client.mapview.maplocation;
 
 import android.location.Location;
 import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import org.mozilla.mozstumbler.client.mapview.MapFragment;
 import java.lang.ref.WeakReference;
 
 // Listens for position changes and updates the position on the map view
-public class MapUpdatingLocationListener implements LocationListener {
+public abstract class MapUpdatingLocationListener implements LocationListener {
+
     interface ReceivedLocationCallback {
         void receivedLocation();
     }
@@ -21,7 +23,7 @@ public class MapUpdatingLocationListener implements LocationListener {
     boolean mIsActive;
     private final WeakReference<MapFragment> mMap;
 
-    public MapUpdatingLocationListener(MapFragment map, String type, long freq, ReceivedLocationCallback callback) {
+    MapUpdatingLocationListener(MapFragment map, String type, long freq, ReceivedLocationCallback callback) {
         mCallback = callback;
         mType = type;
         mFreqMs = freq;
@@ -35,6 +37,11 @@ public class MapUpdatingLocationListener implements LocationListener {
         if (mCallback != null) {
             mCallback.receivedLocation();
         }
+    }
+
+    public void requestLocationUpdates(LocationManager manager) {
+        // Invert this call as most parameters are members of this location listener.
+        manager.requestLocationUpdates(this.mType, this.mFreqMs, 0, this);
     }
 
     public void onStatusChanged(String s, int i, Bundle bundle) {}

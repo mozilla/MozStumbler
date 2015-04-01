@@ -54,7 +54,7 @@ public class UserPositionUpdateManager {
 
         try {
             if (isEnabled && !listener.mIsActive) {
-                manager.requestLocationUpdates(listener.mType, listener.mFreqMs, 0, listener);
+                listener.requestLocationUpdates(manager);
             } else if (!isEnabled && listener.mIsActive) {
                 manager.removeUpdates(listener);
             }

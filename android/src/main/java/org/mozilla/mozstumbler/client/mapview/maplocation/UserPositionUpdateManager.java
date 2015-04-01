@@ -76,14 +76,7 @@ public class UserPositionUpdateManager {
         if (app == null) {
             return;
         }
-    }
-
-    public void setMapVisible(boolean visible) {
-        if (visible) {
-            mMultiSourceLocationListener.start();
-        } else {
-            mMultiSourceLocationListener.stop();
-        }
+        mMultiSourceLocationListener.start();
     }
 
     static void enableLocationListener(LocationManager manager, boolean isEnabled, MapUpdatingLocationListener listener) {

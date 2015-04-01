@@ -3,9 +3,13 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package org.mozilla.mozstumbler.client.mapview.maplocation;
 
+import android.location.GpsSatellite;
+import android.location.GpsStatus;
 import android.location.LocationManager;
 import org.mozilla.mozstumbler.client.mapview.MapFragment;
 import org.mozilla.mozstumbler.client.mapview.maplocation.MapUpdatingLocationListener.ReceivedLocationCallback;
+import org.mozilla.mozstumbler.service.stumblerthread.scanners.GPSScanner;
+
 import java.lang.ref.WeakReference;
 
 public class MultiSourceLocationListener {
@@ -20,8 +24,31 @@ public class MultiSourceLocationListener {
 
     private final MapUpdatingLocationListener mNetworkLocationListener;
     private final MapUpdatingLocationListener mGpsLocationListener;
-
     private final WeakReference<MapFragment> mMapFragment;
+
+    private final GpsStatus.Listener mSatelliteListener = new GpsStatus.Listener() {
+        public void onGpsStatusChanged(int event) {
+            if (event == GpsStatus.GPS_EVENT_SATELLITE_STATUS && mLocationManager != null) {
+                GpsStatus gpsStatus = mLocationManager.getGpsStatus(null);
+                Iterable<GpsSatellite> sats = gpsStatus.getSatellites();
+                int satellites = 0;
+                int fixes = 0;
+                for (GpsSatellite sat : sats) {
+                    satellites++;
+                    if (sat.usedInFix()) {
+                        fixes++;
+                    }
+                }
+                if (mMapFragment.get() != null) {
+                    mMapFragment.get().updateGPSInfo(satellites, fixes);
+                }
+
+                if (fixes < GPSScanner.MIN_SAT_USED_IN_FIX) {
+                    notEnoughSatellites();
+                }
+            }
+        }
+    };
 
     MultiSourceLocationListener(LocationManager manager, MapFragment mapFragment) {
         mLocationManager = manager;
@@ -31,10 +58,12 @@ public class MultiSourceLocationListener {
     }
 
     public void start() {
+        mLocationManager.addGpsStatusListener(mSatelliteListener);
         setLocationUpdatesEnabled(true);
     }
 
     public void stop() {
+        mLocationManager.removeGpsStatusListener(mSatelliteListener);
         setLocationUpdatesEnabled(false);
     }
 

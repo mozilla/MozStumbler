@@ -62,6 +62,11 @@ public final class Reporter extends BroadcastReceiver implements IReporter {
         intentFilter.addAction(WifiScanner.ACTION_WIFIS_SCANNED);
         intentFilter.addAction(CellScanner.ACTION_CELLS_SCANNED);
         intentFilter.addAction(GPSScanner.ACTION_GPS_UPDATED);
+
+        intentFilter.addAction(StumblerServiceIntentActions.SVC_REQ_OBSERVATION_PT);
+        intentFilter.addAction(StumblerServiceIntentActions.SVC_REQ_UNIQUE_CELL_COUNT);
+        intentFilter.addAction(StumblerServiceIntentActions.SVC_REQ_UNIQUE_WIFI_COUNT);
+
         intentFilter.addAction(ACTION_FLUSH_TO_BUNDLE);
 
         LocalBroadcastManager.getInstance(mContext).registerReceiver(this,
@@ -119,6 +124,18 @@ public final class Reporter extends BroadcastReceiver implements IReporter {
         } else if (action.equals(GPSScanner.ACTION_GPS_UPDATED)) {
             // This is the common case
             receivedGpsMessage(intent);
+        } else if (intent.getAction().equals(StumblerServiceIntentActions.SVC_REQ_OBSERVATION_PT)) {
+            StumblerService.broadcastCount(mContext,
+                    StumblerServiceIntentActions.SVC_RESP_OBSERVATION_PT,
+                    getObservationCount());
+        } else if (intent.getAction().equals(StumblerServiceIntentActions.SVC_REQ_UNIQUE_CELL_COUNT)) {
+            StumblerService.broadcastCount(mContext,
+                    StumblerServiceIntentActions.SVC_RESP_UNIQUE_CELL_COUNT,
+                    getUniqueCellCount());
+        } else if (intent.getAction().equals(StumblerServiceIntentActions.SVC_REQ_UNIQUE_WIFI_COUNT)) {
+            StumblerService.broadcastCount(mContext,
+                    StumblerServiceIntentActions.SVC_RESP_UNIQUE_WIFI_COUNT,
+                    getUniqueAPCount());
         }
 
         if (mBundle != null &&
@@ -203,15 +220,15 @@ public final class Reporter extends BroadcastReceiver implements IReporter {
         mBundle = null;
     }
 
-    public synchronized int getObservationCount() {
+    private synchronized int getObservationCount() {
         return mObservationCount;
     }
 
-    public synchronized int getUniqueAPCount() {
+    private synchronized int getUniqueAPCount() {
         return mUniqueAPs.size();
     }
 
-    public synchronized int getUniqueCellCount() {
+    private synchronized int getUniqueCellCount() {
         return mUniqueCells.size();
     }
 }

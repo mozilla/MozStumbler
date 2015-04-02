@@ -29,12 +29,5 @@ public interface IReporter {
      */
 
     public void startup(Context context);
-
     public void shutdown();
-
-    public int getObservationCount();
-
-    public int getUniqueAPCount();
-
-    public int getUniqueCellCount();
 }

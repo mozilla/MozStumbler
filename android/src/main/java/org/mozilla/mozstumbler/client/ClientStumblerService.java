@@ -17,6 +17,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.client.util.NotificationUtil;
 import org.mozilla.mozstumbler.service.AppGlobals;
+import org.mozilla.mozstumbler.service.stumblerthread.Reporter;
 import org.mozilla.mozstumbler.service.stumblerthread.StumblerService;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.ClientDataStorageManager;
 import org.mozilla.mozstumbler.service.utils.BatteryCheckReceiver;
@@ -135,7 +136,8 @@ public class ClientStumblerService extends StumblerService {
 
     public void stopScanning() {
         if (mScanManager.stopScanning()) {
-            mReporter.flush();
+            Intent flush = new Intent(Reporter.ACTION_FLUSH_TO_BUNDLE);
+            LocalBroadcastManager.getInstance(this).sendBroadcastSync(flush);
         }
 
         if (mBatteryChecker != null) {

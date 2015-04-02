@@ -32,8 +32,6 @@ public interface IReporter {
 
     public void shutdown();
 
-    public void flush();
-
     public int getObservationCount();
 
     public int getUniqueAPCount();

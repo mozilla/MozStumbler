@@ -155,7 +155,7 @@ public final class Reporter extends BroadcastReceiver implements IReporter {
         }
     }
 
-    public synchronized void flush() {
+    private synchronized void flush() {
         JSONObject mlsObj;
         int wifiCount = 0;
         int cellCount = 0;

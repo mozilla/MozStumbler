@@ -8,6 +8,7 @@ import android.location.Location;
 
 import com.ekito.simpleKML.model.Coordinate;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.mozilla.mozstumbler.client.ClientPrefs;
@@ -58,12 +59,11 @@ public class ObservationPoint implements MLSLocationGetter.MLSLocationGetterCall
     }
 
     public void setCounts(JSONObject ichnaeaQueryObj) {
-        try {
-            mCellCount = ichnaeaQueryObj.getJSONArray(DataStorageContract.ReportsColumns.CELL).length();
-            mWifiCount = ichnaeaQueryObj.getJSONArray(DataStorageContract.ReportsColumns.WIFI).length();
-        } catch (JSONException ex) {
-            Log.w(LOG_TAG, "Unable to set count length: " + ex.toString());
-        }
+        JSONArray cells = ichnaeaQueryObj.optJSONArray(DataStorageContract.ReportsColumns.CELL);
+        mCellCount = (cells != null) ? cells.length() : 0;
+
+        JSONArray wifis = ichnaeaQueryObj.optJSONArray(DataStorageContract.ReportsColumns.WIFI);
+        mWifiCount = (wifis != null) ? wifis.length() : 0;
     }
 
     public void fetchMLS() {

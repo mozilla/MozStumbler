@@ -6,6 +6,7 @@ package org.mozilla.mozstumbler.service.stumblerthread.datahandling;
 
 import android.content.Context;
 
+import org.acra.ACRA;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.core.logging.ClientLog;
 import org.mozilla.mozstumbler.service.utils.Zipper;
@@ -15,7 +16,6 @@ import org.mozilla.mozstumbler.svclocator.services.log.ILogger;
 import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -50,7 +50,6 @@ public class DataStorageManager {
                                                                 .getInstance()
                                                                 .getService(ISystemClock.class);
 
-    public static final String MOZ_STUMBLER_RELPATH = "mozstumbler";
     static final String SEP_REPORT_COUNT = "-r";
     static final String SEP_WIFI_COUNT = "-w";
     static final String SEP_CELL_COUNT = "-c";
@@ -156,6 +155,7 @@ public class DataStorageManager {
             return data;
         } catch (IOException e) {
             Log.e(LOG_TAG, "Error reading reports file: " + e.toString());
+            ACRA.getErrorReporter().handleSilentException(e);
             return new byte[]{};
         } finally {
             if (f != null) {
@@ -342,7 +342,7 @@ public class DataStorageManager {
             fos.write(bytes);
         } catch (IOException e) {
            Log.e(LOG_TAG, "Error writing reports to disk: " + e.toString());
-
+           ACRA.getErrorReporter().handleSilentException(e);
            // Try to remove the file safely if we can't save it.
            if (f.exists()) {
                f.delete();

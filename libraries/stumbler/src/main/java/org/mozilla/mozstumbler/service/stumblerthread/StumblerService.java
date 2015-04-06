@@ -197,12 +197,7 @@ public class StumblerService extends PersistentIntentService
                 }
 
                 if (DataStorageManager.getInstance() != null) {
-                    try {
-                        DataStorageManager.getInstance().saveCurrentReportsToDisk();
-                    } catch (IOException ex) {
-                        AppGlobals.guiLogInfo(ex.toString());
-                        Log.e(LOG_TAG, "Exception in onDestroy saving reports" + ex.toString());
-                    }
+                    DataStorageManager.getInstance().saveCurrentReportsToDisk();
                 }
                 return null;
             }
@@ -302,10 +297,6 @@ public class StumblerService extends PersistentIntentService
         if (manager == null) {
             return;
         }
-        try {
-            manager.saveCurrentReportsToDisk();
-        } catch (IOException ioException) {
-            Log.e(LOG_TAG, ioException.toString());
-        }
+        manager.saveCurrentReportsToDisk();
     }
 }

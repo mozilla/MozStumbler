@@ -10,10 +10,12 @@ import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.core.logging.ClientLog;
 import org.mozilla.mozstumbler.service.utils.Zipper;
 import org.mozilla.mozstumbler.svclocator.ServiceLocator;
+import org.mozilla.mozstumbler.svclocator.services.ISystemClock;
 import org.mozilla.mozstumbler.svclocator.services.log.ILogger;
 import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -41,8 +43,12 @@ import java.util.TimerTask;
  * when the service is destroyed.
  */
 public class DataStorageManager {
-    ILogger Log = (ILogger) ServiceLocator.getInstance().getService(ILogger.class);
+    private static ILogger Log = (ILogger) ServiceLocator.getInstance().getService(ILogger.class);
     private static final String LOG_TAG = LoggerUtil.makeLogTag(DataStorageManager.class);
+
+    private static final ISystemClock clock = (ISystemClock) ServiceLocator
+                                                                .getInstance()
+                                                                .getService(ISystemClock.class);
 
     public static final String MOZ_STUMBLER_RELPATH = "mozstumbler";
     static final String SEP_REPORT_COUNT = "-r";
@@ -81,6 +87,7 @@ public class DataStorageManager {
         if (!mReportsDir.exists()) {
             mReportsDir.mkdirs();
         }
+
         mFileList = new ReportFileList();
         mFileList.update(mReportsDir);
 
@@ -109,7 +116,8 @@ public class DataStorageManager {
         if (!dir.exists()) {
             boolean ok = dir.mkdirs();
             if (!ok) {
-                ClientLog.d(LOG_TAG, "getStorageDir: error in mkdirs()");
+                ClientLog.w(LOG_TAG, "getStorageDir: error in mkdirs()");
+                Log.e(LOG_TAG, "Error creating storage directory: ["+dir.getAbsolutePath()+"]");
             }
         }
 
@@ -139,14 +147,24 @@ public class DataStorageManager {
         return sInstance;
     }
 
-    private static byte[] readFile(File file) throws IOException {
-        final RandomAccessFile f = new RandomAccessFile(file, "r");
+    private static byte[] readFile(File file) {
+        RandomAccessFile f = null;
         try {
+            f = new RandomAccessFile(file, "r");
             final byte[] data = new byte[(int) f.length()];
             f.readFully(data);
             return data;
+        } catch (IOException e) {
+            Log.e(LOG_TAG, "Error reading reports file: " + e.toString());
+            return new byte[]{};
         } finally {
-            f.close();
+            if (f != null) {
+                try {
+                    f.close();
+                } catch (IOException e) {
+                    // eat it
+                }
+            }
         }
     }
 
@@ -206,7 +224,7 @@ public class DataStorageManager {
 
     /* return name of file used, or memory buffer sentinel value.
      * The return value is used to delete the file/buffer later. */
-    public synchronized ReportBatch getFirstBatch() throws IOException {
+    public synchronized ReportBatch getFirstBatch() {
         final boolean dirEmpty = isDirEmpty();
         final int currentReportsCount = mCurrentReports.reportsCount();
 
@@ -242,7 +260,7 @@ public class DataStorageManager {
         mCurrentReports.wifiCount = mCurrentReports.cellCount = 0;
     }
 
-    public synchronized ReportBatch getNextBatch() throws IOException {
+    public synchronized ReportBatch getNextBatch() {
         if (mReportBatchIterator == null) {
             return null;
         }
@@ -263,7 +281,7 @@ public class DataStorageManager {
     }
 
     private File createFile(int reportCount, int wifiCount, int cellCount) {
-        final long time = System.currentTimeMillis();
+        final long time = clock.currentTimeMillis();
         final String name = FILENAME_PREFIX +
                 SEP_TIME_MS + time +
                 SEP_REPORT_COUNT + reportCount +
@@ -287,34 +305,63 @@ public class DataStorageManager {
         return oldest;
     }
 
-    public synchronized void saveCurrentReportsSendBufferToDisk() throws IOException {
+    /*
+     Return true if the current reports (if any exist) are properly saved.
+     Return false only on a failed write to storage.
+     */
+    private synchronized boolean saveCurrentReportsSendBufferToDisk() {
         if (mCurrentReportsSendBuffer == null || mCurrentReportsSendBuffer.reportCount < 1) {
-            return;
+            return true;
         }
 
-        saveToDisk(mCurrentReportsSendBuffer.data,
+        boolean result = saveToDisk(mCurrentReportsSendBuffer.data,
                 mCurrentReportsSendBuffer.reportCount,
                 mCurrentReportsSendBuffer.wifiCount,
                 mCurrentReportsSendBuffer.cellCount);
         mCurrentReportsSendBuffer = null;
+        return result;
     }
 
-    private void saveToDisk(byte[] bytes, int reportCount, int wifiCount, int cellCount)
-            throws IOException {
+    /*
+     Return true if reports are saved.
+     Return false only on a failed write to storage.
+     */
+    private boolean saveToDisk(byte[] bytes, int reportCount, int wifiCount, int cellCount) {
         if (mFileList.mFilesOnDiskBytes > mMaxBytesDiskStorage) {
-            return;
+            return false;
         }
 
-        final FileOutputStream fos = new FileOutputStream(createFile(reportCount, wifiCount, cellCount));
+        FileOutputStream fos = null;
+        File f = createFile(reportCount, wifiCount, cellCount);
         try {
+            Log.i(LOG_TAG, "Preparing to write to : ["+f.getAbsolutePath()+"]");
+            if (!f.exists()) {
+                f.createNewFile();
+            }
+            fos = new FileOutputStream(f);
             fos.write(bytes);
+        } catch (IOException e) {
+           Log.e(LOG_TAG, "Error writing reports to disk: " + e.toString());
+
+           // Try to remove the file safely if we can't save it.
+           if (f.exists()) {
+               f.delete();
+           }
+           return false;
         } finally {
-            fos.close();
+            if (fos != null) {
+                try {
+                    fos.close();
+                } catch (IOException e) {
+                    // eat it - nothing we can do here
+                }
+            }
         }
         mFileList.update(mReportsDir);
+        return true;
     }
 
-    public synchronized void saveCurrentReportsToDisk() throws IOException {
+    public synchronized void saveCurrentReportsToDisk() {
         saveCurrentReportsSendBufferToDisk();
         if (mCurrentReports.reportsCount() < 1) {
             return;
@@ -330,7 +377,7 @@ public class DataStorageManager {
         clearCurrentReports();
     }
 
-    public synchronized void insert(String report, int wifiCount, int cellCount) throws IOException {
+    public synchronized void insert(String report, int wifiCount, int cellCount) {
         notifyStorageIsEmpty(false);
 
         if (mFlushMemoryBuffersToDiskTimer != null) {
@@ -339,6 +386,7 @@ public class DataStorageManager {
         }
 
         mCurrentReports.addReport(report);
+
         mCurrentReports.wifiCount += wifiCount;
         mCurrentReports.cellCount += cellCount;
 
@@ -353,11 +401,7 @@ public class DataStorageManager {
             mFlushMemoryBuffersToDiskTimer.schedule(new TimerTask() {
                 @Override
                 public void run() {
-                    try {
-                        saveCurrentReportsToDisk();
-                    } catch (IOException ex) {
-                        ClientLog.e(LOG_TAG, "mFlushMemoryBuffersToDiskTimer exception", ex);
-                    }
+                    saveCurrentReportsSendBufferToDisk();
                 }
             }, kMillis);
         }
@@ -400,7 +444,7 @@ public class DataStorageManager {
         }
     }
 
-    public synchronized void incrementSyncStats(long bytesSent, long reports, long cells, long wifis) throws IOException {
+    public synchronized void incrementSyncStats(long bytesSent, long reports, long cells, long wifis) {
         mPersistedOnDiskUploadStats.incrementSyncStats(bytesSent, reports, cells, wifis);
 
     }

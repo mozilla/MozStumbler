@@ -31,6 +31,7 @@ import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.client.ClientPrefs;
 import org.mozilla.mozstumbler.client.MainApp;
 import org.mozilla.mozstumbler.client.ObservedLocationsReceiver;
+import org.mozilla.mozstumbler.client.mapview.maplocation.UserPositionUpdateManager;
 import org.mozilla.mozstumbler.client.mapview.tiles.AbstractMapOverlay;
 import org.mozilla.mozstumbler.client.mapview.tiles.CoverageOverlay;
 import org.mozilla.mozstumbler.client.mapview.tiles.LowResMapOverlay;
@@ -84,7 +85,7 @@ public class MapFragment extends android.support.v4.app.Fragment
     private static boolean sHadFirstLocationFix = false;
     private static boolean sUserPanning = true;
     private ObservationPointsOverlay mObservationPointsOverlay;
-    private MapLocationListener mMapLocationListener;
+    private UserPositionUpdateManager mMapLocationListener;
     private LowResMapOverlay mLowResMapOverlayHighZoom;
     private LowResMapOverlay mLowResMapOverlayLowZoom;
     private Overlay mCoverageTilesOverlayLowZoom;
@@ -252,7 +253,7 @@ public class MapFragment extends android.support.v4.app.Fragment
         mMap.getController().setCenter(loc);
     }
 
-    MainApp getApplication() {
+    public MainApp getApplication() {
         FragmentActivity activity = getActivity();
         if (activity == null) {
             return null;
@@ -510,7 +511,7 @@ public class MapFragment extends android.support.v4.app.Fragment
         }
     }
 
-    void setUserPositionAt(Location location) {
+    public void setUserPositionAt(Location location) {
         mAccuracyOverlay.setLocation(location);
 
         if (!sHadFirstLocationFix) {
@@ -523,7 +524,7 @@ public class MapFragment extends android.support.v4.app.Fragment
         }
     }
 
-    void updateGPSInfo(int satellites, int fixes) {
+    public void updateGPSInfo(int satellites, int fixes) {
         formatTextView(R.id.text_satellites_avail, "%d", satellites);
         formatTextView(R.id.text_satellites_used, "%d", fixes);
         // @TODO this is still not accurate
@@ -544,7 +545,7 @@ public class MapFragment extends android.support.v4.app.Fragment
      the class is under test
      */
     void doOnResume() {
-        mMapLocationListener = new MapLocationListener(this);
+        mMapLocationListener = new UserPositionUpdateManager(this);
 
         ObservedLocationsReceiver observer = ObservedLocationsReceiver.getInstance();
         observer.setMapActivity(this);
@@ -673,24 +674,12 @@ public class MapFragment extends android.support.v4.app.Fragment
 
     public void showPausedDueToNoMotionMessage(boolean show) {
         mRootView.findViewById(R.id.scanning_paused_message).setVisibility(show ? View.VISIBLE : View.INVISIBLE);
-        if (mMapLocationListener != null) {
-            mMapLocationListener.pauseGpsUpdates(show);
-        }
         updateGPSInfo(0, 0);
         dimToolbar();
     }
 
-    public void start() {
-        if (mMapLocationListener != null) {
-            mMapLocationListener.setActiveLocationUpdatesEnabled(true);
-        }
-    }
-
     public void stop() {
         mRootView.findViewById(R.id.scanning_paused_message).setVisibility(View.INVISIBLE);
-        if (mMapLocationListener != null) {
-            mMapLocationListener.setActiveLocationUpdatesEnabled(false);
-        }
         updateGPSInfo(0, 0);
         dimToolbar();
     }

@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 
+import org.acra.ACRA;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.utils.TelemetryWrapper;
 import org.mozilla.mozstumbler.svclocator.ServiceLocator;
@@ -146,6 +147,7 @@ public class PersistedStats {
             props.store(out, null);
         } catch (IOException e) {
             Log.w(LOG_TAG, "Error writing sync stats: " + e.toString());
+            ACRA.getErrorReporter().handleSilentException(e);
             return props;
         } finally {
             try {

@@ -41,7 +41,8 @@ public class ObservedLocationsReceiver extends BroadcastReceiver {
     private static final long FREQ_FETCH_MLS_MS = 5 * 1000;
     private static ObservedLocationsReceiver sInstance;
     private final List<ObservationPoint> mCollectionPoints = Collections.synchronizedList(new LinkedList<ObservationPoint>());
-    private final LinkedList<ObservationPoint> mQueuedForMLS = new LinkedList<ObservationPoint>();
+    private final List<ObservationPoint> mQueuedForMLS =
+            Collections.synchronizedList(new LinkedList<ObservationPoint>());
     private final Handler mHandler = new Handler(Looper.getMainLooper());
 
     // Upper bound on the size of the linked lists of points, for memory and performance safety.
@@ -67,7 +68,7 @@ public class ObservedLocationsReceiver extends BroadcastReceiver {
 
     public synchronized List<ObservationPoint> getObservationPoints_callerMustLock() {
         return mCollectionPoints;
-    }
+   }
 
     // Must call when map activity stopped, to clear the reference to the map activity object
     public void removeMapActivity() {
@@ -76,7 +77,9 @@ public class ObservedLocationsReceiver extends BroadcastReceiver {
 
     private synchronized MapFragment getMapActivity() {
         return mMapActivity.get();
-    }    private final Runnable mFetchMLSRunnable = new Runnable() {
+    }
+
+    private final Runnable mFetchMLSRunnable = new Runnable() {
         @Override
         public void run() {
             synchronized (ObservedLocationsReceiver.this) {
@@ -85,12 +88,16 @@ public class ObservedLocationsReceiver extends BroadcastReceiver {
                     return;
                 }
                 mHandler.postDelayed(mFetchMLSRunnable, FREQ_FETCH_MLS_MS);
-                if (mQueuedForMLS.size() < 1 ||
-                        !prefs.getOnMapShowMLS()) {
+                if (mQueuedForMLS.size() < 1 || !prefs.getOnMapShowMLS()) {
                     return;
                 }
                 int count = 0;
-                Iterator<ObservationPoint> li = mQueuedForMLS.iterator();
+
+                List<ObservationPoint> queued;
+                synchronized (mQueuedForMLS) {
+                    queued = new LinkedList<ObservationPoint>(mQueuedForMLS);
+                }
+                Iterator<ObservationPoint> li = queued.iterator();
                 while (li.hasNext() && count < MAX_QUEUED_MLS_POINTS_TO_FETCH) {
                     ObservationPoint obs = li.next();
                     if (obs.needsToFetchMLS()) {
@@ -143,7 +150,7 @@ public class ObservedLocationsReceiver extends BroadcastReceiver {
                 observation.setMLSQuery(bundle);
 
                 if (mQueuedForMLS.size() < MAX_SIZE_OF_POINT_LISTS) {
-                    mQueuedForMLS.addFirst(observation);
+                    mQueuedForMLS.add(0, observation);
                 }
             }
         } catch (JSONException e) {

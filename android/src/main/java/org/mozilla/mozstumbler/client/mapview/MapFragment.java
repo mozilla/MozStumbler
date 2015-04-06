@@ -10,7 +10,6 @@ import android.content.res.Configuration;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.location.Location;
-import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
@@ -30,9 +29,9 @@ import org.json.JSONObject;
 import org.mozilla.mozstumbler.BuildConfig;
 import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.client.ClientPrefs;
-import org.mozilla.mozstumbler.client.ClientStumblerService;
 import org.mozilla.mozstumbler.client.MainApp;
 import org.mozilla.mozstumbler.client.ObservedLocationsReceiver;
+import org.mozilla.mozstumbler.client.mapview.maplocation.UserPositionUpdateManager;
 import org.mozilla.mozstumbler.client.mapview.tiles.AbstractMapOverlay;
 import org.mozilla.mozstumbler.client.mapview.tiles.CoverageOverlay;
 import org.mozilla.mozstumbler.client.mapview.tiles.LowResMapOverlay;
@@ -83,10 +82,10 @@ public class MapFragment extends android.support.v4.app.Fragment
     private final Timer mGetUrl = new Timer();
     private MapView mMap;
     private AccuracyCircleOverlay mAccuracyOverlay;
-    private boolean mFirstLocationFix;
-    private boolean mUserPanning = false;
+    private static boolean sHadFirstLocationFix = false;
+    private static boolean sUserPanning = true;
     private ObservationPointsOverlay mObservationPointsOverlay;
-    private MapLocationListener mMapLocationListener;
+    private UserPositionUpdateManager mMapLocationListener;
     private LowResMapOverlay mLowResMapOverlayHighZoom;
     private LowResMapOverlay mLowResMapOverlayLowZoom;
     private Overlay mCoverageTilesOverlayLowZoom;
@@ -144,15 +143,15 @@ public class MapFragment extends android.support.v4.app.Fragment
 
     private void initializeCenterMeListener() {
         final ImageButton centerMe = (ImageButton) mRootView.findViewById(R.id.my_location_button);
-        centerMe.setVisibility(View.INVISIBLE);
+        updateCenterButtonIcon();
         centerMe.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (mAccuracyOverlay == null || mAccuracyOverlay.getLocation() == null)
                     return;
                 mMap.getController().animateTo((mAccuracyOverlay.getLocation()));
-                mUserPanning = false;
-                centerMe.setBackgroundResource(R.drawable.ic_mylocation_android_assets);
+                sUserPanning = false;
+                updateCenterButtonIcon();
             }
         });
     }
@@ -163,8 +162,8 @@ public class MapFragment extends android.support.v4.app.Fragment
         mMap.getOverlays().add(new SwipeListeningOverlay(getActivity().getApplicationContext(), new SwipeListeningOverlay.OnSwipeListener() {
             @Override
             public void onSwipe() {
-                mUserPanning = true;
-                setCenterButtonToNotCenteredIcon();
+                sUserPanning = true;
+                updateCenterButtonIcon();
             }
         }));
 
@@ -199,13 +198,11 @@ public class MapFragment extends android.support.v4.app.Fragment
     }
 
     private void initializeLastLocation(Bundle savedInstanceState) {
-        mFirstLocationFix = true;
         int zoomLevel;
         GeoPoint lastLoc = null;
         if (savedInstanceState != null) {
             zoomLevel = savedInstanceState.getInt(ZOOM_KEY, DEFAULT_ZOOM);
             if (savedInstanceState.containsKey(LAT_KEY) && savedInstanceState.containsKey(LON_KEY)) {
-                mFirstLocationFix = false;
                 final double latitude = savedInstanceState.getDouble(LAT_KEY);
                 final double longitude = savedInstanceState.getDouble(LON_KEY);
                 lastLoc = new GeoPoint(latitude, longitude);
@@ -256,7 +253,7 @@ public class MapFragment extends android.support.v4.app.Fragment
         mMap.getController().setCenter(loc);
     }
 
-    MainApp getApplication() {
+    public MainApp getApplication() {
         FragmentActivity activity = getActivity();
         if (activity == null) {
             return null;
@@ -504,29 +501,30 @@ public class MapFragment extends android.support.v4.app.Fragment
         }
     }
 
-    private void setCenterButtonToNotCenteredIcon() {
+    private void updateCenterButtonIcon() {
         ImageButton centerMe = (ImageButton) mRootView.findViewById(R.id.my_location_button);
-        centerMe.setVisibility(View.VISIBLE);
-        centerMe.setBackgroundResource(R.drawable.ic_mylocation_no_dot_android_assets);
+        centerMe.setVisibility(sHadFirstLocationFix ? View.VISIBLE : View.INVISIBLE);
+        if (sUserPanning) {
+            centerMe.setBackgroundResource(R.drawable.ic_mylocation_no_dot_android_assets);
+        } else {
+            centerMe.setBackgroundResource(R.drawable.ic_mylocation_android_assets);
+        }
     }
 
-    void setUserPositionAt(Location location) {
-        if (mAccuracyOverlay.getLocation() == null) {
-            setCenterButtonToNotCenteredIcon();
-        }
-
+    public void setUserPositionAt(Location location) {
         mAccuracyOverlay.setLocation(location);
 
-        if (mFirstLocationFix) {
+        if (!sHadFirstLocationFix) {
             setCenterAndZoom(new GeoPoint(location), DEFAULT_ZOOM_AFTER_FIX);
-            mFirstLocationFix = false;
-            mUserPanning = false;
-        } else if (!mUserPanning) {
+            sHadFirstLocationFix = true;
+            sUserPanning = false;
+            updateCenterButtonIcon();
+        } else if (!sUserPanning) {
             mMap.getController().animateTo((mAccuracyOverlay.getLocation()));
         }
     }
 
-    void updateGPSInfo(int satellites, int fixes) {
+    public void updateGPSInfo(int satellites, int fixes) {
         formatTextView(R.id.text_satellites_avail, "%d", satellites);
         formatTextView(R.id.text_satellites_used, "%d", fixes);
         // @TODO this is still not accurate
@@ -547,7 +545,7 @@ public class MapFragment extends android.support.v4.app.Fragment
      the class is under test
      */
     void doOnResume() {
-        mMapLocationListener = new MapLocationListener(this);
+        mMapLocationListener = new UserPositionUpdateManager(this);
 
         ObservedLocationsReceiver observer = ObservedLocationsReceiver.getInstance();
         observer.setMapActivity(this);
@@ -676,24 +674,12 @@ public class MapFragment extends android.support.v4.app.Fragment
 
     public void showPausedDueToNoMotionMessage(boolean show) {
         mRootView.findViewById(R.id.scanning_paused_message).setVisibility(show ? View.VISIBLE : View.INVISIBLE);
-        if (mMapLocationListener != null) {
-            mMapLocationListener.pauseGpsUpdates(show);
-        }
         updateGPSInfo(0, 0);
         dimToolbar();
     }
 
-    public void start() {
-        if (mMapLocationListener != null) {
-            mMapLocationListener.setActiveLocationUpdatesEnabled(true);
-        }
-    }
-
     public void stop() {
         mRootView.findViewById(R.id.scanning_paused_message).setVisibility(View.INVISIBLE);
-        if (mMapLocationListener != null) {
-            mMapLocationListener.setActiveLocationUpdatesEnabled(false);
-        }
         updateGPSInfo(0, 0);
         dimToolbar();
     }
@@ -715,8 +701,9 @@ public class MapFragment extends android.support.v4.app.Fragment
         }
 
         @Override
-        public boolean onTouchEvent(final MotionEvent event, final MapView mapView) {
-            if (mOnSwipe != null && event.getAction() == MotionEvent.ACTION_MOVE) {
+        public boolean onScroll(final MotionEvent pEvent1, final MotionEvent pEvent2,
+                                final float pDistanceX, final float pDistanceY, final MapView pMapView) {
+            if (mOnSwipe != null) {
                 mOnSwipe.onSwipe();
             }
             return false;

@@ -127,9 +127,9 @@
     <string name="action_developer">開發者</string>
     <string name="developer_title">開發者</string>
     <string name="enable_option_show_mls_on_map">啟用 MLS 位置查詢</string>
-    <string name="enable_option_show_mls_on_map_summary">在您的報告中顯示 Mozilla Location Service (MLS) 的位置。</string>
+    <string name="enable_option_show_mls_on_map_summary">取回並顯示每次回報中，由 Mozilla Location Service (MLS) 推估的位置。</string>
     <!-- enable_option_show_mls_on_map_detailed_info: %1$s refers to upload_wifi_only_title -->
-    <string name="enable_option_show_mls_on_map_detailed_info">多用一些電力、記憶體與網路用量，就可在每次回報中包含您掃到的 MLS 位置。MLS 位置在地圖上會以紅點顯示，並將回報點用線連結起來。但若您開啟「僅在使用 Wi-Fi 時自動上傳資料」的話，就不會透過行動數據連線來查詢位置。</string>
+    <string name="enable_option_show_mls_on_map_detailed_info">多用一些電力、記憶體與網路用量，就可顯示您每次回報時的 MLS 位置，也就是您從已觀測到的資料中所推估出的所在位置。\nMLS 位置在地圖上會以紅點顯示，並將回報點用線連結起來。若該位置越靠近您實際的位置，就代表 Mozilla Location Service 在該地越可靠、越精準。\n但若您開啟「%1$s」的話，就不會透過行動數據連線來查詢位置。</string>
     <string name="cell_plus_wifi_observation">觀測到 Wi-Fi 與行動網路基地台</string>
     <string name="cell_only_observation">僅觀測到行動網路基地台</string>
     <string name="wifi_only_observation">僅觀測到 Wi-Fi 基地台</string>

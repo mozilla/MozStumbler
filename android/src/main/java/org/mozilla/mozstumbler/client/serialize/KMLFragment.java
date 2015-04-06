@@ -35,6 +35,7 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.lang.ref.WeakReference;
 import java.util.LinkedList;
+import java.util.List;
 
 public class KMLFragment extends Fragment
         implements ObservationPointSerializer.IListener {
@@ -52,7 +53,10 @@ public class KMLFragment extends Fragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mRootView = inflater.inflate(R.layout.fragment_kml, container, false);
-        mPointsToWrite = ObservedLocationsReceiver.getInstance().getObservationPoints();
+        List<ObservationPoint> points = ObservedLocationsReceiver.getInstance().getObservationPoints_callerMustLock();
+        synchronized (points) {
+            mPointsToWrite = new LinkedList<ObservationPoint>(points);
+        }
         mProgressDialog = new WeakReference<ProgressDialog>(null);
         mSavedFileLocation = (TextView) mRootView.findViewById(R.id.textViewSavedFile);
 

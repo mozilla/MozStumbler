@@ -27,7 +27,6 @@ import org.mozilla.osmdroid.util.GeoPoint;
 
 import java.lang.ref.WeakReference;
 import java.util.Collections;
-
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -41,7 +40,7 @@ public class ObservedLocationsReceiver extends BroadcastReceiver {
     private static final int MAX_QUEUED_MLS_POINTS_TO_FETCH = 10;
     private static final long FREQ_FETCH_MLS_MS = 5 * 1000;
     private static ObservedLocationsReceiver sInstance;
-    private final LinkedList<ObservationPoint> mCollectionPoints = new LinkedList<ObservationPoint>();
+    private final List<ObservationPoint> mCollectionPoints = Collections.synchronizedList(new LinkedList<ObservationPoint>());
     private final List<ObservationPoint> mQueuedForMLS =
             Collections.synchronizedList(new LinkedList<ObservationPoint>());
     private final Handler mHandler = new Handler(Looper.getMainLooper());
@@ -67,13 +66,9 @@ public class ObservedLocationsReceiver extends BroadcastReceiver {
         return sInstance;
     }
 
-    /*
-     This returns a copy of the observation points so that we don't care about concurrency.
-     */
-    public synchronized LinkedList<ObservationPoint> getObservationPoints() {
-        // Return a copy so that we don't need to care about locking
-        return new LinkedList<ObservationPoint>(mCollectionPoints);
-    }
+    public synchronized List<ObservationPoint> getObservationPoints_callerMustLock() {
+        return mCollectionPoints;
+   }
 
     // Must call when map activity stopped, to clear the reference to the map activity object
     public void removeMapActivity() {
@@ -164,13 +159,13 @@ public class ObservedLocationsReceiver extends BroadcastReceiver {
 
         synchronized(mCollectionPoints) {
             while (mCollectionPoints.size() > MAX_SIZE_OF_POINT_LISTS) {
-                mCollectionPoints.removeFirst();
+                mCollectionPoints.remove(0);
             }
 
             if (mCollectionPoints.size() > 0) {
-                observation.mHeading = observation.pointGPS.bearingTo(mCollectionPoints.getLast().pointGPS);
+                observation.mHeading = observation.pointGPS.bearingTo(mCollectionPoints.get(mCollectionPoints.size() - 1).pointGPS);
             }
-            mCollectionPoints.addLast(observation);
+            mCollectionPoints.add(observation);
         }
 
         if (getMapActivity() == null) {
@@ -190,10 +185,8 @@ public class ObservedLocationsReceiver extends BroadcastReceiver {
             return;
         }
 
-        synchronized(mCollectionPoints) {
-            getMapActivity().newObservationPoint(mCollectionPoints.getLast());
+        synchronized (mCollectionPoints) {
+            getMapActivity().newObservationPoint(mCollectionPoints.get(mCollectionPoints.size() - 1));
         }
-     }
-
-
+    }
 }

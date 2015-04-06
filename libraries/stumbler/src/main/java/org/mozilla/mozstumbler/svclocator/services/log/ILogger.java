@@ -7,6 +7,8 @@ package org.mozilla.mozstumbler.svclocator.services.log;
 public interface ILogger {
     public abstract void w(String logTag, String s);
 
+    public abstract void e(String logTag, String s);
+
     public abstract String e(String logTag, String s, Throwable e);
 
     public abstract void i(String logTag, String s);

@@ -4,11 +4,16 @@
 
 package org.mozilla.mozstumbler.svclocator.services.log;
 
+@SuppressWarnings("unused")
 public class ProductionLogger implements ILogger {
 
     public void w(String logTag, String s) {
-
         android.util.Log.w(logTag, s);
+    }
+
+    @Override
+    public void e(String logTag, String s) {
+        android.util.Log.e(logTag, s);
     }
 
     public String e(String logTag, String s, Throwable e) {

@@ -14,8 +14,16 @@ import org.mozilla.mozstumbler.client.MainApp;
 import org.mozilla.mozstumbler.client.navdrawer.MainDrawerActivity;
 import org.mozilla.mozstumbler.svclocator.ServiceLocator;
 import org.mozilla.mozstumbler.svclocator.services.ISystemClock;
+import org.mozilla.mozstumbler.svclocator.services.log.ILogger;
+import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
 public class NotificationUtil {
+
+    private static final ILogger Log = (ILogger) ServiceLocator
+                                                    .getInstance()
+                                                    .getService(ILogger.class);
+    private static final String LOG_TAG = LoggerUtil.makeLogTag(NotificationUtil.class);
+
     public static final int NOTIFICATION_ID = 1;
     private static final long UPDATE_FREQUENCY = 60 * 1000;
     private static String sStopTitle;
@@ -23,13 +31,17 @@ public class NotificationUtil {
     private static long sUploadTime, sDisplayTime, sLastUpdateTime;
     private static boolean sIsPaused;
     private final Context mContext;
+    private ISystemClock clock = (ISystemClock) ServiceLocator.getInstance().getService(ISystemClock.class);
 
     public NotificationUtil(Context context) {
         mContext = context;
     }
 
     private Notification build() {
-        PendingIntent turnOffIntent = PendingIntent.getBroadcast(mContext, 0, new Intent(MainApp.INTENT_TURN_OFF), 0);
+        PendingIntent notificationStopIntent = PendingIntent.getBroadcast(mContext,
+                                                        0,
+                                                        new Intent(MainApp.NOTIFICATION_STOP),
+                                                        0);
 
         Intent notificationIntent = new Intent(mContext, MainDrawerActivity.class);
         notificationIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_FROM_BACKGROUND);
@@ -37,12 +49,10 @@ public class NotificationUtil {
                 notificationIntent,
                 PendingIntent.FLAG_CANCEL_CURRENT);
 
-        String title;
-        if (sIsPaused) {
-            title = mContext.getString(R.string.notification_paused);
-        } else {
-            title = mContext.getString(R.string.notification_scanning);
-        }
+        String appname = mContext.getString(R.string.app_name);
+        int titleId = sIsPaused ? R.string.notification_paused : R.string.notification_scanning;
+        String title = String.format(mContext.getString(titleId), appname);
+
         String metrics = mContext.getString(R.string.metrics_notification_text);
         metrics = String.format(metrics, sObservations, sCells, sWifis);
 
@@ -69,20 +79,27 @@ public class NotificationUtil {
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setStyle(new NotificationCompat.BigTextStyle()
                         .bigText(metrics + "\n" + uploadLine))
-                .addAction(R.drawable.ic_action_cancel, sStopTitle, turnOffIntent)
+                .addAction(R.drawable.ic_action_cancel, sStopTitle, notificationStopIntent)
                 .build();
     }
 
-    private void update() {
+    void update() {
         Notification notification = build();
         NotificationManager nm = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
+        if (nm == null) {
+            // This really *shouldn't* happen, but we get this on some devices. See :
+            // https://github.com/mozilla/MozStumbler/issues/1564
+            Log.d(LOG_TAG, "Couldn't acquire notification service");
+            return;
+        }
         nm.notify(NOTIFICATION_ID, notification);
+
     }
 
     public Notification buildNotification(String stopTitle) {
         sStopTitle = stopTitle;
         sIsPaused = false;
-        sDisplayTime = System.currentTimeMillis();
+        sDisplayTime = clock.currentTimeMillis();
         return build();
     }
 

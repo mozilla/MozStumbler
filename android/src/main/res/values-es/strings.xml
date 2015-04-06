@@ -8,8 +8,8 @@
     <string name="stop_scanning">Detener escaneo</string>
     <string name="view_leaderboard">Ver tabla de posiciones</string>
     <string name="service_name">Mozilla Stumbler</string>
-    <string name="notification_scanning">Mozilla Stumbler está escaneando</string>
-    <string name="notification_paused">Mozilla Stumbler está pausado</string>
+    <string name="notification_scanning">%1$s está escaneando</string>
+    <string name="notification_paused">%1$s está pausado</string>
     <string name="enter_nickname">Ingresa tu apodo (opcional)</string>
     <string name="enter_nickname_title">Apodo: %1$s</string>
     <string name="enter_nickname_longtext">Tu apodo aparecerá en la tabla de posiciones.</string>
@@ -72,6 +72,7 @@
     <string name="file_bug_description_hint">Información detallada sobre el fallo que se informa (lo que sucede, cuando sucede, etc.)</string>
     <string name="file_bug_reproduction">Réplica del fallo:</string>
     <string name="file_bug_reproduction_hint">Explica los pasos para replicar el fallo.</string>
+    <!-- file_bug_report_info: %1$s refers to enable_crash_reporting -->
     <string name="file_bug_report_info">Mediante el envío de este informe, también se va a enviar información sobre el estado actual de tu dispositivo. Esta información se utilizará para limitar el origen del fallo. Los informes de fallos para los errores que provocados por cuelgues se envían automáticamente si la opción \"%1$s\" está habilitada. Si encuentras fallos que no provocan cuelgues, por favor háznoslos saber a través de este formulario.</string>
     <string name="file_bug_send">Enviar un reporte de fallo</string>
     <string name="file_bug_type">Tipo de fallo:</string>
@@ -174,6 +175,17 @@
     <string name="off">Apagado</string>
 
     <string name="title_activity_power_saving_screen">Opciones de ahorro de energía</string>
-    <!--string name="sensor_type_legacy"></string -->
-    <!--string name="sensor_type_significant_motion"></string -->
+    <string name="sensor_type_legacy">Su dispositivo no dispone de un sensor de movimiento significativo.</string>
+    <string name="sensor_type_significant_motion">El sensor de movimiento significativo ofrece el mejor ahorro de energía, pero puede no funcionar en todos los dispositivos.</string>
+
+    <string name="ok">OK</string>
+    <string name="limit_map_zoom">Límite al reducir el zoom en el mapa</string>
+    <string name="test_significant_sensor_dialog_title">Prueba del sensor de movimiento significativo</string>
+    <string name="test_significant_sensor_dialog_message">Permanecer quiero, y luego caminar durante 1 minuto.\n\nDetectando movimiento&#8230;</string>
+    <string name="test_significant_sensor_confirmed_working">Movimiento detectado.\nEl sensor funciona con normalidad.</string>
+    <string name="button_test_significant_motion_sensor">Prueba del sensor de movimiento significativo</string>
+    <string name="sensor_name_significant_motion">Movimiento significativo</string>
+    <string name="sensor_name_accelerometer">Acelerómetro</string>
+    <string name="title_use_sensor">Usar sensor:</string>
+    <string name="limit_map_zoom_summary">Reduce los datos de red que utiliza la vista del mapa.</string>
 </resources>

@@ -1,17 +1,37 @@
 buildscript {
     repositories {
-        mavenCentral()
+        jcenter()
     }
 
     dependencies {
         classpath 'com.android.tools.build:gradle:1.0.0'
         classpath 'com.jakewharton.sdkmanager:gradle-plugin:0.12.+'
         classpath 'com.github.jcandksolutions.gradle:android-unit-test:2.1.1'
+
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.0'
+        classpath 'com.github.dcendents:android-maven-plugin:1.2'
     }
 }
 
 apply plugin: 'android-sdk-manager'
-apply plugin: 'android-library'
+apply plugin: 'com.android.library'
+apply plugin: 'com.github.dcendents.android-maven'
+apply plugin: 'com.jfrog.bintray'
+
+allprojects {
+    repositories {
+        jcenter()
+    }
+}
+
+version = "1.7.10"
+group = 'org.mozilla.mozstumbler'
+
+// The groupname will be changed into a path for the final library
+// http://dl.bintray.com/crankycoder/libMozStumbler/com/crankycoder/stumbler/0.9.0/
+
+def siteUrl = 'https://github.com/mozilla/MozStumbler'
+def gitUrl = 'https://github.com/mozilla/MozStumbler.git'
 
 android {
     compileSdkVersion 19
@@ -32,11 +52,70 @@ android {
     }
 }
 
+Properties properties = new Properties()
+File bintrayFile = project.rootProject.file('bintray.properties')
+if (bintrayFile.exists()) {
+    properties.load(bintrayFile.newDataInputStream())
+} else {
+    properties = null
+}
+
+bintray {
+    if (properties != null) {
+        user = properties.getProperty("bintray.user")
+        key = properties.getProperty("bintray.apikey")
+    }
+    configurations = ['archives']
+    pkg {
+        repo = "libMozStumbler"
+        name = "libMozStumbler"
+        websiteUrl = siteUrl
+        vcsUrl = gitUrl
+        licenses = ["MPL-2.0"]
+        publish = true
+    }
+}
+
+
 apply plugin: 'android-unit-test'
 
 androidUnitTest {
 }
 
+install {
+    repositories.mavenInstaller {
+        pom {
+            project {
+                packaging 'aar'
+                name 'A simple library to embed Mozilla Stumbler.'
+                url siteUrl
+                licenses {
+                    license {
+                        name 'Mozilla Public License, Version 2.0'
+                        url 'https://www.mozilla.org/MPL/2.0/'
+                    }
+                }
+                developers {
+                    developer {
+                        id 'garvankeeley'
+                        name 'Garvan Keeley'
+                        email 'garvankeeley@gmail.com'
+                    }
+                    developer {
+                        id 'crankycoder'
+                        name 'Victor Ng'
+                        email 'victor@crankycoder.com'
+                    }
+                }
+                scm {
+                    connection gitUrl
+                    developerConnection gitUrl
+                    url siteUrl
+                }
+            }
+        }
+    }
+}
 
 dependencies {
     androidTestCompile 'junit:junit:4.10'
@@ -66,4 +145,28 @@ dependencies {
         exclude group: 'org.json'
     }
 
+}
+
+task sourcesJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    classifier = 'sources'
+}
+
+task javadoc(type: Javadoc) {
+    source = android.sourceSets.main.java.srcDirs
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives javadocJar
+    archives sourcesJar
+}
+
+task findConventions << {
+    println project.getConvention()
 }

@@ -89,6 +89,10 @@ public class DataStorageManager {
 
     public static String getStorageDir(Context c) {
         File dir = null;
+
+        // Uncomment the following block if you're debugging
+        // persistent log storage on a non-rooted device
+        /*
         if (AppGlobals.isDebug) {
             // in debug, put files in public location
             dir = c.getExternalFilesDir(null);
@@ -96,6 +100,7 @@ public class DataStorageManager {
                 dir = new File(dir.getAbsolutePath() + File.separator + MOZ_STUMBLER_RELPATH);
             }
         }
+        */
 
         if (dir == null) {
             dir = c.getFilesDir();

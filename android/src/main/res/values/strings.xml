@@ -8,8 +8,8 @@
     <string name="stop_scanning">Stop Scanning</string>
     <string name="view_leaderboard">View Leaderboard</string>
     <string name="service_name">Mozilla Stumbler</string>
-    <string name="notification_scanning">Mozilla Stumbler is scanning</string>
-    <string name="notification_paused">Mozilla Stumbler is paused</string>
+    <string name="notification_scanning">%1$s is scanning</string>
+    <string name="notification_paused">%1$s is paused</string>
     <string name="enter_nickname">Enter Nickname (optional)</string>
     <string name="enter_nickname_title">Nickname: %1$s</string>
     <string name="enter_nickname_longtext">Your nickname will appear on the leaderboard.</string>

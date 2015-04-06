@@ -4,7 +4,9 @@ package org.mozilla.osmdroid.views;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Matrix;
+import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.PointF;
 import android.graphics.Rect;
@@ -124,26 +126,30 @@ public class MapView extends ViewGroup implements IMapView, MapViewConstants,
         this.mScroller = new Scroller(context);
         TileSystem.setTileSize(tileSizePixels);
 
-        ClientLog.d(LOG_TAG, "Constructor received TileProvider = [" + tileProvider + "]");
-        if (tileProvider == null) {
-            final ITileSource tileSource = getTileSourceFromAttributes(attrs);
-            tileProvider = new BetterTileProvider(context, tileSource);
-        }
-
-        mTileRequestCompleteHandler = tileRequestCompleteHandler == null
-                ? new SimpleInvalidationHandler(this)
-                : tileRequestCompleteHandler;
-        mTileProvider = tileProvider;
-        ClientLog.d(LOG_TAG, "TileProvider is: [" + mTileProvider.getClass().getName() + "]");
-
-        mTileProvider.setTileRequestCompleteHandler(mTileRequestCompleteHandler);
-
-        this.mMapOverlay = new TilesOverlay(mTileProvider, mResourceProxy);
-        mOverlayManager = new OverlayManager(mMapOverlay);
-
         if (isInEditMode()) {
+            mTileRequestCompleteHandler = null;
+            mTileProvider = null;
+            mMapOverlay = null;
+            mOverlayManager = null;
             mZoomController = null;
         } else {
+            ClientLog.d(LOG_TAG, "Constructor received TileProvider = [" + tileProvider + "]");
+            if (tileProvider == null) {
+                final ITileSource tileSource = getTileSourceFromAttributes(attrs);
+                tileProvider = new BetterTileProvider(context, tileSource);
+            }
+
+            mTileRequestCompleteHandler = tileRequestCompleteHandler == null
+                    ? new SimpleInvalidationHandler(this)
+                    : tileRequestCompleteHandler;
+            mTileProvider = tileProvider;
+            ClientLog.d(LOG_TAG, "TileProvider is: [" + mTileProvider.getClass().getName() + "]");
+
+            mTileProvider.setTileRequestCompleteHandler(mTileRequestCompleteHandler);
+
+            this.mMapOverlay = new TilesOverlay(mTileProvider, mResourceProxy);
+            mOverlayManager = new OverlayManager(mMapOverlay);
+
             mZoomController = new ZoomButtonsController(this);
             mZoomController.setOnZoomListener(new MapViewZoomListener());
         }
@@ -956,7 +962,15 @@ public class MapView extends ViewGroup implements IMapView, MapViewConstants,
         // c.drawColor(mBackgroundColor);
 
 		/* Draw all Overlays. */
-        this.getOverlayManager().onDraw(c, this);
+        if (this.isInEditMode()) {
+            c.drawColor(Color.GRAY);
+            Paint p = new Paint();
+            p.setColor(Color.BLACK);
+            p.setTextSize(30.0f);
+            c.drawText(MapView.class.getCanonicalName(), 10, getHeight() / 2, p);
+        } else {
+            this.getOverlayManager().onDraw(c, this);
+        }
 
         // Restore the canvas matrix
         c.restore();

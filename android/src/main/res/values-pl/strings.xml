@@ -8,8 +8,8 @@
     <string name="stop_scanning">Zatrzymaj skanowanie</string>
     <string name="view_leaderboard">Wyświetl ranking</string>
     <string name="service_name">Mozilla Stumbler</string>
-    <string name="notification_scanning">Mozilla Stumbler skanuje</string>
-    <string name="notification_paused">Mozilla Stumbler jest wstrzymany</string>
+    <string name="notification_scanning">%1$s skanuje</string>
+    <string name="notification_paused">%1$s jest wstrzymany</string>
     <string name="enter_nickname">Wpisz pseudonim (opcjonalnie)</string>
     <string name="enter_nickname_title">Pseudonim: %1$s</string>
     <string name="enter_nickname_longtext">Twój pseudonim pojawi się w rankingu.</string>

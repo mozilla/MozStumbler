@@ -40,6 +40,13 @@ public class UnittestLogger implements ILogger {
         messageBuffer.addLast(msg);
     }
 
+
+    @Override
+    public void e(String logTag, String s) {
+        String msg = "E: " + logTag + ", " + s;
+        System.out.println(msg);
+    }
+
     public String e(String logTag, String s, Throwable e) {
         if (e instanceof OutOfMemoryError) {
             // These are usually going to be OutOfMemoryErrors

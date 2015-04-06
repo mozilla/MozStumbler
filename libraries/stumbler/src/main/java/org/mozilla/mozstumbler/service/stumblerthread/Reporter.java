@@ -43,7 +43,7 @@ public final class Reporter extends BroadcastReceiver implements IReporter {
     private final Set<String> mUniqueAPs = new HashSet<String>();
     private final Set<String> mUniqueCells = new HashSet<String>();
     StumblerBundle mBundle;
-    private boolean mIsStarted;
+    private boolean mIsStarted = false;
     private Context mContext;
     private int mObservationCount = 0;
 
@@ -111,7 +111,7 @@ public final class Reporter extends BroadcastReceiver implements IReporter {
     }
 
     @Override
-    public synchronized void onReceive(Context context, Intent intent) {
+    public void onReceive(Context context, Intent intent) {
         String action = intent.getAction();
 
         if (action.equals(ACTION_FLUSH_TO_BUNDLE)) {
@@ -220,15 +220,18 @@ public final class Reporter extends BroadcastReceiver implements IReporter {
         mBundle = null;
     }
 
-    private synchronized int getObservationCount() {
+    private int getObservationCount() {
+        // this is only updated during flush() which is only called from onReceive
         return mObservationCount;
     }
 
-    private synchronized int getUniqueAPCount() {
+    private int getUniqueAPCount() {
+        // this is only updated during flush() which is only called from onReceive
         return mUniqueAPs.size();
     }
 
-    private synchronized int getUniqueCellCount() {
+    private int getUniqueCellCount() {
+        // this is only updated during flush() which is only called from onReceive
         return mUniqueCells.size();
     }
 }

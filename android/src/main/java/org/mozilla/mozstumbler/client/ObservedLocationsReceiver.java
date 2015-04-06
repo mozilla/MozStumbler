@@ -185,8 +185,8 @@ public class ObservedLocationsReceiver extends BroadcastReceiver {
             return;
         }
 
-        getMapActivity().newObservationPoint(mCollectionPoints.get(mCollectionPoints.size() - 1));
-     }
-
-
+        synchronized (mCollectionPoints) {
+            getMapActivity().newObservationPoint(mCollectionPoints.get(mCollectionPoints.size() - 1));
+        }
+    }
 }

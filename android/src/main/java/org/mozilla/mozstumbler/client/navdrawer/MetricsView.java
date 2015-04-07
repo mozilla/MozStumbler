@@ -33,7 +33,7 @@ import org.mozilla.mozstumbler.client.subactivities.PowerSavingScreen;
 import org.mozilla.mozstumbler.client.subactivities.PreferencesScreen;
 import org.mozilla.mozstumbler.client.util.NotificationUtil;
 import org.mozilla.mozstumbler.service.Prefs;
-import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageContract;
+import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageConstants;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.PersistedStats;
 import org.mozilla.mozstumbler.service.uploadthread.AsyncUploadParam;
 import org.mozilla.mozstumbler.service.uploadthread.AsyncUploader;
@@ -278,18 +278,18 @@ public class MetricsView {
     private void updateSentStats() {
         if (sPersistedStats != null) {
             long lastUpload = Long.parseLong(sPersistedStats
-                    .getProperty(DataStorageContract.Stats.KEY_LAST_UPLOAD_TIME, "0"));
+                    .getProperty(DataStorageConstants.Stats.KEY_LAST_UPLOAD_TIME, "0"));
 
             if (lastUpload == 0) {
                 // Don't update anything if a zero is captured for last upload time
                 return;
             }
 
-            String sent = sPersistedStats.getProperty(DataStorageContract.Stats.KEY_OBSERVATIONS_SENT, "0");
-            String bytes = sPersistedStats.getProperty(DataStorageContract.Stats.KEY_BYTES_SENT, "0");
+            String sent = sPersistedStats.getProperty(DataStorageConstants.Stats.KEY_OBSERVATIONS_SENT, "0");
+            String bytes = sPersistedStats.getProperty(DataStorageConstants.Stats.KEY_BYTES_SENT, "0");
             String value = String.format(mObservationAndSize, Integer.parseInt(sent), formatKb(Long.parseLong(bytes)));
             mAllTimeObservationsSentView.setText(value);
-            mLastUploadTime = Long.parseLong(sPersistedStats.getProperty(DataStorageContract.Stats.KEY_LAST_UPLOAD_TIME, "0"));
+            mLastUploadTime = Long.parseLong(sPersistedStats.getProperty(DataStorageConstants.Stats.KEY_LAST_UPLOAD_TIME, "0"));
         }
         updateLastUploadedLabel();
     }

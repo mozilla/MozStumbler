@@ -62,8 +62,8 @@ public class PersistedStats {
 
         Properties properties = readSyncStats();
         final long time = clock.currentTimeMillis();
-        final long lastUploadTime = Long.parseLong(properties.getProperty(DataStorageContract.Stats.KEY_LAST_UPLOAD_TIME, "0"));
-        final long storedObsPerDay = Long.parseLong(properties.getProperty(DataStorageContract.Stats.KEY_OBSERVATIONS_PER_DAY, "0"));
+        final long lastUploadTime = Long.parseLong(properties.getProperty(DataStorageConstants.Stats.KEY_LAST_UPLOAD_TIME, "0"));
+        final long storedObsPerDay = Long.parseLong(properties.getProperty(DataStorageConstants.Stats.KEY_OBSERVATIONS_PER_DAY, "0"));
         long observationsToday = reports;
         if (lastUploadTime > 0) {
             long dayLastUploaded = TimeUnit.MILLISECONDS.toDays(lastUploadTime);
@@ -78,10 +78,10 @@ public class PersistedStats {
         }
 
         Properties newProps = writeSyncStats(time,
-                Long.parseLong(properties.getProperty(DataStorageContract.Stats.KEY_BYTES_SENT, "0")) + bytesSent,
-                Long.parseLong(properties.getProperty(DataStorageContract.Stats.KEY_OBSERVATIONS_SENT, "0")) + reports,
-                Long.parseLong(properties.getProperty(DataStorageContract.Stats.KEY_CELLS_SENT, "0")) + cells,
-                Long.parseLong(properties.getProperty(DataStorageContract.Stats.KEY_WIFIS_SENT, "0")) + wifis,
+                Long.parseLong(properties.getProperty(DataStorageConstants.Stats.KEY_BYTES_SENT, "0")) + bytesSent,
+                Long.parseLong(properties.getProperty(DataStorageConstants.Stats.KEY_OBSERVATIONS_SENT, "0")) + reports,
+                Long.parseLong(properties.getProperty(DataStorageConstants.Stats.KEY_CELLS_SENT, "0")) + cells,
+                Long.parseLong(properties.getProperty(DataStorageConstants.Stats.KEY_WIFIS_SENT, "0")) + wifis,
                 observationsToday);
 
         sendToListeners(newProps);
@@ -125,13 +125,13 @@ public class PersistedStats {
 
     private Properties createStatsProp(long time, long bytesSent, long totalObs, long totalCells, long totalWifis, long obsPerDay) {
         final Properties props = new Properties();
-        props.setProperty(DataStorageContract.Stats.KEY_LAST_UPLOAD_TIME, String.valueOf(time));
-        props.setProperty(DataStorageContract.Stats.KEY_BYTES_SENT, String.valueOf(bytesSent));
-        props.setProperty(DataStorageContract.Stats.KEY_OBSERVATIONS_SENT, String.valueOf(totalObs));
-        props.setProperty(DataStorageContract.Stats.KEY_CELLS_SENT, String.valueOf(totalCells));
-        props.setProperty(DataStorageContract.Stats.KEY_WIFIS_SENT, String.valueOf(totalWifis));
-        props.setProperty(DataStorageContract.Stats.KEY_VERSION, String.valueOf(DataStorageContract.Stats.VERSION_CODE));
-        props.setProperty(DataStorageContract.Stats.KEY_OBSERVATIONS_PER_DAY, String.valueOf(obsPerDay));
+        props.setProperty(DataStorageConstants.Stats.KEY_LAST_UPLOAD_TIME, String.valueOf(time));
+        props.setProperty(DataStorageConstants.Stats.KEY_BYTES_SENT, String.valueOf(bytesSent));
+        props.setProperty(DataStorageConstants.Stats.KEY_OBSERVATIONS_SENT, String.valueOf(totalObs));
+        props.setProperty(DataStorageConstants.Stats.KEY_CELLS_SENT, String.valueOf(totalCells));
+        props.setProperty(DataStorageConstants.Stats.KEY_WIFIS_SENT, String.valueOf(totalWifis));
+        props.setProperty(DataStorageConstants.Stats.KEY_VERSION, String.valueOf(DataStorageConstants.Stats.VERSION_CODE));
+        props.setProperty(DataStorageConstants.Stats.KEY_OBSERVATIONS_PER_DAY, String.valueOf(obsPerDay));
         return props;
     }
 }

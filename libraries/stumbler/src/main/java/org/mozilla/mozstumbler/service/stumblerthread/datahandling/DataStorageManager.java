@@ -50,12 +50,6 @@ public class DataStorageManager {
     static final String SEP_TIME_MS = "-t";
     static final String FILENAME_PREFIX = "reports";
     static final String MEMORY_BUFFER_NAME = "in memory send buffer";
-    // Used to cap the amount of data stored. When this limit is hit, no more data is saved to disk
-    // until the data is uploaded, or and data exceeds DEFAULT_MAX_WEEKS_DATA_ON_DISK.
-    private static final long DEFAULT_MAX_BYTES_STORED_ON_DISK = 1024 * 250; // 250 KiB max by default
-    // Used as a safeguard to ensure stumbling data is not persisted. The intended use case of the stumbler lib is not
-    // for long-term storage, and so if ANY data on disk is this old, ALL data is wiped as a privacy mechanism.
-    private static final int DEFAULT_MAX_WEEKS_DATA_ON_DISK = 2;
     public static DataStorageManager sInstance;
     final File mReportsDir;
     final ReportBatchBuilder mCurrentReports = new ReportBatchBuilder();
@@ -117,7 +111,7 @@ public class DataStorageManager {
 
     public static synchronized void createGlobalInstance(Context context, StorageIsEmptyTracker tracker) {
         DataStorageManager.createGlobalInstance(context, tracker,
-                DEFAULT_MAX_BYTES_STORED_ON_DISK, DEFAULT_MAX_WEEKS_DATA_ON_DISK);
+                DataStorageConstants.DEFAULT_MAX_BYTES_STORED_ON_DISK, DataStorageConstants.DEFAULT_MAX_WEEKS_DATA_ON_DISK);
     }
 
     public static synchronized DataStorageManager createGlobalInstance(Context context, StorageIsEmptyTracker tracker,

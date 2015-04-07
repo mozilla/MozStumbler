@@ -60,12 +60,12 @@ public class StumblerBundleTest {
 
         JSONArray cellTowerArray = new JSONArray(cellTowerList);
 
-        stumbleBlob.put(DataStorageContract.ReportsColumns.CELL, cellTowerArray);
+        stumbleBlob.put(DataStorageConstants.ReportsColumns.CELL, cellTowerArray);
 
-        stumbleBlob.put(DataStorageContract.ReportsColumns.TIME, 1405602028568L);
+        stumbleBlob.put(DataStorageConstants.ReportsColumns.TIME, 1405602028568L);
         stumbleBlob.put("radioType", "lte");
-        stumbleBlob.put(DataStorageContract.ReportsColumns.LON, -43.5f);
-        stumbleBlob.put(DataStorageContract.ReportsColumns.LAT, -22.5f);
+        stumbleBlob.put(DataStorageConstants.ReportsColumns.LON, -43.5f);
+        stumbleBlob.put(DataStorageConstants.ReportsColumns.LAT, -22.5f);
 
         return stumbleBlob;
     }
@@ -103,13 +103,13 @@ public class StumblerBundleTest {
 
         JSONArray cellTowerArray = new JSONArray(cellTowerList);
 
-        stumbleBlob.put(DataStorageContract.ReportsColumns.CELL, cellTowerArray);
+        stumbleBlob.put(DataStorageConstants.ReportsColumns.CELL, cellTowerArray);
 
-        stumbleBlob.put(DataStorageContract.ReportsColumns.TIME, 1405602028568L);
-        stumbleBlob.put(DataStorageContract.ReportsColumns.ALTITUDE, 202.9f);
-        stumbleBlob.put(DataStorageContract.ReportsColumns.LON, -43.5f);
-        stumbleBlob.put(DataStorageContract.ReportsColumns.LAT, -22.5f);
-        stumbleBlob.put(DataStorageContract.ReportsColumns.ACCURACY, 20.5f);
+        stumbleBlob.put(DataStorageConstants.ReportsColumns.TIME, 1405602028568L);
+        stumbleBlob.put(DataStorageConstants.ReportsColumns.ALTITUDE, 202.9f);
+        stumbleBlob.put(DataStorageConstants.ReportsColumns.LON, -43.5f);
+        stumbleBlob.put(DataStorageConstants.ReportsColumns.LAT, -22.5f);
+        stumbleBlob.put(DataStorageConstants.ReportsColumns.ACCURACY, 20.5f);
 
 
         List<JSONObject> itemsList= new ArrayList<JSONObject>();

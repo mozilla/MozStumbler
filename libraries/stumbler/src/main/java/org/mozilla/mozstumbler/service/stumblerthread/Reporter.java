@@ -16,7 +16,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.core.logging.ClientLog;
-import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageContract;
+import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageConstants;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageManager;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.StumblerBundle;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.GPSScanner;
@@ -183,11 +183,11 @@ public final class Reporter extends BroadcastReceiver implements IReporter {
 
         try {
             mlsObj = mBundle.toMLSGeosubmit();
-            if (mlsObj.has(DataStorageContract.ReportsColumns.WIFI)) {
-                wifiCount = mlsObj.getJSONArray(DataStorageContract.ReportsColumns.WIFI).length();
+            if (mlsObj.has(DataStorageConstants.ReportsColumns.WIFI)) {
+                wifiCount = mlsObj.getJSONArray(DataStorageConstants.ReportsColumns.WIFI).length();
             }
-            if (mlsObj.has(DataStorageContract.ReportsColumns.CELL)) {
-                cellCount = mlsObj.getJSONArray(DataStorageContract.ReportsColumns.CELL).length();
+            if (mlsObj.has(DataStorageConstants.ReportsColumns.CELL)) {
+                cellCount = mlsObj.getJSONArray(DataStorageConstants.ReportsColumns.CELL).length();
             }
         } catch (JSONException e) {
             ClientLog.w(LOG_TAG, "Failed to convert bundle to JSON: " + e);

@@ -4,7 +4,6 @@ import android.app.Application;
 import android.content.Context;
 import android.location.Location;
 import android.net.wifi.ScanResult;
-import android.telephony.TelephonyManager;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -82,8 +81,8 @@ public class DataStorageManagerTest {
             }
 
             JSONObject mlsObj = bundle.toMLSGeosubmit();
-            int wifiCount = mlsObj.getJSONArray(DataStorageContract.ReportsColumns.WIFI).length();
-            int cellCount = mlsObj.getJSONArray(DataStorageContract.ReportsColumns.CELL).length();
+            int wifiCount = mlsObj.getJSONArray(DataStorageConstants.ReportsColumns.WIFI).length();
+            int cellCount = mlsObj.getJSONArray(DataStorageConstants.ReportsColumns.CELL).length();
             try {
                 dm.insert(mlsObj.toString(), wifiCount, cellCount);
             } catch (IOException ioEx) {
@@ -116,8 +115,8 @@ public class DataStorageManagerTest {
             }
 
             JSONObject mlsObj = bundle.toMLSGeosubmit();
-            int wifiCount = mlsObj.getJSONArray(DataStorageContract.ReportsColumns.WIFI).length();
-            int cellCount = mlsObj.getJSONArray(DataStorageContract.ReportsColumns.CELL).length();
+            int wifiCount = mlsObj.getJSONArray(DataStorageConstants.ReportsColumns.WIFI).length();
+            int cellCount = mlsObj.getJSONArray(DataStorageConstants.ReportsColumns.CELL).length();
             try {
                 dm.insert(mlsObj.toString(), wifiCount, cellCount);
             } catch (FileNotFoundException fex) {

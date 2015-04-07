@@ -6,7 +6,6 @@ package org.mozilla.mozstumbler.service.stumblerthread.datahandling;
 
 import android.content.Context;
 
-import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.core.logging.ClientLog;
 import org.mozilla.mozstumbler.service.utils.Zipper;
 import org.mozilla.mozstumbler.svclocator.ServiceLocator;
@@ -150,7 +149,7 @@ public class DataStorageManager {
         }
     }
 
-    private static long getLongFromFilename(String name, String separator) {
+    public static long getLongFromFilename(String name, String separator) {
         final int s = name.indexOf(separator) + separator.length();
         int e = name.indexOf('-', s);
         if (e < 0) {
@@ -407,79 +406,5 @@ public class DataStorageManager {
 
     public interface StorageIsEmptyTracker {
         public void notifyStorageStateEmpty(boolean isEmpty);
-    }
-
-
-    protected static class ReportFileList {
-        File[] mFiles;
-        int mReportCount;
-        int mWifiCount;
-        int mCellCount;
-        long mFilesOnDiskBytes;
-
-        public ReportFileList() {
-        }
-
-        public ReportFileList(ReportFileList other) {
-            if (other == null) {
-                return;
-            }
-
-            if (other.mFiles != null) {
-                mFiles = other.mFiles.clone();
-            }
-
-            mReportCount = other.mReportCount;
-            mWifiCount = other.mWifiCount;
-            mCellCount = other.mCellCount;
-            mFilesOnDiskBytes = other.mFilesOnDiskBytes;
-        }
-
-        protected void update(File directory) {
-            mFiles = directory.listFiles();
-            if (mFiles == null) {
-                return;
-            }
-
-            if (AppGlobals.isDebug) {
-                for (File f : mFiles) {
-                    ClientLog.d("StumblerFiles", f.getName());
-                }
-            }
-
-            mFilesOnDiskBytes = mReportCount = mWifiCount = mCellCount = 0;
-            for (File f : mFiles) {
-                mReportCount += (int) getLongFromFilename(f.getName(), SEP_REPORT_COUNT);
-                mWifiCount += (int) getLongFromFilename(f.getName(), SEP_WIFI_COUNT);
-                mCellCount += (int) getLongFromFilename(f.getName(), SEP_CELL_COUNT);
-                mFilesOnDiskBytes += f.length();
-            }
-        }
-    }
-
-    public static class ReportBatch {
-        public final String filename;
-        public final byte[] data;
-        public final int reportCount;
-        public final int wifiCount;
-        public final int cellCount;
-
-        public ReportBatch(String filename, byte[] data, int reportCount, int wifiCount, int cellCount) {
-            this.filename = filename;
-            this.data = data;
-            this.reportCount = reportCount;
-            this.wifiCount = wifiCount;
-            this.cellCount = cellCount;
-        }
-    }
-
-    private static class ReportBatchIterator {
-        static final int BATCH_INDEX_FOR_MEM_BUFFER = -1;
-        public final ReportFileList fileList;
-        public int currentIndex = BATCH_INDEX_FOR_MEM_BUFFER;
-
-        public ReportBatchIterator(ReportFileList list) {
-            fileList = new ReportFileList(list);
-        }
     }
 }

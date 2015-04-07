@@ -14,6 +14,7 @@ import org.mozilla.mozstumbler.service.core.http.ILocationService;
 import org.mozilla.mozstumbler.service.core.http.IResponse;
 import org.mozilla.mozstumbler.service.core.http.MLS;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageManager;
+import org.mozilla.mozstumbler.service.stumblerthread.datahandling.ReportBatch;
 import org.mozilla.mozstumbler.service.utils.NetworkInfo;
 import org.mozilla.mozstumbler.service.utils.Zipper;
 import org.mozilla.mozstumbler.svclocator.ServiceLocator;
@@ -128,7 +129,7 @@ public class AsyncUploader extends AsyncTask<AsyncUploadParam, AsyncProgressList
         String error = null;
 
         try {
-            DataStorageManager.ReportBatch batch = dm.getFirstBatch();
+            ReportBatch batch = dm.getFirstBatch();
             HashMap<String, String> headers = new HashMap<String, String>();
             headers.put(MLS.EMAIL_HEADER, param.emailAddress);
             headers.put(MLS.NICKNAME_HEADER, param.nickname);

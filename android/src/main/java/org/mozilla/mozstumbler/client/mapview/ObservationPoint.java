@@ -21,7 +21,7 @@ import org.mozilla.mozstumbler.svclocator.services.log.ILogger;
 import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 import org.mozilla.osmdroid.util.GeoPoint;
 
-public class ObservationPoint implements MLSLocationGetter.MLSLocationGetterCallback {
+public class ObservationPoint implements AsyncGeolocate.MLSLocationGetterCallback {
 
     private static final ILogger Log = (ILogger) ServiceLocator.getInstance().getService(ILogger.class);
     private static final String LOG_TAG = LoggerUtil.makeLogTag(ObservationPoint.class);
@@ -77,7 +77,7 @@ public class ObservationPoint implements MLSLocationGetter.MLSLocationGetterCall
         }
 
         mIsMLSLocationQueryRunning = true;
-        new MLSLocationGetter(this, mMLSQuery).execute();
+        new AsyncGeolocate(this, mMLSQuery).execute();
     }
 
     public boolean needsToFetchMLS() {

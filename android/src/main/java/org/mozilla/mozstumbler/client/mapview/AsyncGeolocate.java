@@ -21,8 +21,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 /*
  An asynchronous task to fetch MLS locations.
  */
-public class MLSLocationGetter extends AsyncTask<String, Void, Location> {
-    private static final String LOG_TAG = LoggerUtil.makeLogTag(MLSLocationGetter.class);
+public class AsyncGeolocate extends AsyncTask<String, Void, Location> {
+    private static final String LOG_TAG = LoggerUtil.makeLogTag(AsyncGeolocate.class);
     private static AtomicInteger sRequestCounter = new AtomicInteger(0);
     private final int MAX_REQUESTS = 10;
     private ILocationService mls = (ILocationService)
@@ -35,7 +35,7 @@ public class MLSLocationGetter extends AsyncTask<String, Void, Location> {
 
     private boolean mIsBadRequest;
 
-    public MLSLocationGetter(MLSLocationGetterCallback callback, JSONObject mlsQueryObj) {
+    public AsyncGeolocate(MLSLocationGetterCallback callback, JSONObject mlsQueryObj) {
         mCallback = callback;
         mlsGeolocateObj = mlsQueryObj;
     }

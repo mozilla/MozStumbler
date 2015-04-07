@@ -19,7 +19,7 @@ import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /*
-This class provides MLS locations by calling HTTP methods against the MLS.
+ An asynchronous task to fetch MLS locations.
  */
 public class MLSLocationGetter extends AsyncTask<String, Void, Location> {
     private static final String LOG_TAG = LoggerUtil.makeLogTag(MLSLocationGetter.class);
@@ -30,12 +30,14 @@ public class MLSLocationGetter extends AsyncTask<String, Void, Location> {
                                             .getService(ILocationService.class);
 
     private MLSLocationGetterCallback mCallback;
-    private byte[] mQueryMLSBytes;
+
+    JSONObject mlsGeolocateObj;
+
     private boolean mIsBadRequest;
 
     public MLSLocationGetter(MLSLocationGetterCallback callback, JSONObject mlsQueryObj) {
         mCallback = callback;
-        mQueryMLSBytes = mlsQueryObj.toString().getBytes();
+        mlsGeolocateObj = mlsQueryObj;
     }
 
     @Override
@@ -46,7 +48,7 @@ public class MLSLocationGetter extends AsyncTask<String, Void, Location> {
             return null;
         }
 
-        IResponse resp = mls.search(mQueryMLSBytes, null, false);
+        IResponse resp = mls.search(mlsGeolocateObj, null, false);
 
         if (resp == null) {
             Log.i(LOG_TAG, "Error processing search request");

@@ -4,6 +4,7 @@
 
 package org.mozilla.mozstumbler.service.core.http;
 
+import org.json.JSONObject;
 import org.mozilla.mozstumbler.service.Prefs;
 import org.mozilla.mozstumbler.svclocator.ServiceLocator;
 
@@ -31,13 +32,17 @@ public class MLS implements ILocationService {
         return httpDelegate.post(SUBMIT_URL + "?key=" + mozApiKey, data, headers, precompressed);
     }
 
-    public IResponse search(byte[] data, Map<String, String> headers, boolean precompressed) {
+
+    public IResponse search(JSONObject mlsGeoLocate, Map<String, String> headers, boolean precompressed) {
         if (mozApiKey == null) {
             Prefs p = Prefs.getInstanceWithoutContext();
             if (p != null) {
                 mozApiKey = p.getMozApiKey();
             }
         }
-        return httpDelegate.post(SEARCH_URL + "?key=" + mozApiKey, data, headers, precompressed);
+        return httpDelegate.post(SEARCH_URL + "?key=" + mozApiKey,
+                mlsGeoLocate.toString().getBytes(),
+                headers,
+                precompressed);
     }
 }

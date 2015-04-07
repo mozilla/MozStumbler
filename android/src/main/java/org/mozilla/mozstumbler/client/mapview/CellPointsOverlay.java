@@ -7,6 +7,7 @@ import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.PointF;
 import android.util.Log;
+import android.view.MotionEvent;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -31,6 +32,10 @@ public class CellPointsOverlay extends Overlay implements CellDataRequester.Call
     final CellDataRequester mCellDataRequester;
     private final MapView mMapView;
 
+    Map<String, float[]> cachedPixels = new HashMap<String, float[]>();
+    GeoPoint shiftReferenceGeoPoint;
+    PointF shiftReferenceScreenPoint;
+
     CellPointsOverlay(Context ctx, MapView mapView) {
         super(ctx);
 
@@ -53,11 +58,6 @@ public class CellPointsOverlay extends Overlay implements CellDataRequester.Call
         mCellDataRequester.get(mapView);
         shiftReferenceGeoPoint = null;
     }
-
-
-    Map<String, float[]> cachedPixels = new HashMap<String, float[]>();
-    GeoPoint shiftReferenceGeoPoint;
-    PointF shiftReferenceScreenPoint;
 
     // Draw will handle the scrolling. Because the MapView has new info about its
     // viewport, we can use that to scroll the cachedPixels to a new location
@@ -83,6 +83,10 @@ public class CellPointsOverlay extends Overlay implements CellDataRequester.Call
         }
 
         Map<String, JSONArray> gridsToDraw = mCellDataRequester.getData(osmv);
+        if (gridsToDraw == null) {
+            return;
+        }
+
         for (String key : gridsToDraw.keySet()) {
             JSONArray json = gridsToDraw.get(key);
             if (cachedPixels.containsKey(key)) {

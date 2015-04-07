@@ -101,9 +101,13 @@ public class MapTileUtil {
         int maxy = Math.max(low.y, high.y);
 
         ArrayList<TileId> result = new ArrayList<TileId>();
+        int count = 0;
         for (int i = minx; i <= maxx; i++) {
             for (int j = miny; j <= maxy; j++) {
                 result.add(new TileId(i, j));
+                if (++count > 10) { // @TODO need proper upper bound handling, this is temporary
+                    return result;
+                }
             }
         }
         return result;

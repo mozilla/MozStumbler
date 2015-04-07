@@ -8,7 +8,6 @@ import org.robolectric.annotation.Config;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.HashMap;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
@@ -22,7 +21,6 @@ public class SerializableTileTest {
     public void testSerializeTilesNoData() throws IOException {
         File temp = File.createTempFile("temp", ".txt");
 
-        HashMap<String, String> headers = new HashMap<String, String>();
         SerializableTile sTile = new SerializableTile(null, "abc");
         sTile.saveFile(temp);
 
@@ -38,7 +36,6 @@ public class SerializableTileTest {
     public void testSerializeTileToFile() throws IOException {
         File temp = File.createTempFile("temp", ".txt");
 
-        HashMap<String, String> headers = new HashMap<String, String>();
         byte[] tileData = {(byte) 0xde, (byte) 0xca, (byte) 0xfb, (byte) 0xad};
 
         SerializableTile sTile = new SerializableTile(tileData, "abc");

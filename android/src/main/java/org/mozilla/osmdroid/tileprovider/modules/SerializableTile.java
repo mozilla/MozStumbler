@@ -64,7 +64,7 @@ public class SerializableTile {
     }
 
     public byte[] getTileData() {
-        return tData;
+        return (tData == null)? new byte[0] : tData;
     }
 
     public void setTileData(byte[] tileData) {

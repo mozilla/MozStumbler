@@ -8,21 +8,29 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 
+import org.acra.ACRA;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.utils.TelemetryWrapper;
 import org.mozilla.mozstumbler.svclocator.ServiceLocator;
 import org.mozilla.mozstumbler.svclocator.services.ISystemClock;
+import org.mozilla.mozstumbler.svclocator.services.log.ILogger;
+import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 public class PersistedStats {
+
     private final File mStatsFile;
     private final Context mContext;
+
+    private static final ILogger Log = (ILogger) ServiceLocator.getInstance().getService(ILogger.class);
+    private static final String LOG_TAG = LoggerUtil.makeLogTag(PersistedStats.class);
 
     public static final String ACTION_PERSISTENT_SYNC_STATUS_UPDATED = AppGlobals.ACTION_NAMESPACE + ".PERSISTENT_SYNC_STATUS_UPDATED";
     public static final String EXTRAS_PERSISTENT_SYNC_STATUS_UPDATED = ACTION_PERSISTENT_SYNC_STATUS_UPDATED + ".EXTRA";
@@ -35,27 +43,39 @@ public class PersistedStats {
     }
 
     void forceBroadcastOfSyncStats() {
-        try {
-            sendToListeners(readSyncStats());
-        } catch (IOException ex) {}
+        sendToListeners(readSyncStats());
     }
 
-    public synchronized Properties readSyncStats() throws IOException {
+    public synchronized Properties readSyncStats() {
+        Properties props = new Properties();
+
         if (!mStatsFile.exists()) {
             return createStatsProp(0, 0, 0, 0, 0, 0);
         }
 
-        final FileInputStream input = new FileInputStream(mStatsFile);
+        FileInputStream input = null;
         try {
-            final Properties props = new Properties();
+            input = new FileInputStream(mStatsFile);
             props.load(input);
-            return props;
+        } catch (IOException e) {
+            Log.e(LOG_TAG, "Error reading sync stats: " + e.toString());
         } finally {
-            input.close();
+            if (input != null) {
+                try {
+                    input.close();
+                } catch (IOException e) {
+                    // eat it - nothing we can do anyway.
+                }
+            }
         }
+        return props;
+
     }
 
-    public synchronized void incrementSyncStats(long bytesSent, long reports, long cells, long wifis) throws IOException {
+    public synchronized void incrementSyncStats(long bytesSent,
+                                                long reports,
+                                                long cells,
+                                                long wifis) {
         if (reports + cells + wifis < 1) {
             return;
         }
@@ -111,14 +131,32 @@ public class PersistedStats {
     }
 
     private synchronized Properties writeSyncStats(long time, long bytesSent, long totalObs,
-                                            long totalCells, long totalWifis, long obsPerDay) throws IOException {
-        final FileOutputStream out = new FileOutputStream(mStatsFile);
+                                            long totalCells, long totalWifis, long obsPerDay) {
+        final FileOutputStream out;
         final Properties props = createStatsProp(time, bytesSent, totalObs, totalCells, totalWifis, obsPerDay);
+
+
+        try {
+            out = new FileOutputStream(mStatsFile);
+        } catch (FileNotFoundException e) {
+            Log.w(LOG_TAG, "Error opening sync stats for write: " + e.toString());
+            return props;
+        }
 
         try {
             props.store(out, null);
+        } catch (IOException e) {
+            Log.w(LOG_TAG, "Error writing sync stats: " + e.toString());
+            ACRA.getErrorReporter().handleSilentException(e);
+            return props;
         } finally {
-            out.close();
+            try {
+                if (out != null) {
+                    out.close();
+                }
+            } catch (IOException e) {
+                // eat it - nothing we can do
+            }
         }
         return props;
     }

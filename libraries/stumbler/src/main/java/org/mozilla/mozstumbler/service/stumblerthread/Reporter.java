@@ -185,20 +185,16 @@ public final class Reporter extends BroadcastReceiver implements IReporter {
 
         AppGlobals.guiLogInfo("MLS record: " + mlsObj.toString());
 
-        try {
-            DataStorageManager.getInstance().insert(mlsObj.toString(), wifiCount, cellCount);
+        DataStorageManager.getInstance().insert(mlsObj.toString(), wifiCount, cellCount);
 
-            mObservationCount++;
-            mUniqueAPs.addAll(mBundle.getUnmodifiableWifiData().keySet());
-            mUniqueCells.addAll(mBundle.getUnmodifiableCellData().keySet());
+        mObservationCount++;
+        mUniqueAPs.addAll(mBundle.getUnmodifiableWifiData().keySet());
+        mUniqueCells.addAll(mBundle.getUnmodifiableCellData().keySet());
 
-            Intent i = new Intent(ACTION_NEW_BUNDLE);
-            i.putExtra(NEW_BUNDLE_ARG_BUNDLE, mBundle);
-            i.putExtra(AppGlobals.ACTION_ARG_TIME, System.currentTimeMillis());
-            LocalBroadcastManager.getInstance(mContext).sendBroadcastSync(i);
-        } catch (IOException e) {
-            ClientLog.w(LOG_TAG, e.toString());
-        }
+        Intent i = new Intent(ACTION_NEW_BUNDLE);
+        i.putExtra(NEW_BUNDLE_ARG_BUNDLE, mBundle);
+        i.putExtra(AppGlobals.ACTION_ARG_TIME, System.currentTimeMillis());
+        LocalBroadcastManager.getInstance(mContext).sendBroadcastSync(i);
 
         mBundle = null;
     }

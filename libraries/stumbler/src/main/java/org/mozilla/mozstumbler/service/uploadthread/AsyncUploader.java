@@ -14,12 +14,13 @@ import org.mozilla.mozstumbler.service.core.http.ILocationService;
 import org.mozilla.mozstumbler.service.core.http.IResponse;
 import org.mozilla.mozstumbler.service.core.http.MLS;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageManager;
+import org.mozilla.mozstumbler.service.stumblerthread.datahandling.IDataStorageManager;
+import org.mozilla.mozstumbler.service.stumblerthread.datahandling.ReportBatch;
 import org.mozilla.mozstumbler.service.utils.NetworkInfo;
 import org.mozilla.mozstumbler.service.utils.Zipper;
 import org.mozilla.mozstumbler.svclocator.ServiceLocator;
 import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -70,18 +71,14 @@ public class AsyncUploader extends AsyncTask<AsyncUploadParam, AsyncProgressList
         }
 
         if (sAsyncListener != null) {
-             wrapper = new AsyncProgressListenerStatusWrapper(sAsyncListener, true);
+            wrapper = new AsyncProgressListenerStatusWrapper(sAsyncListener, true);
             sAsyncListener.onUploadProgress(true);
             publishProgress(wrapper);
         }
 
 
         if (Prefs.getInstanceWithoutContext().isSaveStumbleLogs()) {
-            try {
-                DataStorageManager.getInstance().saveCurrentReportsSendBufferToDisk();
-            } catch (IOException e) {
-                AppGlobals.guiLogError("Error flushing in-memory reports to sdcard");
-            }
+            DataStorageManager.getInstance().saveCurrentReportsSendBufferToDisk();
         }
         uploadReports(param);
 
@@ -123,79 +120,68 @@ public class AsyncUploader extends AsyncTask<AsyncUploadParam, AsyncProgressList
             return;
         }
 
-        DataStorageManager dm = DataStorageManager.getInstance();
+        IDataStorageManager dm = DataStorageManager.getInstance();
 
-        String error = null;
+        ReportBatch batch = dm.getFirstBatch();
+        HashMap<String, String> headers = new HashMap<String, String>();
+        headers.put(MLS.EMAIL_HEADER, param.emailAddress);
+        headers.put(MLS.NICKNAME_HEADER, param.nickname);
 
-        try {
-            DataStorageManager.ReportBatch batch = dm.getFirstBatch();
-            HashMap<String, String> headers = new HashMap<String, String>();
-            headers.put(MLS.EMAIL_HEADER, param.emailAddress);
-            headers.put(MLS.NICKNAME_HEADER, param.nickname);
+        Prefs prefs = Prefs.getInstanceWithoutContext();
+        while (batch != null) {
+            IResponse result = null;
+            if (prefs != null && prefs.isSimulateStumble()) {
 
-            Prefs prefs = Prefs.getInstanceWithoutContext();
-            while (batch != null) {
-                IResponse result;
-                if (prefs != null && prefs.isSimulateStumble()) {
-
-                    result = new HTTPResponse(200,
-                            new HashMap<String, List<String>>(),
-                            new byte[]{},
-                            batch.data.length);
-                    Log.i(LOG_TAG, "Simulation skipped upload.");
-                } else {
-                    result = mls.submit(batch.data, headers, true);
-                }
-
-                if (result != null && result.isSuccessCode2XX()) {
-                    totalBytesSent += result.bytesSent();
-
-                    String logMsg = "MLS geosubmit: [HTTP Status:" + result.httpStatusCode() + "], [Bytes Sent:" + result.bytesSent() + "]";
-                    AppGlobals.guiLogInfo(logMsg, "#FFFFCC", true, false);
-                    Log.d(LOG_TAG, logMsg);
-
-                    dm.delete(batch.filename);
-
-                    uploadedObservations += batch.reportCount;
-                    uploadedWifis += batch.wifiCount;
-                    uploadedCells += batch.cellCount;
-                } else {
-                    String logMsg = "HTTP error unknown";
-                    if (result != null) {
-                        logMsg = "HTTP non-success code: " + result.httpStatusCode();
-                    }
-
-                    if (result != null && result.isErrorCode400BadRequest()) {
-                        logMsg += ", 400 Error, deleting bad report";
-                        if (AppGlobals.guiLogMessageBuffer != null) { // if true, this is a GUI app
-                            String unzipped = Zipper.unzipData(batch.data);
-                            AppGlobals.guiLogInfo(unzipped, "red", false, true);
-                        }
-                        dm.delete(batch.filename);
-                    } else {
-                        dm.saveCurrentReportsSendBufferToDisk();
-                    }
-                    AppGlobals.guiLogError(logMsg);
-                }
-
-                batch = dm.getNextBatch();
+                result = new HTTPResponse(200,
+                        new HashMap<String, List<String>>(),
+                        new byte[0],
+                        batch.data.length);
+                Log.i(LOG_TAG, "Simulation skipped upload.");
+            } else {
+                result = mls.submit(batch.data, headers, true);
             }
-        } catch (IOException ex) {
-            error = ex.toString();
+
+            if (result != null && result.isSuccessCode2XX()) {
+                totalBytesSent += result.bytesSent();
+
+
+                String logMsg = "MLS geosubmit: [HTTP Status:" + result.httpStatusCode() + "], [Bytes Sent:" + result.bytesSent() + "]";
+                AppGlobals.guiLogInfo(logMsg, "#FFFFCC", true, false);
+                Log.d(LOG_TAG, logMsg);
+
+                dm.delete(batch.filename);
+
+                uploadedObservations += batch.reportCount;
+                uploadedWifis += batch.wifiCount;
+                uploadedCells += batch.cellCount;
+            } else {
+                String logMsg = "HTTP error unknown";
+                if (result != null) {
+                    logMsg = "HTTP non-success code: " + result.httpStatusCode();
+                }
+
+                if (result != null && result.isErrorCode400BadRequest()) {
+                    logMsg += ", 400 Error, deleting bad report";
+                    if (AppGlobals.guiLogMessageBuffer != null) { // if true, this is a GUI app
+                        String unzipped = Zipper.unzipData(batch.data);
+                        if (unzipped == null) {
+                            unzipped = "Corrupt gzip data found.";
+                        }
+                        AppGlobals.guiLogInfo(unzipped, "red", false, true);
+                    }
+                    dm.delete(batch.filename);
+                } else {
+                    dm.saveCurrentReportsToDisk();
+                }
+                AppGlobals.guiLogError(logMsg);
+            }
+
+            batch = dm.getNextBatch();
         }
 
         sTotalBytesUploadedThisSession.addAndGet(totalBytesSent);
 
-        try {
-            dm.incrementSyncStats(totalBytesSent, uploadedObservations, uploadedCells, uploadedWifis);
-        } catch (IOException ex) {
-            error = ex.toString();
-        } finally {
-            if (error != null) {
-                Log.d(LOG_TAG, error);
-                AppGlobals.guiLogError(error + " (uploadReports)");
-            }
-        }
+        dm.incrementSyncStats(totalBytesSent, uploadedObservations, uploadedCells, uploadedWifis);
     }
 
     public interface AsyncUploaderListener {

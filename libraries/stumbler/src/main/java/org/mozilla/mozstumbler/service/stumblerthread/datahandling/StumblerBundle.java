@@ -84,9 +84,9 @@ public final class StumblerBundle implements Parcelable {
 
     public JSONObject toMLSGeosubmit() throws JSONException {
         JSONObject headerFields = new JSONObject();
-        headerFields.put(DataStorageContract.ReportsColumns.LAT, Math.floor(mGpsPosition.getLatitude() * 1.0E6) / 1.0E6);
-        headerFields.put(DataStorageContract.ReportsColumns.LON, Math.floor(mGpsPosition.getLongitude() * 1.0E6) / 1.0E6);
-        headerFields.put(DataStorageContract.ReportsColumns.TIME, mGpsPosition.getTime());
+        headerFields.put(DataStorageConstants.ReportsColumns.LAT, Math.floor(mGpsPosition.getLatitude() * 1.0E6) / 1.0E6);
+        headerFields.put(DataStorageConstants.ReportsColumns.LON, Math.floor(mGpsPosition.getLongitude() * 1.0E6) / 1.0E6);
+        headerFields.put(DataStorageConstants.ReportsColumns.TIME, mGpsPosition.getTime());
 
 
         /* Skip adding 'heading'
@@ -107,7 +107,7 @@ public final class StumblerBundle implements Parcelable {
                 JSONObject obj = c.toJSONObject();
                 cellJSON.put(obj);
             }
-            headerFields.put(DataStorageContract.ReportsColumns.CELL, cellJSON);
+            headerFields.put(DataStorageConstants.ReportsColumns.CELL, cellJSON);
         }
 
         if (mWifiData.size() > 0) {
@@ -123,24 +123,24 @@ public final class StumblerBundle implements Parcelable {
                 }
                 wifis.put(wifiEntry);
             }
-            headerFields.put(DataStorageContract.ReportsColumns.WIFI, wifis);
+            headerFields.put(DataStorageConstants.ReportsColumns.WIFI, wifis);
         }
 
         if (mGpsPosition.hasAltitude()) {
-            headerFields.put(DataStorageContract.ReportsColumns.ALTITUDE, (float) mGpsPosition.getAltitude());
+            headerFields.put(DataStorageConstants.ReportsColumns.ALTITUDE, (float) mGpsPosition.getAltitude());
         }
         if (mGpsPosition.hasAccuracy()) {
             // Note that Android does not support an accuracy measurement specific to altitude
-            headerFields.put(DataStorageContract.ReportsColumns.ACCURACY, mGpsPosition.getAccuracy());
+            headerFields.put(DataStorageConstants.ReportsColumns.ACCURACY, mGpsPosition.getAccuracy());
         }
         return headerFields;
     }
 
     public JSONObject toMLSGeolocate() throws JSONException {
         JSONObject headerFields = new JSONObject();
-        headerFields.put(DataStorageContract.ReportsColumns.LAT, Math.floor(mGpsPosition.getLatitude() * 1.0E6) / 1.0E6);
-        headerFields.put(DataStorageContract.ReportsColumns.LON, Math.floor(mGpsPosition.getLongitude() * 1.0E6) / 1.0E6);
-        headerFields.put(DataStorageContract.ReportsColumns.TIME, mGpsPosition.getTime());
+        headerFields.put(DataStorageConstants.ReportsColumns.LAT, Math.floor(mGpsPosition.getLatitude() * 1.0E6) / 1.0E6);
+        headerFields.put(DataStorageConstants.ReportsColumns.LON, Math.floor(mGpsPosition.getLongitude() * 1.0E6) / 1.0E6);
+        headerFields.put(DataStorageConstants.ReportsColumns.TIME, mGpsPosition.getTime());
 
         /* Skip adding 'heading'
 
@@ -154,7 +154,7 @@ public final class StumblerBundle implements Parcelable {
         */
 
         if (mCellData.size() > 0) {
-            headerFields.put(DataStorageContract.ReportsColumns.RADIO, firstRadioType());
+            headerFields.put(DataStorageConstants.ReportsColumns.RADIO, firstRadioType());
 
             JSONArray cellJSON = new JSONArray();
 
@@ -162,7 +162,7 @@ public final class StumblerBundle implements Parcelable {
                 JSONObject obj = c.toJSONObject();
                 cellJSON.put(obj);
             }
-            headerFields.put(DataStorageContract.ReportsColumns.CELL, cellJSON);
+            headerFields.put(DataStorageConstants.ReportsColumns.CELL, cellJSON);
         }
 
         if (mWifiData.size() > 0) {
@@ -178,7 +178,7 @@ public final class StumblerBundle implements Parcelable {
                 }
                 wifis.put(wifiEntry);
             }
-            headerFields.put(DataStorageContract.ReportsColumns.WIFI, wifis);
+            headerFields.put(DataStorageConstants.ReportsColumns.WIFI, wifis);
         }
 
         return headerFields;

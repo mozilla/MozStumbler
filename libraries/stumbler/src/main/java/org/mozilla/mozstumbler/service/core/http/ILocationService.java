@@ -5,6 +5,8 @@
 
 package org.mozilla.mozstumbler.service.core.http;
 
+import org.json.JSONObject;
+
 import java.util.Map;
 
 public interface ILocationService {
@@ -12,5 +14,5 @@ public interface ILocationService {
     // Errors will return
     public IResponse submit(byte[] data, Map<String, String> headers, boolean precompressed);
 
-    public IResponse search(byte[] data, Map<String, String> headers, boolean precompressed);
+    public IResponse search(JSONObject mlsGeoLocate, Map<String, String> headers, boolean precompressed);
 }

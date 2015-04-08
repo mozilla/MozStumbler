@@ -13,7 +13,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.mozilla.mozstumbler.client.ClientPrefs;
 import org.mozilla.mozstumbler.service.core.logging.ClientLog;
-import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageContract;
+import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageConstants;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.StumblerBundle;
 import org.mozilla.mozstumbler.service.utils.NetworkInfo;
 import org.mozilla.mozstumbler.svclocator.ServiceLocator;
@@ -21,7 +21,7 @@ import org.mozilla.mozstumbler.svclocator.services.log.ILogger;
 import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 import org.mozilla.osmdroid.util.GeoPoint;
 
-public class ObservationPoint implements MLSLocationGetter.MLSLocationGetterCallback {
+public class ObservationPoint implements AsyncGeolocate.MLSLocationGetterCallback {
 
     private static final ILogger Log = (ILogger) ServiceLocator.getInstance().getService(ILogger.class);
     private static final String LOG_TAG = LoggerUtil.makeLogTag(ObservationPoint.class);
@@ -59,10 +59,10 @@ public class ObservationPoint implements MLSLocationGetter.MLSLocationGetterCall
     }
 
     public void setCounts(JSONObject ichnaeaQueryObj) {
-        JSONArray cells = ichnaeaQueryObj.optJSONArray(DataStorageContract.ReportsColumns.CELL);
+        JSONArray cells = ichnaeaQueryObj.optJSONArray(DataStorageConstants.ReportsColumns.CELL);
         mCellCount = (cells != null) ? cells.length() : 0;
 
-        JSONArray wifis = ichnaeaQueryObj.optJSONArray(DataStorageContract.ReportsColumns.WIFI);
+        JSONArray wifis = ichnaeaQueryObj.optJSONArray(DataStorageConstants.ReportsColumns.WIFI);
         mWifiCount = (wifis != null) ? wifis.length() : 0;
     }
 
@@ -77,7 +77,7 @@ public class ObservationPoint implements MLSLocationGetter.MLSLocationGetterCall
         }
 
         mIsMLSLocationQueryRunning = true;
-        new MLSLocationGetter(this, mMLSQuery).execute();
+        new AsyncGeolocate(this, mMLSQuery).execute();
     }
 
     public boolean needsToFetchMLS() {

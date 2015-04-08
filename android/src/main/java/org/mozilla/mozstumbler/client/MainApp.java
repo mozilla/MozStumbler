@@ -7,7 +7,6 @@ package org.mozilla.mozstumbler.client;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Application;
-import android.app.Notification;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -36,6 +35,7 @@ import org.mozilla.mozstumbler.service.core.http.IHttpUtil;
 import org.mozilla.mozstumbler.service.core.http.ILocationService;
 import org.mozilla.mozstumbler.service.core.logging.MockAcraLog;
 import org.mozilla.mozstumbler.service.stumblerthread.Reporter;
+import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageConstants;
 import org.mozilla.mozstumbler.service.stumblerthread.motiondetection.MotionSensor;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.ISimulatorService;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.ScanManager;
@@ -74,8 +74,6 @@ public class MainApp extends Application
     public static final String ACTION_LOW_BATTERY = ACTION_BASE + ".LOW_BATTERY";
     private static boolean sHasBootedOnce;
     private final String LOG_TAG = LoggerUtil.makeLogTag(MainApp.class);
-    private final long MAX_BYTES_DISK_STORAGE = 1000 * 1000 * 20; // 20MB for Mozilla Stumbler by default, is ok?
-    private final int MAX_WEEKS_OLD_STORED = 4;
     private ClientStumblerService mStumblerService;
     private ServiceConnection mConnection;
     private ServiceBroadcastReceiver mReceiver;
@@ -256,7 +254,7 @@ public class MainApp extends Application
 
                 ClientStumblerService.StumblerBinder serviceBinder = (ClientStumblerService.StumblerBinder) binder;
                 mStumblerService = serviceBinder.getServiceAndInitialize(Thread.currentThread(),
-                        MAX_BYTES_DISK_STORAGE, MAX_WEEKS_OLD_STORED);
+                        DataStorageConstants.CLIENT_MAX_BYTES_DISK_STORAGE, DataStorageConstants.CLIENT_MAX_WEEKS_OLD_STORED);
 
                 Log.d(LOG_TAG, "Service connected");
                 if (mMainActivity.get() != null) {

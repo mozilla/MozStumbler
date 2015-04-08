@@ -14,7 +14,6 @@ import android.support.v4.content.LocalBroadcastManager;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mozilla.mozstumbler.service.stumblerthread.motiondetection.LocationChangeSensor;
 import org.mozilla.mozstumbler.svclocator.ServiceLocator;
 import org.mozilla.mozstumbler.svclocator.services.ISystemClock;
 import org.mozilla.mozstumbler.svclocator.services.MockSystemClock;
@@ -22,7 +21,6 @@ import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Properties;
 
@@ -81,6 +79,6 @@ public class ClientDataStorageManagerTest {
 
         Bundle bundle = i.getExtras();
         Properties props = (Properties) bundle.get(PersistedStats.EXTRAS_PERSISTENT_SYNC_STATUS_UPDATED);
-        assertEquals(Long.toString(ARBITRARY_CLOCK_TIME), props.getProperty(DataStorageContract.Stats.KEY_LAST_UPLOAD_TIME, "0"));
+        assertEquals(Long.toString(ARBITRARY_CLOCK_TIME), props.getProperty(DataStorageConstants.Stats.KEY_LAST_UPLOAD_TIME, "0"));
     }
 }

@@ -56,26 +56,45 @@ public class Zipper {
         return output;
     }
 
-    public static String unzipData(byte[] data) throws IOException {
+
+    /*
+     Decompress gzip data or return NULL if the stream cannot be decompressed properly.
+     */
+    public static String unzipData(byte[] data) {
         StringBuilder result = new StringBuilder();
-        final ByteArrayInputStream bs = new ByteArrayInputStream(data);
-        GZIPInputStream gstream = new GZIPInputStream(bs);
+
+        ByteArrayInputStream bs = null;
+        GZIPInputStream gzipInputStream = null;
         try {
-            InputStreamReader reader = new InputStreamReader(gstream);
+            bs = new ByteArrayInputStream(data);
+            gzipInputStream = new GZIPInputStream(bs);
+            InputStreamReader reader = new InputStreamReader(gzipInputStream);
             BufferedReader in = new BufferedReader(reader);
             String read;
             while ((read = in.readLine()) != null) {
                 result.append(read);
             }
+        } catch (IOException e) {
+            Log.w(LOG_TAG, "Can't decompress report data: " + e.toString());
+            return null;
         } finally {
-            gstream.close();
-            bs.close();
+            if (gzipInputStream != null) {
+                try {
+                    gzipInputStream.close();
+                } catch (IOException e) {
+                    // eat it - nothing we can do
+                }
+            }
+
+            if (bs!= null) {
+                try {
+                    bs.close();
+                } catch (IOException e) {
+                    // eat it - nothing we can do.
+                }
+            }
         }
         return result.toString();
     }
 
-    public enum ZippedState {
-        eNotZipped,
-        eAlreadyZipped
-    }
 }

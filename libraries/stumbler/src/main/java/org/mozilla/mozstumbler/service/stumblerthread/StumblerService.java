@@ -16,6 +16,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.Prefs;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageManager;
+import org.mozilla.mozstumbler.service.stumblerthread.datahandling.IDataStorageManager;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.ScanManager;
 import org.mozilla.mozstumbler.service.uploadthread.UploadAlarmReceiver;
 import org.mozilla.mozstumbler.service.utils.NetworkInfo;
@@ -65,16 +66,12 @@ public class StumblerService extends PersistentIntentService
                 return;
             }
 
+            Context ctx = StumblerService.this.getApplicationContext();
+
             if (intent.getAction().equals(StumblerServiceIntentActions.SVC_REQ_VISIBLE_AP)) {
-                broadcastCount(StumblerServiceIntentActions.SVC_RESP_VISIBLE_AP, getVisibleAPCount());
+                broadcastCount(ctx, StumblerServiceIntentActions.SVC_RESP_VISIBLE_AP, getVisibleAPCount());
             } else if (intent.getAction().equals(StumblerServiceIntentActions.SVC_REQ_VISIBLE_CELL)) {
-                broadcastCount(StumblerServiceIntentActions.SVC_RESP_VISIBLE_CELL, getVisibleCellCount());
-            } else if (intent.getAction().equals(StumblerServiceIntentActions.SVC_REQ_OBSERVATION_PT)) {
-                broadcastCount(StumblerServiceIntentActions.SVC_RESP_OBSERVATION_PT, getObservationCount());
-            } else if (intent.getAction().equals(StumblerServiceIntentActions.SVC_REQ_UNIQUE_CELL_COUNT)) {
-                broadcastCount(StumblerServiceIntentActions.SVC_RESP_UNIQUE_CELL_COUNT, getUniqueCellCount());
-            } else if (intent.getAction().equals(StumblerServiceIntentActions.SVC_REQ_UNIQUE_WIFI_COUNT)) {
-                broadcastCount(StumblerServiceIntentActions.SVC_RESP_UNIQUE_WIFI_COUNT, getUniqueAPCount());
+                broadcastCount(ctx, StumblerServiceIntentActions.SVC_RESP_VISIBLE_CELL, getVisibleCellCount());
             }
 
         };
@@ -83,10 +80,10 @@ public class StumblerService extends PersistentIntentService
     /*
     Make a blocking synchronous response to requests for metrics.
      */
-    private void broadcastCount(String svcRespVisibleAp, int visibleAPCount) {
+    static void broadcastCount(Context ctx, String svcRespVisibleAp, int visibleAPCount) {
         Intent intent = new Intent(svcRespVisibleAp);
         intent.putExtra("count", visibleAPCount);
-        LocalBroadcastManager.getInstance(this.getApplicationContext()).sendBroadcastSync(intent);
+        LocalBroadcastManager.getInstance(ctx).sendBroadcastSync(intent);
     }
 
 
@@ -118,14 +115,6 @@ public class StumblerService extends PersistentIntentService
         return mScanManager.getLocation();
     }
 
-    private synchronized int getObservationCount() {
-        return mReporter.getObservationCount();
-    }
-
-    private synchronized int getUniqueAPCount() {
-        return mReporter.getUniqueAPCount();
-    }
-
     private synchronized int getVisibleAPCount() {
         return mScanManager.getVisibleAPCount();
     }
@@ -133,10 +122,6 @@ public class StumblerService extends PersistentIntentService
 
     private synchronized int getVisibleCellCount() {
         return mScanManager.getVisibleCellInfoCount();
-    }
-
-    private synchronized int getUniqueCellCount() {
-        return mReporter.getUniqueCellCount();
     }
 
     // Previously this was done in onCreate(). Moved out of that so that in the passive standalone service
@@ -148,9 +133,8 @@ public class StumblerService extends PersistentIntentService
             IntentFilter filter = new IntentFilter();
             filter.addAction(StumblerServiceIntentActions.SVC_REQ_VISIBLE_AP);
             filter.addAction(StumblerServiceIntentActions.SVC_REQ_VISIBLE_CELL);
-            filter.addAction(StumblerServiceIntentActions.SVC_REQ_OBSERVATION_PT);
-            filter.addAction(StumblerServiceIntentActions.SVC_REQ_UNIQUE_CELL_COUNT);
-            filter.addAction(StumblerServiceIntentActions.SVC_REQ_UNIQUE_WIFI_COUNT);
+
+
             LocalBroadcastManager.getInstance(getApplicationContext())
                     .registerReceiver(visibleCountRequestReceiver,
                             filter);
@@ -197,12 +181,7 @@ public class StumblerService extends PersistentIntentService
                 }
 
                 if (DataStorageManager.getInstance() != null) {
-                    try {
-                        DataStorageManager.getInstance().saveCurrentReportsToDisk();
-                    } catch (IOException ex) {
-                        AppGlobals.guiLogInfo(ex.toString());
-                        Log.e(LOG_TAG, "Exception in onDestroy saving reports" + ex.toString());
-                    }
+                    DataStorageManager.getInstance().saveCurrentReportsToDisk();
                 }
                 return null;
             }
@@ -298,14 +277,10 @@ public class StumblerService extends PersistentIntentService
     }
 
     public void handleLowMemoryNotification() {
-        DataStorageManager manager = DataStorageManager.getInstance();
+        IDataStorageManager manager = DataStorageManager.getInstance();
         if (manager == null) {
             return;
         }
-        try {
-            manager.saveCurrentReportsToDisk();
-        } catch (IOException ioException) {
-            Log.e(LOG_TAG, ioException.toString());
-        }
+        manager.saveCurrentReportsToDisk();
     }
 }

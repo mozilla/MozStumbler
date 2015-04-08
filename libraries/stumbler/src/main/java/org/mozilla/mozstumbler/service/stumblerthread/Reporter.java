@@ -16,7 +16,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.core.logging.ClientLog;
-import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageContract;
+import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageConstants;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageManager;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.StumblerBundle;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.GPSScanner;
@@ -43,7 +43,7 @@ public final class Reporter extends BroadcastReceiver implements IReporter {
     private final Set<String> mUniqueAPs = new HashSet<String>();
     private final Set<String> mUniqueCells = new HashSet<String>();
     StumblerBundle mBundle;
-    private boolean mIsStarted;
+    private boolean mIsStarted = false;
     private Context mContext;
     private int mObservationCount = 0;
 
@@ -62,6 +62,11 @@ public final class Reporter extends BroadcastReceiver implements IReporter {
         intentFilter.addAction(WifiScanner.ACTION_WIFIS_SCANNED);
         intentFilter.addAction(CellScanner.ACTION_CELLS_SCANNED);
         intentFilter.addAction(GPSScanner.ACTION_GPS_UPDATED);
+
+        intentFilter.addAction(StumblerServiceIntentActions.SVC_REQ_OBSERVATION_PT);
+        intentFilter.addAction(StumblerServiceIntentActions.SVC_REQ_UNIQUE_CELL_COUNT);
+        intentFilter.addAction(StumblerServiceIntentActions.SVC_REQ_UNIQUE_WIFI_COUNT);
+
         intentFilter.addAction(ACTION_FLUSH_TO_BUNDLE);
 
         LocalBroadcastManager.getInstance(mContext).registerReceiver(this,
@@ -106,7 +111,7 @@ public final class Reporter extends BroadcastReceiver implements IReporter {
     }
 
     @Override
-    public synchronized void onReceive(Context context, Intent intent) {
+    public void onReceive(Context context, Intent intent) {
         String action = intent.getAction();
 
         if (action.equals(ACTION_FLUSH_TO_BUNDLE)) {
@@ -119,6 +124,18 @@ public final class Reporter extends BroadcastReceiver implements IReporter {
         } else if (action.equals(GPSScanner.ACTION_GPS_UPDATED)) {
             // This is the common case
             receivedGpsMessage(intent);
+        } else if (intent.getAction().equals(StumblerServiceIntentActions.SVC_REQ_OBSERVATION_PT)) {
+            StumblerService.broadcastCount(mContext,
+                    StumblerServiceIntentActions.SVC_RESP_OBSERVATION_PT,
+                    getObservationCount());
+        } else if (intent.getAction().equals(StumblerServiceIntentActions.SVC_REQ_UNIQUE_CELL_COUNT)) {
+            StumblerService.broadcastCount(mContext,
+                    StumblerServiceIntentActions.SVC_RESP_UNIQUE_CELL_COUNT,
+                    getUniqueCellCount());
+        } else if (intent.getAction().equals(StumblerServiceIntentActions.SVC_REQ_UNIQUE_WIFI_COUNT)) {
+            StumblerService.broadcastCount(mContext,
+                    StumblerServiceIntentActions.SVC_RESP_UNIQUE_WIFI_COUNT,
+                    getUniqueAPCount());
         }
 
         if (mBundle != null &&
@@ -155,7 +172,7 @@ public final class Reporter extends BroadcastReceiver implements IReporter {
         }
     }
 
-    public synchronized void flush() {
+    private synchronized void flush() {
         JSONObject mlsObj;
         int wifiCount = 0;
         int cellCount = 0;
@@ -166,11 +183,11 @@ public final class Reporter extends BroadcastReceiver implements IReporter {
 
         try {
             mlsObj = mBundle.toMLSGeosubmit();
-            if (mlsObj.has(DataStorageContract.ReportsColumns.WIFI)) {
-                wifiCount = mlsObj.getJSONArray(DataStorageContract.ReportsColumns.WIFI).length();
+            if (mlsObj.has(DataStorageConstants.ReportsColumns.WIFI)) {
+                wifiCount = mlsObj.getJSONArray(DataStorageConstants.ReportsColumns.WIFI).length();
             }
-            if (mlsObj.has(DataStorageContract.ReportsColumns.CELL)) {
-                cellCount = mlsObj.getJSONArray(DataStorageContract.ReportsColumns.CELL).length();
+            if (mlsObj.has(DataStorageConstants.ReportsColumns.CELL)) {
+                cellCount = mlsObj.getJSONArray(DataStorageConstants.ReportsColumns.CELL).length();
             }
         } catch (JSONException e) {
             ClientLog.w(LOG_TAG, "Failed to convert bundle to JSON: " + e);
@@ -185,33 +202,32 @@ public final class Reporter extends BroadcastReceiver implements IReporter {
 
         AppGlobals.guiLogInfo("MLS record: " + mlsObj.toString());
 
-        try {
-            DataStorageManager.getInstance().insert(mlsObj.toString(), wifiCount, cellCount);
+        DataStorageManager.getInstance().insert(mlsObj.toString(), wifiCount, cellCount);
 
-            mObservationCount++;
-            mUniqueAPs.addAll(mBundle.getUnmodifiableWifiData().keySet());
-            mUniqueCells.addAll(mBundle.getUnmodifiableCellData().keySet());
+        mObservationCount++;
+        mUniqueAPs.addAll(mBundle.getUnmodifiableWifiData().keySet());
+        mUniqueCells.addAll(mBundle.getUnmodifiableCellData().keySet());
 
-            Intent i = new Intent(ACTION_NEW_BUNDLE);
-            i.putExtra(NEW_BUNDLE_ARG_BUNDLE, mBundle);
-            i.putExtra(AppGlobals.ACTION_ARG_TIME, System.currentTimeMillis());
-            LocalBroadcastManager.getInstance(mContext).sendBroadcastSync(i);
-        } catch (IOException e) {
-            ClientLog.w(LOG_TAG, e.toString());
-        }
+        Intent i = new Intent(ACTION_NEW_BUNDLE);
+        i.putExtra(NEW_BUNDLE_ARG_BUNDLE, mBundle);
+        i.putExtra(AppGlobals.ACTION_ARG_TIME, System.currentTimeMillis());
+        LocalBroadcastManager.getInstance(mContext).sendBroadcastSync(i);
 
         mBundle = null;
     }
 
-    public synchronized int getObservationCount() {
+    private int getObservationCount() {
+        // this is only updated during flush() which is only called from onReceive
         return mObservationCount;
     }
 
-    public synchronized int getUniqueAPCount() {
+    private int getUniqueAPCount() {
+        // this is only updated during flush() which is only called from onReceive
         return mUniqueAPs.size();
     }
 
-    public synchronized int getUniqueCellCount() {
+    private int getUniqueCellCount() {
+        // this is only updated during flush() which is only called from onReceive
         return mUniqueCells.size();
     }
 }

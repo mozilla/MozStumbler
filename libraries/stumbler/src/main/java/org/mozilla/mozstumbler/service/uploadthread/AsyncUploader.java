@@ -14,6 +14,7 @@ import org.mozilla.mozstumbler.service.core.http.ILocationService;
 import org.mozilla.mozstumbler.service.core.http.IResponse;
 import org.mozilla.mozstumbler.service.core.http.MLS;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageManager;
+import org.mozilla.mozstumbler.service.stumblerthread.datahandling.IDataStorageManager;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.ReportBatch;
 import org.mozilla.mozstumbler.service.utils.NetworkInfo;
 import org.mozilla.mozstumbler.service.utils.Zipper;
@@ -124,7 +125,7 @@ public class AsyncUploader extends AsyncTask<AsyncUploadParam, AsyncProgressList
             return;
         }
 
-        DataStorageManager dm = DataStorageManager.getInstance();
+        IDataStorageManager dm = DataStorageManager.getInstance();
 
         String error = null;
 

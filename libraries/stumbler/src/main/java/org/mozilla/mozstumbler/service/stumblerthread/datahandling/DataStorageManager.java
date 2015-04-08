@@ -39,7 +39,7 @@ import java.util.TimerTask;
  * Also of note: the in-memory buffers (both mCurrentReports and mCurrentReportsSendBuffer) are saved
  * when the service is destroyed.
  */
-public class DataStorageManager {
+public class DataStorageManager implements IDataStorageManager {
     ILogger Log = (ILogger) ServiceLocator.getInstance().getService(ILogger.class);
     private static final String LOG_TAG = LoggerUtil.makeLogTag(DataStorageManager.class);
 
@@ -128,7 +128,7 @@ public class DataStorageManager {
         sInstance = null;
     }
 
-    public static synchronized DataStorageManager getInstance() {
+    public static synchronized IDataStorageManager getInstance() {
         return sInstance;
     }
 
@@ -152,6 +152,7 @@ public class DataStorageManager {
         return Long.parseLong(name.substring(s, e));
     }
 
+    @Override
     public synchronized int getQueuedReportCount() {
         int reportCount = mFileList.mReportCount + mCurrentReports.reportsCount();
         if (mCurrentReportsSendBuffer != null) {
@@ -160,6 +161,7 @@ public class DataStorageManager {
         return reportCount;
     }
 
+    @Override
     public synchronized int getQueuedWifiCount() {
         int count = mFileList.mWifiCount + mCurrentReports.wifiCount;
         if (mCurrentReportsSendBuffer != null) {
@@ -168,6 +170,7 @@ public class DataStorageManager {
         return count;
     }
 
+    @Override
     public synchronized int getQueuedCellCount() {
         int count = mFileList.mCellCount + mCurrentReports.cellCount;
         if (mCurrentReportsSendBuffer != null) {
@@ -176,11 +179,13 @@ public class DataStorageManager {
         return count;
     }
 
+    @Override
     public synchronized byte[] getCurrentReportsRawBytes() {
         return (mCurrentReports.reportsCount() < 1) ? null :
                 mCurrentReports.finalizeReports().getBytes();
     }
 
+    @Override
     public synchronized long getQueuedZippedDataSize() {
         long byteLength = mFileList.mFilesOnDiskBytes;
         if (mCurrentReportsSendBuffer != null) {

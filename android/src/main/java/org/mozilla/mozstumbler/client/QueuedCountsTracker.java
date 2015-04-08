@@ -5,6 +5,7 @@
 package org.mozilla.mozstumbler.client;
 
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageManager;
+import org.mozilla.mozstumbler.service.stumblerthread.datahandling.IDataStorageManager;
 import org.mozilla.mozstumbler.service.utils.Zipper;
 import org.mozilla.mozstumbler.svclocator.ServiceLocator;
 import org.mozilla.mozstumbler.svclocator.services.ISystemClock;
@@ -42,7 +43,7 @@ public class QueuedCountsTracker {
     private long getInMemoryReportsUploadBytes() {
         ISystemClock clock = (ISystemClock) ServiceLocator.getInstance().getService(ISystemClock.class);
 
-        DataStorageManager dsm = DataStorageManager.getInstance();
+        IDataStorageManager dsm = DataStorageManager.getInstance();
         if (dsm == null) {
             return 0;
         }
@@ -71,7 +72,7 @@ public class QueuedCountsTracker {
 
     /* Some data is calculated on-demand, don't abuse this function */
     public QueuedCounts getQueuedCounts() {
-        DataStorageManager dsm = DataStorageManager.getInstance();
+        IDataStorageManager dsm = DataStorageManager.getInstance();
         if (dsm == null ) {
             return new QueuedCounts(0, 0, 0, 0);
         }

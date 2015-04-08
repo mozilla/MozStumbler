@@ -16,6 +16,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.Prefs;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageManager;
+import org.mozilla.mozstumbler.service.stumblerthread.datahandling.IDataStorageManager;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.ScanManager;
 import org.mozilla.mozstumbler.service.uploadthread.UploadAlarmReceiver;
 import org.mozilla.mozstumbler.service.utils.NetworkInfo;
@@ -281,7 +282,7 @@ public class StumblerService extends PersistentIntentService
     }
 
     public void handleLowMemoryNotification() {
-        DataStorageManager manager = DataStorageManager.getInstance();
+        IDataStorageManager manager = DataStorageManager.getInstance();
         if (manager == null) {
             return;
         }

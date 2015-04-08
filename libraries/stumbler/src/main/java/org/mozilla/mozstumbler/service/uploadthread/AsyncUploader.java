@@ -126,12 +126,12 @@ public class AsyncUploader extends AsyncTask<AsyncUploadParam, AsyncProgressList
 
         Prefs prefs = Prefs.getInstanceWithoutContext();
         while (batch != null) {
-            IResponse result;
+            IResponse result = null;
             if (prefs != null && prefs.isSimulateStumble()) {
 
                 result = new HTTPResponse(200,
                         new HashMap<String, List<String>>(),
-                        new byte[]{},
+                        new byte[0],
                         batch.data.length);
                 Log.i(LOG_TAG, "Simulation skipped upload.");
             } else {

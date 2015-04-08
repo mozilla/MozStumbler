@@ -132,9 +132,8 @@ public class PersistedStats {
 
     private synchronized Properties writeSyncStats(long time, long bytesSent, long totalObs,
                                             long totalCells, long totalWifis, long obsPerDay) {
-        final FileOutputStream out;
+        FileOutputStream out = null;
         final Properties props = createStatsProp(time, bytesSent, totalObs, totalCells, totalWifis, obsPerDay);
-
 
         try {
             out = new FileOutputStream(mStatsFile);

@@ -30,7 +30,7 @@ import static junit.framework.Assert.assertEquals;
 @RunWith(RobolectricTestRunner.class)
 public class ClientDataStorageManagerTest {
 
-    private class StorageTracker implements DataStorageManager.StorageIsEmptyTracker {
+    private class StorageTracker implements StorageIsEmptyTracker {
         public void notifyStorageStateEmpty(boolean isEmpty) {
         }
     }

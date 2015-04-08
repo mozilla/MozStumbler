@@ -55,16 +55,19 @@ public class DataStorageManager implements IDataStorageManager {
     static final String SEP_CELL_COUNT = "-c";
     static final String SEP_TIME_MS = "-t";
     static final String FILENAME_PREFIX = "reports";
-    static final String MEMORY_BUFFER_NAME = "in memory send buffer";
     public static DataStorageManager sInstance;
-    final File mReportsDir;
-    final ReportBatchBuilder mCurrentReports = new ReportBatchBuilder();
     // Set to the default value specified above.
     private final long mMaxBytesDiskStorage;
     // Set to the default value specified above.
     private final int mMaxWeeksStored;
     private final StorageIsEmptyTracker mTracker;
     protected final PersistedStats mPersistedOnDiskUploadStats;
+
+    // This set of members are used to keep track of ReportBatch instances in memory
+    // and on disk.  The Timer is used to periodically flush the in-memory buffer to disk.
+    static final String MEMORY_BUFFER_NAME = "in memory send buffer";
+    final File mReportsDir;
+    final ReportBatchBuilder mCurrentReports = new ReportBatchBuilder();
     protected ReportBatch mCurrentReportsSendBuffer;
     protected ReportFileList mFileList;
     private ReportBatchIterator mReportBatchIterator;
@@ -89,18 +92,6 @@ public class DataStorageManager implements IDataStorageManager {
 
     public static String getStorageDir(Context c) {
         File dir = null;
-
-        // Uncomment the following block if you're debugging
-        // persistent log storage on a non-rooted device
-        /*
-        if (AppGlobals.isDebug) {
-            // in debug, put files in public location
-            dir = c.getExternalFilesDir(null);
-            if (dir != null) {
-                dir = new File(dir.getAbsolutePath() + File.separator + MOZ_STUMBLER_RELPATH);
-            }
-        }
-        */
 
         if (dir == null) {
             dir = c.getFilesDir();
@@ -446,9 +437,5 @@ public class DataStorageManager implements IDataStorageManager {
     @Override
     public synchronized void incrementSyncStats(long bytesSent, long reports, long cells, long wifis) {
         mPersistedOnDiskUploadStats.incrementSyncStats(bytesSent, reports, cells, wifis);
-    }
-
-    public interface StorageIsEmptyTracker {
-        public void notifyStorageStateEmpty(boolean isEmpty);
     }
 }

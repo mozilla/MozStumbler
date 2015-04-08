@@ -127,7 +127,7 @@ public class DataStorageManagerTest {
 
     }
 
-    public class StorageTracker implements DataStorageManager.StorageIsEmptyTracker {
+    public class StorageTracker implements StorageIsEmptyTracker {
         public void notifyStorageStateEmpty(boolean isEmpty) {
         }
     }

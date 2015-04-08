@@ -17,6 +17,7 @@ import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.Prefs;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageManager;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.IDataStorageManager;
+import org.mozilla.mozstumbler.service.stumblerthread.datahandling.StorageIsEmptyTracker;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.ScanManager;
 import org.mozilla.mozstumbler.service.uploadthread.UploadAlarmReceiver;
 import org.mozilla.mozstumbler.service.utils.NetworkInfo;
@@ -25,14 +26,13 @@ import org.mozilla.mozstumbler.svclocator.ServiceLocator;
 import org.mozilla.mozstumbler.svclocator.services.log.ILogger;
 import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
-import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 // In stand-alone service mode (a.k.a passive scanning mode), this is created from PassiveServiceReceiver (by calling startService).
 // The StumblerService is a sticky unbound service in this usage.
 //
 public class StumblerService extends PersistentIntentService
-        implements DataStorageManager.StorageIsEmptyTracker {
+        implements StorageIsEmptyTracker {
 
     private static final String LOG_TAG = LoggerUtil.makeLogTag(StumblerService.class);
     private static ILogger Log = (ILogger) ServiceLocator.getInstance().getService(ILogger.class);

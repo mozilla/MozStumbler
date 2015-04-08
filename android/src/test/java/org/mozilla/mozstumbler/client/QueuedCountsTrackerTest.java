@@ -11,6 +11,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.ClientDataStorageManager;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageManager;
+import org.mozilla.mozstumbler.service.stumblerthread.datahandling.StorageIsEmptyTracker;
 import org.mozilla.mozstumbler.svclocator.ServiceLocator;
 import org.mozilla.mozstumbler.svclocator.services.ISystemClock;
 import org.mozilla.mozstumbler.svclocator.services.MockSystemClock;
@@ -27,7 +28,7 @@ import static org.mockito.Mockito.spy;
 @RunWith(RobolectricTestRunner.class)
 public class QueuedCountsTrackerTest {
 
-    public class StorageTracker implements DataStorageManager.StorageIsEmptyTracker {
+    public class StorageTracker implements StorageIsEmptyTracker {
         public void notifyStorageStateEmpty(boolean isEmpty) {
         }
     }

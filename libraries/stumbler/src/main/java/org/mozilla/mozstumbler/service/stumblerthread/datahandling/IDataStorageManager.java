@@ -13,16 +13,20 @@ public interface IDataStorageManager {
 
     // Some stats retrieval methods on the DSM
     public int getQueuedReportCount();
+
     public int getQueuedWifiCount();
+
     public int getQueuedCellCount();
+
     public long getQueuedZippedDataSize();
+
     public byte[] getCurrentReportsRawBytes();
 
     // Insert a report into storage
-    public void insert(String report, int wifiCount, int cellCount) throws IOException;
+    public void insert(String report, int wifiCount, int cellCount);
 
     // It feels like this method should be pushed behind the DataStorageManager implementation
-    public void incrementSyncStats(long bytesSent, long reports, long cells, long wifis) throws IOException;
+    public void incrementSyncStats(long bytesSent, long reports, long cells, long wifis);
 
 
     // This is used only by the StumblerService on initial startup of the service in the
@@ -37,8 +41,8 @@ public interface IDataStorageManager {
     // It seems like we should be able to get rid of the sendBuffer which is just a ReportBatch
     // record. This would get rid of having to maintain the state of `mCurrentReportsSendBuffer`
     // and get rid of the saveCurrentReportsSendBufferToDisk method.
-    public void saveCurrentReportsSendBufferToDisk() throws IOException;
-    public void saveCurrentReportsToDisk() throws IOException;
+    public boolean saveCurrentReportsSendBufferToDisk();
+    public void saveCurrentReportsToDisk();
 
 
     // Getting an instance of ReportBatch should really hang off of an iterator.
@@ -46,20 +50,21 @@ public interface IDataStorageManager {
     // all reports that are currently stored only in-memory.  getNextBatch will always hit disk.
     // We should extend the ReportBatchIterator to have knowledge of the in-memory reports
     // and implement java.util.Iterator to return the ReportBatch instances.
-    public ReportBatch getFirstBatch() throws IOException;
-    public ReportBatch getNextBatch() throws IOException;
+    public ReportBatch getFirstBatch();
+
+    public ReportBatch getNextBatch();
 
     // These 3 methods are *only* used to determine if we have stale data and if we should be
     // clearing it out.  We should collapse these into one method call and return a boolean
     // to indicate that the pending reports have been truncated.
     public long getOldestBatchTimeMs();
-    public int getMaxWeeksStored();
-    public void deleteAll();
 
+    public int getMaxWeeksStored();
+
+    public void deleteAll();
 
 
     // delete should be pushed down into ReportBatch as it already has everything except
     // DataStorageManager::mReportsDir to do this work.
     public boolean delete(String filename);
-
 }

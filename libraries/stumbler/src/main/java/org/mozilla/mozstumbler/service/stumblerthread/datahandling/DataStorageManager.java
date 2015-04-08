@@ -7,6 +7,7 @@ package org.mozilla.mozstumbler.service.stumblerthread.datahandling;
 import android.content.Context;
 
 import org.acra.ACRA;
+import org.json.JSONObject;
 import org.mozilla.mozstumbler.service.core.logging.ClientLog;
 import org.mozilla.mozstumbler.service.utils.Zipper;
 import org.mozilla.mozstumbler.svclocator.ServiceLocator;
@@ -80,7 +81,7 @@ public class DataStorageManager implements IDataStorageManager {
             mReportsDir.mkdirs();
         }
 
-        mFileList = new ReportFileList();
+        mFileList = new ReportFileList(null);
         mFileList.update(mReportsDir);
 
         mPersistedOnDiskUploadStats = new PersistedStats(baseDir, c);
@@ -375,7 +376,7 @@ public class DataStorageManager implements IDataStorageManager {
         clearCurrentReports();
     }
 
-    public synchronized void insert(String report, int wifiCount, int cellCount) {
+    public synchronized void insert(JSONObject geoSubmitObj, int wifiCount, int cellCount) {
         notifyStorageIsEmpty(false);
 
         if (mFlushMemoryBuffersToDiskTimer != null) {
@@ -383,7 +384,7 @@ public class DataStorageManager implements IDataStorageManager {
             mFlushMemoryBuffersToDiskTimer = null;
         }
 
-        mCurrentReports.addReport(report);
+        mCurrentReports.addReport(geoSubmitObj.toString());
 
         mCurrentReports.wifiCount += wifiCount;
         mCurrentReports.cellCount += cellCount;

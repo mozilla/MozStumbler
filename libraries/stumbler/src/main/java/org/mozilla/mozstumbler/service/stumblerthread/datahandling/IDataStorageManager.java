@@ -4,6 +4,8 @@
 
 package org.mozilla.mozstumbler.service.stumblerthread.datahandling;
 
+import org.json.JSONObject;
+
 import java.io.IOException;
 
 /*
@@ -23,7 +25,7 @@ public interface IDataStorageManager {
     public byte[] getCurrentReportsRawBytes();
 
     // Insert a report into storage
-    public void insert(String report, int wifiCount, int cellCount);
+    public void insert(JSONObject geoSubmitObj, int wifiCount, int cellCount);
 
     // It feels like this method should be pushed behind the DataStorageManager implementation
     public void incrementSyncStats(long bytesSent, long reports, long cells, long wifis);

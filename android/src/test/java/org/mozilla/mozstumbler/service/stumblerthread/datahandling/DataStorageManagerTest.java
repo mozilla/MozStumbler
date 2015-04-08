@@ -87,7 +87,7 @@ public class DataStorageManagerTest {
 
             int wifiCount = mlsObj.getJSONArray(DataStorageConstants.ReportsColumns.WIFI).length();
             int cellCount = mlsObj.getJSONArray(DataStorageConstants.ReportsColumns.CELL).length();
-            dm.insert(mlsObj.toString(), wifiCount, cellCount);
+            dm.insert(mlsObj, wifiCount, cellCount);
 
             assertEquals((locCount+1) % ReportBatchBuilder.MAX_REPORTS_IN_MEMORY,
                     dm.mCurrentReports.reportsCount());
@@ -118,7 +118,7 @@ public class DataStorageManagerTest {
 
             int wifiCount = mlsObj.getJSONArray(DataStorageConstants.ReportsColumns.WIFI).length();
             int cellCount = mlsObj.getJSONArray(DataStorageConstants.ReportsColumns.CELL).length();
-            dm.insert(mlsObj.toString(), wifiCount, cellCount);
+            dm.insert(mlsObj, wifiCount, cellCount);
 
             assertEquals((locCount+1) % ReportBatchBuilder.MAX_REPORTS_IN_MEMORY  ,
                     dm.mCurrentReports.reportsCount());

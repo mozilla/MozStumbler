@@ -173,7 +173,7 @@ public final class Reporter extends BroadcastReceiver implements IReporter {
     }
 
     private synchronized void flush() {
-        JSONObject mlsObj;
+        JSONObject geoSubmitJSON;
         int wifiCount = 0;
         int cellCount = 0;
 
@@ -182,12 +182,12 @@ public final class Reporter extends BroadcastReceiver implements IReporter {
         }
 
         try {
-            mlsObj = mBundle.toMLSGeosubmit();
-            if (mlsObj.has(DataStorageConstants.ReportsColumns.WIFI)) {
-                wifiCount = mlsObj.getJSONArray(DataStorageConstants.ReportsColumns.WIFI).length();
+            geoSubmitJSON = mBundle.toMLSGeosubmit();
+            if (geoSubmitJSON.has(DataStorageConstants.ReportsColumns.WIFI)) {
+                wifiCount = geoSubmitJSON.getJSONArray(DataStorageConstants.ReportsColumns.WIFI).length();
             }
-            if (mlsObj.has(DataStorageConstants.ReportsColumns.CELL)) {
-                cellCount = mlsObj.getJSONArray(DataStorageConstants.ReportsColumns.CELL).length();
+            if (geoSubmitJSON.has(DataStorageConstants.ReportsColumns.CELL)) {
+                cellCount = geoSubmitJSON.getJSONArray(DataStorageConstants.ReportsColumns.CELL).length();
             }
         } catch (JSONException e) {
             ClientLog.w(LOG_TAG, "Failed to convert bundle to JSON: " + e);
@@ -200,9 +200,7 @@ public final class Reporter extends BroadcastReceiver implements IReporter {
             return;
         }
 
-        AppGlobals.guiLogInfo("MLS record: " + mlsObj.toString());
-
-        DataStorageManager.getInstance().insert(mlsObj.toString(), wifiCount, cellCount);
+        DataStorageManager.getInstance().insert(geoSubmitJSON, wifiCount, cellCount);
 
         mObservationCount++;
         mUniqueAPs.addAll(mBundle.getUnmodifiableWifiData().keySet());

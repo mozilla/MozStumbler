@@ -9,6 +9,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 import java.nio.charset.CharacterCodingException;
 import java.nio.charset.Charset;
@@ -36,16 +37,7 @@ public class SerializableTile {
     private File myFile;
 
     public SerializableTile(File sTileFile) {
-
-        if (sTileFile.exists()) {
-            boolean tileIsCurrent = false;
-            try {
-                fromFile(sTileFile);
-            } catch (FileNotFoundException e) {
-                ClientLog.e(LOG_TAG, "TileFile was deleted by Android during tile load.", e);
-                tData = null;
-            }
-        }
+        fromFile(sTileFile);
     }
 
     public SerializableTile(byte[] tileBytes, String etag) {
@@ -120,7 +112,7 @@ public class SerializableTile {
      M bytes for content body
 
      */
-    public byte[] asBytes() throws CharacterCodingException {
+    private byte[] asBytes() throws CharacterCodingException {
         ByteArrayBuffer buff = new ByteArrayBuffer(10);
 
         buff.append(FILE_HEADER, 0, FILE_HEADER.length);
@@ -174,8 +166,41 @@ public class SerializableTile {
         return false;
     }
 
-    public boolean fromFile(File file) throws FileNotFoundException {
-        FileInputStream fis = new FileInputStream(file);
+    /*
+     Load a tile from a File object.
+
+     Returns whether the file was loaded successfully or not
+     */
+    public boolean fromFile(File file) {
+        if (!file.exists()) {
+            return false;
+        }
+
+        boolean result;
+
+        result = decodeFile(file);
+
+        if (!result) {
+            // Any decode that fails should try to remove the offending file.
+            if (file.exists()) {
+                file.delete();
+            }
+        }
+        return result;
+    }
+
+    private boolean decodeFile(File file) {
+        if (file.length() <= 4) {
+            // there's no way this is a valid file
+            return false;
+        }
+
+        FileInputStream fis = null;
+        try {
+            fis = new FileInputStream(file);
+        } catch (FileNotFoundException e) {
+            return false;
+        }
         byte[] arr = new byte[(int) file.length()];
 
         try {
@@ -192,16 +217,11 @@ public class SerializableTile {
             }
         }
 
-        try {
-            myFile = file.getAbsoluteFile();
-            return fromBytes(arr);
-        } catch (CharacterCodingException e) {
-            ClientLog.e(LOG_TAG, "Error decoding strings from file", e);
-            return false;
-        }
+        myFile = file.getAbsoluteFile();
+        return fromBytes(arr);
     }
 
-    protected boolean fromBytes(byte[] arr) throws CharacterCodingException {
+    protected boolean fromBytes(byte[] arr)   {
         byte[] buffer = null;
 
         Charset charsetE = Charset.forName("UTF-8");
@@ -221,19 +241,33 @@ public class SerializableTile {
 
         // read # of headers
         buffer = new byte[4];
+        try {
+            return parseTileBytes(buffer, bb);
+        } catch (RuntimeException re) {
+            return false;
+        }
+    }
+
+    /*
+      java.nio can throw a bunch of j.l.RuntimeExceptions that don't show up as actual I/O
+      errors and there's no common parent for nio exceptions other
+      than java.lang.RuntimeException.
+     */
+    private boolean parseTileBytes(byte[] buffer, ByteBuffer bb) {
         bb.get(buffer, 0, 4);
-        int headerCount = java.nio.ByteBuffer.wrap(buffer).getInt();
+
+        int headerCount = ByteBuffer.wrap(buffer).getInt();
 
         headers.clear();
 
         for (int i = 0; i < headerCount; i++) {
             buffer = new byte[4];
             bb.get(buffer, 0, 4);
-            int keyLength = java.nio.ByteBuffer.wrap(buffer).getInt();
+            int keyLength = ByteBuffer.wrap(buffer).getInt();
 
             buffer = new byte[4];
             bb.get(buffer, 0, 4);
-            int valueLength = java.nio.ByteBuffer.wrap(buffer).getInt();
+            int valueLength = ByteBuffer.wrap(buffer).getInt();
 
             String key = null;
             String value = null;
@@ -258,7 +292,7 @@ public class SerializableTile {
         // Remaining bytes should equal the content length of our payload.
         buffer = new byte[4];
         bb.get(buffer, 0, 4);
-        int contentLength = java.nio.ByteBuffer.wrap(buffer).getInt();
+        int contentLength = ByteBuffer.wrap(buffer).getInt();
         if (bb.remaining() != contentLength) {
             ClientLog.w(LOG_TAG, "Remaining byte count does not match actual[" + bb.remaining() + "] vs expected[" + contentLength + "]");
             // Force data to be null on errors.

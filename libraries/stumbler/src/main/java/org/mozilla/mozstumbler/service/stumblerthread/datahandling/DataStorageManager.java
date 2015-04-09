@@ -375,10 +375,7 @@ public class DataStorageManager implements IDataStorageManager {
             mFlushMemoryBuffersToDiskTimer = null;
         }
 
-        mCachedReportBatches.addReport(geoSubmitObj.toString());
-
-        mCachedReportBatches.incWifiCount(geoSubmitObj.getWifiCount());
-        mCachedReportBatches.incCellCount(geoSubmitObj.getCellCount());
+        mCachedReportBatches.addReport(geoSubmitObj);
 
         if (mCachedReportBatches.maxReportsReached()) {
             // save to disk

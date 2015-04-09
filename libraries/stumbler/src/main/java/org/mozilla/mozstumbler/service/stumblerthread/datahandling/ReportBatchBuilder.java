@@ -40,7 +40,11 @@ public class ReportBatchBuilder {
         wifiCount = cellCount = 0;
     }
 
-    public void addReport(String report) {
+    public void addReport(MLSJSONObject geoSubmitObj) {
+        String report = geoSubmitObj.toString();
+        wifiCount += geoSubmitObj.getWifiCount();
+        cellCount += geoSubmitObj.getCellCount();
+
         if (reportCount == MAX_REPORTS_IN_MEMORY) {
             // This can happen in the event that serializing reports to disk fails
             // and the reports list is never cleared.
@@ -63,14 +67,6 @@ public class ReportBatchBuilder {
             return true;
         }
         return reportsCount() == MAX_REPORTS_IN_MEMORY;
-    }
-
-    public void incWifiCount(int v) {
-        wifiCount += v;
-    }
-
-    public void incCellCount(int v) {
-        cellCount += v;
     }
 
     public int getCellCount() {

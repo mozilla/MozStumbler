@@ -155,7 +155,7 @@ public class StumblerBundleTest {
 
         ReportBatchBuilder rbb = new ReportBatchBuilder();
         for (StumblerBundle b: bundleList) {
-            rbb.addReport(b.toMLSGeosubmit().toString(4));
+            rbb.addReport(b.toMLSGeosubmit());
         }
 
         String finalReport = rbb.finalizeReports();

@@ -48,8 +48,6 @@ public class DataStorageManagerTest {
         // directory will be properly created
         ClientDataStorageManager.sInstance = null;
         dm = ClientDataStorageManager.createGlobalInstance(ctx, tracker, maxBytes, maxWeeks);
-        // Force the current reports to clear out between test runs.
-        dm.mCachedReportBatches.clear();
 
         rp = new Reporter();
 

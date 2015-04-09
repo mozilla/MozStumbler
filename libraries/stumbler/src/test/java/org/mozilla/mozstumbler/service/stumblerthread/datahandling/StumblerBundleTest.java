@@ -158,12 +158,11 @@ public class StumblerBundleTest {
             rbb.addReport(b.toMLSGeosubmit());
         }
 
-        String finalReport = rbb.finalizeReports();
+        String finalReport = rbb.finalizeAndClearReports();
         JSONObject actualJson = new JSONObject(finalReport);
 
         System.out.println("Actual JSON with accuracy and location: " + actualJson.toString(2));
         System.out.println("Expected JSON with accuracy and location: " + expectedJson.toString(2));
-
 
         JSONAssert.assertEquals(expectedJson, actualJson, true);
     }

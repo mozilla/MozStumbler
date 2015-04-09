@@ -7,7 +7,6 @@ package org.mozilla.mozstumbler.service.stumblerthread.datahandling;
 import android.content.Context;
 
 import org.acra.ACRA;
-import org.json.JSONObject;
 import org.mozilla.mozstumbler.service.core.logging.ClientLog;
 import org.mozilla.mozstumbler.service.utils.Zipper;
 import org.mozilla.mozstumbler.svclocator.ServiceLocator;
@@ -194,8 +193,7 @@ public class DataStorageManager implements IDataStorageManager {
 
     @Override
     public synchronized byte[] getCurrentReportsRawBytes() {
-        return (mCachedReportBatches.reportsCount() < 1) ? null :
-                mCachedReportBatches.finalizeReports().getBytes();
+        return mCachedReportBatches.peekBytes();
     }
 
     @Override
@@ -230,16 +228,17 @@ public class DataStorageManager implements IDataStorageManager {
         if (currentReportsCount > 0) {
             final String filename = MEMORY_BUFFER_NAME;
 
-            String report = mCachedReportBatches.finalizeReports();
+            final int wifiCount = mCachedReportBatches.getWifiCount();
+            final int cellCount = mCachedReportBatches.getCellCount();
+            String report = mCachedReportBatches.finalizeAndClearReports();
+
             // Uncomment this block when debugging the report blobs
             //Log.d(LOG_TAG, "PII geosubmit report: " + report);
             // end debug blob
 
             final byte[] data = Zipper.zipData(report.getBytes());
-            final int wifiCount = mCachedReportBatches.getWifiCount();
-            final int cellCount = mCachedReportBatches.getCellCount();
 
-            mCachedReportBatches.clear();
+
             mCurrentReportsSendBuffer = new ReportBatch(filename, data, currentReportsCount, wifiCount, cellCount);
             return mCurrentReportsSendBuffer;
         } else {
@@ -353,17 +352,22 @@ public class DataStorageManager implements IDataStorageManager {
         if (mCachedReportBatches.reportsCount() < 1) {
             return;
         }
-        String report = mCachedReportBatches.finalizeReports();
+
+        int wifiCount = mCachedReportBatches.getWifiCount();
+        int cellCount = mCachedReportBatches.getCellCount();
+        int reportCount = mCachedReportBatches.reportsCount();
+
+        String report = mCachedReportBatches.finalizeAndClearReports();
+        final byte[] bytes = Zipper.zipData(report.getBytes());
+
         // Uncomment this block when debugging the report blobs
         //Log.d(LOG_TAG, "PII geosubmit report: " + report);
         // end debug blob
 
-
-        final byte[] bytes = Zipper.zipData(report.getBytes());
-        saveToDisk(bytes, mCachedReportBatches.reportsCount(),
-                mCachedReportBatches.getWifiCount(),
-                mCachedReportBatches.getCellCount());
-        mCachedReportBatches.clear();
+        saveToDisk(bytes,
+                reportCount,
+                wifiCount,
+                cellCount);
     }
 
     public synchronized void insert(MLSJSONObject geoSubmitObj) {

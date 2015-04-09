@@ -49,7 +49,7 @@ public class QueuedCountsTracker {
         }
 
         byte[] bytes = dsm.getCurrentReportsRawBytes();
-        if (bytes == null) {
+        if (bytes == null || bytes.length == 0) {
             mCachedByteCount = 0;
             return 0;
         }

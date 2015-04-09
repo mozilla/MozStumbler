@@ -240,9 +240,8 @@ public class DataStorageManager implements IDataStorageManager {
             final int cellCount = mCachedReportBatches.getCellCount();
 
             mCachedReportBatches.clear();
-            final ReportBatch result = new ReportBatch(filename, data, currentReportsCount, wifiCount, cellCount);
-            mCurrentReportsSendBuffer = result;
-            return result;
+            mCurrentReportsSendBuffer = new ReportBatch(filename, data, currentReportsCount, wifiCount, cellCount);
+            return mCurrentReportsSendBuffer;
         } else {
             return getNextBatch();
         }

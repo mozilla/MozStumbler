@@ -367,7 +367,7 @@ public class DataStorageManager implements IDataStorageManager {
         mCachedReportBatches.clear();
     }
 
-    public synchronized void insert(JSONObject geoSubmitObj, int wifiCount, int cellCount) {
+    public synchronized void insert(MLSJSONObject geoSubmitObj) {
         notifyStorageIsEmpty(false);
 
         if (mFlushMemoryBuffersToDiskTimer != null) {
@@ -377,8 +377,8 @@ public class DataStorageManager implements IDataStorageManager {
 
         mCachedReportBatches.addReport(geoSubmitObj.toString());
 
-        mCachedReportBatches.incWifiCount(wifiCount);
-        mCachedReportBatches.incCellCount(cellCount);
+        mCachedReportBatches.incWifiCount(geoSubmitObj.getWifiCount());
+        mCachedReportBatches.incCellCount(geoSubmitObj.getCellCount());
 
         if (mCachedReportBatches.maxReportsReached()) {
             // save to disk

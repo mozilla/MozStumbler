@@ -25,7 +25,7 @@ public interface IDataStorageManager {
     public byte[] getCurrentReportsRawBytes();
 
     // Insert a report into storage
-    public void insert(JSONObject geoSubmitObj, int wifiCount, int cellCount);
+    public void insert(MLSJSONObject geoSubmitObj);
 
     // It feels like this method should be pushed behind the DataStorageManager implementation
     public void incrementSyncStats(long bytesSent, long reports, long cells, long wifis);

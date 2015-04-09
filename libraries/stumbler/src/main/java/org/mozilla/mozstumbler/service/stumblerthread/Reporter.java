@@ -12,12 +12,14 @@ import android.location.Location;
 import android.net.wifi.ScanResult;
 import android.support.v4.content.LocalBroadcastManager;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.core.logging.ClientLog;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageConstants;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageManager;
+import org.mozilla.mozstumbler.service.stumblerthread.datahandling.MLSJSONObject;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.StumblerBundle;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.GPSScanner;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.WifiScanner;
@@ -173,7 +175,7 @@ public final class Reporter extends BroadcastReceiver implements IReporter {
     }
 
     private synchronized void flush() {
-        JSONObject geoSubmitJSON;
+        MLSJSONObject geoSubmitJSON = null;
         int wifiCount = 0;
         int cellCount = 0;
 
@@ -183,24 +185,18 @@ public final class Reporter extends BroadcastReceiver implements IReporter {
 
         try {
             geoSubmitJSON = mBundle.toMLSGeosubmit();
-            if (geoSubmitJSON.has(DataStorageConstants.ReportsColumns.WIFI)) {
-                wifiCount = geoSubmitJSON.getJSONArray(DataStorageConstants.ReportsColumns.WIFI).length();
-            }
-            if (geoSubmitJSON.has(DataStorageConstants.ReportsColumns.CELL)) {
-                cellCount = geoSubmitJSON.getJSONArray(DataStorageConstants.ReportsColumns.CELL).length();
-            }
         } catch (JSONException e) {
             ClientLog.w(LOG_TAG, "Failed to convert bundle to JSON: " + e);
             mBundle = null;
             return;
         }
 
-        if (wifiCount + cellCount < 1) {
+        if (geoSubmitJSON.radioCount() < 1) {
             mBundle = null;
             return;
         }
 
-        DataStorageManager.getInstance().insert(geoSubmitJSON, wifiCount, cellCount);
+        DataStorageManager.getInstance().insert(geoSubmitJSON);
 
         mObservationCount++;
         mUniqueAPs.addAll(mBundle.getUnmodifiableWifiData().keySet());

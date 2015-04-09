@@ -49,20 +49,20 @@ public class DataStorageManagerTest {
         ClientDataStorageManager.sInstance = null;
         dm = ClientDataStorageManager.createGlobalInstance(ctx, tracker, maxBytes, maxWeeks);
         // Force the current reports to clear out between test runs.
-        dm.mCurrentReports.clearReports();
+        dm.mCachedReportBatches.clear();
 
         rp = new Reporter();
 
         // The Reporter class needs a reference to a context
         rp.startup(ctx);
-        assertEquals(0, dm.mCurrentReports.reportsCount());
+        assertEquals(0, dm.mCachedReportBatches.reportsCount());
     }
 
     @Test
     public void testMaxReportsLength() throws JSONException {
         StumblerBundle bundle;
 
-        assertEquals(0, dm.mCurrentReports.reportsCount());
+        assertEquals(0, dm.mCachedReportBatches.reportsCount());
 
         for (int locCount = 0; locCount < ReportBatchBuilder.MAX_REPORTS_IN_MEMORY - 1; locCount++) {
             Location loc = new Location("mock");
@@ -90,7 +90,7 @@ public class DataStorageManagerTest {
             dm.insert(mlsObj, wifiCount, cellCount);
 
             assertEquals((locCount+1) % ReportBatchBuilder.MAX_REPORTS_IN_MEMORY,
-                    dm.mCurrentReports.reportsCount());
+                    dm.mCachedReportBatches.reportsCount());
         }
 
         for (int locCount = ReportBatchBuilder.MAX_REPORTS_IN_MEMORY -1;
@@ -121,7 +121,7 @@ public class DataStorageManagerTest {
             dm.insert(mlsObj, wifiCount, cellCount);
 
             assertEquals((locCount+1) % ReportBatchBuilder.MAX_REPORTS_IN_MEMORY  ,
-                    dm.mCurrentReports.reportsCount());
+                    dm.mCachedReportBatches.reportsCount());
 
         }
 

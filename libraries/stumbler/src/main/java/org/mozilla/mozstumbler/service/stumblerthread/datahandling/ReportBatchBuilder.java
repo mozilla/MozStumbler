@@ -15,11 +15,13 @@ public class ReportBatchBuilder {
     private static ILogger Log = (ILogger) ServiceLocator.getInstance().getService(ILogger.class);
     private static String LOG_TAG = LoggerUtil.makeLogTag(ReportBatchBuilder.class);
 
-    // The max number of reports stored in the mCurrentReports. Each report is a GPS location plus wifi and cell scan.
-    // Once this size is reached, data is persisted to disk, mCurrentReports is cleared.
+    // The max number of reports stored in the mCachedReportBatches. Each report is a GPS location plus wifi and cell scan.
+    // Once this size is reached, data is persisted to disk, mCachedReportBatches is cleared.
     public static final int MAX_REPORTS_IN_MEMORY = 50;
-    public int wifiCount;
-    public int cellCount;
+
+    private int wifiCount;
+    private int cellCount;
+
     StringBuilder reportString;
     int reportCount;
 
@@ -32,9 +34,10 @@ public class ReportBatchBuilder {
         return reportString.toString() + kSuffix;
     }
 
-    public void clearReports() {
+    public void clear() {
         reportCount = 0;
         reportString = null;
+        wifiCount = cellCount = 0;
     }
 
     public void addReport(String report) {
@@ -60,5 +63,21 @@ public class ReportBatchBuilder {
             return true;
         }
         return reportsCount() == MAX_REPORTS_IN_MEMORY;
+    }
+
+    public void incWifiCount(int v) {
+        wifiCount += v;
+    }
+
+    public void incCellCount(int v) {
+        cellCount += v;
+    }
+
+    public int getCellCount() {
+        return cellCount;
+    }
+
+    public int getWifiCount() {
+        return wifiCount;
     }
 }

@@ -5,12 +5,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.net.wifi.ScanResult;
-import android.telephony.TelephonyManager;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageManager;
+import org.mozilla.mozstumbler.service.stumblerthread.datahandling.StorageIsEmptyTracker;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.StumblerBundle;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.GPSScanner;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.WifiScanner;
@@ -189,7 +189,7 @@ public class ReporterTest {
         return Robolectric.application;
     }
 
-    public class StorageTracker implements DataStorageManager.StorageIsEmptyTracker {
+    public class StorageTracker implements StorageIsEmptyTracker {
         public void notifyStorageStateEmpty(boolean isEmpty) {
         }
     }

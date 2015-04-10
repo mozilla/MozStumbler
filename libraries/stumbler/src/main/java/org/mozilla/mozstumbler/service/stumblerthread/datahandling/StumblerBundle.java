@@ -82,12 +82,11 @@ public final class StumblerBundle implements Parcelable {
         return Collections.unmodifiableMap(mCellData);
     }
 
-    public JSONObject toMLSGeosubmit() throws JSONException {
-        JSONObject headerFields = new JSONObject();
+    public MLSJSONObject toMLSGeosubmit() throws JSONException {
+        MLSJSONObject headerFields = new MLSJSONObject();
         headerFields.put(DataStorageConstants.ReportsColumns.LAT, Math.floor(mGpsPosition.getLatitude() * 1.0E6) / 1.0E6);
         headerFields.put(DataStorageConstants.ReportsColumns.LON, Math.floor(mGpsPosition.getLongitude() * 1.0E6) / 1.0E6);
         headerFields.put(DataStorageConstants.ReportsColumns.TIME, mGpsPosition.getTime());
-
 
         /* Skip adding 'heading'
 

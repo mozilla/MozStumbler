@@ -7,8 +7,8 @@ package org.mozilla.mozstumbler.service.stumblerthread.datahandling;
 import android.content.Context;
 
 import org.acra.ACRA;
+import org.mozilla.mozstumbler.service.Prefs;
 import org.mozilla.mozstumbler.service.core.logging.ClientLog;
-import org.mozilla.mozstumbler.service.utils.Zipper;
 import org.mozilla.mozstumbler.svclocator.ServiceLocator;
 import org.mozilla.mozstumbler.svclocator.services.ISystemClock;
 import org.mozilla.mozstumbler.svclocator.services.log.ILogger;
@@ -22,7 +22,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 
-/* Stores reports in memory (mCurrentReports) until MAX_REPORTS_IN_MEMORY,
+/* Stores reports in memory (mCachedReportBatches) until MAX_REPORTS_IN_MEMORY,
  * then writes them to disk as a .gz file. The name of the file has
  * the time written, the # of reports, and the # of cells and wifis.
  *
@@ -31,14 +31,14 @@ import java.util.TimerTask;
  * The sync stats are written as a key-value pair file (not zipped).
  *
  * The tricky bit is the mCurrentReportsSendBuffer. When the uploader code begins accessing the
- * report batches, mCurrentReports gets pushed to mCurrentReportsSendBuffer.
- * The mCurrentReports is then cleared, and can continue receiving new reports.
+ * report batches, mCachedReportBatches gets pushed to mCurrentReportsSendBuffer.
+ * The mCachedReportBatches is then cleared, and can continue receiving new reports.
  * From the uploader perspective, mCurrentReportsSendBuffer looks and acts exactly like a batch file on disk.
  *
  * If the network is reasonably active, and reporting is slow enough, there is no disk I/O, it all happens
  * in-memory.
  *
- * Also of note: the in-memory buffers (both mCurrentReports and mCurrentReportsSendBuffer) are saved
+ * Also of note: the in-memory buffers (both mCachedReportBatches and mCurrentReportsSendBuffer) are saved
  * when the service is destroyed.
  */
 public class DataStorageManager implements IDataStorageManager {
@@ -54,16 +54,20 @@ public class DataStorageManager implements IDataStorageManager {
     static final String SEP_CELL_COUNT = "-c";
     static final String SEP_TIME_MS = "-t";
     static final String FILENAME_PREFIX = "reports";
-    static final String MEMORY_BUFFER_NAME = "in memory send buffer";
     public static DataStorageManager sInstance;
-    final File mReportsDir;
-    final ReportBatchBuilder mCurrentReports = new ReportBatchBuilder();
     // Set to the default value specified above.
     private final long mMaxBytesDiskStorage;
     // Set to the default value specified above.
     private final int mMaxWeeksStored;
     private final StorageIsEmptyTracker mTracker;
     protected final PersistedStats mPersistedOnDiskUploadStats;
+
+    // This set of members are used to keep track of ReportBatch instances in memory
+    // and on disk.  The Timer is used to periodically flush the in-memory buffer to disk.
+    static final String MEMORY_BUFFER_NAME = "in memory send buffer";
+    final File mReportsDir;
+
+    final ReportBatchBuilder mCachedReportBatches = new ReportBatchBuilder();
     protected ReportBatch mCurrentReportsSendBuffer;
     protected ReportFileList mFileList;
     private ReportBatchIterator mReportBatchIterator;
@@ -80,26 +84,17 @@ public class DataStorageManager implements IDataStorageManager {
             mReportsDir.mkdirs();
         }
 
-        mFileList = new ReportFileList();
+        mFileList = new ReportFileList(null);
         mFileList.update(mReportsDir);
 
         mPersistedOnDiskUploadStats = new PersistedStats(baseDir, c);
     }
 
+    /*
+    Get a storage directory
+     */
     public static String getStorageDir(Context c) {
         File dir = null;
-
-        // Uncomment the following block if you're debugging
-        // persistent log storage on a non-rooted device
-        /*
-        if (AppGlobals.isDebug) {
-            // in debug, put files in public location
-            dir = c.getExternalFilesDir(null);
-            if (dir != null) {
-                dir = new File(dir.getAbsolutePath() + File.separator + MOZ_STUMBLER_RELPATH);
-            }
-        }
-        */
 
         if (dir == null) {
             dir = c.getFilesDir();
@@ -172,7 +167,7 @@ public class DataStorageManager implements IDataStorageManager {
 
     @Override
     public synchronized int getQueuedReportCount() {
-        int reportCount = mFileList.mReportCount + mCurrentReports.reportsCount();
+        int reportCount = mFileList.mReportCount + mCachedReportBatches.reportsCount();
         if (mCurrentReportsSendBuffer != null) {
             reportCount += mCurrentReportsSendBuffer.reportCount;
         }
@@ -181,7 +176,7 @@ public class DataStorageManager implements IDataStorageManager {
 
     @Override
     public synchronized int getQueuedWifiCount() {
-        int count = mFileList.mWifiCount + mCurrentReports.wifiCount;
+        int count = mFileList.mWifiCount + mCachedReportBatches.getWifiCount();
         if (mCurrentReportsSendBuffer != null) {
             count += mCurrentReportsSendBuffer.wifiCount;
         }
@@ -190,7 +185,7 @@ public class DataStorageManager implements IDataStorageManager {
 
     @Override
     public synchronized int getQueuedCellCount() {
-        int count = mFileList.mCellCount + mCurrentReports.cellCount;
+        int count = mFileList.mCellCount + mCachedReportBatches.getCellCount();
         if (mCurrentReportsSendBuffer != null) {
             count += mCurrentReportsSendBuffer.cellCount;
         }
@@ -199,8 +194,7 @@ public class DataStorageManager implements IDataStorageManager {
 
     @Override
     public synchronized byte[] getCurrentReportsRawBytes() {
-        return (mCurrentReports.reportsCount() < 1) ? null :
-                mCurrentReports.finalizeReports().getBytes();
+        return mCachedReportBatches.peekBytes();
     }
 
     @Override
@@ -223,8 +217,14 @@ public class DataStorageManager implements IDataStorageManager {
     /* return name of file used, or memory buffer sentinel value.
      * The return value is used to delete the file/buffer later. */
     public synchronized ReportBatch getFirstBatch() {
+
+        if (Prefs.getInstanceWithoutContext().isSaveStumbleLogs()) {
+            // We should flush to disk immediately
+            saveCurrentReportsSendBufferToDisk();
+        }
+
         final boolean dirEmpty = isDirEmpty();
-        final int currentReportsCount = mCurrentReports.reportsCount();
+        final int currentReportsCount = mCachedReportBatches.reportsCount();
 
         if (dirEmpty && currentReportsCount < 1) {
             return null;
@@ -233,29 +233,25 @@ public class DataStorageManager implements IDataStorageManager {
         mReportBatchIterator = new ReportBatchIterator(mFileList);
 
         if (currentReportsCount > 0) {
+            // This entire block convert mCachedReportBatches
+            // into a ReportBatch.  Note that mCachedReportBatches
+            // is an instance of ReportBatchBuilder
+            // so we should be able to just invoke:
+            // mCachedReportBatches.finalizeAndClearReports() to grab
+            // an instance of ReportBatch.
+
+
             final String filename = MEMORY_BUFFER_NAME;
+            final int wifiCount = mCachedReportBatches.getWifiCount();
+            final int cellCount = mCachedReportBatches.getCellCount();
 
-            String report = mCurrentReports.finalizeReports();
-            // Uncomment this block when debugging the report blobs
-            //Log.d(LOG_TAG, "PII geosubmit report: " + report);
-            // end debug blob
+            final byte[] data = mCachedReportBatches.finalizeAndClearReports();
 
-            final byte[] data = Zipper.zipData(report.getBytes());
-            final int wifiCount = mCurrentReports.wifiCount;
-            final int cellCount = mCurrentReports.cellCount;
-
-            clearCurrentReports();
-            final ReportBatch result = new ReportBatch(filename, data, currentReportsCount, wifiCount, cellCount);
-            mCurrentReportsSendBuffer = result;
-            return result;
+            mCurrentReportsSendBuffer = new ReportBatch(filename, data, currentReportsCount, wifiCount, cellCount);
+            return mCurrentReportsSendBuffer;
         } else {
             return getNextBatch();
         }
-    }
-
-    private void clearCurrentReports() {
-        mCurrentReports.clearReports();
-        mCurrentReports.wifiCount = mCurrentReports.cellCount = 0;
     }
 
     public synchronized ReportBatch getNextBatch() {
@@ -307,7 +303,7 @@ public class DataStorageManager implements IDataStorageManager {
      Return true if the current reports (if any exist) are properly saved.
      Return false only on a failed write to storage.
      */
-    public synchronized boolean saveCurrentReportsSendBufferToDisk() {
+    private synchronized boolean saveCurrentReportsSendBufferToDisk() {
         if (mCurrentReportsSendBuffer == null || mCurrentReportsSendBuffer.reportCount < 1) {
             return true;
         }
@@ -359,23 +355,32 @@ public class DataStorageManager implements IDataStorageManager {
         return true;
     }
 
-    public synchronized void saveCurrentReportsToDisk() {
+    /*
+     Flushes the in-memory cache of the ReportBatch to disk
+     */
+    public synchronized void saveCachedReportsToDisk() {
         saveCurrentReportsSendBufferToDisk();
-        if (mCurrentReports.reportsCount() < 1) {
+        if (mCachedReportBatches.reportsCount() < 1) {
             return;
         }
-        String report = mCurrentReports.finalizeReports();
+
+        int wifiCount = mCachedReportBatches.getWifiCount();
+        int cellCount = mCachedReportBatches.getCellCount();
+        int reportCount = mCachedReportBatches.reportsCount();
+
+        final byte[] bytes = mCachedReportBatches.finalizeAndClearReports();
+
         // Uncomment this block when debugging the report blobs
         //Log.d(LOG_TAG, "PII geosubmit report: " + report);
         // end debug blob
 
-
-        final byte[] bytes = Zipper.zipData(report.getBytes());
-        saveToDisk(bytes, mCurrentReports.reportsCount(), mCurrentReports.wifiCount, mCurrentReports.cellCount);
-        clearCurrentReports();
+        saveToDisk(bytes,
+                reportCount,
+                wifiCount,
+                cellCount);
     }
 
-    public synchronized void insert(String report, int wifiCount, int cellCount) {
+    public synchronized void insert(MLSJSONObject geoSubmitObj) {
         notifyStorageIsEmpty(false);
 
         if (mFlushMemoryBuffersToDiskTimer != null) {
@@ -383,14 +388,11 @@ public class DataStorageManager implements IDataStorageManager {
             mFlushMemoryBuffersToDiskTimer = null;
         }
 
-        mCurrentReports.addReport(report);
+        mCachedReportBatches.addReport(geoSubmitObj);
 
-        mCurrentReports.wifiCount += wifiCount;
-        mCurrentReports.cellCount += cellCount;
-
-        if (mCurrentReports.maxReportsReached()) {
+        if (mCachedReportBatches.maxReportsReached()) {
             // save to disk
-            saveCurrentReportsToDisk();
+            saveCachedReportsToDisk();
         } else {
             // Schedule a timer to flush to disk after a few mins.
             // If collection stops and wifi not available for uploading, the memory buffer is flushed to disk.
@@ -399,7 +401,7 @@ public class DataStorageManager implements IDataStorageManager {
             mFlushMemoryBuffersToDiskTimer.schedule(new TimerTask() {
                 @Override
                 public void run() {
-                    saveCurrentReportsToDisk();
+                    saveCachedReportsToDisk();
                 }
             }, kMillis);
         }
@@ -445,9 +447,5 @@ public class DataStorageManager implements IDataStorageManager {
     @Override
     public synchronized void incrementSyncStats(long bytesSent, long reports, long cells, long wifis) {
         mPersistedOnDiskUploadStats.incrementSyncStats(bytesSent, reports, cells, wifis);
-    }
-
-    public interface StorageIsEmptyTracker {
-        public void notifyStorageStateEmpty(boolean isEmpty);
     }
 }

@@ -4,8 +4,6 @@
 
 package org.mozilla.mozstumbler.service.stumblerthread.datahandling;
 
-import java.io.IOException;
-
 /*
  This interface just exists to firm up the public interface of the DataStorageManager
  */
@@ -23,7 +21,7 @@ public interface IDataStorageManager {
     public byte[] getCurrentReportsRawBytes();
 
     // Insert a report into storage
-    public void insert(String report, int wifiCount, int cellCount);
+    public void insert(MLSJSONObject geoSubmitObj);
 
     // It feels like this method should be pushed behind the DataStorageManager implementation
     public void incrementSyncStats(long bytesSent, long reports, long cells, long wifis);
@@ -37,13 +35,7 @@ public interface IDataStorageManager {
     // DataStorageManager.
     public boolean isDirEmpty();
 
-
-    // It seems like we should be able to get rid of the sendBuffer which is just a ReportBatch
-    // record. This would get rid of having to maintain the state of `mCurrentReportsSendBuffer`
-    // and get rid of the saveCurrentReportsSendBufferToDisk method.
-    public boolean saveCurrentReportsSendBufferToDisk();
-    public void saveCurrentReportsToDisk();
-
+    public void saveCachedReportsToDisk();
 
     // Getting an instance of ReportBatch should really hang off of an iterator.
     // We have two methods because we have a special case where the first batch is
@@ -51,7 +43,6 @@ public interface IDataStorageManager {
     // We should extend the ReportBatchIterator to have knowledge of the in-memory reports
     // and implement java.util.Iterator to return the ReportBatch instances.
     public ReportBatch getFirstBatch();
-
     public ReportBatch getNextBatch();
 
     // These 3 methods are *only* used to determine if we have stale data and if we should be

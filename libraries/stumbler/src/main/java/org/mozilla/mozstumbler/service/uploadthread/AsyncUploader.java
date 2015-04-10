@@ -77,9 +77,7 @@ public class AsyncUploader extends AsyncTask<AsyncUploadParam, AsyncProgressList
         }
 
 
-        if (Prefs.getInstanceWithoutContext().isSaveStumbleLogs()) {
-            DataStorageManager.getInstance().saveCurrentReportsSendBufferToDisk();
-        }
+
         uploadReports(param);
 
         isUploading.set(false);
@@ -121,7 +119,6 @@ public class AsyncUploader extends AsyncTask<AsyncUploadParam, AsyncProgressList
         }
 
         IDataStorageManager dm = DataStorageManager.getInstance();
-
         ReportBatch batch = dm.getFirstBatch();
         HashMap<String, String> headers = new HashMap<String, String>();
         headers.put(MLS.EMAIL_HEADER, param.emailAddress);
@@ -171,7 +168,7 @@ public class AsyncUploader extends AsyncTask<AsyncUploadParam, AsyncProgressList
                     }
                     dm.delete(batch.filename);
                 } else {
-                    dm.saveCurrentReportsToDisk();
+                    dm.saveCachedReportsToDisk();
                 }
                 AppGlobals.guiLogError(logMsg);
             }

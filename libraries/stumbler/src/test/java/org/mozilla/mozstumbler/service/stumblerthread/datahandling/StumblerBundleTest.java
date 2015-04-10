@@ -16,6 +16,7 @@ import org.json.JSONObject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner.CellInfo;
+import org.mozilla.mozstumbler.service.utils.Zipper;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 import org.skyscreamer.jsonassert.JSONAssert;
@@ -158,7 +159,7 @@ public class StumblerBundleTest {
             rbb.addReport(b.toMLSGeosubmit());
         }
 
-        String finalReport = rbb.finalizeAndClearReports();
+        String finalReport = Zipper.unzipData(rbb.finalizeAndClearReports());
         JSONObject actualJson = new JSONObject(finalReport);
 
         System.out.println("Actual JSON with accuracy and location: " + actualJson.toString(2));

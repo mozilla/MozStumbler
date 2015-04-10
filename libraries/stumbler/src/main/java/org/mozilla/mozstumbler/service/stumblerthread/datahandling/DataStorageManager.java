@@ -66,6 +66,7 @@ public class DataStorageManager implements IDataStorageManager {
     // and on disk.  The Timer is used to periodically flush the in-memory buffer to disk.
     static final String MEMORY_BUFFER_NAME = "in memory send buffer";
     final File mReportsDir;
+
     final ReportBatchBuilder mCachedReportBatches = new ReportBatchBuilder();
     protected ReportBatch mCurrentReportsSendBuffer;
     protected ReportFileList mFileList;
@@ -226,18 +227,19 @@ public class DataStorageManager implements IDataStorageManager {
         mReportBatchIterator = new ReportBatchIterator(mFileList);
 
         if (currentReportsCount > 0) {
-            final String filename = MEMORY_BUFFER_NAME;
+            // This entire block convert mCachedReportBatches
+            // into a ReportBatch.  Note that mCachedReportBatches
+            // is an instance of ReportBatchBuilder
+            // so we should be able to just invoke:
+            // mCachedReportBatches.finalizeAndClearReports() to grab
+            // an instance of ReportBatch.
 
+
+            final String filename = MEMORY_BUFFER_NAME;
             final int wifiCount = mCachedReportBatches.getWifiCount();
             final int cellCount = mCachedReportBatches.getCellCount();
-            String report = mCachedReportBatches.finalizeAndClearReports();
 
-            // Uncomment this block when debugging the report blobs
-            //Log.d(LOG_TAG, "PII geosubmit report: " + report);
-            // end debug blob
-
-            final byte[] data = Zipper.zipData(report.getBytes());
-
+            final byte[] data = mCachedReportBatches.finalizeAndClearReports();
 
             mCurrentReportsSendBuffer = new ReportBatch(filename, data, currentReportsCount, wifiCount, cellCount);
             return mCurrentReportsSendBuffer;
@@ -357,8 +359,7 @@ public class DataStorageManager implements IDataStorageManager {
         int cellCount = mCachedReportBatches.getCellCount();
         int reportCount = mCachedReportBatches.reportsCount();
 
-        String report = mCachedReportBatches.finalizeAndClearReports();
-        final byte[] bytes = Zipper.zipData(report.getBytes());
+        final byte[] bytes = mCachedReportBatches.finalizeAndClearReports();
 
         // Uncomment this block when debugging the report blobs
         //Log.d(LOG_TAG, "PII geosubmit report: " + report);

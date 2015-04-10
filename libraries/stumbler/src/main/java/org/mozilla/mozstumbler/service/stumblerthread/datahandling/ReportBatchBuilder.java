@@ -5,6 +5,7 @@
 package org.mozilla.mozstumbler.service.stumblerthread.datahandling;
 
 import org.mozilla.mozstumbler.service.Prefs;
+import org.mozilla.mozstumbler.service.utils.Zipper;
 
 import java.util.NoSuchElementException;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -31,8 +32,8 @@ public class ReportBatchBuilder {
      converted to a string.  You almost certainly want to set that flag to false though as you'll
      eat memory.
      */
-    String finalizeAndClearReports() {
-        return generateJSON(false);
+    byte[] finalizeAndClearReports() {
+        return Zipper.zipData(generateJSON(false).getBytes());
     }
 
     private String generateJSON(boolean preserveReports) {

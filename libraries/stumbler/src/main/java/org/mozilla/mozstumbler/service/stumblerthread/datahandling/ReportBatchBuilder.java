@@ -7,7 +7,6 @@ package org.mozilla.mozstumbler.service.stumblerthread.datahandling;
 import org.mozilla.mozstumbler.service.Prefs;
 import org.mozilla.mozstumbler.service.utils.Zipper;
 
-import java.util.NoSuchElementException;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 /*
@@ -19,10 +18,10 @@ public class ReportBatchBuilder {
     // Once this size is reached, data is persisted to disk, mCachedReportBatches is cleared.
     public static final int MAX_REPORTS_IN_MEMORY = 50;
 
-    private ConcurrentLinkedQueue<MLSJSONObject> reportList = new ConcurrentLinkedQueue<MLSJSONObject>();
+    private ConcurrentLinkedQueue<MLSJSONObject> mReportList = new ConcurrentLinkedQueue<MLSJSONObject>();
 
     public int reportsCount() {
-        return reportList.size();
+        return mReportList.size();
     }
 
     /*
@@ -42,7 +41,7 @@ public class ReportBatchBuilder {
         MLSJSONObject report = null;
         final String kPrefix = "{\"items\":[";
         StringBuilder reportString = new StringBuilder(kPrefix);
-        report = reportList.poll();
+        report = mReportList.poll();
         if (report != null) {
             if (preserveReports) {
                 jsonCollector.add(report);
@@ -50,20 +49,20 @@ public class ReportBatchBuilder {
             reportString.append(report.toString());
         }
 
-        report = reportList.poll();
+        report = mReportList.poll();
         while (report != null) {
             if (preserveReports) {
                 jsonCollector.add(report);
             }
             reportString.append("," + report.toString());
-            report = reportList.poll();
+            report = mReportList.poll();
         }
 
         // Restore the ejected reports if necessary
         if (preserveReports) {
             report = jsonCollector.poll();
             while (report != null) {
-                reportList.add(report);
+                mReportList.add(report);
                 report = jsonCollector.poll();
             }
         }
@@ -79,7 +78,7 @@ public class ReportBatchBuilder {
             // and the reports list is never cleared.
             return;
         }
-        reportList.add(geoSubmitObj);
+        mReportList.add(geoSubmitObj);
     }
 
     public boolean maxReportsReached() {
@@ -92,7 +91,7 @@ public class ReportBatchBuilder {
 
     public int getCellCount() {
         int result = 0;
-        for (MLSJSONObject obj: reportList) {
+        for (MLSJSONObject obj: mReportList) {
             result += obj.getCellCount();
         }
         return result;
@@ -100,7 +99,7 @@ public class ReportBatchBuilder {
 
     public int getWifiCount() {
         int result = 0;
-        for (MLSJSONObject obj : reportList) {
+        for (MLSJSONObject obj : mReportList) {
             result += obj.getWifiCount();
         }
         return result;

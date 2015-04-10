@@ -4,10 +4,6 @@
 
 package org.mozilla.mozstumbler.service.stumblerthread.datahandling;
 
-import org.json.JSONObject;
-
-import java.io.IOException;
-
 /*
  This interface just exists to firm up the public interface of the DataStorageManager
  */

@@ -35,13 +35,7 @@ public interface IDataStorageManager {
     // DataStorageManager.
     public boolean isDirEmpty();
 
-
-    // It seems like we should be able to get rid of the sendBuffer which is just a ReportBatch
-    // record. This would get rid of having to maintain the state of `mCurrentReportsSendBuffer`
-    // and get rid of the saveCurrentReportsSendBufferToDisk method.
-    public boolean saveCurrentReportsSendBufferToDisk();
-    public void saveCurrentReportsToDisk();
-
+    public void saveCachedReportsToDisk();
 
     // Getting an instance of ReportBatch should really hang off of an iterator.
     // We have two methods because we have a special case where the first batch is
@@ -49,7 +43,6 @@ public interface IDataStorageManager {
     // We should extend the ReportBatchIterator to have knowledge of the in-memory reports
     // and implement java.util.Iterator to return the ReportBatch instances.
     public ReportBatch getFirstBatch();
-
     public ReportBatch getNextBatch();
 
     // These 3 methods are *only* used to determine if we have stale data and if we should be

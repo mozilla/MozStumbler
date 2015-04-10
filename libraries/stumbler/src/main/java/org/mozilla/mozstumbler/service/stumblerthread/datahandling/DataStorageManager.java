@@ -7,8 +7,8 @@ package org.mozilla.mozstumbler.service.stumblerthread.datahandling;
 import android.content.Context;
 
 import org.acra.ACRA;
+import org.mozilla.mozstumbler.service.Prefs;
 import org.mozilla.mozstumbler.service.core.logging.ClientLog;
-import org.mozilla.mozstumbler.service.utils.Zipper;
 import org.mozilla.mozstumbler.svclocator.ServiceLocator;
 import org.mozilla.mozstumbler.svclocator.services.ISystemClock;
 import org.mozilla.mozstumbler.svclocator.services.log.ILogger;
@@ -217,6 +217,12 @@ public class DataStorageManager implements IDataStorageManager {
     /* return name of file used, or memory buffer sentinel value.
      * The return value is used to delete the file/buffer later. */
     public synchronized ReportBatch getFirstBatch() {
+
+        if (Prefs.getInstanceWithoutContext().isSaveStumbleLogs()) {
+            // We should flush to disk immediately
+            saveCurrentReportsSendBufferToDisk();
+        }
+
         final boolean dirEmpty = isDirEmpty();
         final int currentReportsCount = mCachedReportBatches.reportsCount();
 
@@ -297,7 +303,7 @@ public class DataStorageManager implements IDataStorageManager {
      Return true if the current reports (if any exist) are properly saved.
      Return false only on a failed write to storage.
      */
-    public synchronized boolean saveCurrentReportsSendBufferToDisk() {
+    private synchronized boolean saveCurrentReportsSendBufferToDisk() {
         if (mCurrentReportsSendBuffer == null || mCurrentReportsSendBuffer.reportCount < 1) {
             return true;
         }
@@ -349,7 +355,10 @@ public class DataStorageManager implements IDataStorageManager {
         return true;
     }
 
-    public synchronized void saveCurrentReportsToDisk() {
+    /*
+     Flushes the in-memory cache of the ReportBatch to disk
+     */
+    public synchronized void saveCachedReportsToDisk() {
         saveCurrentReportsSendBufferToDisk();
         if (mCachedReportBatches.reportsCount() < 1) {
             return;
@@ -383,7 +392,7 @@ public class DataStorageManager implements IDataStorageManager {
 
         if (mCachedReportBatches.maxReportsReached()) {
             // save to disk
-            saveCurrentReportsToDisk();
+            saveCachedReportsToDisk();
         } else {
             // Schedule a timer to flush to disk after a few mins.
             // If collection stops and wifi not available for uploading, the memory buffer is flushed to disk.
@@ -392,7 +401,7 @@ public class DataStorageManager implements IDataStorageManager {
             mFlushMemoryBuffersToDiskTimer.schedule(new TimerTask() {
                 @Override
                 public void run() {
-                    saveCurrentReportsToDisk();
+                    saveCachedReportsToDisk();
                 }
             }, kMillis);
         }

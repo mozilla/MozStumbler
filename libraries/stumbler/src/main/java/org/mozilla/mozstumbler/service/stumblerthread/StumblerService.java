@@ -181,7 +181,7 @@ public class StumblerService extends PersistentIntentService
                 }
 
                 if (DataStorageManager.getInstance() != null) {
-                    DataStorageManager.getInstance().saveCurrentReportsToDisk();
+                    DataStorageManager.getInstance().saveCachedReportsToDisk();
                 }
                 return null;
             }
@@ -281,6 +281,6 @@ public class StumblerService extends PersistentIntentService
         if (manager == null) {
             return;
         }
-        manager.saveCurrentReportsToDisk();
+        manager.saveCachedReportsToDisk();
     }
 }

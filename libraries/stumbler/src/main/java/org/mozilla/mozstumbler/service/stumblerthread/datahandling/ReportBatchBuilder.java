@@ -41,21 +41,18 @@ public class ReportBatchBuilder {
         MLSJSONObject report = null;
         final String kPrefix = "{\"items\":[";
         StringBuilder reportString = new StringBuilder(kPrefix);
-        report = mReportList.poll();
-        if (report != null) {
-            if (preserveReports) {
-                jsonCollector.add(report);
-            }
-            reportString.append(report.toString());
-        }
+
+        // Note that this is a blank separator for first iteration
+        String jsonSep = "";
 
         report = mReportList.poll();
         while (report != null) {
             if (preserveReports) {
                 jsonCollector.add(report);
             }
-            reportString.append("," + report.toString());
+            reportString.append(jsonSep + report.toString());
             report = mReportList.poll();
+            jsonSep = ",";
         }
 
         // Restore the ejected reports if necessary

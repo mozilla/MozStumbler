@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Mozilla Stumbler</string>
+    <string name="action_about">Mozilla Stumbler সম্পর্কে</string>
+    <string name="action_preferences">সেটিংস</string>
+    <string name="start_scanning">স্ক্যান চালু করুন</string>
+    <string name="stop_scanning">স্ক্যান বন্ধ করুন</string>
+    <string name="view_leaderboard">লীডারবোর্ড দেখুন</string>
+    <string name="service_name">Mozilla Stumbler</string>
+    <string name="enter_nickname">নাম প্রবেশ করুন (ঐচ্ছিক)</string>
+    <string name="enter_nickname_title">নাম: %1$s</string>
+    <string name="enter_nickname_longtext">আপনার নাম লীডারবোর্ডে দেখানো হবে</string>
+    <string name="update_title">Mozilla Stumbler আপডেট ডাউনলোড করবেন?</string>
+    <string name="update_message">ইন্সটলকৃত সংস্করণ: %1$s\nসর্বশেষ সংস্করণ: %2$s</string>
+    <string name="update_now">এক্ষুনি আপডেট করুন</string>
+    <string name="update_later">পরে আপডেট করুন</string>
+    <string name="yes">হ্যাঁ</string>
+    <string name="no">না</string>
+    <string name="about_version">সংস্করণ %1$s</string>
+    <string name="about_openstreetmap">মানচিত্র দর্শন টাইলস © OpenStreetMap contributors\nhttp://www.openstreetmap.org</string>
+    <string name="about_mapbox_title">ম্যাপবক্স</string>
+    <string name="about_mapbox">ম্যাপিং প্রোভাইডার সম্পর্কে আরও জানুন</string>
+    <string name="about_legal_aosp">এই এপ্লিকেশনের কিছু কিছু আইকন বা গ্রাফিক্স সংক্রান্ত কাজ  Android Open Source Project থেকে নেয়া হয়েছে এবং তা Creative Commons 2.5 Attribution License এর আওতায় ব্যবহৃত হয়েছে।</string>
+    <string name="upload_observations_sent_title">আপলোডকৃত</string>
+    <string name="metrics_observations_last_upload_time_title">সর্বশেষ আপলোডের সময়:</string>
+    <string name="metrics_observations_title">তথ্য:</string>
+    <string name="metrics_observations_wifis_title">ওয়াই-ফাই এক্সেস পয়েন্ট:</string>
+    <string name="metrics_observations_cell_towers_title">সেল:</string>
+    <string name="upload_observations_in_queue_title">আপলোডের জন্যে অপেক্ষমান</string>
+	<string name="upload_wifi_only_title">শুধুমাত্র ওয়াই-ফাই দ্বারা আপলোড</string>
+    <string name="upload_wifi_only_summary">এই বিকল্পটি আপনার মোবাইল নেটওয়ার্কের ডাটা ব্যবহার কমাবে।</string>
+    <string name="title_activity_log">Log</string>
+    <string name="action_view_log">Log দেখুন</string>
+    <string name="scroll_to_start">উপরে ফিরন </string>
+    <string name="scroll_to_end">শেষে পৌঁছান</string>
+</resources>

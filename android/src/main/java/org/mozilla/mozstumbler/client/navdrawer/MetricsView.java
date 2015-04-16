@@ -37,6 +37,7 @@ import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageCo
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.PersistedStats;
 import org.mozilla.mozstumbler.service.uploadthread.AsyncUploadParam;
 import org.mozilla.mozstumbler.service.uploadthread.AsyncUploader;
+import org.mozilla.mozstumbler.service.utils.NetworkInfo;
 import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
 import java.lang.ref.WeakReference;
@@ -113,6 +114,7 @@ public class MetricsView {
 
                 AsyncUploader uploader = new AsyncUploader();
                 AsyncUploadParam param = new AsyncUploadParam(false /* useWifiOnly */,
+                        new NetworkInfo(mView.getContext()).isWifiAvailable(),
                         Prefs.getInstance(mView.getContext()).getNickname(),
                         Prefs.getInstance(mView.getContext()).getEmail());
                 uploader.execute(param);

@@ -9,8 +9,10 @@ public class AsyncUploadParam {
     final boolean useWifiOnly;
     final String nickname;
     final String emailAddress;
+    final boolean isWifiAvailable;
 
     public AsyncUploadParam(boolean wifiOnly,
+                            boolean isWifiAvailable,
                             String nick,
                             String email) {
 
@@ -22,6 +24,7 @@ public class AsyncUploadParam {
             nick = "";
         }
 
+        this.isWifiAvailable = isWifiAvailable;
         useWifiOnly = wifiOnly;
         nickname = nick;
         emailAddress = email;

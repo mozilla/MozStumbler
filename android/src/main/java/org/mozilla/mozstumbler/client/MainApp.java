@@ -233,7 +233,6 @@ public class MainApp extends Application
         lbm.registerReceiver(scannerStateReceiver, new IntentFilter(ScannerState.STARTED_BUT_PAUSED_MOTIONLESS.toString()));
         lbm.registerReceiver(scannerStateReceiver, new IntentFilter(ScannerState.STOPPED.toString()));
 
-        NetworkInfo.createGlobalInstance(this);
         LogActivity.LogMessageReceiver.createGlobalInstance(this);
         // This will create, and register the receiver
         ObservedLocationsReceiver.createGlobalInstance(this.getApplicationContext());
@@ -322,6 +321,7 @@ public class MainApp extends Application
         AsyncUploader uploader = new AsyncUploader();
         AsyncUploadParam param = new AsyncUploadParam(
                 ClientPrefs.getInstance(this).getUseWifiOnly(),
+                new NetworkInfo(this).isWifiAvailable(),
                 Prefs.getInstance(this).getNickname(),
                 Prefs.getInstance(this).getEmail());
 

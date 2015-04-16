@@ -143,7 +143,6 @@ public class StumblerService extends PersistentIntentService
         // Don't remove, ensures that a Prefs instance is available for internal classes
         // that call Prefs.getInstanceWithoutContext()
         Prefs.getInstance(this);
-        NetworkInfo.createGlobalInstance(this);
         DataStorageManager.createGlobalInstance(this, this);
 
         mReporter.startup(this);

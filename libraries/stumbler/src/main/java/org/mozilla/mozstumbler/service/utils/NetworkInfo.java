@@ -12,28 +12,15 @@ import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
 public class NetworkInfo {
     private static final String LOG_TAG = LoggerUtil.makeLogTag(NetworkInfo.class);
-    static NetworkInfo instance;
     ConnectivityManager mConnectivityManager;
 
-    // must be private as createGlobalInstance() is the entry point.
-    private NetworkInfo(){};
-
-    /* Created at startup by app, or service, using a context. */
-    public static synchronized void createGlobalInstance(Context context) {
-        getInstance();
+    public NetworkInfo(Context context) {
 
         // getSystemService() should be called on the application context instead of any context.
         // This enables us to replace the system service using robolectric.
-        instance.mConnectivityManager = (ConnectivityManager) context
+        mConnectivityManager = (ConnectivityManager) context
                                 .getApplicationContext()
                                 .getSystemService(Context.CONNECTIVITY_SERVICE);
-    }
-
-    public static synchronized NetworkInfo getInstance() {
-        if (instance == null) {
-            instance = new NetworkInfo();
-        }
-        return instance;
     }
 
     public synchronized boolean isConnected() {

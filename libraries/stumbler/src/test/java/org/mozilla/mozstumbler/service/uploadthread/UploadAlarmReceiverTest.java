@@ -13,7 +13,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mozilla.mozstumbler.service.utils.NetworkInfo;
-import org.mozilla.mozstumbler.service.utils.NetworkInfoTestUtil;
 import org.mozilla.mozstumbler.svclocator.ServiceLocator;
 import org.mozilla.mozstumbler.svclocator.services.log.UnittestLogger;
 import org.mozilla.mozstumbler.svclocator.services.log.ILogger;
@@ -79,15 +78,12 @@ public class UploadAlarmReceiverTest {
 
 
         Context ctx = Robolectric.application;
-        NetworkInfo.createGlobalInstance(ctx);
 
         // Setup NetworkInfo to say that wifi is available.
-        NetworkInfo niSpy = spy(NetworkInfo.getInstance());
+        NetworkInfo niSpy = spy(new NetworkInfo(ctx));
         doReturn(true).when(niSpy).isWifiAvailable();
 
-        NetworkInfoTestUtil.setNetworkInfo(niSpy);
-
-            // Verify that passing in valid intent to the onHandleIntent to the UploadAlarmService
+        // Verify that passing in valid intent to the onHandleIntent to the UploadAlarmService
         // will cause
         UploadAlarmReceiver.UploadAlarmService uas = new UploadAlarmReceiver.UploadAlarmService();
 

@@ -27,7 +27,6 @@ public class NetworkInfoTest {
 
     @Before
     public void setup() {
-        NetworkInfo.instance = null;
         ctx = Robolectric.application;
     }
 
@@ -36,15 +35,15 @@ public class NetworkInfoTest {
         // Test that the isConnected method doesn't bomb out without a connection manager
 
         // This first instance will have no connection manager
-        NetworkInfo ni = NetworkInfo.getInstance();
+        NetworkInfo ni = new NetworkInfo(ctx);
+        ni.mConnectivityManager = null;
         assertFalse(ni.isConnected());
     }
 
     @Test
     @Config(shadows = {MyShadowConnectivityManager.class})
     public void testIsConnectedWithGlobal() {
-        NetworkInfo.createGlobalInstance(ctx);
-        NetworkInfo ni = NetworkInfo.getInstance();
+        NetworkInfo ni = new NetworkInfo(ctx);
 
         ConnectivityManager connectivityManager = (ConnectivityManager) ctx.getSystemService(Context.CONNECTIVITY_SERVICE);
         MyShadowConnectivityManager shadowConnManager = (MyShadowConnectivityManager) shadowOf(connectivityManager);

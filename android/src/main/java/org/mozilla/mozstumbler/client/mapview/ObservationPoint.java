@@ -66,13 +66,12 @@ public class ObservationPoint implements AsyncGeolocate.MLSLocationGetterCallbac
         mWifiCount = (wifis != null) ? wifis.length() : 0;
     }
 
-    public void fetchMLS() {
+    public void fetchMLS(boolean isWifiConnected, boolean isWifiAvailable) {
         if (mMLSQuery == null || pointMLS != null || mIsMLSLocationQueryRunning) {
             return;
         }
         ClientPrefs prefs = ClientPrefs.getInstanceWithoutContext();
-        if (prefs == null || !NetworkInfo.getInstance().isConnected() ||
-                (prefs.getUseWifiOnly() && !NetworkInfo.getInstance().isWifiAvailable())) {
+        if (prefs == null || !isWifiConnected || (prefs.getUseWifiOnly() && !isWifiAvailable)) {
             return;
         }
 

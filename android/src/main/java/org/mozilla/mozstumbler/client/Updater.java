@@ -37,7 +37,8 @@ public class Updater {
     static long sLastUpdateCheck = 0;
 
     public boolean wifiExclusiveAndUnavailable(Context c) {
-        return !NetworkInfo.getInstance().isWifiAvailable() && ClientPrefs.getInstance(c).getUseWifiOnly();
+        return !new NetworkInfo(c).isWifiAvailable() &&
+                ClientPrefs.getInstance(c).getUseWifiOnly();
     }
 
 
@@ -54,7 +55,7 @@ public class Updater {
             return false;
         }
 
-        if (!NetworkInfo.getInstance().isConnected()) {
+        if (!new NetworkInfo(activity).isConnected()) {
             return false;
         }
 

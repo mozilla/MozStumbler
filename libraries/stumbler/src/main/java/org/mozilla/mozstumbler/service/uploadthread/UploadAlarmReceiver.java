@@ -133,12 +133,14 @@ public class UploadAlarmReceiver extends BroadcastReceiver {
                 }
             }
 
-            if (NetworkInfo.getInstance().isWifiAvailable()) {
+            boolean isWifiAvailable = new NetworkInfo(this).isWifiAvailable();
+            if (isWifiAvailable) {
                 Log.d(LOG_TAG, "Alarm upload(), call AsyncUploader");
 
                 AsyncUploader uploader = new AsyncUploader();
                 AsyncUploadParam param = new AsyncUploadParam(
                         Prefs.getInstance(this).getUseWifiOnly(),
+                        isWifiAvailable,
                         Prefs.getInstance(this).getNickname(),
                         Prefs.getInstance(this).getEmail()
                 );

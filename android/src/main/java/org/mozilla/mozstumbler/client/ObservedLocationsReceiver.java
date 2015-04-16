@@ -20,6 +20,7 @@ import org.mozilla.mozstumbler.client.mapview.ObservationPoint;
 import org.mozilla.mozstumbler.service.core.logging.ClientLog;
 import org.mozilla.mozstumbler.service.stumblerthread.Reporter;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.StumblerBundle;
+import org.mozilla.mozstumbler.service.utils.NetworkInfo;
 import org.mozilla.mozstumbler.svclocator.ServiceLocator;
 import org.mozilla.mozstumbler.svclocator.services.log.ILogger;
 import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
@@ -50,9 +51,9 @@ public class ObservedLocationsReceiver extends BroadcastReceiver {
     private final int MAX_SIZE_OF_POINT_LISTS = (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) ?
             5000 : 2500;
     private WeakReference<MapFragment> mMapActivity = new WeakReference<MapFragment>(null);
+    private Context mContext;
 
     private ObservedLocationsReceiver() {
-        mHandler.postDelayed(mFetchMLSRunnable, FREQ_FETCH_MLS_MS);
     }
 
     public static void createGlobalInstance(Context context) {
@@ -83,10 +84,12 @@ public class ObservedLocationsReceiver extends BroadcastReceiver {
         @Override
         public void run() {
             synchronized (ObservedLocationsReceiver.this) {
-                ClientPrefs prefs = ClientPrefs.getInstanceWithoutContext();
-                if (prefs == null) {
+                if (mContext == null) {
                     return;
                 }
+                ClientPrefs prefs = ClientPrefs.getInstance(mContext);
+                NetworkInfo networkInfo = new NetworkInfo(mContext);
+
                 mHandler.postDelayed(mFetchMLSRunnable, FREQ_FETCH_MLS_MS);
                 if (mQueuedForMLS.size() < 1 || !prefs.getOnMapShowMLS()) {
                     return;
@@ -100,8 +103,9 @@ public class ObservedLocationsReceiver extends BroadcastReceiver {
                 Iterator<ObservationPoint> li = queued.iterator();
                 while (li.hasNext() && count < MAX_QUEUED_MLS_POINTS_TO_FETCH) {
                     ObservationPoint obs = li.next();
-                    if (obs.needsToFetchMLS()) {
-                        obs.fetchMLS();
+                    if (obs.needsToFetchMLS() && mContext != null) {
+                        obs.fetchMLS(networkInfo.isConnected(),
+                                     networkInfo.isWifiAvailable());
                         count++;
                     } else {
                         if (getMapActivity() != null && obs.pointMLS != null) {
@@ -121,7 +125,13 @@ public class ObservedLocationsReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        ClientPrefs prefs = ClientPrefs.getInstanceWithoutContext();
+        if (mContext == null) {
+            // the first time here, start this queue handling runnable
+            mHandler.postDelayed(mFetchMLSRunnable, FREQ_FETCH_MLS_MS);
+        }
+        mContext = context;
+
+        ClientPrefs prefs = ClientPrefs.getInstance(context);
         if (prefs == null) {
             return;
         }

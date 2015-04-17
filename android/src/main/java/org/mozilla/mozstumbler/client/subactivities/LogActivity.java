@@ -88,6 +88,7 @@ public class LogActivity extends ActionBarActivity {
         AddToBufferOnMain mMainThreadHandler;
 
         LogMessageReceiver(Context context) {
+            mMainThreadHandler = new AddToBufferOnMain(new WeakReference<LogMessageReceiver>(this));
             LocalBroadcastManager.getInstance(context).registerReceiver(this,
                     new IntentFilter(AppGlobals.ACTION_GUI_LOG_MESSAGE));
 
@@ -102,7 +103,6 @@ public class LogActivity extends ActionBarActivity {
 
         public static void createGlobalInstance(Context context) {
             sInstance = new LogMessageReceiver(context);
-            sInstance.mMainThreadHandler = new AddToBufferOnMain(new WeakReference<LogMessageReceiver>(sInstance));
             AppGlobals.guiLogMessageBuffer = new ConcurrentLinkedQueue<String>();
         }
 

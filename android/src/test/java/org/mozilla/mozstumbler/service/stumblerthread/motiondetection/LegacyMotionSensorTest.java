@@ -4,11 +4,9 @@
 package org.mozilla.mozstumbler.service.stumblerthread.motiondetection;
 
 import android.content.Context;
-import android.hardware.Sensor;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Build;
-import android.util.Log;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -21,11 +19,12 @@ import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
-import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
+import static org.robolectric.Robolectric.shadowOf;
 
-@Config(emulateSdk = 18)
 @RunWith(RobolectricTestRunner.class)
+@Config(emulateSdk = 18,
+        shadows = {CustomLocationManager.class})
 public class LegacyMotionSensorTest {
 
     MockSystemClock clock;
@@ -35,6 +34,11 @@ public class LegacyMotionSensorTest {
     public void setup() {
         clock = new MockSystemClock();
         ServiceLocator.getInstance().putService(ISystemClock.class, clock);
+
+        // We need to obtain the 'shadow' of the SensorManager so that we can invoke the
+        // custom method to trigger an event
+        LocationManager lm = (LocationManager) Robolectric.application.getSystemService(Context.LOCATION_SERVICE);
+        CustomLocationManager shadow = (CustomLocationManager) shadowOf(lm);
     }
 
     double mLat, mLon;

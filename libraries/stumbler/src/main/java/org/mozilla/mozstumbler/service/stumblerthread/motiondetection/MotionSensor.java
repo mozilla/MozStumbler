@@ -178,7 +178,22 @@ public class MotionSensor {
                 return;
             }
 
-            lm.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, TIME_INTERVAL_MS, 0, mNetworkLocationListener);
+            if (lm.getProvider(LocationManager.NETWORK_PROVIDER) == null) {
+                return;
+            }
+
+            try {
+                lm.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
+                        TIME_INTERVAL_MS,
+                        0,
+                        mNetworkLocationListener);
+            } catch (IllegalArgumentException e) {
+                // Some devices will throw an IllegalArgumentException here, but according to spec
+                // that should only happen if either the location provider (NETWORK_PROVIDER) or
+                // the Listener is null. This is impossible as the listener is instantiated in a
+                // static block and NETWORK_PROVIDER is checked to both exist and not null.
+                return;
+            }
         }
 
         public void stop() {

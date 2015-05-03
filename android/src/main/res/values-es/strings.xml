@@ -181,7 +181,7 @@
     <string name="ok">OK</string>
     <string name="limit_map_zoom">Límite al reducir el zoom en el mapa</string>
     <string name="test_significant_sensor_dialog_title">Prueba del sensor de movimiento significativo</string>
-    <string name="test_significant_sensor_dialog_message">Permanecer quiero, y luego caminar durante 1 minuto.\n\nDetectando movimiento&#8230;</string>
+    <string name="test_significant_sensor_dialog_message">Permanecer quieto, y luego caminar durante 1 minuto.\n\nDetectando movimiento&#8230;</string>
     <string name="test_significant_sensor_confirmed_working">Movimiento detectado.\nEl sensor funciona con normalidad.</string>
     <string name="button_test_significant_motion_sensor">Prueba del sensor de movimiento significativo</string>
     <string name="sensor_name_significant_motion">Movimiento significativo</string>

@@ -31,6 +31,9 @@ repositories {
     jcenter()
     maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
     mavenCentral()
+    // This is temporarily needed until JCenter picks up the maven
+    // build of libmarisa
+    maven { url "http://dl.bintray.com/crankycoder/libMozStumbler" }
 }
 
 android {
@@ -235,6 +238,9 @@ dependencies {
     // osmdroid stuff
     compile "org.apache.httpcomponents:httpmime:4.0.1"
     compile "org.apache.james:apache-mime4j:0.6"
+
+    // marisa-trie for offline geo support
+    compile 'org.mozilla.mozstumbler.marisa:marisa:0.4'
 
     compile project(':libraries:stumbler')
     testCompile project(':libraries:stumbler')

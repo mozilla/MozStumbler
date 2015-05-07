@@ -5,7 +5,11 @@
 package org.mozilla.mozstumbler.service.stumblerthread.datahandling;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /*
  This subclass of JSONObject provides additional getters - and only getters for convenient access
@@ -30,4 +34,20 @@ public class MLSJSONObject extends JSONObject {
         return (cellRecords == null ? 0 : cellRecords.length());
     }
 
+    public List<String> getWifiBSSIDs() {
+        JSONArray wifiRecords = this.optJSONArray(DataStorageConstants.ReportsColumns.WIFI);
+        List<String> result = new ArrayList<String>();
+        if (wifiRecords != null) {
+            for (int i = 0; i < wifiRecords.length(); i++) {
+                try {
+                    String bssid = wifiRecords.getString(i);
+                    result.add(bssid);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        return result;
+    }
 }

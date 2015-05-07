@@ -5,13 +5,32 @@
 package org.mozilla.mozstumbler.service.stumblerthread.datahandling;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
+import org.mozilla.mozstumbler.svclocator.ServiceLocator;
+import org.mozilla.mozstumbler.svclocator.services.log.ILogger;
+import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /*
  This subclass of JSONObject provides additional getters - and only getters for convenient access
  to bits of data that are relevant to the Ichnaea JSON specification.
  */
 public class MLSJSONObject extends JSONObject {
+
+    private final static ILogger Log = (ILogger) ServiceLocator.getInstance().getService(ILogger.class);
+    private final static String LOG_TAG = LoggerUtil.makeLogTag(MLSJSONObject.class);
+
+
+    public MLSJSONObject() {
+        super();
+    }
+
+    public MLSJSONObject(String s) throws JSONException {
+        super(s);
+    }
 
     public int radioCount() {
         int result = 0;
@@ -30,4 +49,20 @@ public class MLSJSONObject extends JSONObject {
         return (cellRecords == null ? 0 : cellRecords.length());
     }
 
+    public List<String> geolocateBSSIDs() {
+        JSONArray wifiRecords = this.optJSONArray(DataStorageConstants.ReportsColumns.WIFI);
+        List<String> result = new ArrayList<String>();
+        if (wifiRecords != null) {
+            for (int i = 0; i < wifiRecords.length(); i++) {
+                try {
+                    String bssid = wifiRecords.getJSONObject(i).getString("macAddress");
+                    result.add(bssid);
+                } catch (JSONException e) {
+                    Log.e(LOG_TAG, "Error deserializing wifi BSSID data", e);
+                }
+            }
+        }
+
+        return result;
+    }
 }

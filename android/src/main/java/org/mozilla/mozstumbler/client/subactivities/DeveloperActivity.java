@@ -106,6 +106,7 @@ public class DeveloperActivity extends ActionBarActivity {
             // Setup for any logical group of config options should self contained in their
             // own methods.  This is mostly to help with merges in the event that multiple
             // source branches update the developer options.
+            setupOfflineGeoToggle();
             setupSaveJSONLogs();
             setupSimulationPreference();
             setupLocationChangeSpinners();
@@ -114,6 +115,20 @@ public class DeveloperActivity extends ActionBarActivity {
             setupPassiveMode();
             return mRootView;
         }
+
+        private void setupOfflineGeoToggle() {
+            boolean useOfflineGeo = Prefs.getInstanceWithoutContext().useOfflineGeo();
+            CheckBox button = (CheckBox) mRootView.findViewById(R.id.toggleOfflineGeo);
+            button.setChecked(useOfflineGeo);
+            button.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                    onToggleUseOfflineGeo(isChecked);
+                }
+            });
+
+        }
+
 
         private void setupLimitZoom() {
             boolean isLimited = ClientPrefs.getInstanceWithoutContext().isMapZoomLimited();
@@ -256,6 +271,13 @@ public class DeveloperActivity extends ActionBarActivity {
                 public void onNothingSelected(AdapterView<?> arg0) {
                 }
             });
+        }
+
+
+        private void onToggleUseOfflineGeo(boolean isChecked) {
+            // do nothing here as we are just going to query the value
+            // when we trigger an AsyncGeolocate call
+            Prefs.getInstanceWithoutContext().setOfflineGeo(isChecked);
         }
 
         private void onToggleSaveStumbleLogs(boolean isChecked) {

@@ -36,6 +36,7 @@ import org.mozilla.mozstumbler.service.core.http.HttpUtil;
 import org.mozilla.mozstumbler.service.core.http.IHttpUtil;
 import org.mozilla.mozstumbler.service.core.http.ILocationService;
 import org.mozilla.mozstumbler.service.core.http.MLSLocationService;
+import org.mozilla.mozstumbler.service.core.offline.IOfflineLocationService;
 import org.mozilla.mozstumbler.service.core.logging.MockAcraLog;
 import org.mozilla.mozstumbler.service.stumblerthread.Reporter;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageConstants;
@@ -55,8 +56,12 @@ import org.mozilla.mozstumbler.svclocator.ServiceLocator;
 import org.mozilla.mozstumbler.svclocator.services.ISystemClock;
 import org.mozilla.mozstumbler.svclocator.services.SystemClock;
 import org.mozilla.mozstumbler.svclocator.services.log.ILogger;
+import org.mozilla.mozstumbler.svclocator.services.log.UnittestLogger;
+import org.mozilla.mozstumbler.svclocator.services.log.DebugLogger;
 import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 import org.mozilla.osmdroid.tileprovider.constants.TileFilePath;
+import org.mozilla.mozstumbler.service.core.offline.LocationService;
+
 
 import java.io.File;
 import java.lang.ref.WeakReference;
@@ -144,9 +149,13 @@ public class MainApp extends Application
         result.put(ISimulatorService.class, ServiceConfig.load(SimulatorService.class.getName()));
 
         if (BuildConfig.BUILD_TYPE.equals("unittest")) {
-            result.put(ILogger.class, ServiceConfig.load("org.mozilla.mozstumbler.svclocator.services.log.UnittestLogger"));
+            result.put(ILogger.class, ServiceConfig.load(UnittestLogger.class.getName()));
         } else if (BuildConfig.BUILD_TYPE.equals("debug")) {
-            result.put(ILogger.class, ServiceConfig.load("org.mozilla.mozstumbler.svclocator.services.log.DebugLogger"));
+            result.put(ILogger.class, ServiceConfig.load(DebugLogger.class.getName()));
+
+            result.put(IOfflineLocationService.class,
+                    ServiceConfig.load(LocationService.class.getName()));
+
         } else {
             result.put(ILogger.class, ServiceConfig.load("org.mozilla.mozstumbler.svclocator.services.log.ProductionLogger"));
         }

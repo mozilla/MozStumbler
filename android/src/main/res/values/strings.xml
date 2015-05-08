@@ -125,10 +125,15 @@
     <string name="map_copyright_moz">© MapBox © OpenStreetMap contributors</string>
     <string name="action_developer">Developer</string>
     <string name="developer_title">Developer</string>
+
     <string name="enable_option_show_mls_on_map">Enable MLS location queries</string>
     <string name="enable_option_show_mls_on_map_summary">Retrieve and show the Mozilla Location Service (MLS) estimated location for each report.</string>
     <!-- enable_option_show_mls_on_map_detailed_info: %1$s refers to upload_wifi_only_title -->
     <string name="enable_option_show_mls_on_map_detailed_info">At the cost of a bit more memory and network usage, the MLS location is shown for each report - i.e. your estimated location based on already stumbled data.\nThis is shown as a red dot with a line to its report. The closer it is to your actual GPS location, the more reliable and precise the Mozilla Location Service is. More stumbling in the area will improve this.\nHowever, it will not query locations over mobile data connections if \"%1$s\" is enabled.</string>
+
+    <!-- This is an experimental option to enable offline location queries-->
+    <string name="enable_offline_geo">Enable Offline location queries</string>
+
     <string name="cell_plus_wifi_observation">Wi-Fi + cell report</string>
     <string name="cell_only_observation">Cell only report</string>
     <string name="wifi_only_observation">Wi-Fi only report</string>

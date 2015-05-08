@@ -314,4 +314,8 @@ public class Prefs {
     public boolean useOfflineGeo() {
         return getPrefs().getBoolean(USE_OFFLINE_GEO, false);
     }
+
+    public void setOfflineGeo(boolean offlineGeo) {
+        setBoolPref(USE_OFFLINE_GEO, offlineGeo);
+    }
 }

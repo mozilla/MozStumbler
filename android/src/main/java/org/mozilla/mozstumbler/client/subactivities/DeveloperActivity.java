@@ -259,6 +259,7 @@ public class DeveloperActivity extends ActionBarActivity {
         private void onToggleUseOfflineGeo(boolean isChecked) {
             // do nothing here as we are just going to query the value
             // when we trigger an AsyncGeolocate call
+            Prefs.getInstanceWithoutContext().setOfflineGeo(isChecked);
         }
 
         private void onToggleSaveStumbleLogs(boolean isChecked) {

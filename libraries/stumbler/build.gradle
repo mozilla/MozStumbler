@@ -148,6 +148,10 @@ dependencies {
     // marisa-trie for offline geo support
     compile 'org.mozilla.mozstumbler.marisa:marisa:0.4'
 
+    // Google Guava.  I'm lazy and want to use collections that aren't
+    // crazy.
+    compile group: 'com.google.guava', name: 'guava', version: '12.0'
+
 }
 
 task sourcesJar(type: Jar) {

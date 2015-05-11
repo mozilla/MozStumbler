@@ -35,14 +35,11 @@ import java.io.File;
 public class DataStorageManager extends JSONRowsStorageManager implements IDataStorageManager {
 
     private static final String LOG_TAG = LoggerUtil.makeLogTag(DataStorageManager.class);
-
-
     static final String SEP_REPORT_COUNT = "-r";
     static final String SEP_WIFI_COUNT = "-w";
     static final String SEP_CELL_COUNT = "-c";
     public static DataStorageManager sInstance;
     protected final PersistedStats mPersistedOnDiskUploadStats;
-
 
     protected DataStorageManager(Context c, StorageIsEmptyTracker tracker,
                        long maxBytesStoredOnDisk, int maxWeeksDataStored) {

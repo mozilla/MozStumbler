@@ -11,8 +11,8 @@ public class ReportBatch extends SerializedJSONRows {
     public final int wifiCount;
     public final int cellCount;
 
-    public ReportBatch(String filename, byte[] data, int reportCount, int wifiCount, int cellCount) {
-        super(filename, data);
+    public ReportBatch(byte[] data, StorageState storageState, int reportCount, int wifiCount, int cellCount) {
+        super(data, storageState);
         this.reportCount = reportCount;
         this.wifiCount = wifiCount;
         this.cellCount = cellCount;

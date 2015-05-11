@@ -1,15 +1,13 @@
 package org.mozilla.mozstumbler.service.stumblerthread.datahandling.base;
 
 public class SerializedJSONRows {
-    public String filename;
+    public String filename = "";
     public final byte[] data;
+    public enum StorageState { ON_DISK, IN_MEMORY_ONLY };
+    public StorageState storageState;
 
-    public SerializedJSONRows(String filename, byte[] data) {
-        this.filename = filename;
+    public SerializedJSONRows(byte[] data, StorageState storageState) {
         this.data = data;
-    }
-
-    public void setFilename(String name) {
-        filename = name;
+        this.storageState = storageState;
     }
 }

@@ -159,7 +159,7 @@ public class StumblerBundleTest {
             rbb.addRow(b.toMLSGeosubmit());
         }
 
-        String finalReport = Zipper.unzipData(rbb.finalizeToJSONRowsObject("temp").data);
+        String finalReport = Zipper.unzipData(rbb.finalizeToJSONRowsObject().data);
         JSONObject actualJson = new JSONObject(finalReport);
 
         System.out.println("Actual JSON with accuracy and location: " + actualJson.toString(2));

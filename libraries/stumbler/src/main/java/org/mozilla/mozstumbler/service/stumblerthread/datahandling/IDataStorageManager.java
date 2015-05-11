@@ -57,5 +57,5 @@ public interface IDataStorageManager {
 
     // delete should be pushed down into ReportBatch as it already has everything except
     // DataStorageManager::mReportsDir to do this work.
-    public boolean delete(String filename);
+    public boolean delete(SerializedJSONRows data);
 }

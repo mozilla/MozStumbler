@@ -12,6 +12,7 @@ import org.junit.runner.RunWith;
 import org.mozilla.mozstumbler.service.Prefs;
 import org.mozilla.mozstumbler.service.stumblerthread.Reporter;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.base.JSONRowsObjectBuilder;
+import org.mozilla.mozstumbler.service.stumblerthread.datahandling.base.JSONRowsStorageManager;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner.CellInfo;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
@@ -39,7 +40,7 @@ public class DataStorageManagerTest {
     int getInMemoryRowCount() {
         Field field = null;
         try {
-            field = DataStorageManager.class.getDeclaredField("mInMemoryActiveJSONRows");
+            field = JSONRowsStorageManager.class.getDeclaredField("mInMemoryActiveJSONRows");
             field.setAccessible(true);
         } catch (NoSuchFieldException e) {
             e.printStackTrace();

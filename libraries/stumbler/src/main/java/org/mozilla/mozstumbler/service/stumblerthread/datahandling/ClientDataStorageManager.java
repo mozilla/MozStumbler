@@ -8,6 +8,7 @@ import android.os.Environment;
 
 import org.mozilla.mozstumbler.service.Prefs;
 import org.mozilla.mozstumbler.service.core.logging.ClientLog;
+import org.mozilla.mozstumbler.service.stumblerthread.datahandling.base.SerializedJSONRows;
 import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
 import java.io.File;
@@ -43,16 +44,16 @@ public class ClientDataStorageManager extends DataStorageManager {
 
     /* Pass filename returned from dataToSend() */
     @Override
-    public synchronized boolean delete(String filename) {
-        if (filename.equals(MEMORY_BUFFER_NAME)) {
-            return super.delete(filename);
+    public synchronized boolean delete(SerializedJSONRows data) {
+        if (data.storageState == SerializedJSONRows.StorageState.IN_MEMORY_ONLY) {
+            return super.delete(data);
         }
 
-        final File file = new File(mStorageDir, filename);
+        final File file = new File(mStorageDir, data.filename);
         boolean ok = true;
 
         if (Prefs.getInstanceWithoutContext().isSaveStumbleLogs()) {
-            File newFile = new File(sdcardArchivePath() + File.separator + filename);
+            File newFile = new File(sdcardArchivePath() + File.separator + data.filename);
             ok = copyAndDelete(file, newFile);
 
             if (!ok) {

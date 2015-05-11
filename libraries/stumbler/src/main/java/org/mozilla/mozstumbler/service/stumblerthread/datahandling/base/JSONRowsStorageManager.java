@@ -48,10 +48,6 @@ public class JSONRowsStorageManager {
     protected final long mMaxBytesDiskStorage;
     protected final int mMaxWeeksStored;
     protected final StorageIsEmptyTracker mTracker;
-
-    // This set of members are used to keep track of ChunkOfJSON instances in memory
-    // and on disk.  The Timer is used to periodically flush the in-memory buffer to disk.
-    protected static final String MEMORY_BUFFER_NAME = "in memory send buffer";
     protected final File mStorageDir;
 
     protected JSONRowsObjectBuilder mInMemoryActiveJSONRows = new JSONRowsObjectBuilder();
@@ -94,28 +90,6 @@ public class JSONRowsStorageManager {
         return dir.getPath();
     }
 
-    private static byte[] readFile(File file) {
-        RandomAccessFile f = null;
-        try {
-            f = new RandomAccessFile(file, "r");
-            final byte[] data = new byte[(int) f.length()];
-            f.readFully(data);
-            return data;
-        } catch (IOException e) {
-            Log.e(LOG_TAG, "Error reading reports file: " + e.toString());
-            ACRA.getErrorReporter().handleSilentException(e);
-            return new byte[]{};
-        } finally {
-            if (f != null) {
-                try {
-                    f.close();
-                } catch (IOException e) {
-                    // eat it
-                }
-            }
-        }
-    }
-
     public synchronized byte[] getActiveInMemoryBufferRawBytes() {
         return mInMemoryActiveJSONRows.peekBytes();
     }
@@ -141,8 +115,8 @@ public class JSONRowsStorageManager {
         mJSONRowsObjectIterator = new SerializedJSONRowsList.Iterator(mFileList);
 
         if (inMemoryReportsCount > 0) {
-            mInMemoryFinalizedJSONRowsObject = mInMemoryActiveJSONRows.finalizeToJSONRowsObject(MEMORY_BUFFER_NAME);
-            mInMemoryFinalizedJSONRowsObject.setFilename(MEMORY_BUFFER_NAME);
+            mInMemoryFinalizedJSONRowsObject = mInMemoryActiveJSONRows.finalizeToJSONRowsObject();
+            mInMemoryFinalizedJSONRowsObject.storageState = SerializedJSONRows.StorageState.IN_MEMORY_ONLY;
             return mInMemoryFinalizedJSONRowsObject;
         } else {
             return getNextBatch();
@@ -154,16 +128,11 @@ public class JSONRowsStorageManager {
             return null;
         }
 
-        mJSONRowsObjectIterator.currentIndex++;
-        if (mJSONRowsObjectIterator.currentIndex < 0 ||
-                mJSONRowsObjectIterator.currentIndex > mJSONRowsObjectIterator.fileList.mFiles.length - 1) {
+        int index = mJSONRowsObjectIterator.nextIndex();
+        if (!mJSONRowsObjectIterator.isIndexValid(index)) {
             return null;
         }
-
-        final File f = mJSONRowsObjectIterator.fileList.mFiles[mJSONRowsObjectIterator.currentIndex];
-        final String filename = f.getName();
-        final byte[] data = readFile(f);
-        return new SerializedJSONRows(filename, data);
+        return mJSONRowsObjectIterator.getAtCurrentIndex();
     }
 
     protected File createFile(SerializedJSONRows unused) {
@@ -220,7 +189,7 @@ public class JSONRowsStorageManager {
         if (mFileList.mFilesOnDiskBytes > mMaxBytesDiskStorage) {
             return false;
         }
-
+        data.storageState = SerializedJSONRows.StorageState.ON_DISK;
         FileOutputStream fos = null;
         File f = createFile(data);
         try {
@@ -260,7 +229,7 @@ public class JSONRowsStorageManager {
             return;
         }
 
-        SerializedJSONRows json = mInMemoryActiveJSONRows.finalizeToJSONRowsObject(MEMORY_BUFFER_NAME);
+        SerializedJSONRows json = mInMemoryActiveJSONRows.finalizeToJSONRowsObject();
 
         // Uncomment this block when debugging the report blobs
         //Log.d(LOG_TAG, "PII geosubmit report: " + report);
@@ -297,13 +266,13 @@ public class JSONRowsStorageManager {
     }
 
     /* Pass filename returned from dataToSend() */
-    public synchronized boolean delete(String filename) {
-        if (filename.equals(MEMORY_BUFFER_NAME)) {
+    public synchronized boolean delete(SerializedJSONRows data) {
+        if (data.storageState == SerializedJSONRows.StorageState.IN_MEMORY_ONLY) {
             mInMemoryFinalizedJSONRowsObject = null;
             return true;
         }
 
-        final File file = new File(mStorageDir, filename);
+        final File file = new File(mStorageDir, data.filename);
         boolean ok = file.delete();
         mFileList.update(mStorageDir);
         return ok;

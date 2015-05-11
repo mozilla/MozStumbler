@@ -5,12 +5,10 @@
 package org.mozilla.mozstumbler.service.core.offline;
 
 import android.location.Location;
-import android.location.LocationManager;
 import android.os.Environment;
 
 import com.crankycoder.marisa.IntRecordTrie;
-import com.google.common.base.Joiner;
-import com.google.common.collect.Iterables;
+import com.google.common.primitives.Ints;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -30,19 +28,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static junit.framework.Assert.assertEquals;
-
 public class LocationService implements IOfflineLocationService {
 
     private static final ILogger Log = (ILogger) ServiceLocator.getInstance().getService(ILogger.class);
     private static final String LOG_TAG = LoggerUtil.makeLogTag(LocationService.class);
 
     private final IntRecordTrie trie;
+
     private static final int BSSID_DUPLICATES = 100;
+    private static final int TOTAL_POSSIBLE_TILES = 65536;
 
     public LocationService() {
         trie = loadTrie();
     }
+
     public static String sdcardArchivePath() {
         return Environment.getExternalStorageDirectory() + File.separator + "StumblerOffline";
     }
@@ -56,11 +55,11 @@ public class LocationService implements IOfflineLocationService {
     private IntRecordTrie loadTrie() {
         String fmt = "<" + new String(new char[BSSID_DUPLICATES]).replace("\0", "i");
         IntRecordTrie recordTrie = new IntRecordTrie(fmt);
-        File f = new File(sdcardArchivePath() +"/newmarket.record_trie");
+        File f = new File(sdcardArchivePath() +"/offline.record_trie");
         recordTrie.mmap(f.getAbsolutePath());
         return recordTrie;
     }
-    
+
     @Override
     public IResponse search(JSONObject mlsGeoLocate, Map<String, String> headers, boolean precompressed) {
         MLSJSONObject mlsJson = null;
@@ -74,34 +73,116 @@ public class LocationService implements IOfflineLocationService {
 
         Log.i(LOG_TAG, "Offline location started!");
 
-        ArrayList<Set<Integer>> trieResults = new ArrayList<Set<Integer>>();
+        int[] tile_points = new int[TOTAL_POSSIBLE_TILES];
+        int max_tilept = 0;
 
         // Build up a list
         Log.i(LOG_TAG, "Start BSSID for offline geo");
         for (String k: bssidList) {
-            trieResults.add(trie.getResultSet(k));
             Log.i(LOG_TAG, "Using BSSID = ["+k+"] ");
+            for (int tile_id: trie.getResultSet(k)) {
+                tile_points[tile_id] += 1;
+            }
         }
         Log.i(LOG_TAG, "END BSSID for offline geo");
 
-        return locationFix(493);
+
+        max_tilept = Ints.max(tile_points);
+        if (max_tilept <= 1) {
+            Log.i(LOG_TAG, "Can't find any solution to this set of BSSIDS");
+            return null;
+        }
+
+        Set<Integer> maxpt_tileset = new HashSet<Integer>();
+        for (int i =0; i < tile_points.length; i++) {
+            if (tile_points[i] == max_tilept) {
+                maxpt_tileset.add(i);
+            }
+        }
+
+        if (maxpt_tileset.size() == 1) {
+            Log.i(LOG_TAG, "Unique solution found: " + maxpt_tileset.toString());
+            for (int tile: maxpt_tileset) {
+                return locationFix(tile);
+            }
+        } else {
+            // We have to solve a tie breaker
+            // square the points for the max point array
+            for (int pt: maxpt_tileset) {
+                tile_points[pt] *= tile_points[pt];
+            }
+
+            int[] adj_tile_points = new int[TOTAL_POSSIBLE_TILES];
+
+            for (int tile: maxpt_tileset) {
+                int new_pts = 0;
+
+                for (int adj_tileid: adjacent_tile(tile)) {
+                    new_pts += tile_points[adj_tileid];
+                }
+                new_pts *= new_pts;
+                adj_tile_points[tile] = new_pts;
+
+            }
+
+            // Copy points over
+            for (int i = 0; i < adj_tile_points.length; i++) {
+                tile_points[i] += adj_tile_points[i];
+            }
+
+            // Recompute the max tile
+            max_tilept = Ints.max(tile_points);
+            maxpt_tileset = new HashSet<Integer>();
+            for (int i =0; i < tile_points.length; i++) {
+                if (tile_points[i] == max_tilept) {
+                    maxpt_tileset.add(i);
+                }
+            }
+            String msg = "Tie breaking solution: " +
+                    maxpt_tileset.toString() +
+                    ", " +
+                    maxpt_tileset.size() +
+                    " solutions were found.";
+
+            Log.i(LOG_TAG, msg);
+
+            for (int tile_id: maxpt_tileset) {
+                return locationFix(tile_id);
+            }
+        }
+
+        Log.i(LOG_TAG, "Can't find a solution");
+        return null;
+    }
+
+    private List<Integer> adjacent_tile(int tile_id) {
+        ArrayList<Integer> result = new ArrayList<Integer>();
+        OrderedCityTiles city_tiles = new OrderedCityTiles();
+
+        TileCoord tc = city_tiles.getCoord(tile_id);
+        result.add(city_tiles.getTileID(new TileCoord(tc.tile_x-1, tc.tile_y-1)));
+        result.add(city_tiles.getTileID(new TileCoord(tc.tile_x, tc.tile_y - 1)));
+        result.add(city_tiles.getTileID(new TileCoord(tc.tile_x + 1, tc.tile_y - 1)));
+
+        result.add(city_tiles.getTileID(new TileCoord(tc.tile_x-1, tc.tile_y)) );
+        result.add(city_tiles.getTileID(new TileCoord(tc.tile_x+1, tc.tile_y)) );
+
+        result.add(city_tiles.getTileID(new TileCoord(tc.tile_x-1, tc.tile_y+1)) );
+        result.add(city_tiles.getTileID(new TileCoord(tc.tile_x  , tc.tile_y+1)) );
+        result.add(city_tiles.getTileID(new TileCoord(tc.tile_x-1, tc.tile_y+1)) );
+
+        return result;
     }
 
     private IResponse locationFix(Integer tile_id) {
-
-        // TODO: convert the tile_id to tile_x, tile_y and then run num2deg on it.
         IResponse result = null;
-        double lat = 44.033613;
-        double lon = -79.4905629;
 
+        OrderedCityTiles city_tiles = new OrderedCityTiles();
+        TileCoord coord = city_tiles.getCoord(tile_id);
 
         // There's only GPS, NETWORK and PASSIVE providers specified in
         // LocationManager.  Use
-        Location roundTrip = new Location("mls_offline");
-        roundTrip.setAccuracy(150);
-        roundTrip.setLatitude(lat);
-        roundTrip.setLongitude(lon);
-
+        Location roundTrip = coord.getLocation();
         JSONObject jsonLocation = LocationAdapter.toJSON(roundTrip);
 
         result = new HTTPResponse(200,

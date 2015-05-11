@@ -36,6 +36,8 @@ import org.mozilla.mozstumbler.service.core.http.ILocationService;
 import org.mozilla.mozstumbler.service.core.logging.MockAcraLog;
 import org.mozilla.mozstumbler.service.stumblerthread.Reporter;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageConstants;
+import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageManager;
+import org.mozilla.mozstumbler.service.stumblerthread.datahandling.IDataStorageManager;
 import org.mozilla.mozstumbler.service.stumblerthread.motiondetection.MotionSensor;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.ISimulatorService;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.ScanManager;
@@ -43,6 +45,7 @@ import org.mozilla.mozstumbler.service.stumblerthread.scanners.WifiScanner;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner.CellScanner;
 import org.mozilla.mozstumbler.service.uploadthread.AsyncUploadParam;
 import org.mozilla.mozstumbler.service.uploadthread.AsyncUploader;
+import org.mozilla.mozstumbler.service.uploadthread.AsyncUploaderMLS;
 import org.mozilla.mozstumbler.service.utils.NetworkInfo;
 import org.mozilla.mozstumbler.svclocator.ServiceConfig;
 import org.mozilla.mozstumbler.svclocator.ServiceLocator;
@@ -318,7 +321,7 @@ public class MainApp extends Application
             mMainActivity.get().stop();
         }
 
-        AsyncUploader uploader = new AsyncUploader();
+        AsyncUploader uploader = new AsyncUploaderMLS((DataStorageManager)DataStorageManager.getInstance());
         AsyncUploadParam param = new AsyncUploadParam(
                 ClientPrefs.getInstance(this).getUseWifiOnly(),
                 new NetworkInfo(this).isWifiAvailable(),

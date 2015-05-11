@@ -13,10 +13,8 @@ import org.mozilla.mozstumbler.service.core.http.HTTPResponse;
 import org.mozilla.mozstumbler.service.core.http.ILocationService;
 import org.mozilla.mozstumbler.service.core.http.IResponse;
 import org.mozilla.mozstumbler.service.core.http.MLS;
-import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageManager;
-import org.mozilla.mozstumbler.service.stumblerthread.datahandling.IDataStorageManager;
-import org.mozilla.mozstumbler.service.stumblerthread.datahandling.ReportBatch;
-import org.mozilla.mozstumbler.service.utils.NetworkInfo;
+import org.mozilla.mozstumbler.service.stumblerthread.datahandling.base.JSONRowsStorageManager;
+import org.mozilla.mozstumbler.service.stumblerthread.datahandling.base.SerializedJSONRows;
 import org.mozilla.mozstumbler.service.utils.Zipper;
 import org.mozilla.mozstumbler.svclocator.ServiceLocator;
 import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
@@ -50,6 +48,11 @@ public class AsyncUploader extends AsyncTask<AsyncUploadParam, AsyncProgressList
     private static final String LOG_TAG = LoggerUtil.makeLogTag(AsyncUploader.class);
     private static AsyncUploaderListener sAsyncListener;
     ILocationService mls = (ILocationService) ServiceLocator.getInstance().getService(ILocationService.class);
+    protected final JSONRowsStorageManager storageManager;
+
+    public AsyncUploader(JSONRowsStorageManager storageManager) {
+        this.storageManager = storageManager;
+    }
 
     // This listener can show progress for any AsyncUploader. This global use is particularly
     // useful for UI to show progress when this has been scheduled internally in the service.
@@ -106,10 +109,8 @@ public class AsyncUploader extends AsyncTask<AsyncUploadParam, AsyncProgressList
     }
 
     private void uploadReports(AsyncUploadParam param) {
-        long uploadedObservations = 0;
-        long uploadedCells = 0;
-        long uploadedWifis = 0;
         long totalBytesSent = 0;
+        HashMap<String, Integer> tally = new HashMap<String, Integer>();
 
         if (param.useWifiOnly && param.isWifiAvailable) {
             if (AppGlobals.isDebug) {
@@ -118,8 +119,7 @@ public class AsyncUploader extends AsyncTask<AsyncUploadParam, AsyncProgressList
             return;
         }
 
-        IDataStorageManager dm = DataStorageManager.getInstance();
-        ReportBatch batch = dm.getFirstBatch();
+        SerializedJSONRows batch = storageManager.getFirstBatch();
         HashMap<String, String> headers = new HashMap<String, String>();
         headers.put(MLS.EMAIL_HEADER, param.emailAddress);
         headers.put(MLS.NICKNAME_HEADER, param.nickname);
@@ -146,11 +146,9 @@ public class AsyncUploader extends AsyncTask<AsyncUploadParam, AsyncProgressList
                 AppGlobals.guiLogInfo(logMsg, "#FFFFCC", true, false);
                 Log.d(LOG_TAG, logMsg);
 
-                dm.delete(batch.filename);
+                tally(tally, batch);
 
-                uploadedObservations += batch.reportCount;
-                uploadedWifis += batch.wifiCount;
-                uploadedCells += batch.cellCount;
+                storageManager.delete(batch);
             } else {
                 String logMsg = "HTTP error unknown";
                 if (result != null) {
@@ -166,20 +164,27 @@ public class AsyncUploader extends AsyncTask<AsyncUploadParam, AsyncProgressList
                         }
                         AppGlobals.guiLogInfo(unzipped, "red", false, true);
                     }
-                    dm.delete(batch.filename);
+                    storageManager.delete(batch);
                 } else {
-                    dm.saveCachedReportsToDisk();
+                    storageManager.saveAllInMemoryToDisk();
                 }
                 AppGlobals.guiLogError(logMsg);
             }
 
-            batch = dm.getNextBatch();
+            batch = storageManager.getNextBatch();
         }
 
         sTotalBytesUploadedThisSession.addAndGet(totalBytesSent);
 
-        dm.incrementSyncStats(totalBytesSent, uploadedObservations, uploadedCells, uploadedWifis);
+        tallyCompleted(tally, totalBytesSent);
     }
+
+    protected void tally(HashMap<String, Integer> tallyValues, SerializedJSONRows batch) {
+    }
+
+    protected void tallyCompleted(HashMap<String, Integer> tallyValues, long totalBytesSent) {
+    }
+
 
     public interface AsyncUploaderListener {
         // This is called by Android on the UI thread

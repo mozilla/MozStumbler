@@ -6,18 +6,21 @@ import android.location.Location;
 import android.net.wifi.ScanResult;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mozilla.mozstumbler.service.Prefs;
 import org.mozilla.mozstumbler.service.stumblerthread.Reporter;
+import org.mozilla.mozstumbler.service.stumblerthread.datahandling.base.JSONRowsObjectBuilder;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner.CellInfo;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
+import java.lang.reflect.Field;
+
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.fail;
 import static org.mozilla.mozstumbler.service.stumblerthread.ReporterTest.createCellInfo;
 import static org.mozilla.mozstumbler.service.stumblerthread.ReporterTest.createScanResult;
 
@@ -31,6 +34,24 @@ public class DataStorageManagerTest {
 
     private Application getApplicationContext() {
         return Robolectric.application;
+    }
+
+    int getInMemoryRowCount() {
+        Field field = null;
+        try {
+            field = DataStorageManager.class.getDeclaredField("mInMemoryActiveJSONRows");
+            field.setAccessible(true);
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+            fail();
+        }
+        try {
+            return (Integer) field.get(dm);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+            fail();
+        }
+        return -1;
     }
 
     @Before
@@ -53,16 +74,17 @@ public class DataStorageManagerTest {
 
         // The Reporter class needs a reference to a context
         rp.startup(ctx);
-        assertEquals(0, dm.mCachedReportBatches.reportsCount());
+
+        assertEquals(0, getInMemoryRowCount());
     }
 
     @Test
     public void testMaxReportsLength() throws JSONException {
         StumblerBundle bundle;
 
-        assertEquals(0, dm.mCachedReportBatches.reportsCount());
+        assertEquals(0, getInMemoryRowCount());
 
-        for (int locCount = 0; locCount < ReportBatchBuilder.MAX_REPORTS_IN_MEMORY - 1; locCount++) {
+        for (int locCount = 0; locCount < JSONRowsObjectBuilder.MAX_ROWS_IN_MEMORY - 1; locCount++) {
             Location loc = new Location("mock");
             loc.setLatitude(42 + (locCount * 0.1));
             loc.setLongitude(45 + (locCount * 0.1));
@@ -85,12 +107,12 @@ public class DataStorageManagerTest {
 
             dm.insert(mlsObj);
 
-            assertEquals((locCount+1) % ReportBatchBuilder.MAX_REPORTS_IN_MEMORY,
-                    dm.mCachedReportBatches.reportsCount());
+            assertEquals((locCount+1) % ReportBatchBuilder.MAX_ROWS_IN_MEMORY,
+                    getInMemoryRowCount());
         }
 
-        for (int locCount = ReportBatchBuilder.MAX_REPORTS_IN_MEMORY -1;
-             locCount < (ReportBatchBuilder.MAX_REPORTS_IN_MEMORY*2-1);
+        for (int locCount = ReportBatchBuilder.MAX_ROWS_IN_MEMORY - 1;
+             locCount < (ReportBatchBuilder.MAX_ROWS_IN_MEMORY * 2 - 1);
              locCount++) {
             Location loc = new Location("mock");
             loc.setLatitude(42 + (locCount * 0.1));
@@ -114,8 +136,8 @@ public class DataStorageManagerTest {
 
             dm.insert(mlsObj);
 
-            assertEquals((locCount+1) % ReportBatchBuilder.MAX_REPORTS_IN_MEMORY  ,
-                    dm.mCachedReportBatches.reportsCount());
+            assertEquals((locCount+1) % ReportBatchBuilder.MAX_ROWS_IN_MEMORY,
+                    getInMemoryRowCount());
 
         }
 

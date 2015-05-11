@@ -156,10 +156,10 @@ public class StumblerBundleTest {
 
         ReportBatchBuilder rbb = new ReportBatchBuilder();
         for (StumblerBundle b: bundleList) {
-            rbb.addReport(b.toMLSGeosubmit());
+            rbb.addRow(b.toMLSGeosubmit());
         }
 
-        String finalReport = Zipper.unzipData(rbb.finalizeAndClearReports());
+        String finalReport = Zipper.unzipData(rbb.finalizeToJSONRowsObject("temp").data);
         JSONObject actualJson = new JSONObject(finalReport);
 
         System.out.println("Actual JSON with accuracy and location: " + actualJson.toString(2));

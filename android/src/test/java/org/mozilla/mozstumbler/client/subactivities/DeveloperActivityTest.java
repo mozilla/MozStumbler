@@ -105,7 +105,7 @@ public class DeveloperActivityTest {
 
         // note that this 'reports' directory was created when the ClientDataStorageManager
         // was instantiated with createGlobalInstance()
-        String mockFilePath = DataStorageManager.getStorageDir(ctx) +
+        String mockFilePath = DataStorageManager.getSystemStorageDir(ctx) +
                 File.separator +
                 "/reports" +
                 File.separator +

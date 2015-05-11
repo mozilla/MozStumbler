@@ -186,3 +186,4 @@ public class AsyncUploader extends AsyncTask<AsyncUploadParam, AsyncProgressList
         public void onUploadProgress(boolean isUploading);
     }
 }
+

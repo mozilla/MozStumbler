@@ -10,7 +10,7 @@ import org.junit.runner.RunWith;
 import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.service.Prefs;
 import org.mozilla.mozstumbler.service.core.logging.ClientLog;
-import org.mozilla.mozstumbler.service.stumblerthread.datahandling.ClientDataStorageManager;
+import org.mozilla.mozstumbler.client.ClientDataStorageManager;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageManager;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.ReportBatch;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.base.SerializedJSONRows;

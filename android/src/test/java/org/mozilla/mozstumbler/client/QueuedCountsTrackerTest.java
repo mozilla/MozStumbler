@@ -9,7 +9,6 @@ import android.content.Context;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mozilla.mozstumbler.service.stumblerthread.datahandling.ClientDataStorageManager;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageManager;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.StorageIsEmptyTracker;
 import org.mozilla.mozstumbler.svclocator.ServiceLocator;

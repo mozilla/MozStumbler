@@ -19,7 +19,6 @@ import org.mozilla.mozstumbler.client.util.NotificationUtil;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.stumblerthread.Reporter;
 import org.mozilla.mozstumbler.service.stumblerthread.StumblerService;
-import org.mozilla.mozstumbler.service.stumblerthread.datahandling.ClientDataStorageManager;
 import org.mozilla.mozstumbler.service.utils.BatteryCheckReceiver;
 import org.mozilla.mozstumbler.service.utils.BatteryCheckReceiver.BatteryCheckCallback;
 import org.mozilla.mozstumbler.svclocator.ServiceLocator;

@@ -1,13 +1,15 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
-package org.mozilla.mozstumbler.service.stumblerthread.datahandling;
+package org.mozilla.mozstumbler.client;
 
 import android.content.Context;
 import android.os.Environment;
 
 import org.mozilla.mozstumbler.service.Prefs;
 import org.mozilla.mozstumbler.service.core.logging.ClientLog;
+import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageManager;
+import org.mozilla.mozstumbler.service.stumblerthread.datahandling.StorageIsEmptyTracker;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.base.SerializedJSONRows;
 import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 

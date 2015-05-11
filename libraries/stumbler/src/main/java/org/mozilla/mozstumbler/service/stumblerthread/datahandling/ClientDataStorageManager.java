@@ -45,11 +45,10 @@ public class ClientDataStorageManager extends DataStorageManager {
     @Override
     public synchronized boolean delete(String filename) {
         if (filename.equals(MEMORY_BUFFER_NAME)) {
-            mCurrentReportsSendBuffer = null;
-            return true;
+            return super.delete(filename);
         }
 
-        final File file = new File(mReportsDir, filename);
+        final File file = new File(mStorageDir, filename);
         boolean ok = true;
 
         if (Prefs.getInstanceWithoutContext().isSaveStumbleLogs()) {
@@ -63,7 +62,7 @@ public class ClientDataStorageManager extends DataStorageManager {
             ok = file.delete();
         }
 
-        mFileList.update(mReportsDir);
+        mFileList.update(mStorageDir);
         return ok;
     }
 

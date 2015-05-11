@@ -6,15 +6,17 @@ package org.mozilla.mozstumbler.service.stumblerthread.datahandling;
 
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.core.logging.ClientLog;
+import org.mozilla.mozstumbler.service.stumblerthread.datahandling.base.SerializedJSONRowsList;
 
 import java.io.File;
 
-class ReportFileList {
-    File[] mFiles;
-    int mReportCount;
-    int mWifiCount;
-    int mCellCount;
-    long mFilesOnDiskBytes;
+public class ReportFileList extends SerializedJSONRowsList {
+    protected int mReportCount;
+    protected int mWifiCount;
+    protected int mCellCount;
+
+    public ReportFileList() {
+    }
 
     public ReportFileList(ReportFileList other) {
         if (other == null) {
@@ -31,7 +33,7 @@ class ReportFileList {
         mFilesOnDiskBytes = other.mFilesOnDiskBytes;
     }
 
-    protected void update(File directory) {
+    public void update(File directory) {
         mFiles = directory.listFiles();
         if (mFiles == null) {
             return;
@@ -50,9 +52,5 @@ class ReportFileList {
             mCellCount += (int) DataStorageManager.getLongFromFilename(f.getName(), DataStorageManager.SEP_CELL_COUNT);
             mFilesOnDiskBytes += f.length();
         }
-    }
-
-    public synchronized boolean isDirEmpty() {
-        return (mFiles == null || mFiles.length < 1);
     }
 }

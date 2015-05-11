@@ -4,6 +4,8 @@
 
 package org.mozilla.mozstumbler.service.core.offline;
 
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Environment;
 
 import com.crankycoder.marisa.IntRecordTrie;
@@ -12,18 +14,23 @@ import com.google.common.collect.Iterables;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.mozilla.mozstumbler.service.core.http.HTTPResponse;
 import org.mozilla.mozstumbler.service.core.http.IResponse;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.MLSJSONObject;
+import org.mozilla.mozstumbler.service.utils.LocationAdapter;
 import org.mozilla.mozstumbler.svclocator.ServiceLocator;
 import org.mozilla.mozstumbler.svclocator.services.log.ILogger;
 import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import static junit.framework.Assert.assertEquals;
 
 public class LocationService implements IOfflineLocationService {
 
@@ -31,6 +38,7 @@ public class LocationService implements IOfflineLocationService {
     private static final String LOG_TAG = LoggerUtil.makeLogTag(LocationService.class);
 
     private final IntRecordTrie trie;
+    private static final int BSSID_DUPLICATES = 100;
 
     public LocationService() {
         trie = loadTrie();
@@ -46,7 +54,7 @@ public class LocationService implements IOfflineLocationService {
     }
 
     private IntRecordTrie loadTrie() {
-        String fmt = "<" + new String(new char[100]).replace("\0", "i");
+        String fmt = "<" + new String(new char[BSSID_DUPLICATES]).replace("\0", "i");
         IntRecordTrie recordTrie = new IntRecordTrie(fmt);
         File f = new File(sdcardArchivePath() +"/newmarket.record_trie");
         recordTrie.mmap(f.getAbsolutePath());
@@ -65,7 +73,6 @@ public class LocationService implements IOfflineLocationService {
         List<String> bssidList = mlsJson.geolocateBSSIDs();
 
         Log.i(LOG_TAG, "Offline location started!");
-        Set<Integer> result = null;
 
         ArrayList<Set<Integer>> trieResults = new ArrayList<Set<Integer>>();
 
@@ -77,85 +84,31 @@ public class LocationService implements IOfflineLocationService {
         }
         Log.i(LOG_TAG, "END BSSID for offline geo");
 
-
-        Set<Integer> smallest = null;
-        int[] smallestBssidIndexes = null;
-
-        Set<Integer> tmp = null;
-
-        // Try to match any 3 BSSIDs together in the trie
-        for (int i = 0; i < bssidList.size()-2; i++) {
-            for (int j = i+1; j < bssidList.size()-1; j++) {
-                for (int k = j+1; k < bssidList.size(); k++) {
-                    Set<Integer> t1 = trieResults.get(i);
-                    Set<Integer> t2 = trieResults.get(j);
-                    Set<Integer> t3 = trieResults.get(k);
-
-                    tmp = new HashSet<Integer>(t1);
-                    tmp.retainAll(t2);
-                    if (tmp.size() > 0 && tmp.size() > 0 && tmp.size() < smallest.size()) {
-                        smallest = tmp;
-                        smallestBssidIndexes = new int[]{i, j};
-                    }
-                    tmp = new HashSet<Integer>(t2);
-                    tmp.retainAll(t3);
-                    if (tmp.size() > 0 && tmp.size() > 0 && tmp.size() < smallest.size()) {
-                        smallest = tmp;
-                        smallestBssidIndexes = new int[]{j, k};
-                    }
-                    tmp = new HashSet<Integer>(t1);
-                    tmp.retainAll(t2);
-                    if (tmp.size() > 0 && tmp.size() > 0 && tmp.size() < smallest.size()) {
-                        smallest = tmp;
-                        smallestBssidIndexes = new int[]{i, k};
-                    }
-                    tmp = new HashSet<Integer>(t1);
-                    tmp.retainAll(t2);
-                    tmp.retainAll(t3);
-                    if (tmp.size() > 0 && tmp.size() > 0 && tmp.size() < smallest.size()) {
-                        smallest = tmp;
-                        smallestBssidIndexes = new int[]{i, j, k};
-                    }
-
-                    if (smallest.size() == 1) { break; }
-                }
-                if (smallest.size() == 1) { break; }
-            }
-            if (smallest.size() == 1) { break; }
-        }
-
-        if (smallest == null || smallest.size() == 100) {
-            // No fix could be found at all.
-            return nolocationFound();
-        }
-
-        if (smallest.size() == 1) {
-            // We have a solid fix with 3 BSSIDs.
-            return locationFix(Iterables.get(smallest, 0));
-        }
-
-        if (smallest.size() < 100) {
-            // Ok, we have a partial fix.  Let's try to narrow it down by cross referencing the
-            // adjacent cells each of the matches against disjoint matchsets
-            // TODO:
-            Log.i(LOG_TAG, "Partial fix found: " + Joiner.on(", ").join(smallest));
-            Integer bestGuess = new Integer(0);
-            return locationFix(bestGuess);
-        }
-
-        return null;
+        return locationFix(493);
     }
 
-    private IResponse nolocationFound() {
-        // TODO: return a no location found response
-        Log.i(LOG_TAG, "No matches found!");
-        return null;
-    }
+    private IResponse locationFix(Integer tile_id) {
 
-    private IResponse locationFix(Integer integer) {
+        // TODO: convert the tile_id to tile_x, tile_y and then run num2deg on it.
         IResponse result = null;
-        // TODO: make a working location fix from a tile Id
-        Log.i(LOG_TAG, "Found a match: " + integer);
+        double lat = 44.033613;
+        double lon = -79.4905629;
+
+
+        // There's only GPS, NETWORK and PASSIVE providers specified in
+        // LocationManager.  Use
+        Location roundTrip = new Location("mls_offline");
+        roundTrip.setAccuracy(150);
+        roundTrip.setLatitude(lat);
+        roundTrip.setLongitude(lon);
+
+        JSONObject jsonLocation = LocationAdapter.toJSON(roundTrip);
+
+        result = new HTTPResponse(200,
+                new HashMap<String, List<String>>(),
+                jsonLocation.toString().getBytes(),
+                0);
+        Log.i(LOG_TAG, "Sending back location: " + jsonLocation.toString());
         return result;
     }
 }

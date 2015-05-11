@@ -27,7 +27,7 @@ public class MLSJSONObject extends JSONObject {
     public MLSJSONObject() {
         super();
     }
-    
+
     public MLSJSONObject(String s) throws JSONException {
         super(s);
     }

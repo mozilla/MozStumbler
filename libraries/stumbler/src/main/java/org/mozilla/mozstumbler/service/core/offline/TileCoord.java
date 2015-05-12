@@ -18,7 +18,6 @@ public class TileCoord {
     }
 
     public TileCoord(String line) {
-
         //Get all tokens available in line
         String[] tokens = line.split(",");
         tokens[0] = tokens[0].replaceAll("\\s+", "");

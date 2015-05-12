@@ -52,10 +52,17 @@ public class OrderedCityTiles {
     }
 
     public int getTileID(TileCoord tc) {
+        String key = tc.toString();
+        if (!CoordToTileID.containsKey(key)) {
+            return -1;
+        }
         return CoordToTileID.get(tc.toString());
     }
 
     public TileCoord getCoord(int tile_id) {
+        if (!TileIDToCoord.containsKey(tile_id)) {
+            return null;
+        }
         return new TileCoord(TileIDToCoord.get(tile_id));
     }
 }

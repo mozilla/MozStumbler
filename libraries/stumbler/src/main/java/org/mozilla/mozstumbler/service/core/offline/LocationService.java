@@ -55,13 +55,18 @@ public class LocationService implements IOfflineLocationService {
     private IntRecordTrie loadTrie() {
         String fmt = "<" + new String(new char[BSSID_DUPLICATES]).replace("\0", "i");
         IntRecordTrie recordTrie = new IntRecordTrie(fmt);
-        File f = new File(sdcardArchivePath() +"/offline.record_trie");
+        File f = new File(sdcardArchivePath() + "/offline.record_trie");
+
+        if (!f.exists()) {
+            return null;
+        }
         recordTrie.mmap(f.getAbsolutePath());
         return recordTrie;
     }
 
     @Override
     public IResponse search(JSONObject mlsGeoLocate, Map<String, String> headers, boolean precompressed) {
+        if (trie == null) return null;
         MLSJSONObject mlsJson = null;
         try {
             mlsJson = new MLSJSONObject(mlsGeoLocate.toString());
@@ -78,9 +83,9 @@ public class LocationService implements IOfflineLocationService {
 
         // Build up a list
         Log.i(LOG_TAG, "Start BSSID for offline geo");
-        for (String k: bssidList) {
-            Log.i(LOG_TAG, "Using BSSID = ["+k+"] ");
-            for (int tile_id: trie.getResultSet(k)) {
+        for (String k : bssidList) {
+            Log.i(LOG_TAG, "Using BSSID = [" + k + "] ");
+            for (int tile_id : trie.getResultSet(k)) {
                 tile_points[tile_id] += 1;
             }
         }
@@ -94,7 +99,7 @@ public class LocationService implements IOfflineLocationService {
         }
 
         Set<Integer> maxpt_tileset = new HashSet<Integer>();
-        for (int i =0; i < tile_points.length; i++) {
+        for (int i = 0; i < tile_points.length; i++) {
             if (tile_points[i] == max_tilept) {
                 maxpt_tileset.add(i);
             }
@@ -102,27 +107,26 @@ public class LocationService implements IOfflineLocationService {
 
         if (maxpt_tileset.size() == 1) {
             Log.i(LOG_TAG, "Unique solution found: " + maxpt_tileset.toString());
-            for (int tile: maxpt_tileset) {
+            for (int tile : maxpt_tileset) {
                 return locationFix(tile);
             }
         } else {
             // We have to solve a tie breaker
             // square the points for the max point array
-            for (int pt: maxpt_tileset) {
+            for (int pt : maxpt_tileset) {
                 tile_points[pt] *= tile_points[pt];
             }
 
             int[] adj_tile_points = new int[TOTAL_POSSIBLE_TILES];
 
-            for (int tile: maxpt_tileset) {
+            for (int tile : maxpt_tileset) {
                 int new_pts = 0;
 
-                for (int adj_tileid: adjacent_tile(tile)) {
+                for (int adj_tileid : adjacent_tile(tile)) {
                     new_pts += tile_points[adj_tileid];
                 }
                 new_pts *= new_pts;
                 adj_tile_points[tile] = new_pts;
-
             }
 
             // Copy points over
@@ -133,7 +137,7 @@ public class LocationService implements IOfflineLocationService {
             // Recompute the max tile
             max_tilept = Ints.max(tile_points);
             maxpt_tileset = new HashSet<Integer>();
-            for (int i =0; i < tile_points.length; i++) {
+            for (int i = 0; i < tile_points.length; i++) {
                 if (tile_points[i] == max_tilept) {
                     maxpt_tileset.add(i);
                 }
@@ -146,7 +150,7 @@ public class LocationService implements IOfflineLocationService {
 
             Log.i(LOG_TAG, msg);
 
-            for (int tile_id: maxpt_tileset) {
+            for (int tile_id : maxpt_tileset) {
                 return locationFix(tile_id);
             }
         }
@@ -160,18 +164,32 @@ public class LocationService implements IOfflineLocationService {
         OrderedCityTiles city_tiles = new OrderedCityTiles();
 
         TileCoord tc = city_tiles.getCoord(tile_id);
-        result.add(city_tiles.getTileID(new TileCoord(tc.tile_x-1, tc.tile_y-1)));
-        result.add(city_tiles.getTileID(new TileCoord(tc.tile_x, tc.tile_y - 1)));
-        result.add(city_tiles.getTileID(new TileCoord(tc.tile_x + 1, tc.tile_y - 1)));
+        if (tc == null) {
+            // No adjacent tiles could be found.
+            Log.w(LOG_TAG, "Couldn't find adjacent tiles for tile_id=[" + tile_id + "]");
+            return result;
+        }
+        safe_add_adjacent_tile(city_tiles, result, tc.tile_x - 1, tc.tile_y - 1);
+        safe_add_adjacent_tile(city_tiles, result, tc.tile_x, tc.tile_y - 1);
+        safe_add_adjacent_tile(city_tiles, result, tc.tile_x + 1, tc.tile_y - 1);
 
-        result.add(city_tiles.getTileID(new TileCoord(tc.tile_x-1, tc.tile_y)) );
-        result.add(city_tiles.getTileID(new TileCoord(tc.tile_x+1, tc.tile_y)) );
+        safe_add_adjacent_tile(city_tiles, result, tc.tile_x - 1, tc.tile_y);
+        safe_add_adjacent_tile(city_tiles, result, tc.tile_x + 1, tc.tile_y);
 
-        result.add(city_tiles.getTileID(new TileCoord(tc.tile_x-1, tc.tile_y+1)) );
-        result.add(city_tiles.getTileID(new TileCoord(tc.tile_x  , tc.tile_y+1)) );
-        result.add(city_tiles.getTileID(new TileCoord(tc.tile_x-1, tc.tile_y+1)) );
+        safe_add_adjacent_tile(city_tiles, result, tc.tile_x - 1, tc.tile_y + 1);
+        safe_add_adjacent_tile(city_tiles, result, tc.tile_x, tc.tile_y + 1);
+        safe_add_adjacent_tile(city_tiles, result, tc.tile_x + 1, tc.tile_y + 1);
 
         return result;
+    }
+
+    private void safe_add_adjacent_tile(OrderedCityTiles city_tiles, ArrayList<Integer> result, int tile_x, int tile_y) {
+        int tile_id = city_tiles.getTileID(new TileCoord(tile_x, tile_y));
+        if (tile_id == -1) {
+            Log.w(LOG_TAG, "Invalid tile lookup for tx[" + tile_x + "], ty[" + tile_y + "]");
+            return;
+        }
+        result.add(tile_id);
     }
 
     private IResponse locationFix(Integer tile_id) {
@@ -179,6 +197,10 @@ public class LocationService implements IOfflineLocationService {
 
         OrderedCityTiles city_tiles = new OrderedCityTiles();
         TileCoord coord = city_tiles.getCoord(tile_id);
+        if (coord == null) {
+            Log.w(LOG_TAG, "Couldn't find co-ordinates for tile_id=[" + tile_id + "]");
+            return null;
+        }
 
         // There's only GPS, NETWORK and PASSIVE providers specified in
         // LocationManager.  Use

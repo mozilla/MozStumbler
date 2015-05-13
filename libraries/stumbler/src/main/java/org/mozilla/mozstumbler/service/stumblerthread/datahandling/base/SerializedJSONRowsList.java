@@ -62,6 +62,7 @@ public class SerializedJSONRowsList {
 
     public File[] mFiles;
     public long mFilesOnDiskBytes;
+    protected File mStorageDir;
 
     public SerializedJSONRowsList(SerializedJSONRowsList other) {
         if (other == null) {
@@ -73,14 +74,16 @@ public class SerializedJSONRowsList {
         }
 
         mFilesOnDiskBytes = other.mFilesOnDiskBytes;
+        mStorageDir = other.mStorageDir;
     }
 
-    public SerializedJSONRowsList() {
-
+    public SerializedJSONRowsList(File storageDir) {
+        mStorageDir = storageDir;
+        update();
     }
 
-    public void update(File directory) {
-        mFiles = directory.listFiles();
+    public void update() {
+        mFiles = mStorageDir.listFiles();
         if (mFiles == null) {
             return;
         }

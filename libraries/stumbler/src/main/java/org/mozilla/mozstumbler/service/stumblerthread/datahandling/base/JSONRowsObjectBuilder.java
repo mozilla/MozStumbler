@@ -8,7 +8,6 @@ import org.mozilla.mozstumbler.service.Prefs;
 import org.mozilla.mozstumbler.service.utils.Zipper;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-
 public class JSONRowsObjectBuilder {
     // Once this size is reached, data should be persisted to disk
     public static final int MAX_ROWS_IN_MEMORY = 50;

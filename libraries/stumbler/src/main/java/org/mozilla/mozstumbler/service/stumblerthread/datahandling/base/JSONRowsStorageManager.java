@@ -68,8 +68,12 @@ public class JSONRowsStorageManager {
             mStorageDir.mkdirs();
         }
 
-        mFileList = new SerializedJSONRowsList();
-        mFileList.update(mStorageDir);
+        mFileList = createFileList(mStorageDir);
+        mFileList.update();
+    }
+
+    protected SerializedJSONRowsList createFileList(File storageDir) {
+        return new SerializedJSONRowsList(storageDir);
     }
 
     public static String getSystemStorageDir(Context c) {
@@ -216,7 +220,7 @@ public class JSONRowsStorageManager {
                 }
             }
         }
-        mFileList.update(mStorageDir);
+        mFileList.update();
         return true;
     }
 
@@ -274,7 +278,7 @@ public class JSONRowsStorageManager {
 
         final File file = new File(mStorageDir, data.filename);
         boolean ok = file.delete();
-        mFileList.update(mStorageDir);
+        mFileList.update();
         return ok;
     }
 
@@ -293,7 +297,7 @@ public class JSONRowsStorageManager {
             f.delete();
         }
 
-        mFileList.update(mStorageDir);
+        mFileList.update();
     }
 
     private void notifyStorageIsEmpty(boolean isEmpty) {

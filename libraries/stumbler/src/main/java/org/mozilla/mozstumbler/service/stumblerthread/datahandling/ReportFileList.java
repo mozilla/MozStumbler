@@ -15,22 +15,15 @@ public class ReportFileList extends SerializedJSONRowsList {
     protected int mWifiCount;
     protected int mCellCount;
 
-    public ReportFileList() {
+    public ReportFileList(File storageDir) {
+        super(storageDir);
     }
 
     public ReportFileList(ReportFileList other) {
-        if (other == null) {
-            return;
-        }
-
-        if (other.mFiles != null) {
-            mFiles = other.mFiles.clone();
-        }
-
+        super(other);
         mReportCount = other.mReportCount;
         mWifiCount = other.mWifiCount;
         mCellCount = other.mCellCount;
-        mFilesOnDiskBytes = other.mFilesOnDiskBytes;
     }
 
     public void update(File directory) {

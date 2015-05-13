@@ -8,6 +8,7 @@ import android.content.Context;
 
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.base.SerializedJSONRows;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.base.JSONRowsStorageManager;
+import org.mozilla.mozstumbler.service.stumblerthread.datahandling.base.SerializedJSONRowsList;
 import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
 import java.io.File;
@@ -47,7 +48,6 @@ public class DataStorageManager extends JSONRowsStorageManager implements IDataS
         FILENAME_PREFIX = "report";
         mPersistedOnDiskUploadStats = new PersistedStats(getSystemStorageDir(c), c);
         mInMemoryActiveJSONRows = new ReportBatchBuilder();
-        mFileList = new ReportFileList();
     }
 
     public static synchronized void createGlobalInstance(Context context, StorageIsEmptyTracker tracker) {
@@ -155,5 +155,10 @@ public class DataStorageManager extends JSONRowsStorageManager implements IDataS
     @Override
     public synchronized void incrementSyncStats(long bytesSent, long reports, long cells, long wifis) {
         mPersistedOnDiskUploadStats.incrementSyncStats(bytesSent, reports, cells, wifis);
+    }
+
+    @Override
+    protected SerializedJSONRowsList createFileList(File storageDir) {
+        return new ReportFileList(storageDir);
     }
 }

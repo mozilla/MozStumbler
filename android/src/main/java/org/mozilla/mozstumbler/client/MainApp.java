@@ -26,6 +26,7 @@ import org.acra.annotation.ReportsCrashes;
 import org.acra.sender.HttpSender;
 import org.mozilla.mozstumbler.BuildConfig;
 import org.mozilla.mozstumbler.R;
+import org.mozilla.mozstumbler.client.leaderboard.LBStumblerBundleReceiver;
 import org.mozilla.mozstumbler.client.subactivities.DeveloperActivity;
 import org.mozilla.mozstumbler.client.subactivities.LogActivity;
 import org.mozilla.mozstumbler.client.util.NotificationUtil;
@@ -36,8 +37,7 @@ import org.mozilla.mozstumbler.service.core.http.ILocationService;
 import org.mozilla.mozstumbler.service.core.logging.MockAcraLog;
 import org.mozilla.mozstumbler.service.stumblerthread.Reporter;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageConstants;
-import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageManager;
-import org.mozilla.mozstumbler.service.stumblerthread.datahandling.IDataStorageManager;
+import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageManager;;
 import org.mozilla.mozstumbler.service.stumblerthread.motiondetection.MotionSensor;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.ISimulatorService;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.ScanManager;
@@ -85,6 +85,7 @@ public class MainApp extends Application
 
     // These track the state of the currently running service
     private ScanManager.ScannerState scannerState = ScannerState.STOPPED;
+    private LBStumblerBundleReceiver mLeaderboard;
 
 
     boolean isStumblerStopped() {
@@ -272,7 +273,7 @@ public class MainApp extends Application
         Intent intent = new Intent(this, ClientStumblerService.class);
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
 
-
+        mLeaderboard = new LBStumblerBundleReceiver(this);
     }
 
     private void checkSimulationPermission() {
@@ -321,7 +322,7 @@ public class MainApp extends Application
             mMainActivity.get().stop();
         }
 
-        AsyncUploader uploader = new AsyncUploaderMLS((DataStorageManager)DataStorageManager.getInstance());
+        AsyncUploader uploader = new AsyncUploaderMLS((DataStorageManager)DataStorageManager.getInstance(), this);
         AsyncUploadParam param = new AsyncUploadParam(
                 ClientPrefs.getInstance(this).getUseWifiOnly(),
                 new NetworkInfo(this).isWifiAvailable(),

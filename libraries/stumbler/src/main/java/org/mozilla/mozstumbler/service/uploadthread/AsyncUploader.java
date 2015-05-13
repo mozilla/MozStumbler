@@ -10,13 +10,11 @@ import android.util.Log;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.Prefs;
 import org.mozilla.mozstumbler.service.core.http.HTTPResponse;
-import org.mozilla.mozstumbler.service.core.http.ILocationService;
 import org.mozilla.mozstumbler.service.core.http.IResponse;
-import org.mozilla.mozstumbler.service.core.http.MLS;
+import org.mozilla.mozstumbler.service.core.http.ISubmitService;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.base.JSONRowsStorageManager;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.base.SerializedJSONRows;
 import org.mozilla.mozstumbler.service.utils.Zipper;
-import org.mozilla.mozstumbler.svclocator.ServiceLocator;
 import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
 import java.util.HashMap;
@@ -42,12 +40,11 @@ import java.util.concurrent.atomic.AtomicLong;
 * initiating execution of AsyncUploader.
 *
 * */
-public class AsyncUploader extends AsyncTask<AsyncUploadParam, AsyncProgressListenerStatusWrapper, Void> {
+public abstract class AsyncUploader extends AsyncTask<AsyncUploadParam, AsyncProgressListenerStatusWrapper, Void> {
     public static final AtomicLong sTotalBytesUploadedThisSession = new AtomicLong();
     public static final AtomicBoolean isUploading = new AtomicBoolean();
     private static final String LOG_TAG = LoggerUtil.makeLogTag(AsyncUploader.class);
     private static AsyncUploaderListener sAsyncListener;
-    ILocationService mls = (ILocationService) ServiceLocator.getInstance().getService(ILocationService.class);
     protected final JSONRowsStorageManager storageManager;
 
     public AsyncUploader(JSONRowsStorageManager storageManager) {
@@ -59,6 +56,8 @@ public class AsyncUploader extends AsyncTask<AsyncUploadParam, AsyncProgressList
     public static void setGlobalUploadListener(AsyncUploaderListener listener) {
         sAsyncListener = listener;
     }
+
+    protected abstract ISubmitService getSubmitter();
 
     @Override
     protected Void doInBackground(AsyncUploadParam... params) {
@@ -78,8 +77,6 @@ public class AsyncUploader extends AsyncTask<AsyncUploadParam, AsyncProgressList
             sAsyncListener.onUploadProgress(true);
             publishProgress(wrapper);
         }
-
-
 
         uploadReports(param);
 
@@ -112,17 +109,12 @@ public class AsyncUploader extends AsyncTask<AsyncUploadParam, AsyncProgressList
         long totalBytesSent = 0;
         HashMap<String, Integer> tally = new HashMap<String, Integer>();
 
-        if (param.useWifiOnly && param.isWifiAvailable) {
-            if (AppGlobals.isDebug) {
-                Log.d(LOG_TAG, "not on WiFi, not sending");
-            }
+        if (!checkCanUpload(param)) {
             return;
         }
 
         SerializedJSONRows batch = storageManager.getFirstBatch();
-        HashMap<String, String> headers = new HashMap<String, String>();
-        headers.put(MLS.EMAIL_HEADER, param.emailAddress);
-        headers.put(MLS.NICKNAME_HEADER, param.nickname);
+        HashMap<String, String> headers = getHeaders(param);
 
         Prefs prefs = Prefs.getInstanceWithoutContext();
         while (batch != null) {
@@ -135,14 +127,13 @@ public class AsyncUploader extends AsyncTask<AsyncUploadParam, AsyncProgressList
                         batch.data.length);
                 Log.i(LOG_TAG, "Simulation skipped upload.");
             } else {
-                result = mls.submit(batch.data, headers, true);
+                result = getSubmitter().submit(batch.data, headers, true);
             }
 
             if (result != null && result.isSuccessCode2XX()) {
                 totalBytesSent += result.bytesSent();
 
-
-                String logMsg = "MLS geosubmit: [HTTP Status:" + result.httpStatusCode() + "], [Bytes Sent:" + result.bytesSent() + "]";
+                String logMsg = "submit: [HTTP Status:" + result.httpStatusCode() + "], [Bytes Sent:" + result.bytesSent() + "]";
                 AppGlobals.guiLogInfo(logMsg, "#FFFFCC", true, false);
                 Log.d(LOG_TAG, logMsg);
 
@@ -179,12 +170,23 @@ public class AsyncUploader extends AsyncTask<AsyncUploadParam, AsyncProgressList
         tallyCompleted(tally, totalBytesSent);
     }
 
+    protected boolean checkCanUpload(AsyncUploadParam param) {
+        if (param.useWifiOnly && param.isWifiAvailable) {
+            if (AppGlobals.isDebug) {
+                Log.d(LOG_TAG, "not on WiFi, not sending");
+            }
+            return false;
+        }
+        return true;
+    }
+
     protected void tally(HashMap<String, Integer> tallyValues, SerializedJSONRows batch) {
     }
 
     protected void tallyCompleted(HashMap<String, Integer> tallyValues, long totalBytesSent) {
     }
 
+    protected abstract HashMap<String,String> getHeaders(AsyncUploadParam param);
 
     public interface AsyncUploaderListener {
         // This is called by Android on the UI thread

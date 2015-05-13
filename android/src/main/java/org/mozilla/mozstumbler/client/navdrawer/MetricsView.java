@@ -115,7 +115,8 @@ public class MetricsView {
                     return;
                 }
 
-                AsyncUploader uploader = new AsyncUploaderMLS((DataStorageManager)DataStorageManager.getInstance());
+                Context c = mView.getContext();
+                AsyncUploader uploader = new AsyncUploaderMLS((DataStorageManager)DataStorageManager.getInstance(), c);
                 AsyncUploadParam param = new AsyncUploadParam(false /* useWifiOnly */,
                         new NetworkInfo(mView.getContext()).isWifiAvailable(),
                         Prefs.getInstance(mView.getContext()).getNickname(),

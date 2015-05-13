@@ -138,7 +138,7 @@ public class UploadAlarmReceiver extends BroadcastReceiver {
             if (isWifiAvailable) {
                 Log.d(LOG_TAG, "Alarm upload(), call AsyncUploader");
 
-                AsyncUploader uploader = new AsyncUploaderMLS((DataStorageManager)DataStorageManager.getInstance());
+                AsyncUploader uploader = new AsyncUploaderMLS((DataStorageManager)DataStorageManager.getInstance(), this);
                 AsyncUploadParam param = new AsyncUploadParam(
                         Prefs.getInstance(this).getUseWifiOnly(),
                         isWifiAvailable,

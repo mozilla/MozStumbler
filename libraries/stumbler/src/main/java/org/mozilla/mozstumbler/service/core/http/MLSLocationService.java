@@ -10,7 +10,7 @@ import org.mozilla.mozstumbler.svclocator.ServiceLocator;
 
 import java.util.Map;
 
-public class MLS implements ILocationService {
+public class MLSLocationService implements ILocationService {
     public static final String NICKNAME_HEADER = "X-Nickname";
     public static final String EMAIL_HEADER = "X-Email";
     private static final String SEARCH_URL = "https://location.services.mozilla.com/v1/geolocate";
@@ -19,7 +19,7 @@ public class MLS implements ILocationService {
 
     private String mozApiKey;
 
-    public MLS() {}
+    public MLSLocationService() {}
 
     public IResponse submit(byte[] data, Map<String, String> headers, boolean precompressed) {
         if (mozApiKey == null) {

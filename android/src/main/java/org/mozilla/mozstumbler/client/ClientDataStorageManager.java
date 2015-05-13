@@ -65,7 +65,7 @@ public class ClientDataStorageManager extends DataStorageManager {
             ok = file.delete();
         }
 
-        mFileList.update(mStorageDir);
+        mFileList.update();
         return ok;
     }
 

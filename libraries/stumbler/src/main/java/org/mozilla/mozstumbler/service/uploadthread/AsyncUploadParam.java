@@ -7,8 +7,8 @@ package org.mozilla.mozstumbler.service.uploadthread;
 public class AsyncUploadParam {
 
     final boolean useWifiOnly;
-    final String nickname;
-    final String emailAddress;
+    public final String nickname;
+    public final String emailAddress;
     final boolean isWifiAvailable;
 
     public AsyncUploadParam(boolean wifiOnly,

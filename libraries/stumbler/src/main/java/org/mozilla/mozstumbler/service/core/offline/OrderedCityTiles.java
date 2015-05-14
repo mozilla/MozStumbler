@@ -24,7 +24,6 @@ public class OrderedCityTiles {
 
     public OrderedCityTiles() {
         parse_csv();
-
     }
 
     private void parse_csv() {
@@ -33,7 +32,7 @@ public class OrderedCityTiles {
         try {
             fileReader = new BufferedReader(new FileReader(LocationService.sdcardArchivePath()+"/ordered_city.csv"));
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            Log.e(LOG_TAG, "Can't open file", e);
         }
 
         //Read the file line by line
@@ -41,7 +40,7 @@ public class OrderedCityTiles {
         int lineNum = 0;
         try {
             while ((line = fileReader.readLine()) != null) {
-                TileCoord tc = new TileCoord(line);
+                SmartTile tc = new SmartTile(line);
                 CoordToTileID.put(tc.toString(), lineNum);
                 TileIDToCoord.put(lineNum, tc.toString());
                 lineNum += 1;
@@ -51,7 +50,7 @@ public class OrderedCityTiles {
         }
     }
 
-    public int getTileID(TileCoord tc) {
+    public int getTileID(SmartTile tc) {
         String key = tc.toString();
         if (!CoordToTileID.containsKey(key)) {
             return -1;
@@ -59,10 +58,10 @@ public class OrderedCityTiles {
         return CoordToTileID.get(tc.toString());
     }
 
-    public TileCoord getCoord(int tile_id) {
+    public SmartTile getCoord(int tile_id) {
         if (!TileIDToCoord.containsKey(tile_id)) {
             return null;
         }
-        return new TileCoord(TileIDToCoord.get(tile_id));
+        return new SmartTile(TileIDToCoord.get(tile_id));
     }
 }

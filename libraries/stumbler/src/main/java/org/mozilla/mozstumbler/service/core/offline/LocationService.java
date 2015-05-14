@@ -5,6 +5,7 @@
 package org.mozilla.mozstumbler.service.core.offline;
 
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Environment;
 
 import com.crankycoder.marisa.IntRecordTrie;
@@ -35,11 +36,15 @@ public class LocationService implements IOfflineLocationService {
 
     private final IntRecordTrie trie;
 
+    private static final int ZOOM_LEVEL = 18;
+
     private static final int BSSID_DUPLICATES = 100;
     private static final int TOTAL_POSSIBLE_TILES = 65536;
+    private final OrderedCityTiles city_tiles;
 
     public LocationService() {
         trie = loadTrie();
+        city_tiles = new OrderedCityTiles();
     }
 
     public static String sdcardArchivePath() {
@@ -108,7 +113,9 @@ public class LocationService implements IOfflineLocationService {
         if (maxpt_tileset.size() == 1) {
             Log.i(LOG_TAG, "Unique solution found: " + maxpt_tileset.toString());
             for (int tile : maxpt_tileset) {
-                return locationFix(tile);
+                Location loc = adjust_center_with_adjacent_wifi(tile, max_tilept, tile_points);
+                SmartTile tile_coord = new SmartTile(loc.getLatitude(), loc.getLongitude());
+                return locationFix(city_tiles.getTileID(tile_coord));
             }
         } else {
             // We have to solve a tie breaker
@@ -150,8 +157,41 @@ public class LocationService implements IOfflineLocationService {
 
             Log.i(LOG_TAG, msg);
 
-            for (int tile_id : maxpt_tileset) {
-                return locationFix(tile_id);
+            if (maxpt_tileset.size() == 1) {
+                // There is a single solution.
+                for (int tile_id : maxpt_tileset) {
+                    return locationFix(tile_id);
+                }
+            } else {
+                // Add adjacent points
+                // TODO: check for adjacency between 2 or more tile_ids
+                // and use that as an average to figure out which single tile
+                // we should return
+                Log.i(LOG_TAG, "Multiple solutions- take the average: " + maxpt_tileset);
+
+                Set<Integer> tiebreaking_set = new HashSet<Integer>();
+                List<Integer> maxpt_tilelist = new ArrayList<Integer>(maxpt_tileset);
+                for (int i = 0; i < maxpt_tilelist.size(); i++) {
+                    Integer pt = maxpt_tilelist.get(i);
+
+                    List<Integer> adjacent_tilelist = adjacent_tile(pt);
+                    HashSet<Integer> adjacent_tileset = new HashSet<Integer>(adjacent_tilelist);
+                    adjacent_tileset.retainAll(new HashSet<Integer>(maxpt_tilelist.subList(i+1, maxpt_tilelist.size())));
+                    if (adjacent_tileset.size() > 0) {
+                        tiebreaking_set.add(pt);
+                    }
+                }
+                double final_lat = 0;
+                double final_lon = 0;
+                for (Integer tie_tileid: tiebreaking_set) {
+                    SmartTile tmp_coord = city_tiles.getCoord(tie_tileid);
+                    final_lat += (tmp_coord.getLocation().getLatitude() * 1.0 / tiebreaking_set.size());
+                    final_lon += (tmp_coord.getLocation().getLongitude() * 1.0 / tiebreaking_set.size());
+                }
+
+                SmartTile final_coord = new SmartTile(final_lat, final_lon);
+                Log.i(LOG_TAG, "Multiple solutions converging on : " + final_coord);
+                return locationFix(city_tiles.getTileID(final_coord));
             }
         }
 
@@ -161,9 +201,8 @@ public class LocationService implements IOfflineLocationService {
 
     private List<Integer> adjacent_tile(int tile_id) {
         ArrayList<Integer> result = new ArrayList<Integer>();
-        OrderedCityTiles city_tiles = new OrderedCityTiles();
 
-        TileCoord tc = city_tiles.getCoord(tile_id);
+        SmartTile tc = city_tiles.getCoord(tile_id);
         if (tc == null) {
             // No adjacent tiles could be found.
             Log.w(LOG_TAG, "Couldn't find adjacent tiles for tile_id=[" + tile_id + "]");
@@ -184,7 +223,7 @@ public class LocationService implements IOfflineLocationService {
     }
 
     private void safe_add_adjacent_tile(OrderedCityTiles city_tiles, ArrayList<Integer> result, int tile_x, int tile_y) {
-        int tile_id = city_tiles.getTileID(new TileCoord(tile_x, tile_y));
+        int tile_id = city_tiles.getTileID(new SmartTile(tile_x, tile_y));
         if (tile_id == -1) {
             Log.w(LOG_TAG, "Invalid tile lookup for tx[" + tile_x + "], ty[" + tile_y + "]");
             return;
@@ -195,8 +234,7 @@ public class LocationService implements IOfflineLocationService {
     private IResponse locationFix(Integer tile_id) {
         IResponse result = null;
 
-        OrderedCityTiles city_tiles = new OrderedCityTiles();
-        TileCoord coord = city_tiles.getCoord(tile_id);
+        SmartTile coord = city_tiles.getCoord(tile_id);
         if (coord == null) {
             Log.w(LOG_TAG, "Couldn't find co-ordinates for tile_id=[" + tile_id + "]");
             return null;
@@ -214,4 +252,64 @@ public class LocationService implements IOfflineLocationService {
         Log.i(LOG_TAG, "Sending back location: " + jsonLocation.toString());
         return result;
     }
+
+    private Location adjust_center_with_adjacent_wifi(int center_tile_id, int center_height, int[] tile_points) {
+        SmartTile coord = city_tiles.getCoord(center_tile_id);
+        Location loc = coord.getLocation();
+        double c_lat = loc.getLatitude();
+        double c_lon = loc.getLongitude();
+
+        Log.i(LOG_TAG, "Center is at : " + c_lat + ", " + c_lon);
+
+        List<HashMap<String, Double>> weighted_lat_lon = new ArrayList<HashMap<String, Double>>();
+
+        for (int adj_tileid: adjacent_tile(center_tile_id)) {
+            SmartTile adj_coord = city_tiles.getCoord(adj_tileid);
+            int adj_pts = tile_points[adj_tileid];
+            if (adj_pts > 0) {
+                Location adj_loc = adj_coord.getLocation();
+                Log.i(LOG_TAG, "Extra points at: " + adj_tileid + ", " + adj_pts);
+                Log.i(LOG_TAG, "Lat Lon for "+
+                        adj_tileid+
+                        " is " +
+                        adj_loc.getLatitude() +
+                        ", " +
+                        adj_loc.getLongitude());
+
+                HashMap<String, Double> v = new HashMap<String, Double>();
+                v.put("adj_pts", (double) adj_pts);
+                v.put("lat", adj_loc.getLatitude());
+                v.put("lon", adj_loc.getLongitude());
+
+                weighted_lat_lon.add(v);
+            }
+        }
+
+        double w_lat = 0;
+        double w_lon = 0;
+
+        double total_shift_weight = 0;
+        for (HashMap<String, Double> v: weighted_lat_lon) {
+            w_lat += v.get("lat") * v.get("adj_pts");
+            w_lon += v.get("lon") * v.get("adj_pts");
+            total_shift_weight += v.get("adj_pts");
+        }
+
+        w_lat /= total_shift_weight;
+        w_lon /= total_shift_weight;
+        Log.i(LOG_TAG, "Adjacent w_lat, w_lon : " + w_lat + ", " + w_lon);
+
+        double n_lat = c_lat * 0.5 + w_lat * 0.5;
+        double n_lon = c_lon * 0.5 + w_lat * 0.5;
+
+        Location result = new Location(LocationManager.NETWORK_PROVIDER);
+        result.setLatitude(n_lat);
+        result.setLongitude(n_lon);
+        result.setAccuracy(150);
+
+        Log.i(LOG_TAG, "Recomputed lat/lon: ["+result.getLatitude()+"], ["+result.getLongitude()+"]");
+        return result;
+    }
+
+
 }

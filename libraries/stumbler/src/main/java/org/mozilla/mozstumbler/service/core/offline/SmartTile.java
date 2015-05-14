@@ -7,17 +7,43 @@ package org.mozilla.mozstumbler.service.core.offline;
 import android.location.Location;
 import android.location.LocationManager;
 
-public class TileCoord {
+/*
+ This is a convenience class which can convert to and from slippy tiles coordinates to lat/lon
+ by returning a Location object.
+ */
+public class SmartTile {
     private static final double ZOOM = 18;
     public final int tile_x;
     public final int tile_y;
 
-    public TileCoord(int x, int y) {
+    /*
+     Create a tile based on lat/lon
+     */
+    public SmartTile(double lat, double lon) {
+        final int zoom = (int) ZOOM;
+        int xtile = (int) Math.floor((lon + 180) / 360 * (1 << zoom));
+        int ytile = (int) Math.floor((1 - Math.log(Math.tan(Math.toRadians(lat)) + 1 / Math.cos(Math.toRadians(lat))) / Math.PI) / 2 * (1 << zoom));
+        if (xtile < 0)
+            xtile = 0;
+        if (xtile >= (1 << zoom))
+            xtile = ((1 << zoom) - 1);
+        if (ytile < 0)
+            ytile = 0;
+        if (ytile >= (1 << zoom))
+            ytile = ((1 << zoom) - 1);
+        tile_x = xtile;
+        tile_y = ytile;
+    }
+
+    /*
+     Create a tile based on x/y co-ordinates
+     */
+    public SmartTile(int x, int y) {
         tile_x = x;
         tile_y = y;
     }
 
-    public TileCoord(String line) {
+    public SmartTile(String line) {
         //Get all tokens available in line
         String[] tokens = line.split(",");
         tokens[0] = tokens[0].replaceAll("\\s+", "");

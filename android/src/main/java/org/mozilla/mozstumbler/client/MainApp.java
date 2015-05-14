@@ -32,8 +32,10 @@ import org.mozilla.mozstumbler.client.subactivities.LogActivity;
 import org.mozilla.mozstumbler.client.util.NotificationUtil;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.Prefs;
+import org.mozilla.mozstumbler.service.core.http.HttpUtil;
 import org.mozilla.mozstumbler.service.core.http.IHttpUtil;
 import org.mozilla.mozstumbler.service.core.http.ILocationService;
+import org.mozilla.mozstumbler.service.core.http.MLSLocationService;
 import org.mozilla.mozstumbler.service.core.logging.MockAcraLog;
 import org.mozilla.mozstumbler.service.stumblerthread.Reporter;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageConstants;
@@ -41,6 +43,7 @@ import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageMa
 import org.mozilla.mozstumbler.service.stumblerthread.motiondetection.MotionSensor;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.ISimulatorService;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.ScanManager;
+import org.mozilla.mozstumbler.service.stumblerthread.scanners.SimulatorService;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.WifiScanner;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner.CellScanner;
 import org.mozilla.mozstumbler.service.uploadthread.AsyncUploadParam;
@@ -50,6 +53,7 @@ import org.mozilla.mozstumbler.service.utils.NetworkInfo;
 import org.mozilla.mozstumbler.svclocator.ServiceConfig;
 import org.mozilla.mozstumbler.svclocator.ServiceLocator;
 import org.mozilla.mozstumbler.svclocator.services.ISystemClock;
+import org.mozilla.mozstumbler.svclocator.services.SystemClock;
 import org.mozilla.mozstumbler.svclocator.services.log.ILogger;
 import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 import org.mozilla.osmdroid.tileprovider.constants.TileFilePath;
@@ -134,14 +138,10 @@ public class MainApp extends Application
 
         ServiceConfig result = new ServiceConfig();
         // All classes here must have an argument free constructor.
-        result.put(IHttpUtil.class,
-                ServiceConfig.load("org.mozilla.mozstumbler.service.core.http.HttpUtil"));
-        result.put(ISystemClock.class,
-                ServiceConfig.load("org.mozilla.mozstumbler.svclocator.services.SystemClock"));
-        result.put(ILocationService.class,
-                ServiceConfig.load("org.mozilla.mozstumbler.service.core.http.MLS"));
-        result.put(ISimulatorService.class,
-                ServiceConfig.load("org.mozilla.mozstumbler.service.stumblerthread.scanners.SimulatorService"));
+        result.put(IHttpUtil.class, ServiceConfig.load(HttpUtil.class.getName()));
+        result.put(ISystemClock.class, ServiceConfig.load(SystemClock.class.getName()));
+        result.put(ILocationService.class, ServiceConfig.load(MLSLocationService.class.getName()));
+        result.put(ISimulatorService.class, ServiceConfig.load(SimulatorService.class.getName()));
 
         if (BuildConfig.BUILD_TYPE.equals("unittest")) {
             result.put(ILogger.class, ServiceConfig.load("org.mozilla.mozstumbler.svclocator.services.log.UnittestLogger"));

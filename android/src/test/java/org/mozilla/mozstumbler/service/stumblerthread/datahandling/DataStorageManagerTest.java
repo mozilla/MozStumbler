@@ -48,7 +48,8 @@ public class DataStorageManagerTest {
             fail();
         }
         try {
-            return (Integer) field.get(dm);
+            JSONRowsObjectBuilder obj = (JSONRowsObjectBuilder) field.get(dm);
+            return obj.entriesCount();
         } catch (IllegalAccessException e) {
             e.printStackTrace();
             fail();

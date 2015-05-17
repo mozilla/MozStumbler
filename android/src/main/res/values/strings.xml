@@ -65,7 +65,7 @@
     <string name="file_bug_sender_name">Your Name:</string>
     <string name="file_bug_sender_name_hint">Optional</string>
     <string name="file_bug_sender_email">Your Email:</string>
-    <string name="file_bug_sender_email_hint">Optional</string>
+    <string name="file_bug_sender_email_hint">Email is required</string>
     <string name="file_bug_name">Bug Title:</string>
     <string name="file_bug_name_hint">Descriptive title for the bug</string>
     <string name="file_bug_description">Bug Description:</string>

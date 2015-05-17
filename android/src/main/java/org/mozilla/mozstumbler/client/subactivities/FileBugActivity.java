@@ -57,7 +57,7 @@ public class FileBugActivity extends ActionBarActivity {
         EditText bugDescription = (EditText) findViewById(R.id.bug_report_description);
         EditText bugReproduction = (EditText) findViewById(R.id.bug_report_reproduction);
 
-        if (verifyInput(bugName, bugDescription, bugReproduction)) {
+        if (verifyInput(senderEmail, bugName, bugDescription, bugReproduction)) {
 
             // Set custom data fields
             ACRA.getErrorReporter().putCustomData(SENDER_NAME, senderName.getText().toString());

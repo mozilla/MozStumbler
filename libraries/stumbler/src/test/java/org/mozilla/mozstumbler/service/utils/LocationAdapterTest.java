@@ -4,6 +4,9 @@
 
 package org.mozilla.mozstumbler.service.utils;
 
+import android.location.Location;
+import android.location.LocationManager;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Test;
@@ -49,8 +52,21 @@ public class LocationAdapterTest {
     @Test
     public void testLocationAdaption() throws JSONException {
         JSONObject expected = getExpectedLocation();
+
         assertEquals(LocationAdapter.getLat(expected), LAT, DELTA);
         assertEquals(LocationAdapter.getLng(expected), LNG, DELTA);
         assertEquals(LocationAdapter.getAccuracy(expected), ACCURACY, DELTA);
+
+        Location roundTrip = new Location(LocationManager.GPS_PROVIDER); // a string
+
+        roundTrip.setAccuracy(ACCURACY);
+        roundTrip.setLongitude(LNG);
+        roundTrip.setLatitude(LAT);
+
+        JSONObject actual = LocationAdapter.toJSON(roundTrip);
+        assertEquals(LocationAdapter.getLat(actual), LAT, DELTA);
+        assertEquals(LocationAdapter.getLng(actual), LNG, DELTA);
+        assertEquals(LocationAdapter.getAccuracy(actual ), ACCURACY, DELTA);
+
     }
 }

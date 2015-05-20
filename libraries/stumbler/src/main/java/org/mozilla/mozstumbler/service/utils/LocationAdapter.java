@@ -12,6 +12,8 @@ import org.json.JSONObject;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
+import java.text.DecimalFormat;
+
 /*
     A simple adapter for deserializing JSON to Location objects from the
     geolocate API.
@@ -26,6 +28,8 @@ public class LocationAdapter {
     private static final String JSON_LATITUDE = "lat";
     private static final String JSON_LONGITUDE = "lng";
     private static final String JSON_ACCURACY = "accuracy";
+    static DecimalFormat floatFormatter = new DecimalFormat("#.#########");
+
 
     public static Location fromJSON(JSONObject jsonObj) {
         Location location = new Location(AppGlobals.LOCATION_ORIGIN_INTERNAL);
@@ -34,6 +38,49 @@ public class LocationAdapter {
         location.setAccuracy(getAccuracy(jsonObj));
         return location;
     }
+
+    public static JSONObject toJSON(Location loc) {
+        JSONObject jobj = new JSONObject();
+
+
+        double lat = loc.getLatitude();
+        double lon = loc.getLongitude();
+        float acc = loc.getAccuracy();
+
+        setLat(jobj, lat);
+        setLon(jobj, lon);
+        setAccuracy(jobj, acc);
+
+        return jobj;
+    }
+
+    private static void setLat(JSONObject jobject, double v) {
+        setFloat(jobject, JSON_LATITUDE, v, true);
+    }
+
+    private static void setLon(JSONObject jobject, double v) {
+        setFloat(jobject, JSON_LONGITUDE, v, true);
+    }
+
+    private static void setAccuracy(JSONObject jobject, double v) {
+        setFloat(jobject, JSON_ACCURACY, v, false);
+    }
+
+    private static void setFloat(JSONObject jobject, String field_name, double v, boolean useLocation) {
+        try {
+            if (useLocation) {
+                if (!jobject.has("location")) {
+                    jobject.put("location", new JSONObject());
+                }
+                jobject.getJSONObject("location").put(field_name, floatFormatter.format(v));
+            } else {
+                jobject.put(field_name, floatFormatter.format(v));
+            }
+        } catch (JSONException e) {
+            Log.e(LOG_TAG, "Error setting " + field_name + " on JSON: ", e);
+        }
+    }
+
 
     /*
     We should deserialize the JSONObject in one shot and provide

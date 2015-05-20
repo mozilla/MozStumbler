@@ -57,7 +57,7 @@ public class FileBugActivity extends ActionBarActivity {
         EditText bugDescription = (EditText) findViewById(R.id.bug_report_description);
         EditText bugReproduction = (EditText) findViewById(R.id.bug_report_reproduction);
 
-        if (verifyInput(senderEmail, bugName, bugDescription, bugReproduction)) {
+        if (verifyFieldNotEmpty(senderEmail, bugName, bugDescription, bugReproduction)) {
 
             // Set custom data fields
             ACRA.getErrorReporter().putCustomData(SENDER_NAME, senderName.getText().toString());
@@ -78,8 +78,7 @@ public class FileBugActivity extends ActionBarActivity {
         }
     }
 
-    // Making sure input isn't just blank spaces for required fields
-    private boolean verifyInput(EditText... args) {
+    private boolean verifyFieldNotEmpty(EditText... args) {
         boolean allValid = true;
         for (EditText field : args) {
             String input = field.getText().toString();

@@ -69,7 +69,7 @@
     <string name="delete_file">删除文件</string>
     <string name="kml_file_saved">KML 已保存</string>
     <string name="share_after_kml_saved">文件已保存到设备，是否分享文件？</string>
-    <string name="enter_email">输入 e-mail 地址 (可选)</string>
+    <string name="enter_email">输入 e-mail 地址 </string>
     <string name="enter_email_title">Email：</string>
     <string name="enter_email_longtext">你的 email 地址不会被展示给其他人，只会用于你自己的报告</string>
     <string name="drawer_open">显示抽屉</string>

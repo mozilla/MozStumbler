@@ -66,7 +66,7 @@
     <string name="file_bug_sender_name">您的姓名:</string>
     <string name="file_bug_sender_name_hint">非必填</string>
     <string name="file_bug_sender_email">您的 Email 地址:</string>
-    <string name="file_bug_sender_email_hint">非必填</string>
+    <string name="file_bug_sender_email_hint">Email 是必須的</string>
     <string name="file_bug_name">Bug 標題:</string>
     <string name="file_bug_name_hint">Bug 的簡要標題</string>
     <string name="file_bug_description">Bug 描述:</string>

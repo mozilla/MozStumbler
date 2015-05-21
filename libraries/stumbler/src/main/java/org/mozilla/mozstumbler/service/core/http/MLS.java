@@ -22,11 +22,9 @@ public class MLS implements ILocationService {
     public MLS() {}
 
     public IResponse submit(byte[] data, Map<String, String> headers, boolean precompressed) {
-        if (data.length > 0) {
-            if (data[0] == '/' ) {
-                // This really shouldn't happen, but it does on FDroid
-                return null;
-            }
+        if (data.length > 0 && data[0] == '/') {
+            // This really shouldn't happen, but it does on FDroid
+            return null;
         }
         if (mozApiKey == null) {
             Prefs p = Prefs.getInstanceWithoutContext();

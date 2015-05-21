@@ -13,11 +13,11 @@ import java.util.HashMap;
 import static junit.framework.Assert.assertNull;
 
 @RunWith(RobolectricTestRunner.class)
-public class MLSTest {
+public class MLSLocationServiceTest {
 
     @Test
     public void testSubmitIgnoresFilePaths() {
-        MLS mls = new MLS();
+        MLSLocationService mls = new MLSLocationService();
         byte[] pathData = "/data/data/org.fdroid.fdroid/files/fdroid/repo/index.html".getBytes();
         IResponse response = mls.submit(pathData, new HashMap<String, String>(), false);
         assertNull(response);

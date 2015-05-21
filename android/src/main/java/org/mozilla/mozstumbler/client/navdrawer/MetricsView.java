@@ -34,9 +34,12 @@ import org.mozilla.mozstumbler.client.subactivities.PreferencesScreen;
 import org.mozilla.mozstumbler.client.util.NotificationUtil;
 import org.mozilla.mozstumbler.service.Prefs;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageConstants;
+import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageManager;
+import org.mozilla.mozstumbler.service.stumblerthread.datahandling.IDataStorageManager;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.PersistedStats;
 import org.mozilla.mozstumbler.service.uploadthread.AsyncUploadParam;
 import org.mozilla.mozstumbler.service.uploadthread.AsyncUploader;
+import org.mozilla.mozstumbler.service.uploadthread.AsyncUploaderMLS;
 import org.mozilla.mozstumbler.service.utils.NetworkInfo;
 import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
@@ -112,7 +115,8 @@ public class MetricsView {
                     return;
                 }
 
-                AsyncUploader uploader = new AsyncUploader();
+                Context c = mView.getContext();
+                AsyncUploader uploader = new AsyncUploaderMLS((DataStorageManager)DataStorageManager.getInstance(), c);
                 AsyncUploadParam param = new AsyncUploadParam(false /* useWifiOnly */,
                         new NetworkInfo(mView.getContext()).isWifiAvailable(),
                         Prefs.getInstance(mView.getContext()).getNickname(),

@@ -38,7 +38,7 @@ import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
 import java.io.File;
 
-import static org.mozilla.mozstumbler.service.stumblerthread.datahandling.ClientDataStorageManager.sdcardArchivePath;
+import static org.mozilla.mozstumbler.client.ClientDataStorageManager.sdcardArchivePath;
 
 public class DeveloperActivity extends ActionBarActivity {
 

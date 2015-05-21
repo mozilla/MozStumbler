@@ -42,7 +42,7 @@ public class PersistedStats {
         mContext = context.getApplicationContext();
     }
 
-    void forceBroadcastOfSyncStats() {
+    public void forceBroadcastOfSyncStats() {
         sendToListeners(readSyncStats());
     }
 

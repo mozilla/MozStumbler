@@ -4,6 +4,8 @@
 
 package org.mozilla.mozstumbler.service.stumblerthread.datahandling;
 
+import org.mozilla.mozstumbler.service.stumblerthread.datahandling.base.SerializedJSONRows;
+
 /*
  This interface just exists to firm up the public interface of the DataStorageManager
  */
@@ -26,7 +28,6 @@ public interface IDataStorageManager {
     // It feels like this method should be pushed behind the DataStorageManager implementation
     public void incrementSyncStats(long bytesSent, long reports, long cells, long wifis);
 
-
     // This is used only by the StumblerService on initial startup of the service in the
     // `onHandleIntent` method.  We use it to test if there are any files waiting to be uploaded
     // on initial process startup.
@@ -42,8 +43,8 @@ public interface IDataStorageManager {
     // all reports that are currently stored only in-memory.  getNextBatch will always hit disk.
     // We should extend the ReportBatchIterator to have knowledge of the in-memory reports
     // and implement java.util.Iterator to return the ReportBatch instances.
-    public ReportBatch getFirstBatch();
-    public ReportBatch getNextBatch();
+    public SerializedJSONRows getFirstBatch();
+    public SerializedJSONRows getNextBatch();
 
     // These 3 methods are *only* used to determine if we have stale data and if we should be
     // clearing it out.  We should collapse these into one method call and return a boolean
@@ -54,8 +55,7 @@ public interface IDataStorageManager {
 
     public void deleteAll();
 
-
     // delete should be pushed down into ReportBatch as it already has everything except
     // DataStorageManager::mReportsDir to do this work.
-    public boolean delete(String filename);
+    public boolean delete(SerializedJSONRows data);
 }

@@ -10,8 +10,10 @@ import org.junit.runner.RunWith;
 import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.service.Prefs;
 import org.mozilla.mozstumbler.service.core.logging.ClientLog;
-import org.mozilla.mozstumbler.service.stumblerthread.datahandling.ClientDataStorageManager;
+import org.mozilla.mozstumbler.client.ClientDataStorageManager;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageManager;
+import org.mozilla.mozstumbler.service.stumblerthread.datahandling.ReportBatch;
+import org.mozilla.mozstumbler.service.stumblerthread.datahandling.base.SerializedJSONRows;
 import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
@@ -103,13 +105,15 @@ public class DeveloperActivityTest {
         assertTrue(Prefs.getInstanceWithoutContext().isSaveStumbleLogs());
         assertTrue(ShadowToast.getTextOfLatestToast().startsWith(ctx.getString(R.string.create_log_archive_success)));
 
+        String filename = "foo.txt";
+
         // note that this 'reports' directory was created when the ClientDataStorageManager
         // was instantiated with createGlobalInstance()
-        String mockFilePath = DataStorageManager.getStorageDir(ctx) +
+        String mockFilePath = DataStorageManager.getSystemStorageDir(ctx) +
                 File.separator +
                 "/reports" +
                 File.separator +
-                "foo.txt";
+                filename;
 
         File fakeReport = new File(mockFilePath);
         ClientLog.d(LOG_TAG, "Trying to write fake report: [" + mockFilePath + "]");
@@ -126,7 +130,9 @@ public class DeveloperActivityTest {
 
         // Note that delete will automatically assume that the root path
         // is in the getStorageDir+'/reports' directory
-        assertTrue(dsm.delete("foo.txt"));
+        ReportBatch file = new ReportBatch(null, SerializedJSONRows.StorageState.ON_DISK, 0, 0, 0);
+        file.filename = filename;
+        assertTrue(dsm.delete(file));
 
         assertTrue(movedFile.exists());
         assertFalse(fakeReport.exists());

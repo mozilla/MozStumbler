@@ -4,16 +4,15 @@
 
 package org.mozilla.mozstumbler.service.stumblerthread.datahandling;
 
-public class ReportBatch {
-    public final String filename;
-    public final byte[] data;
+import org.mozilla.mozstumbler.service.stumblerthread.datahandling.base.SerializedJSONRows;
+
+public class ReportBatch extends SerializedJSONRows {
     public final int reportCount;
     public final int wifiCount;
     public final int cellCount;
 
-    public ReportBatch(String filename, byte[] data, int reportCount, int wifiCount, int cellCount) {
-        this.filename = filename;
-        this.data = data;
+    public ReportBatch(byte[] data, StorageState storageState, int reportCount, int wifiCount, int cellCount) {
+        super(data, storageState);
         this.reportCount = reportCount;
         this.wifiCount = wifiCount;
         this.cellCount = cellCount;

@@ -14,6 +14,7 @@ import android.util.Log;
 
 import org.mozilla.mozstumbler.service.Prefs;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageManager;
+import org.mozilla.mozstumbler.service.stumblerthread.datahandling.IDataStorageManager;
 import org.mozilla.mozstumbler.service.utils.NetworkInfo;
 import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
@@ -137,7 +138,7 @@ public class UploadAlarmReceiver extends BroadcastReceiver {
             if (isWifiAvailable) {
                 Log.d(LOG_TAG, "Alarm upload(), call AsyncUploader");
 
-                AsyncUploader uploader = new AsyncUploader();
+                AsyncUploader uploader = new AsyncUploaderMLS((DataStorageManager)DataStorageManager.getInstance(), this);
                 AsyncUploadParam param = new AsyncUploadParam(
                         Prefs.getInstance(this).getUseWifiOnly(),
                         isWifiAvailable,

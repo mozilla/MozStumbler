@@ -86,7 +86,7 @@ public class JSONRowsStorageManager {
         if (!dir.exists()) {
             boolean ok = dir.mkdirs();
             if (!ok) {
-                ClientLog.w(LOG_TAG, "getStorageDir: error in mkdirs()");
+                ClientLog.w(LOG_TAG, "getSystemStorageDir: error in mkdirs()");
                 Log.e(LOG_TAG, "Error creating storage directory: ["+dir.getAbsolutePath()+"]");
             }
         }

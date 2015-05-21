@@ -10,12 +10,13 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.base.JSONRowsStorageManager;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageConstants;
+import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
 import java.util.HashMap;
 
 class LBDataStorage extends JSONRowsStorageManager {
 
-    private static final String LOG_TAG = "LBDataStorage";
+    private static final String LOG_TAG = LoggerUtil.makeLogTag(LBDataStorage.class);
     public static final String KEY_GRID = "grid";
     public static final String KEY_CELL = "cellcount";
     public static final String KEY_WIFI = "wificount";
@@ -57,7 +58,7 @@ class LBDataStorage extends JSONRowsStorageManager {
             }
             mGridToRow.put(grid, json);
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(LOG_TAG, e.toString());
         }
     }
 

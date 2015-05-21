@@ -79,6 +79,9 @@ public class DataStorageManager extends JSONRowsStorageManager implements IDataS
     }
 
     private ReportBatch getFinalizedReportBatch() {
+        if (mInMemoryFinalizedJSONRowsObject == null) {
+            return null;
+        }
         assert(mInMemoryFinalizedJSONRowsObject instanceof ReportBatch);
         return (ReportBatch)mInMemoryFinalizedJSONRowsObject;
     }
@@ -96,7 +99,7 @@ public class DataStorageManager extends JSONRowsStorageManager implements IDataS
     @Override
     public synchronized int getQueuedReportCount() {
         int reportCount = getFileList().mReportCount + getReportBatchBuilder().entriesCount();
-        if (mInMemoryFinalizedJSONRowsObject != null) {
+        if (getFinalizedReportBatch() != null) {
             reportCount += getFinalizedReportBatch().reportCount;
         }
         return reportCount;
@@ -105,7 +108,7 @@ public class DataStorageManager extends JSONRowsStorageManager implements IDataS
     @Override
     public synchronized int getQueuedWifiCount() {
         int count = getFileList().mWifiCount + getReportBatchBuilder().getWifiCount();
-        if (mInMemoryFinalizedJSONRowsObject != null) {
+        if (getFinalizedReportBatch() != null) {
             count += getFinalizedReportBatch().wifiCount;
         }
         return count;
@@ -114,7 +117,7 @@ public class DataStorageManager extends JSONRowsStorageManager implements IDataS
     @Override
     public synchronized int getQueuedCellCount() {
         int count = getFileList().mCellCount + getReportBatchBuilder().getCellCount();
-        if (mInMemoryFinalizedJSONRowsObject != null) {
+        if (getFinalizedReportBatch() != null) {
             count += getFinalizedReportBatch().cellCount;
         }
         return count;
@@ -128,7 +131,7 @@ public class DataStorageManager extends JSONRowsStorageManager implements IDataS
     @Override
     public synchronized long getQueuedZippedDataSize() {
         long byteLength = mFileList.mFilesOnDiskBytes;
-        if (mInMemoryFinalizedJSONRowsObject != null) {
+        if (getFinalizedReportBatch() != null) {
             byteLength += mInMemoryFinalizedJSONRowsObject.data.length;
         }
         return byteLength;

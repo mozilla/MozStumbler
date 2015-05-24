@@ -69,7 +69,7 @@
     <string name="file_bug_sender_name">Imię i nazwisko:</string>
     <string name="file_bug_sender_name_hint">Opcjonalne</string>
     <string name="file_bug_sender_email">Adres e-mail:</string>
-    <string name="file_bug_sender_email_hint">Opcjonalne</string>
+    <string name="file_bug_sender_email_hint">Adres e-mail jest wymagany</string>
     <string name="file_bug_name">Tytuł błędu:</string>
     <string name="file_bug_name_hint">Opisowy tytuł błędu</string>
     <string name="file_bug_description">Opis błędu:</string>
@@ -130,9 +130,9 @@
     <string name="action_developer">Opcje programistyczne</string>
     <string name="developer_title">Opcje programistyczne</string>
     <string name="enable_option_show_mls_on_map">Włączenie zapytań położeń MLS</string>
-    <string name="enable_option_show_mls_on_map_summary">Wyświetla położenia usługi Mozilla Location Service (MLS) w obserwacjach.</string>
+    <string name="enable_option_show_mls_on_map_summary">Pobiera i wyświetla szacowane położenie usługi Mozilla Location Service (MLS) dla każdej obserwacji.</string>
     <!-- enable_option_show_mls_on_map_detailed_info: %1$s refers to upload_wifi_only_title -->
-    <string name="enable_option_show_mls_on_map_detailed_info">Wykorzystując nieco więcej pamięci i sieci, mapa może wyświetlać położenia MLS jako czerwone kropki połączone liniami z obserwacjami. Jeśli \"%1$s\" jest włączone, to nie będzie to działało podczas używania połączenia komórkowego.</string>
+    <string name="enable_option_show_mls_on_map_detailed_info">Wykorzystując nieco więcej pamięci i sieci, mapa może wyświetlać położenie MLS dla każdej obserwacji - tzn. położenie szacowane w oparciu o zebrane dane.\nPołożenia są wyświetlane jako czerwone kropki połączone liniami z obserwacjami. Im bliżej prawdziwego położenia GPS, tym dokładniejsza jest usługa Mozilla Location Service. Zebranie więcej danych spowoduje zwiększenie dokładności.\nJeśli \"%1$s\" jest włączone, to nie będzie to działało podczas używania połączenia komórkowego.</string>
     <string name="cell_plus_wifi_observation">Obserwacje sieci Wi-Fi i komórkowych</string>
     <string name="cell_only_observation">Obserwacje tylko sieci komórkowych</string>
     <string name="wifi_only_observation">Obserwacje tylko sieci Wi-Fi</string>

@@ -14,6 +14,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Mockito;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.stumblerthread.StumblerService;
 import org.mozilla.mozstumbler.service.stumblerthread.motiondetection.CustomSensorManager;
@@ -163,7 +164,7 @@ public class PassiveServiceReceiverTest {
 
         // We need to no-op this as the StumblerService won't have an application context yet
         // and binding in the BatteryCheckReceiver is just going to NPE on us.
-        doNothing().when(ss).setPassiveMode();
+        doNothing().when(ss).setPassiveMode(Mockito.anyBoolean());
 
         ss.onHandleIntent(intent);
 

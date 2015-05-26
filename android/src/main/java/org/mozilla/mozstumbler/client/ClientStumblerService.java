@@ -150,6 +150,9 @@ public class ClientStumblerService extends StumblerService {
     public synchronized void startScanning() {
         foregroundNotification();
 
+        boolean passiveScanning = ClientPrefs.getInstance(ClientStumblerService.this).isScanningPassive();
+        setPassiveMode(passiveScanning);
+
         super.startScanning();
 
         if (mBatteryChecker == null) {

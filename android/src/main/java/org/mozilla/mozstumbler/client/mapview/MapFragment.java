@@ -545,7 +545,11 @@ public class MapFragment extends android.support.v4.app.Fragment
      the class is under test
      */
     void doOnResume() {
-        mMapLocationListener = new UserPositionUpdateManager(this);
+        ClientPrefs prefs = ClientPrefs.getInstance(getActivity().getApplicationContext());
+
+        if (!prefs.isScanningPassive()) {
+            mMapLocationListener = new UserPositionUpdateManager(this);
+        }
 
         ObservedLocationsReceiver observer = ObservedLocationsReceiver.getInstance();
         observer.setMapActivity(this);
@@ -556,7 +560,6 @@ public class MapFragment extends android.support.v4.app.Fragment
 
         mHighLowBandwidthChecker = new HighLowBandwidthReceiver(this);
 
-        ClientPrefs prefs = ClientPrefs.getInstance(getActivity().getApplicationContext());
         setShowMLS(prefs.getOnMapShowMLS());
 
         mObservationPointsOverlay.zoomChanged(mMap);

@@ -7,14 +7,30 @@
     android:paddingTop="@dimen/activity_vertical_margin">
 
     <CheckBox
+        android:id="@+id/toggleOfflineGeo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/enable_offline_geo" />
+
+    <View
+        android:id="@+id/geo_line"
+        android:layout_below="@id/toggleOfflineGeo"
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="10dp"
+        android:background="#55ffffff" />
+
+    <CheckBox
         android:id="@+id/toggleSaveStumbleLogs"
+        android:layout_below="@id/geo_line"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/save_stumble_logs" />
 
     <View
-        android:layout_below="@id/toggleSaveStumbleLogs"
         android:id="@+id/line"
+        android:layout_below="@id/toggleSaveStumbleLogs"
         android:layout_width="fill_parent"
         android:layout_height="1dp"
         android:layout_marginBottom="10dp"

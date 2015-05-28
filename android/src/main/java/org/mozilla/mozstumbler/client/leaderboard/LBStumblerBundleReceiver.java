@@ -13,6 +13,7 @@ import org.mozilla.mozstumbler.client.ClientPrefs;
 import org.mozilla.mozstumbler.service.stumblerthread.Reporter;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.StumblerBundle;
 import org.mozilla.mozstumbler.service.uploadthread.AsyncUploadParam;
+import org.mozilla.mozstumbler.service.uploadthread.AsyncUploader;
 import org.mozilla.mozstumbler.service.uploadthread.AsyncUploaderMLS;
 
 public class LBStumblerBundleReceiver extends BroadcastReceiver {
@@ -23,7 +24,7 @@ public class LBStumblerBundleReceiver extends BroadcastReceiver {
         public void onReceive(Context context, Intent intent) {
             // start this upload
             if (mUploadTask != null &&
-                    mUploadTask.isUploading.get()) {
+                    AsyncUploader.isUploading.get()) {
                 return;
             }
 

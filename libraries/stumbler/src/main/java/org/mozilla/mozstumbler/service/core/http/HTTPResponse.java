@@ -1,7 +1,5 @@
 package org.mozilla.mozstumbler.service.core.http;
 
-import org.mozilla.mozstumbler.service.AppGlobals;
-import org.mozilla.mozstumbler.service.core.logging.ClientLog;
 import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
 import java.io.UnsupportedEncodingException;
@@ -27,6 +25,9 @@ public class HTTPResponse implements IResponse {
         statusCode = responseCode;
         bodyBytes = contentBody;
         bytesSent = txByteLength;
+        if (headerFields == null) {
+            headerFields = new HashMap<String, List<String>>();
+        }
         headers = headerFields;
     }
 

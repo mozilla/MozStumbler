@@ -106,6 +106,7 @@ public class DeveloperActivity extends ActionBarActivity {
             // Setup for any logical group of config options should self contained in their
             // own methods.  This is mostly to help with merges in the event that multiple
             // source branches update the developer options.
+            setupOfflineGeoToggle();
             setupSaveJSONLogs();
             setupSimulationPreference();
             setupLocationChangeSpinners();
@@ -114,6 +115,20 @@ public class DeveloperActivity extends ActionBarActivity {
             setupPassiveMode();
             return mRootView;
         }
+
+        private void setupOfflineGeoToggle() {
+            boolean useOfflineGeo = Prefs.getInstance(mRootView.getContext()).useOfflineGeo();
+            CheckBox button = (CheckBox) mRootView.findViewById(R.id.toggleOfflineGeo);
+            button.setChecked(useOfflineGeo);
+            button.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                    onToggleUseOfflineGeo(isChecked);
+                }
+            });
+
+        }
+
 
         private void setupLimitZoom() {
             boolean isLimited = ClientPrefs.getInstanceWithoutContext().isMapZoomLimited();
@@ -258,10 +273,17 @@ public class DeveloperActivity extends ActionBarActivity {
             });
         }
 
+
+        private void onToggleUseOfflineGeo(boolean isChecked) {
+            // do nothing here as we are just going to query the value
+            // when we trigger an AsyncGeolocate call
+            Prefs.getInstanceWithoutContext().setOfflineGeo(isChecked);
+        }
+
         private void onToggleSaveStumbleLogs(boolean isChecked) {
             if (isChecked) {
                 Context viewCtx = mRootView.getContext();
-                if (!archiveDirCreatedAndMounted(this.getActivity())) {
+                if (!archiveDirCreatedAndMounted()) {
 
                     Toast.makeText(viewCtx,
                             viewCtx.getString(R.string.create_log_archive_failure),
@@ -279,7 +301,7 @@ public class DeveloperActivity extends ActionBarActivity {
             Prefs.getInstanceWithoutContext().setSaveStumbleLogs(isChecked);
         }
 
-        public boolean archiveDirCreatedAndMounted(Context ctx) {
+        public boolean archiveDirCreatedAndMounted() {
             File saveDir = new File(sdcardArchivePath());
             String storageState = Environment.getExternalStorageState();
 

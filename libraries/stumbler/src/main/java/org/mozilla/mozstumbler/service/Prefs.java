@@ -43,6 +43,9 @@ public class Prefs {
     private static final String MOTION_SENSOR_MIN_PAUSE_SECONDS = "motion_sensor_min_pause_sec";
 
     private static final String SAVE_STUMBLE_LOGS = "save_stumble_logs";
+
+    private static final String USE_OFFLINE_GEO = "use_offline_geo";
+
     protected static Prefs sInstance;
     private final SharedPreferences mSharedPrefs;
 
@@ -306,5 +309,13 @@ public class Prefs {
 
     public long getMotionDetectionMinPauseTime() {
         return getPrefs().getLong(MOTION_SENSOR_MIN_PAUSE_SECONDS, 20);
+    }
+
+    public boolean useOfflineGeo() {
+        return getPrefs().getBoolean(USE_OFFLINE_GEO, false);
+    }
+
+    public void setOfflineGeo(boolean offlineGeo) {
+        setBoolPref(USE_OFFLINE_GEO, offlineGeo);
     }
 }

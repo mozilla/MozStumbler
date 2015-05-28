@@ -38,7 +38,6 @@ import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
 import java.io.File;
 
-@SuppressWarnings("unused")
 import static org.mozilla.mozstumbler.client.ClientDataStorageManager.sdcardArchivePath;
 
 public class DeveloperActivity extends ActionBarActivity {

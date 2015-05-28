@@ -38,6 +38,7 @@ import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
 import java.io.File;
 
+@SuppressWarnings("unused")
 import static org.mozilla.mozstumbler.client.ClientDataStorageManager.sdcardArchivePath;
 
 public class DeveloperActivity extends ActionBarActivity {
@@ -117,7 +118,7 @@ public class DeveloperActivity extends ActionBarActivity {
         }
 
         private void setupOfflineGeoToggle() {
-            boolean useOfflineGeo = Prefs.getInstanceWithoutContext().useOfflineGeo();
+            boolean useOfflineGeo = Prefs.getInstance(mRootView.getContext()).useOfflineGeo();
             CheckBox button = (CheckBox) mRootView.findViewById(R.id.toggleOfflineGeo);
             button.setChecked(useOfflineGeo);
             button.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -283,7 +284,7 @@ public class DeveloperActivity extends ActionBarActivity {
         private void onToggleSaveStumbleLogs(boolean isChecked) {
             if (isChecked) {
                 Context viewCtx = mRootView.getContext();
-                if (!archiveDirCreatedAndMounted(this.getActivity())) {
+                if (!archiveDirCreatedAndMounted()) {
 
                     Toast.makeText(viewCtx,
                             viewCtx.getString(R.string.create_log_archive_failure),
@@ -301,7 +302,7 @@ public class DeveloperActivity extends ActionBarActivity {
             Prefs.getInstanceWithoutContext().setSaveStumbleLogs(isChecked);
         }
 
-        public boolean archiveDirCreatedAndMounted(Context ctx) {
+        public boolean archiveDirCreatedAndMounted() {
             File saveDir = new File(sdcardArchivePath());
             String storageState = Environment.getExternalStorageState();
 

@@ -49,7 +49,7 @@ public class MLSJSONObject extends JSONObject {
         return (cellRecords == null ? 0 : cellRecords.length());
     }
 
-    public List<String> geolocateBSSIDs() {
+    public List<String> extractBSSIDs() {
         JSONArray wifiRecords = this.optJSONArray(DataStorageConstants.ReportsColumns.WIFI);
         List<String> result = new ArrayList<String>();
         if (wifiRecords != null) {

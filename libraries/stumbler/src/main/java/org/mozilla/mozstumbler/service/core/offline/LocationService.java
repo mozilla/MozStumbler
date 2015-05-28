@@ -33,6 +33,9 @@ public class LocationService implements IOfflineLocationService {
 
     private static final ILogger Log = (ILogger) ServiceLocator.getInstance().getService(ILogger.class);
     private static final String LOG_TAG = LoggerUtil.makeLogTag(LocationService.class);
+    public static final String ADJ_PTS = "adj_pts";
+    public static final String LAT = "lat";
+    public static final String LON = "lon";
 
     private final IntRecordTrie trie;
 
@@ -71,7 +74,10 @@ public class LocationService implements IOfflineLocationService {
 
     @Override
     public IResponse search(JSONObject mlsGeoLocate, Map<String, String> headers, boolean precompressed) {
-        if (trie == null) return null;
+        if (trie == null) {
+            return null;
+        }
+
         MLSJSONObject mlsJson = null;
         try {
             mlsJson = new MLSJSONObject(mlsGeoLocate.toString());
@@ -79,7 +85,7 @@ public class LocationService implements IOfflineLocationService {
             Log.e(LOG_TAG, "Can't make a MLSJSONObject!", e);
             return null;
         }
-        List<String> bssidList = mlsJson.geolocateBSSIDs();
+        List<String> bssidList = mlsJson.extractBSSIDs();
 
         Log.i(LOG_TAG, "Offline location started!");
 
@@ -132,7 +138,9 @@ public class LocationService implements IOfflineLocationService {
                 for (int adj_tileid : adjacent_tile(tile)) {
                     new_pts += tile_points[adj_tileid];
                 }
-                new_pts *= new_pts;
+
+                // Removed this in the refactored strategy code.  squaring is not needed.
+                // new_pts *= new_pts;
                 adj_tile_points[tile] = new_pts;
             }
 
@@ -222,6 +230,9 @@ public class LocationService implements IOfflineLocationService {
         return result;
     }
 
+    /*
+    This method only exists for the edges of a city. Edge tiles will have < 8 adjacent tiles.
+     */
     private void safe_add_adjacent_tile(OrderedCityTiles city_tiles, ArrayList<Integer> result, int tile_x, int tile_y) {
         int tile_id = city_tiles.getTileID(new SmartTile(tile_x, tile_y));
         if (tile_id == -1) {
@@ -240,8 +251,6 @@ public class LocationService implements IOfflineLocationService {
             return null;
         }
 
-        // There's only GPS, NETWORK and PASSIVE providers specified in
-        // LocationManager.  Use
         Location roundTrip = coord.getLocation();
         JSONObject jsonLocation = LocationAdapter.toJSON(roundTrip);
 
@@ -277,9 +286,9 @@ public class LocationService implements IOfflineLocationService {
                         adj_loc.getLongitude());
 
                 HashMap<String, Double> v = new HashMap<String, Double>();
-                v.put("adj_pts", (double) adj_pts);
-                v.put("lat", adj_loc.getLatitude());
-                v.put("lon", adj_loc.getLongitude());
+                v.put(ADJ_PTS, (double) adj_pts);
+                v.put(LAT, adj_loc.getLatitude());
+                v.put(LON, adj_loc.getLongitude());
 
                 weighted_lat_lon.add(v);
             }
@@ -290,9 +299,9 @@ public class LocationService implements IOfflineLocationService {
 
         double total_shift_weight = 0;
         for (HashMap<String, Double> v: weighted_lat_lon) {
-            w_lat += v.get("lat") * v.get("adj_pts");
-            w_lon += v.get("lon") * v.get("adj_pts");
-            total_shift_weight += v.get("adj_pts");
+            w_lat += v.get(LAT) * v.get(ADJ_PTS);
+            w_lon += v.get(LON) * v.get(ADJ_PTS);
+            total_shift_weight += v.get(ADJ_PTS);
         }
 
         w_lat /= total_shift_weight;
@@ -302,6 +311,8 @@ public class LocationService implements IOfflineLocationService {
         double n_lat = c_lat * 0.5 + w_lat * 0.5;
         double n_lon = c_lon * 0.5 + w_lat * 0.5;
 
+        // There's only GPS, NETWORK and PASSIVE providers specified in
+        // LocationManager.
         Location result = new Location(LocationManager.NETWORK_PROVIDER);
         result.setLatitude(n_lat);
         result.setLongitude(n_lon);

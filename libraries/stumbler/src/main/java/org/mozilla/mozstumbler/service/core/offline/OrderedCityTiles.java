@@ -16,6 +16,7 @@ import java.util.HashMap;
 
 public class OrderedCityTiles {
 
+    public static final String ORDERED_CITY_CSV = "ordered_city.csv";
     private static ILogger Log = (ILogger) ServiceLocator.getInstance().getService(ILogger.class);
     private static final String LOG_TAG = LoggerUtil.makeLogTag(OrderedCityTiles.class);
 
@@ -30,7 +31,7 @@ public class OrderedCityTiles {
 
         BufferedReader fileReader = null;
         try {
-            fileReader = new BufferedReader(new FileReader(LocationService.sdcardArchivePath()+"/ordered_city.csv"));
+            fileReader = new BufferedReader(new FileReader(LocationService.sdcardArchivePath()+ "/" + ORDERED_CITY_CSV));
         } catch (FileNotFoundException e) {
             Log.e(LOG_TAG, "Can't open file", e);
         }

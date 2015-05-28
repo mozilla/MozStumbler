@@ -37,17 +37,25 @@ public class LocationService implements IOfflineLocationService {
     public static final String LAT = "lat";
     public static final String LON = "lon";
 
-    private final IntRecordTrie trie;
 
     private static final int ZOOM_LEVEL = 18;
 
     private static final int BSSID_DUPLICATES = 100;
     private static final int TOTAL_POSSIBLE_TILES = 65536;
-    private final OrderedCityTiles city_tiles;
+
+    private IntRecordTrie trie;
+    private OrderedCityTiles city_tiles;
 
     public LocationService() {
-        trie = loadTrie();
-        city_tiles = new OrderedCityTiles();
+        try {
+            // This won't work in real life.   Trie data files may not be on disk yet.
+            trie = loadTrie();
+            city_tiles = new OrderedCityTiles();
+        } catch (Exception e) {
+            trie = null;
+            city_tiles = null;
+            android.util.Log.e(LOG_TAG, "Error loading trie data.", e);
+        }
     }
 
     public static String sdcardArchivePath() {
@@ -119,9 +127,7 @@ public class LocationService implements IOfflineLocationService {
         if (maxpt_tileset.size() == 1) {
             Log.i(LOG_TAG, "Unique solution found: " + maxpt_tileset.toString());
             for (int tile : maxpt_tileset) {
-                Location loc = adjust_center_with_adjacent_wifi(tile, max_tilept, tile_points);
-                SmartTile tile_coord = new SmartTile(loc.getLatitude(), loc.getLongitude());
-                return locationFix(city_tiles.getTileID(tile_coord));
+                return locationFix(tile);
             }
         } else {
             // We have to solve a tie breaker

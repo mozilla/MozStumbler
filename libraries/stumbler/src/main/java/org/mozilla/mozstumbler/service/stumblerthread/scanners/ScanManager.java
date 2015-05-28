@@ -187,9 +187,6 @@ public class ScanManager {
     }
 
     public synchronized void setPassiveMode(boolean on) {
-        if (on && mPassiveModeBatteryChecker == null) {
-            mPassiveModeBatteryChecker = new BatteryCheckReceiver(mAppContext, mBatteryCheckCallback);
-        }
         mStumblingMode = (on) ? ActiveOrPassiveStumbling.PASSIVE_STUMBLING :
                 ActiveOrPassiveStumbling.ACTIVE_STUMBLING;
     }
@@ -243,6 +240,13 @@ public class ScanManager {
         mCellScanner = new CellScanner(mAppContext);
 
         mGPSScanner.start(mStumblingMode);
+
+        if (isPassiveMode()) {
+            if (mPassiveModeBatteryChecker == null) {
+                mPassiveModeBatteryChecker = new BatteryCheckReceiver(mAppContext, mBatteryCheckCallback);
+            }
+            mPassiveModeBatteryChecker.start();
+        }
     }
 
     public synchronized boolean stopScanning() {
@@ -251,6 +255,11 @@ public class ScanManager {
         }
         broadcastScanState(ScannerState.STOPPED);
         mMotionSensor.scannerFullyStopped();
+
+        if (mPassiveModeBatteryChecker != null) {
+            mPassiveModeBatteryChecker.stop();
+        }
+
         return stopAllScanners();
     }
 

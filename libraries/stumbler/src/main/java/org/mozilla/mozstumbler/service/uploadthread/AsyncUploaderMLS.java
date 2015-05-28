@@ -55,6 +55,11 @@ public class AsyncUploaderMLS extends AsyncUploader {
 
     protected void tallyCompleted(HashMap<String, Integer> tally, long totalBytesSent) {
         assert(storageManager instanceof DataStorageManager);
+        if (!tally.containsKey(OBSERVATIONS_TALLY)) {
+            // Just check one key, as obs, wifi, and cell keys are added at the same time
+            return;
+        }
+
         ((DataStorageManager) storageManager).incrementSyncStats(totalBytesSent,
                 tally.get(OBSERVATIONS_TALLY),
                 tally.get(CELLS_TALLY),

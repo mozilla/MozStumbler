@@ -197,7 +197,7 @@ public class StumblerService extends PersistentIntentService
         init();
 
         // Post-init(), set the mode to passive.
-        setPassiveMode();
+        setPassiveMode(true);
 
         if (intent == null) {
             return;
@@ -249,8 +249,8 @@ public class StumblerService extends PersistentIntentService
         startScanning();
     }
 
-    public void setPassiveMode() {
-        mScanManager.setPassiveMode(true);
+    public void setPassiveMode(boolean on) {
+        mScanManager.setPassiveMode(on);
     }
 
     // Note that in passive mode, having data isn't an upload trigger, it is triggered by the start intent

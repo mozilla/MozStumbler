@@ -165,7 +165,7 @@ public class GPSScanner implements LocationListener {
         String logMsg = (mIsPassiveMode) ? "[Passive] " : "[Active] ";
 
         String provider = location.getProvider();
-        if (!provider.toLowerCase().contains("gps")) {
+        if (!provider.equals(LocationManager.GPS_PROVIDER)) {
             sendToLogActivity(logMsg + "Discard fused/network location. Provider ["+provider+"]");
             // only interested in GPS locations
             return;

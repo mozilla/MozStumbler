@@ -111,6 +111,7 @@ public class DeveloperActivity extends ActionBarActivity {
             setupLocationChangeSpinners();
             setupMinPauseTime();
             setupLimitZoom();
+            setupPassiveMode();
             return mRootView;
         }
 
@@ -122,6 +123,23 @@ public class DeveloperActivity extends ActionBarActivity {
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
                     ClientPrefs.getInstance(mRootView.getContext()).setIsMapZoomLimited(isChecked);
+                }
+            });
+        }
+
+        private void setupPassiveMode() {
+            boolean isPassive = ClientPrefs.getInstance(mRootView.getContext()).isScanningPassive();
+            CheckBox button = (CheckBox) mRootView.findViewById(R.id.togglePassiveScanning);
+            button.setChecked(isPassive);
+            button.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                    ClientPrefs.getInstance(mRootView.getContext()).setIsScanningPassive(isChecked);
+                    MainApp mainApp = ((MainApp) getActivity().getApplication());
+                    if (mainApp.isScanningOrPaused()) {
+                        mainApp.stopScanning();
+                        mainApp.startScanning();
+                    }
                 }
             });
         }

@@ -14,7 +14,7 @@ import org.mozilla.mozstumbler.svclocator.ServiceLocator;
 import java.util.HashMap;
 
 public class AsyncUploaderMLS extends AsyncUploader {
-    private final String OBSERVATIONS_TALLY = "observations", CELLS_TALLY = "cells", WIFIS_TALLY = "wifis";
+    public static final String OBSERVATIONS_TALLY = "observations", CELLS_TALLY = "cells", WIFIS_TALLY = "wifis";
     private final Context mContext;
 
     public static final String ACTION_MLS_UPLOAD_COMPLETED = AppGlobals.ACTION_NAMESPACE + ".action_mls_upload_executed";

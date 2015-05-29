@@ -1,5 +1,7 @@
 package org.mozilla.mozstumbler.service.stumblerthread.datahandling.base;
 
+import java.util.HashMap;
+
 public class SerializedJSONRows {
     public String filename = "";
     public final byte[] data;
@@ -9,5 +11,8 @@ public class SerializedJSONRows {
     public SerializedJSONRows(byte[] data, StorageState storageState) {
         this.data = data;
         this.storageState = storageState;
+    }
+
+    public void tally(HashMap<String, Integer> tallyValues) {
     }
 }

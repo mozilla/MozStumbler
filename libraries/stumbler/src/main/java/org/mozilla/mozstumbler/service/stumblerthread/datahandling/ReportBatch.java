@@ -5,6 +5,9 @@
 package org.mozilla.mozstumbler.service.stumblerthread.datahandling;
 
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.base.SerializedJSONRows;
+import org.mozilla.mozstumbler.service.uploadthread.AsyncUploaderMLS;
+
+import java.util.HashMap;
 
 public class ReportBatch extends SerializedJSONRows {
     public final int reportCount;
@@ -16,5 +19,18 @@ public class ReportBatch extends SerializedJSONRows {
         this.reportCount = reportCount;
         this.wifiCount = wifiCount;
         this.cellCount = cellCount;
+    }
+
+
+    public void tally(HashMap<String, Integer> tallyValues) {
+        assert(tallyValues != null);
+        if (!tallyValues.containsKey(AsyncUploaderMLS.OBSERVATIONS_TALLY)) {
+            tallyValues.put(AsyncUploaderMLS.OBSERVATIONS_TALLY, 0);
+            tallyValues.put(AsyncUploaderMLS.CELLS_TALLY, 0);
+            tallyValues.put(AsyncUploaderMLS.WIFIS_TALLY, 0);
+        }
+        tallyValues.put(AsyncUploaderMLS.OBSERVATIONS_TALLY, tallyValues.get(AsyncUploaderMLS.OBSERVATIONS_TALLY) + reportCount);
+        tallyValues.put(AsyncUploaderMLS.CELLS_TALLY, tallyValues.get(AsyncUploaderMLS.CELLS_TALLY) + cellCount);
+        tallyValues.put(AsyncUploaderMLS.WIFIS_TALLY, tallyValues.get(AsyncUploaderMLS.WIFIS_TALLY) + wifiCount);
     }
 }

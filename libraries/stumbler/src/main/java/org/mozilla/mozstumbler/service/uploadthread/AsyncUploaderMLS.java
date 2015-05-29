@@ -9,8 +9,6 @@ import org.mozilla.mozstumbler.service.core.http.ILocationService;
 import org.mozilla.mozstumbler.service.core.http.ISubmitService;
 import org.mozilla.mozstumbler.service.core.http.MLSLocationService;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageManager;
-import org.mozilla.mozstumbler.service.stumblerthread.datahandling.ReportBatch;
-import org.mozilla.mozstumbler.service.stumblerthread.datahandling.base.SerializedJSONRows;
 import org.mozilla.mozstumbler.svclocator.ServiceLocator;
 
 import java.util.HashMap;
@@ -37,20 +35,6 @@ public class AsyncUploaderMLS extends AsyncUploader {
         headers.put(MLSLocationService.EMAIL_HEADER, param.emailAddress);
         headers.put(MLSLocationService.NICKNAME_HEADER, param.nickname);
         return headers;
-    }
-
-    protected void tally(HashMap<String, Integer> tallyValues, SerializedJSONRows batch) {
-        assert(tallyValues != null);
-        if (!tallyValues.containsKey(OBSERVATIONS_TALLY)) {
-            tallyValues.put(OBSERVATIONS_TALLY, 0);
-            tallyValues.put(CELLS_TALLY, 0);
-            tallyValues.put(WIFIS_TALLY, 0);
-        }
-
-        ReportBatch reportBatch = (ReportBatch) batch;
-        tallyValues.put(OBSERVATIONS_TALLY, tallyValues.get(OBSERVATIONS_TALLY) + reportBatch.reportCount);
-        tallyValues.put(CELLS_TALLY, tallyValues.get(CELLS_TALLY) + reportBatch.cellCount);
-        tallyValues.put(WIFIS_TALLY, tallyValues.get(WIFIS_TALLY) + reportBatch.wifiCount);
     }
 
     protected void tallyCompleted(HashMap<String, Integer> tally, long totalBytesSent) {

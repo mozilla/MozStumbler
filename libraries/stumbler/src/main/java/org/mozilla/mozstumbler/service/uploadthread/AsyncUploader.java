@@ -137,7 +137,7 @@ public abstract class AsyncUploader extends AsyncTask<AsyncUploadParam, AsyncPro
                 AppGlobals.guiLogInfo(logMsg, "#FFFFCC", true, false);
                 Log.d(LOG_TAG, logMsg);
 
-                tally(tally, batch);
+                batch.tally(tally);
 
                 storageManager.delete(batch);
             } else {
@@ -178,9 +178,6 @@ public abstract class AsyncUploader extends AsyncTask<AsyncUploadParam, AsyncPro
             return false;
         }
         return true;
-    }
-
-    protected void tally(HashMap<String, Integer> tallyValues, SerializedJSONRows batch) {
     }
 
     protected void tallyCompleted(HashMap<String, Integer> tallyValues, long totalBytesSent) {

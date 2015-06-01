@@ -129,10 +129,15 @@
     <string name="map_copyright_moz">© MapBox © Współtwórcy projektu OpenStreetMap</string>
     <string name="action_developer">Opcje programistyczne</string>
     <string name="developer_title">Opcje programistyczne</string>
+
     <string name="enable_option_show_mls_on_map">Włączenie zapytań położeń MLS</string>
     <string name="enable_option_show_mls_on_map_summary">Pobiera i wyświetla szacowane położenie usługi Mozilla Location Service (MLS) dla każdej obserwacji.</string>
     <!-- enable_option_show_mls_on_map_detailed_info: %1$s refers to upload_wifi_only_title -->
     <string name="enable_option_show_mls_on_map_detailed_info">Wykorzystując nieco więcej pamięci i sieci, mapa może wyświetlać położenie MLS dla każdej obserwacji - tzn. położenie szacowane w oparciu o zebrane dane.\nPołożenia są wyświetlane jako czerwone kropki połączone liniami z obserwacjami. Im bliżej prawdziwego położenia GPS, tym dokładniejsza jest usługa Mozilla Location Service. Zebranie więcej danych spowoduje zwiększenie dokładności.\nJeśli \"%1$s\" jest włączone, to nie będzie to działało podczas używania połączenia komórkowego.</string>
+
+    <!-- This is an experimental option to enable offline location queries-->
+    <string name="enable_offline_geo">Zapytania o położenia w trybie offline</string>
+
     <string name="cell_plus_wifi_observation">Obserwacje sieci Wi-Fi i komórkowych</string>
     <string name="cell_only_observation">Obserwacje tylko sieci komórkowych</string>
     <string name="wifi_only_observation">Obserwacje tylko sieci Wi-Fi</string>
@@ -184,6 +189,7 @@
 
     <string name="ok">OK</string>
     <string name="limit_map_zoom">Ograniczenie oddalania mapy</string>
+    <string name="use_passive_scanning">Test skanowania pasywnego</string>
     <string name="test_significant_sensor_dialog_title">Test znaczącego czujnika ruchu</string>
     <string name="test_significant_sensor_dialog_message">Proszę stać w miejscu, po czym chodzić przez jedną minutę.\n\nWykrywanie ruchu: &#8230;</string>
     <string name="test_significant_sensor_confirmed_working">Wykryto ruch.\nCzujnik działa poprawnie.</string>

@@ -94,6 +94,8 @@ public class UploadAlarmReceiver extends BroadcastReceiver {
 
     public static class UploadAlarmService extends IntentService {
 
+        private static final String NO_EMAIL = "";
+
         public UploadAlarmService(String name) {
             super(name);
             // makes the service START_NOT_STICKY, that is, the service is not auto-restarted
@@ -143,7 +145,7 @@ public class UploadAlarmReceiver extends BroadcastReceiver {
                         Prefs.getInstance(this).getUseWifiOnly(),
                         isWifiAvailable,
                         Prefs.getInstance(this).getNickname(),
-                        Prefs.getInstance(this).getEmail()
+                        NO_EMAIL
                 );
                 uploader.execute(param);
             }

@@ -8,7 +8,6 @@ import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.Build;
 import android.os.Build.VERSION;
 import android.text.TextUtils;
 import android.util.Log;
@@ -20,7 +19,10 @@ import java.util.regex.Pattern;
 
 public class Prefs {
     public static final String NICKNAME_PREF = "nickname";
+
+    // This is being replaced by FxA
     public static final String EMAIL_PREF = "email";
+
     public static final String WIFI_ONLY = "wifi_only";
     public static final String MOTION_SENSOR_IS_SIGNIFICANT_TYPE = "motion_sensor_is_significant";
     public static final String MOTION_SENSOR_ENABLED = "motion_sensor_enabled";
@@ -45,6 +47,7 @@ public class Prefs {
     private static final String SAVE_STUMBLE_LOGS = "save_stumble_logs";
 
     private static final String USE_OFFLINE_GEO = "use_offline_geo";
+    public static final String FXA_LOGIN_PREF = "fxaLogin";
 
     protected static Prefs sInstance;
     private final SharedPreferences mSharedPrefs;
@@ -317,5 +320,20 @@ public class Prefs {
 
     public void setOfflineGeo(boolean offlineGeo) {
         setBoolPref(USE_OFFLINE_GEO, offlineGeo);
+    }
+
+    public void setBearerToken(String bearerToken) {
+        if (bearerToken != null) {
+            bearerToken = bearerToken.trim();
+            setStringPref(FXA_LOGIN_PREF, bearerToken);
+        }
+    }
+
+    public String getBearerToken() {
+        String bearerToken = getStringPref(FXA_LOGIN_PREF);
+        if (bearerToken != null) {
+            bearerToken = bearerToken.trim();
+        }
+        return TextUtils.isEmpty(bearerToken) ? null : bearerToken;
     }
 }

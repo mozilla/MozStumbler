@@ -34,6 +34,7 @@ public class OrderedCityTiles {
             fileReader = new BufferedReader(new FileReader(LocationService.sdcardArchivePath()+ "/" + ORDERED_CITY_CSV));
         } catch (FileNotFoundException e) {
             Log.e(LOG_TAG, "Can't open file", e);
+            return;
         }
 
         //Read the file line by line

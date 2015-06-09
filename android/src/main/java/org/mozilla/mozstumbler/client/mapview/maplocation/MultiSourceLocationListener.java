@@ -6,6 +6,7 @@ package org.mozilla.mozstumbler.client.mapview.maplocation;
 import android.location.GpsSatellite;
 import android.location.GpsStatus;
 import android.location.LocationManager;
+
 import org.mozilla.mozstumbler.client.mapview.MapFragment;
 import org.mozilla.mozstumbler.client.mapview.maplocation.MapUpdatingLocationListener.ReceivedLocationCallback;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.GPSScanner;
@@ -24,7 +25,9 @@ public class MultiSourceLocationListener {
 
     private final MapUpdatingLocationListener mNetworkLocationListener;
     private final MapUpdatingLocationListener mGpsLocationListener;
+    private final MapUpdatingLocationListener mPassiveLocationListener;
     private final WeakReference<MapFragment> mMapFragment;
+    private boolean mPassive;
 
     private final GpsStatus.Listener mSatelliteListener = new GpsStatus.Listener() {
         public void onGpsStatusChanged(int event) {
@@ -50,11 +53,13 @@ public class MultiSourceLocationListener {
         }
     };
 
-    MultiSourceLocationListener(LocationManager manager, MapFragment mapFragment) {
+    MultiSourceLocationListener(LocationManager manager, MapFragment mapFragment, boolean passive) {
         mLocationManager = manager;
+        mPassive = passive;
         mMapFragment = new WeakReference<MapFragment>(mapFragment);
         mNetworkLocationListener = new NetworkMapUpdatingLocationListener(mapFragment, null);
         mGpsLocationListener = new GPSMapUpdatingLocationListener(mapFragment, mReceivedGpsLocation);
+        mPassiveLocationListener = new PassiveMapUpdatingLocationListener(mapFragment, null);
     }
 
     public void start() {
@@ -73,13 +78,18 @@ public class MultiSourceLocationListener {
         }
 
         if (enable) {
-            // enable NetworkLocationListener first because GpsLocationListener will disable it
-            UserPositionUpdateManager.enableLocationListener(mLocationManager, true, mNetworkLocationListener);
-            UserPositionUpdateManager.enableLocationListener(mLocationManager, true, mGpsLocationListener);
+            if (!mPassive) {
+                // enable NetworkLocationListener first because GpsLocationListener will disable it
+                UserPositionUpdateManager.enableLocationListener(mLocationManager, true, mNetworkLocationListener);
+                UserPositionUpdateManager.enableLocationListener(mLocationManager, true, mGpsLocationListener);
+            } else {
+                UserPositionUpdateManager.enableLocationListener(mLocationManager, true, mPassiveLocationListener);
+            }
         } else {
             // disable GpsLocationListener first because it might enable NetworkLocationListener
             UserPositionUpdateManager.enableLocationListener(mLocationManager, false, mGpsLocationListener);
             UserPositionUpdateManager.enableLocationListener(mLocationManager, false, mNetworkLocationListener);
+            UserPositionUpdateManager.enableLocationListener(mLocationManager, false, mPassiveLocationListener);
         }
     }
 

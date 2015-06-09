@@ -27,7 +27,7 @@ public class SignificantMotionSensor implements IMotionSensor {
 
     private final Context mAppContext;
     private Sensor mSignificantMotionSensor;
-    private boolean mStopSignificantMotionSensor;
+    private boolean mIsActive;
     static SensorManager mSensorManager;
 
     public static SignificantMotionSensor getSensor(Context appCtx) {
@@ -50,21 +50,21 @@ public class SignificantMotionSensor implements IMotionSensor {
     }
 
     private SignificantMotionSensor(Context appCtx, Sensor significantSensor) {
-        mStopSignificantMotionSensor = false;
+        mIsActive = false;
         mSignificantMotionSensor = significantSensor;
         mAppContext = appCtx;
     }
 
     @Override
     public void start() {
-        mStopSignificantMotionSensor = false;
+        mIsActive = true;
 
         if (Build.VERSION.SDK_INT >= 18) {
             final TriggerEventListener tr = new TriggerEventListener() {
                 @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
                 @Override
                 public void onTrigger(TriggerEvent event) {
-                    if (mStopSignificantMotionSensor) {
+                    if (!mIsActive) {
                         return;
                     }
                     AppGlobals.guiLogInfo("Major motion detected.");
@@ -111,11 +111,11 @@ public class SignificantMotionSensor implements IMotionSensor {
 
     @Override
     public void stop() {
-        mStopSignificantMotionSensor = true;
+        mIsActive = false;
     }
 
     @Override
     public boolean isActive() {
-        return !mStopSignificantMotionSensor;
+        return mIsActive;
     }
 }

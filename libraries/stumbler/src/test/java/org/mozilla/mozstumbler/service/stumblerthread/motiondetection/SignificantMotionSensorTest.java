@@ -24,8 +24,10 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNull;
+import static junit.framework.Assert.assertTrue;
 import static org.robolectric.Robolectric.shadowOf;
 
 
@@ -75,8 +77,10 @@ public class SignificantMotionSensorTest {
         Context ctx = Robolectric.application;
         SignificantMotionSensor sensor = SignificantMotionSensor.getSensor(ctx);
 
+        assertFalse(sensor.isActive());
         sensor.start();
         Log.d(LOG_TAG, "Started significant sensor");
+        assertTrue(sensor.isActive());
 
         assertNull(captured);
         shadow.triggerEvent();
@@ -84,6 +88,9 @@ public class SignificantMotionSensorTest {
         // Verify that the significant motion event has triggered the intent to be broadcast
         assertNotNull(captured);
         assertEquals(captured.getAction(), MotionSensor.ACTION_USER_MOTION_DETECTED);
+
+        sensor.stop();
+        assertFalse(sensor.isActive());
     }
 
 

@@ -202,5 +202,6 @@
     <string name="fxa_is_logged_out">Firefox Accounts is logged out</string>
     <string name="fxa_logged_in">Firefox Accounts is logged in</string>
     <string name="fxa_accounts">Firefox Accounts</string>
+    <string name="fxa_needs_network">A data network connection is required.</string>
 
 </resources>

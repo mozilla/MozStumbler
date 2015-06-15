@@ -19,8 +19,6 @@ import java.util.regex.Pattern;
 
 public class Prefs {
     public static final String NICKNAME_PREF = "nickname";
-
-    // This is being replaced by FxA
     public static final String EMAIL_PREF = "email";
 
     public static final String WIFI_ONLY = "wifi_only";

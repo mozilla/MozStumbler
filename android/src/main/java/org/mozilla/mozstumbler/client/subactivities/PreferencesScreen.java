@@ -40,6 +40,7 @@ import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.client.ClientPrefs;
 import org.mozilla.mozstumbler.client.MainApp;
 import org.mozilla.mozstumbler.service.Prefs;
+import org.mozilla.mozstumbler.service.utils.NetworkInfo;
 import org.mozilla.mozstumbler.svclocator.ServiceLocator;
 import org.mozilla.mozstumbler.svclocator.services.log.ILogger;
 import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
@@ -50,13 +51,11 @@ public class PreferencesScreen extends PreferenceActivity {
     ILogger Log = (ILogger) ServiceLocator.getInstance().getService(ILogger.class);
 
     private EditTextPreference mNicknamePreference;
-    //private EditTextPreference mEmailPreference;
 
     private CheckBoxPreference mWifiPreference;
     private CheckBoxPreference mKeepScreenOn;
     private CheckBoxPreference mEnableShowMLSLocations;
     private CheckBoxPreference mCrashReportsOn;
-    //private CheckBoxPreference mLimitMapZoom;
     private ListPreference mMapTileDetail;
     private Preference mFxaLoginPreference;
 
@@ -175,6 +174,9 @@ public class PreferencesScreen extends PreferenceActivity {
     }
 
     private void verifyBearerToken() {
+        if (!hasNetworkForFxA()) {
+            return;
+        }
         String bearerToken = getPrefs().getBearerToken();
         if (!TextUtils.isEmpty(bearerToken)) {
             VerifyOAuthTask task = new VerifyOAuthTask(getApplicationContext(),
@@ -223,7 +225,6 @@ public class PreferencesScreen extends PreferenceActivity {
             }
         });
 
-
         button = findPreference("developer_button");
         button.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
@@ -254,6 +255,10 @@ public class PreferencesScreen extends PreferenceActivity {
         mNicknamePreference.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
+                if (!hasNetworkForFxA()) {
+                    return false;
+                }
+
                 SetDisplayNameTask task = new SetDisplayNameTask(getApplicationContext(),
                         BuildConfig.FXA_PROFILE_SERVER);
                 task.execute(getPrefs().getBearerToken(), newValue.toString());
@@ -265,11 +270,17 @@ public class PreferencesScreen extends PreferenceActivity {
         mFxaLoginPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                //code for what you want it to do
+                NetworkInfo netInfo = new NetworkInfo(PreferencesScreen.this);
+                if (!netInfo.isConnected()) {
+                    Toast.makeText(getApplicationContext(),
+                            getApplicationContext().getString(R.string.fxa_needs_network),
+                            Toast.LENGTH_SHORT).show();
+                    return false;
+                }
+
 
                 String bearerToken = getPrefs().getBearerToken();
                 if (!TextUtils.isEmpty(bearerToken)) {
-                    // TODO: Check if the user really wants to logout.
                     AlertDialog.Builder myAlertDialog = new AlertDialog.Builder(PreferencesScreen.this);
                     myAlertDialog.setTitle(getString(R.string.fxaPromptLogout));
                     myAlertDialog.setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
@@ -293,11 +304,11 @@ public class PreferencesScreen extends PreferenceActivity {
                 FxAGlobals.initFxaLogin(PreferencesScreen.this, app_name);
 
                 // These secrets are provisioned from the FxA dashboard
-                String FXA_APP_KEY = "d0f6d2ed3c5fcc3b";
+                String FXA_APP_KEY = BuildConfig.FXA_APP_KEY;
 
                 // And finally the callback endpoint on our web application
                 // Example server endpoint code is available under the `sample_endpoint` subdirectory.
-                String FXA_APP_CALLBACK = "http://ec2-52-1-93-147.compute-1.amazonaws.com/fxa/callback";
+                String FXA_APP_CALLBACK = BuildConfig.FXA_APP_CALLBACK;
 
                 CookieSyncManager cookies = CookieSyncManager.createInstance(PreferencesScreen.this);
                 CookieManager.getInstance().removeAllCookie();
@@ -379,6 +390,18 @@ public class PreferencesScreen extends PreferenceActivity {
 //                return true;
 //            }
 //        });
+    }
+
+    private boolean hasNetworkForFxA() {
+        boolean useWifiOnly = ClientPrefs.getInstance(PreferencesScreen.this).getUseWifiOnly();
+        NetworkInfo netInfo = new NetworkInfo(PreferencesScreen.this);
+
+        // Short circuit if we're restricted to wifi-only and have no wifi,
+        // or if we just have no network connection.
+        if ((useWifiOnly && !netInfo.isWifiAvailable()) || !netInfo.isConnected()) {
+            return false;
+        }
+        return true;
     }
 
     private void clearFxaLoginState() {

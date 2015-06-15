@@ -145,7 +145,7 @@ public class UploadAlarmReceiver extends BroadcastReceiver {
                         Prefs.getInstance(this).getUseWifiOnly(),
                         isWifiAvailable,
                         Prefs.getInstance(this).getNickname(),
-                        NO_EMAIL
+                        Prefs.getInstance(this).getEmail()
                 );
                 uploader.execute(param);
             }

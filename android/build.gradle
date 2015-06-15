@@ -125,11 +125,11 @@ android {
             buildConfigField "String", "FXA_OAUTH2_SERVER", "\"https://oauth-stable.dev.lcip.org/v1\""
             buildConfigField "String", "FXA_PROFILE_SERVER", "\"https://stable.dev.lcip.org/profile/v1\""
             buildConfigField "String", "FXA_SIGNIN_URL", "\"https://stable.dev.lcip.org/signin\""
+            buildConfigField "String", "FXA_APP_CALLBACK", "\"http://ec2-52-1-93-147.compute-1.amazonaws.com/fxa/callback\""
         }
 
         release {
             signingConfig signingConfigs.release
-
 
             // TODO: this key will need to be reprovisioned for
             // production releases
@@ -138,6 +138,9 @@ android {
             buildConfigField "String", "FXA_OAUTH2_SERVER", "\"https://oauth.accounts.firefox.com/v1\""
             buildConfigField "String", "FXA_PROFILE_SERVER", "\"https://profile.accounts.firefox.com/v1\""
             buildConfigField "String", "FXA_SIGNIN_URL", "\"https://accounts.firefox.com/signin\""
+
+            // TODO: update this callback for production
+            buildConfigField "String", "FXA_APP_CALLBACK", "\"http://ec2-52-1-93-147.compute-1.amazonaws.com/fxa/callback\""
         }
 
 

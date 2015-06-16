@@ -381,15 +381,6 @@ public class PreferencesScreen extends PreferenceActivity {
                 return true;
             }
         });
-
-//        bug #1476
-//        mLimitMapZoom.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
-//            @Override
-//            public boolean onPreferenceChange(Preference preference, Object newValue) {
-//                getPrefs().setIsMapZoomLimited(newValue.equals(true));
-//                return true;
-//            }
-//        });
     }
 
     private boolean hasNetworkForFxA() {
@@ -420,11 +411,11 @@ public class PreferencesScreen extends PreferenceActivity {
             email = "";
         }
         if (!TextUtils.isEmpty(bearerToken)) {
-            mFxaLoginPreference.setTitle(getString(R.string.fxa_accounts));
+            mFxaLoginPreference.setTitle(getString(R.string.fxa_settings_title));
             mFxaLoginPreference.setSummary(getString(R.string.fxaDescriptionLoggedIn) + ":\n" + email);
             mNicknamePreference.setEnabled(true);
         } else {
-            mFxaLoginPreference.setTitle(getString(R.string.fxaLoginTitle));
+            mFxaLoginPreference.setTitle(getString(R.string.fxa_settings_title));
             mFxaLoginPreference.setSummary(getString(R.string.fxaDescription));
             mNicknamePreference.setEnabled(false);
         }

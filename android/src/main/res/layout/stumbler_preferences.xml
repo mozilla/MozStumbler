@@ -5,7 +5,7 @@
     <!-- friendly reminder: the android:key must match the name of the value in [Client]Prefs.java -->
 
     <PreferenceCategory android:title="@string/category_leaderboard">
-        <Preference android:title="@string/fxaLoginTitle"
+        <Preference android:title="@string/fxa_settings_title"
                     android:key="fxaLogin"
                     android:summary="@string/fxaDescription"/>
         <EditTextPreference

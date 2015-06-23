@@ -20,10 +20,10 @@ public class UserPositionUpdateManager {
     private LocationManager mLocationManager;
     private final MultiSourceLocationListener mMultiSourceLocationListener;
 
-    public UserPositionUpdateManager(MapFragment mapFragment) {
+    public UserPositionUpdateManager(MapFragment mapFragment, boolean passive) {
         Context context = mapFragment.getActivity().getApplicationContext();
         mLocationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-        mMultiSourceLocationListener = new MultiSourceLocationListener(mLocationManager, mapFragment);
+        mMultiSourceLocationListener = new MultiSourceLocationListener(mLocationManager, mapFragment, passive);
 
         if (mLocationManager == null) {
             // Ugly non-localized message, which is fine, the app is not usable on any device that shows this toast.

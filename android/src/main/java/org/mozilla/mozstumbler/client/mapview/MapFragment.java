@@ -547,9 +547,7 @@ public class MapFragment extends android.support.v4.app.Fragment
     void doOnResume() {
         ClientPrefs prefs = ClientPrefs.getInstance(getActivity().getApplicationContext());
 
-        if (!prefs.isScanningPassive()) {
-            mMapLocationListener = new UserPositionUpdateManager(this);
-        }
+        mMapLocationListener = new UserPositionUpdateManager(this, prefs.isScanningPassive());
 
         ObservedLocationsReceiver observer = ObservedLocationsReceiver.getInstance();
         observer.setMapActivity(this);

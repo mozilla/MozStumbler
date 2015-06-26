@@ -5,15 +5,13 @@
     <!-- friendly reminder: the android:key must match the name of the value in [Client]Prefs.java -->
 
     <PreferenceCategory android:title="@string/category_leaderboard">
+        <Preference android:title="@string/fxa_settings_title"
+                    android:key="fxaLogin"
+                    android:summary="@string/fxaDescription"/>
         <EditTextPreference
             android:key="nickname"
             android:summary="@string/enter_nickname_longtext"
             android:title="@string/enter_nickname" />
-        <EditTextPreference
-            android:inputType="textEmailAddress"
-            android:key="email"
-            android:summary="@string/enter_email_longtext"
-            android:title="@string/enter_email" />
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/category_network_usage">

@@ -12,7 +12,7 @@ for (versionPart in [versionPatch, versionMinor, versionMajor]) {
 
 buildscript {
     repositories {
-        mavenCentral()
+        jcenter()
         maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
     }
 
@@ -30,7 +30,7 @@ apply plugin: 'com.android.application'
 repositories {
     jcenter()
     maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
-    mavenCentral()
+    mavenLocal()
 }
 
 android {
@@ -120,10 +120,27 @@ android {
             // set this to false if you want your debug builds to have
             // standard unlabelled tiles.
             buildConfigField "boolean", "LABEL_MAP_TILES", "false"
+
+            buildConfigField "String", "FXA_APP_KEY", "\"d0f6d2ed3c5fcc3b\""
+            buildConfigField "String", "FXA_OAUTH2_SERVER", "\"https://oauth-stable.dev.lcip.org/v1\""
+            buildConfigField "String", "FXA_PROFILE_SERVER", "\"https://stable.dev.lcip.org/profile/v1\""
+            buildConfigField "String", "FXA_SIGNIN_URL", "\"https://stable.dev.lcip.org/signin\""
+            buildConfigField "String", "FXA_APP_CALLBACK", "\"http://ec2-52-1-93-147.compute-1.amazonaws.com/fxa/callback\""
         }
 
         release {
             signingConfig signingConfigs.release
+
+            // TODO: this key will need to be reprovisioned for
+            // production releases
+            buildConfigField "String", "FXA_APP_KEY", "\"d0f6d2ed3c5fcc3b\""
+
+            buildConfigField "String", "FXA_OAUTH2_SERVER", "\"https://oauth.accounts.firefox.com/v1\""
+            buildConfigField "String", "FXA_PROFILE_SERVER", "\"https://profile.accounts.firefox.com/v1\""
+            buildConfigField "String", "FXA_SIGNIN_URL", "\"https://accounts.firefox.com/signin\""
+
+            // TODO: update this callback for production
+            buildConfigField "String", "FXA_APP_CALLBACK", "\"http://ec2-52-1-93-147.compute-1.amazonaws.com/fxa/callback\""
         }
 
 
@@ -208,7 +225,6 @@ dependencies {
     androidTestCompile "org.mockito:mockito-core:1.+"
     testCompile        "org.mockito:mockito-core:1.+"
 
-
     compile 'com.crankycoder:SimpleKML:1.0'
     compile 'org.slf4j:slf4j-android:1.7.7'
 
@@ -236,6 +252,11 @@ dependencies {
     compile "org.apache.httpcomponents:httpmime:4.0.1"
     compile "org.apache.james:apache-mime4j:0.6"
 
+    // Firefox Accounts library code
+    compile 'org.mozilla.accounts.fxa:fxa:0.9.9'
+    testCompile 'org.mozilla.accounts.fxa:fxa:0.9.9'
+
+    // Stumbler library - always build from source
     compile project(':libraries:stumbler')
     testCompile project(':libraries:stumbler')
 }

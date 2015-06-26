@@ -3,6 +3,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package org.mozilla.mozstumbler.client.leaderboard;
 
+import org.mozilla.mozstumbler.BuildConfig;
 import org.mozilla.mozstumbler.service.core.http.IHttpUtil;
 import org.mozilla.mozstumbler.service.core.http.IResponse;
 import org.mozilla.mozstumbler.service.core.http.ISubmitService;
@@ -17,7 +18,7 @@ import java.util.Map;
 
 class LBUploadTask extends AsyncUploader {
     class LBSubmitter implements ISubmitService {
-        private static final String SUBMIT_URL = "https://fill me in please";
+        private static final String SUBMIT_URL = BuildConfig.LB_SUBMIT_URL;
         final IHttpUtil httpDelegate = (IHttpUtil) ServiceLocator.getInstance().getService(IHttpUtil.class);
 
         @Override

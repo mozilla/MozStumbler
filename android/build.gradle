@@ -120,6 +120,14 @@ android {
             // set this to false if you want your debug builds to have
             // standard unlabelled tiles.
             buildConfigField "boolean", "LABEL_MAP_TILES", "false"
+
+            buildConfigField "String", "FXA_APP_KEY", "\"d0f6d2ed3c5fcc3b\""
+            buildConfigField "String", "FXA_OAUTH2_SERVER", "\"https://oauth-stable.dev.lcip.org/v1\""
+            buildConfigField "String", "FXA_PROFILE_SERVER", "\"https://stable.dev.lcip.org/profile/v1\""
+            buildConfigField "String", "FXA_SIGNIN_URL", "\"https://stable.dev.lcip.org/signin\""
+            buildConfigField "String", "FXA_APP_CALLBACK", "\"http://ec2-52-1-93-147.compute-1.amazonaws.com/fxa/callback\""
+            buildConfigField "String", "LB_SUBMIT_URL", "\"https://ec2-52-1-93-147.compute-1.amazonaws.com/add_stumbles\""
+
         }
 
         release {

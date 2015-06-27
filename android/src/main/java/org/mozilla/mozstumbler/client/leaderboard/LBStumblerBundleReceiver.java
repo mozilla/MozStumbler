@@ -54,8 +54,6 @@ public class LBStumblerBundleReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         final StumblerBundle bundle = intent.getParcelableExtra(Reporter.NEW_BUNDLE_ARG_BUNDLE);
-        mStorage.insert(bundle.getGpsPosition(),
-                bundle.getUnmodifiableCellData().size(),
-                bundle.getUnmodifiableWifiData().size());
+        mStorage.insert(bundle.getGpsPosition());
     }
 }

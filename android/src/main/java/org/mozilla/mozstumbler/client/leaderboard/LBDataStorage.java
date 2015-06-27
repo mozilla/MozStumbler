@@ -17,9 +17,8 @@ import java.util.HashMap;
 class LBDataStorage extends JSONRowsStorageManager {
 
     private static final String LOG_TAG = LoggerUtil.makeLogTag(LBDataStorage.class);
-    public static final String KEY_GRID = "grid";
-    public static final String KEY_CELL = "cellcount";
-    public static final String KEY_WIFI = "wificount";
+    public static final String KEY_TILE_COORD = "tile_easting_northing";
+    public static final String KEY_OBSERVATIONS = "observations";
 
     private HashMap<String, JSONObject> mGridToRow = new HashMap<String, JSONObject>();
     // mGridToRow applies only to the current in memory buffer, when this buffer changes it no longer applies
@@ -35,28 +34,26 @@ class LBDataStorage extends JSONRowsStorageManager {
         json.put(key, (Integer) json.get(key) + value);
     }
 
-    public void insert(Location location, int cellCount, int wifiCount) {
-        String grid = locationToGrid(location);
+    public void insert(Location location) {
+        String eastingNorthing = locationToEastingNorthing(location);
 
-        JSONObject prev = findRowWithMatchingGrid(grid);
+        JSONObject prev = findRowWithMatchingGrid(eastingNorthing);
         try {
             if (prev != null) {
-                incrementJSON(prev, KEY_CELL, cellCount);
-                incrementJSON(prev, KEY_WIFI, wifiCount);
+                incrementJSON(prev, KEY_OBSERVATIONS, 1);
                 return;
             }
 
             JSONObject json = new JSONObject();
-            json.put(KEY_GRID, grid);
-            json.put(KEY_CELL, cellCount);
-            json.put(KEY_WIFI, wifiCount);
+            json.put(KEY_TILE_COORD, eastingNorthing);
+            json.put(KEY_OBSERVATIONS, 1);
             insertRow(json);
 
             if (mCurrentObjForGridToRow != mInMemoryActiveJSONRows) {
                 mCurrentObjForGridToRow = mInMemoryActiveJSONRows;
                 mGridToRow = new HashMap<String, JSONObject>();
             }
-            mGridToRow.put(grid, json);
+            mGridToRow.put(eastingNorthing, json);
         } catch (JSONException e) {
             Log.e(LOG_TAG, e.toString());
         }
@@ -69,7 +66,7 @@ class LBDataStorage extends JSONRowsStorageManager {
         return mGridToRow.get(grid);
     }
 
-    private String locationToGrid(Location location) {
+    private String locationToEastingNorthing(Location location) {
         //Code from here, http://wiki.openstreetmap.org/wiki/Mercator,spherical world mercator (not elliptical)
         final double earthRadius = 6378137.000;
 

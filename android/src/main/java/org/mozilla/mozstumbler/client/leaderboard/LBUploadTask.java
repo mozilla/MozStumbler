@@ -61,6 +61,12 @@ class LBUploadTask extends AsyncUploader {
     protected boolean checkCanUpload(AsyncUploadParam param) {
         // This task is triggered only on a successful upload of MLS data, so we assume
         // this can also upload without further checks
+
+        // TODO: do we want to handle a case where the bearer token is not set
+        // and FxA is not logged in?  LBUploadTask should probably be created
+        // with the bearer token passed in explicitly instead of loading the
+        // OAuth state at runtime.
+
         return true;
     }
 }

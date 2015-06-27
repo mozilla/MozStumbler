@@ -4,8 +4,10 @@
 package org.mozilla.mozstumbler.client.leaderboard;
 
 import org.mozilla.mozstumbler.BuildConfig;
+import org.mozilla.mozstumbler.service.Prefs;
 import org.mozilla.mozstumbler.service.core.http.IHttpUtil;
 import org.mozilla.mozstumbler.service.core.http.IResponse;
+import org.mozilla.mozstumbler.service.core.http.FxAService;
 import org.mozilla.mozstumbler.service.core.http.ISubmitService;
 import org.mozilla.mozstumbler.service.core.http.MLSLocationService;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.base.JSONRowsStorageManager;
@@ -39,8 +41,19 @@ class LBUploadTask extends AsyncUploader {
     @Override
     protected HashMap<String, String> getHeaders(AsyncUploadParam param) {
         HashMap<String,String> headers = new HashMap<String, String>();
+
+
+        String bearerToken = Prefs.getInstanceWithoutContext().getBearerToken();
+        // TODO: do we want to handle a case where the bearer token is not set
+        // and FxA is not logged in?  LBUploadTask should probably be created
+        // with the bearer token passed in explicitly instead of loading the
+        // OAuth state at runtime.
+        if (bearerToken != null) {
+            headers.put(FxAService.BEARER_HEADER, "Bearer " + bearerToken);
+        }
         headers.put(MLSLocationService.EMAIL_HEADER, param.emailAddress);
         headers.put(MLSLocationService.NICKNAME_HEADER, param.nickname);
+
         return headers;
     }
 

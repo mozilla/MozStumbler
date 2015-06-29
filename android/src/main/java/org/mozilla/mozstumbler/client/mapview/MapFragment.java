@@ -72,7 +72,7 @@ public class MapFragment extends android.support.v4.app.Fragment
 
     private static final String COVERAGE_REDIRECT_URL = "https://location.services.mozilla.com/map.json";
     private static final String ZOOM_KEY = "zoom";
-    private static final int LOWEST_UNLIMITED_ZOOM = 6;
+    private static final int LOWEST_UNLIMITED_ZOOM = 3;
     private static final int DEFAULT_ZOOM = 13;
     private static final int DEFAULT_ZOOM_AFTER_FIX = 16;
     private static final String LAT_KEY = "latitude";
@@ -287,10 +287,8 @@ public class MapFragment extends android.support.v4.app.Fragment
         final List<Overlay> overlays = mMap.getOverlays();
         final Overlay overlayRemoved = (!isHighZoom(zoomLevel)) ? mLowResMapOverlayHighZoom : mLowResMapOverlayLowZoom;
         final Overlay overlayAdded = (isHighZoom(zoomLevel)) ? mLowResMapOverlayHighZoom : mLowResMapOverlayLowZoom;
-        if (overlays.indexOf(overlayRemoved) > -1) {
-            overlays.remove(overlayRemoved);
-        }
-        if (overlays.indexOf(overlayAdded) == -1) {
+        overlays.remove(overlayRemoved);
+        if (!overlays.contains(overlayAdded)) {
             overlays.add(0, overlayAdded);
             mMap.invalidate();
         }
@@ -305,17 +303,12 @@ public class MapFragment extends android.support.v4.app.Fragment
         }
 
         final List<Overlay> overlays = mMap.getOverlays();
-        int idx = 0;
-        if (overlays.indexOf(mLowResMapOverlayHighZoom) > -1 || overlays.indexOf(mLowResMapOverlayLowZoom) > -1) {
-            idx = 1;
-        }
-
         final Overlay overlayRemoved = (!isHighZoom(zoomLevel)) ? mCoverageTilesOverlayHighZoom : mCoverageTilesOverlayLowZoom;
         final Overlay overlayAdded = (isHighZoom(zoomLevel)) ? mCoverageTilesOverlayHighZoom : mCoverageTilesOverlayLowZoom;
-        if (overlays.indexOf(overlayRemoved) > -1) {
-            overlays.remove(overlayRemoved);
-        }
-        if (overlays.indexOf(overlayAdded) == -1) {
+        overlays.remove(overlayRemoved);
+        if (!overlays.contains(overlayAdded)) {
+            boolean hasMapOverlay = overlays.contains(mLowResMapOverlayHighZoom) || overlays.contains(mLowResMapOverlayLowZoom);
+            int idx = hasMapOverlay ? 1 : 0;
             overlays.add(idx, overlayAdded);
             mMap.invalidate();
         }
@@ -401,6 +394,12 @@ public class MapFragment extends android.support.v4.app.Fragment
         }
 
         updateMapResolutionTextView(tileType, isHighBandwidth);
+
+        int minZoom = AbstractMapOverlay.getDisplaySizeBasedMinZoomLevel();
+        if (!prefs.isMapZoomLimited()) {
+            minZoom = isHighBandwidth ? LOWEST_UNLIMITED_ZOOM : LowResMapOverlay.LOW_ZOOM_LEVEL;
+        }
+        mMap.setMinZoomLevel(minZoom);
     }
 
     private void updateMapResolutionTextView(ClientPrefs.MapTileResolutionOptions tileType, boolean isHighBandwidth) {
@@ -561,12 +560,6 @@ public class MapFragment extends android.support.v4.app.Fragment
         setShowMLS(prefs.getOnMapShowMLS());
 
         mObservationPointsOverlay.zoomChanged(mMap);
-        ClientPrefs cp = ClientPrefs.getInstance(mRootView.getContext());
-        if (!cp.isMapZoomLimited()) {
-            mMap.setMinZoomLevel(LOWEST_UNLIMITED_ZOOM);
-        } else {
-            mMap.setMinZoomLevel(AbstractMapOverlay.getDisplaySizeBasedMinZoomLevel());
-        }
         mMap.postInvalidate();
     }
 

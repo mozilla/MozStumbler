@@ -16,18 +16,27 @@ import org.mozilla.osmdroid.views.MapView;
  * This class provides the Mozilla Coverage overlay
  */
 public class CoverageOverlay extends AbstractMapOverlay {
+    public static final String MLS_MAP_TILE_COVERAGE_NAME = "Mozilla Location Service Coverage Map";
     // Use a lower zoom than the LowResMapOverlay, the coverage can be very low detail and still look ok
-    private static final int LOW_ZOOM_LEVEL = 10;
+    public static final int LOW_ZOOM_LEVEL = 10;
+
+    public CoverageOverlay(final Context aContext, final String coverageUrl, MapView mapView) {
+        super(aContext);
+        setup(1, AbstractMapOverlay.LARGE_SCREEN_MIN_ZOOM, coverageUrl, mapView);
+    }
 
     public CoverageOverlay(LowResType type, final Context aContext, final String coverageUrl, MapView mapView) {
         super(aContext);
 
         final int zoomLevel = (type == LowResType.HIGHER_ZOOM) ?
                 AbstractMapOverlay.getDisplaySizeBasedMinZoomLevel() : LOW_ZOOM_LEVEL;
+        setup(zoomLevel, zoomLevel, coverageUrl, mapView);
+    }
 
-        final ITileSource coverageTileSource = new XYTileSource("Mozilla Location Service Coverage Map",
+    private void setup(int aZoomMinLevel, int aZoomMaxLevel, final String coverageUrl, MapView mapView) {
+        final ITileSource coverageTileSource = new XYTileSource(MLS_MAP_TILE_COVERAGE_NAME,
                 null,
-                zoomLevel, zoomLevel,
+                aZoomMinLevel, aZoomMaxLevel,
                 AbstractMapOverlay.TILE_PIXEL_SIZE,
                 ".png",
                 new String[]{coverageUrl});

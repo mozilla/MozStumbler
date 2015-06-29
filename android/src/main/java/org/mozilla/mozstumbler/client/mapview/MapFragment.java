@@ -72,7 +72,7 @@ public class MapFragment extends android.support.v4.app.Fragment
 
     private static final String COVERAGE_REDIRECT_URL = "https://location.services.mozilla.com/map.json";
     private static final String ZOOM_KEY = "zoom";
-    private static final int LOWEST_UNLIMITED_ZOOM = 3;
+    public static final int LOWEST_UNLIMITED_ZOOM = 3;
     private static final int DEFAULT_ZOOM = 13;
     private static final int DEFAULT_ZOOM_AFTER_FIX = 16;
     private static final String LAT_KEY = "latitude";
@@ -90,6 +90,7 @@ public class MapFragment extends android.support.v4.app.Fragment
     private LowResMapOverlay mLowResMapOverlayLowZoom;
     private Overlay mCoverageTilesOverlayLowZoom;
     private Overlay mCoverageTilesOverlayHighZoom;
+    private Overlay mCoverageTilesOverlayOriginalZoom; // used in unlimited zoom mode for levels < LOW_ZOOM_LEVEL
     private ITileSource mHighResMapSource;
     private View mRootView;
     private TextView mTextViewMapResolutionInfo;
@@ -263,9 +264,11 @@ public class MapFragment extends android.support.v4.app.Fragment
 
     private void initCoverageTiles(String coverageUrl) {
         ClientLog.i(LOG_TAG, "initCoverageTiles: " + coverageUrl);
-        mCoverageTilesOverlayLowZoom = new CoverageOverlay(CoverageOverlay.LowResType.LOWER_ZOOM,
+        mCoverageTilesOverlayLowZoom = new CoverageOverlay(AbstractMapOverlay.TileResType.LOWER_ZOOM,
                 mRootView.getContext(), coverageUrl, mMap);
-        mCoverageTilesOverlayHighZoom = new CoverageOverlay(CoverageOverlay.LowResType.HIGHER_ZOOM,
+        mCoverageTilesOverlayHighZoom = new CoverageOverlay(AbstractMapOverlay.TileResType.HIGHER_ZOOM,
+                mRootView.getContext(), coverageUrl, mMap);
+        mCoverageTilesOverlayOriginalZoom = new CoverageOverlay(AbstractMapOverlay.TileResType.ORIGINAL_ZOOM,
                 mRootView.getContext(), coverageUrl, mMap);
     }
 
@@ -294,18 +297,30 @@ public class MapFragment extends android.support.v4.app.Fragment
         }
     }
 
-    // The MLS coverage follows the same logic as the lower resolution map overlay, in that
-    // when at low zoom level, show even lower resolution tiles. The MLS coverage is not
-    // dependant on the isHighBandwidth for this behaviour, it always does this.
+    // At regular zoom levels, the MLS coverage follows the same logic as the lower resolution map
+    // overlay, in that when at low zoom level, show even lower resolution tiles.
+    // At lower zoom levels (only available in unlimited zoom mode) show exact zoom level
     private void updateOverlayCoverageLayer(int zoomLevel) {
-        if (mCoverageTilesOverlayLowZoom == null || mCoverageTilesOverlayHighZoom == null) {
+        if (mCoverageTilesOverlayLowZoom == null || mCoverageTilesOverlayHighZoom == null
+                || mCoverageTilesOverlayOriginalZoom == null) {
             return;
         }
 
         final List<Overlay> overlays = mMap.getOverlays();
+        if (zoomLevel < CoverageOverlay.LOW_ZOOM_LEVEL) {
+            if (!overlays.contains(mCoverageTilesOverlayOriginalZoom)) {
+                overlays.remove(mCoverageTilesOverlayLowZoom);
+                overlays.remove(mCoverageTilesOverlayHighZoom);
+                overlays.add(0, mCoverageTilesOverlayOriginalZoom);
+                mMap.invalidate();
+            }
+            return;
+        }
+
         final Overlay overlayRemoved = (!isHighZoom(zoomLevel)) ? mCoverageTilesOverlayHighZoom : mCoverageTilesOverlayLowZoom;
         final Overlay overlayAdded = (isHighZoom(zoomLevel)) ? mCoverageTilesOverlayHighZoom : mCoverageTilesOverlayLowZoom;
         overlays.remove(overlayRemoved);
+        overlays.remove(mCoverageTilesOverlayOriginalZoom);
         if (!overlays.contains(overlayAdded)) {
             boolean hasMapOverlay = overlays.contains(mLowResMapOverlayHighZoom) || overlays.contains(mLowResMapOverlayLowZoom);
             int idx = hasMapOverlay ? 1 : 0;
@@ -385,9 +400,9 @@ public class MapFragment extends android.support.v4.app.Fragment
 
             mMap.setTileSource(new BlankTileSource());
 
-            mLowResMapOverlayLowZoom = new LowResMapOverlay(LowResMapOverlay.LowResType.LOWER_ZOOM,
+            mLowResMapOverlayLowZoom = new LowResMapOverlay(AbstractMapOverlay.TileResType.LOWER_ZOOM,
                     this.getActivity(), isMLSTileStore, mMap);
-            mLowResMapOverlayHighZoom = new LowResMapOverlay(LowResMapOverlay.LowResType.HIGHER_ZOOM,
+            mLowResMapOverlayHighZoom = new LowResMapOverlay(AbstractMapOverlay.TileResType.HIGHER_ZOOM,
                     this.getActivity(), isMLSTileStore, mMap);
 
             updateOverlayBaseLayer(mMap.getZoomLevel());

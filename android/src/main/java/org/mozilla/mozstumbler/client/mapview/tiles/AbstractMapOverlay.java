@@ -141,7 +141,7 @@ public abstract class AbstractMapOverlay extends TilesOverlay {
         currentMapTile.draw(c);
     }
 
-    public enum LowResType {
-        HIGHER_ZOOM, LOWER_ZOOM
+    public enum TileResType {
+        HIGHER_ZOOM, LOWER_ZOOM, ORIGINAL_ZOOM
     }
 }

@@ -7,6 +7,7 @@ package org.mozilla.mozstumbler.client.mapview.tiles;
 import android.content.Context;
 import android.graphics.Color;
 
+import org.mozilla.mozstumbler.client.mapview.MapFragment;
 import org.mozilla.osmdroid.tileprovider.tilesource.ITileSource;
 import org.mozilla.osmdroid.tileprovider.tilesource.XYTileSource;
 import org.mozilla.osmdroid.tileprovider.util.SimpleInvalidationHandler;
@@ -20,23 +21,23 @@ public class CoverageOverlay extends AbstractMapOverlay {
     // Use a lower zoom than the LowResMapOverlay, the coverage can be very low detail and still look ok
     public static final int LOW_ZOOM_LEVEL = 10;
 
-    public CoverageOverlay(final Context aContext, final String coverageUrl, MapView mapView) {
-        super(aContext);
-        setup(1, AbstractMapOverlay.LARGE_SCREEN_MIN_ZOOM, coverageUrl, mapView);
-    }
-
-    public CoverageOverlay(LowResType type, final Context aContext, final String coverageUrl, MapView mapView) {
+    public CoverageOverlay(TileResType type, final Context aContext, final String coverageUrl, MapView mapView) {
         super(aContext);
 
-        final int zoomLevel = (type == LowResType.HIGHER_ZOOM) ?
+        if (type == TileResType.ORIGINAL_ZOOM) {
+            setup(MapFragment.LOWEST_UNLIMITED_ZOOM, LOW_ZOOM_LEVEL - 1, coverageUrl, mapView);
+            return;
+        }
+
+        final int zoomLevel = (type == TileResType.HIGHER_ZOOM) ?
                 AbstractMapOverlay.getDisplaySizeBasedMinZoomLevel() : LOW_ZOOM_LEVEL;
         setup(zoomLevel, zoomLevel, coverageUrl, mapView);
     }
 
-    private void setup(int aZoomMinLevel, int aZoomMaxLevel, final String coverageUrl, MapView mapView) {
+    private void setup(int zoomMinLevel, int zoomMaxLevel, final String coverageUrl, MapView mapView) {
         final ITileSource coverageTileSource = new XYTileSource(MLS_MAP_TILE_COVERAGE_NAME,
                 null,
-                aZoomMinLevel, aZoomMaxLevel,
+                zoomMinLevel, zoomMaxLevel,
                 AbstractMapOverlay.TILE_PIXEL_SIZE,
                 ".png",
                 new String[]{coverageUrl});

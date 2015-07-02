@@ -51,9 +51,6 @@ class LBUploadTask extends AsyncUploader {
         if (bearerToken != null) {
             headers.put(FxAService.BEARER_HEADER, "Bearer " + bearerToken);
         }
-        headers.put(MLSLocationService.EMAIL_HEADER, param.emailAddress);
-        headers.put(MLSLocationService.NICKNAME_HEADER, param.nickname);
-
         return headers;
     }
 

@@ -30,9 +30,7 @@ public class LBStumblerBundleReceiver extends BroadcastReceiver {
 
             mUploadTask = new LBUploadTask(mStorage);
             boolean ignoredValue = false;
-            ClientPrefs prefs = ClientPrefs.getInstance(context);
-            AsyncUploadParam params = new AsyncUploadParam(ignoredValue, ignoredValue,
-                    prefs.getEmail(), prefs.getNickname());
+            AsyncUploadParam params = new AsyncUploadParam(ignoredValue, ignoredValue, null, null);
             mUploadTask.execute(params);
         }
     }

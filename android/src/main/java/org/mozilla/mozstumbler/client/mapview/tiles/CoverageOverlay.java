@@ -7,6 +7,7 @@ package org.mozilla.mozstumbler.client.mapview.tiles;
 import android.content.Context;
 import android.graphics.Color;
 
+import org.mozilla.mozstumbler.client.mapview.MapFragment;
 import org.mozilla.osmdroid.tileprovider.tilesource.ITileSource;
 import org.mozilla.osmdroid.tileprovider.tilesource.XYTileSource;
 import org.mozilla.osmdroid.tileprovider.util.SimpleInvalidationHandler;
@@ -16,18 +17,27 @@ import org.mozilla.osmdroid.views.MapView;
  * This class provides the Mozilla Coverage overlay
  */
 public class CoverageOverlay extends AbstractMapOverlay {
+    public static final String MLS_MAP_TILE_COVERAGE_NAME = "Mozilla Location Service Coverage Map";
     // Use a lower zoom than the LowResMapOverlay, the coverage can be very low detail and still look ok
-    private static final int LOW_ZOOM_LEVEL = 10;
+    public static final int LOW_ZOOM_LEVEL = 10;
 
-    public CoverageOverlay(LowResType type, final Context aContext, final String coverageUrl, MapView mapView) {
+    public CoverageOverlay(TileResType type, final Context aContext, final String coverageUrl, MapView mapView) {
         super(aContext);
 
-        final int zoomLevel = (type == LowResType.HIGHER_ZOOM) ?
-                AbstractMapOverlay.getDisplaySizeBasedMinZoomLevel() : LOW_ZOOM_LEVEL;
+        if (type == TileResType.ORIGINAL_ZOOM) {
+            setup(MapFragment.LOWEST_UNLIMITED_ZOOM, LOW_ZOOM_LEVEL - 1, coverageUrl, mapView);
+            return;
+        }
 
-        final ITileSource coverageTileSource = new XYTileSource("Mozilla Location Service Coverage Map",
+        final int zoomLevel = (type == TileResType.HIGHER_ZOOM) ?
+                AbstractMapOverlay.getDisplaySizeBasedMinZoomLevel() : LOW_ZOOM_LEVEL;
+        setup(zoomLevel, zoomLevel, coverageUrl, mapView);
+    }
+
+    private void setup(int zoomMinLevel, int zoomMaxLevel, final String coverageUrl, MapView mapView) {
+        final ITileSource coverageTileSource = new XYTileSource(MLS_MAP_TILE_COVERAGE_NAME,
                 null,
-                zoomLevel, zoomLevel,
+                zoomMinLevel, zoomMaxLevel,
                 AbstractMapOverlay.TILE_PIXEL_SIZE,
                 ".png",
                 new String[]{coverageUrl});

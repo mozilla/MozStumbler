@@ -32,7 +32,7 @@ public abstract class AbstractMapOverlay extends TilesOverlay {
     // TODO make this a single value configurable in developer settings
     private static final int SMALL_SCREEN_MIN_ZOOM = 11;
     private static final int MEDIUM_SCREEN_MIN_ZOOM = 12;
-    private static final int LARGE_SCREEN_MIN_ZOOM = 13;
+    protected static final int LARGE_SCREEN_MIN_ZOOM = 13;
     // Use png32 which is a 32-color indexed image, the tiles are ~30% smaller
     public static String FILE_TYPE_SUFFIX_PNG = ".png32";
     private static int sMinZoomLevelOfMapDisplaySizeBased;
@@ -141,7 +141,7 @@ public abstract class AbstractMapOverlay extends TilesOverlay {
         currentMapTile.draw(c);
     }
 
-    public enum LowResType {
-        HIGHER_ZOOM, LOWER_ZOOM
+    public enum TileResType {
+        HIGHER_ZOOM, LOWER_ZOOM, ORIGINAL_ZOOM
     }
 }

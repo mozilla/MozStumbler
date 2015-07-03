@@ -15,12 +15,12 @@ import org.mozilla.osmdroid.tileprovider.util.SimpleInvalidationHandler;
 import org.mozilla.osmdroid.views.MapView;
 
 public class LowResMapOverlay extends AbstractMapOverlay {
-    private static final int LOW_ZOOM_LEVEL = 11;
+    public static final int LOW_ZOOM_LEVEL = 11;
 
-    public LowResMapOverlay(LowResType type, final Context aContext, boolean isMLSTileStore, MapView mapView) {
+    public LowResMapOverlay(TileResType type, final Context aContext, boolean isMLSTileStore, MapView mapView) {
         super(aContext);
 
-        final int zoomLevel = (type == LowResType.HIGHER_ZOOM) ?
+        final int zoomLevel = (type == TileResType.HIGHER_ZOOM) ?
                 AbstractMapOverlay.getDisplaySizeBasedMinZoomLevel() : LOW_ZOOM_LEVEL;
 
         ITileSource mapTileSource;

@@ -97,8 +97,7 @@ public class PreferencesScreen extends PreferenceActivity implements IFxACallbac
 
         String app_name = getResources().getString(R.string.app_name);
         FxAGlobals fxa = new FxAGlobals();
-        fxa.registerCallbacks(this);
-        fxa.startIntentListening(this, app_name);
+        fxa.startIntentListening((Context)this, (IFxACallbacks) this, app_name);
 
     }
 

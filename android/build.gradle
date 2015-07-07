@@ -255,8 +255,8 @@ dependencies {
     compile "org.apache.james:apache-mime4j:0.6"
 
     // Firefox Accounts library code
-    compile 'org.mozilla.accounts.fxa:fxa:0.9.11'
-    testCompile 'org.mozilla.accounts.fxa:fxa:0.9.11'
+    compile 'org.mozilla.accounts.fxa:fxa:0.9.12'
+    testCompile 'org.mozilla.accounts.fxa:fxa:0.9.12'
 
     // Stumbler library - always build from source
     compile project(':libraries:stumbler')

@@ -10,6 +10,7 @@ import android.content.IntentFilter;
 import android.support.v4.content.LocalBroadcastManager;
 
 import org.mozilla.mozstumbler.client.ClientPrefs;
+import org.mozilla.mozstumbler.service.Prefs;
 import org.mozilla.mozstumbler.service.stumblerthread.Reporter;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.StumblerBundle;
 import org.mozilla.mozstumbler.service.uploadthread.AsyncUploadParam;
@@ -22,6 +23,11 @@ public class LBStumblerBundleReceiver extends BroadcastReceiver {
 
         @Override
         public void onReceive(Context context, Intent intent) {
+            // Guard against LeaderBoard intents when we're not logged into FxA
+            if (Prefs.getInstance(context).getBearerToken() == null) {
+                return;
+            }
+
             // start this upload
             if (mUploadTask != null &&
                     AsyncUploader.isUploading.get()) {
@@ -46,12 +52,14 @@ public class LBStumblerBundleReceiver extends BroadcastReceiver {
 
         LocalBroadcastManager.getInstance(c).registerReceiver(mUploadTrigger,
                 new IntentFilter(AsyncUploaderMLS.ACTION_MLS_UPLOAD_COMPLETED));
-
     }
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        final StumblerBundle bundle = intent.getParcelableExtra(Reporter.NEW_BUNDLE_ARG_BUNDLE);
-        mStorage.insert(bundle.getGpsPosition());
+        // Guard against LeaderBoard intents when we're not logged into FxA
+        if (Prefs.getInstance(context).getBearerToken() != null) {
+            final StumblerBundle bundle = intent.getParcelableExtra(Reporter.NEW_BUNDLE_ARG_BUNDLE);
+            mStorage.insert(bundle.getGpsPosition());
+        }
     }
 }

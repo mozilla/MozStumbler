@@ -171,7 +171,7 @@ public abstract class AsyncUploader extends AsyncTask<AsyncUploadParam, AsyncPro
     }
 
     protected boolean checkCanUpload(AsyncUploadParam param) {
-        if (param.useWifiOnly && param.isWifiAvailable) {
+        if (param.useWifiOnly && !param.isWifiAvailable) {
             if (AppGlobals.isDebug) {
                 Log.d(LOG_TAG, "not on WiFi, not sending");
             }

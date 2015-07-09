@@ -6,6 +6,10 @@ package org.mozilla.mozstumbler.service.core.http;
 
 import android.util.Log;
 
+import org.mozilla.mozstumbler.svclocator.ServiceLocator;
+import org.mozilla.mozstumbler.svclocator.services.log.ILogger;
+import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -14,6 +18,7 @@ import java.net.Socket;
 import java.net.SocketAddress;
 import java.net.SocketException;
 import java.nio.channels.SocketChannel;
+import java.util.Arrays;
 
 import javax.net.ssl.HandshakeCompletedListener;
 import javax.net.ssl.HttpsURLConnection;
@@ -23,6 +28,9 @@ import javax.net.ssl.SSLSocketFactory;
 
 
 public class NoSSLv3SocketFactory extends SSLSocketFactory{
+
+    private static String LOG_TAG = LoggerUtil.makeLogTag(NoSSLv3SSLSocket.class);
+    private static ILogger Log = (ILogger) ServiceLocator.getInstance().getService(ILogger.class);
     private final SSLSocketFactory delegate;
 
     public NoSSLv3SocketFactory() {
@@ -35,13 +43,11 @@ public class NoSSLv3SocketFactory extends SSLSocketFactory{
 
     @Override
     public String[] getDefaultCipherSuites() {
-        Log.i("NoSSLv3", "Using good cipher suites!");
         return GlobalConstants.DEFAULT_CIPHER_SUITES;
     }
 
     @Override
     public String[] getSupportedCipherSuites() {
-        Log.i("NoSSLv3", "Using good cipher suites!");
         return GlobalConstants.DEFAULT_CIPHER_SUITES;
     }
 
@@ -85,7 +91,6 @@ public class NoSSLv3SocketFactory extends SSLSocketFactory{
 
         @Override
         public void setEnabledProtocols(String[] protocols) {
-            Log.i("NoSSLv3", "Using good protocols suites!");
             super.setEnabledProtocols(GlobalConstants.DEFAULT_PROTOCOLS);
         }
     }
@@ -100,17 +105,17 @@ public class NoSSLv3SocketFactory extends SSLSocketFactory{
 
         @Override
         public String[] getSupportedCipherSuites() {
-            return delegate.getSupportedCipherSuites();
+            return GlobalConstants.DEFAULT_CIPHER_SUITES;
         }
 
         @Override
         public String[] getEnabledCipherSuites() {
-            return delegate.getEnabledCipherSuites();
+            return GlobalConstants.DEFAULT_CIPHER_SUITES;
         }
 
         @Override
         public void setEnabledCipherSuites(String[] suites) {
-            delegate.setEnabledCipherSuites(suites);
+            delegate.setEnabledCipherSuites(GlobalConstants.DEFAULT_CIPHER_SUITES);
         }
 
         @Override
@@ -125,7 +130,7 @@ public class NoSSLv3SocketFactory extends SSLSocketFactory{
 
         @Override
         public void setEnabledProtocols(String[] protocols) {
-            delegate.setEnabledProtocols(protocols);
+            delegate.setEnabledProtocols(GlobalConstants.DEFAULT_PROTOCOLS);
         }
 
         @Override

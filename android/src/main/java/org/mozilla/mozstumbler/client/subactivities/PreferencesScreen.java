@@ -5,7 +5,6 @@
 package org.mozilla.mozstumbler.client.subactivities;
 
 import android.app.AlertDialog;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -25,9 +24,9 @@ import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
 import android.widget.Toast;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.mozilla.accounts.fxa.FxAGlobals;
+import org.mozilla.accounts.fxa.IFxACallbacks;
 import org.mozilla.accounts.fxa.Intents;
 import org.mozilla.accounts.fxa.dialog.OAuthDialog;
 import org.mozilla.accounts.fxa.tasks.DestroyOAuthTask;
@@ -45,7 +44,7 @@ import org.mozilla.mozstumbler.svclocator.ServiceLocator;
 import org.mozilla.mozstumbler.svclocator.services.log.ILogger;
 import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
-public class PreferencesScreen extends PreferenceActivity {
+public class PreferencesScreen extends PreferenceActivity implements IFxACallbacks{
 
     private static final String LOG_TAG = LoggerUtil.makeLogTag(PreferencesScreen.class);
     ILogger Log = (ILogger) ServiceLocator.getInstance().getService(ILogger.class);
@@ -58,81 +57,6 @@ public class PreferencesScreen extends PreferenceActivity {
     private CheckBoxPreference mCrashReportsOn;
     private ListPreference mMapTileDetail;
     private Preference mFxaLoginPreference;
-
-    private final BroadcastReceiver fxaCallbackReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (intent.getAction().equals(Intents.ORG_MOZILLA_ACCOUNTS_FXA_BEARER_TOKEN)) {
-                processBearerToken(intent);
-            } else if (intent.getAction().equals(Intents.PROFILE_READ)) {
-                processProfile(context, intent);
-            } else if (intent.getAction().equals(Intents.PROFILE_READ_FAILURE)) {
-                // bad profile reads automatically logout the user
-                getPrefs().setBearerToken("");
-                clearFxaLoginState();
-            } else if (intent.getAction().equals(Intents.OAUTH_DESTROY)) {
-                clearFxaLoginState();
-            } else if (intent.getAction().equals(Intents.OAUTH_DESTROY_FAIL)) {
-                // I don't care.  Clear the login state even if fxa logout 'fails'
-                clearFxaLoginState();
-            } else if (intent.getAction().equals(Intents.DISPLAY_NAME_WRITE)) {
-                // Refetch the profile to make sure we have the proper display name
-                fetchFxaProfile(getPrefs().getBearerToken());
-            } else if (intent.getAction().equals(Intents.DISPLAY_NAME_WRITE_FAILURE)) {
-                fetchFxaProfile(getPrefs().getBearerToken());
-            } else if (intent.getAction().equals(Intents.OAUTH_VERIFY)) {
-                // Do nothing
-            } else if (intent.getAction().equals(Intents.OAUTH_VERIFY_FAIL)) {
-                clearFxaLoginState();
-            }
-        }
-
-        private void processBearerToken(Intent intent) {
-            String jsonBlob = intent.getStringExtra("json");
-            if (TextUtils.isEmpty(jsonBlob)) {
-                Log.w(LOG_TAG, "error extracting json data");
-                return;
-            }
-            JSONObject authJSON = null;
-            try {
-                authJSON = new JSONObject(jsonBlob);
-                String bearerToken = authJSON.getString("access_token");
-                getPrefs().setBearerToken(bearerToken);
-                fetchFxaProfile(bearerToken);
-            } catch (JSONException e) {
-                Log.e(LOG_TAG, "Error fetching bearer token.", e);
-                return;
-            }
-        }
-
-        private void processProfile(Context context, Intent intent) {
-            String jsonBlob = intent.getStringExtra("json");
-            if (TextUtils.isEmpty(jsonBlob)) {
-                Log.w(LOG_TAG, "error extracting json data");
-                return;
-            }
-            ProfileJson profileJson = null;
-            try {
-                profileJson = new ProfileJson(new JSONObject(jsonBlob));
-                String displayName = profileJson.getDisplayName();
-                String email = profileJson.getEmail();
-
-                if (!TextUtils.isEmpty(email)) {
-                    Prefs.getInstance(context).setEmail(email);
-                    setFxALoginTitle(getPrefs().getBearerToken(), getPrefs().getEmail());
-                }
-
-                if (!TextUtils.isEmpty(displayName)) {
-                    Prefs.getInstance(context).setNickname(displayName);
-                    setNicknamePreferenceTitle(displayName);
-                }
-
-
-            } catch (JSONException e) {
-                Log.e(LOG_TAG, "Error fetching FxA profile", e);
-            }
-        }
-    };
 
     private void fetchFxaProfile(String bearerToken) {
         RetrieveProfileTask task = new RetrieveProfileTask(getApplicationContext(),
@@ -169,8 +93,12 @@ public class PreferencesScreen extends PreferenceActivity {
 
         setPreferenceListener();
         setButtonListeners();
-        registerFxaListeners();
         verifyBearerToken();
+
+        String app_name = getResources().getString(R.string.app_name);
+        FxAGlobals fxa = new FxAGlobals();
+        fxa.startIntentListening((Context)this, (IFxACallbacks) this, app_name);
+
     }
 
     private void verifyBearerToken() {
@@ -183,15 +111,6 @@ public class PreferencesScreen extends PreferenceActivity {
                     BuildConfig.FXA_OAUTH2_SERVER);
             task.execute(bearerToken);
         }
-    }
-
-    private void registerFxaListeners() {
-        IntentFilter intentFilter = new IntentFilter();
-        Intents.registerFxaIntents(intentFilter);
-
-        LocalBroadcastManager
-                .getInstance(getApplicationContext())
-                .registerReceiver(fxaCallbackReceiver, intentFilter);
     }
 
     private void setButtonListeners() {
@@ -299,9 +218,6 @@ public class PreferencesScreen extends PreferenceActivity {
                     myAlertDialog.show();
                     return true;
                 }
-
-                String app_name = getResources().getString(R.string.app_name);
-                FxAGlobals.initFxaLogin(PreferencesScreen.this, app_name);
 
                 // These secrets are provisioned from the FxA dashboard
                 String FXA_APP_KEY = BuildConfig.FXA_APP_KEY;
@@ -431,4 +347,61 @@ public class PreferencesScreen extends PreferenceActivity {
     }
 
 
+    // FxA Callbacks
+    @Override
+    public void processReceiveBearerToken(String bearerToken) {
+        getPrefs().setBearerToken(bearerToken);
+        fetchFxaProfile(bearerToken);
+    }
+
+    @Override
+    public void failCallback(String s) {
+        if (s.equals(Intents.PROFILE_READ)) {
+            getPrefs().setBearerToken("");
+            clearFxaLoginState();
+        }
+        if (s.equals(Intents.OAUTH_DESTROY)) {
+            // I don't care.  Clear the login state even if fxa logout 'fails'
+            clearFxaLoginState();
+        }
+        if (s.equals(Intents.DISPLAY_NAME_WRITE)) {
+            fetchFxaProfile(getPrefs().getBearerToken());
+        }
+        if (s.equals(Intents.OAUTH_VERIFY)) {
+            clearFxaLoginState();
+        }
+    }
+
+    @Override
+    public void processProfileRead(JSONObject jsonObject) {
+        ProfileJson profileJson = new ProfileJson(jsonObject);
+        String displayName = profileJson.getDisplayName();
+        String email = profileJson.getEmail();
+
+        if (!TextUtils.isEmpty(email)) {
+            Prefs.getInstance(this).setEmail(email);
+            setFxALoginTitle(getPrefs().getBearerToken(), getPrefs().getEmail());
+        }
+
+        if (!TextUtils.isEmpty(displayName)) {
+            Prefs.getInstance(this).setNickname(displayName);
+            setNicknamePreferenceTitle(displayName);
+        }
+    }
+
+    @Override
+    public void processDisplayNameWrite() {
+        // Fetch the profile to make sure we have the proper display name
+        fetchFxaProfile(getPrefs().getBearerToken());
+    }
+
+    @Override
+    public void processOauthDestroy() {
+        clearFxaLoginState();
+    }
+
+    @Override
+    public void processOauthVerify() {
+
+    }
 }

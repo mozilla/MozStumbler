@@ -9,6 +9,14 @@ import android.os.Build;
 import org.mozilla.mozstumbler.svclocator.BuildConfig;
 
 public class GlobalConstants {
+    /*
+     * The DEFALUT_CIPHER_SUITES and DEFAULT_PROTOCOLS is copied from
+     * firefox sync on android.
+     *
+     * Original source can be found at: 
+     * 
+     * https://github.com/mozilla-services/android-sync/blob/a948def/src/main/java/org/mozilla/gecko/background/common/GlobalConstants.java
+     */
 
     // Acceptable cipher suites.
     /**

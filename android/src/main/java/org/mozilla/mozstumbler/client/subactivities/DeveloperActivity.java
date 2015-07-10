@@ -30,13 +30,17 @@ import org.mozilla.mozstumbler.client.MainApp;
 import org.mozilla.mozstumbler.client.serialize.KMLFragment;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.Prefs;
+import org.mozilla.mozstumbler.service.core.http.IHttpUtil;
 import org.mozilla.mozstumbler.service.core.logging.ClientLog;
 import org.mozilla.mozstumbler.service.stumblerthread.motiondetection.LocationChangeSensor;
 import org.mozilla.mozstumbler.service.stumblerthread.motiondetection.MotionSensor;
 import org.mozilla.mozstumbler.service.utils.BatteryCheckReceiver;
+import org.mozilla.mozstumbler.svclocator.ServiceLocator;
 import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
+import org.mozilla.osmdroid.tileprovider.modules.SerializableTile;
 
 import java.io.File;
+import java.util.HashMap;
 
 import static org.mozilla.mozstumbler.service.stumblerthread.datahandling.ClientDataStorageManager.sdcardArchivePath;
 
@@ -68,6 +72,12 @@ public class DeveloperActivity extends ActionBarActivity {
                     public void onClick(DialogInterface dialog, int item) {
                         switch (item) {
                             case 0:
+                                // Trigger a bad HTTPS POST to see what the TLS stuff does.
+                                IHttpUtil httpUtil = (IHttpUtil) ServiceLocator.getInstance().getService(IHttpUtil.class);
+                                httpUtil.post("https://location.services.mozilla.com/",
+                                        new byte[0],
+                                        new HashMap<String, String>(),
+                                        false);
                                 Object a = null;
                                 a.hashCode();
                                 break;

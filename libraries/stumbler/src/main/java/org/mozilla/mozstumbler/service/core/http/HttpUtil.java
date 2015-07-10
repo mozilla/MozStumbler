@@ -265,8 +265,10 @@ public class HttpUtil implements IHttpUtil {
         } catch (IOException e) {
             ClientLog.e(LOG_TAG, "post error", e);
         } finally {
-            String cipherSuite = ((HttpsURLConnection) httpURLConnection).getCipherSuite();
-            Log.d(LOG_TAG, "Negotiated HTTPS ciphers: " + cipherSuite);
+            if (BuildConfig.DEBUG) {
+                String cipherSuite = ((HttpsURLConnection) httpURLConnection).getCipherSuite();
+                Log.i(LOG_TAG, "Negotiated HTTPS ciphers: " + cipherSuite);
+            }
             httpURLConnection.disconnect();
         }
         return null;

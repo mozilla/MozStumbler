@@ -4,6 +4,9 @@
 
 package org.mozilla.mozstumbler.svclocator.services.log;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
 public class DebugLogger implements ILogger {
 
     public void w(String logTag, String s) {
@@ -28,7 +31,10 @@ public class DebugLogger implements ILogger {
         if (e == null) {
             msg = "";
         } else {
-            msg = e.toString();
+            StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw);
+            e.printStackTrace(pw);
+            msg = sw.toString();
         }
         android.util.Log.e(logTag, s + ":" + msg);
         return msg;

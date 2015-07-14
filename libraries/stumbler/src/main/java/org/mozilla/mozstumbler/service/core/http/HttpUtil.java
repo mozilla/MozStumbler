@@ -9,6 +9,9 @@ import android.os.Build;
 import org.mozilla.mozstumbler.service.Prefs;
 import org.mozilla.mozstumbler.service.core.logging.ClientLog;
 import org.mozilla.mozstumbler.service.utils.Zipper;
+import org.mozilla.mozstumbler.svclocator.BuildConfig;
+import org.mozilla.mozstumbler.svclocator.ServiceLocator;
+import org.mozilla.mozstumbler.svclocator.services.log.ILogger;
 import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
 import java.io.BufferedInputStream;
@@ -23,19 +26,18 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
-import java.net.Proxy;
-import java.net.ProxySelector;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
 
 public class HttpUtil implements IHttpUtil {
     public final static int IO_BUFFER_SIZE = 8 * 1024;
 
+    private static final ILogger Log = (ILogger) ServiceLocator.getInstance().getService(ILogger.class);
     private static final String LOG_TAG = LoggerUtil.makeLogTag(HttpUtil.class);
     private static final String USER_AGENT_HEADER = "User-Agent";
     private final String userAgent;
@@ -51,33 +53,26 @@ public class HttpUtil implements IHttpUtil {
         userAgent = ua;
     }
 
-    private URLConnection openConnectionWithProxy(URL url) throws IOException {
-        Proxy proxy = Proxy.NO_PROXY;
-
-        ProxySelector proxySelector = ProxySelector.getDefault();
-        if (proxySelector != null) {
-            URI uri;
-            try {
-                uri = url.toURI();
-            } catch (URISyntaxException e) {
-                IOException ioe = new IOException(url.toString());
-                ioe.initCause(e);
-                throw ioe;
-            }
-
-            List<Proxy> proxies = proxySelector.select(uri);
-            if (proxies != null && !proxies.isEmpty()) {
-                proxy = proxies.get(0);
-            }
+    private URLConnection mozOpenConnection(URL l_url) throws IOException {
+        try {
+            // Try to use the highest possible TLS protocol that this platform supports.
+            SSLContext sslcontext = SSLContext.getInstance(GlobalConstants.DEFAULT_PROTOCOLS[0]);
+            sslcontext.init(null,
+                    null,
+                    null);
+            NoSSLv3SocketFactory factory = new NoSSLv3SocketFactory(sslcontext.getSocketFactory());
+            HttpsURLConnection.setDefaultSSLSocketFactory(factory);
+            return l_url.openConnection();
+        } catch (Exception e) {
+            Log.e(LOG_TAG, "Error initializing context", e);
+            return null ;
         }
-
-        return url.openConnection(proxy);
     }
 
     public String getUrlAsString(URL url) throws IOException {
         InputStream stream = null;
         try {
-            URLConnection connection = openConnectionWithProxy(url);
+            URLConnection connection = mozOpenConnection(url);
             stream = connection.getInputStream();
             BufferedReader reader = null;
             try {
@@ -102,7 +97,8 @@ public class HttpUtil implements IHttpUtil {
 
     @Override
     public InputStream getUrlAsStream(String url) throws IOException {
-        return new URL(url).openStream();
+        URLConnection connection = mozOpenConnection(new URL(url));
+        return connection.getInputStream();
     }
 
 
@@ -112,7 +108,7 @@ public class HttpUtil implements IHttpUtil {
         InputStream inputStream = null;
         OutputStream outputStream = null;
         try {
-            URLConnection connection = openConnectionWithProxy(url);
+            URLConnection connection = mozOpenConnection(url);
             inputStream = connection.getInputStream();
             outputStream = new FileOutputStream(file);
             for (; ; ) {
@@ -133,9 +129,7 @@ public class HttpUtil implements IHttpUtil {
     }
 
     public IResponse get(String urlString, Map<String, String> headers) {
-
         String HTTP_METHOD = "GET";
-
         return getHttpResponse(urlString, headers, HTTP_METHOD);
     }
 
@@ -155,7 +149,7 @@ public class HttpUtil implements IHttpUtil {
         }
 
         try {
-            httpURLConnection = (HttpURLConnection) url.openConnection();
+            httpURLConnection = (HttpURLConnection) mozOpenConnection(url);
             if (HTTP_METHOD.toUpperCase().equals("HEAD")) {
                 httpURLConnection.setInstanceFollowRedirects(false);
             }
@@ -220,13 +214,13 @@ public class HttpUtil implements IHttpUtil {
 
 
         try {
-            httpURLConnection = (HttpURLConnection) url.openConnection();
+            httpURLConnection = (HttpsURLConnection) mozOpenConnection(url);
             httpURLConnection.setConnectTimeout(5000); // set timeout to 5 seconds
             // HttpURLConnection and Java are braindead.
             // http://stackoverflow.com/questions/8587913/what-exactly-does-urlconnection-setdooutput-affect
             httpURLConnection.setDoOutput(true);
             httpURLConnection.setRequestMethod("POST");
-        } catch (IOException e) {
+        } catch (Exception e) {
             ClientLog.e(LOG_TAG, "Couldn't open a connection: ", e);
             return null;
         }
@@ -272,6 +266,10 @@ public class HttpUtil implements IHttpUtil {
         } catch (IOException e) {
             ClientLog.e(LOG_TAG, "post error", e);
         } finally {
+            if (BuildConfig.DEBUG) {
+                String cipherSuite = ((HttpsURLConnection) httpURLConnection).getCipherSuite();
+                Log.i(LOG_TAG, "Negotiated HTTPS ciphers: " + cipherSuite);
+            }
             httpURLConnection.disconnect();
         }
         return null;

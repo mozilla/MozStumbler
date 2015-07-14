@@ -5,7 +5,7 @@ import java.util.HashMap;
 public class SerializedJSONRows {
     public String filename = "";
     public final byte[] data;
-    public enum StorageState { ON_DISK, IN_MEMORY_ONLY };
+    public enum StorageState { ON_DISK, IN_MEMORY }
     public StorageState storageState;
 
     public SerializedJSONRows(byte[] data, StorageState storageState) {

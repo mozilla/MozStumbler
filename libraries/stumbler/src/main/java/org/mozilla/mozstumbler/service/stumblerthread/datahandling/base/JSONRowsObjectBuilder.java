@@ -25,7 +25,7 @@ public class JSONRowsObjectBuilder {
      eat memory.
      */
     public SerializedJSONRows finalizeToJSONRowsObject() {
-        return new SerializedJSONRows(Zipper.zipData(generateJSON(false).getBytes()), SerializedJSONRows.StorageState.IN_MEMORY_ONLY);
+        return new SerializedJSONRows(Zipper.zipData(generateJSON(false).getBytes()), SerializedJSONRows.StorageState.IN_MEMORY);
     }
 
     protected String generateJSON(boolean preserve) {

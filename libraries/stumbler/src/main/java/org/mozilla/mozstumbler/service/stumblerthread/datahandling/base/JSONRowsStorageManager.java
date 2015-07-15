@@ -77,11 +77,7 @@ public class JSONRowsStorageManager {
     }
 
     public static String getSystemStorageDir(Context c) {
-        File dir = null;
-
-        if (dir == null) {
-            dir = c.getFilesDir();
-        }
+        File dir = c.getFilesDir();
 
         if (!dir.exists()) {
             boolean ok = dir.mkdirs();

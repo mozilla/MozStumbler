@@ -14,8 +14,7 @@ import java.io.RandomAccessFile;
 public class SerializedJSONRowsList {
     public static class Iterator {
         public final SerializedJSONRowsList fileList;
-        static final int INDEX_FOR_MEM_BUFFER = -1;
-        public int currentIndex = INDEX_FOR_MEM_BUFFER;
+        public int currentIndex = -1;
 
         public Iterator(SerializedJSONRowsList list) {
             fileList = new SerializedJSONRowsList(list);
@@ -23,7 +22,6 @@ public class SerializedJSONRowsList {
 
         public SerializedJSONRows getAtCurrentIndex() {
             final File f = fileList.mFiles[currentIndex];
-            final String filename = f.getName();
             final byte[] data = readFile(f);
             SerializedJSONRows serializedJSONRows = new SerializedJSONRows(data, SerializedJSONRows.StorageState.ON_DISK);
             serializedJSONRows.filename = f.getName();

@@ -110,7 +110,7 @@ public class JSONRowsStorageManager {
             return null;
         }
 
-        mJSONRowsObjectIterator = new SerializedJSONRowsList.Iterator(mFileList);
+        mJSONRowsObjectIterator = mFileList.getIterator();
 
         if (inMemoryReportsCount > 0) {
             mInMemoryFinalizedJSONRowsObject = mInMemoryActiveJSONRows.finalizeToJSONRowsObject();

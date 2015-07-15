@@ -82,7 +82,7 @@ public class MetricsView {
                     public void onReceive(Context context, Intent intent) {
                         Bundle bundle = intent.getExtras();
                         sPersistedStats = (Properties) bundle.get(PersistedStats.EXTRAS_PERSISTENT_SYNC_STATUS_UPDATED);
-                        updateSentStats();
+                        updateUiThread();
                     }
                 },
                 new IntentFilter(PersistedStats.ACTION_PERSISTENT_SYNC_STATUS_UPDATED));

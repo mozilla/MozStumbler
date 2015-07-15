@@ -22,7 +22,12 @@ public class SerializedJSONRowsList {
 
         public SerializedJSONRows getAtCurrentIndex() {
             final File f = fileList.mFiles[currentIndex];
-            final byte[] data = readFile(f);
+            byte[] data = null;
+            try {
+                data = readFile(f);
+            } catch (Exception e) {
+                return null;
+            }
             SerializedJSONRows serializedJSONRows = new SerializedJSONRows(data, SerializedJSONRows.StorageState.ON_DISK);
             serializedJSONRows.filename = f.getName();
             return serializedJSONRows;

@@ -130,7 +130,11 @@ public class JSONRowsStorageManager {
         if (!mJSONRowsObjectIterator.isIndexValid(index)) {
             return null;
         }
-        return mJSONRowsObjectIterator.getAtCurrentIndex();
+        SerializedJSONRows result = mJSONRowsObjectIterator.getAtCurrentIndex();
+        if (result == null) {
+            mFileList.update();
+        }
+        return result;
     }
 
     protected File createFile(SerializedJSONRows unused) {

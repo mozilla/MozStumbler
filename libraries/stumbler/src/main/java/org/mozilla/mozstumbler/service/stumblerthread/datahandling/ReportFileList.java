@@ -26,8 +26,9 @@ public class ReportFileList extends SerializedJSONRowsList {
         mCellCount = other.mCellCount;
     }
 
-    public void update(File directory) {
-        mFiles = directory.listFiles();
+    @Override
+    public void update() {
+        mFiles = mStorageDir.listFiles();
         if (mFiles == null) {
             return;
         }

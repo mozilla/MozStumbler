@@ -21,7 +21,7 @@ public class ReportBatch extends SerializedJSONRows {
         this.cellCount = cellCount;
     }
 
-
+    @Override
     public void tally(HashMap<String, Integer> tallyValues) {
         assert(tallyValues != null);
         if (!tallyValues.containsKey(AsyncUploaderMLS.OBSERVATIONS_TALLY)) {

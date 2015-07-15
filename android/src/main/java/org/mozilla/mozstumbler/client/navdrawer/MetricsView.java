@@ -307,7 +307,9 @@ public class MetricsView {
 
         mHasQueuedObservations = q.mReportCount > 0;
         updateUploadButtonEnabled();
-    }    private final Runnable mUpdateLastUploadedLabel = new Runnable() {
+    }
+
+    private final Runnable mUpdateLastUploadedLabel = new Runnable() {
         @Override
         public void run() {
             updateLastUploadedLabel();

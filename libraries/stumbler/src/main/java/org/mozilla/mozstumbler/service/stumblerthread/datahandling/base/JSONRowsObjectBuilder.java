@@ -24,7 +24,7 @@ public class JSONRowsObjectBuilder {
      converted to a string.  You almost certainly want to set that flag to false though as you'll
      eat memory.
      */
-    public SerializedJSONRows finalizeToJSONRowsObject() {
+    public SerializedJSONRows  finalizeToJSONRowsObject() {
         return new SerializedJSONRows(Zipper.zipData(generateJSON(false).getBytes()), SerializedJSONRows.StorageState.IN_MEMORY);
     }
 

@@ -54,16 +54,7 @@ public class ReportFileList extends SerializedJSONRowsList {
 
     @Override
     public void update() {
-        mFiles = mStorageDir.listFiles();
-        if (mFiles == null) {
-            return;
-        }
-
-        if (AppGlobals.isDebug) {
-            for (File f : mFiles) {
-                ClientLog.d("StumblerFiles", f.getName());
-            }
-        }
+        super.update();
 
         mFilesOnDiskBytes = mReportCount = mWifiCount = mCellCount = 0;
         for (File f : mFiles) {

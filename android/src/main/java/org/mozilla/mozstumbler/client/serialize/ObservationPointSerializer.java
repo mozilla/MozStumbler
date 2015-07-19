@@ -48,7 +48,7 @@ public class ObservationPointSerializer extends AsyncTask<Void, Void, Boolean> {
     private static final String MLS_NAME = "MLS";
     private static final String ICON_RED_CIRCLE = "http://maps.google.com/mapfiles/kml/shapes/placemark_circle_highlight.png";
     private static final String STYLE_NAME_RED_CIRCLE = "redcircle";
-    private static final String ICON_ARROW = "http://maps.google.com/mapfiles/kml/shapes/arrow.png";
+    private static final String ICON_ARROW = "http://earth.google.com/images/kml-icons/track-directional/track-0.png";
     private static final String STYLE_NAME_ARROW = "arrow";
     private static final String COLOR_HAS_WIFI = "ffff0000"; //green in AABBGGRR
     private static final String COLOR_HAS_CELLS = "ff00ffff"; // yellow

@@ -26,26 +26,23 @@ public class ObservationPoint implements AsyncGeolocate.MLSLocationGetterCallbac
     private static final ILogger Log = (ILogger) ServiceLocator.getInstance().getService(ILogger.class);
     private static final String LOG_TAG = LoggerUtil.makeLogTag(ObservationPoint.class);
 
-    public final GeoPoint pointGPS;
+    public final Location pointGPS;
     public GeoPoint pointMLS;
-    public long mTimestamp;
     public int mWifiCount;
     public int mCellCount;
-    public boolean mWasReadFromFile;
-    public double mHeading;
     private JSONObject mMLSQuery;
     private boolean mIsMLSLocationQueryRunning;
 
-    public ObservationPoint(GeoPoint pointGPS) {
+    public ObservationPoint(Location pointGPS) {
         this.pointGPS = pointGPS;
-        mTimestamp = System.currentTimeMillis();
     }
 
-    public ObservationPoint(Coordinate pointGPS, int wifis, int cells/*, long timestamp*/) {
-        this.pointGPS = new GeoPoint(pointGPS.getLatitude(), pointGPS.getLongitude());
+    public ObservationPoint(String provider, Coordinate pointGPS, int wifis, int cells/*, long timestamp*/) {
+        this.pointGPS = new Location(provider);
+        this.pointGPS.setLatitude(pointGPS.getLatitude());
+        this.pointGPS.setLongitude(pointGPS.getLongitude());
         mWifiCount = wifis;
         mCellCount = cells;
-        /*mTimestamp = timestamp;*/
     }
 
     public void setMLSQuery(StumblerBundle stumbleBundle) {

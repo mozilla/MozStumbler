@@ -41,6 +41,7 @@ import java.util.Map;
 // load -> show list to pick from
 
 public class ObservationPointSerializer extends AsyncTask<Void, Void, Boolean> {
+    public static final String KML_PROVIDER = "KML_FILE";
     public static final String WIFIS = "Wi-Fis";
     public static final String CELLS = "Cells";
     private static final String LOG_TAG = LoggerUtil.makeLogTag(ObservationPointSerializer.class);
@@ -119,7 +120,7 @@ public class ObservationPointSerializer extends AsyncTask<Void, Void, Boolean> {
                 // This point is in-progress in terms of scanning, don't write it out
                 continue;
             }
-            if (observationPoint.mWasReadFromFile) {
+            if (observationPoint.pointGPS.getProvider().equals(KML_PROVIDER)) {
                 // This was previously read in, don't write out again
                 continue;
             }
@@ -130,7 +131,7 @@ public class ObservationPointSerializer extends AsyncTask<Void, Void, Boolean> {
             point.setCoordinates(observationPoint.getGPSCoordinate());
             Placemark placemark = new Placemark();
             placemark.setName(GPS_NAME);
-            DateTime dateTime = new DateTime(observationPoint.mTimestamp);
+            DateTime dateTime = new DateTime(observationPoint.pointGPS.getTime());
             TimeStamp time = new TimeStamp();
             time.setWhen(dateTime.toString() /* Date auto formats to RFC 3339 */);
             placemark.setTimePrimitive(time);
@@ -140,7 +141,7 @@ public class ObservationPointSerializer extends AsyncTask<Void, Void, Boolean> {
                 color = COLOR_HAS_BOTH;
             }
 
-            setHeadingAndColor(placemark, observationPoint.mHeading, color);
+            setHeadingAndColor(placemark, observationPoint.pointGPS.getBearing(), color);
 
             List<Data> dataList = new LinkedList<Data>();
             Data data = new Data();
@@ -268,8 +269,7 @@ public class ObservationPointSerializer extends AsyncTask<Void, Void, Boolean> {
                     }
                 }
 
-                ObservationPoint observationPoint = new ObservationPoint(coordinate, wifis, cells);
-                observationPoint.mWasReadFromFile = true;
+                ObservationPoint observationPoint = new ObservationPoint(KML_PROVIDER, coordinate, wifis, cells);
 
                 if (isGps) {
                     mPointList.add(observationPoint);
@@ -321,10 +321,10 @@ public class ObservationPointSerializer extends AsyncTask<Void, Void, Boolean> {
     public enum Mode {READ, WRITE}
 
     public interface IListener {
-        public void onWriteComplete(File file);
+        void onWriteComplete(File file);
 
-        public void onReadComplete(File file);
+        void onReadComplete(File file);
 
-        public void onError();
+        void onError();
     }
 }

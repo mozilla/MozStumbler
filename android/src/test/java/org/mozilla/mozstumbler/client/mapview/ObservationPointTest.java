@@ -9,7 +9,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.StumblerBundle;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner.CellInfo;
-import org.mozilla.osmdroid.util.GeoPoint;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
@@ -50,7 +49,7 @@ public class ObservationPointTest {
     }
 
     private void testObservationCounts(StumblerBundle bundle, int cells, int wifis) {
-        ObservationPoint observation = new ObservationPoint(new GeoPoint(bundle.getGpsPosition()));
+        ObservationPoint observation = new ObservationPoint(bundle.getGpsPosition());
         try {
             observation.setCounts(bundle.toMLSGeosubmit());
         } catch (JSONException e) {

@@ -15,11 +15,9 @@ import org.mozilla.mozstumbler.client.ClientPrefs;
 import org.mozilla.mozstumbler.service.core.logging.ClientLog;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageConstants;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.StumblerBundle;
-import org.mozilla.mozstumbler.service.utils.NetworkInfo;
 import org.mozilla.mozstumbler.svclocator.ServiceLocator;
 import org.mozilla.mozstumbler.svclocator.services.log.ILogger;
 import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
-import org.mozilla.osmdroid.util.GeoPoint;
 
 public class ObservationPoint implements AsyncGeolocate.MLSLocationGetterCallback {
 
@@ -27,7 +25,7 @@ public class ObservationPoint implements AsyncGeolocate.MLSLocationGetterCallbac
     private static final String LOG_TAG = LoggerUtil.makeLogTag(ObservationPoint.class);
 
     public final Location pointGPS;
-    public GeoPoint pointMLS;
+    public Coordinate pointMLS;
     public int mWifiCount;
     public int mCellCount;
     private JSONObject mMLSQuery;
@@ -85,7 +83,7 @@ public class ObservationPoint implements AsyncGeolocate.MLSLocationGetterCallbac
 
         if (location != null) {
             mMLSQuery = null; // todo decide how to persist this to kml
-            pointMLS = new GeoPoint(location);
+            pointMLS = new Coordinate(location.getLongitude(), location.getLatitude(), location.getAltitude());
         }
     }
 
@@ -98,7 +96,7 @@ public class ObservationPoint implements AsyncGeolocate.MLSLocationGetterCallbac
     }
 
     public void setMLSCoordinate(Coordinate c) {
-        pointMLS = new GeoPoint(c.getLatitude(), c.getLongitude());
+        pointMLS = c;
     }
 
     public void errorMLSResponse(boolean stopRequesting) {

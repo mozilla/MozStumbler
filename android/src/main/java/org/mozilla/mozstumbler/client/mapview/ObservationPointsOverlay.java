@@ -16,7 +16,6 @@ import android.os.SystemClock;
 import org.mozilla.mozstumbler.client.ObservedLocationsReceiver;
 import org.mozilla.mozstumbler.service.core.logging.ClientLog;
 import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
-import org.mozilla.osmdroid.util.GeoPoint;
 import org.mozilla.osmdroid.views.MapView;
 import org.mozilla.osmdroid.views.Projection;
 import org.mozilla.osmdroid.views.overlay.Overlay;
@@ -25,7 +24,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -211,7 +209,7 @@ class ObservationPointsOverlay extends Overlay {
                 ObservationPoint point = entry.getValue();
                 if (point.pointMLS != null) {
                     pj.toPixels(point.pointGPS.getLatitude(), point.pointGPS.getLongitude(), gps);
-                    pj.toPixels(point.pointMLS, mls);
+                    pj.toPixels(point.pointMLS.getLatitude(), point.pointMLS.getLongitude(), mls);
                     drawDot(c, mls, radiusInnerRing - 1, mRedPaint, mBlackStrokePaintThin);
                     c.drawLine(gps.x, gps.y, mls.x, mls.y, mBlackMLSLinePaint);
                 }

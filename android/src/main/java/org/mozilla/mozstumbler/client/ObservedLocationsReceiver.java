@@ -173,7 +173,8 @@ public class ObservedLocationsReceiver extends BroadcastReceiver {
             }
 
             if (mCollectionPoints.size() > 0) {
-                observation.mHeading = observation.pointGPS.bearingTo(mCollectionPoints.get(mCollectionPoints.size() - 1).pointGPS);
+                final GeoPoint previous = mCollectionPoints.get(mCollectionPoints.size() - 1).pointGPS;
+                observation.mHeading = previous.bearingTo(observation.pointGPS);
             }
             mCollectionPoints.add(observation);
         }

@@ -24,7 +24,6 @@ import org.mozilla.mozstumbler.service.utils.NetworkInfo;
 import org.mozilla.mozstumbler.svclocator.ServiceLocator;
 import org.mozilla.mozstumbler.svclocator.services.log.ILogger;
 import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
-import org.mozilla.osmdroid.util.GeoPoint;
 
 import java.lang.ref.WeakReference;
 import java.util.Collections;
@@ -150,7 +149,7 @@ public class ObservedLocationsReceiver extends BroadcastReceiver {
         if (position == null) {
             return;
         }
-        ObservationPoint observation = new ObservationPoint(new GeoPoint(position));
+        ObservationPoint observation = new ObservationPoint(position);
 
         try {
             observation.setCounts(bundle.toMLSGeosubmit());
@@ -172,9 +171,9 @@ public class ObservedLocationsReceiver extends BroadcastReceiver {
                 mCollectionPoints.remove(0);
             }
 
-            if (mCollectionPoints.size() > 0) {
-                final GeoPoint previous = mCollectionPoints.get(mCollectionPoints.size() - 1).pointGPS;
-                observation.mHeading = previous.bearingTo(observation.pointGPS);
+            if (mCollectionPoints.size() > 0 && !observation.pointGPS.hasBearing()) {
+                final Location previous = mCollectionPoints.get(mCollectionPoints.size() - 1).pointGPS;
+                observation.pointGPS.setBearing(previous.bearingTo(observation.pointGPS));
             }
             mCollectionPoints.add(observation);
         }

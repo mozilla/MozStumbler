@@ -79,15 +79,15 @@ class ObservationPointsOverlay extends Overlay {
     }
 
     void update(ObservationPoint obsPoint, MapView mapView, boolean isMlsPointUpdate) {
-        final Projection pj = mapView.getProjection();
-        GeoPoint geoPoint = (isMlsPointUpdate) ? obsPoint.pointMLS : obsPoint.pointGPS;
-        if (geoPoint == null) {
+        if ((isMlsPointUpdate && obsPoint.pointMLS == null) ||
+                (!isMlsPointUpdate && obsPoint.pointGPS == null)) {
             ClientLog.w(LOG_TAG, "Caller error: geoPoint is null");
             return;
         }
-        final Point point = pj.toPixels(geoPoint, null);
 
         if (!isMlsPointUpdate) {
+            final Projection pj = mapView.getProjection();
+            final Point point = pj.toPixels(obsPoint.pointGPS.getLatitude(), obsPoint.pointGPS.getLongitude(), null);
             // add to hashed grid
             addToGridHash(obsPoint, point, new Point(mapView.getScrollX(), mapView.getScrollY()));
         }
@@ -131,7 +131,7 @@ class ObservationPointsOverlay extends Overlay {
             Point zero = new Point(0, 0);
             while (i.hasNext()) {
                 point = i.next();
-                pj.toPixels(point.pointGPS, gps);
+                pj.toPixels(point.pointGPS.getLatitude(), point.pointGPS.getLongitude(), gps);
                 addToGridHash(point, gps, zero);
             }
         }
@@ -177,7 +177,7 @@ class ObservationPointsOverlay extends Overlay {
             while (revIterator.hasPrevious()) {
                 HashMap.Entry<Integer, ObservationPoint> entry = revIterator.previous();
                 ObservationPoint point = entry.getValue();
-                pj.toPixels(point.pointGPS, gps);
+                pj.toPixels(point.pointGPS.getLatitude(), point.pointGPS.getLongitude(), gps);
 
                 if (!clip.contains(gps.x, gps.y)) {
                     continue;
@@ -210,7 +210,7 @@ class ObservationPointsOverlay extends Overlay {
                 HashMap.Entry<Integer, ObservationPoint> entry = revIterator.previous();
                 ObservationPoint point = entry.getValue();
                 if (point.pointMLS != null) {
-                    pj.toPixels(point.pointGPS, gps);
+                    pj.toPixels(point.pointGPS.getLatitude(), point.pointGPS.getLongitude(), gps);
                     pj.toPixels(point.pointMLS, mls);
                     drawDot(c, mls, radiusInnerRing - 1, mRedPaint, mBlackStrokePaintThin);
                     c.drawLine(gps.x, gps.y, mls.x, mls.y, mBlackMLSLinePaint);

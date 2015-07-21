@@ -15,37 +15,32 @@ import org.mozilla.mozstumbler.client.ClientPrefs;
 import org.mozilla.mozstumbler.service.core.logging.ClientLog;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageConstants;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.StumblerBundle;
-import org.mozilla.mozstumbler.service.utils.NetworkInfo;
 import org.mozilla.mozstumbler.svclocator.ServiceLocator;
 import org.mozilla.mozstumbler.svclocator.services.log.ILogger;
 import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
-import org.mozilla.osmdroid.util.GeoPoint;
 
 public class ObservationPoint implements AsyncGeolocate.MLSLocationGetterCallback {
 
     private static final ILogger Log = (ILogger) ServiceLocator.getInstance().getService(ILogger.class);
     private static final String LOG_TAG = LoggerUtil.makeLogTag(ObservationPoint.class);
 
-    public final GeoPoint pointGPS;
-    public GeoPoint pointMLS;
-    public long mTimestamp;
+    public final Location pointGPS;
+    public Coordinate pointMLS;
     public int mWifiCount;
     public int mCellCount;
-    public boolean mWasReadFromFile;
-    public double mHeading;
     private JSONObject mMLSQuery;
     private boolean mIsMLSLocationQueryRunning;
 
-    public ObservationPoint(GeoPoint pointGPS) {
+    public ObservationPoint(Location pointGPS) {
         this.pointGPS = pointGPS;
-        mTimestamp = System.currentTimeMillis();
     }
 
-    public ObservationPoint(Coordinate pointGPS, int wifis, int cells/*, long timestamp*/) {
-        this.pointGPS = new GeoPoint(pointGPS.getLatitude(), pointGPS.getLongitude());
+    public ObservationPoint(String provider, Coordinate pointGPS, int wifis, int cells/*, long timestamp*/) {
+        this.pointGPS = new Location(provider);
+        this.pointGPS.setLatitude(pointGPS.getLatitude());
+        this.pointGPS.setLongitude(pointGPS.getLongitude());
         mWifiCount = wifis;
         mCellCount = cells;
-        /*mTimestamp = timestamp;*/
     }
 
     public void setMLSQuery(StumblerBundle stumbleBundle) {
@@ -88,7 +83,7 @@ public class ObservationPoint implements AsyncGeolocate.MLSLocationGetterCallbac
 
         if (location != null) {
             mMLSQuery = null; // todo decide how to persist this to kml
-            pointMLS = new GeoPoint(location);
+            pointMLS = new Coordinate(location.getLongitude(), location.getLatitude(), location.getAltitude());
         }
     }
 
@@ -101,7 +96,7 @@ public class ObservationPoint implements AsyncGeolocate.MLSLocationGetterCallbac
     }
 
     public void setMLSCoordinate(Coordinate c) {
-        pointMLS = new GeoPoint(c.getLatitude(), c.getLongitude());
+        pointMLS = c;
     }
 
     public void errorMLSResponse(boolean stopRequesting) {

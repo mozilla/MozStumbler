@@ -160,7 +160,7 @@ public class KMLFragment extends Fragment
         final File dir = getActivity().getExternalFilesDir(null);
         final File file = new File(dir, name);
 
-        showProgress(true, getString(R.string.saving_kml) + " to " + (dir != null ? dir.toString() : "null"));
+        showProgress(true, getString(R.string.saving_kml) + " to " + (file != null ? file.toString() : "null")); // TODO: l10n
         ObservationPointSerializer obs = new ObservationPointSerializer(this,
                 ObservationPointSerializer.Mode.WRITE, file, mPointsToWrite);
         obs.execute();

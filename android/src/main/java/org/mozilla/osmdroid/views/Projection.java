@@ -98,7 +98,11 @@ public class Projection implements IProjection, MapViewConstants {
 
     @Override
     public Point toPixels(final IGeoPoint in, final Point reuse) {
-        Point out = TileSystem.LatLongToPixelXY(in.getLatitude(), in.getLongitude(),
+        return toPixels(in.getLatitude(), in.getLongitude(), reuse);
+    }
+
+    public Point toPixels(double latitude, double longitude, final Point reuse) {
+        Point out = TileSystem.LatLongToPixelXY(latitude, longitude,
                 getZoomLevel(), reuse);
 
         out = toPixelsFromMercator(out.x, out.y, out);

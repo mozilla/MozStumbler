@@ -94,7 +94,7 @@
     <string name="kml_file_title">KML Reports File</string>
     <string name="kml_file_load">Load KML File</string>
     <string name="kml_file_save">Save KML File</string>
-    <string name="kml_file_description">Save/Load the reports (location, Wi-Fi + cell counts) for debugging.</string>
+    <string name="kml_file_description">Save/Load the reports (location, Wi-Fi + cell counts, track segment) for debugging.</string>
     <string name="kml_file_saved_name">Saved File:</string>
     <string name="keep_screen_on_title">Keep screen on while scanning</string>
     <string name="keep_screen_on_summary">Keep the screen on while scanning is active and the app is in the foreground.</string>

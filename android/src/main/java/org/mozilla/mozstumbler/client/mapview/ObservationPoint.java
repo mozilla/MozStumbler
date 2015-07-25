@@ -28,6 +28,7 @@ public class ObservationPoint implements AsyncGeolocate.MLSLocationGetterCallbac
     public Coordinate pointMLS;
     public int mWifiCount;
     public int mCellCount;
+    public int mTrackSegment;
     private JSONObject mMLSQuery;
     private boolean mIsMLSLocationQueryRunning;
 

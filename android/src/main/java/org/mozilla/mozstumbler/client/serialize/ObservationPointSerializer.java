@@ -44,6 +44,7 @@ public class ObservationPointSerializer extends AsyncTask<Void, Void, Boolean> {
     public static final String KML_PROVIDER = "KML_FILE";
     public static final String WIFIS = "Wi-Fis";
     public static final String CELLS = "Cells";
+    public static final String TRACK_SEGMENT = "Track segment";
     private static final String LOG_TAG = LoggerUtil.makeLogTag(ObservationPointSerializer.class);
     private static final String GPS_NAME = "GPS";
     private static final String MLS_NAME = "MLS";
@@ -151,6 +152,10 @@ public class ObservationPointSerializer extends AsyncTask<Void, Void, Boolean> {
             data = new Data();
             data.setName(CELLS);
             data.setValue(String.valueOf(observationPoint.mCellCount));
+            dataList.add(data);
+            data = new Data();
+            data.setName(TRACK_SEGMENT);
+            data.setValue(String.valueOf(observationPoint.mTrackSegment));
             dataList.add(data);
 
             ExtendedData extendedData = new ExtendedData();

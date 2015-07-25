@@ -12,12 +12,9 @@ import android.location.Location;
 import android.net.wifi.ScanResult;
 import android.support.v4.content.LocalBroadcastManager;
 
-import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.core.logging.ClientLog;
-import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageConstants;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageManager;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.MLSJSONObject;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.StumblerBundle;
@@ -29,7 +26,6 @@ import org.mozilla.mozstumbler.svclocator.ServiceLocator;
 import org.mozilla.mozstumbler.svclocator.services.log.ILogger;
 import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
-import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -45,6 +41,8 @@ public final class Reporter extends BroadcastReceiver implements IReporter {
     private final Set<String> mUniqueAPs = new HashSet<String>();
     private final Set<String> mUniqueCells = new HashSet<String>();
     StumblerBundle mBundle;
+    private boolean mHasGpsFix = false;
+    private int mTrackSegment = 0;
     private boolean mIsStarted = false;
     private Context mContext;
     private int mObservationCount = 0;
@@ -105,10 +103,15 @@ public final class Reporter extends BroadcastReceiver implements IReporter {
             // Only create StumblerBundle instances if the position exists
             if (newPosition != null) {
                 flush();
-                mBundle = new StumblerBundle(newPosition);
+                mBundle = new StumblerBundle(newPosition, mTrackSegment);
+                mHasGpsFix = true;
             }
-        } else if (subject.equals(GPSScanner.SUBJECT_LOCATION_LOST)) {
+        } else if (subject.equals(GPSScanner.SUBJECT_LOCATION_LOST) && mHasGpsFix) {
             flush();
+
+            ClientLog.i(LOG_TAG, "Track segment ended: " + mTrackSegment);
+            mTrackSegment++;
+            mHasGpsFix = false;
         }
     }
 
@@ -175,14 +178,11 @@ public final class Reporter extends BroadcastReceiver implements IReporter {
     }
 
     private synchronized void flush() {
-        MLSJSONObject geoSubmitJSON = null;
-        int wifiCount = 0;
-        int cellCount = 0;
-
         if (mBundle == null) {
             return;
         }
 
+        MLSJSONObject geoSubmitJSON;
         try {
             geoSubmitJSON = mBundle.toMLSGeosubmit();
         } catch (JSONException e) {

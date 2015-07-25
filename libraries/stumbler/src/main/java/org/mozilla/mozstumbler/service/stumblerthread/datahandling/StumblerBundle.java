@@ -30,6 +30,7 @@ public final class StumblerBundle implements Parcelable {
     /* The maximum number of cells in a single observation */
     public static final int MAX_CELLS_PER_LOCATION = 50;
     private final Location mGpsPosition;
+    private int mTrackSegment = -1;
     private final TreeMap<String, ScanResult> mWifiData;
     private final TreeMap<String, CellInfo> mCellData;
 
@@ -39,6 +40,10 @@ public final class StumblerBundle implements Parcelable {
         mCellData = new TreeMap<String, CellInfo>();
     }
 
+    public StumblerBundle(Location position, int trackSegment) {
+        this(position);
+        mTrackSegment = trackSegment;
+    }
 
     @Override
     public int describeContents() {
@@ -62,10 +67,15 @@ public final class StumblerBundle implements Parcelable {
         out.writeBundle(wifiBundle);
         out.writeBundle(cellBundle);
         out.writeParcelable(mGpsPosition, 0);
+        out.writeInt(mTrackSegment);
     }
 
     public Location getGpsPosition() {
         return mGpsPosition;
+    }
+
+    public int getTrackSegment() {
+        return mTrackSegment;
     }
 
     public Map<String, ScanResult> getUnmodifiableWifiData() {

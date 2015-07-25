@@ -535,6 +535,8 @@ public class MapFragment extends android.support.v4.app.Fragment
             updateCenterButtonIcon();
         } else if (!sUserPanning) {
             mMap.getController().animateTo((mAccuracyOverlay.getLocation()));
+        } else {
+            mMap.postInvalidate();
         }
     }
 
@@ -626,6 +628,7 @@ public class MapFragment extends android.support.v4.app.Fragment
         super.onDestroy();
         ClientLog.d(LOG_TAG, "onDestroy");
 
+        removeLayer(mCoverageTilesOverlayOriginalZoom);
         removeLayer(mLowResMapOverlayHighZoom);
         removeLayer(mLowResMapOverlayLowZoom);
         removeLayer(mCoverageTilesOverlayHighZoom);

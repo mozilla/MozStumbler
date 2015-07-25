@@ -91,23 +91,37 @@
     <string name="action_view_log">View Log</string>
     <string name="scroll_to_start">Scroll to Top</string>
     <string name="scroll_to_end">Scroll to End</string>
+
     <string name="kml_file_title">KML Reports File</string>
     <string name="kml_file_load">Load KML File</string>
     <string name="kml_file_save">Save KML File</string>
     <string name="kml_file_description">Save/Load the reports (location, Wi-Fi + cell counts, track segment) for debugging.</string>
     <string name="kml_file_saved_name">Saved File:</string>
+    <string name="loading_kml">Loading KML</string>
+    <string name="saving_kml">Saving KML</string>
+    <string name="mozstumbler_kml_file">Mozilla Stumbler KML file</string>
+    <string name="kml_file_saved">KML Saved</string>
+    <string name="share_after_kml_saved">The file is saved on device, would you like to share the file?</string>
+
+    <string name="gpx_file_title">GPX Track File</string>
+    <string name="gpx_file_save">Save GPX File</string>
+    <string name="gpx_file_list">List GPX Files</string>
+    <string name="gpx_file_description">Save the locations as GPX track file.</string>
+    <string name="gpx_file_saved_name">Saved File:</string>
+    <string name="saving_gpx">Saving GPX to %1$s</string>
+    <string name="mozstumbler_gpx_file">Mozilla Stumbler GPX file</string>
+    <string name="gpx_file_saved">GPX Saved</string>
+    <string name="share_after_gpx_saved">The file is saved on device, would you like to share the file?</string>
+
     <string name="keep_screen_on_title">Keep screen on while scanning</string>
     <string name="keep_screen_on_summary">Keep the screen on while scanning is active and the app is in the foreground.</string>
     <string name="delete_all">Delete all</string>
     <string name="are_you_sure">Are you sure?</string>
-    <string name="loading_kml">Loading KML</string>
-    <string name="saving_kml">Saving KML</string>
-    <string name="mozstumbler_kml_file">Mozilla Stumbler KML file</string>
+    <string name="select_file">Select file</string>
     <string name="share_file">Share file</string>
     <string name="load_file">Load file</string>
     <string name="delete_file">Delete file</string>
-    <string name="kml_file_saved">KML Saved</string>
-    <string name="share_after_kml_saved">The file is saved on device, would you like to share the file?</string>
+
     <string name="enter_email">Enter e-mail address (optional)</string>
     <string name="enter_email_title">Email: %1$s</string>
     <string name="enter_email_longtext">Your email address is never displayed to people and is only used for your own reports.</string>

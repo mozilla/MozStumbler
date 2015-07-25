@@ -1,0 +1,72 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="org.mozilla.mozstumbler.client.mapview.serialize.GPXActivity">
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="20dp"
+        android:text="@string/gpx_file_title"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <Button
+        android:id="@+id/buttonLoad"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/buttonSave"
+        android:layout_toEndOf="@+id/buttonSave"
+        android:layout_toRightOf="@+id/buttonSave"
+        android:text="@string/gpx_file_list"
+        android:textSize="14sp" />
+
+    <Button
+        android:id="@+id/buttonSave"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/textView3"
+        android:text="@string/gpx_file_save"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/textView"
+        android:text="@string/gpx_file_description" />
+
+    <TextView
+        android:id="@+id/textViewSavedFileLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/buttonLoad"
+        android:paddingTop="5dp"
+        android:text="@string/gpx_file_saved_name"
+        android:textSize="10sp" />
+
+    <TextView
+        android:id="@+id/textViewSavedFile"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@id/textViewSavedFileLabel"
+        android:layout_toEndOf="@+id/textViewSavedFileLabel"
+        android:layout_toRightOf="@+id/textViewSavedFileLabel"
+        android:paddingLeft="5dp"
+        android:paddingStart="5dp"
+        android:textSize="10sp"
+        tools:text="     " />
+
+</RelativeLayout>

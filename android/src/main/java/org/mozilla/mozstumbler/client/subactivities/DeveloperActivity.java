@@ -27,6 +27,7 @@ import android.widget.Toast;
 import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.client.ClientPrefs;
 import org.mozilla.mozstumbler.client.MainApp;
+import org.mozilla.mozstumbler.client.serialize.GPXFragment;
 import org.mozilla.mozstumbler.client.serialize.KMLFragment;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.Prefs;
@@ -55,6 +56,7 @@ public class DeveloperActivity extends ActionBarActivity {
         if (savedInstanceState == null) {
             FragmentManager fm = getSupportFragmentManager();
             FragmentTransaction ft = fm.beginTransaction();
+            ft.add(R.id.frame0, new GPXFragment());
             ft.add(R.id.frame1, new KMLFragment());
             ft.add(R.id.frame2, new DeveloperOptions());
             ft.commit();

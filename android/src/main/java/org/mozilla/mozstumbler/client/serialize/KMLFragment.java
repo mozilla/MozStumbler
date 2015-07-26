@@ -107,7 +107,7 @@ public class KMLFragment extends Fragment
         View buttonSave = mRootView.findViewById(R.id.buttonSave);
 
         buttonLoad.setEnabled(!mIsRunning);
-        buttonSave.setEnabled(!mIsRunning);
+        buttonSave.setEnabled(!mIsRunning && !mPointsToWrite.isEmpty());
 
         if (!mIsRunning) {
             String[] files = getFileList();
@@ -155,8 +155,8 @@ public class KMLFragment extends Fragment
         setButtonsEnabledState();
 
         final DateTime date = DateTime.now();
-        final DateTimeFormatter dtf = DateTimeFormat.forPattern("dd-MM-yyyy-HH:mm");
-        final String name = "obs-" + mPointsToWrite.size() + "-date-" + dtf.print(date) + ".kml";
+        final DateTimeFormatter dtf = DateTimeFormat.forPattern("yyyy-MM-dd-HH:mm:ss");
+        final String name = "date-" + dtf.print(date) + "_obs-" + mPointsToWrite.size() + ".kml";
         final File dir = getActivity().getExternalFilesDir(null);
         final File file = new File(dir, name);
 
@@ -247,6 +247,7 @@ public class KMLFragment extends Fragment
                                 }
                             }
                         }
+                        setButtonsEnabledState();
                     }
                 })
                 .setNegativeButton(android.R.string.no, null).show();
@@ -284,7 +285,7 @@ public class KMLFragment extends Fragment
         setButtonsEnabledState();
 
         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle("Select File");
+        builder.setTitle(R.string.select_file);
         final ListView listView = new ListView(getActivity());
         registerForContextMenu(listView);
         final ArrayAdapter<String> modeAdapter = new ArrayAdapter<String>(getActivity(),

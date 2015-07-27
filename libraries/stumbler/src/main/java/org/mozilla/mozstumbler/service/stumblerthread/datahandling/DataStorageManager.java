@@ -164,4 +164,11 @@ public class DataStorageManager extends JSONRowsStorageManager implements IDataS
     protected SerializedJSONRowsList createFileList(File storageDir) {
         return new ReportFileList(storageDir);
     }
+
+    @Override
+    public synchronized SerializedJSONRows getNextBatch() {
+        SerializedJSONRows result = super.getNextBatch();
+        assert(result instanceof ReportBatch);
+        return result;
+    }
 }

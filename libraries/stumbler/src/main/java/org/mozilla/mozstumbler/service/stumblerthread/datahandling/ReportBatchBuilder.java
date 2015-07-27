@@ -34,8 +34,13 @@ public class ReportBatchBuilder extends JSONRowsObjectBuilder {
 
     @Override
     public SerializedJSONRows finalizeToJSONRowsObject() {
-        return new ReportBatch(Zipper.zipData(generateJSON(false).getBytes()),
-                SerializedJSONRows.StorageState.IN_MEMORY_ONLY,
-                entriesCount(), getWifiCount(), getCellCount());
+        int obs = entriesCount();
+        int wifis = getWifiCount();
+        int cells = getCellCount();
+        boolean preserveDataAfterGenerateJSON = false;
+        byte[] zippedbytes = Zipper.zipData(generateJSON(preserveDataAfterGenerateJSON).getBytes());
+        return new ReportBatch(zippedbytes,
+                SerializedJSONRows.StorageState.IN_MEMORY,
+                obs, wifis, cells);
     }
 }

@@ -99,11 +99,9 @@ public class JSONRowsStorageManager {
     }
 
     public synchronized boolean isDirEmpty() {
-    return (mFileList.mFiles == null || mFileList.mFiles.length < 1);
-}
+        return (mFileList.mFiles == null || mFileList.mFiles.length < 1);
+    }
 
-    /* return name of file used, or memory buffer sentinel value.
-     * The return value is used to delete the file/buffer later. */
     public synchronized SerializedJSONRows getFirstBatch() {
         final boolean dirEmpty = isDirEmpty();
         final int inMemoryReportsCount = mInMemoryActiveJSONRows.entriesCount();
@@ -112,11 +110,11 @@ public class JSONRowsStorageManager {
             return null;
         }
 
-        mJSONRowsObjectIterator = new SerializedJSONRowsList.Iterator(mFileList);
+        mJSONRowsObjectIterator = mFileList.getIterator();
 
         if (inMemoryReportsCount > 0) {
             mInMemoryFinalizedJSONRowsObject = mInMemoryActiveJSONRows.finalizeToJSONRowsObject();
-            mInMemoryFinalizedJSONRowsObject.storageState = SerializedJSONRows.StorageState.IN_MEMORY_ONLY;
+            mInMemoryFinalizedJSONRowsObject.storageState = SerializedJSONRows.StorageState.IN_MEMORY;
             return mInMemoryFinalizedJSONRowsObject;
         } else {
             return getNextBatch();
@@ -132,7 +130,11 @@ public class JSONRowsStorageManager {
         if (!mJSONRowsObjectIterator.isIndexValid(index)) {
             return null;
         }
-        return mJSONRowsObjectIterator.getAtCurrentIndex();
+        SerializedJSONRows result = mJSONRowsObjectIterator.getAtCurrentIndex();
+        if (result == null) {
+            mFileList.update();
+        }
+        return result;
     }
 
     protected File createFile(SerializedJSONRows unused) {
@@ -215,8 +217,9 @@ public class JSONRowsStorageManager {
                     // eat it - nothing we can do here
                 }
             }
+            mFileList.update();
         }
-        mFileList.update();
+
         return true;
     }
 
@@ -265,9 +268,8 @@ public class JSONRowsStorageManager {
         }
     }
 
-    /* Pass filename returned from dataToSend() */
     public synchronized boolean delete(SerializedJSONRows data) {
-        if (data.storageState == SerializedJSONRows.StorageState.IN_MEMORY_ONLY) {
+        if (data == mInMemoryFinalizedJSONRowsObject) {
             mInMemoryFinalizedJSONRowsObject = null;
             return true;
         }

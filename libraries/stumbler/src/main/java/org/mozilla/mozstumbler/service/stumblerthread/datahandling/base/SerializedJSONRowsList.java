@@ -16,16 +16,25 @@ public class SerializedJSONRowsList {
         public final SerializedJSONRowsList fileList;
         public int currentIndex = -1;
 
-        public Iterator(SerializedJSONRowsList list) {
+        protected Iterator(SerializedJSONRowsList list) {
             fileList = new SerializedJSONRowsList(list);
+        }
+
+        protected SerializedJSONRows create(File f, byte[] data) {
+            SerializedJSONRows serializedJSONRows = new SerializedJSONRows(data, SerializedJSONRows.StorageState.ON_DISK);
+            serializedJSONRows.filename = f.getName();
+            return serializedJSONRows;
         }
 
         public SerializedJSONRows getAtCurrentIndex() {
             final File f = fileList.mFiles[currentIndex];
-            final byte[] data = readFile(f);
-            SerializedJSONRows serializedJSONRows = new SerializedJSONRows(data, SerializedJSONRows.StorageState.ON_DISK);
-            serializedJSONRows.filename = f.getName();
-            return serializedJSONRows;
+            byte[] data = null;
+            try {
+                data = readFile(f);
+            } catch (Exception e) {
+                return null;
+            }
+            return create(f, data);
         }
 
         public boolean isIndexValid(int index) {
@@ -78,6 +87,10 @@ public class SerializedJSONRowsList {
     public SerializedJSONRowsList(File storageDir) {
         mStorageDir = storageDir;
         update();
+    }
+
+    public Iterator getIterator() {
+        return new Iterator(this);
     }
 
     public void update() {

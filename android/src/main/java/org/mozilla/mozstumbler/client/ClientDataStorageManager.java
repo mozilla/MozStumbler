@@ -47,7 +47,7 @@ public class ClientDataStorageManager extends DataStorageManager {
     /* Pass filename returned from dataToSend() */
     @Override
     public synchronized boolean delete(SerializedJSONRows data) {
-        if (data.storageState == SerializedJSONRows.StorageState.IN_MEMORY_ONLY) {
+        if (data == mInMemoryFinalizedJSONRowsObject) {
             return super.delete(data);
         }
 

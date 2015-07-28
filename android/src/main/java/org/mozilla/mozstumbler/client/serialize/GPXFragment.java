@@ -37,10 +37,10 @@ import java.lang.ref.WeakReference;
 import java.util.LinkedList;
 import java.util.List;
 
-public class KMLFragment extends Fragment
-        implements ObservationPointSerializer.IListener {
+public class GPXFragment extends Fragment
+        implements GpxObservationPointSerializer.IListener {
 
-    private final String LOG_TAG = LoggerUtil.makeLogTag(KMLFragment.class);
+    private final String LOG_TAG = LoggerUtil.makeLogTag(GPXFragment.class);
 
     private LinkedList<ObservationPoint> mPointsToWrite;
     private WeakReference<ProgressDialog> mProgressDialog;
@@ -48,11 +48,11 @@ public class KMLFragment extends Fragment
 
     private View mRootView;
     private boolean mIsRunning;
-    private Dialog mLoadFileDialog;
+    private Dialog mListFileDialog;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mRootView = inflater.inflate(R.layout.fragment_kml, container, false);
+        mRootView = inflater.inflate(R.layout.fragment_gpx, container, false);
         List<ObservationPoint> points = ObservedLocationsReceiver.getInstance().getObservationPoints_callerMustLock();
         synchronized (points) {
             mPointsToWrite = new LinkedList<ObservationPoint>(points);
@@ -60,13 +60,13 @@ public class KMLFragment extends Fragment
         mProgressDialog = new WeakReference<ProgressDialog>(null);
         mSavedFileLocation = (TextView) mRootView.findViewById(R.id.textViewSavedFile);
 
-        View buttonLoad = mRootView.findViewById(R.id.buttonLoad);
+        View buttonList = mRootView.findViewById(R.id.buttonLoad);
         View buttonSave = mRootView.findViewById(R.id.buttonSave);
 
-        buttonLoad.setOnClickListener(new View.OnClickListener() {
+        buttonList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onClickLoad(v);
+                onClickList(v);
             }
         });
         buttonSave.setOnClickListener(new View.OnClickListener() {
@@ -115,10 +115,6 @@ public class KMLFragment extends Fragment
         }
     }
 
-    public void onReadComplete(File file) {
-        showProgress(false, null);
-    }
-
     public void onError() {
         showProgress(false, null);
     }
@@ -129,8 +125,8 @@ public class KMLFragment extends Fragment
         mSavedFileLocation.setText(file.getAbsolutePath());
 
         new AlertDialog.Builder(getActivity())
-                .setTitle(R.string.kml_file_saved)
-                .setMessage(R.string.share_after_kml_saved)
+                .setTitle(R.string.gpx_file_saved)
+                .setMessage(R.string.share_after_gpx_saved)
                 .setIcon(android.R.drawable.ic_dialog_info)
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
@@ -156,13 +152,13 @@ public class KMLFragment extends Fragment
 
         final DateTime date = DateTime.now();
         final DateTimeFormatter dtf = DateTimeFormat.forPattern("yyyy-MM-dd-HH:mm:ss");
-        final String name = "date-" + dtf.print(date) + "_obs-" + mPointsToWrite.size() + ".kml";
+        final String name = "date-" + dtf.print(date) + "_obs-" + mPointsToWrite.size() + ".gpx";
         final File dir = getActivity().getExternalFilesDir(null);
         final File file = new File(dir, name);
 
-        showProgress(true, getString(R.string.saving_kml) + " to " + (file != null ? file.toString() : "null")); // TODO: l10n
-        ObservationPointSerializer obs = new ObservationPointSerializer(this,
-                ObservationPointSerializer.Mode.WRITE, file, mPointsToWrite);
+        String msg = String.format(getString(R.string.saving_gpx), file != null ? file.toString() : "null");
+        showProgress(true, msg);
+        GpxObservationPointSerializer obs = new GpxObservationPointSerializer(this, file, mPointsToWrite);
         obs.execute();
     }
 
@@ -174,7 +170,6 @@ public class KMLFragment extends Fragment
         final int position = info.position;
         final Object object = list.getAdapter().getItem(position);
 
-        menu.add(R.string.load_file);
         menu.add(R.string.share_file);
         menu.add(R.string.delete_file);
         menu.add(R.string.delete_all);
@@ -183,8 +178,8 @@ public class KMLFragment extends Fragment
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 contextItemSelected(item, (object == null) ? null : object.toString());
-                if (mLoadFileDialog != null && mLoadFileDialog.isShowing()) {
-                    mLoadFileDialog.dismiss();
+                if (mListFileDialog != null && mListFileDialog.isShowing()) {
+                    mListFileDialog.dismiss();
                 }
                 return false;
             }
@@ -195,29 +190,19 @@ public class KMLFragment extends Fragment
     }
 
     private void shareFile(File file) {
-        final Intent intent = new Intent(android.content.Intent.ACTION_SEND);
+        final Intent intent = new Intent(Intent.ACTION_SEND);
         intent.setType("*/*");
-        intent.putExtra(android.content.Intent.EXTRA_SUBJECT, R.string.mozstumbler_kml_file);
+        intent.putExtra(Intent.EXTRA_SUBJECT, R.string.mozstumbler_gpx_file);
         intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(file));
         startActivity(Intent.createChooser(intent, getString(R.string.share_file)));
     }
 
     private void contextItemSelected(MenuItem item, final String filename) {
         final boolean isDeleteFile = item.getTitle().equals(getString(R.string.delete_file));
-        boolean isLoadFile = item.getTitle().equals(getString(R.string.load_file));
         boolean isDeleteAll = item.getTitle().equals(getString(R.string.delete_all));
         boolean isShareFile = item.getTitle().equals(getString(R.string.share_file));
 
-        if (filename == null && (isDeleteFile || isLoadFile || isShareFile)) {
-            return;
-        }
-
-        if (isLoadFile) {
-            showProgress(true, getString(R.string.loading_kml));
-            ObservationPointSerializer obs = new ObservationPointSerializer(this,
-                    ObservationPointSerializer.Mode.READ,
-                    new File(getActivity().getExternalFilesDir(null), filename), mPointsToWrite);
-            obs.execute();
+        if (filename == null && (isDeleteFile || isShareFile)) {
             return;
         }
 
@@ -261,7 +246,7 @@ public class KMLFragment extends Fragment
         String[] list = dir.list(new FilenameFilter() {
             @Override
             public boolean accept(File dir, String name) {
-                return name.endsWith(".kml");
+                return name.endsWith(".gpx");
             }
         });
         return (list != null) ? list : new String[0];
@@ -271,8 +256,7 @@ public class KMLFragment extends Fragment
         ((MainApp) getActivity().getApplication()).stopScanning();
     }
 
-    private void onClickLoad(View v) {
-        stopScanning();
+    private void onClickList(View v) {
         final String[] files = getFileList();
         if (files == null || files.length < 1) {
             return;
@@ -294,8 +278,8 @@ public class KMLFragment extends Fragment
                 files);
         listView.setAdapter(modeAdapter);
         builder.setView(listView);
-        mLoadFileDialog = builder.create();
-        mLoadFileDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+        mListFileDialog = builder.create();
+        mListFileDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface dialog) {
                 mIsRunning = false;
@@ -305,17 +289,11 @@ public class KMLFragment extends Fragment
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                showProgress(true, getString(R.string.loading_kml));
                 File file = new File(getActivity().getExternalFilesDir(null), files[position]);
-                ObservationPointSerializer obs = new ObservationPointSerializer(KMLFragment.this,
-                        ObservationPointSerializer.Mode.READ,
-                        file, mPointsToWrite);
-                obs.execute();
-                mLoadFileDialog.setOnDismissListener(null);
-                mLoadFileDialog.dismiss();
+                shareFile(file);
             }
         });
 
-        mLoadFileDialog.show();
+        mListFileDialog.show();
     }
 }

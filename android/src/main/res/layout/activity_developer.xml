@@ -19,9 +19,15 @@
             android:textAppearance="?android:attr/textAppearanceLarge" />
 
         <FrameLayout
-            android:id="@+id/frame1"
+            android:id="@+id/frame0"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
+
+        <FrameLayout
+            android:id="@+id/frame1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/frame0" />
 
         <FrameLayout
             android:id="@+id/frame2"

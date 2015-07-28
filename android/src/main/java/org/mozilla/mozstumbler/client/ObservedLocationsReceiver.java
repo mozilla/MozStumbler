@@ -150,6 +150,7 @@ public class ObservedLocationsReceiver extends BroadcastReceiver {
             return;
         }
         ObservationPoint observation = new ObservationPoint(position);
+        observation.mTrackSegment = bundle.getTrackSegment();
 
         try {
             observation.setCounts(bundle.toMLSGeosubmit());

@@ -95,23 +95,37 @@
     <string name="action_view_log">Wyświetl dziennik</string>
     <string name="scroll_to_start">Przewiń do góry</string>
     <string name="scroll_to_end">Przewiń na dół</string>
+
     <string name="kml_file_title">Plik obserwacji KML</string>
     <string name="kml_file_load">Wczytaj plik KML</string>
     <string name="kml_file_save">Zapisz plik KML</string>
-    <string name="kml_file_description">Zapisywanie/wczytywanie obserwacji (położenia, liczby sieci Wi-Fi i komórkowych) do celów debugowania.</string>
+    <string name="kml_file_description">Zapisywanie/wczytywanie obserwacji (położenia, liczby sieci Wi-Fi i komórkowych, odcinki ścieżek) do celów debugowania.</string>
     <string name="kml_file_saved_name">Zapisany plik:</string>
+    <string name="loading_kml">Wczytywanie pliku KML</string>
+    <string name="saving_kml">Zapisywanie pliku KML</string>
+    <string name="mozstumbler_kml_file">Plik KML programu Mozilla Stumbler</string>
+    <string name="kml_file_saved">Zapisano plik KML</string>
+    <string name="share_after_kml_saved">Zapisano plik na urządzeniu, wysłać go?</string>
+
+    <string name="gpx_file_title">Plik ścieżek GPX</string>
+    <string name="gpx_file_save">Zapisz plik GPX</string>
+    <string name="gpx_file_list">Wyświetl pliki GPX</string>
+    <string name="gpx_file_description">Zapisywanie położeń jako plik ścieżek GPX.</string>
+    <string name="gpx_file_saved_name">Zapisany plik:</string>
+    <string name="saving_gpx">Zapisywanie pliku GPX w %1$s</string>
+    <string name="mozstumbler_gpx_file">Plik GPX programu Mozilla Stumbler</string>
+    <string name="gpx_file_saved">Zapisano plik GPX</string>
+    <string name="share_after_gpx_saved">Zapisano plik na urządzeniu, wysłać go?</string>
+
     <string name="keep_screen_on_title">Bez wyłączania ekranu podczas skanowania</string>
     <string name="keep_screen_on_summary">Nie wyłącza ekranu, kiedy skanowanie jest aktywne, a aplikacja nie działa w tle.</string>
     <string name="delete_all">Usuń wszystko</string>
     <string name="are_you_sure">Na pewno?</string>
-    <string name="loading_kml">Wczytywanie pliku KML</string>
-    <string name="saving_kml">Zapisywanie pliku KML</string>
-    <string name="mozstumbler_kml_file">Plik KML programu Mozilla Stumbler</string>
+    <string name="select_file">Wybierz plik</string>
     <string name="share_file">Wyślij plik</string>
     <string name="load_file">Wczytaj plik</string>
     <string name="delete_file">Usuń plik</string>
-    <string name="kml_file_saved">Zapisano plik KML</string>
-    <string name="share_after_kml_saved">Plik został zapisany na urządzeniu, wysłać go?</string>
+
     <string name="enter_email">Wpisz adres e-mail (opcjonalnie)</string>
     <string name="enter_email_title">E-mail: %1$s</string>
     <string name="enter_email_longtext">Adres e-mail nie jest nikomu pokazywany i jest używany tylko do obserwacji użytkownika.</string>
@@ -198,4 +212,13 @@
     <string name="sensor_name_accelerometer">Przyspieszeniomierz</string>
     <string name="title_use_sensor">Użycie czujnika:</string>
     <string name="limit_map_zoom_summary">Zmniejsza zużycie danych przez widok mapy.</string>
+
+    <string name="fxaDescription">Dołączenie do rankingu za pomocą konta Firefoksa</string>
+    <string name="fxaDescriptionLoggedIn">Obecnie zalogowano</string>
+    <string name="fxaPromptLogout">Wyloguj z konta Firefoksa</string>
+    <string name="fxa_is_logged_out">Wylogowano z konta Firefoksa</string>
+    <string name="fxa_logged_in">Zalogowano do konta Firefoksa</string>
+    <string name="fxa_settings_title">Konto Firefoksa</string>
+    <string name="fxa_needs_network">Wymagane jest połączenie z siecią.</string>
+
 </resources>

@@ -52,9 +52,10 @@ public class ObservationPointSerializer extends AsyncTask<Void, Void, Boolean> {
     private static final String STYLE_NAME_RED_CIRCLE = "redcircle";
     private static final String ICON_ARROW = "http://earth.google.com/images/kml-icons/track-directional/track-0.png";
     private static final String STYLE_NAME_ARROW = "arrow";
-    private static final String COLOR_HAS_WIFI = "ffff0000"; //green in AABBGGRR
-    private static final String COLOR_HAS_CELLS = "ff00ffff"; // yellow
-    private static final String COLOR_HAS_BOTH = "ff00ff00"; // blue
+    private static final String COLOR_HAS_WIFI = "ff0000ff"; // red in AABBGGRR
+    private static final String COLOR_HAS_CELLS = "ffff0000"; // blue
+    private static final String COLOR_HAS_BOTH = "ff00ff00"; // green
+    private static final String COLOR_HAS_NONE = "aa000000"; // transparent black
     final WeakReference<IListener> mObservationPointSerializerListener;
     private final LinkedList<ObservationPoint> mPointList;
     private File mFile;
@@ -117,10 +118,6 @@ public class ObservationPointSerializer extends AsyncTask<Void, Void, Boolean> {
         List<Feature> mlsFeatures = new LinkedList<Feature>();
         int idCounter = 0;
         for (ObservationPoint observationPoint : mPointList) {
-            if (observationPoint.mWifiCount < 1 && observationPoint.mCellCount < 1) {
-                // This point is in-progress in terms of scanning, don't write it out
-                continue;
-            }
             if (observationPoint.pointGPS.getProvider().equals(KML_PROVIDER)) {
                 // This was previously read in, don't write out again
                 continue;
@@ -137,9 +134,13 @@ public class ObservationPointSerializer extends AsyncTask<Void, Void, Boolean> {
             time.setWhen(dateTime.toString() /* Date auto formats to RFC 3339 */);
             placemark.setTimePrimitive(time);
 
-            String color = (observationPoint.mWifiCount > 0) ? COLOR_HAS_WIFI : COLOR_HAS_CELLS;
+            String color = COLOR_HAS_NONE;
             if (observationPoint.mWifiCount > 0 && observationPoint.mCellCount > 0) {
                 color = COLOR_HAS_BOTH;
+            } else if (observationPoint.mWifiCount > 0) {
+                color = COLOR_HAS_WIFI;
+            } else if (observationPoint.mCellCount > 0) {
+                color = COLOR_HAS_CELLS;
             }
 
             setHeadingAndColor(placemark, observationPoint.pointGPS.getBearing(), color);
@@ -183,7 +184,7 @@ public class ObservationPointSerializer extends AsyncTask<Void, Void, Boolean> {
 
         Document doc = new Document();
         addStyle(doc, ICON_RED_CIRCLE, STYLE_NAME_RED_CIRCLE, null);
-        addStyle(doc, ICON_ARROW, STYLE_NAME_ARROW, 0.7f);
+        addStyle(doc, ICON_ARROW, STYLE_NAME_ARROW, 1.2f);
 
         List<Feature> docFeatures = new LinkedList<Feature>();
         docFeatures.add(createFolder(GPS_NAME, gpsFeatures));

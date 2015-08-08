@@ -8,12 +8,11 @@ import android.location.Location;
 
 import com.ekito.simpleKML.model.Coordinate;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.mozilla.mozstumbler.client.ClientPrefs;
 import org.mozilla.mozstumbler.service.core.logging.ClientLog;
-import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageConstants;
+import org.mozilla.mozstumbler.service.stumblerthread.datahandling.MLSJSONObject;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.StumblerBundle;
 import org.mozilla.mozstumbler.svclocator.ServiceLocator;
 import org.mozilla.mozstumbler.svclocator.services.log.ILogger;
@@ -54,12 +53,9 @@ public class ObservationPoint implements AsyncGeolocate.MLSLocationGetterCallbac
         }
     }
 
-    public void setCounts(JSONObject ichnaeaQueryObj) {
-        JSONArray cells = ichnaeaQueryObj.optJSONArray(DataStorageConstants.ReportsColumns.CELL);
-        mCellCount = (cells != null) ? cells.length() : 0;
-
-        JSONArray wifis = ichnaeaQueryObj.optJSONArray(DataStorageConstants.ReportsColumns.WIFI);
-        mWifiCount = (wifis != null) ? wifis.length() : 0;
+    public void setCounts(MLSJSONObject ichnaeaQueryObj) {
+        mCellCount = ichnaeaQueryObj.getCellCount();
+        mWifiCount = ichnaeaQueryObj.getWifiCount();
     }
 
     public void fetchMLS(boolean isWifiConnected, boolean isWifiAvailable) {

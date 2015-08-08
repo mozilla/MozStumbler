@@ -110,6 +110,9 @@ class ObservationPointsOverlay extends Overlay {
     }
 
     private void addToGridHash(ObservationPoint obsPoint, Point screenPoint, Point currentScroll) {
+        if (obsPoint.mCellCount == 0 && obsPoint.mWifiCount == 0) {
+            return;
+        }
         int hash = hashedGridPoint(screenPoint.x, screenPoint.y, currentScroll.x, currentScroll.y);
         ObservationPoint gp = mHashedGrid.get(hash);
         if (gp == null || toTypeBitField(obsPoint) > toTypeBitField(gp)) {
@@ -184,12 +187,12 @@ class ObservationPointsOverlay extends Overlay {
                 boolean hasWifiScan = point.mWifiCount > 0;
                 boolean hasCellScan = point.mCellCount > 0;
 
-                if (hasWifiScan && !hasCellScan) {
-                    drawWifiScan(c, gps);
-                } else if (hasCellScan && !hasWifiScan) {
-                    drawCellScan(c, gps);
-                } else {
+                if (hasCellScan && hasWifiScan) {
                     drawDot(c, gps, radiusInnerRing, mGreenPaint, mBlackStrokePaint);
+                } else if (hasWifiScan) {
+                    drawWifiScan(c, gps);
+                } else if (hasCellScan) {
+                    drawCellScan(c, gps);
                 }
 
                 if ((++count % TIME_CHECK_MULTIPLE == 0) && (SystemClock.uptimeMillis() > endTime)) {

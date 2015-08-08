@@ -155,7 +155,7 @@ public class ObservedLocationsReceiver extends BroadcastReceiver {
         try {
             observation.setCounts(bundle.toMLSGeosubmit());
 
-            boolean getInfoForMLS = prefs.isOptionEnabledToShowMLSOnMap();
+            boolean getInfoForMLS = prefs.isOptionEnabledToShowMLSOnMap() && bundle.hasRadioData();
             if (getInfoForMLS) {
                 observation.setMLSQuery(bundle);
 
@@ -183,12 +183,14 @@ public class ObservedLocationsReceiver extends BroadcastReceiver {
             return;
         }
 
-        getMapActivity().getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                addObservationPointToMap();
-            }
-        });
+        if (bundle.hasRadioData()) {
+            getMapActivity().getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    addObservationPointToMap();
+                }
+            });
+        }
     }
 
     private void addObservationPointToMap() {

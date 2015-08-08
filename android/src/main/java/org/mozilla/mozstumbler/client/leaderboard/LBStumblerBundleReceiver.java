@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.support.v4.content.LocalBroadcastManager;
 
-import org.mozilla.mozstumbler.client.ClientPrefs;
 import org.mozilla.mozstumbler.service.Prefs;
 import org.mozilla.mozstumbler.service.stumblerthread.Reporter;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.StumblerBundle;
@@ -59,7 +58,9 @@ public class LBStumblerBundleReceiver extends BroadcastReceiver {
         // Guard against LeaderBoard intents when we're not logged into FxA
         if (Prefs.getInstance(context).getBearerToken() != null) {
             final StumblerBundle bundle = intent.getParcelableExtra(Reporter.NEW_BUNDLE_ARG_BUNDLE);
-            mStorage.insert(bundle.getGpsPosition());
+            if (bundle.hasRadioData()) {
+                mStorage.insert(bundle.getGpsPosition());
+            }
         }
     }
 }

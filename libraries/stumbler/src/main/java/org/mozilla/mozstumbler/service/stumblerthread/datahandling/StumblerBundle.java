@@ -78,6 +78,12 @@ public final class StumblerBundle implements Parcelable {
         return mTrackSegment;
     }
 
+    public boolean hasRadioData() {
+        boolean hasCellData = mCellData != null && !mCellData.isEmpty();
+        boolean hasWifiData = mWifiData != null && !mWifiData.isEmpty();
+        return hasCellData || hasWifiData;
+    }
+
     public Map<String, ScanResult> getUnmodifiableWifiData() {
         if (mWifiData == null) {
             return null;

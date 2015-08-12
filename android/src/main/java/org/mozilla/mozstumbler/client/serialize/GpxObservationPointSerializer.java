@@ -6,8 +6,11 @@ package org.mozilla.mozstumbler.client.serialize;
 
 import android.location.Location;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.util.Log;
 
+import org.mozilla.mozstumbler.BuildConfig;
+import org.mozilla.mozstumbler.service.AppGlobals;
 import org.simpleframework.xml.Attribute;
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.ElementList;
@@ -47,15 +50,17 @@ public class GpxObservationPointSerializer extends AsyncTask<Void, Void, Boolean
         df.setTimeZone(TimeZone.getTimeZone("UTC"));
 
         Gpx gpx = new Gpx();
+        gpx.creator = "Mozilla Stumbler " + BuildConfig.VERSION_NAME;
+        if (AppGlobals.isDebug) {
+            gpx.creator += " (" + BuildConfig.GIT_DESCRIPTION + ")";
+        }
 
         Trk trk = new Trk();
         gpx.trk.add(trk);
 
         Trkseg seg;
         for (ObservationPoint observationPoint : mPointList) {
-            if ((observationPoint.mWifiCount < 1 && observationPoint.mCellCount < 1)
-                    || observationPoint.mTrackSegment < 0) {
-                // This point is in-progress in terms of scanning, don't write it out
+            if (observationPoint.mTrackSegment < 0) {
                 continue;
             }
 
@@ -121,12 +126,13 @@ public class GpxObservationPointSerializer extends AsyncTask<Void, Void, Boolean
             @Namespace(reference="http://www.w3.org/2001/XMLSchema-instance", prefix="xsi")
     })
     static class Gpx {
+        // TODO optional: time, bounds, author
         @Attribute
         static final String version = "1.1";
         @Attribute
-        static final String creator = "Mozilla Stumbler";
-        @Attribute
         static final String schemaLocation = "http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd";
+        @Attribute
+        String creator;
 
         @ElementList(inline=true)
         List<Trk> trk;
@@ -138,6 +144,8 @@ public class GpxObservationPointSerializer extends AsyncTask<Void, Void, Boolean
 
     @Root
     static class Trk {
+        @Element
+        static final String src = Build.MANUFACTURER + " " + Build.MODEL + " (" + Build.HARDWARE + ")";
         @ElementList(inline=true)
         List<Trkseg> trkseg;
 

@@ -191,16 +191,12 @@ public final class Reporter extends BroadcastReceiver implements IReporter {
             return;
         }
 
-        if (geoSubmitJSON.radioCount() < 1) {
-            mBundle = null;
-            return;
+        if (geoSubmitJSON.radioCount() > 0) {
+            DataStorageManager.getInstance().insert(geoSubmitJSON);
+            mObservationCount++;
+            mUniqueAPs.addAll(mBundle.getUnmodifiableWifiData().keySet());
+            mUniqueCells.addAll(mBundle.getUnmodifiableCellData().keySet());
         }
-
-        DataStorageManager.getInstance().insert(geoSubmitJSON);
-
-        mObservationCount++;
-        mUniqueAPs.addAll(mBundle.getUnmodifiableWifiData().keySet());
-        mUniqueCells.addAll(mBundle.getUnmodifiableCellData().keySet());
 
         Intent i = new Intent(ACTION_NEW_BUNDLE);
         i.putExtra(NEW_BUNDLE_ARG_BUNDLE, mBundle);

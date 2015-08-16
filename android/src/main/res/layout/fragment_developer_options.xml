@@ -70,10 +70,26 @@
         android:background="#55ffffff" />
 
     <CheckBox
-        android:id="@+id/toggleSimulation"
+        android:id="@+id/toggleHighPowerMode"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/line_passive"
+        android:text="@string/use_high_power_mode" />
+
+    <View
+        android:layout_below="@id/toggleHighPowerMode"
+        android:id="@+id/line_high_power"
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="10dp"
+        android:background="#55ffffff" />
+
+    <CheckBox
+        android:id="@+id/toggleSimulation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/line_high_power"
         android:text="@string/enable_simulation" />
 
     <Button

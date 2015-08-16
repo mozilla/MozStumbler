@@ -30,6 +30,7 @@ public class CellScanner {
     public static final String ACTION_CELLS_SCANNED_ARG_CELLS = "cells";
     public static final String ACTION_CELLS_SCANNED_ARG_TIME = AppGlobals.ACTION_ARG_TIME;
 
+    private static final int MAX_SCANS_PER_GPS = 2;
     private static final long CELL_MIN_UPDATE_TIME = 1000; // milliseconds
 
     private final Context mAppContext;
@@ -89,7 +90,7 @@ public class CellScanner {
                     return;
                 }
 
-                if (mScanCount.incrementAndGet() > AppGlobals.MAX_SCANS_PER_GPS) {
+                if (mScanCount.incrementAndGet() > MAX_SCANS_PER_GPS) {
                     stop();
                     return;
                 }

@@ -18,6 +18,7 @@ import android.util.Log;
 
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.AppGlobals.ActiveOrPassiveStumbling;
+import org.mozilla.mozstumbler.service.Prefs;
 import org.mozilla.mozstumbler.service.utils.TelemetryWrapper;
 import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
@@ -28,11 +29,12 @@ public class GPSScanner implements LocationListener {
     public static final String SUBJECT_LOCATION_LOST = "location_lost";
     public static final String SUBJECT_NEW_LOCATION = "new_location";
     public static final String NEW_LOCATION_ARG_LOCATION = "location";
-    public static final int MIN_SAT_USED_IN_FIX = 3;
+    public static final int MIN_SAT_USED_IN_FIX = 3; // TODO: check
 
     private static final String LOG_TAG = LoggerUtil.makeLogTag(GPSScanner.class);
     private static final long ACTIVE_MODE_GPS_MIN_UPDATE_TIME_MS = 2000;
     private static final float ACTIVE_MODE_GPS_MIN_UPDATE_DISTANCE_M = 30;
+    private static final float HIGH_POWER_ACTIVE_MODE_GPS_MIN_UPDATE_DISTANCE_M = 15;
     private static final long PASSIVE_GPS_MIN_UPDATE_FREQ_MS = 3000;
     private static final float PASSIVE_GPS_MOVEMENT_MIN_DELTA_M = 30;
     private final StumblerFilter stumbleFilter = new StumblerFilter();
@@ -89,9 +91,12 @@ public class GPSScanner implements LocationListener {
             return;
         }
 
+        final boolean highPower = Prefs.getInstance(mContext).isHighPowerMode();
+        Log.i(LOG_TAG, "high power mode " + (highPower ? "enabled" : "disabled"));
+
         lm.requestLocationUpdates(LocationManager.GPS_PROVIDER,
                 ACTIVE_MODE_GPS_MIN_UPDATE_TIME_MS,
-                ACTIVE_MODE_GPS_MIN_UPDATE_DISTANCE_M,
+                (highPower ? HIGH_POWER_ACTIVE_MODE_GPS_MIN_UPDATE_DISTANCE_M : ACTIVE_MODE_GPS_MIN_UPDATE_DISTANCE_M),
                 this);
 
         reportLocationLost();
@@ -102,11 +107,8 @@ public class GPSScanner implements LocationListener {
                     GpsStatus status = getLocationManager().getGpsStatus(null);
                     Iterable<GpsSatellite> sats = status.getSatellites();
 
-                    int satellites = 0;
                     int fixes = 0;
-
                     for (GpsSatellite sat : sats) {
-                        satellites++;
                         if (sat.usedInFix()) {
                             fixes++;
                         }

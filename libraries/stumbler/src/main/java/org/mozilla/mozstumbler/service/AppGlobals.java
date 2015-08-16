@@ -25,8 +25,6 @@ public class AppGlobals {
 
     /* Location constructor requires a named origin, these are created in the app. */
     public static final String LOCATION_ORIGIN_INTERNAL = "internal";
-    /* In passive mode, only scan this many times for each gps. */
-    public static final int MAX_SCANS_PER_GPS = 2;
     public static final String NO_TRUNCATE_FLAG = "~";
     public static final String ACTION_TEST_SETTING_ENABLED = "stumbler-test-setting-enabled";
     public static final String ACTION_TEST_SETTING_DISABLED = "stumbler-test-setting-disabled";

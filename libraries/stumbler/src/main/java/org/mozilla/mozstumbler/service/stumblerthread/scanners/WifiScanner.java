@@ -13,6 +13,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import org.mozilla.mozstumbler.service.AppGlobals;
+import org.mozilla.mozstumbler.service.Prefs;
 import org.mozilla.mozstumbler.service.stumblerthread.blocklist.BSSIDBlockList;
 import org.mozilla.mozstumbler.service.stumblerthread.blocklist.SSIDBlockList;
 import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
@@ -34,7 +35,10 @@ public class WifiScanner {
     public static final int STATUS_WIFI_DISABLED = -1;
 
     private static final String LOG_TAG = LoggerUtil.makeLogTag(WifiScanner.class);
+    private static final int MAX_SCANS_PER_GPS = 2;
+    private static final int HIGH_POWER_MAX_SCANS_PER_GPS = 3;
     private static final long WIFI_MIN_UPDATE_TIME = 4000; // milliseconds
+    private static final long HIGH_POWER_WIFI_MIN_UPDATE_TIME = 2000; // milliseconds
     private final Context mAppContext;
     private final WifiManagerProxy wifiManagerProxy;
     private boolean mStarted;
@@ -153,13 +157,17 @@ public class WifiScanner {
         mWifiLock = wifiManagerProxy.createWifiLock();
         mWifiLock.acquire();
 
+        final boolean highPower = Prefs.getInstance(mAppContext).isHighPowerMode();
+        final long updateTime = highPower ? HIGH_POWER_WIFI_MIN_UPDATE_TIME : WIFI_MIN_UPDATE_TIME;
+        final long maxScans = highPower ? HIGH_POWER_MAX_SCANS_PER_GPS : MAX_SCANS_PER_GPS;
+
         // Ensure that we are constantly scanning for new access points.
         mWifiScanTimer = new Timer();
         mWifiScanTimer.schedule(new TimerTask() {
 
             @Override
             public void run() {
-                if (mScanCount.incrementAndGet() > AppGlobals.MAX_SCANS_PER_GPS) {
+                if (mScanCount.incrementAndGet() > maxScans) {
                     stop(); // set mWifiScanTimer to null
                     return;
                 }
@@ -168,7 +176,7 @@ public class WifiScanner {
                 }
                 wifiManagerProxy.runWifiScan();
             }
-        }, 0, WIFI_MIN_UPDATE_TIME);
+        }, 0, updateTime);
     }
 
     synchronized void deactivatePeriodicScan() {

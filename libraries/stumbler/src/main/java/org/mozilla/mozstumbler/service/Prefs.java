@@ -45,6 +45,7 @@ public class Prefs {
     private static final String SAVE_STUMBLE_LOGS = "save_stumble_logs";
 
     private static final String USE_OFFLINE_GEO = "use_offline_geo";
+    private static final String USE_HIGH_POWER = "use_high_power";
     public static final String FXA_LOGIN_PREF = "fxaLogin";
 
     protected static Prefs sInstance;
@@ -318,6 +319,14 @@ public class Prefs {
 
     public void setOfflineGeo(boolean offlineGeo) {
         setBoolPref(USE_OFFLINE_GEO, offlineGeo);
+    }
+
+    public boolean isHighPowerMode() {
+        return getPrefs().getBoolean(USE_HIGH_POWER, false);
+    }
+
+    public void setIsHighPowerMode(boolean highPower) {
+        setBoolPref(USE_HIGH_POWER, highPower);
     }
 
     public void setBearerToken(String bearerToken) {

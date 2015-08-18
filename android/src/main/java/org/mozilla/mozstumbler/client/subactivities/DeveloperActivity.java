@@ -38,7 +38,6 @@ import org.mozilla.mozstumbler.service.stumblerthread.motiondetection.MotionSens
 import org.mozilla.mozstumbler.service.utils.BatteryCheckReceiver;
 import org.mozilla.mozstumbler.svclocator.ServiceLocator;
 import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
-import org.mozilla.osmdroid.tileprovider.modules.SerializableTile;
 
 import java.io.File;
 import java.util.HashMap;
@@ -119,6 +118,7 @@ public class DeveloperActivity extends ActionBarActivity {
             // own methods.  This is mostly to help with merges in the event that multiple
             // source branches update the developer options.
             setupOfflineGeoToggle();
+            setupHighPowerMode();
             setupSaveJSONLogs();
             setupSimulationPreference();
             setupLocationChangeSpinners();
@@ -128,6 +128,14 @@ public class DeveloperActivity extends ActionBarActivity {
             return mRootView;
         }
 
+        private void checkRestartScanning() {
+            MainApp mainApp = ((MainApp) getActivity().getApplication());
+            if (mainApp.isScanningOrPaused()) {
+                mainApp.stopScanning();
+                mainApp.startScanning();
+            }
+        }
+
         private void setupOfflineGeoToggle() {
             boolean useOfflineGeo = Prefs.getInstance(mRootView.getContext()).useOfflineGeo();
             CheckBox button = (CheckBox) mRootView.findViewById(R.id.toggleOfflineGeo);
@@ -135,15 +143,30 @@ public class DeveloperActivity extends ActionBarActivity {
             button.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-                    onToggleUseOfflineGeo(isChecked);
+                    // do nothing here as we are just going to query the value
+                    // when we trigger an AsyncGeolocate call
+                    Prefs.getInstance(mRootView.getContext()).setOfflineGeo(isChecked);
                 }
             });
 
         }
 
+        private void setupHighPowerMode() {
+            boolean isHighPowerMode = Prefs.getInstance(mRootView.getContext()).isHighPowerMode();
+            CheckBox button = (CheckBox) mRootView.findViewById(R.id.toggleHighPowerMode);
+            button.setChecked(isHighPowerMode);
+            button.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                    ClientPrefs.getInstance(mRootView.getContext()).setIsHighPowerMode(isChecked);
+                    checkRestartScanning();
+                }
+            });
+
+        }
 
         private void setupLimitZoom() {
-            boolean isLimited = ClientPrefs.getInstanceWithoutContext().isMapZoomLimited();
+            boolean isLimited = ClientPrefs.getInstance(mRootView.getContext()).isMapZoomLimited();
             CheckBox button = (CheckBox) mRootView.findViewById(R.id.toggleLimitedMapZoom);
             button.setChecked(isLimited);
             button.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -162,11 +185,7 @@ public class DeveloperActivity extends ActionBarActivity {
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
                     ClientPrefs.getInstance(mRootView.getContext()).setIsScanningPassive(isChecked);
-                    MainApp mainApp = ((MainApp) getActivity().getApplication());
-                    if (mainApp.isScanningOrPaused()) {
-                        mainApp.stopScanning();
-                        mainApp.startScanning();
-                    }
+                    checkRestartScanning();
                 }
             });
         }
@@ -196,7 +215,7 @@ public class DeveloperActivity extends ActionBarActivity {
         }
 
         private void setupSaveJSONLogs() {
-            boolean saveStumbleLogs = Prefs.getInstanceWithoutContext().isSaveStumbleLogs();
+            boolean saveStumbleLogs = Prefs.getInstance(mRootView.getContext()).isSaveStumbleLogs();
             CheckBox button = (CheckBox) mRootView.findViewById(R.id.toggleSaveStumbleLogs);
             button.setChecked(saveStumbleLogs);
             button.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -285,13 +304,6 @@ public class DeveloperActivity extends ActionBarActivity {
             });
         }
 
-
-        private void onToggleUseOfflineGeo(boolean isChecked) {
-            // do nothing here as we are just going to query the value
-            // when we trigger an AsyncGeolocate call
-            Prefs.getInstanceWithoutContext().setOfflineGeo(isChecked);
-        }
-
         private void onToggleSaveStumbleLogs(boolean isChecked) {
             if (isChecked) {
                 Context viewCtx = mRootView.getContext();
@@ -310,7 +322,7 @@ public class DeveloperActivity extends ActionBarActivity {
                             Toast.LENGTH_LONG).show();
                 }
             }
-            Prefs.getInstanceWithoutContext().setSaveStumbleLogs(isChecked);
+            Prefs.getInstance(mRootView.getContext()).setSaveStumbleLogs(isChecked);
         }
 
         public boolean archiveDirCreatedAndMounted() {
@@ -333,17 +345,20 @@ public class DeveloperActivity extends ActionBarActivity {
 
         private void changeOfMotionDetectionDistanceOrTime(AdapterView<?> parent, int position, IsDistanceOrTime isDistanceOrTime) {
             String item = parent.getItemAtPosition(position).toString();
-            int val = Integer.valueOf(item.substring(0, item.indexOf(" ")));
+            final int val = Integer.valueOf(item.substring(0, item.indexOf(" ")));
+            boolean changed;
             ClientPrefs prefs = ClientPrefs.getInstance(getActivity().getApplicationContext());
             if (isDistanceOrTime == IsDistanceOrTime.DISTANCE) {
+                changed = (val != prefs.getMotionChangeDistanceMeters());
                 prefs.setMotionChangeDistanceMeters(val);
             } else {
+                changed = (val != prefs.getMotionChangeTimeWindowSeconds());
                 prefs.setMotionChangeTimeWindowSeconds(val);
             }
-            MainApp mainApp = ((MainApp) getActivity().getApplication());
-            if (mainApp.isScanningOrPaused()) {
-                mainApp.stopScanning();
-                mainApp.startScanning();
+
+            // avoid restart when initially setting the pref
+            if (changed) {
+                checkRestartScanning();
             }
         }
 

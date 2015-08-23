@@ -8,7 +8,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
@@ -18,7 +17,6 @@ import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceGroup;
-import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
@@ -55,6 +53,7 @@ public class PreferencesScreen extends PreferenceActivity implements IFxACallbac
     private CheckBoxPreference mKeepScreenOn;
     private CheckBoxPreference mEnableShowMLSLocations;
     private CheckBoxPreference mCrashReportsOn;
+    private CheckBoxPreference mLimitMapZoom;
     private ListPreference mMapTileDetail;
     private Preference mFxaLoginPreference;
 
@@ -90,6 +89,8 @@ public class PreferencesScreen extends PreferenceActivity implements IFxACallbac
         int valueIndex = ClientPrefs.getInstance(this).getMapTileResolutionType().ordinal();
         mMapTileDetail.setValueIndex(valueIndex);
         updateMapDetailTitle(valueIndex);
+
+        mLimitMapZoom = (CheckBoxPreference) getPreferenceManager().findPreference(ClientPrefs.IS_MAP_ZOOM_LIMITED);
 
         setPreferenceListener();
         setButtonListeners();
@@ -294,6 +295,13 @@ public class PreferencesScreen extends PreferenceActivity implements IFxACallbac
                 int i = mMapTileDetail.findIndexOfValue(newValue.toString());
                 getPrefs().setMapTileResolutionType(i);
                 updateMapDetailTitle(i);
+                return true;
+            }
+        });
+        mLimitMapZoom.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                getPrefs().setIsMapZoomLimited(newValue.equals(true));
                 return true;
             }
         });

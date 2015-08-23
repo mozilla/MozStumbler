@@ -123,7 +123,6 @@ public class DeveloperActivity extends ActionBarActivity {
             setupSimulationPreference();
             setupLocationChangeSpinners();
             setupMinPauseTime();
-            setupLimitZoom();
             setupPassiveMode();
             return mRootView;
         }
@@ -163,18 +162,6 @@ public class DeveloperActivity extends ActionBarActivity {
                 }
             });
 
-        }
-
-        private void setupLimitZoom() {
-            boolean isLimited = ClientPrefs.getInstance(mRootView.getContext()).isMapZoomLimited();
-            CheckBox button = (CheckBox) mRootView.findViewById(R.id.toggleLimitedMapZoom);
-            button.setChecked(isLimited);
-            button.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-                    ClientPrefs.getInstance(mRootView.getContext()).setIsMapZoomLimited(isChecked);
-                }
-            });
         }
 
         private void setupPassiveMode() {

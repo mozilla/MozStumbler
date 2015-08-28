@@ -4,7 +4,7 @@ jdk: oraclejdk7
 android:
     components:
         - android-23
-        - build-tools-23
+        - build-tools-23.0.5
         - extra-android-support
     licenses:
         - android-sdk-license-5be876d5

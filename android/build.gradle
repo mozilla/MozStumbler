@@ -257,6 +257,10 @@ dependencies {
     compile 'org.mozilla.accounts.fxa:fxa:0.9.12'
     testCompile 'org.mozilla.accounts.fxa:fxa:0.9.12'
 
+    // org.apache.http.httpclient
+    compile 'org.apache.httpcomponents:httpclient-android:4.3.5.1'
+    testCompile 'org.apache.httpcomponents:httpclient-android:4.3.5.1'
+
     // Stumbler library - always build from source
     compile project(':libraries:stumbler')
     testCompile project(':libraries:stumbler')

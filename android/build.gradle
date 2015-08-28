@@ -17,8 +17,7 @@ buildscript {
     }
 
     dependencies {
-
-        classpath 'com.android.tools.build:gradle:1.0.0'
+        classpath 'com.android.tools.build:gradle:1.3.1'
         classpath 'com.jakewharton.sdkmanager:gradle-plugin:0.12.+'
         classpath 'com.github.jcandksolutions.gradle:android-unit-test:2.1.1'
     }
@@ -34,8 +33,8 @@ repositories {
 }
 
 android {
-    compileSdkVersion 19
-    buildToolsVersion "19.1.0"
+    compileSdkVersion 23
+    buildToolsVersion "23"
 
     def gitHash = "git rev-parse --short HEAD".execute().text.trim()
     def hasModifiedDeletedOrOtherFiles = !"git ls-files -mdo --exclude-standard".execute().text.trim().isEmpty()
@@ -257,6 +256,10 @@ dependencies {
     // Firefox Accounts library code
     compile 'org.mozilla.accounts.fxa:fxa:0.9.12'
     testCompile 'org.mozilla.accounts.fxa:fxa:0.9.12'
+
+    // org.apache.http.httpclient
+    compile 'org.apache.httpcomponents:httpclient-android:4.3.5.1'
+    testCompile 'org.apache.httpcomponents:httpclient-android:4.3.5.1'
 
     // Stumbler library - always build from source
     compile project(':libraries:stumbler')

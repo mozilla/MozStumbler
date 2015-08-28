@@ -411,7 +411,7 @@ public class MapFragment extends android.support.v4.app.Fragment
         updateMapResolutionTextView(tileType, isHighBandwidth);
 
         int minZoom = AbstractMapOverlay.getDisplaySizeBasedMinZoomLevel();
-        if (!prefs.isMapZoomLimited()) {
+        if (prefs.isMapZoomUnlimited()) {
             minZoom = isHighBandwidth ? LOWEST_UNLIMITED_ZOOM : LowResMapOverlay.LOW_ZOOM_LEVEL;
         }
         mMap.setMinZoomLevel(minZoom);

@@ -53,7 +53,7 @@ public class PreferencesScreen extends PreferenceActivity implements IFxACallbac
     private CheckBoxPreference mKeepScreenOn;
     private CheckBoxPreference mEnableShowMLSLocations;
     private CheckBoxPreference mCrashReportsOn;
-    private CheckBoxPreference mLimitMapZoom;
+    private CheckBoxPreference mUnlimitedMapZoom;
     private ListPreference mMapTileDetail;
     private Preference mFxaLoginPreference;
 
@@ -90,7 +90,7 @@ public class PreferencesScreen extends PreferenceActivity implements IFxACallbac
         mMapTileDetail.setValueIndex(valueIndex);
         updateMapDetailTitle(valueIndex);
 
-        mLimitMapZoom = (CheckBoxPreference) getPreferenceManager().findPreference(ClientPrefs.IS_MAP_ZOOM_LIMITED);
+        mUnlimitedMapZoom = (CheckBoxPreference) getPreferenceManager().findPreference(ClientPrefs.IS_MAP_ZOOM_UNLIMITED);
 
         setPreferenceListener();
         setButtonListeners();
@@ -298,10 +298,10 @@ public class PreferencesScreen extends PreferenceActivity implements IFxACallbac
                 return true;
             }
         });
-        mLimitMapZoom.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+        mUnlimitedMapZoom.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
-                getPrefs().setIsMapZoomLimited(newValue.equals(true));
+                getPrefs().setIsMapZoomUnlimited(newValue.equals(true));
                 return true;
             }
         });

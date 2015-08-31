@@ -179,7 +179,7 @@
     <string name="sensor_type_significant_motion">Önemli hareket algılayıcısı en iyi güç tasarrufunu sağlar, ancak tüm cihazlarda çalışmayabilir.</string>
 
     <string name="ok">Tamam</string>
-    <string name="limit_map_zoom">Haritadan uzaklaşmayı sınırla</string>
+    <!--string name="limit_map_zoom">Haritadan uzaklaşmayı sınırla</string-->
     <string name="test_significant_sensor_dialog_title">Önemli Hareket Algılayıcıyı Sına</string>
     <string name="test_significant_sensor_dialog_message">Sabit durun, ardından 1 dk boyunca yürüyün.\n\nHareket algılanıyor &#8230;</string>
     <string name="test_significant_sensor_confirmed_working">Hareket algılandı.\nAlgılayıcı düzgün çalışıyor.</string>
@@ -187,5 +187,5 @@
     <string name="sensor_name_significant_motion">Önemli hareket</string>
     <string name="sensor_name_accelerometer">İvme ölçer</string>
     <string name="title_use_sensor">Algılayıcı kullan:</string>
-    <string name="limit_map_zoom_summary">Harita görünümünde kullanılacak ağ verisini azaltır.</string>
+    <!--string name="limit_map_zoom_summary">Harita görünümünde kullanılacak ağ verisini azaltır.</string-->
 </resources>

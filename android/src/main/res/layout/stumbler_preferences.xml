@@ -27,13 +27,11 @@
             android:key="map_tile_res_options"
             android:summary="@string/map_tile_resolution_options_summary"
             android:title="@string/map_tile_resolution_options_label" />
-        <!-- bug #1476
         <CheckBoxPreference
-            android:defaultValue="true"
-            android:key="limited_zoom"
-            android:summary="@string/limit_map_zoom_summary"
-            android:title="@string/limit_map_zoom" />
-            -->
+            android:defaultValue="false"
+            android:key="unlimited_zoom"
+            android:summary="@string/unlimited_map_zoom_summary"
+            android:title="@string/unlimited_map_zoom" />
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/category_display">

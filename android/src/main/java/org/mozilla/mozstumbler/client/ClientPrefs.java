@@ -20,7 +20,7 @@ public class ClientPrefs extends Prefs {
     public static final String CRASH_REPORTING = "crash_reporting";
     public static final int MIN_BATTERY_DEFAULT = 15;
     public static final String LAST_VERSION = "last_version";
-    public static final String IS_MAP_ZOOM_LIMITED = "limited_zoom";
+    public static final String IS_MAP_ZOOM_UNLIMITED = "unlimited_zoom";
     public static final String IS_SCANNING_PASSIVE = "passive_scanning";
     private static final String LOG_TAG = LoggerUtil.makeLogTag(ClientPrefs.class);
     private static final String LAT_PREF = "lat";
@@ -179,12 +179,12 @@ public class ClientPrefs extends Prefs {
 
     public enum MapTileResolutionOptions {Default, HighRes, LowRes, NoMap}
 
-    public boolean isMapZoomLimited() {
-        return getBoolPrefWithDefault(IS_MAP_ZOOM_LIMITED, true);
+    public boolean isMapZoomUnlimited() {
+        return getBoolPrefWithDefault(IS_MAP_ZOOM_UNLIMITED, false);
     }
 
-    public void setIsMapZoomLimited(boolean isOn) {
-        setBoolPref(IS_MAP_ZOOM_LIMITED, isOn);
+    public void setIsMapZoomUnlimited(boolean isOn) {
+        setBoolPref(IS_MAP_ZOOM_UNLIMITED, isOn);
     }
 
     public boolean isScanningPassive() {

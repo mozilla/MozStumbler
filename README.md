@@ -17,6 +17,9 @@ make
 
 # Building a debug version from Android Studio #
 
+[![Edit run configuration](https://raw.githubusercontent.com/mozilla/MozStumbler/dev/docs/screencaps/edit_configuration.png)](https://raw.githubusercontent.com/mozilla/MozStumbler/dev/docs/screencaps/edit_configuration.png)
+
+
 [![Add new run configuration](https://raw.githubusercontent.com/mozilla/MozStumbler/dev/docs/screencaps/add_new_config.png)](https://raw.githubusercontent.com/mozilla/MozStumbler/dev/docs/screencaps/add_new_config.png)
 
 Setup the Android Application to use two gradle aware make targets.

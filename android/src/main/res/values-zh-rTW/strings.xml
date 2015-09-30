@@ -66,7 +66,7 @@
     <string name="file_bug_sender_name">您的姓名:</string>
     <string name="file_bug_sender_name_hint">非必填</string>
     <string name="file_bug_sender_email">您的 Email 地址:</string>
-    <string name="file_bug_sender_email_hint">Email 是必須的</string>
+    <string name="file_bug_sender_email_hint">Email 必填</string>
     <string name="file_bug_name">Bug 標題:</string>
     <string name="file_bug_name_hint">Bug 的簡要標題</string>
     <string name="file_bug_description">Bug 描述:</string>
@@ -92,24 +92,38 @@
     <string name="action_view_log">檢視紀錄</string>
     <string name="scroll_to_start">滾動到頂端</string>
     <string name="scroll_to_end">滾動到底端</string>
+
     <string name="kml_file_title">KML 回報檔案</string>
     <string name="kml_file_load">載入 KML 檔案</string>
     <string name="kml_file_save">儲存 KML 檔案</string>
-    <string name="kml_file_description">儲存/載入測量報告（位置、Wi-Fi+行動基地台計數）用以除錯。</string>
+    <string name="kml_file_description">儲存/載入測量報告（位置、Wi-Fi+行動基地台計數、軌跡分段）用以除錯。</string>
     <string name="kml_file_saved_name">已存檔案:</string>
+    <string name="loading_kml">正在載入 KML</string>
+    <string name="saving_kml">正在儲存 KML</string>
+    <string name="mozstumbler_kml_file">Mozilla Stumbler KML 檔案</string>
+    <string name="kml_file_saved">已儲存 KML 檔案</string>
+    <string name="share_after_kml_saved">已將檔案儲存於裝置中，要分享出去嗎？</string>
+
+    <string name="gpx_file_title">GPX 軌跡檔案</string>
+    <string name="gpx_file_save">儲存 GPX 檔案</string>
+    <string name="gpx_file_list">列出 GPX 檔案</string>
+    <string name="gpx_file_description">將測量到的紀錄儲存為 GPX 軌跡檔案。</string>
+    <string name="gpx_file_saved_name">已儲存檔案:</string>
+    <string name="saving_gpx">正在將 GPX 儲存為 %1$s</string>
+    <string name="mozstumbler_gpx_file">Mozilla Stumbler GPX 檔案</string>
+    <string name="gpx_file_saved">已儲存 GPX 檔案</string>
+    <string name="share_after_gpx_saved">已將檔案儲存於裝置中，要分享出去嗎？</string>
+
     <string name="keep_screen_on_title">掃描時，保持螢幕開啟</string>
     <string name="keep_screen_on_summary">在應用程式於系統前景掃描時保持螢幕開啟。</string>
     <string name="delete_all">刪除全部</string>
     <string name="are_you_sure">您確定嗎？</string>
-    <string name="loading_kml">正在載入 KML</string>
-    <string name="saving_kml">正在儲存 KML</string>
-    <string name="mozstumbler_kml_file">Mozilla Stumbler KML 檔案</string>
+    <string name="select_file">選擇檔案</string>
     <string name="share_file">分享檔案</string>
     <string name="load_file">載入檔案</string>
     <string name="delete_file">刪除檔案</string>
-    <string name="kml_file_saved">已儲存 KML 檔</string>
-    <string name="share_after_kml_saved">已將檔案儲存於裝置中，您要將檔案分享出去嗎？</string>
     <string name="enter_email">輸入電子郵件地址（非必填）</string>
+
     <string name="enter_email_title">電子郵件地址: %1$s</string>
     <string name="enter_email_longtext">您的電子郵件地址不會顯示給其他人知道，而只會用於您自己上傳的報告當中</string>
     <string name="drawer_open">顯示抽屜</string>
@@ -181,6 +195,8 @@
 
     <string name="ok">確定</string>
     <!--string name="limit_map_zoom">限制縮小地圖</string-->
+    <string name="use_passive_scanning">測試被動掃描</string>
+    <string name="use_high_power_mode">高耗電模式</string>
     <string name="test_significant_sensor_dialog_title">測試顯著運動感測器</string>
     <string name="test_significant_sensor_dialog_message">先站直，然後持續走路一分鐘。\n\n偵測移動中&#8230;</string>
     <string name="test_significant_sensor_confirmed_working">偵測到移動。\n感測器功能正常。</string>
@@ -189,4 +205,12 @@
     <string name="sensor_name_accelerometer">加速度感測器</string>
     <string name="title_use_sensor">使用感測器:</string>
     <!--string name="limit_map_zoom_summary">減少地圖所使用的網路數據量。</string-->
+    <string name="fxaLoginTitle">Firefox 帳號</string>
+    <string name="fxaDescription">使用 Firefox 帳號列於排行榜</string>
+    <string name="fxaDescriptionLoggedIn">您已經登入</string>
+    <string name="fxaPromptLogout">登出 Firefox 帳號</string>
+    <string name="fxa_is_logged_out">Firefox 帳號已登出</string>
+    <string name="fxa_logged_in">Firefox 帳號已登入</string>
+    <string name="fxa_settings_title">Firefox 帳號</string>
+    <string name="fxa_needs_network">需要數據網路連線。</string>
 </resources>

@@ -25,7 +25,8 @@ public class DelayedMapListener implements MapListener {
      */
     protected long delay;
     protected Handler handler;
-    protected CallbackTask callback;
+    protected CallbackTask callbackScroll;
+    protected CallbackTask callbackZoom;
     /**
      * The wrapped MapListener
      */
@@ -40,7 +41,8 @@ public class DelayedMapListener implements MapListener {
         this.wrappedListener = wrappedListener;
         this.delay = delay;
         this.handler = new Handler();
-        this.callback = null;
+        this.callbackScroll = null;
+        this.callbackZoom = null;
     }
 
     /*
@@ -54,20 +56,20 @@ public class DelayedMapListener implements MapListener {
 
     @Override
     public boolean onScroll(final ScrollEvent event) {
-        dispatch(event);
+        callbackScroll = dispatch(event, callbackScroll);
         return true;
     }
 
     @Override
     public boolean onZoom(final ZoomEvent event) {
-        dispatch(event);
+        callbackZoom = dispatch(event, callbackZoom);
         return true;
     }
 
     /*
      * Process an incoming MapEvent.
      */
-    protected void dispatch(final MapEvent event) {
+    protected CallbackTask dispatch(final MapEvent event, CallbackTask callback) {
         // cancel any pending callback
         if (callback != null) {
             handler.removeCallbacks(callback);
@@ -76,6 +78,7 @@ public class DelayedMapListener implements MapListener {
 
         // set timer
         handler.postDelayed(callback, delay);
+        return callback;
     }
 
     // Callback tasks

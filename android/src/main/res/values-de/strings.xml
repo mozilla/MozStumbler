@@ -28,6 +28,10 @@
     <string name="upload_observations_sent_title">Bereits gesendet</string>
     <string name="metrics_observations_last_upload_time_title">Letzter Upload:</string>
     <string name="metrics_observations_last_upload_time_never">nie</string>
+    <!--
+    Plurals Deutsch:
+    one, other
+    -->
     <plurals name="time_diff_seconds">
         <item quantity="one">gerade</item>
         <item quantity="other">gerade eben</item>
@@ -44,6 +48,7 @@
         <item quantity="one">vor einem Tag</item>
         <item quantity="other">vor %d Tagen</item>
     </plurals>
+
     <string name="metrics_notification_text">Berichte:%1$d Funkzellen:%2$d WLANs:%3$d</string>
     <string name="metrics_notification_extraline">Letzter Upload: %1$s</string>
     <string name="metrics_observations_title">Berichte:</string>
@@ -56,7 +61,6 @@
     <string name="metrics_this_session">Aktuelle Sitzung</string>
     <string name="drawer_map_option_show_mls_locations">MLS Ortungen anzeigen</string>
     <string name="title_activity_log">Protokoll</string>
-
     <string name="action_file_bug">Fehler melden</string>
     <string name="file_bug_sender_name">Ihr Name:</string>
     <string name="file_bug_sender_name_hint">Optional</string>
@@ -68,9 +72,11 @@
     <string name="file_bug_description_hint">Detaillierte Informationen über den zu meldenden Fehler (was passiert, wann passiert es, usw.)</string>
     <string name="file_bug_reproduction">Reproduzierbarkeit:</string>
     <string name="file_bug_reproduction_hint">Schritte erklären, anhand derer der Fehler reproduziert werden kann.</string>
+    <!-- file_bug_report_info: %1$s verweist auf enable_crash_reporting -->
     <string name="file_bug_report_info">Wenn Sie diesen Bericht senden, senden Sie auch Informationen über Ihren aktuellen Gerätezustand. Diese Informationen werden dazu genutzt, den Grund für den Fehler einzugrenzen. Fehlerberichte für Fehler, die einen Absturz verursachen, werden automatisch gesendet, wenn Sie die Option \"%1$s\" aktiviert haben. Wenn Sie Fehler entdecken, die keinen Absturz verursachen, melden Sie diese bitte mittels dieses Formulars.</string>
     <string name="file_bug_send">Fehlerbericht senden</string>
     <string name="file_bug_type">Fehlerkategorie:</string>
+
     <string-array name="file_bug_type_list">
         <item>Kosmetisch</item>
         <item>Leistung</item>
@@ -79,29 +85,43 @@
         <item>Funktion vorschlagen</item>
         <item>Andere</item>
     </string-array>
+
     <string name="file_bug_toast_success">Fehlerbericht gesendet!\n Vielen Dank!</string>
     <string name="file_bug_missing_field">Diese Angabe ist erforderlich!</string>
-
     <string name="action_view_log">Protokoll anzeigen</string>
     <string name="scroll_to_start">Nach Oben scrollen</string>
     <string name="scroll_to_end">Ans Ende scrollen</string>
+
     <string name="kml_file_title">KML Berichtsdatei</string>
     <string name="kml_file_load">KML Datei laden</string>
     <string name="kml_file_save">KML Datei speichern</string>
     <string name="kml_file_description">Berichte zu Debugzwecken speichern/laden (Standort, WLAN + Funkzellen Beobachtungen).</string>
     <string name="kml_file_saved_name">Gespeicherte Datei:</string>
+    <string name="loading_kml">KML wird geladen</string>
+    <string name="saving_kml">KML wird gespeichert</string>
+    <string name="mozstumbler_kml_file">Mozilla Stumbler KML Datei</string>
+    <string name="kml_file_saved">KML gespeichert</string>
+    <string name="share_after_kml_saved">Die Datei wurde auf dem Gerät gespeichert, möchten Sie sie teilen?</string>
+
+    <string name="gpx_file_title">GPX Track Datei</string>
+    <string name="gpx_file_save">GPX Datei speichern</string>
+    <string name="gpx_file_list">GPX Dateien anzeigen</string>
+    <string name="gpx_file_description">Positionen als GPX Track Datei speichern.</string>
+    <string name="gpx_file_saved_name">Gespeicherte Datei:</string>
+    <string name="saving_gpx">Speichere GPX als %1$s</string>
+    <string name="mozstumbler_gpx_file">Mozilla Stumbler GPX Datei</string>
+    <string name="gpx_file_saved">GPX gespeichert</string>
+    <string name="share_after_gpx_saved">Die Datei wurde auf dem Gerät gespeichert, möchten Sie sie teilen?</string>
+
     <string name="keep_screen_on_title">Bildschirm anlassen wenn aktiv</string>
     <string name="keep_screen_on_summary">Den Bildschirm eingeschaltet lassen, wenn das Scannen aktiviert ist und sich die Anwendung im Vordergrund befindet.</string>
     <string name="delete_all">Alle löschen</string>
     <string name="are_you_sure">Sind Sie sicher?</string>
-    <string name="loading_kml">KML wird geladen</string>
-    <string name="saving_kml">KML wird gespeichert</string>
-    <string name="mozstumbler_kml_file">Mozilla Stumbler KML Datei</string>
+    <string name="select_file">Datei auswählen</string>
     <string name="share_file">Datei teilen</string>
     <string name="load_file">Datei laden</string>
     <string name="delete_file">Datei löschen</string>
-    <string name="kml_file_saved">KML gespeichert</string>
-    <string name="share_after_kml_saved">Die Datei wurde auf dem Gerät gespeichert, möchten Sie sie teilen?</string>
+
     <string name="enter_email">E-Mail-Adresse eingeben (optional)</string>
     <string name="enter_email_title">E-Mail: %1$s</string>
     <string name="enter_email_longtext">Ihre E-Mail-Adresse wird niemals anderen Leuten angezeigt und wird nur für Ihre eigenen Berichte verwendet.</string>
@@ -119,9 +139,15 @@
     <string name="map_copyright_moz">© MapBox © OpenStreetMap-Mitwirkende</string>
     <string name="action_developer">Entwickler</string>
     <string name="developer_title">Entwickler</string>
+
     <string name="enable_option_show_mls_on_map">MLS Ortungsabfragen aktivieren</string>
     <string name="enable_option_show_mls_on_map_summary">Geschätzte Mozilla Location Service (MLS) Standorte für jeden Bericht abrufen und anzeigen.</string>
+    <!-- enable_option_show_mls_on_map_detailed_info: %1$s verweist auf upload_wifi_only_title -->
     <string name="enable_option_show_mls_on_map_detailed_info">Auf Kosten von ein wenig mehr Speicher- und Datenverbrauch wird für jeden Bericht der MLS Standort angezeigt - d.h. Ihre geschätzte Position basierend auf bereits gesammelten Daten.\nDieser wird auf der Karte als roter Punkt, mit einer Verbindungslinie zum zugehörigen Bericht, angezeigt. Je näher dieser sich an Ihrer tatsächlichen GPS Position befindet, desto präziser ist der Mozilla Location Service. Weiteres Scannen verbessert die Präzision.\nEs werden jedoch keine Standorte über mobile Datenverbindungen abgefragt, wenn \"%1$s\" aktiviert ist.</string>
+
+    <!-- experimentell -->
+    <string name="enable_offline_geo">Offline Positionsabfragen aktivieren</string>
+
     <string name="cell_plus_wifi_observation">WLAN + Funkzellen Bericht</string>
     <string name="cell_only_observation">Nur Funkzellen Bericht</string>
     <string name="wifi_only_observation">Nur WLAN Bericht</string>
@@ -142,19 +168,21 @@
     <string name="category_display">Anzeige</string>
     <string name="reset_simulation_start">Simulations-Startpunkt wurde zurückgesetzt</string>
     <string name="category_crashreport">Absturzberichte</string>
+
     <string-array name="map_tile_resolution_options">
         <item>Hoch (WLAN) / niedrig (Mobil)</item>
         <item>Immer hohe Auflösung</item>
         <item>Immer niedrige Auflösung</item>
         <item>Keine Karte</item>
     </string-array>
+
     <string name="low_battery_title">Scannen bei niedrigem Akkustand stoppen</string>
     <string name="battery_percent_options_label">Stoppen ab Akkustand:</string>
     <string name="motion_detection_title">Bewegungserkennung</string>
     <string name="motion_detection_options_label">Scannen pausieren, wenn keine Bewegung um</string>
     <string name="motion_detection_options_conjunction">in</string>
+    <string name="motion_detection_minimum_pause_time">Minimale Pausierzeit:</string>
     <string name="map_scanning_paused_no_motion">Keine Positionsänderung, Scannen pausiert.</string>
-
     <string name="save_stumble_logs">Scan-Protokoll speichern</string>
     <string name="create_log_archive_failure">Verzeichnis für Archivierung des Protokolls konnte nicht erstellt werden</string>
     <string name="create_log_archive_success">Protokoll wird gespeichert in: </string>
@@ -173,6 +201,8 @@
     <string name="ok">OK</string>
     <string name="unlimited_map_zoom">Karte unbegrenzt herauszoomen</string>
     <string name="unlimited_map_zoom_summary">Begrenzter Zoom kann helfen, den Datenverbrauch der Kartenansicht zu verringern. Unbegrenztes Zoomen betrifft nur die Karte mit hoher Auflösung.</string>
+    <string name="use_passive_scanning">Teste Passives Scannen</string>
+    <string name="use_high_power_mode">High Power Modus</string>
     <string name="test_significant_sensor_dialog_title">Sensor für signifikante Bewegungen testen</string>
     <string name="test_significant_sensor_dialog_message">Bleiben Sie stehen, laufen Sie dann 1 Minute lang.\n\nWarte auf Bewegung &#8230;</string>
     <string name="test_significant_sensor_confirmed_working">Bewegung erkannt.\nDer Sensor funktioniert korrekt.</string>
@@ -180,5 +210,13 @@
     <string name="sensor_name_significant_motion">Signifikante Bewegung</string>
     <string name="sensor_name_accelerometer">Beschleunigungssensor</string>
     <string name="title_use_sensor">Sensor benutzen:</string>
+
+    <string name="fxaDescription">Nutzen Sie Firefox Accounts um der Bestenliste beizutreten</string>
+    <string name="fxaDescriptionLoggedIn">Sie sind aktuell angemeldet</string>
+    <string name="fxaPromptLogout">Firefox Account abmelden</string>
+    <string name="fxa_is_logged_out">Firefox Account ist abgemeldet</string>
+    <string name="fxa_logged_in">Firefox Account ist angemeldet</string>
+    <string name="fxa_settings_title">Firefox Account</string>
+    <string name="fxa_needs_network">Es wird eine Internetverbindung benötigt.</string>
 
 </resources>

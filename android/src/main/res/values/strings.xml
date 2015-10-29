@@ -181,6 +181,7 @@
     <string name="motion_detection_title">Motion Detection</string>
     <string name="motion_detection_options_label">Pause scanning if you don\'t move</string>
     <string name="motion_detection_options_conjunction">in</string>
+    <string name="motion_detection_minimum_pause_time">Minimum pause time:</string>
     <string name="map_scanning_paused_no_motion">Location not changing, scanning paused.</string>
     <string name="save_stumble_logs">Save Stumble Logs</string>
     <string name="create_log_archive_failure">Unable to create archive directory for logs</string>

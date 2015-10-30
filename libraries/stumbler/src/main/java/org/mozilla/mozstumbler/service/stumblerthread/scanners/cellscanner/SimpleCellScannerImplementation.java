@@ -168,6 +168,11 @@ public class SimpleCellScannerImplementation implements ISimpleCellScanner {
     }
 
     private List<CellInfo> getNeighboringCells() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            return Collections.emptyList();
+        }
+
+        @SuppressWarnings("deprecation")
         Collection<NeighboringCellInfo> cells = mTelephonyManager.getNeighboringCellInfo();
         if (cells == null || cells.isEmpty()) {
             return Collections.emptyList();

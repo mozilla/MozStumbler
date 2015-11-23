@@ -72,7 +72,7 @@ public class SimpleCellScannerImplementation implements ISimpleCellScanner {
         mIsStarted = true;
 
         if (mTelephonyManager == null) {
-            if (Build.VERSION.SDK_INT >= 18 /*Build.VERSION_CODES.JELLY_BEAN_MR2 */) { // Fennec: no Build.VERSION_CODES
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
                 mGetAllInfoCellScanner = new GetAllCellInfoScannerMr2();
             } else {
                 mGetAllInfoCellScanner = new GetAllCellInfoScannerDummy();
@@ -168,6 +168,11 @@ public class SimpleCellScannerImplementation implements ISimpleCellScanner {
     }
 
     private List<CellInfo> getNeighboringCells() {
+        //  getNeighboringCellInfo() is deprecated on Android M. #1710 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
+            return Collections.emptyList();
+        }
+
         Collection<NeighboringCellInfo> cells = mTelephonyManager.getNeighboringCellInfo();
         if (cells == null || cells.isEmpty()) {
             return Collections.emptyList();

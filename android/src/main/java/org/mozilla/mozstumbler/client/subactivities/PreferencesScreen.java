@@ -241,7 +241,7 @@ public class PreferencesScreen extends PreferenceActivity implements IFxACallbac
                         "profile:display_name:write"};
 
                 new OAuthDialog(PreferencesScreen.this,
-                        BuildConfig.FXA_SIGNIN_URL,
+                        BuildConfig.FXA_OAUTH2_SERVER,
                         FXA_APP_CALLBACK,
                         scopes,
                         FXA_APP_KEY).show();
@@ -360,6 +360,11 @@ public class PreferencesScreen extends PreferenceActivity implements IFxACallbac
     public void processReceiveBearerToken(String bearerToken) {
         getPrefs().setBearerToken(bearerToken);
         fetchFxaProfile(bearerToken);
+    }
+
+    @Override
+    public void processRawResponse(JSONObject jsonObject) {
+
     }
 
     @Override

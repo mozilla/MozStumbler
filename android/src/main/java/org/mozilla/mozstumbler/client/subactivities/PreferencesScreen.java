@@ -179,9 +179,18 @@ public class PreferencesScreen extends PreferenceActivity implements IFxACallbac
                     return false;
                 }
 
-                SetDisplayNameTask task = new SetDisplayNameTask(getApplicationContext(),
-                        BuildConfig.FXA_PROFILE_SERVER);
-                task.execute(getPrefs().getBearerToken(), newValue.toString());
+                String newNickName = (String) newValue;
+                if (TextUtils.isEmpty(newNickName)) {
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(PreferencesScreen.this)
+                            .setTitle("Forcing default display name")
+                            .setPositiveButton(android.R.string.ok, null);
+                    builder.create().show();
+
+                    newNickName = defaultDisplayName();
+                }
+
+                setFxANickname(newNickName);
                 return true;
             }
         });
@@ -399,7 +408,21 @@ public class PreferencesScreen extends PreferenceActivity implements IFxACallbac
         if (!TextUtils.isEmpty(displayName)) {
             Prefs.getInstance(this).setNickname(displayName);
             setNicknamePreferenceTitle(displayName);
+        } else {
+            // Empty displayName is the default for a newly created FxA account
+            // Force the display name to a default value
+            setFxANickname(defaultDisplayName());
         }
+    }
+
+    private void setFxANickname(String displayName) {
+        SetDisplayNameTask task = new SetDisplayNameTask(getApplicationContext(),
+                BuildConfig.FXA_PROFILE_SERVER);
+        task.execute(getPrefs().getBearerToken(), displayName);
+    }
+
+    private String defaultDisplayName() {
+        return  "user_" + Integer.toString(Math.abs(getPrefs().getEmail().hashCode()));
     }
 
     @Override

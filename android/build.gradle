@@ -126,7 +126,7 @@ android {
             buildConfigField "String", "FXA_PROFILE_SERVER", "\"https://stable.dev.lcip.org/profile/v1\""
 
             buildConfigField "String", "FXA_APP_CALLBACK", "\"http://leaderboard-dev.jaredkerim.com\""
-            buildConfigField "String", "LB_SUBMIT_URL", "\"http://leaderboard-dev.jaredkerim.com\""
+            buildConfigField "String", "LB_SUBMIT_URL", "\"http://leaderboard-dev.jaredkerim.com/api/v1/contributions/\""
 
         }
 

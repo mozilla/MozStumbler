@@ -44,10 +44,8 @@ class LBUploadTask extends AsyncUploader {
 
 
         String bearerToken = Prefs.getInstanceWithoutContext().getBearerToken();
-        // TODO: do we want to handle a case where the bearer token is not set
-        // and FxA is not logged in?  LBUploadTask should probably be created
-        // with the bearer token passed in explicitly instead of loading the
-        // OAuth state at runtime.
+        headers.put("Content-Encoding", "gzip");
+
         if (bearerToken != null) {
             headers.put(FxAService.BEARER_HEADER, "Bearer " + bearerToken);
         }

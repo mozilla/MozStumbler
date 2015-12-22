@@ -33,7 +33,21 @@ class LBUploadTask extends AsyncUploader {
 
         @Override
         public IResponse submit(byte[] data, Map<String, String> headers, boolean precompressed) {
-            return httpDelegate.post(SUBMIT_URL, data, headers, precompressed);
+            Log.i(LOG_TAG, "Sending leaderboard data to: [" + SUBMIT_URL + "]");
+
+
+            String sData = "";
+
+            if (precompressed) {
+                sData = Zipper.unzipData(data);
+            } else {
+                sData = new String(data);
+            }
+            Log.i(LOG_TAG, "Sending leaderboard data: " + sData);
+
+            IResponse resp =  httpDelegate.post(SUBMIT_URL, data, headers, precompressed);
+            Log.i(LOG_TAG, "Got response: " + resp.httpStatusCode());
+            return resp;
         }
     }
 

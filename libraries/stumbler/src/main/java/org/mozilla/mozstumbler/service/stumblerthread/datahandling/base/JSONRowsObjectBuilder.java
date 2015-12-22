@@ -6,11 +6,18 @@ package org.mozilla.mozstumbler.service.stumblerthread.datahandling.base;
 import org.json.JSONObject;
 import org.mozilla.mozstumbler.service.Prefs;
 import org.mozilla.mozstumbler.service.utils.Zipper;
+import org.mozilla.mozstumbler.svclocator.ServiceLocator;
+import org.mozilla.mozstumbler.svclocator.services.log.ILogger;
+import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
+
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class JSONRowsObjectBuilder {
     // Once this size is reached, data should be persisted to disk
     public static final int MAX_ROWS_IN_MEMORY = 50;
+
+    private static final ILogger Log = (ILogger) ServiceLocator.getInstance().getService(ILogger.class);
+    private static String LOG_TAG = LoggerUtil.makeLogTag(JSONRowsObjectBuilder.class);
 
     protected ConcurrentLinkedQueue<JSONObject> mJSONEntries = new ConcurrentLinkedQueue<JSONObject>();
 

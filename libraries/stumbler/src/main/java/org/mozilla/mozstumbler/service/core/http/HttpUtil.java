@@ -55,11 +55,15 @@ public class HttpUtil implements IHttpUtil {
 
     private URLConnection mozOpenConnection(URL l_url) throws IOException {
         try {
+            if (l_url.getProtocol().equals("http")) {
+                return l_url.openConnection();
+            }
             // Try to use the highest possible TLS protocol that this platform supports.
             SSLContext sslcontext = SSLContext.getInstance(GlobalConstants.DEFAULT_PROTOCOLS[0]);
             sslcontext.init(null,
                     null,
                     null);
+
             NoSSLv3SocketFactory factory = new NoSSLv3SocketFactory(sslcontext.getSocketFactory());
             HttpsURLConnection.setDefaultSSLSocketFactory(factory);
             return l_url.openConnection();
@@ -214,7 +218,7 @@ public class HttpUtil implements IHttpUtil {
 
 
         try {
-            httpURLConnection = (HttpsURLConnection) mozOpenConnection(url);
+            httpURLConnection = (HttpURLConnection) mozOpenConnection(url);
             httpURLConnection.setConnectTimeout(5000); // set timeout to 5 seconds
             // HttpURLConnection and Java are braindead.
             // http://stackoverflow.com/questions/8587913/what-exactly-does-urlconnection-setdooutput-affect

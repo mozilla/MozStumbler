@@ -13,12 +13,20 @@ import org.mozilla.mozstumbler.service.core.http.MLSLocationService;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.base.JSONRowsStorageManager;
 import org.mozilla.mozstumbler.service.uploadthread.AsyncUploadParam;
 import org.mozilla.mozstumbler.service.uploadthread.AsyncUploader;
+import org.mozilla.mozstumbler.service.utils.Zipper;
 import org.mozilla.mozstumbler.svclocator.ServiceLocator;
+import org.mozilla.mozstumbler.svclocator.services.log.ILogger;
+import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.zip.GZIPInputStream;
 
 class LBUploadTask extends AsyncUploader {
+
+    private static ILogger Log = (ILogger) ServiceLocator.getInstance().getService(ILogger.class);
+    private String LOG_TAG = LoggerUtil.makeLogTag(LBUploadTask.class);
+
     class LBSubmitter implements ISubmitService {
         private static final String SUBMIT_URL = BuildConfig.LB_SUBMIT_URL;
         final IHttpUtil httpDelegate = (IHttpUtil) ServiceLocator.getInstance().getService(IHttpUtil.class);

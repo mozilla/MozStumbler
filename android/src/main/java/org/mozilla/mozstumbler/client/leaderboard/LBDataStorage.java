@@ -14,18 +14,24 @@ import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
 import java.util.HashMap;
 
+// TODO: change this to use delegation instead of subclassing
 class LBDataStorage extends JSONRowsStorageManager {
 
     private static final String LOG_TAG = LoggerUtil.makeLogTag(LBDataStorage.class);
-    public static final String KEY_TILE_COORD = "tile_easting_northing";
+
+    // TODO split the easting and northing into separate bits
+    public static final String KEY_TILE_EASTING_COORD = "tile_easting_m";
+    public static final String KEY_TILE_NORTHING_COORD = "tile_northing_m";
+
     public static final String KEY_OBSERVATIONS = "observations";
+    private static final String TIME_KEY = "time";
 
     private HashMap<String, JSONObject> mGridToRow = new HashMap<String, JSONObject>();
     // mGridToRow applies only to the current in memory buffer, when this buffer changes it no longer applies
     // the following is used to track this
     private Object mCurrentObjForGridToRow = new Object();
 
-    LBDataStorage(Context c) {
+    public LBDataStorage(Context c) {
         super(c, null, DataStorageConstants.DEFAULT_MAX_BYTES_STORED_ON_DISK,
                 DataStorageConstants.DEFAULT_MAX_WEEKS_DATA_ON_DISK, "/leaderboard");
     }
@@ -35,17 +41,23 @@ class LBDataStorage extends JSONRowsStorageManager {
     }
 
     public void insert(Location location) {
-        String eastingNorthing = locationToEastingNorthing(location);
+        long easting = locationToEasting(location);
+        long northing = locationToNorthing(location);
 
-        JSONObject prev = findRowWithMatchingGrid(eastingNorthing);
+        String locationHashKey = locationToEastingNorthing(location);
+
+        JSONObject prev = findRowWithMatchingGrid(locationHashKey);
         try {
             if (prev != null) {
                 incrementJSON(prev, KEY_OBSERVATIONS, 1);
+                Log.i(LOG_TAG, "Updated leaderboard JSON: " + prev);
                 return;
             }
 
             JSONObject json = new JSONObject();
-            json.put(KEY_TILE_COORD, eastingNorthing);
+            json.put(TIME_KEY, System.currentTimeMillis() / 1000L);
+            json.put(KEY_TILE_EASTING_COORD, easting);
+            json.put(KEY_TILE_NORTHING_COORD, northing);
             json.put(KEY_OBSERVATIONS, 1);
             insertRow(json);
 
@@ -53,7 +65,8 @@ class LBDataStorage extends JSONRowsStorageManager {
                 mCurrentObjForGridToRow = mInMemoryActiveJSONRows;
                 mGridToRow = new HashMap<String, JSONObject>();
             }
-            mGridToRow.put(eastingNorthing, json);
+            Log.i(LOG_TAG, "Created leaderboard JSON: " + json);
+            mGridToRow.put(locationHashKey, json);
         } catch (JSONException e) {
             Log.e(LOG_TAG, e.toString());
         }
@@ -88,4 +101,40 @@ class LBDataStorage extends JSONRowsStorageManager {
         // 4th decimal is ~10 meters
         return grid;
     }
+
+
+    private long locationToNorthing(Location location) {
+        //Code from here, http://wiki.openstreetmap.org/wiki/Mercator,spherical world mercator (not elliptical)
+        final double earthRadius = 6378137.000;
+
+        // get northing of lower left of grid cell
+        double northing = earthRadius * Math.log(Math.tan(Math.PI / 4.0 +
+                Math.toRadians(location.getLatitude()) / 2.0));
+
+        // round down to grid lower left, 500m increments
+        northing = Math.floor(northing / 1000.0 * 2) / 2.0 * 1000;
+
+        // bump up by small amount towards center of cell (to avoid being on the edge)
+        northing += 100;
+
+        return Math.round(northing);
+    }
+
+
+    private long locationToEasting(Location location) {
+        //Code from here, http://wiki.openstreetmap.org/wiki/Mercator,spherical world mercator (not elliptical)
+        final double earthRadius = 6378137.000;
+
+        // get easting of lower left of grid cell
+        double easting = Math.toRadians(location.getLongitude()) * earthRadius;
+
+        // round down to grid lower left, 500m increments
+        easting = Math.floor(easting / 1000.0 * 2) / 2.0 * 1000;
+
+        // bump up by small amount towards center of cell (to avoid being on the edge)
+        easting += 100;
+
+        return Math.round(easting);
+    }
+
 }

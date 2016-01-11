@@ -14,11 +14,12 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
 
+import org.mozilla.mozstumbler.BuildConfig;
 import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.client.ClientPrefs;
 
 public class LeaderboardActivity extends ActionBarActivity {
-    private static final String LEADERBOARD_URL = "https://location.services.mozilla.com/leaders";
+    private static final String LEADERBOARD_URL = BuildConfig.LB_BASE_URL;
     private WebView mWebView;
     private boolean mHasError;
 
@@ -67,15 +68,14 @@ public class LeaderboardActivity extends ActionBarActivity {
 
         setProgress(0);
         ClientPrefs prefs = ClientPrefs.getInstance(getApplicationContext());
-        String nick = prefs.getNickname();
-        String url = LEADERBOARD_URL;
-        if (nick != null) {
-            url += "#" + nick;
-        } else {
-            // TODO Get server side to add this anchor
-            // https://github.com/mozilla/ichnaea/issues/327
-            url += "#leaderboard_start";
-        }
+        String url = LEADERBOARD_URL +  "/?profile=" + getPrefs().getLeaderboardUID();
+
         mWebView.loadUrl(url);
     }
+
+
+    private ClientPrefs getPrefs() {
+        return ClientPrefs.getInstance(this);
+    }
+
 }

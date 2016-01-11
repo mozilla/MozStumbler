@@ -1,7 +1,7 @@
 // each of the version numbers must be 0-99
 def versionMajor = 1
-def versionMinor = 7 // minor feature releases
-def versionPatch = 12 // This should be bumped for hot fixes
+def versionMinor = 8 // minor feature releases
+def versionPatch = 1 // This should be bumped for hot fixes
 
 // Double check the versioning
 for (versionPart in [versionPatch, versionMinor, versionMajor]) {
@@ -120,29 +120,23 @@ android {
             // standard unlabelled tiles.
             buildConfigField "boolean", "LABEL_MAP_TILES", "false"
 
-            buildConfigField "String", "FXA_APP_KEY", "\"86cd25bed2c63936\""
+            // buildConfigField "String", "FXA_APP_KEY", "\"86cd25bed2c63936\""
+            // buildConfigField "String", "FXA_OAUTH2_SERVER", "\"https://oauth-stable.dev.lcip.org\""
+            // buildConfigField "String", "FXA_PROFILE_SERVER", "\"https://stable.dev.lcip.org/profile\""
+            // buildConfigField "String", "FXA_APP_CALLBACK", "\"http://leaderboard-dev.jaredkerim.com\""
 
-            buildConfigField "String", "FXA_OAUTH2_SERVER", "\"https://oauth-stable.dev.lcip.org/v1\""
-            buildConfigField "String", "FXA_PROFILE_SERVER", "\"https://stable.dev.lcip.org/profile/v1\""
+            // This is needed to generate the submission URL and the
+            // profile URL to view user stats
+            buildConfigField "String", "LB_BASE_URL", "\"http://cloudvm.jaredkerim.com\""
 
-            buildConfigField "String", "FXA_APP_CALLBACK", "\"http://leaderboard-dev.jaredkerim.com\""
-            buildConfigField "String", "LB_SUBMIT_URL", "\"http://leaderboard-dev.jaredkerim.com/api/v1/contributions/\""
-
+            // This should go away and hang off the LB_BASE_URL
+            buildConfigField "String", "LB_SUBMIT_URL", "\"http://cloudvm.jaredkerim.com/api/v1/contributions/\""
         }
 
         release {
             signingConfig signingConfigs.release
 
-            // TODO: this key will need to be reprovisioned for
-            // production releases
-            buildConfigField "String", "FXA_APP_KEY", "\"d0f6d2ed3c5fcc3b\""
-
-            buildConfigField "String", "FXA_OAUTH2_SERVER", "\"https://oauth.accounts.firefox.com/v1\""
-            buildConfigField "String", "FXA_PROFILE_SERVER", "\"https://profile.accounts.firefox.com/v1\""
-            // buildConfigField "String", "FXA_SIGNIN_URL", "\"https://accounts.firefox.com/signin\""
-
-            // TODO: update this callback for production
-            buildConfigField "String", "FXA_APP_CALLBACK", "\"http://ec2-52-1-93-147.compute-1.amazonaws.com/fxa/callback\""
+            buildConfigField "String", "LB_SUBMIT_URL", "\"http://leaderboard-dev.jaredkerim.com/api/v1/contributions/\""
         }
 
 
@@ -255,8 +249,8 @@ dependencies {
     compile "org.apache.james:apache-mime4j:0.6"
 
     // Firefox Accounts library code
-    compile 'org.mozilla.accounts.fxa:fxa:0.9.17'
-    testCompile 'org.mozilla.accounts.fxa:fxa:0.9.17'
+    compile 'org.mozilla.accounts.fxa:fxa:0.10.2'
+    testCompile 'org.mozilla.accounts.fxa:fxa:0.10.2'
 
     // org.apache.http.httpclient
     compile 'org.apache.httpcomponents:httpclient-android:4.3.5.1'

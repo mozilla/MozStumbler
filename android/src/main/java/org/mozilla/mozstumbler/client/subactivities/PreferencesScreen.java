@@ -5,6 +5,7 @@
 package org.mozilla.mozstumbler.client.subactivities;
 
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -22,6 +23,7 @@ import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
 import android.widget.Toast;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.mozilla.accounts.fxa.FxAGlobals;
 import org.mozilla.accounts.fxa.IFxACallbacks;
@@ -32,7 +34,6 @@ import org.mozilla.accounts.fxa.tasks.ProfileJson;
 import org.mozilla.accounts.fxa.tasks.RetrieveProfileTask;
 import org.mozilla.accounts.fxa.tasks.SetDisplayNameTask;
 import org.mozilla.accounts.fxa.tasks.VerifyOAuthTask;
-import org.mozilla.mozstumbler.BuildConfig;
 import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.client.ClientPrefs;
 import org.mozilla.mozstumbler.client.MainApp;
@@ -57,9 +58,66 @@ public class PreferencesScreen extends PreferenceActivity implements IFxACallbac
     private ListPreference mMapTileDetail;
     private Preference mFxaLoginPreference;
 
+    static String FXA_APP_CALLBACK;
+    static String FXA_PROFILE_SERVER;
+    static String FXA_OAUTH2_SERVER;
+    static String FXA_APP_KEY;
+    static String SCOPES;
+
+
+    private final BroadcastReceiver callbackReceiver = new BroadcastReceiver() {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals(FetchFxaConfiguration.FXA_CONFIG_LOAD)) {
+                processFxaConfigLoad(intent, true);
+            } else if (intent.getAction().equals(FetchFxaConfiguration.FXA_CONFIG_LOAD_FAILURE)) {
+                processFxaConfigLoad(intent, false);
+            } else {
+               Log.w(LOG_TAG, "Unexpected intent: " + intent.toString());
+            }
+        }
+    };
+
+
+    private void processFxaConfigLoad(Intent intent, boolean success) {
+        if (!success) {
+            Log.e(LOG_TAG, "No fxa configuration is available");
+            return;
+        }
+
+        String configBlob  = intent.getStringExtra("json");
+        if (TextUtils.isEmpty(configBlob)) {
+            Log.w(LOG_TAG, "No fxa config blob was found in the intent");
+            return;
+        }
+
+        Log.i(LOG_TAG, "Obtained configuration JSON: " + configBlob);
+
+        try {
+            JSONObject configJSON = new JSONObject(configBlob);
+
+            // These secrets are provisioned from the FxA dashboard
+            FXA_APP_KEY = configJSON.getString("client_id");
+            FXA_PROFILE_SERVER = configJSON.getString("profile_uri");
+            FXA_OAUTH2_SERVER = configJSON.getString("oauth_uri");
+            SCOPES = configJSON.getString("scopes");
+            FXA_APP_CALLBACK = configJSON.getString("redirect_uri");
+
+            // TODO: enable the FxA login TextPreference
+            Log.i(LOG_TAG, "Fxa Config ["+FXA_APP_KEY+"]["+FXA_PROFILE_SERVER+"]["+FXA_OAUTH2_SERVER+"]["+SCOPES+"]["+FXA_APP_CALLBACK+"]");
+
+        } catch (JSONException e) {
+            Log.e(LOG_TAG, "Can't parse JSON config blob", e);
+            return;
+        }
+
+
+    }
+
     private void fetchFxaProfile(String bearerToken) {
         RetrieveProfileTask task = new RetrieveProfileTask(getApplicationContext(),
-                BuildConfig.FXA_PROFILE_SERVER);
+                FXA_PROFILE_SERVER);
         task.execute(bearerToken);
     }
 
@@ -97,8 +155,17 @@ public class PreferencesScreen extends PreferenceActivity implements IFxACallbac
         verifyBearerToken();
 
         String app_name = getResources().getString(R.string.app_name);
+
         FxAGlobals fxa = new FxAGlobals();
-        fxa.startIntentListening((Context)this, (IFxACallbacks) this, app_name);
+        fxa.startIntentListening((Context) this, (IFxACallbacks) this, app_name);
+
+
+        // Register callbacks so that we can load the FxA configuration JSON blob
+        FetchFxaConfiguration.registerFxaIntents(this.getApplicationContext(), callbackReceiver);
+
+        FetchFxaConfiguration fxaConfigTask = new FetchFxaConfiguration(this.getApplicationContext(),
+                "http://cloudvm.jaredkerim.com/api/v1/fxa/config/");
+        fxaConfigTask.execute();
 
     }
 
@@ -109,7 +176,7 @@ public class PreferencesScreen extends PreferenceActivity implements IFxACallbac
         String bearerToken = getPrefs().getBearerToken();
         if (!TextUtils.isEmpty(bearerToken)) {
             VerifyOAuthTask task = new VerifyOAuthTask(getApplicationContext(),
-                    BuildConfig.FXA_OAUTH2_SERVER);
+                    FXA_OAUTH2_SERVER);
             task.execute(bearerToken);
         }
     }
@@ -216,7 +283,7 @@ public class PreferencesScreen extends PreferenceActivity implements IFxACallbac
                         public void onClick(DialogInterface arg0, int arg1) {
                             String bearerToken = getPrefs().getBearerToken();
                             DestroyOAuthTask task = new DestroyOAuthTask(getApplicationContext(),
-                                    BuildConfig.FXA_OAUTH2_SERVER);
+                                    FXA_OAUTH2_SERVER);
                             task.execute(bearerToken);
                         }
                     });
@@ -229,30 +296,18 @@ public class PreferencesScreen extends PreferenceActivity implements IFxACallbac
                     return true;
                 }
 
-                // These secrets are provisioned from the FxA dashboard
-                String FXA_APP_KEY = BuildConfig.FXA_APP_KEY;
 
                 // And finally the callback endpoint on our web application
                 // Example server endpoint code is available under the `sample_endpoint` subdirectory.
-                String FXA_APP_CALLBACK = BuildConfig.FXA_APP_CALLBACK;
-
                 CookieSyncManager cookies = CookieSyncManager.createInstance(PreferencesScreen.this);
                 CookieManager.getInstance().removeAllCookie();
                 CookieManager.getInstance().removeSessionCookie();
                 cookies.sync();
 
-                // Only untrusted scopes can go here for now.
-                // If you add an scope that is not on that list, the login screen will hang instead
-                // of going to the final redirect.  No user visible error occurs. This is terrible.
-                // https://github.com/mozilla/fxa-content-server/issues/2508
-                String[] scopes = new String[] {"profile:email",
-                        "profile:display_name",
-                        "profile:display_name:write"};
-
                 new OAuthDialog(PreferencesScreen.this,
-                        BuildConfig.FXA_OAUTH2_SERVER,
+                        FXA_OAUTH2_SERVER,
                         FXA_APP_CALLBACK,
-                        scopes,
+                        SCOPES,
                         FXA_APP_KEY).show();
                 return true;
             }
@@ -333,6 +388,7 @@ public class PreferencesScreen extends PreferenceActivity implements IFxACallbac
         getPrefs().setEmail("");
         getPrefs().setNickname("");
         setFxALoginTitle("", "");
+        getPrefs().setLeaderboardUID("");
         setNicknamePreferenceTitle("");
         Toast.makeText(getApplicationContext(),
                 getApplicationContext().getString(R.string.fxa_is_logged_out),
@@ -365,15 +421,37 @@ public class PreferencesScreen extends PreferenceActivity implements IFxACallbac
 
 
     // FxA Callbacks
+
     @Override
-    public void processReceiveBearerToken(String bearerToken) {
+    public void processWebSvcAuthResponse(JSONObject authJSON) {
+        String leaderboard_uid = authJSON.optString("leaderboard_uid", "");
+
+        JSONObject fxa_auth_data = authJSON.optJSONObject("fxa_auth_data");
+
+        if (fxa_auth_data == null) {
+            clearFxaLoginState();
+            return;
+        }
+
+        String bearerToken = null;
+        try {
+            bearerToken = fxa_auth_data.getString("access_token");
+        } catch (JSONException e) {
+            Log.e(LOG_TAG, "Expected to find an access token in the FxA auth data block.");
+            clearFxaLoginState();
+            return;
+        }
+
         getPrefs().setBearerToken(bearerToken);
         fetchFxaProfile(bearerToken);
-    }
 
-    @Override
-    public void processRawResponse(JSONObject jsonObject) {
+        if (!TextUtils.isEmpty(leaderboard_uid)) {
+            getPrefs().setLeaderboardUID(leaderboard_uid);
+            Log.i(LOG_TAG, "Saved leaderboard UID: " + leaderboard_uid);
+        } else {
+            Log.i(LOG_TAG, "Didn't save a leaderboard UID");
 
+        }
     }
 
     @Override
@@ -400,6 +478,7 @@ public class PreferencesScreen extends PreferenceActivity implements IFxACallbac
         String displayName = profileJson.getDisplayName();
         String email = profileJson.getEmail();
 
+
         if (!TextUtils.isEmpty(email)) {
             Prefs.getInstance(this).setEmail(email);
             setFxALoginTitle(getPrefs().getBearerToken(), getPrefs().getEmail());
@@ -417,7 +496,7 @@ public class PreferencesScreen extends PreferenceActivity implements IFxACallbac
 
     private void setFxANickname(String displayName) {
         SetDisplayNameTask task = new SetDisplayNameTask(getApplicationContext(),
-                BuildConfig.FXA_PROFILE_SERVER);
+                FXA_PROFILE_SERVER);
         task.execute(getPrefs().getBearerToken(), displayName);
     }
 
@@ -438,6 +517,11 @@ public class PreferencesScreen extends PreferenceActivity implements IFxACallbac
 
     @Override
     public void processOauthVerify() {
+
+    }
+
+    @Override
+    public void processRefreshToken(JSONObject jObj) {
 
     }
 }

@@ -47,6 +47,7 @@ public class Prefs {
     private static final String USE_OFFLINE_GEO = "use_offline_geo";
     private static final String USE_HIGH_POWER = "use_high_power";
     public static final String FXA_LOGIN_PREF = "fxaLogin";
+    public static final String UID_PREF = "leaderboard_uid";
 
     protected static Prefs sInstance;
     private final SharedPreferences mSharedPrefs;
@@ -159,6 +160,20 @@ public class Prefs {
         if (nick != null) {
             nick = nick.trim();
             setStringPref(NICKNAME_PREF, nick);
+        }
+    }
+
+    public synchronized String getLeaderboardUID() {
+        String uid = getStringPref(UID_PREF);
+        if (!TextUtils.isEmpty(uid)) {
+            return uid;
+        }
+        return null;
+    }
+
+    public synchronized void setLeaderboardUID(String uid) {
+        if (!TextUtils.isEmpty(uid)) {
+            setStringPref(UID_PREF, uid);
         }
     }
 

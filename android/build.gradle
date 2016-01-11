@@ -136,7 +136,8 @@ android {
         release {
             signingConfig signingConfigs.release
 
-            buildConfigField "String", "LB_SUBMIT_URL", "\"http://leaderboard-dev.jaredkerim.com/api/v1/contributions/\""
+            buildConfigField "String", "LB_SUBMIT_URL",
+"\"http://cloudvm.jaredkerim.com/api/v1/contributions/\""
         }
 
 

@@ -62,7 +62,7 @@ public class PreferencesScreen extends PreferenceActivity implements IFxACallbac
     static String FXA_PROFILE_SERVER;
     static String FXA_OAUTH2_SERVER;
     static String FXA_APP_KEY;
-    static String SCOPES;
+    static String[] SCOPES;
 
 
     private final BroadcastReceiver callbackReceiver = new BroadcastReceiver() {
@@ -101,7 +101,7 @@ public class PreferencesScreen extends PreferenceActivity implements IFxACallbac
             FXA_APP_KEY = configJSON.getString("client_id");
             FXA_PROFILE_SERVER = configJSON.getString("profile_uri");
             FXA_OAUTH2_SERVER = configJSON.getString("oauth_uri");
-            SCOPES = configJSON.getString("scopes");
+            SCOPES = configJSON.getString("scopes").split(" ");
             FXA_APP_CALLBACK = configJSON.getString("redirect_uri");
 
             // TODO: enable the FxA login TextPreference

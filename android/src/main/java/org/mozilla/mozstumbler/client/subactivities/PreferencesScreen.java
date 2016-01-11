@@ -107,6 +107,10 @@ public class PreferencesScreen extends PreferenceActivity implements IFxACallbac
             // TODO: enable the FxA login TextPreference
             Log.i(LOG_TAG, "Fxa Config ["+FXA_APP_KEY+"]["+FXA_PROFILE_SERVER+"]["+FXA_OAUTH2_SERVER+"]["+SCOPES+"]["+FXA_APP_CALLBACK+"]");
 
+
+            // Only after all the FXA crap is setup can we initiate bearer token verification
+            verifyBearerToken();
+
         } catch (JSONException e) {
             Log.e(LOG_TAG, "Can't parse JSON config blob", e);
             return;
@@ -152,7 +156,7 @@ public class PreferencesScreen extends PreferenceActivity implements IFxACallbac
 
         setPreferenceListener();
         setButtonListeners();
-        verifyBearerToken();
+
 
         String app_name = getResources().getString(R.string.app_name);
 

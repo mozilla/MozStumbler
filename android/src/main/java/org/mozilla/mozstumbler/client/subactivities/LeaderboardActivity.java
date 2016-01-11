@@ -14,12 +14,20 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
 
+import org.mozilla.accounts.fxa.FxAGlobals;
 import org.mozilla.mozstumbler.BuildConfig;
 import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.client.ClientPrefs;
+import org.mozilla.mozstumbler.svclocator.ServiceLocator;
+import org.mozilla.mozstumbler.svclocator.services.log.ILogger;
+import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
 public class LeaderboardActivity extends ActionBarActivity {
-    private static final String LEADERBOARD_URL = BuildConfig.LB_BASE_URL;
+
+
+    ILogger Log = (ILogger) ServiceLocator.getInstance().getService(ILogger.class);
+    private static final String LOG_TAG = LoggerUtil.makeLogTag(LeaderboardActivity.class);
+
     private WebView mWebView;
     private boolean mHasError;
 
@@ -68,8 +76,7 @@ public class LeaderboardActivity extends ActionBarActivity {
 
         setProgress(0);
         ClientPrefs prefs = ClientPrefs.getInstance(getApplicationContext());
-        String url = LEADERBOARD_URL +  "/?profile=" + getPrefs().getLeaderboardUID();
-
+        String url = BuildConfig.LB_BASE_URL +  "/?profile=" + getPrefs().getLeaderboardUID();
         mWebView.loadUrl(url);
     }
 

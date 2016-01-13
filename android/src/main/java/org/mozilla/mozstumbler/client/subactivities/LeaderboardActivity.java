@@ -22,6 +22,9 @@ import org.mozilla.mozstumbler.svclocator.ServiceLocator;
 import org.mozilla.mozstumbler.svclocator.services.log.ILogger;
 import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+
 public class LeaderboardActivity extends ActionBarActivity {
 
 
@@ -77,7 +80,17 @@ public class LeaderboardActivity extends ActionBarActivity {
 
         setProgress(0);
         ClientPrefs prefs = ClientPrefs.getInstance(getApplicationContext());
-        String url = BuildConfig.LB_BASE_URL +  "/?profile=" + getPrefs().getLeaderboardUID();
+        URI tmpURI = null;
+        String url = null;
+
+        try {
+            tmpURI = new URI(getPrefs().getLbBaseURI() +  "/?profile=" + getPrefs().getLeaderboardUID());
+            url = tmpURI.normalize().toString();
+        } catch (URISyntaxException e) {
+            Log.e(LOG_TAG, "Error normalizing URL", e);
+            url = getPrefs().getLbBaseURI();
+        }
+
         mWebView.loadUrl(url);
     }
 

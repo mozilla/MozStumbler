@@ -34,6 +34,7 @@ import org.mozilla.accounts.fxa.tasks.ProfileJson;
 import org.mozilla.accounts.fxa.tasks.RetrieveProfileTask;
 import org.mozilla.accounts.fxa.tasks.SetDisplayNameTask;
 import org.mozilla.accounts.fxa.tasks.VerifyOAuthTask;
+import org.mozilla.mozstumbler.BuildConfig;
 import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.client.ClientPrefs;
 import org.mozilla.mozstumbler.client.MainApp;
@@ -160,7 +161,7 @@ public class PreferencesScreen extends PreferenceActivity implements IFxACallbac
         FetchFxaConfiguration.registerFxaIntents(this.getApplicationContext(), callbackReceiver);
 
         FetchFxaConfiguration fxaConfigTask = new FetchFxaConfiguration(this.getApplicationContext(),
-                "http://cloudvm.jaredkerim.com/api/v1/fxa/config/");
+                BuildConfig.LB_CONFIG_URL);
         fxaConfigTask.execute();
 
     }

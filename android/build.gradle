@@ -77,6 +77,10 @@ android {
 
         buildConfigField "String", "GIT_DESCRIPTION", "\"${gitDescription}\""
         buildConfigField "String", "GIT_VERSION", "\"${versionName} ${gitDescription}\""
+
+        // Need a stub LB_CONFIG_URL which gets clobbered by the
+        // leaderboard build flavor
+        buildConfigField "String", "LB_CONFIG_URL", "\"\""
     }
 
     signingConfigs {
@@ -112,12 +116,12 @@ android {
 
         lbdev {
             flavorDimension "leaderboard"
-            buildConfigField "String", "LB_BASE_URL", "\"http://leaderboard-dev.jaredkerim.com/api/v1/fxa/config/\""
+            buildConfigField "String", "LB_CONFIG_URL", "\"http://leaderboard-dev.jaredkerim.com/api/v1/fxa/config/\""
         }
 
         lbprod {
             flavorDimension "leaderboard"
-            buildConfigField "String", "LB_BASE_URL", "\"http://leaderboard-prod.jaredkerim.com/api/v1/fxa/config/\""
+            buildConfigField "String", "LB_CONFIG_URL", "\"http://leaderboard-prod.jaredkerim.com/api/v1/fxa/config/\""
         }
     }
 

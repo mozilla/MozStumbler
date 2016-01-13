@@ -31,4 +31,4 @@ clean:
 	./gradlew clean
 
 install_debug:
-	./gradlew installGithubDebug
+	./gradlew installGithubLbdevDebug

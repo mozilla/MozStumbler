@@ -9,20 +9,20 @@ unittest:
 	./gradlew assembleGithubUnittest
 
 debug:
-	./gradlew assembleGithubDebug
+	./gradlew assembleGithubLbdevDebug
 
 github:
 	./release_check.py github
-	./gradlew assembleGithubRelease
+	./gradlew assembleGithubLbprodRelease
 	sh rename_release.sh github-release
 
 playstore:
 	./release_check.py playstore
-	./gradlew assemblePlaystoreRelease
+	./gradlew assemblePlaystoreLbprodRelease
 	sh rename_release.sh playstore-release
 
 fdroid:
-	./gradlew assembleFdroidRelease
+	./gradlew assembleFdroidLbprodRelease
 	sh rename_release.sh fdroid-release
 
 clean:

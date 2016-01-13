@@ -84,7 +84,7 @@ android {
     }
 
     productFlavors {
-        flavorDimensions "appstore"
+        flavorDimensions "appstore", "leaderboard"
 
         github {
             flavorDimension "appstore"
@@ -109,6 +109,16 @@ android {
             buildConfigField "String", "TILE_SERVER_URL", getTileServerUrl('fdroid')
             buildConfigField "boolean", "FDROID", "true"
         }
+
+        lbdev {
+            flavorDimension "leaderboard"
+            buildConfigField "String", "LB_BASE_URL", "\"http://leaderboard-dev.jaredkerim.com/api/v1/fxa/config/\""
+        }
+
+        lbprod {
+            flavorDimension "leaderboard"
+            buildConfigField "String", "LB_BASE_URL", "\"http://leaderboard-prod.jaredkerim.com/api/v1/fxa/config/\""
+        }
     }
 
     buildTypes {
@@ -120,17 +130,6 @@ android {
             // standard unlabelled tiles.
             buildConfigField "boolean", "LABEL_MAP_TILES", "false"
 
-            // buildConfigField "String", "FXA_APP_KEY", "\"86cd25bed2c63936\""
-            // buildConfigField "String", "FXA_OAUTH2_SERVER", "\"https://oauth-stable.dev.lcip.org\""
-            // buildConfigField "String", "FXA_PROFILE_SERVER", "\"https://stable.dev.lcip.org/profile\""
-            // buildConfigField "String", "FXA_APP_CALLBACK", "\"http://leaderboard-dev.jaredkerim.com\""
-
-            // This is needed to generate the submission URL and the
-            // profile URL to view user stats
-            buildConfigField "String", "LB_BASE_URL", "\"http://cloudvm.jaredkerim.com\""
-
-            // This should go away and hang off the LB_BASE_URL
-            buildConfigField "String", "LB_SUBMIT_URL", "\"http://cloudvm.jaredkerim.com/api/v1/contributions/\""
         }
 
         release {

@@ -58,13 +58,6 @@ public class PreferencesScreen extends PreferenceActivity implements IFxACallbac
     private ListPreference mMapTileDetail;
     private Preference mFxaLoginPreference;
 
-    static String FXA_APP_CALLBACK;
-    static String FXA_PROFILE_SERVER;
-    static String FXA_OAUTH2_SERVER;
-    static String FXA_APP_KEY;
-    static String[] SCOPES;
-
-
     private final BroadcastReceiver callbackReceiver = new BroadcastReceiver() {
 
         @Override
@@ -98,14 +91,14 @@ public class PreferencesScreen extends PreferenceActivity implements IFxACallbac
             JSONObject configJSON = new JSONObject(configBlob);
 
             // These secrets are provisioned from the FxA dashboard
-            FXA_APP_KEY = configJSON.getString("client_id");
-            FXA_PROFILE_SERVER = configJSON.getString("profile_uri");
-            FXA_OAUTH2_SERVER = configJSON.getString("oauth_uri");
-            SCOPES = configJSON.getString("scopes").split(" ");
-            FXA_APP_CALLBACK = configJSON.getString("redirect_uri");
+            getPrefs().setFxaClientId(configJSON.getString("client_id"));
+            getPrefs().setFxaProfileServer(configJSON.getString("profile_uri"));
+            getPrefs().setFxaOauth2Server(configJSON.getString("oauth_uri"));
+            getPrefs().setFxaScopes(configJSON.getString("scopes"));
+            getPrefs().setFxaAppCallback(configJSON.getString("redirect_uri"));
 
-            // TODO: enable the FxA login TextPreference
-            Log.i(LOG_TAG, "Fxa Config ["+FXA_APP_KEY+"]["+FXA_PROFILE_SERVER+"]["+FXA_OAUTH2_SERVER+"]["+SCOPES+"]["+FXA_APP_CALLBACK+"]");
+            getPrefs().setLbBaseURI(configJSON.getString("leaderboard_base_uri"));
+            getPrefs().setLbSubmitURL(configJSON.getString("leaderboard_base_uri") + "/api/v1/contributions/");
 
 
             // Only after all the FXA crap is setup can we initiate bearer token verification
@@ -121,7 +114,7 @@ public class PreferencesScreen extends PreferenceActivity implements IFxACallbac
 
     private void fetchFxaProfile(String bearerToken) {
         RetrieveProfileTask task = new RetrieveProfileTask(getApplicationContext(),
-                FXA_PROFILE_SERVER);
+                getFxaProfileServer());
         task.execute(bearerToken);
     }
 
@@ -163,7 +156,6 @@ public class PreferencesScreen extends PreferenceActivity implements IFxACallbac
         FxAGlobals fxa = new FxAGlobals();
         fxa.startIntentListening((Context) this, (IFxACallbacks) this, app_name);
 
-
         // Register callbacks so that we can load the FxA configuration JSON blob
         FetchFxaConfiguration.registerFxaIntents(this.getApplicationContext(), callbackReceiver);
 
@@ -180,7 +172,7 @@ public class PreferencesScreen extends PreferenceActivity implements IFxACallbac
         String bearerToken = getPrefs().getBearerToken();
         if (!TextUtils.isEmpty(bearerToken)) {
             VerifyOAuthTask task = new VerifyOAuthTask(getApplicationContext(),
-                    FXA_OAUTH2_SERVER);
+                    getFxaOauth2Server());
             task.execute(bearerToken);
         }
     }
@@ -287,7 +279,7 @@ public class PreferencesScreen extends PreferenceActivity implements IFxACallbac
                         public void onClick(DialogInterface arg0, int arg1) {
                             String bearerToken = getPrefs().getBearerToken();
                             DestroyOAuthTask task = new DestroyOAuthTask(getApplicationContext(),
-                                    FXA_OAUTH2_SERVER);
+                                    getFxaOauth2Server());
                             task.execute(bearerToken);
                         }
                     });
@@ -309,10 +301,10 @@ public class PreferencesScreen extends PreferenceActivity implements IFxACallbac
                 cookies.sync();
 
                 new OAuthDialog(PreferencesScreen.this,
-                        FXA_OAUTH2_SERVER,
-                        FXA_APP_CALLBACK,
-                        SCOPES,
-                        FXA_APP_KEY).show();
+                        getFxaOauth2Server(),
+                        getFxaAppCallback(),
+                        getFxaScopes(),
+                        getFxaClientId()).show();
                 return true;
             }
         });
@@ -391,6 +383,8 @@ public class PreferencesScreen extends PreferenceActivity implements IFxACallbac
         getPrefs().setBearerToken("");
         getPrefs().setEmail("");
         getPrefs().setNickname("");
+        getPrefs().setLbBaseURI("");
+        getPrefs().setLbSubmitURL("");
         setFxALoginTitle("", "");
         getPrefs().setLeaderboardUID("");
         setNicknamePreferenceTitle("");
@@ -500,7 +494,7 @@ public class PreferencesScreen extends PreferenceActivity implements IFxACallbac
 
     private void setFxANickname(String displayName) {
         SetDisplayNameTask task = new SetDisplayNameTask(getApplicationContext(),
-                FXA_PROFILE_SERVER);
+                getFxaProfileServer());
         task.execute(getPrefs().getBearerToken(), displayName);
     }
 
@@ -527,5 +521,25 @@ public class PreferencesScreen extends PreferenceActivity implements IFxACallbac
     @Override
     public void processRefreshToken(JSONObject jObj) {
 
+    }
+
+    private String getFxaAppCallback() {
+        return getPrefs().getFxaAppCallback();
+    }
+
+    private String getFxaOauth2Server() {
+        return getPrefs().getFxaOauth2Server();
+    }
+
+    public String[] getFxaScopes() {
+        return TextUtils.split(getPrefs().getFxaScopes(), " ");
+    }
+
+    public String getFxaClientId() {
+        return getPrefs().getFxaClientId();
+    }
+
+    public String getFxaProfileServer() {
+        return getPrefs().getFxaProfileServer();
     }
 }

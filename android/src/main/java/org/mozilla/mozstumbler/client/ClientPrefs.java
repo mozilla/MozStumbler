@@ -30,6 +30,16 @@ public class ClientPrefs extends Prefs {
     private static final String DEFAULT_SIMULATION_LAT_LONG = "default_simulation_lat_lon";
     private static final String MIN_BATTERY_PCT = "min_battery_pct";
 
+
+    private static final String LB_BASE_URI = "org.mozilla.mozstumbler.client.lb_base_uri";
+    private static final String LB_SUBMIT_URL = "org.mozilla.mozstumbler.client.lb_submit_url";
+
+    private static final String FXA_CLIENT_ID = "org.mozilla.mozstumbler.client.fxa_client_id";
+    private static final String FXA_PROFILE_SERVER = "org.mozilla.mozstumbler.client.fxa_profile_server";
+    private static final String FXA_APP_CALLBACK = "org.mozilla.mozstumbler.client.fxa_app_callback";
+    private static final String FXA_OAUTH2_SERVER = "org.mozilla.mozstumbler.fxa_oauth2_server";
+    private static final String FXA_SCOPES = "org.mozilla.mozstumbler.client.fxa_scopes";
+
     protected ClientPrefs(Context context) {
         super(context);
     }
@@ -51,6 +61,45 @@ public class ClientPrefs extends Prefs {
     // For Mozilla Stumbler to use for manual upgrade of old prefs.
     static String getPrefsFileNameForUpgrade() {
         return PREFS_FILE;
+    }
+
+    public String getFxaOauth2Server() {
+        return getStringPref(FXA_OAUTH2_SERVER);
+    }
+
+    public void setFxaScopes(String scopes) {
+        setStringPref(FXA_SCOPES, scopes);
+    }
+
+    public String getFxaScopes() {
+        return getStringPref(FXA_SCOPES);
+    }
+
+    public void setFxaOauth2Server(String uri) {
+        setStringPref(FXA_OAUTH2_SERVER, uri);
+    }
+
+    public void setFxaAppCallback(String callback_site) {
+        setStringPref(FXA_APP_CALLBACK, callback_site);
+    }
+
+    public String getFxaAppCallback() {
+        return getStringPref(FXA_APP_CALLBACK);
+    }
+
+    public String getLbBaseURI() {
+        return getStringPref(LB_BASE_URI);
+    }
+
+    public void setLbBaseURI(String base_uri) {
+        setStringPref(LB_BASE_URI, base_uri);
+    }
+
+    public String getLbSubmitUrl() {
+        return getStringPref(LB_SUBMIT_URL);
+    }
+    public void setLbSubmitURL(String url) {
+        setStringPref(LB_SUBMIT_URL, url);
     }
 
     public long getLastVersion() {
@@ -175,6 +224,22 @@ public class ClientPrefs extends Prefs {
         SharedPreferences.Editor editor = getPrefs().edit();
         editor.putInt(MIN_BATTERY_PCT, percent);
         apply(editor);
+    }
+
+    public void setFxaClientId(String fxaClientId) {
+        setStringPref(FXA_CLIENT_ID, fxaClientId);
+    }
+
+    public String getFxaClientId() {
+        return getStringPref(FXA_CLIENT_ID);
+    }
+
+    public String getFxaProfileServer() {
+        return getStringPref(FXA_PROFILE_SERVER);
+    }
+
+    public void setFxaProfileServer(String fxaProfileServer) {
+        setStringPref(FXA_PROFILE_SERVER, fxaProfileServer);
     }
 
     public enum MapTileResolutionOptions {Default, HighRes, LowRes, NoMap}

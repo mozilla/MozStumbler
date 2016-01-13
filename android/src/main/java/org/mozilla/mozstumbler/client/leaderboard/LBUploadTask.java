@@ -3,7 +3,10 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package org.mozilla.mozstumbler.client.leaderboard;
 
+import android.text.TextUtils;
+
 import org.mozilla.mozstumbler.BuildConfig;
+import org.mozilla.mozstumbler.client.ClientPrefs;
 import org.mozilla.mozstumbler.service.Prefs;
 import org.mozilla.mozstumbler.service.core.http.IHttpUtil;
 import org.mozilla.mozstumbler.service.core.http.IResponse;
@@ -28,13 +31,23 @@ class LBUploadTask extends AsyncUploader {
     private String LOG_TAG = LoggerUtil.makeLogTag(LBUploadTask.class);
 
     class LBSubmitter implements ISubmitService {
-        private static final String SUBMIT_URL = BuildConfig.LB_SUBMIT_URL;
+
+
+        private ClientPrefs getPrefs() {
+            return ClientPrefs.getInstanceWithoutContext();
+        }
+
+
         final IHttpUtil httpDelegate = (IHttpUtil) ServiceLocator.getInstance().getService(IHttpUtil.class);
 
         @Override
         public IResponse submit(byte[] data, Map<String, String> headers, boolean precompressed) {
-            Log.i(LOG_TAG, "Sending leaderboard data to: [" + SUBMIT_URL + "]");
+            final String submit_url = getPrefs().getLbSubmitUrl();
 
+            if (TextUtils.isEmpty(submit_url)) {
+                return null;
+            }
+            Log.d(LOG_TAG, "Sending leaderboard data to: [" + submit_url + "]");
 
             String sData = "";
 
@@ -43,10 +56,10 @@ class LBUploadTask extends AsyncUploader {
             } else {
                 sData = new String(data);
             }
-            Log.i(LOG_TAG, "Sending leaderboard data: " + sData);
+            Log.d(LOG_TAG, "Sending leaderboard data: " + sData);
 
-            IResponse resp =  httpDelegate.post(SUBMIT_URL, data, headers, precompressed);
-            Log.i(LOG_TAG, "Got response: " + resp.httpStatusCode());
+            IResponse resp =  httpDelegate.post(submit_url, data, headers, precompressed);
+            Log.d(LOG_TAG, "Got response: " + resp.httpStatusCode());
             return resp;
         }
     }
@@ -76,14 +89,6 @@ class LBUploadTask extends AsyncUploader {
 
     @Override
     protected boolean checkCanUpload(AsyncUploadParam param) {
-        // This task is triggered only on a successful upload of MLS data, so we assume
-        // this can also upload without further checks
-
-        // TODO: do we want to handle a case where the bearer token is not set
-        // and FxA is not logged in?  LBUploadTask should probably be created
-        // with the bearer token passed in explicitly instead of loading the
-        // OAuth state at runtime.
-
         return true;
     }
 }

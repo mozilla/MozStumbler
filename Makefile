@@ -1,12 +1,12 @@
 test: libtest unittest
 	./gradlew copyTestResources
-	./gradlew testGithubUnittest --info
+	./gradlew testGithubLbDevUnittest --info
 
 libtest:
 	cd libraries/stumbler; ./gradlew test
 
 unittest:
-	./gradlew assembleGithubUnittest
+	./gradlew assembleGithubLbdevUnittest
 
 debug:
 	./gradlew assembleGithubLbdevDebug

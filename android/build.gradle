@@ -119,6 +119,11 @@ android {
             buildConfigField "String", "LB_CONFIG_URL", "\"http://leaderboard-dev.jaredkerim.com/api/v1/fxa/config/\""
         }
 
+        lbstage {
+            flavorDimension "leaderboard"
+            buildConfigField "String", "LB_CONFIG_URL", "\"https://loc-leaders.stage.mozaws.net/api/v1/fxa/config/\""
+        }
+
         lbprod {
             flavorDimension "leaderboard"
             buildConfigField "String", "LB_CONFIG_URL", "\"http://leaderboard-prod.jaredkerim.com/api/v1/fxa/config/\""

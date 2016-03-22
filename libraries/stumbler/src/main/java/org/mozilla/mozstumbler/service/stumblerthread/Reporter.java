@@ -98,7 +98,7 @@ public final class Reporter extends BroadcastReceiver implements IReporter {
     private void receivedGpsMessage(Intent intent) {
         String subject = intent.getStringExtra(Intent.EXTRA_SUBJECT);
 
-        if (subject.equals(GPSScanner.SUBJECT_NEW_LOCATION)) {
+        if (subject != null && subject.equals(GPSScanner.SUBJECT_NEW_LOCATION)) {
             Location newPosition = intent.getParcelableExtra(GPSScanner.NEW_LOCATION_ARG_LOCATION);
             // Only create StumblerBundle instances if the position exists
             if (newPosition != null) {

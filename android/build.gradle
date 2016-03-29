@@ -126,7 +126,7 @@ android {
 
         lbprod {
             flavorDimension "leaderboard"
-            buildConfigField "String", "LB_CONFIG_URL", "\"http://leaderboard-prod.jaredkerim.com/api/v1/fxa/config/\""
+            buildConfigField "String", "LB_CONFIG_URL", "\"https://location-leaderboard.services.mozilla.com/api/v1/fxa/config/\""
         }
     }
 

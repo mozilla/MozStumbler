@@ -4,17 +4,22 @@
 
 package org.mozilla.mozstumbler.service.stumblerthread.datahandling;
 
+import android.annotation.TargetApi;
 import android.location.Location;
 import android.net.wifi.ScanResult;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.os.SystemClock;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner.CellInfo;
+import org.mozilla.mozstumbler.svclocator.ServiceLocator;
+import org.mozilla.mozstumbler.svclocator.services.ISystemClock;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -98,7 +103,9 @@ public final class StumblerBundle implements Parcelable {
         return Collections.unmodifiableMap(mCellData);
     }
 
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
     public MLSJSONObject toMLSGeosubmit() throws JSONException {
+        ISystemClock clock = (ISystemClock) ServiceLocator.getInstance().getService(ISystemClock.class);
         MLSJSONObject headerFields = new MLSJSONObject();
         headerFields.put(DataStorageConstants.ReportsColumns.LAT, Math.floor(mGpsPosition.getLatitude() * 1.0E6) / 1.0E6);
         headerFields.put(DataStorageConstants.ReportsColumns.LON, Math.floor(mGpsPosition.getLongitude() * 1.0E6) / 1.0E6);
@@ -127,15 +134,20 @@ public final class StumblerBundle implements Parcelable {
 
         if (mWifiData.size() > 0) {
             JSONArray wifis = new JSONArray();
-            for (ScanResult s : mWifiData.values()) {
+            for (ScanResult scanResult : mWifiData.values()) {
                 JSONObject wifiEntry = new JSONObject();
-                wifiEntry.put("macAddress", s.BSSID);
-                if (s.frequency != 0) {
-                    wifiEntry.put("frequency", s.frequency);
+                wifiEntry.put("macAddress", scanResult.BSSID);
+                if (scanResult.frequency != 0) {
+                    wifiEntry.put("frequency", scanResult.frequency);
                 }
-                if (s.level != 0) {
-                    wifiEntry.put("signalStrength", s.level);
+                if (scanResult.level != 0) {
+                    wifiEntry.put("signalStrength", scanResult.level);
                 }
+
+                long gpsTimeSinceBootInMS = (mGpsPosition.getElapsedRealtimeNanos()/1000000);
+                long wifiTimeSinceBootInMS = (scanResult.timestamp / 1000);
+                long ageMS =  wifiTimeSinceBootInMS - gpsTimeSinceBootInMS;
+                wifiEntry.put("age", ageMS);
                 wifis.put(wifiEntry);
             }
             headerFields.put(DataStorageConstants.ReportsColumns.WIFI, wifis);

@@ -11,4 +11,7 @@ public interface ISystemClock {
 
     // Implementations should provide an implementation of System.currentTimeMillis
     public long currentTimeMillis();
+
+    // Returns milliseconds since boot for the device, including time spent in sleep.
+    public long elapsedRealtime();
 }

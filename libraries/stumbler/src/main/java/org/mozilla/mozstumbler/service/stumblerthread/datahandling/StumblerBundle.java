@@ -105,7 +105,6 @@ public final class StumblerBundle implements Parcelable {
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
     public MLSJSONObject toMLSGeosubmit() throws JSONException {
-        ISystemClock clock = (ISystemClock) ServiceLocator.getInstance().getService(ISystemClock.class);
         MLSJSONObject headerFields = new MLSJSONObject();
         headerFields.put(DataStorageConstants.ReportsColumns.LAT, Math.floor(mGpsPosition.getLatitude() * 1.0E6) / 1.0E6);
         headerFields.put(DataStorageConstants.ReportsColumns.LON, Math.floor(mGpsPosition.getLongitude() * 1.0E6) / 1.0E6);
@@ -134,6 +133,8 @@ public final class StumblerBundle implements Parcelable {
 
         if (mWifiData.size() > 0) {
             JSONArray wifis = new JSONArray();
+
+            long gpsTimeSinceBootInMS = (mGpsPosition.getElapsedRealtimeNanos()/1000000);
             for (ScanResult scanResult : mWifiData.values()) {
                 JSONObject wifiEntry = new JSONObject();
                 wifiEntry.put("macAddress", scanResult.BSSID);
@@ -144,7 +145,6 @@ public final class StumblerBundle implements Parcelable {
                     wifiEntry.put("signalStrength", scanResult.level);
                 }
 
-                long gpsTimeSinceBootInMS = (mGpsPosition.getElapsedRealtimeNanos()/1000000);
                 long wifiTimeSinceBootInMS = (scanResult.timestamp / 1000);
                 long ageMS =  wifiTimeSinceBootInMS - gpsTimeSinceBootInMS;
                 wifiEntry.put("age", ageMS);

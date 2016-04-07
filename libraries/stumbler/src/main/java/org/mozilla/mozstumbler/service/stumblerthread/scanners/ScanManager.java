@@ -314,9 +314,5 @@ public class ScanManager {
         return (mGPSScanner == null) ? 0 : mGPSScanner.getLocationCount();
     }
 
-    public Location getLocation() {
-        return (mGPSScanner == null) ? new Location("null") : mGPSScanner.getLocation();
-    }
-
     private enum PassiveModeBatteryState {OK, LOW, IGNORE_BATTERY_STATE}
 }

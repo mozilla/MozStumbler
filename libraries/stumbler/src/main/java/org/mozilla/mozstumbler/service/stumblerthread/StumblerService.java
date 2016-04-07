@@ -111,10 +111,6 @@ public class StumblerService extends PersistentIntentService
         return Prefs.getInstance(c);
     }
 
-    public synchronized Location getLocation() {
-        return mScanManager.getLocation();
-    }
-
     private synchronized int getVisibleAPCount() {
         return mScanManager.getVisibleAPCount();
     }

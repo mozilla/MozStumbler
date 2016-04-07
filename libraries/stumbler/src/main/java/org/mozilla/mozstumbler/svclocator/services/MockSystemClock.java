@@ -6,13 +6,22 @@ package org.mozilla.mozstumbler.svclocator.services;
 public class MockSystemClock implements ISystemClock {
 
     private long currentTime;
+    private long elapsedTime;
 
     public void setCurrentTime(long currentTime) {
         this.currentTime = currentTime;
+    }
+    public void setElapsedRealtime(long elapsedTime) {
+        this.elapsedTime = elapsedTime;
     }
 
     @Override
     public long currentTimeMillis() {
         return currentTime;
+    }
+
+    @Override
+    public long elapsedRealtime() {
+        return elapsedTime;
     }
 }

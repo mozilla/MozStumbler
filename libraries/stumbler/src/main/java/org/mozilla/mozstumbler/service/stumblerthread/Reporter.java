@@ -161,9 +161,9 @@ public final class Reporter extends BroadcastReceiver implements IReporter {
         if (mBundle == null) {
             return;
         }
-        for (ScanResult result : results) {
-            String key = result.BSSID;
-            mBundle.addWifiData(key, result);
+        for (ScanResult scanResult: results) {
+            String key = scanResult.BSSID;
+            mBundle.addWifiData(key, scanResult);
         }
     }
 

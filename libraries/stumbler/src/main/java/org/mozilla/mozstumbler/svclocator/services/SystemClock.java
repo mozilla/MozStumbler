@@ -9,4 +9,10 @@ public class SystemClock implements ISystemClock {
     public long currentTimeMillis() {
         return System.currentTimeMillis();
     }
+
+    @Override
+    public long elapsedRealtime() {
+        return android.os.SystemClock.elapsedRealtime();
+    }
+
 }

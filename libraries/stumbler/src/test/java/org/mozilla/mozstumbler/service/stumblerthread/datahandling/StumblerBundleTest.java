@@ -13,10 +13,15 @@ import android.os.SystemClock;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner.CellInfo;
 import org.mozilla.mozstumbler.service.utils.Zipper;
+import org.mozilla.mozstumbler.svclocator.ServiceLocator;
+import org.mozilla.mozstumbler.svclocator.services.ISystemClock;
+import org.mozilla.mozstumbler.svclocator.services.MockSystemClock;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 import org.skyscreamer.jsonassert.JSONAssert;
@@ -33,11 +38,40 @@ import static junit.framework.Assert.assertTrue;
 public class StumblerBundleTest {
 
 
+    // Set the wifi scan time to be 100 milliseconds, but expressed in microseconds
+    public static final int WIFI_SCAN_uSec_DELTA = 100 * 1000;
+
+    // Set the time since boot to be 50 milliseconds (but expressed in nanos)
+    public static final int BOOT_TIME_NS_DELTA = 50 * 1000 * 1000;
+
+    // Set to ~5:19pm April 6, 2016
+    public static final long CURRENT_TIME = 1459977530162L;
+
+    private ISystemClock real_clock;
+    @Before
+    public void setUp() {
+        real_clock = (ISystemClock) ServiceLocator.getInstance().getService(ISystemClock.class);
+
+        MockSystemClock mockClock = new MockSystemClock();
+        ServiceLocator.getInstance().putService(ISystemClock.class, mockClock);
+
+        mockClock.setCurrentTime(CURRENT_TIME);
+        mockClock.setElapsedRealtime(BOOT_TIME_NS_DELTA);
+    }
+
+    @After
+    public void tearDown() {
+        if (real_clock != null) {
+            ServiceLocator.getInstance().putService(ISystemClock.class, real_clock);
+        }
+    }
+
     protected JSONObject getExpectedGeoLocate() throws JSONException {
         List<JSONObject> wifiList = new ArrayList<JSONObject>();
 
         JSONObject wifi = new JSONObject();
         wifi.put("macAddress", "01:23:45:67:89:ab");
+
         wifiList.add(wifi);
         wifi = new JSONObject();
         wifi.put("macAddress", "23:45:67:89:ab:cd");
@@ -73,14 +107,20 @@ public class StumblerBundleTest {
 
 
     protected JSONObject getExpectedGeosubmit() throws JSONException {
+        ISystemClock clock = (ISystemClock) ServiceLocator.getInstance().getService(ISystemClock.class);
+
+        // Set each wifi scan to be WIFI_SCAN_uSec expressed in millisec precision
+        long ageMS = WIFI_SCAN_uSec_DELTA/1000;
 
         List<JSONObject> wifiList = new ArrayList<JSONObject>();
 
         JSONObject wifi = new JSONObject();
         wifi.put("macAddress", "01:23:45:67:89:ab");
+        wifi.put("age", ageMS);
         wifiList.add(wifi);
         wifi = new JSONObject();
         wifi.put("macAddress", "23:45:67:89:ab:cd");
+        wifi.put("age", ageMS);
         wifiList.add(wifi);
         JSONArray wifiArray = new JSONArray(wifiList);
 
@@ -88,7 +128,6 @@ public class StumblerBundleTest {
         stumbleBlob.put("wifiAccessPoints", wifiArray);
 
         JSONObject itemsContainer = new JSONObject();
-
 
         List<JSONObject> cellTowerList = new ArrayList<JSONObject>();
         JSONObject cellTower = new JSONObject();
@@ -106,12 +145,13 @@ public class StumblerBundleTest {
 
         stumbleBlob.put(DataStorageConstants.ReportsColumns.CELL, cellTowerArray);
 
-        stumbleBlob.put(DataStorageConstants.ReportsColumns.TIME, 1405602028568L);
+        // The timestamp of the blob should be the current system time which is what the mock location
+        // in geosubmit and geolocate will use for the GPS timestamp
+        stumbleBlob.put(DataStorageConstants.ReportsColumns.TIME, clock.currentTimeMillis());
         stumbleBlob.put(DataStorageConstants.ReportsColumns.ALTITUDE, 202.9f);
         stumbleBlob.put(DataStorageConstants.ReportsColumns.LON, -43.5f);
         stumbleBlob.put(DataStorageConstants.ReportsColumns.LAT, -22.5f);
         stumbleBlob.put(DataStorageConstants.ReportsColumns.ACCURACY, 20.5f);
-
 
         List<JSONObject> itemsList= new ArrayList<JSONObject>();
         itemsList.add(stumbleBlob);
@@ -123,12 +163,15 @@ public class StumblerBundleTest {
 
     @Test
     public void testToGeosubmitJSON() throws JSONException {
+
+        ISystemClock clock = (ISystemClock) ServiceLocator.getInstance().getService(ISystemClock.class);
+
         JSONObject expectedJson = getExpectedGeosubmit();
 
         Location mockLocation = new Location(LocationManager.GPS_PROVIDER); // a string
         mockLocation.setLatitude(-22.5f);
         mockLocation.setLongitude(-43.5f);
-        mockLocation.setTime(1405602028568L);
+        mockLocation.setTime(clock.currentTimeMillis());
         mockLocation.setAccuracy(20.5f);
         mockLocation.setAltitude(202.9f);
 
@@ -162,8 +205,6 @@ public class StumblerBundleTest {
         String finalReport = Zipper.unzipData(rbb.finalizeToJSONRowsObject().data);
         JSONObject actualJson = new JSONObject(finalReport);
 
-        System.out.println("Actual JSON with accuracy and location: " + actualJson.toString(2));
-        System.out.println("Expected JSON with accuracy and location: " + expectedJson.toString(2));
 
         JSONAssert.assertEquals(expectedJson, actualJson, true);
     }
@@ -200,7 +241,6 @@ public class StumblerBundleTest {
         bundle.addCellData(cellInfo.getCellIdentity(), cellInfo);
 
         JSONObject actualJson = bundle.toMLSGeolocate();
-
         JSONAssert.assertEquals(expectedJson, actualJson, true);
     }
 
@@ -220,6 +260,11 @@ public class StumblerBundleTest {
 
     public static ScanResult createScanResult(String BSSID, String caps, int level, int frequency,
                                               long tsf) {
+        ISystemClock clock = (ISystemClock) ServiceLocator.getInstance().getService(ISystemClock.class);
+
+        // Set each wifi scan to occur 100,000 nanoseconds after the boot time
+        long microSecondTS = WIFI_SCAN_uSec_DELTA;
+
         Class<?> c = null;
         try {
             c = Class.forName("android.net.wifi.ScanResult");
@@ -242,10 +287,12 @@ public class StumblerBundleTest {
         ScanResult scan = null;
         try {
             scan = (ScanResult) myConstructor.newInstance(null, BSSID, caps, level, frequency, tsf);
+            scan.timestamp = microSecondTS;
         } catch (Exception e) {
             throw new RuntimeException(e.toString());
         }
         return scan;
     }
+
 
 }

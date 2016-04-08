@@ -8,8 +8,8 @@ import android.location.Location;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.mozilla.mozstumbler.service.stumblerthread.datahandling.base.JSONRowsStorageManager;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageConstants;
+import org.mozilla.mozstumbler.service.stumblerthread.datahandling.base.JSONRowsStorageManager;
 import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
 import java.util.HashMap;

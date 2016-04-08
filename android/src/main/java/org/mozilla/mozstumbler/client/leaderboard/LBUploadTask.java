@@ -5,14 +5,12 @@ package org.mozilla.mozstumbler.client.leaderboard;
 
 import android.text.TextUtils;
 
-import org.mozilla.mozstumbler.BuildConfig;
 import org.mozilla.mozstumbler.client.ClientPrefs;
 import org.mozilla.mozstumbler.service.Prefs;
+import org.mozilla.mozstumbler.service.core.http.FxAService;
 import org.mozilla.mozstumbler.service.core.http.IHttpUtil;
 import org.mozilla.mozstumbler.service.core.http.IResponse;
-import org.mozilla.mozstumbler.service.core.http.FxAService;
 import org.mozilla.mozstumbler.service.core.http.ISubmitService;
-import org.mozilla.mozstumbler.service.core.http.MLSLocationService;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.base.JSONRowsStorageManager;
 import org.mozilla.mozstumbler.service.uploadthread.AsyncUploadParam;
 import org.mozilla.mozstumbler.service.uploadthread.AsyncUploader;
@@ -23,7 +21,6 @@ import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.zip.GZIPInputStream;
 
 class LBUploadTask extends AsyncUploader {
 

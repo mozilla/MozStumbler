@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.support.v4.content.LocalBroadcastManager;
-import android.text.TextUtils;
 import android.util.Log;
 
 import org.json.JSONException;
@@ -18,9 +17,6 @@ import org.mozilla.accounts.fxa.net.HttpUtil;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import static org.mozilla.accounts.fxa.Intents.ACCESS_TOKEN_REFRESH;
-import static org.mozilla.accounts.fxa.Intents.ACCESS_TOKEN_REFRESH_FAILURE;
 
 /**
  * Created by victorng on 2015-12-31.

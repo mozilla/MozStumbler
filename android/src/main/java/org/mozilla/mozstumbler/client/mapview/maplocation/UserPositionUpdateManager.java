@@ -8,6 +8,7 @@ import android.content.Context;
 import android.location.Location;
 import android.location.LocationManager;
 import android.widget.Toast;
+
 import org.mozilla.mozstumbler.client.MainApp;
 import org.mozilla.mozstumbler.client.mapview.MapFragment;
 import org.mozilla.mozstumbler.service.AppGlobals;

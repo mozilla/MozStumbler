@@ -12,7 +12,6 @@ import android.graphics.Paint.Style;
 import android.graphics.Path;
 import android.graphics.Point;
 import android.graphics.Rect;
-import java.lang.Math;
 import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;

@@ -4,7 +4,7 @@
 
 package org.mozilla.mozstumbler.service.utils;
 
-import android.net.*;
+import android.net.ConnectivityManager;
 
 import org.mockito.Mockito;
 import org.robolectric.annotation.Implementation;

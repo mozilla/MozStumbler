@@ -12,7 +12,6 @@ import android.graphics.Rect;
 import android.location.Location;
 import android.os.Handler;
 import android.os.Looper;
-import java.lang.Math;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;

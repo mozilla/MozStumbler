@@ -10,7 +10,9 @@ import android.os.Build;
 import android.util.Log;
 
 import org.mozilla.mozstumbler.BuildConfig;
+import org.mozilla.mozstumbler.client.mapview.ObservationPoint;
 import org.mozilla.mozstumbler.service.AppGlobals;
+import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 import org.simpleframework.xml.Attribute;
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.ElementList;
@@ -18,9 +20,6 @@ import org.simpleframework.xml.Namespace;
 import org.simpleframework.xml.NamespaceList;
 import org.simpleframework.xml.Root;
 import org.simpleframework.xml.Serializer;
-
-import org.mozilla.mozstumbler.client.mapview.ObservationPoint;
-import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 import org.simpleframework.xml.core.Persister;
 
 import java.io.File;

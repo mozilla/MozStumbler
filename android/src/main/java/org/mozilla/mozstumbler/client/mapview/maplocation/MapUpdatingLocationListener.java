@@ -7,7 +7,9 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+
 import org.mozilla.mozstumbler.client.mapview.MapFragment;
+
 import java.lang.ref.WeakReference;
 
 // Listens for position changes and updates the position on the map view

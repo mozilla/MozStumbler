@@ -11,9 +11,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.svclocator.ServiceLocator;
-import org.mozilla.mozstumbler.svclocator.services.log.UnittestLogger;
 import org.mozilla.mozstumbler.svclocator.services.log.ILogger;
 import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
+import org.mozilla.mozstumbler.svclocator.services.log.UnittestLogger;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 

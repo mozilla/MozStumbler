@@ -36,11 +36,12 @@ import org.mozilla.mozstumbler.service.core.http.HttpUtil;
 import org.mozilla.mozstumbler.service.core.http.IHttpUtil;
 import org.mozilla.mozstumbler.service.core.http.ILocationService;
 import org.mozilla.mozstumbler.service.core.http.MLSLocationService;
-import org.mozilla.mozstumbler.service.core.offline.IOfflineLocationService;
 import org.mozilla.mozstumbler.service.core.logging.MockAcraLog;
+import org.mozilla.mozstumbler.service.core.offline.IOfflineLocationService;
+import org.mozilla.mozstumbler.service.core.offline.LocationService;
 import org.mozilla.mozstumbler.service.stumblerthread.Reporter;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageConstants;
-import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageManager;;
+import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageManager;
 import org.mozilla.mozstumbler.service.stumblerthread.motiondetection.MotionSensor;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.ISimulatorService;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.ScanManager;
@@ -55,19 +56,21 @@ import org.mozilla.mozstumbler.svclocator.ServiceConfig;
 import org.mozilla.mozstumbler.svclocator.ServiceLocator;
 import org.mozilla.mozstumbler.svclocator.services.ISystemClock;
 import org.mozilla.mozstumbler.svclocator.services.SystemClock;
-import org.mozilla.mozstumbler.svclocator.services.log.ILogger;
-import org.mozilla.mozstumbler.svclocator.services.log.UnittestLogger;
 import org.mozilla.mozstumbler.svclocator.services.log.DebugLogger;
+import org.mozilla.mozstumbler.svclocator.services.log.ILogger;
 import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
+import org.mozilla.mozstumbler.svclocator.services.log.UnittestLogger;
 import org.mozilla.osmdroid.tileprovider.constants.TileFilePath;
-import org.mozilla.mozstumbler.service.core.offline.LocationService;
-
 
 import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static org.mozilla.mozstumbler.service.stumblerthread.scanners.ScanManager.*;
+import static org.mozilla.mozstumbler.service.stumblerthread.scanners.ScanManager.ACTION_SCAN_PAUSED_USER_MOTIONLESS;
+import static org.mozilla.mozstumbler.service.stumblerthread.scanners.ScanManager.ACTION_SCAN_UNPAUSED_USER_MOVED;
+import static org.mozilla.mozstumbler.service.stumblerthread.scanners.ScanManager.ScannerState;
+
+;
 
 @ReportsCrashes(
         formKey = "",

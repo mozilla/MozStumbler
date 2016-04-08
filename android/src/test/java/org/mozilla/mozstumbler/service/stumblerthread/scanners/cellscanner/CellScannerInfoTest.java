@@ -35,29 +35,5 @@ public class CellInfoTest {
             assertEquals(CellInfo.CELL_RADIO_CDMA, cellInfo.getCellRadio());
         }
     }
-
-    @Test
-    public void testNeighbouringCellInfo() {
-        // verify that construction of a neighbouring CellInfo object
-        // will set the signal strength using the getRssi() value of the
-        // NeighbouringCellInfo record.
-
-
-        //throw new AssertionError();
-
-}
-    @Test
-    public void testCellInfoMissingFields() {
-        // verify that unknown cellId and unknown LAC in a CellInfo record
-        // will not include those fields in the JSON-ified celltower record
-        //throw new AssertionError();
-    }
-
-    @Test
-    public void testGsmCellLocations() {
-        // verify that GSM CellInfo records do not have an ASU set, but do have
-        // the signal strength set via the setCellLocation() invocation
-        //throw new AssertionError();
-
-    }
+    
 }

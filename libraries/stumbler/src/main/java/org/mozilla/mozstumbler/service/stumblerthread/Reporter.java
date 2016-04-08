@@ -19,6 +19,7 @@ import org.mozilla.mozstumbler.service.stumblerthread.datahandling.DataStorageMa
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.MLSJSONObject;
 import org.mozilla.mozstumbler.service.stumblerthread.datahandling.StumblerBundle;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.GPSScanner;
+import org.mozilla.mozstumbler.service.stumblerthread.scanners.PressureScanner;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.WifiScanner;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner.CellInfo;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner.CellScanner;
@@ -62,6 +63,7 @@ public final class Reporter extends BroadcastReceiver implements IReporter {
         intentFilter.addAction(WifiScanner.ACTION_WIFIS_SCANNED);
         intentFilter.addAction(CellScanner.ACTION_CELLS_SCANNED);
         intentFilter.addAction(GPSScanner.ACTION_GPS_UPDATED);
+        intentFilter.addAction(PressureScanner.ACTION_PRESSURE_SCANNED);
 
         intentFilter.addAction(StumblerServiceIntentActions.SVC_REQ_OBSERVATION_PT);
         intentFilter.addAction(StumblerServiceIntentActions.SVC_REQ_UNIQUE_CELL_COUNT);
@@ -115,6 +117,16 @@ public final class Reporter extends BroadcastReceiver implements IReporter {
         }
     }
 
+    private void receivedPressureMessage(Intent intent) {
+        float hPa = intent.getFloatExtra(PressureScanner.ACTION_PRESSURE_SCANNED_PRESSURE, (float) 0.0);
+
+        if (mBundle == null || hPa == 0.0) {
+            return;
+        }
+
+        mBundle.addPressure(hPa);
+    }
+
     @Override
     public void onReceive(Context context, Intent intent) {
         String action = intent.getAction();
@@ -141,6 +153,8 @@ public final class Reporter extends BroadcastReceiver implements IReporter {
             StumblerService.broadcastCount(mContext,
                     StumblerServiceIntentActions.SVC_RESP_UNIQUE_WIFI_COUNT,
                     getUniqueAPCount());
+        } else if (intent.getAction().equals(PressureScanner.ACTION_PRESSURE_SCANNED)) {
+            receivedPressureMessage(intent);
         }
 
         if (mBundle != null &&

@@ -22,7 +22,7 @@ import org.mozilla.mozstumbler.service.Prefs;
 import org.mozilla.mozstumbler.service.utils.TelemetryWrapper;
 import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
-public class GPSScanner implements LocationListener {
+public class GPSScanner implements LocationListener, IHaltable {
     public static final String ACTION_BASE = AppGlobals.ACTION_NAMESPACE + ".GPSScanner.";
     public static final String ACTION_GPS_UPDATED = ACTION_BASE + "GPS_UPDATED";
     public static final String ACTION_ARG_TIME = AppGlobals.ACTION_ARG_TIME;

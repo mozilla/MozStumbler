@@ -152,6 +152,8 @@ public class StumblerBundleTest {
         stumbleBlob.put(DataStorageConstants.ReportsColumns.LON, -43.5f);
         stumbleBlob.put(DataStorageConstants.ReportsColumns.LAT, -22.5f);
         stumbleBlob.put(DataStorageConstants.ReportsColumns.ACCURACY, 20.5f);
+        stumbleBlob.put(DataStorageConstants.ReportsColumns.SPEED, 0.0);
+        stumbleBlob.put(DataStorageConstants.ReportsColumns.HEADING, 0.0);
 
         List<JSONObject> itemsList= new ArrayList<JSONObject>();
         itemsList.add(stumbleBlob);

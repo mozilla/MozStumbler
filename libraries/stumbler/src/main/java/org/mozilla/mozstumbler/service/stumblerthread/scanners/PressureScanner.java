@@ -30,10 +30,16 @@ public class PressureScanner implements SensorEventListener, IHaltable {
         mAppContext = appContext;
 
         snsMgr = (SensorManager) mAppContext.getSystemService(Service.SENSOR_SERVICE);
-        mPressure = snsMgr.getDefaultSensor(Sensor.TYPE_PRESSURE);
+        if (snsMgr != null) {
+            mPressure = snsMgr.getDefaultSensor(Sensor.TYPE_PRESSURE);
+        }
     }
 
     public synchronized void start() {
+        if (mPressure == null) {
+            // No pressure sensor exists
+            return;
+        }
         mStarted = true;
         snsMgr.registerListener(this, mPressure, SensorManager.SENSOR_DELAY_NORMAL);
     }

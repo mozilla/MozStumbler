@@ -24,7 +24,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class WifiScanner {
+public class WifiScanner implements IHaltable {
     public static final String ACTION_BASE = AppGlobals.ACTION_NAMESPACE + ".WifiScanner.";
     public static final String ACTION_WIFIS_SCANNED = ACTION_BASE + "WIFIS_SCANNED";
     public static final String ACTION_WIFIS_SCANNED_ARG_RESULTS = "scan_results";

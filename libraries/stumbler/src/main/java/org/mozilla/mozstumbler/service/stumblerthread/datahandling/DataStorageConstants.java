@@ -36,6 +36,9 @@ public class DataStorageConstants {
         public static final String CELL = "cellTowers";
         public static final String WIFI = "wifiAccessPoints";
         public static final String RADIO = "radioType";
+        public static final String HEADING = "heading";
+        public static final String SPEED = "speed";
+        public static final String PRESSURE = "pressure";
     }
 
     public static class Stats {

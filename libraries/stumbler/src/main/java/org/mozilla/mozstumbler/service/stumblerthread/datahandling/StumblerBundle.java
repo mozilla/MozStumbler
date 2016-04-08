@@ -11,15 +11,12 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.os.SystemClock;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.cellscanner.CellInfo;
-import org.mozilla.mozstumbler.svclocator.ServiceLocator;
-import org.mozilla.mozstumbler.svclocator.services.ISystemClock;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -38,6 +35,7 @@ public final class StumblerBundle implements Parcelable {
     private int mTrackSegment = -1;
     private final TreeMap<String, ScanResult> mWifiData;
     private final TreeMap<String, CellInfo> mCellData;
+    private float mPressureHPA;
 
     public StumblerBundle(Location position) {
         mGpsPosition = position;
@@ -109,17 +107,11 @@ public final class StumblerBundle implements Parcelable {
         headerFields.put(DataStorageConstants.ReportsColumns.LAT, Math.floor(mGpsPosition.getLatitude() * 1.0E6) / 1.0E6);
         headerFields.put(DataStorageConstants.ReportsColumns.LON, Math.floor(mGpsPosition.getLongitude() * 1.0E6) / 1.0E6);
         headerFields.put(DataStorageConstants.ReportsColumns.TIME, mGpsPosition.getTime());
-
-        /* Skip adding 'heading'
-
-            The heading field denotes the direction of travel of the device and is specified in
-            degrees, where 0° ≤ heading < 360°, counting clockwise relative to the true north.
-            If the device cannot provide heading information or the device is stationary,
-            the field should be omitted.
-
-            Adding heading is tricky and problematic.  We might be able to do this by taking a delta
-            between two relatively high precision locations, but I'm skeptical that the
-        */
+        headerFields.put(DataStorageConstants.ReportsColumns.HEADING,mGpsPosition.getBearing());
+        headerFields.put(DataStorageConstants.ReportsColumns.SPEED,  mGpsPosition.getSpeed());
+        if (mPressureHPA != 0.0) {
+            headerFields.put(DataStorageConstants.ReportsColumns.PRESSURE,  mPressureHPA);
+        }
 
         if (mCellData.size() > 0) {
             JSONArray cellJSON = new JSONArray();
@@ -160,6 +152,7 @@ public final class StumblerBundle implements Parcelable {
             // Note that Android does not support an accuracy measurement specific to altitude
             headerFields.put(DataStorageConstants.ReportsColumns.ACCURACY, mGpsPosition.getAccuracy());
         }
+
         return headerFields;
     }
 
@@ -241,5 +234,9 @@ public final class StumblerBundle implements Parcelable {
         if (!mCellData.containsKey(key)) {
             mCellData.put(key, result);
         }
+    }
+
+    public void addPressure(float hPa) {
+        mPressureHPA = hPa;
     }
 }

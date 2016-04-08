@@ -13,11 +13,12 @@ import org.mozilla.mozstumbler.service.AppGlobals;
 import org.mozilla.mozstumbler.service.Prefs;
 import org.mozilla.mozstumbler.service.core.logging.ClientLog;
 import org.mozilla.mozstumbler.service.stumblerthread.scanners.GPSScanner;
+import org.mozilla.mozstumbler.service.stumblerthread.scanners.IHaltable;
 import org.mozilla.mozstumbler.svclocator.ServiceLocator;
 import org.mozilla.mozstumbler.svclocator.services.ISystemClock;
 import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
-public class LocationChangeSensor extends BroadcastReceiver {
+public class LocationChangeSensor extends BroadcastReceiver implements IHaltable {
     // This class is a bit confusing because of 2 checks that need to take place.
 // 1) One check happens when a gps event arrives, to see if the user moved x meters in t seconds.
 // 2) The other is a timeout in case no gps event arrives during time t.

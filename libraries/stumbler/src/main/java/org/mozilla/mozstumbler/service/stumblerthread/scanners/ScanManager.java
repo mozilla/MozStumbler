@@ -8,7 +8,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.location.Location;
 import android.support.v4.content.LocalBroadcastManager;
 
 import org.mozilla.mozstumbler.service.AppGlobals;
@@ -25,12 +24,14 @@ import org.mozilla.mozstumbler.svclocator.services.log.ILogger;
 import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class ScanManager {
     public static final String ACTION_SCAN_PAUSED_USER_MOTIONLESS = AppGlobals.ACTION_NAMESPACE + ".NOTIFY_USER_MOTIONLESS";
     public static final String ACTION_SCAN_UNPAUSED_USER_MOVED = AppGlobals.ACTION_NAMESPACE + ".NOTIFY_USER_MOVED";
+    private LinkedList<IHaltable> mStoppables;
 
     public static enum ScannerState {
         STOPPED, STARTED, STARTED_BUT_PAUSED_MOTIONLESS;
@@ -51,12 +52,6 @@ public class ScanManager {
         }
     }
 
-    // Convenience strings so that we don't have to keep invoking tostring()
-    private static final String SCANSTATE_STARTED = ScannerState.STARTED.toString();
-    private static final String SCANSTATE_STOPPED = ScannerState.STOPPED.toString();
-    private static final String SCANSTATE_STARTED_BUT_PAUSED_MOTIONLESS = ScannerState.STARTED_BUT_PAUSED_MOTIONLESS.toString();
-
-
     private ILogger Log = (ILogger) ServiceLocator.getInstance().getService(ILogger.class);
     private static final String LOG_TAG = LoggerUtil.makeLogTag(ScanManager.class);
 
@@ -73,6 +68,7 @@ public class ScanManager {
     private GPSScanner mGPSScanner;
     private WifiScanner mWifiScanner;
     private CellScanner mCellScanner;
+    private PressureScanner mPressureScanner;
 
     private ActiveOrPassiveStumbling mStumblingMode = ActiveOrPassiveStumbling.ACTIVE_STUMBLING;
 
@@ -91,7 +87,6 @@ public class ScanManager {
     };
     private LocationChangeSensor mLocationChangeSensor;
     private MotionSensor mMotionSensor;
-
 
 
     private ScannerState mScannerState = ScannerState.STOPPED;
@@ -162,6 +157,7 @@ public class ScanManager {
 
         mWifiScanner.start();
         mCellScanner.start();
+        mPressureScanner.start();
 
         if (mFlushTimer != null) {
             mFlushTimer.cancel();
@@ -238,6 +234,16 @@ public class ScanManager {
         mGPSScanner = new GPSScanner(mAppContext, this);
         mWifiScanner = new WifiScanner(mAppContext);
         mCellScanner = new CellScanner(mAppContext);
+        mPressureScanner = new PressureScanner(mAppContext);
+        
+        mStoppables = new LinkedList<IHaltable>();
+        mStoppables.add(mGPSScanner);
+        mStoppables.add(mWifiScanner);
+        mStoppables.add(mCellScanner);
+        mStoppables.add(mPressureScanner);
+        mStoppables.add(mMotionSensor);
+        mStoppables.add(mLocationChangeSensor);
+
 
         mGPSScanner.start(mStumblingMode);
 
@@ -272,19 +278,8 @@ public class ScanManager {
             ClientLog.d(LOG_TAG, "Scanning stopped");
         }
 
-        mLocationChangeSensor.stop();
-        mMotionSensor.stop();
-
-        if (mGPSScanner != null) {
-            mGPSScanner.stop();
-        }
-
-        if (mWifiScanner != null) {
-            mWifiScanner.stop();
-        }
-
-        if (mCellScanner != null) {
-            mCellScanner.stop();
+        for (IHaltable svc: mStoppables) {
+            svc.stop();
         }
 
         return true;

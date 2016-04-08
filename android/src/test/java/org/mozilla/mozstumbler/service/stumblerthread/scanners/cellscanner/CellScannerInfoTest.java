@@ -45,8 +45,7 @@ public class CellInfoTest {
 
         //throw new AssertionError();
 
-    }
-
+}
     @Test
     public void testCellInfoMissingFields() {
         // verify that unknown cellId and unknown LAC in a CellInfo record

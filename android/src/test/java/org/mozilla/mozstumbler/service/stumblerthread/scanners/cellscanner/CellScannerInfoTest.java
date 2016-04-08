@@ -17,7 +17,7 @@ import static junit.framework.Assert.assertEquals;
 
 @Config(emulateSdk = 18)
 @RunWith(RobolectricTestRunner.class)
-public class CellInfoTest {
+public class CellScannerInfoTest {
 
     @Test
     public void testCellInfoCellRadioType() {

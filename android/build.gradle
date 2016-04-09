@@ -145,7 +145,7 @@ android {
             signingConfig signingConfigs.release
 
             buildConfigField "String", "LB_SUBMIT_URL",
-"\"http://cloudvm.jaredkerim.com/api/v1/contributions/\""
+"\"https://location-leaderboard.services.mozilla.com/api/v1/contributions/\""
         }
 
 

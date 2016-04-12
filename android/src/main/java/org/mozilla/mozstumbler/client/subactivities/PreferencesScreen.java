@@ -411,6 +411,7 @@ public class PreferencesScreen extends PreferenceActivity implements IFxACallbac
 
     private void setNicknamePreferenceTitle(String displayName) {
         if (!TextUtils.isEmpty(displayName)) {
+            mNicknamePreference.setEnabled(true);
             String title = String.format(getString(R.string.enter_nickname_title), displayName);
             mNicknamePreference.setTitle(title);
         } else {

@@ -343,6 +343,6 @@ project.archivesBaseName = "MozStumbler";
 
 task copyTestResources(type: Copy) {
     from "${projectDir}/src/test/res"
-    into "${buildDir}/test-classes/githublbdev/unittest"
+    into "${buildDir}/test-classes/githublbprod/unittest"
 }
 check.dependsOn copyTestResources

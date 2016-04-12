@@ -14,16 +14,16 @@ debug:
 github:
 	./release_check.py github
 	./gradlew assembleGithubLbprodRelease
-	sh rename_release.sh github-release
+	sh rename_release.sh github-lbprod-release
 
 playstore:
 	./release_check.py playstore
 	./gradlew assemblePlaystoreLbprodRelease
-	sh rename_release.sh playstore-release
+	sh rename_release.sh playstore-lbprod-release
 
 fdroid:
 	./gradlew assembleFdroidLbprodRelease
-	sh rename_release.sh fdroid-release
+	sh rename_release.sh fdroid-lbprod-release
 
 clean:
 	rm -rf outputs

@@ -205,7 +205,6 @@
     <string name="sensor_name_accelerometer">加速度感測器</string>
     <string name="title_use_sensor">使用感測器:</string>
     <!--string name="limit_map_zoom_summary">減少地圖所使用的網路數據量。</string-->
-    <string name="fxaLoginTitle">Firefox 帳號</string>
     <string name="fxaDescription">使用 Firefox 帳號列於排行榜</string>
     <string name="fxaDescriptionLoggedIn">您已經登入</string>
     <string name="fxaPromptLogout">登出 Firefox 帳號</string>

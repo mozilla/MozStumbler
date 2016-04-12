@@ -40,6 +40,8 @@ public class ClientPrefs extends Prefs {
     private static final String FXA_OAUTH2_SERVER = "org.mozilla.mozstumbler.fxa_oauth2_server";
     private static final String FXA_SCOPES = "org.mozilla.mozstumbler.client.fxa_scopes";
 
+    private static final String FXA_ENABLED = "org.mozilla.mozstumbler.client.fxa_enabled";
+
     protected ClientPrefs(Context context) {
         super(context);
     }
@@ -61,6 +63,10 @@ public class ClientPrefs extends Prefs {
     // For Mozilla Stumbler to use for manual upgrade of old prefs.
     static String getPrefsFileNameForUpgrade() {
         return PREFS_FILE;
+    }
+
+    public synchronized void setFxaEnabled(boolean on) {
+        setBoolPref(FXA_ENABLED, on);
     }
 
     public String getFxaOauth2Server() {
@@ -240,6 +246,10 @@ public class ClientPrefs extends Prefs {
 
     public void setFxaProfileServer(String fxaProfileServer) {
         setStringPref(FXA_PROFILE_SERVER, fxaProfileServer);
+    }
+
+    public synchronized boolean isFxaEnabled() {
+        return getBoolPrefWithDefault(FXA_ENABLED, false);
     }
 
     public enum MapTileResolutionOptions {Default, HighRes, LowRes, NoMap}

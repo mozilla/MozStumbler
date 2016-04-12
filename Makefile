@@ -1,15 +1,15 @@
 test: libtest unittest
 	./gradlew copyTestResources
-	./gradlew testGithubLbDevUnittest --info
+	./gradlew testGithubLbprodUnittest --info
 
 libtest:
 	cd libraries/stumbler; ./gradlew test
 
 unittest:
-	./gradlew assembleGithubLbdevUnittest
+	./gradlew assembleGithubLbprodUnittest
 
 debug:
-	./gradlew assembleGithubLbdevDebug
+	./gradlew assembleGithubLbprodDebug
 
 github:
 	./release_check.py github
@@ -31,4 +31,4 @@ clean:
 	./gradlew clean
 
 install_debug:
-	./gradlew installGithubLbdevDebug
+	./gradlew installGithubLbprodDebug

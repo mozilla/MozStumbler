@@ -180,6 +180,11 @@ public class MainApp extends Application
         mMainActivity = new WeakReference<IMainActivity>(mainActivity);
     }
 
+
+    public IMainActivity getMainActivity() {
+        return mMainActivity.get();
+    }
+
     private File getCacheDir(Context c) {
         File dir = c.getExternalCacheDir();
 

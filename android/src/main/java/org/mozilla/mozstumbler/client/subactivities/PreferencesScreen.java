@@ -120,6 +120,15 @@ public class PreferencesScreen extends PreferenceActivity implements IFxACallbac
 
     }
 
+    /*
+     We enable the leaderboard button in either of two scenarios:
+      a) the leaderboard FxA configuration was valid
+      b) the user is signed into FxA
+
+      Both of these state transitions indicate that FxA is 'mostly' live
+      with respect to the leaderboard, so it should be ok to either start the signon
+      process to FxA via leaderboard, or display the user's leaderboard page.
+     */
     private void enableLeaderboardMenuItem(boolean b) {
         ClientPrefs clientPrefs = ClientPrefs.getInstance(this);
         clientPrefs.setFxaEnabled(b);

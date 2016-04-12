@@ -18,6 +18,7 @@ import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceGroup;
+import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
@@ -37,8 +38,12 @@ import org.mozilla.accounts.fxa.tasks.VerifyOAuthTask;
 import org.mozilla.mozstumbler.BuildConfig;
 import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.client.ClientPrefs;
+import org.mozilla.mozstumbler.client.IMainActivity;
 import org.mozilla.mozstumbler.client.MainApp;
+import org.mozilla.mozstumbler.client.navdrawer.MainDrawerActivity;
 import org.mozilla.mozstumbler.service.Prefs;
+import org.mozilla.mozstumbler.service.stumblerthread.StumblerService;
+import org.mozilla.mozstumbler.service.stumblerthread.StumblerServiceIntentActions;
 import org.mozilla.mozstumbler.service.utils.NetworkInfo;
 import org.mozilla.mozstumbler.svclocator.ServiceLocator;
 import org.mozilla.mozstumbler.svclocator.services.log.ILogger;
@@ -101,16 +106,27 @@ public class PreferencesScreen extends PreferenceActivity implements IFxACallbac
             getPrefs().setLbBaseURI(configJSON.getString("leaderboard_base_uri"));
             getPrefs().setLbSubmitURL(configJSON.getString("leaderboard_base_uri") + "/api/v1/contributions/");
 
-
+            enableLeaderboardMenuItem(true);
             // Only after all the FXA crap is setup can we initiate bearer token verification
             verifyBearerToken();
 
         } catch (JSONException e) {
+            enableLeaderboardMenuItem(false);
+
             Log.e(LOG_TAG, "Can't parse JSON config blob", e);
             return;
         }
 
 
+    }
+
+    private void enableLeaderboardMenuItem(boolean b) {
+        ClientPrefs clientPrefs = ClientPrefs.getInstance(this);
+        clientPrefs.setFxaEnabled(b);
+        IMainActivity mainActivity = ((MainApp) getApplication()).getMainActivity();
+        if (mainActivity != null) {
+            mainActivity.updateUiOnMainThread(false);
+        }
     }
 
     private void fetchFxaProfile(String bearerToken) {
@@ -301,11 +317,15 @@ public class PreferencesScreen extends PreferenceActivity implements IFxACallbac
                 CookieManager.getInstance().removeSessionCookie();
                 cookies.sync();
 
-                new OAuthDialog(PreferencesScreen.this,
-                        getFxaOauth2Server(),
-                        getFxaAppCallback(),
-                        getFxaScopes(),
-                        getFxaClientId()).show();
+                ClientPrefs prefs = ClientPrefs.getInstance(PreferencesScreen.this);
+
+                if (prefs.isFxaEnabled()) {
+                    new OAuthDialog(PreferencesScreen.this,
+                            getFxaOauth2Server(),
+                            getFxaAppCallback(),
+                            getFxaScopes(),
+                            getFxaClientId()).show();
+                }
                 return true;
             }
         });
@@ -402,10 +422,12 @@ public class PreferencesScreen extends PreferenceActivity implements IFxACallbac
             mFxaLoginPreference.setTitle(getString(R.string.fxa_settings_title));
             mFxaLoginPreference.setSummary(getString(R.string.fxaDescriptionLoggedIn) + ":\n" + email);
             mNicknamePreference.setEnabled(true);
+            enableLeaderboardMenuItem(true);
         } else {
             mFxaLoginPreference.setTitle(getString(R.string.fxa_settings_title));
             mFxaLoginPreference.setSummary(getString(R.string.fxaDescription));
             mNicknamePreference.setEnabled(false);
+            enableLeaderboardMenuItem(false);
         }
     }
 

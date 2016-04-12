@@ -82,21 +82,27 @@ public class MainDrawerActivity
             }
 
             int count = intent.getIntExtra("count", 0);
-            if (intent.getAction().equals(StumblerServiceIntentActions.SVC_RESP_VISIBLE_AP)) {
-                mSvcVisibleAP = count;
-            } else if (intent.getAction().equals(StumblerServiceIntentActions.SVC_RESP_VISIBLE_CELL)) {
-                mSvcVisibleCell = count;
-            } else if (intent.getAction().equals(StumblerServiceIntentActions.SVC_RESP_OBSERVATION_PT)) {
-                mSvcObservationPoints = count;
-            } else if (intent.getAction().equals(StumblerServiceIntentActions.SVC_RESP_UNIQUE_CELL_COUNT)) {
-                mSvcUniqueCell = count;
-            } else if (intent.getAction().equals(StumblerServiceIntentActions.SVC_RESP_UNIQUE_WIFI_COUNT)) {
-                mSvcUniqueAP = count;
+            switch (intent.getAction()) {
+                case StumblerServiceIntentActions.SVC_RESP_VISIBLE_AP:
+                    mSvcVisibleAP = count;
+                    break;
+                case StumblerServiceIntentActions.SVC_RESP_VISIBLE_CELL:
+                    mSvcVisibleCell = count;
+                    break;
+                case StumblerServiceIntentActions.SVC_RESP_OBSERVATION_PT:
+                    mSvcObservationPoints = count;
+                    break;
+                case StumblerServiceIntentActions.SVC_RESP_UNIQUE_CELL_COUNT:
+                    mSvcUniqueCell = count;
+                    break;
+                case StumblerServiceIntentActions.SVC_RESP_UNIQUE_WIFI_COUNT:
+                    mSvcUniqueAP = count;
+                    break;
             }
         };
     };
-    private AtomicBoolean initializeIntentFilters = new AtomicBoolean(false);
 
+    private AtomicBoolean initializeIntentFilters = new AtomicBoolean(false);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -240,6 +246,20 @@ public class MainDrawerActivity
     }
 
     @Override
+    public synchronized boolean onPrepareOptionsMenu (Menu menu) {
+        if (menu == null) { return true; }
+
+        ClientPrefs prefs = ClientPrefs.getInstance(this);
+        for (int i = 0; i < menu.size(); i++ ) {
+            MenuItem item = menu.getItem(i);
+            if (item.getItemId() == R.id.action_view_leaderboard) {
+                item.setEnabled(prefs.isFxaEnabled());
+            }
+        }
+        return true;
+    }
+
+    @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
         // Sync the toggle state after onRestoreInstanceState has occurred.
@@ -311,6 +331,10 @@ public class MainDrawerActivity
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+
+                // Force the leaderboard menu item to update it's enabled status
+                invalidateOptionsMenu();
+
                 if (mMapFragment == null || mMapFragment.getActivity() == null) {
                     return;
                 }

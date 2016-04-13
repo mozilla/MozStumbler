@@ -78,7 +78,7 @@ class LBUploadTask extends AsyncUploader {
         String bearerToken = Prefs.getInstanceWithoutContext().getBearerToken();
         headers.put("Content-Encoding", "gzip");
 
-        if (bearerToken != null) {
+        if (!TextUtils.isEmpty(bearerToken)) {
             headers.put(FxAService.BEARER_HEADER, "Bearer " + bearerToken);
         }
         return headers;

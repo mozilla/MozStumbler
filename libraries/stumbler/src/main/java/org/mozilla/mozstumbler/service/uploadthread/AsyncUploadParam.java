@@ -4,6 +4,8 @@
 
 package org.mozilla.mozstumbler.service.uploadthread;
 
+import android.text.TextUtils;
+
 public class AsyncUploadParam {
 
     final boolean useWifiOnly;
@@ -16,11 +18,11 @@ public class AsyncUploadParam {
                             String nick,
                             String email) {
 
-        if (email == null) {
+        if (TextUtils.isEmpty(email)) {
             email = "";
         }
 
-        if (nick == null) {
+        if (TextUtils.isEmpty(nick)) {
             nick = "";
         }
 

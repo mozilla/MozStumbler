@@ -49,6 +49,9 @@ import org.mozilla.mozstumbler.svclocator.ServiceLocator;
 import org.mozilla.mozstumbler.svclocator.services.log.ILogger;
 import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
+import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
+
 public class PreferencesScreen extends PreferenceActivity implements IFxACallbacks{
 
     private static final String LOG_TAG = LoggerUtil.makeLogTag(PreferencesScreen.class);
@@ -531,7 +534,8 @@ public class PreferencesScreen extends PreferenceActivity implements IFxACallbac
     }
 
     private String defaultDisplayName() {
-        return  "user_" + Integer.toString(Math.abs(getPrefs().getEmail().hashCode()));
+        Random rand = new Random(System.currentTimeMillis() % 1000);
+        return  "user_" + rand.nextInt(Integer.MAX_VALUE-1) + 1;
     }
 
     @Override

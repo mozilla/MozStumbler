@@ -49,7 +49,6 @@ public class LeaderboardActivity extends ActionBarActivity {
         final Activity activity = this;
         mWebView.setWebChromeClient(new WebChromeClient() {
             public void onProgressChanged(WebView view, int progress) {
-                //activity.setProgress(progress * 100);
                 setSupportProgress(progress * 100);
                 if (progress > 45 && !mHasError) {
                     mWebView.setVisibility(View.VISIBLE);
@@ -77,24 +76,19 @@ public class LeaderboardActivity extends ActionBarActivity {
         });
 
         setProgress(0);
-        ClientPrefs prefs = ClientPrefs.getInstance(getApplicationContext());
+        ClientPrefs prefs = ClientPrefs.getInstance(this);
         URI tmpURI = null;
         String url = null;
 
         try {
-            tmpURI = new URI(getPrefs().getLbBaseURI() +  "/?profile=" + getPrefs().getLeaderboardUID());
+            tmpURI = new URI(prefs.getLbBaseURI() +  "/?profile=" + prefs.getLeaderboardUID());
             url = tmpURI.normalize().toString();
         } catch (URISyntaxException e) {
             Log.e(LOG_TAG, "Error normalizing URL", e);
-            url = getPrefs().getLbBaseURI();
+            url = prefs.getLbBaseURI();
         }
 
         mWebView.loadUrl(url);
-    }
-
-
-    private ClientPrefs getPrefs() {
-        return ClientPrefs.getInstance(this);
     }
 
 }

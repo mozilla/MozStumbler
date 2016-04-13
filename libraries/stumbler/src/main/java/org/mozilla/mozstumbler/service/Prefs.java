@@ -109,7 +109,7 @@ public class Prefs {
     ///
     public synchronized String getUserAgent() {
         String s = getStringPref(USER_AGENT_PREF);
-        return (s == null) ? AppGlobals.appName + "/" + AppGlobals.appVersionName : s;
+        return (TextUtils.isEmpty(s)) ? AppGlobals.appName + "/" + AppGlobals.appVersionName : s;
     }
 
     ///
@@ -129,7 +129,7 @@ public class Prefs {
 
     public synchronized String getMozApiKey() {
         String s = getStringPref(MOZ_API_KEY);
-        return (s == null) ? "no-mozilla-api-key" : s;
+        return (TextUtils.isEmpty(s)) ? "no-mozilla-api-key" : s;
     }
 
     public synchronized void setMozApiKey(String s) {
@@ -150,10 +150,10 @@ public class Prefs {
 
     public synchronized String getNickname() {
         String nickname = getStringPref(NICKNAME_PREF);
-        if (nickname != null) {
-            nickname = nickname.trim();
+        if (!TextUtils.isEmpty(nickname)) {
+            return nickname.trim();
         }
-        return TextUtils.isEmpty(nickname) ? null : nickname;
+        return TextUtils.isEmpty(nickname) ? "" : nickname;
     }
 
     public synchronized void setNickname(String nick) {
@@ -168,7 +168,7 @@ public class Prefs {
         if (!TextUtils.isEmpty(uid)) {
             return uid;
         }
-        return null;
+        return "";
     }
 
     public synchronized void setLeaderboardUID(String uid) {
@@ -179,10 +179,10 @@ public class Prefs {
 
     public synchronized String getEmail() {
         String email = getStringPref(EMAIL_PREF);
-        if (email != null) {
+        if (!TextUtils.isEmpty(email)) {
             email = email.trim();
         }
-        return TextUtils.isEmpty(email) ? null : email;
+        return TextUtils.isEmpty(email) ? "" : email;
     }
 
     public synchronized void setEmail(String email) {
@@ -214,7 +214,7 @@ public class Prefs {
     ///
 
     protected String getStringPref(String key) {
-        return getPrefs().getString(key, null);
+        return getPrefs().getString(key, "");
     }
 
     protected boolean getBoolPrefWithDefault(String key, boolean def) {
@@ -353,9 +353,9 @@ public class Prefs {
 
     public String getBearerToken() {
         String bearerToken = getStringPref(FXA_LOGIN_PREF);
-        if (bearerToken != null) {
+        if (!TextUtils.isEmpty(bearerToken)) {
             bearerToken = bearerToken.trim();
         }
-        return TextUtils.isEmpty(bearerToken) ? null : bearerToken;
+        return TextUtils.isEmpty(bearerToken) ? "" : bearerToken;
     }
 }

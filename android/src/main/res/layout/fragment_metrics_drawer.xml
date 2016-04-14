@@ -434,19 +434,6 @@
                     android:textSize="@dimen/font_size_for_metrics" />
 
             </LinearLayout>
-
-            <CheckBox
-                android:id="@+id/checkBox_show_mls"
-                android:layout_width="wrap_content"
-                android:layout_height="20dp"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_below="@id/mls_location_layout"
-                android:layout_marginLeft="-8dp"
-                android:layout_marginStart="-8dp"
-                android:checked="false"
-                android:text="@string/drawer_map_option_show_mls_locations"
-                android:textSize="14sp" />
         </RelativeLayout>
 
     </ScrollView>

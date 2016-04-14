@@ -90,7 +90,7 @@ public class ObservedLocationsReceiver extends BroadcastReceiver {
                 NetworkInfo networkInfo = new NetworkInfo(mContext);
 
                 mHandler.postDelayed(mFetchMLSRunnable, FREQ_FETCH_MLS_MS);
-                if (mQueuedForMLS.size() < 1 || !prefs.getOnMapShowMLS()) {
+                if (mQueuedForMLS.size() < 1 || !prefs.showMLSQueryResults()) {
                     return;
                 }
                 int count = 0;
@@ -155,7 +155,7 @@ public class ObservedLocationsReceiver extends BroadcastReceiver {
         try {
             observation.setCounts(bundle.toMLSGeosubmit());
 
-            boolean getInfoForMLS = prefs.isOptionEnabledToShowMLSOnMap() && bundle.hasRadioData();
+            boolean getInfoForMLS = prefs.showMLSQueryResults() && bundle.hasRadioData();
             if (getInfoForMLS) {
                 observation.setMLSQuery(bundle);
 

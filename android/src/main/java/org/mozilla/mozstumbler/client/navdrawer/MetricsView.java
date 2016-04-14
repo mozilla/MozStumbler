@@ -58,7 +58,6 @@ public class MetricsView {
             mThisSessionObservationsView,
             mThisSessionUniqueCellsView,
             mThisSessionUniqueAPsView;
-    private final CheckBox mOnMapShowMLS;
     private final Handler mHandler = new Handler(Looper.getMainLooper());
     private final long FREQ_UPDATE_UPLOADTIME = 10 * 1000;
     private final ImageButton mUploadButton;
@@ -85,18 +84,6 @@ public class MetricsView {
                     }
                 },
                 new IntentFilter(PersistedStats.ACTION_PERSISTENT_SYNC_STATUS_UPDATED));
-
-        mOnMapShowMLS = (CheckBox) mView.findViewById(R.id.checkBox_show_mls);
-        mOnMapShowMLS.setVisibility(View.GONE);
-        mOnMapShowMLS.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                ClientPrefs.getInstance(mView.getContext()).setOnMapShowMLS(mOnMapShowMLS.isChecked());
-                if (mMapLayerToggleListener.get() != null) {
-                    mMapLayerToggleListener.get().setShowMLS(mOnMapShowMLS.isChecked());
-                }
-            }
-        });
 
         mLastUpdateTimeView = (TextView) mView.findViewById(R.id.last_upload_time_value);
         mAllTimeObservationsSentView = (TextView) mView.findViewById(R.id.observations_sent_value);
@@ -179,7 +166,6 @@ public class MetricsView {
 
     public void setMapLayerToggleListener(IMapLayerToggleListener listener) {
         mMapLayerToggleListener = new WeakReference<IMapLayerToggleListener>(listener);
-        mOnMapShowMLS.setChecked(ClientPrefs.getInstance(mView.getContext()).getOnMapShowMLS());
     }
 
     private void updateUploadButtonEnabled() {
@@ -215,12 +201,6 @@ public class MetricsView {
     }
 
     public void update() {
-        if (ClientPrefs.getInstance(mView.getContext()).isOptionEnabledToShowMLSOnMap()) {
-            mOnMapShowMLS.setVisibility(View.VISIBLE);
-        } else {
-            mOnMapShowMLS.setVisibility(View.GONE);
-        }
-
         updatePowerSavingsLabels();
         updateQueuedStats();
         updateSentStats();

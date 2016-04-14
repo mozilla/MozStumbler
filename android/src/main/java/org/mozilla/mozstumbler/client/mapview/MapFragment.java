@@ -574,7 +574,7 @@ public class MapFragment extends android.support.v4.app.Fragment
 
         mHighLowBandwidthChecker = new HighLowBandwidthReceiver(this);
 
-        setShowMLS(prefs.getOnMapShowMLS());
+        setShowMLS(prefs.showMLSQueryResults());
 
         mObservationPointsOverlay.zoomChanged(mMap);
         mMap.postInvalidate();

@@ -72,8 +72,7 @@ public class AsyncGeolocate extends AsyncTask<String, Void, Location> {
             return null;
         }
 
-        if (resp.isErrorCode400BadRequest()) {
-            //TODO detect malformed request, and clear out mlsrequest on observation point
+        if (resp.isErrorCode4xx()) {
             mIsBadRequest = true;
             return null;
         }

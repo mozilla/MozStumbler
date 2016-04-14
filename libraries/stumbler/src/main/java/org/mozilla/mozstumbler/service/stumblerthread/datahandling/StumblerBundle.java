@@ -158,6 +158,12 @@ public final class StumblerBundle implements Parcelable {
 
     public JSONObject toMLSGeolocate() throws JSONException {
         JSONObject headerFields = new JSONObject();
+
+        JSONObject fallbackPayload = new JSONObject();
+        fallbackPayload.put("lacf", false);
+        fallbackPayload.put("ipf", false);
+        headerFields.put("fallbacks", fallbackPayload);
+
         headerFields.put(DataStorageConstants.ReportsColumns.LAT, Math.floor(mGpsPosition.getLatitude() * 1.0E6) / 1.0E6);
         headerFields.put(DataStorageConstants.ReportsColumns.LON, Math.floor(mGpsPosition.getLongitude() * 1.0E6) / 1.0E6);
         headerFields.put(DataStorageConstants.ReportsColumns.TIME, mGpsPosition.getTime());

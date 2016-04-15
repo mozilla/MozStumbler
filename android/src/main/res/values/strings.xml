@@ -122,9 +122,6 @@
     <string name="load_file">Load file</string>
     <string name="delete_file">Delete file</string>
 
-    <string name="enter_email">Enter e-mail address (optional)</string>
-    <string name="enter_email_title">Email: %1$s</string>
-    <string name="enter_email_longtext">Your email address is never displayed to people and is only used for your own reports.</string>
     <string name="drawer_open">Show drawer</string>
     <string name="drawer_close">Close drawer</string>
     <string name="title_activity_leaderboard">Leaderboard</string>

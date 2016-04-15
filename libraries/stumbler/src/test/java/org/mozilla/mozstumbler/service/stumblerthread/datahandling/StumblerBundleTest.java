@@ -79,6 +79,12 @@ public class StumblerBundleTest {
         JSONArray wifiArray = new JSONArray(wifiList);
 
         JSONObject stumbleBlob = new JSONObject();
+
+        JSONObject fallbackPayload = new JSONObject();
+        fallbackPayload.put("lacf", false);
+        fallbackPayload.put("ipf", false);
+        stumbleBlob.put("fallbacks", fallbackPayload);
+
         stumbleBlob.put("wifiAccessPoints", wifiArray);
 
         List<JSONObject> cellTowerList = new ArrayList<JSONObject>();

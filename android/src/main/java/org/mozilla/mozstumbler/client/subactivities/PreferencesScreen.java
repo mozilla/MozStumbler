@@ -18,7 +18,6 @@ import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceGroup;
-import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
@@ -40,17 +39,13 @@ import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.client.ClientPrefs;
 import org.mozilla.mozstumbler.client.IMainActivity;
 import org.mozilla.mozstumbler.client.MainApp;
-import org.mozilla.mozstumbler.client.navdrawer.MainDrawerActivity;
 import org.mozilla.mozstumbler.service.Prefs;
-import org.mozilla.mozstumbler.service.stumblerthread.StumblerService;
-import org.mozilla.mozstumbler.service.stumblerthread.StumblerServiceIntentActions;
 import org.mozilla.mozstumbler.service.utils.NetworkInfo;
 import org.mozilla.mozstumbler.svclocator.ServiceLocator;
 import org.mozilla.mozstumbler.svclocator.services.log.ILogger;
 import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 
 import java.util.Random;
-import java.util.concurrent.ThreadLocalRandom;
 
 public class PreferencesScreen extends PreferenceActivity implements IFxACallbacks{
 
@@ -362,7 +357,7 @@ public class PreferencesScreen extends PreferenceActivity implements IFxACallbac
         mEnableShowMLSLocations.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
-                getPrefs().setOptionEnabledToShowMLSOnMap(newValue.equals(true));
+                getPrefs().enableMLSQueryResults(newValue.equals(true));
                 if (newValue.equals(true)) {
                     Context c = PreferencesScreen.this;
                     String message = String.format(getString(R.string.enable_option_show_mls_on_map_detailed_info),

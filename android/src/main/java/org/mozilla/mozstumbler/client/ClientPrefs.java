@@ -16,7 +16,8 @@ import org.mozilla.osmdroid.util.GeoPoint;
 public class ClientPrefs extends Prefs {
     public static final String MAP_TILE_RESOLUTION_TYPE = "map_tile_res_options";
     public static final String KEEP_SCREEN_ON_PREF = "keep_screen_on";
-    public static final String ENABLE_OPTION_TO_SHOW_MLS_ON_MAP = "enable_the_option_to_show_mls_on_map";
+
+
     public static final String CRASH_REPORTING = "crash_reporting";
     public static final int MIN_BATTERY_DEFAULT = 15;
     public static final String LAST_VERSION = "last_version";
@@ -26,7 +27,9 @@ public class ClientPrefs extends Prefs {
     private static final String LAT_PREF = "lat";
     private static final String LON_PREF = "lon";
     private static final String IS_FIRST_RUN = "is_first_run";
-    private static final String ON_MAP_MLS_DRAW_IS_ON = "actually_draw_mls_dots_on_map";
+
+    public static final String ENABLE_OPTION_TO_SHOW_MLS_ON_MAP = "enable_the_option_to_show_mls_on_map";
+
     private static final String DEFAULT_SIMULATION_LAT_LONG = "default_simulation_lat_lon";
     private static final String MIN_BATTERY_PCT = "min_battery_pct";
 
@@ -150,13 +153,16 @@ public class ClientPrefs extends Prefs {
         setBoolPref(KEEP_SCREEN_ON_PREF, on);
     }
 
-    public boolean getOnMapShowMLS() {
-        return getBoolPrefWithDefault(ON_MAP_MLS_DRAW_IS_ON, false);
+    /****************/
+    public boolean showMLSQueryResults() {
+        return getBoolPrefWithDefault(ENABLE_OPTION_TO_SHOW_MLS_ON_MAP, false);
     }
 
-    public void setOnMapShowMLS(boolean on) {
-        setBoolPref(ON_MAP_MLS_DRAW_IS_ON, on);
+    public void enableMLSQueryResults(boolean isEnabled) {
+        setBoolPref(ENABLE_OPTION_TO_SHOW_MLS_ON_MAP, isEnabled);
     }
+    /****************/
+
 
     public boolean isFirstRun() {
         return getBoolPrefWithDefault(IS_FIRST_RUN, true);
@@ -166,16 +172,6 @@ public class ClientPrefs extends Prefs {
         setBoolPref(IS_FIRST_RUN, b);
     }
 
-    public boolean isOptionEnabledToShowMLSOnMap() {
-        return getBoolPrefWithDefault(ENABLE_OPTION_TO_SHOW_MLS_ON_MAP, false);
-    }
-
-    public void setOptionEnabledToShowMLSOnMap(boolean isEnabled) {
-        setBoolPref(ENABLE_OPTION_TO_SHOW_MLS_ON_MAP, isEnabled);
-        // have this pref follow the parent pref, so when the parent is turned on
-        // this starts in the on state, and when parent is off, this pref is off
-        setOnMapShowMLS(isEnabled);
-    }
 
     public boolean isCrashReportingEnabled() {
         // default to true for GITHUB build

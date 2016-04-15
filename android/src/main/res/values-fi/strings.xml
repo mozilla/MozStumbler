@@ -101,7 +101,7 @@
     <string name="enable_option_show_mls_on_map_summary">Näytä Mozilla Location Service (MLS) -sijainnit raporteissa.</string>
     <!-- enable_option_show_mls_on_map_detailed_info: %1$s refers to upload_wifi_only_title -->
 
-    <string name="enable_option_show_mls_on_map_detailed_info">MLS-sijainti näytetään jokaiselle raportille, mutta tämä kuluttaa vähän enemmän energiaa, muistia ja verkkoliikennettä. Tämä näytetään kartalla punaisena sijaintina MLS-sijainnille, ja viivana todelliseen paikkaan. Tätä ei näytetä mobiilidatayhteydellä jos \"$1$s\" on päällä.</string>
+    <string name="enable_option_show_mls_on_map_detailed_info">MLS-sijainti näytetään jokaiselle raportille, mutta tämä kuluttaa vähän enemmän energiaa, muistia ja verkkoliikennettä. Tämä näytetään kartalla punaisena sijaintina MLS-sijainnille, ja viivana todelliseen paikkaan. Tätä ei näytetä mobiilidatayhteydellä jos \"%1$s\" on päällä.</string>
     <string name="cell_plus_wifi_observation">Wi-Fi + mastoraportti</string>
     <string name="cell_only_observation">Raportti vain mastoista</string>
     <string name="wifi_only_observation">Raportti vain Wi-Fi:stä</string>

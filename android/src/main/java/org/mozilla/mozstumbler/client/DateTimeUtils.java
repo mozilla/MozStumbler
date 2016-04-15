@@ -58,17 +58,17 @@ public final class DateTimeUtils {
 
         final long minutes = (long) Math.floor(seconds / 60.0);
         if (minutes <= 60) {
-            return String.format(res.getQuantityString(R.plurals.time_diff_minutes, (int) minutes, minutes));
+            return res.getQuantityString(R.plurals.time_diff_minutes, (int) minutes, minutes);
         }
 
         final long hours = (long) Math.floor(minutes / 60.0);
         if (hours <= 24) {
-            return String.format(res.getQuantityString(R.plurals.time_diff_hours, (int) hours, hours));
+            return res.getQuantityString(R.plurals.time_diff_hours, (int) hours, hours);
         }
 
         final long days = (long) Math.floor(hours / 24.0);
         if (days <= 7) {
-            return String.format(res.getQuantityString(R.plurals.time_diff_days, (int) days, days));
+            return res.getQuantityString(R.plurals.time_diff_days, (int) days, days);
         }
 
         return sLocaleFormatDate.format(time);

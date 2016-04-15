@@ -333,7 +333,7 @@ public class MainDrawerActivity
             public void run() {
 
                 // Force the leaderboard menu item to update it's enabled status
-                invalidateOptionsMenu();
+                supportInvalidateOptionsMenu();
 
                 if (mMapFragment == null || mMapFragment.getActivity() == null) {
                     return;

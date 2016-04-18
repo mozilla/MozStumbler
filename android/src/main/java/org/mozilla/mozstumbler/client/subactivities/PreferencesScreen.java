@@ -158,6 +158,7 @@ public class PreferencesScreen extends PreferenceActivity implements IFxACallbac
 
         mFxaLoginPreference = getPreferenceManager().findPreference(Prefs.FXA_LOGIN_PREF);
         setFxALoginTitle(getPrefs().getBearerToken(), getPrefs().getEmail());
+
         setNicknamePreferenceTitle(getPrefs().getNickname());
 
         mWifiPreference = (CheckBoxPreference) getPreferenceManager().findPreference(Prefs.WIFI_ONLY);
@@ -174,7 +175,6 @@ public class PreferencesScreen extends PreferenceActivity implements IFxACallbac
         setPreferenceListener();
         setButtonListeners();
 
-
         String app_name = getResources().getString(R.string.app_name);
 
         FxAGlobals fxa = new FxAGlobals();
@@ -187,6 +187,12 @@ public class PreferencesScreen extends PreferenceActivity implements IFxACallbac
                 BuildConfig.LB_CONFIG_URL);
         fxaConfigTask.execute();
 
+        // Kludge for 1.8.4 to clear out FxA logins if a token is detected, but no email.
+        String bearerToken = getPrefs().getBearerToken();
+        String fxaEmail = getPrefs().getEmail();
+        if ((!TextUtils.isEmpty(bearerToken)) && (TextUtils.isEmpty(fxaEmail))) {
+            clearFxaLoginState();
+        }
     }
 
     private void verifyBearerToken() {

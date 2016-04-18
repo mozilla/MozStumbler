@@ -126,9 +126,9 @@
     <string name="load_file">Wczytaj plik</string>
     <string name="delete_file">Usuń plik</string>
 
-    <string name="enter_email">Wpisz adres e-mail (opcjonalnie)</string>
-    <string name="enter_email_title">E-mail: %1$s</string>
-    <string name="enter_email_longtext">Adres e-mail nie jest nikomu pokazywany i jest używany tylko do obserwacji użytkownika.</string>
+
+
+
     <string name="drawer_open">Wysuń szufladę</string>
     <string name="drawer_close">Zamknij szufladę</string>
     <string name="title_activity_leaderboard">Ranking</string>

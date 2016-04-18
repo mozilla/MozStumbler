@@ -15,9 +15,9 @@
     <string name="developer_title">निर्माता</string>
     <string name="drawer_close">दराज बन्द</string>
     <string name="drawer_map_layers_title">नक्शा कथा</string>
-    <string name="enter_email">ई-मेल ठेगाना (वैकल्पिक)</string>
-    <string name="enter_email_longtext">तपाईंको इमेल ठेगाना मान्छे को लागि प्रदर्शित कहिल्यै हुदैन र केवल आफ्नो रिपोर्ट को लागि प्रयोग गरिन्छ।</string>
-    <string name="enter_email_title">इमेल: %1$s</string>
+
+
+
     <string name="enter_nickname">उपनाम हल्नुहोस (वैकल्पिक)</string>
     <string name="enter_nickname_longtext">तपाईंको उपनाम लिडरबोर्डको देखा पर्नेछ।</string>
     <string name="enter_nickname_title">उपनाम: %1$s</string>

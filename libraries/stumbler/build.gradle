@@ -24,7 +24,7 @@ allprojects {
     }
 }
 
-version = "1.7.10"
+version = "1.8.5"
 group = 'org.mozilla.mozstumbler'
 
 // The groupname will be changed into a path for the final library
@@ -43,7 +43,7 @@ android {
 
     defaultConfig {
         minSdkVersion 10
-        targetSdkVersion 18
+        targetSdkVersion 23
     }
 
     lintOptions {
@@ -137,8 +137,8 @@ dependencies {
     // libraries, because they support a wide range of Android versions and
     // provide APIs for recommended user interface patterns.
 
-    compile "com.android.support:support-v4:21.0.+"
-    compile 'com.android.support:appcompat-v7:19.1.0'
+    compile "com.android.support:support-v4:23.0.0"
+    compile 'com.android.support:appcompat-v7:23.0.0'
 
     // Acralyzer crash reports
     compile('ch.acra:acra:4.5.0') {

@@ -108,7 +108,7 @@ public class PreferencesScreen extends PreferenceActivity implements IFxACallbac
             getPrefs().setLbSubmitURL(configJSON.getString("leaderboard_base_uri") + "/api/v1/contributions/");
 
             Toast.makeText(PreferencesScreen.this,
-                    mContext.getString(R.string.fxa_config_loaded),
+                    this.getString(R.string.fxa_config_loaded),
                     Toast.LENGTH_SHORT).show();
 
             enableLeaderboardMenuItem(true);

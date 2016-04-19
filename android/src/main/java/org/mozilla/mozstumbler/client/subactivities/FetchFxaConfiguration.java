@@ -64,10 +64,6 @@ public class FetchFxaConfiguration extends AsyncTask<Void, Void, JSONObject> {
             Log.i(LOG_TAG, "Invalid number of arguments.");
             return null;
         }
-        Toast.makeText(PreferencesScreen.this,
-                mContext.getString(R.string.fxa_loading_config),
-                Toast.LENGTH_SHORT).show();
-
 
         HttpUtil httpUtil = new HttpUtil(System.getProperty("http.agent") + " " +
                 FxAGlobals.appName + "/" + FxAGlobals.appVersionName);
@@ -101,6 +97,9 @@ public class FetchFxaConfiguration extends AsyncTask<Void, Void, JSONObject> {
             Intent intent = new Intent(FXA_CONFIG_LOAD);
             intent.putExtra("json", result.toString());
             LocalBroadcastManager.getInstance(mContext).sendBroadcast(intent);
+            Toast.makeText(mContext,
+                    mContext.getString(R.string.fxa_loading_config),
+                    Toast.LENGTH_SHORT).show();
         }
     }
 

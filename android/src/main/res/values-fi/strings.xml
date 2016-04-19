@@ -80,9 +80,9 @@
     <string name="delete_file">Poista tiedosto</string>
     <string name="kml_file_saved">KML tallennettu</string>
     <string name="share_after_kml_saved">Tiedosto on tallennettu laitteelle, haluatko jakaa sen?</string>
-    <string name="enter_email">Anna sähköpostiosoite (vapaaehtoinen)</string>
-    <string name="enter_email_title">Sähköposti: %1$s</string>
-    <string name="enter_email_longtext">Sähköpostiosoitetta ei näytetä muille ja sitä käytetään vain sinun omille raporteillesi.</string>
+
+
+
     <string name="drawer_open">Näytä laatikko</string>
     <string name="drawer_close">Sulje laatikko</string>
     <string name="title_activity_leaderboard">Tilastot</string>

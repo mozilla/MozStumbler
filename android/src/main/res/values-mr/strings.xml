@@ -73,9 +73,9 @@
     <string name="delete_file">फाईल नष्ट करा</string>
     <string name="kml_file_saved">KML  सुरक्षित करण्यात आली आहे</string>
     <string name="share_after_kml_saved">हि फाईल यंत्रावर सुरक्षित आहे, तुम्हाला ती वाटायला आवडेल का?</string>
-    <string name="enter_email">इमेल पत्ता टाका (ऐच्छिक)</string>
-    <string name="enter_email_title">इमेल: %1$s</string>
-    <string name="enter_email_longtext">तुमचा इमेल पत्ता कधीच लोकांना दाखवला जात नाही आणि फक्त तुमच्या अहवालाकरिता वापरला जातो.</string>
+
+
+
     <string name="drawer_open">कप्पा दाखवा</string>
     <string name="drawer_close">कप्पा बंद करा</string>
     <string name="title_activity_leaderboard">अग्रेसर वापरकर्ता फलक</string>

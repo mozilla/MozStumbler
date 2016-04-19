@@ -7,6 +7,7 @@ import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -14,6 +15,7 @@ import org.mozilla.accounts.fxa.FxAGlobals;
 import org.mozilla.accounts.fxa.LoggerUtil;
 import org.mozilla.accounts.fxa.net.HTTPResponse;
 import org.mozilla.accounts.fxa.net.HttpUtil;
+import org.mozilla.mozstumbler.R;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -62,6 +64,10 @@ public class FetchFxaConfiguration extends AsyncTask<Void, Void, JSONObject> {
             Log.i(LOG_TAG, "Invalid number of arguments.");
             return null;
         }
+        Toast.makeText(PreferencesScreen.this,
+                mContext.getString(R.string.fxa_loading_config),
+                Toast.LENGTH_SHORT).show();
+
 
         HttpUtil httpUtil = new HttpUtil(System.getProperty("http.agent") + " " +
                 FxAGlobals.appName + "/" + FxAGlobals.appVersionName);

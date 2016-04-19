@@ -215,5 +215,8 @@
     <string name="fxa_logged_in">Firefox Accounts is logged in</string>
     <string name="fxa_settings_title">Firefox Accounts</string>
     <string name="fxa_needs_network">A data network connection is required.</string>
+    <string name="fxa_no_config">Firefox Accounts configuration could not be loaded</string>
+    <string name="fxa_loading_config">Trying to load Firefox Accounts Configuration</string>
+    <string name="fxa_config_loaded">Firefox Accounts configuration is loaded</string>
 
 </resources>

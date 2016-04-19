@@ -79,6 +79,9 @@ public class PreferencesScreen extends PreferenceActivity implements IFxACallbac
 
     private void processFxaConfigLoad(Intent intent, boolean success) {
         if (!success) {
+            Toast.makeText(PreferencesScreen.this,
+                    getApplicationContext().getString(R.string.fxa_no_config),
+                    Toast.LENGTH_SHORT).show();
             Log.e(LOG_TAG, "No fxa configuration is available");
             return;
         }
@@ -103,6 +106,10 @@ public class PreferencesScreen extends PreferenceActivity implements IFxACallbac
 
             getPrefs().setLbBaseURI(configJSON.getString("leaderboard_base_uri"));
             getPrefs().setLbSubmitURL(configJSON.getString("leaderboard_base_uri") + "/api/v1/contributions/");
+
+            Toast.makeText(PreferencesScreen.this,
+                    mContext.getString(R.string.fxa_config_loaded),
+                    Toast.LENGTH_SHORT).show();
 
             enableLeaderboardMenuItem(true);
             // Only after all the FXA crap is setup can we initiate bearer token verification
@@ -338,6 +345,11 @@ public class PreferencesScreen extends PreferenceActivity implements IFxACallbac
                             getFxaAppCallback(),
                             getFxaScopes(),
                             getFxaClientId()).show();
+                } else {
+                    // Try to get the FxA configuration again
+                    FetchFxaConfiguration fxaConfigTask = new FetchFxaConfiguration(PreferencesScreen.this,
+                            BuildConfig.LB_CONFIG_URL);
+                    fxaConfigTask.execute();
                 }
                 return true;
             }

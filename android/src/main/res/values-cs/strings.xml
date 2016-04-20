@@ -112,9 +112,9 @@
     <string name="delete_file">Smazat soubor</string>
     <string name="kml_file_saved">KML uloženo</string>
     <string name="share_after_kml_saved">Soubor byl uložen ve vašem zařízení, chcete jej sdílet?</string>
-
-
-
+    <string name="enter_email">Vložte e-mailovou adresu (nepovinné)</string>
+    <string name="enter_email_title">E-mail: %1$s</string>
+    <string name="enter_email_longtext">Vaše e-mailová adresa nebude nikde zobrazována a je použita pouze pro vaše vlastní reporty.</string>
     <!--<string name="drawer_open">Show drawer</string>
     <string name="drawer_close">Close drawer</string>-->
     <string name="title_activity_leaderboard">Žebříček</string>

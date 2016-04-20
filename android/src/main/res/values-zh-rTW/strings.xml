@@ -122,10 +122,10 @@
     <string name="share_file">分享檔案</string>
     <string name="load_file">載入檔案</string>
     <string name="delete_file">刪除檔案</string>
+    <string name="enter_email">輸入電子郵件地址（非必填）</string>
 
-
-
-
+    <string name="enter_email_title">電子郵件地址: %1$s</string>
+    <string name="enter_email_longtext">您的電子郵件地址不會顯示給其他人知道，而只會用於您自己上傳的報告當中</string>
     <string name="drawer_open">顯示抽屜</string>
     <string name="drawer_close">關閉抽屜</string>
     <string name="title_activity_leaderboard">排行榜</string>

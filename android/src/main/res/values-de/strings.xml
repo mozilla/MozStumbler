@@ -122,9 +122,9 @@
     <string name="load_file">Datei laden</string>
     <string name="delete_file">Datei löschen</string>
 
-
-
-
+    <string name="enter_email">E-Mail-Adresse eingeben (optional)</string>
+    <string name="enter_email_title">E-Mail: %1$s</string>
+    <string name="enter_email_longtext">Ihre E-Mail-Adresse wird niemals anderen Leuten angezeigt und wird nur für Ihre eigenen Berichte verwendet.</string>
     <string name="drawer_open">Leiste einblenden</string>
     <string name="drawer_close">Leiste ausblenden</string>
     <string name="title_activity_leaderboard">Bestenliste</string>

@@ -108,9 +108,9 @@
     <string name="delete_file">Dosyayı sil</string>
     <string name="kml_file_saved">KML Kaydedildi</string>
     <string name="share_after_kml_saved">Dosya cihaza kaydedildi. Dosyayı paylaşmak ister misiniz?</string>
-
-
-
+    <string name="enter_email">E-posta adresiniz (isteğe bağlı)</string>
+    <string name="enter_email_title">E-posta: %1$s</string>
+    <string name="enter_email_longtext">E-posta adresiniz asla başkalarına gösterilmez ve sadece raporlarınız için kullanılır.</string>
     <string name="drawer_open">Sürgüyü göster</string>
     <string name="drawer_close">Sürgüyü kapat</string>
     <string name="title_activity_leaderboard">Puan Durumu</string>

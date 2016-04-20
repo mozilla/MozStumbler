@@ -108,9 +108,9 @@
     <string name="delete_file">Borrar archivo</string>
     <string name="kml_file_saved">KML guardado</string>
     <string name="share_after_kml_saved">El archivo fue guardado en el dispositivo, ¿Te gustaría compartir el archivo?</string>
-
-
-
+    <string name="enter_email">Ingresa tu dirección de correo (opcional)</string>
+    <string name="enter_email_title">Correo: %1$s</string>
+    <string name="enter_email_longtext">Tu dirección de correo jamás es mostrada a las personas y sólo es usada para tus reportes</string>
     <string name="drawer_open">Mostrar barra lateral</string>
     <string name="drawer_close">Cerrar barra lateral</string>
     <string name="title_activity_leaderboard">Tabla de posiciones</string>

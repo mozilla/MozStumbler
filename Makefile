@@ -9,7 +9,7 @@ unittest:
 	./gradlew assembleGithubLbprodUnittest
 
 debug:
-	./gradlew assembleGithubLbprodDebug
+	./gradlew assembleGithubLbstageDebug
 
 github:
 	./release_check.py github
@@ -31,4 +31,4 @@ clean:
 	./gradlew clean
 
 install_debug:
-	./gradlew installGithubLbprodDebug
+	./gradlew installGithubLbstageDebug

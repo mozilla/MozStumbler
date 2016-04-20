@@ -79,6 +79,9 @@ public class PreferencesScreen extends PreferenceActivity implements IFxACallbac
 
     private void processFxaConfigLoad(Intent intent, boolean success) {
         if (!success) {
+            Toast.makeText(PreferencesScreen.this,
+                    getApplicationContext().getString(R.string.fxa_no_config),
+                    Toast.LENGTH_SHORT).show();
             Log.e(LOG_TAG, "No fxa configuration is available");
             return;
         }
@@ -103,6 +106,10 @@ public class PreferencesScreen extends PreferenceActivity implements IFxACallbac
 
             getPrefs().setLbBaseURI(configJSON.getString("leaderboard_base_uri"));
             getPrefs().setLbSubmitURL(configJSON.getString("leaderboard_base_uri") + "/api/v1/contributions/");
+
+            Toast.makeText(PreferencesScreen.this,
+                    this.getString(R.string.fxa_config_loaded),
+                    Toast.LENGTH_SHORT).show();
 
             enableLeaderboardMenuItem(true);
             // Only after all the FXA crap is setup can we initiate bearer token verification
@@ -183,13 +190,19 @@ public class PreferencesScreen extends PreferenceActivity implements IFxACallbac
         // Register callbacks so that we can load the FxA configuration JSON blob
         FetchFxaConfiguration.registerFxaIntents(this.getApplicationContext(), callbackReceiver);
 
-        FetchFxaConfiguration fxaConfigTask = new FetchFxaConfiguration(this.getApplicationContext(),
-                BuildConfig.LB_CONFIG_URL);
-        fxaConfigTask.execute();
+
 
         // Kludge for 1.8.4 to clear out FxA logins if a token is detected, but no email.
         String bearerToken = getPrefs().getBearerToken();
         String fxaEmail = getPrefs().getEmail();
+
+        if (TextUtils.isEmpty(getPrefs().getLbSubmitUrl())) {
+            // Only update the FxA configuration if we have to.
+            FetchFxaConfiguration fxaConfigTask = new FetchFxaConfiguration(this.getApplicationContext(),
+                    BuildConfig.LB_CONFIG_URL);
+            fxaConfigTask.execute();
+        }
+
         if ((!TextUtils.isEmpty(bearerToken)) && (TextUtils.isEmpty(fxaEmail))) {
             clearFxaLoginState();
         }
@@ -338,6 +351,11 @@ public class PreferencesScreen extends PreferenceActivity implements IFxACallbac
                             getFxaAppCallback(),
                             getFxaScopes(),
                             getFxaClientId()).show();
+                } else {
+                    // Try to get the FxA configuration again
+                    FetchFxaConfiguration fxaConfigTask = new FetchFxaConfiguration(PreferencesScreen.this,
+                            BuildConfig.LB_CONFIG_URL);
+                    fxaConfigTask.execute();
                 }
                 return true;
             }

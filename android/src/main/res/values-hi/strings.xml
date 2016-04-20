@@ -73,9 +73,9 @@
     <string name="delete_file">फ़ाइल नष्ट करे</string>
     <string name="kml_file_saved">KML सुरक्षित</string>
     <string name="share_after_kml_saved">यह फ़ाइल आपके डिवाइस पर सुरक्षित है, आप इसे भेजना पसंद करेंगे?</string>
-    <string name="enter_email">इमेल पता डाले (वैकल्पिक)</string>
-    <string name="enter_email_title">इमेल: %1$s</string>
-    <string name="enter_email_longtext">आपका इमेल पता लोगोंको कभी नहीं दिखाया जायेगा और यह सिर्फ आपके विवरणोंके लिए इस्तेमाल किया जाएगा.</string>
+
+
+
     <string name="drawer_open">दराज दिखाए</string>
     <string name="drawer_close">दराज बंद करे</string>
     <string name="title_activity_leaderboard">अग्रणी उपयोगकर्ता फलक</string>

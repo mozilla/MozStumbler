@@ -6,8 +6,6 @@ package org.mozilla.mozstumbler.service.core.http;
 
 import android.os.Build;
 
-import org.mozilla.mozstumbler.svclocator.BuildConfig;
-
 public class GlobalConstants {
     /*
      * The DEFALUT_CIPHER_SUITES and DEFAULT_PROTOCOLS is copied from

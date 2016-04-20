@@ -190,13 +190,19 @@ public class PreferencesScreen extends PreferenceActivity implements IFxACallbac
         // Register callbacks so that we can load the FxA configuration JSON blob
         FetchFxaConfiguration.registerFxaIntents(this.getApplicationContext(), callbackReceiver);
 
-        FetchFxaConfiguration fxaConfigTask = new FetchFxaConfiguration(this.getApplicationContext(),
-                BuildConfig.LB_CONFIG_URL);
-        fxaConfigTask.execute();
+
 
         // Kludge for 1.8.4 to clear out FxA logins if a token is detected, but no email.
         String bearerToken = getPrefs().getBearerToken();
         String fxaEmail = getPrefs().getEmail();
+
+        if (TextUtils.isEmpty(getPrefs().getLbSubmitUrl())) {
+            // Only update the FxA configuration if we have to.
+            FetchFxaConfiguration fxaConfigTask = new FetchFxaConfiguration(this.getApplicationContext(),
+                    BuildConfig.LB_CONFIG_URL);
+            fxaConfigTask.execute();
+        }
+
         if ((!TextUtils.isEmpty(bearerToken)) && (TextUtils.isEmpty(fxaEmail))) {
             clearFxaLoginState();
         }

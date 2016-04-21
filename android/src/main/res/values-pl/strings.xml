@@ -214,10 +214,9 @@
     <!--string name="limit_map_zoom_summary">Zmniejsza zużycie danych przez widok mapy.</string-->
 
     <string name="fxaDescription">Dołączenie do rankingu za pomocą konta Firefoksa</string>
-    <string name="fxaDescriptionLoggedIn">Obecnie zalogowano</string>
+    <string name="fxaDescriptionLoggedIn">Obecnie zalogowano\n%1$s</string>
     <string name="fxaPromptLogout">Wyloguj z konta Firefoksa</string>
     <string name="fxa_is_logged_out">Wylogowano z konta Firefoksa</string>
-    <string name="fxa_logged_in">Zalogowano do konta Firefoksa</string>
     <string name="fxa_settings_title">Konto Firefoksa</string>
     <string name="fxa_needs_network">Wymagane jest połączenie z siecią.</string>
 

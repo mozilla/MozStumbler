@@ -211,12 +211,14 @@
     <string name="sensor_name_accelerometer">Beschleunigungssensor</string>
     <string name="title_use_sensor">Sensor benutzen:</string>
 
-    <string name="fxaDescription">Nutzen Sie Firefox Accounts um der Bestenliste beizutreten</string>
-    <string name="fxaDescriptionLoggedIn">Sie sind aktuell angemeldet</string>
-    <string name="fxaPromptLogout">Firefox Account abmelden</string>
-    <string name="fxa_is_logged_out">Firefox Account ist abgemeldet</string>
-    <string name="fxa_logged_in">Firefox Account ist angemeldet</string>
-    <string name="fxa_settings_title">Firefox Account</string>
+    <string name="fxaDescription">Nutzen Sie ein Firefox-Konto, um der Bestenliste beizutreten</string>
+    <string name="fxaDescriptionLoggedIn">Sie sind aktuell angemeldet:\n%1$s</string>
+    <string name="fxaPromptLogout">Firefox-Konto abmelden</string>
+    <string name="fxa_is_logged_out">Firefox-Konto ist abgemeldet</string>
+    <string name="fxa_settings_title">Firefox-Konto</string>
     <string name="fxa_needs_network">Es wird eine Internetverbindung benötigt.</string>
+    <string name="fxa_no_config">Konfiguration für Firefox-Konten konnte nicht geladen werden</string>
+    <string name="fxa_loading_config">Lade Konfiguration für Firefox-Konten</string>
+    <string name="fxa_config_loaded">Konfiguration für Firefox-Konten wurde geladen</string>
 
 </resources>

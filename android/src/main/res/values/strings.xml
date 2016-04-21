@@ -209,14 +209,13 @@
     <string name="title_use_sensor">Use sensor:</string>
 
     <string name="fxaDescription">Use Firefox Accounts to join the leaderboard</string>
-    <string name="fxaDescriptionLoggedIn">You are currently logged in</string>
+    <string name="fxaDescriptionLoggedIn">You are currently logged in:\n%1$s</string>
     <string name="fxaPromptLogout">Log out from Firefox Accounts</string>
     <string name="fxa_is_logged_out">Firefox Accounts is logged out</string>
-    <string name="fxa_logged_in">Firefox Accounts is logged in</string>
     <string name="fxa_settings_title">Firefox Accounts</string>
     <string name="fxa_needs_network">A data network connection is required.</string>
     <string name="fxa_no_config">Firefox Accounts configuration could not be loaded</string>
-    <string name="fxa_loading_config">Trying to load Firefox Accounts Configuration</string>
+    <string name="fxa_loading_config">Trying to load Firefox Accounts configuration</string>
     <string name="fxa_config_loaded">Firefox Accounts configuration is loaded</string>
 
 </resources>

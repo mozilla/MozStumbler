@@ -451,7 +451,7 @@ public class PreferencesScreen extends PreferenceActivity implements IFxACallbac
         }
         if (!TextUtils.isEmpty(bearerToken)) {
             mFxaLoginPreference.setTitle(getString(R.string.fxa_settings_title));
-            mFxaLoginPreference.setSummary(getString(R.string.fxaDescriptionLoggedIn) + ":\n" + email);
+            mFxaLoginPreference.setSummary(String.format(getString(R.string.fxaDescriptionLoggedIn), email));
             mNicknamePreference.setEnabled(true);
             enableLeaderboardMenuItem(true);
         } else {

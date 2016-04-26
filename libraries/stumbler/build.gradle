@@ -24,7 +24,7 @@ allprojects {
     }
 }
 
-version = "1.8.5"
+version = "1.8.4"
 group = 'org.mozilla.mozstumbler'
 
 // The groupname will be changed into a path for the final library

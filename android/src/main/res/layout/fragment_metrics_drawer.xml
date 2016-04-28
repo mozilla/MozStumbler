@@ -296,6 +296,7 @@
 
             <Button
                 android:id="@+id/button_change_power_setting"
+                style="?android:attr/buttonStyleSmall"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@layout/button_selector"
@@ -304,6 +305,8 @@
                 android:layout_alignRight="@+id/cell_plus_wifi_layout"
                 android:minHeight="0dp"
                 android:text="@string/change_power_saving"
+                android:textAllCaps="false"
+                android:padding="5dp"
                 android:layout_marginBottom="10dp" />
 
             <TextView

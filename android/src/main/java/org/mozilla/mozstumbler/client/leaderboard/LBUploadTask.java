@@ -56,7 +56,7 @@ class LBUploadTask extends AsyncUploader {
             Log.d(LOG_TAG, "Sending leaderboard data: " + sData);
 
             IResponse resp =  httpDelegate.post(submit_url, data, headers, precompressed);
-            Log.d(LOG_TAG, "Got response: " + resp.httpStatusCode());
+            Log.d(LOG_TAG, "Got response: " + (resp != null ? resp.httpStatusCode() : "null"));
             return resp;
         }
     }

@@ -125,8 +125,12 @@ public final class StumblerBundle implements Parcelable {
 
         if (mWifiData.size() > 0) {
             JSONArray wifis = new JSONArray();
+            long gpsTimeSinceBootInMS = 0;
 
-            long gpsTimeSinceBootInMS = (mGpsPosition.getElapsedRealtimeNanos()/1000000);
+            if (Build.VERSION.SDK_INT >= 17) {
+                gpsTimeSinceBootInMS = (mGpsPosition.getElapsedRealtimeNanos() / 1000000);
+            }
+
             for (ScanResult scanResult : mWifiData.values()) {
                 JSONObject wifiEntry = new JSONObject();
                 wifiEntry.put("macAddress", scanResult.BSSID);
@@ -137,9 +141,12 @@ public final class StumblerBundle implements Parcelable {
                     wifiEntry.put("signalStrength", scanResult.level);
                 }
 
-                long wifiTimeSinceBootInMS = (scanResult.timestamp / 1000);
-                long ageMS =  wifiTimeSinceBootInMS - gpsTimeSinceBootInMS;
-                wifiEntry.put("age", ageMS);
+                if (Build.VERSION.SDK_INT >= 17) {
+                    long wifiTimeSinceBootInMS = (scanResult.timestamp / 1000);
+                    long ageMS =  wifiTimeSinceBootInMS - gpsTimeSinceBootInMS;
+                    wifiEntry.put("age", ageMS);
+                }
+
                 wifis.put(wifiEntry);
             }
             headerFields.put(DataStorageConstants.ReportsColumns.WIFI, wifis);

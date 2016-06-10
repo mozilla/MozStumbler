@@ -86,8 +86,8 @@ dependencies {
     androidTestCompile  'com.google.code.gson:gson:2.3.1'
     testCompile         'com.google.code.gson:gson:2.3.1'
 
-    androidTestCompile 'org.robolectric:robolectric:2.4'
-    testCompile        'org.robolectric:robolectric:2.4'
+    androidTestCompile 'org.robolectric:robolectric:3.1'
+    testCompile        'org.robolectric:robolectric:3.1'
 
     androidTestCompile "org.mockito:mockito-core:1.+"
     testCompile        "org.mockito:mockito-core:1.+"

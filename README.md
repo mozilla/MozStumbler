@@ -1,7 +1,7 @@
 Please refer to the [wiki](https://github.com/mozilla/MozStumbler/wiki) for detailed documentation.
 
 MozStumbler
-[![Build Status](https://travis-ci.org/mozilla/MozStumbler.png)](https://travis-ci.org/mozilla/MozStumbler.png)
+[![Build Status](https://travis-ci.org/mozilla/MozStumbler.png?branch=dev)](https://travis-ci.org/mozilla/MozStumbler)
 
 # Building a debug version from command line #
 

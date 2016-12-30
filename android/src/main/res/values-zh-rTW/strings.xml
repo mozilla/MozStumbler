@@ -34,7 +34,6 @@
     -->
     <plurals name="time_diff_seconds">
         <item quantity="one">剛剛</item>
-        <item quantity="few">幾秒鐘前</item>
         <item quantity="other">一陣子前</item>
     </plurals>
     <plurals name="time_diff_minutes">
@@ -123,9 +122,6 @@
     <string name="load_file">載入檔案</string>
     <string name="delete_file">刪除檔案</string>
 
-
-
-
     <string name="drawer_open">顯示抽屜</string>
     <string name="drawer_close">關閉抽屜</string>
     <string name="title_activity_leaderboard">排行榜</string>
@@ -140,10 +136,15 @@
     <string name="map_copyright_moz">© MapBox © OpenStreetMap 貢獻者</string>
     <string name="action_developer">開發者</string>
     <string name="developer_title">開發者</string>
+
     <string name="enable_option_show_mls_on_map">啟用 MLS 位置查詢</string>
     <string name="enable_option_show_mls_on_map_summary">取回並顯示每次回報中，由 Mozilla Location Service (MLS) 推估的位置。</string>
     <!-- enable_option_show_mls_on_map_detailed_info: %1$s refers to upload_wifi_only_title -->
     <string name="enable_option_show_mls_on_map_detailed_info">多用一些電力、記憶體與網路用量，就可顯示您每次回報時的 MLS 位置，也就是您從已觀測到的資料中所推估出的所在位置。\nMLS 位置在地圖上會以紅點顯示，並將回報點用線連結起來。若該位置越靠近您實際的位置，就代表 Mozilla Location Service 在該地越可靠、越精準。\n但若您開啟「%1$s」的話，就不會透過行動數據連線來查詢位置。</string>
+
+    <!-- This is an experimental option to enable offline location queries-->
+    <string name="enable_offline_geo">開啟離線位置查詢</string>
+
     <string name="cell_plus_wifi_observation">觀測到 Wi-Fi 與行動網路基地台</string>
     <string name="cell_only_observation">僅觀測到行動網路基地台</string>
     <string name="wifi_only_observation">僅觀測到 Wi-Fi 基地台</string>
@@ -177,6 +178,7 @@
     <string name="motion_detection_title">動態偵測</string>
     <string name="motion_detection_options_label">在您沒有移動時暫停掃描</string>
     <string name="motion_detection_options_conjunction">於</string>
+    <string name="motion_detection_minimum_pause_time">最小暫停時間:</string>
     <string name="map_scanning_paused_no_motion">位置沒有變動，暫停掃描。</string>
     <string name="save_stumble_logs">儲存觀測記錄</string>
     <string name="create_log_archive_failure">無法建立儲存記錄檔的資料夾</string>
@@ -194,7 +196,8 @@
     <string name="sensor_type_significant_motion">顯著運動感測器的省電效果最好，但不是在每台裝置上都能用。</string>
 
     <string name="ok">確定</string>
-    <!--string name="limit_map_zoom">限制縮小地圖</string-->
+    <string name="unlimited_map_zoom">無限地圖縮放</string>
+    <string name="unlimited_map_zoom_summary">限制縮放可減少顯示地圖時的網路數據用量，無限縮放僅會套用到高解析度圖資模式。</string>
     <string name="use_passive_scanning">測試被動掃描</string>
     <string name="use_high_power_mode">高耗電模式</string>
     <string name="test_significant_sensor_dialog_title">測試顯著運動感測器</string>
@@ -204,11 +207,15 @@
     <string name="sensor_name_significant_motion">顯著運動感測器</string>
     <string name="sensor_name_accelerometer">加速度感測器</string>
     <string name="title_use_sensor">使用感測器:</string>
-    <!--string name="limit_map_zoom_summary">減少地圖所使用的網路數據量。</string-->
+
     <string name="fxaDescription">使用 Firefox 帳號列於排行榜</string>
-    <string name="fxaDescriptionLoggedIn">您已經登入\n%1$s</string>
+    <string name="fxaDescriptionLoggedIn">您已經登入:\n%1$s</string>
     <string name="fxaPromptLogout">登出 Firefox 帳號</string>
-    <string name="fxa_is_logged_out">Firefox 帳號已登出</string>
+    <string name="fxa_is_logged_out">已登出 Firefox 帳號</string>
     <string name="fxa_settings_title">Firefox 帳號</string>
     <string name="fxa_needs_network">需要數據網路連線。</string>
+    <string name="fxa_no_config">無法載入 Firefox 帳號設定</string>
+    <string name="fxa_loading_config">正在嘗試載入 Firefox 帳號設定</string>
+    <string name="fxa_config_loaded">已載入 Firefox 帳號設定</string>
+
 </resources>

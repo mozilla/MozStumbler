@@ -20,8 +20,8 @@ import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 public class NotificationUtil {
 
     private static final ILogger Log = (ILogger) ServiceLocator
-                                                    .getInstance()
-                                                    .getService(ILogger.class);
+            .getInstance()
+            .getService(ILogger.class);
     private static final String LOG_TAG = LoggerUtil.makeLogTag(NotificationUtil.class);
 
     public static final int NOTIFICATION_ID = 1;
@@ -39,9 +39,9 @@ public class NotificationUtil {
 
     private Notification build() {
         PendingIntent notificationStopIntent = PendingIntent.getBroadcast(mContext,
-                                                        0,
-                                                        new Intent(MainApp.NOTIFICATION_STOP),
-                                                        0);
+                0,
+                new Intent(MainApp.NOTIFICATION_STOP),
+                0);
 
         Intent notificationIntent = new Intent(mContext, MainDrawerActivity.class);
         notificationIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_FROM_BACKGROUND);
@@ -58,13 +58,13 @@ public class NotificationUtil {
 
         String uploadtime = mContext.getString(R.string.metrics_observations_last_upload_time_never);
         if (sUploadTime > 0) {
-            uploadtime = DateTimeUtils.formatTimeForLocale(sUploadTime);
+            uploadtime = DateTimeUtils.formatTimeForSystem(sUploadTime,mContext);
         }
         String uploadLine = mContext.getString(R.string.metrics_notification_extraline);
         uploadLine = String.format(uploadLine, uploadtime);
 
         ISystemClock clock = (ISystemClock) ServiceLocator.getInstance()
-                                           .getService(ISystemClock.class);
+                .getService(ISystemClock.class);
 
         sLastUpdateTime = clock.currentTimeMillis();
 

@@ -18,8 +18,6 @@ import android.os.Looper;
 import android.support.v4.content.LocalBroadcastManager;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -250,7 +248,7 @@ public class MetricsView {
         Context context = mView.getContext();
         String value = context.getString(R.string.metrics_observations_last_upload_time_never);
         if (mLastUploadTime > 0) {
-            value = DateTimeUtils.prettyPrintTimeDiff(mLastUploadTime, context.getResources());
+            value = DateTimeUtils.prettyPrintTimeDiff(mLastUploadTime, context);
         }
         mLastUpdateTimeView.setText(value);
 

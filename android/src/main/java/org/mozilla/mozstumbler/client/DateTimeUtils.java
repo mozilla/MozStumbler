@@ -56,12 +56,13 @@ public final class DateTimeUtils {
     }
 
     public static String formatTimeForSystem(long time, Context mContext){
-        StringBuffer systemFormatDateTime = new StringBuffer(recoverFormatForSystem(mContext));
+        String systemFormatDateTime = recoverFormatForSystem(mContext);
         if(TextUtils.isEmpty(systemFormatDateTime)){
             return formatTimeForLocale(time);
         }else{
-            systemFormatDateTime.append(" HH:mm a");
-            return new SimpleDateFormat(systemFormatDateTime.toString()).format(time);
+            StringBuffer systemFormatDateTimeBuffer = new StringBuffer(systemFormatDateTime);
+            systemFormatDateTimeBuffer.append(" HH:mm a");
+            return new SimpleDateFormat(systemFormatDateTimeBuffer.toString()).format(time);
         }
     }
 

@@ -5,7 +5,9 @@
 package org.mozilla.mozstumbler.client;
 
 import android.annotation.SuppressLint;
-import android.content.res.Resources;
+import android.content.Context;
+import android.provider.Settings;
+import android.text.TextUtils;
 
 import org.mozilla.mozstumbler.R;
 
@@ -20,6 +22,7 @@ public final class DateTimeUtils {
     private static final DateFormat sLocaleFormatDateTime = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);
     private static final DateFormat sLocaleFormatDate = DateFormat.getDateInstance(DateFormat.SHORT);
     private static final DateFormat sISO8601Format = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+
 
     static {
         sISO8601Format.setTimeZone(TimeZone.getTimeZone("UTC"));
@@ -48,29 +51,52 @@ public final class DateTimeUtils {
         return sLocaleFormatDateTime.format(time);
     }
 
-    public static String prettyPrintTimeDiff(long time, Resources res) {
+    public static String recoverFormatForSystem(Context mContext){
+        return Settings.System.getString(mContext.getContentResolver(),Settings.System.DATE_FORMAT);
+    }
+
+    public static String formatTimeForSystem(long time, Context mContext){
+        String systemFormatDateTime =recoverFormatForSystem(mContext);
+        if(TextUtils.isEmpty(systemFormatDateTime)){
+            return formatTimeForLocale(time);
+        }else{
+            StringBuffer systemFormatDateTimeBuffer = new StringBuffer(systemFormatDateTime);
+            systemFormatDateTimeBuffer.append(" HH:mm a");
+            return new SimpleDateFormat(systemFormatDateTimeBuffer.toString()).format(time);
+        }
+    }
+
+    public static String formatDateForSystem(long time, Context mContext){
+        String systemFormatDateTime = recoverFormatForSystem(mContext);
+        if(TextUtils.isEmpty(systemFormatDateTime)){
+            return sLocaleFormatDate.format(time);
+        }else{
+            return new SimpleDateFormat(systemFormatDateTime).format(time);
+        }
+    }
+
+    public static String prettyPrintTimeDiff(long time, Context mContext) {
         final long seconds = (System.currentTimeMillis() - time) / 1000;
         if (seconds < 0) {
-            return DateTimeUtils.formatTimeForLocale(time);
+            return DateTimeUtils.formatTimeForSystem(time,mContext);
         } else if (seconds < 60) {
-            return res.getQuantityString(R.plurals.time_diff_seconds, (int) seconds, seconds);
+            return mContext.getResources().getQuantityString(R.plurals.time_diff_seconds, (int) seconds, seconds);
         }
 
         final long minutes = (long) Math.floor(seconds / 60.0);
         if (minutes <= 60) {
-            return res.getQuantityString(R.plurals.time_diff_minutes, (int) minutes, minutes);
+            return mContext.getResources().getQuantityString(R.plurals.time_diff_minutes, (int) minutes, minutes);
         }
 
         final long hours = (long) Math.floor(minutes / 60.0);
         if (hours <= 24) {
-            return res.getQuantityString(R.plurals.time_diff_hours, (int) hours, hours);
+            return mContext.getResources().getQuantityString(R.plurals.time_diff_hours, (int) hours, hours);
         }
 
         final long days = (long) Math.floor(hours / 24.0);
         if (days <= 7) {
-            return res.getQuantityString(R.plurals.time_diff_days, (int) days, days);
+            return mContext.getResources().getQuantityString(R.plurals.time_diff_days, (int) days, days);
         }
-
-        return sLocaleFormatDate.format(time);
+        return formatDateForSystem(time,mContext);
     }
 }

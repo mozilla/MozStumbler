@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Mozilla Stumbler</string>
+    <string name="action_about">A Mozilla Stumbler névjegye</string>
+    <string name="action_preferences">Beállítások</string>
+    <string name="start_scanning">Letapogatás indítása</string>
+    <string name="stop_scanning">Letapogatás leállítása</string>
+    <string name="view_leaderboard">Ranglista megtekintése</string>
+    <string name="service_name">Mozilla Stumbler</string>
+    <string name="notification_scanning">A %1$s letapogatást végez</string>
+    <string name="notification_paused">A %1$s szünetel</string>
+    <string name="enter_nickname">Adjon meg becenevet (nem kötelező)</string>
+    <string name="enter_nickname_title">Becenév: %1$s</string>
+    <string name="enter_nickname_longtext">A beceneve meg fog jelenni a ranglistán.</string>
+    <string name="update_title">Letölti a Mozilla Stumbler frissítést?</string>
+    <string name="update_message">Telepített verzió: %1$s\nLegfrissebb verzió: %2$s</string>
+    <string name="update_now">Frissítés most</string>
+    <string name="update_later">Frissítés később</string>
+    <string name="yes">Igen</string>
+    <string name="no">Nem</string>
+    <string name="about_version">%1$s verzió</string>
+    <string name="about_openstreetmap">Térképcsempék\n© OpenStreetMap közreműködők\nhttp://www.openstreetmap.org</string>
+    <string name="about_mapbox_title">MapBox</string>
+    <string name="about_mapbox">Tudjon meg többet itt: http://www.mapbox.com</string>
+    <string name="about_legal_aosp">Az alkalmazás néhány ikonja az Android Open Source Project által készített és megosztott munkából lett újra létrehozva, és a Creative Commons 2.5 Attribution License alapján kerülnek felhasználásra.</string>
+    <string name="about_legal_flaticons">A GPS, mobiltorony, Wi-Fi és távcső ikonokat a Freepik készítette a http://www.flaticon.com alapján, a következő licenc alatt: https://creativecommons.org/licenses/by-nd/3.0</string>
+    <string name="upload_observations_sent_title">Már el lett küldve</string>
+    <string name="metrics_observations_last_upload_time_title">Legutóbbi feltöltés:</string>
+    <string name="metrics_observations_last_upload_time_never">soha</string>
+    <!--
+    Do not just copy those plurals, please check what is needed for your language.
+    http://developer.android.com/guide/topics/resources/string-resource.html#Plurals
+    -->
+    <plurals name="time_diff_seconds">
+        <item quantity="one">épp most</item>
+        <item quantity="other">pillanatokkal ezelőtt</item>
+    </plurals>
+    <plurals name="time_diff_minutes">
+        <item quantity="one">egy perce</item>
+        <item quantity="other">%d perce</item>
+    </plurals>
+    <plurals name="time_diff_hours">
+        <item quantity="one">egy órája</item>
+        <item quantity="other">%d órája</item>
+    </plurals>
+    <plurals name="time_diff_days">
+        <item quantity="one">egy napja</item>
+        <item quantity="other">%d napja</item>
+    </plurals>
+
+    <string name="metrics_notification_text">Jelentések: %1$d Cellák: %2$d Wi-Fik: %3$d</string>
+    <string name="metrics_notification_extraline">Legutóbbi frissítés: %1$s</string>
+    <string name="metrics_observations_title">Jelentések:</string>
+    <string name="metrics_observations_wifis_title">Wi-Fi hálózatok:</string>
+    <string name="metrics_observations_cell_towers_title">Mobilhálózatok:</string>
+    <string name="upload_observations_in_queue_title">Küldésre kész</string>
+    <string name="upload_wifi_only_title">Auto-feltöltés csak Wi-Fin</string>
+    <string name="upload_wifi_only_summary">Ez a beállítás csökkenti az adathasználatot mobilhálózaton. A Mérőszámok nézetben, a feltöltés gomb megnyomására mindig feltölti.</string>
+    <string name="metrics_activity_title">Mérőszámok</string>
+    <string name="metrics_this_session">Jelenlegi munkamenet</string>
+    <string name="drawer_map_option_show_mls_locations">MLS helyek megjelenítése</string>
+    <string name="title_activity_log">Napló</string>
+    <string name="action_file_bug">Hibajelentés</string>
+    <string name="file_bug_sender_name">Az Ön neve:</string>
+    <string name="file_bug_sender_name_hint">Nem kötelező</string>
+    <string name="file_bug_sender_email">Az e-mail címe:</string>
+    <string name="file_bug_sender_email_hint">Az e-mail cím kötelező</string>
+    <string name="file_bug_name">Hiba neve:</string>
+    <string name="file_bug_name_hint">A hibát jól leíró cím</string>
+    <string name="file_bug_description">Hibaleírás:</string>
+    <string name="file_bug_description_hint">Részletes információk a bejelentendő hibáról (mi történik, mikor történik, stb.)</string>
+    <string name="file_bug_reproduction">Hiba reprodukulása:</string>
+    <string name="file_bug_reproduction_hint">Lépések a hiba reprodukálására.</string>
+    <!-- file_bug_report_info: %1$s refers to enable_crash_reporting -->
+    <string name="file_bug_report_info"></string>
+    <string name="file_bug_send">Hibajelentés küldése</string>
+    <string name="file_bug_type">Hibatípus:</string>
+
+    <string-array name="file_bug_type_list">
+        <item>Megjelenés</item>
+        <item>Teljesítmény</item>
+        <item>Kompatibilitás</item>
+        <item>Funkcionitás</item>
+        <item>Funkció kérése</item>
+        <item>Más</item>
+    </string-array>
+
+    <string name="file_bug_toast_success">Hibajelentés elküldve\n Köszönjük!</string>
+    <string name="file_bug_missing_field">A mező kötelező</string>
+    <string name="action_view_log">Napló megtekintése</string>
+    <string name="scroll_to_start">Görgetés a tetejére</string>
+    <string name="scroll_to_end">Görgetés a végére</string>
+
+    <string name="kml_file_title">KML jelentésfájl</string>
+    <string name="kml_file_load">KML fájl betöltése</string>
+    <string name="kml_file_save">KML fájl mentése</string>
+    <string name="kml_file_description">A jelentések (hely, Wi-Fi és mobiltornyok száma, nyomvonal szegmensek) mentése/betöltése hibakövetéshez.</string>
+    <string name="kml_file_saved_name">Mentett fájl:</string>
+    <string name="loading_kml">KML betöltése</string>
+    <string name="saving_kml">KML mentése</string>
+    <string name="mozstumbler_kml_file">Mozilla Stumbler KML fájl</string>
+    <string name="kml_file_saved">KML mentve</string>
+    <string name="share_after_kml_saved">A fájl az eszközön kerül mentésre, szeretné megosztani?</string>
+
+    <string name="gpx_file_title">GPX nyomvonal fájl</string>
+    <string name="gpx_file_save">GPX fájl mentése</string>
+    <string name="gpx_file_list">GPX fájlok listázása</string>
+    <string name="gpx_file_description">A helyek mentése GPX nyomvonal fájlként.</string>
+    <string name="gpx_file_saved_name">Mentett fájl:</string>
+    <string name="saving_gpx">GPX mentése ide: %1$s</string>
+    <string name="mozstumbler_gpx_file">Mozilla Stumbler GPX fájl</string>
+    <string name="gpx_file_saved">GPX mentve</string>
+    <string name="share_after_gpx_saved">A fájl az eszközön kerül mentésre, szeretné megosztani?</string>
+
+    <string name="keep_screen_on_title">Képernyő bekapcsolva tartása</string>
+    <string name="keep_screen_on_summary">A képernyő maradjon bekapcsolva, ha a letapogatás aktív, és az app előtérben van.</string>
+    <string name="delete_all">Összes törlése</string>
+    <string name="are_you_sure">Biztos benne?</string>
+    <string name="select_file">Fájl kiválasztása</string>
+    <string name="share_file">Fájl megosztása</string>
+    <string name="load_file">Fájl betöltése</string>
+    <string name="delete_file">Fájl törlése</string>
+
+    <string name="drawer_open">Fiók megjelenítése</string>
+    <string name="drawer_close">Fiók bezárása</string>
+    <string name="title_activity_leaderboard">Ranglista</string>
+    <string name="drawer_map_layers_title">Térkép jelmagyarázat</string>
+    <string name="first_run_message_part1">A Mozilla Location Service egy nyílt forráskódú szolgáltatás eszközök helyének Wi-Fi és mobilhálózatokkal történő meghatározására.</string>
+    <string name="first_run_message_part2">Olvassa el az <a href="https://location.services.mozilla.com/privacy">adatvédelmi nyilatkozatunkat</a>, és kezdjen hozzá a jelenlegi helyének megadásával.</string>
+    <string name="first_run_start_stumbling">Kezdjen hozzá</string>
+    <string name="first_run_welcome_to_mozstumbler">Üdvözli a Mozilla Stumbler</string>
+    <string name="map_unavailable">A térkép nem jeleníthető meg, mert nincs SD kártya tároló.\nAdatokat ettől még gyűjthet.</string>
+    <string name="map_offline_mode">A térkép nem fog frissülni internetkapcsolat nélkül,\nde továbbra is gyűjthet adatokat.</string>
+    <string name="map_copyright_fdroid">Csempék a MapQuest jóvoltából\n© OpenStreetMap közreműködők</string>
+    <string name="map_copyright_moz">© MapBox © OpenStreetMap közreműködők</string>
+    <string name="action_developer">Fejlesztő</string>
+    <string name="developer_title">Fejlesztő</string>
+
+    <string name="enable_option_show_mls_on_map">MLS helylekérdezések engedélyezése</string>
+    <string name="enable_option_show_mls_on_map_summary">A Mozilla Location Service (MLS) által becsült hely lekérése és megjelenítése, minden egyes jelentéshez.</string>
+    <!-- enable_option_show_mls_on_map_detailed_info: %1$s refers to upload_wifi_only_title -->
+    <string name="enable_option_show_mls_on_map_detailed_info">Kicsit több memória- és adathasználat mellett, az MLS hely is megjelenítésre kerül minden egyes jelentéshez – azaz a már letapogatott adatokból becsült hely.\n Ez piros pontként jelenik meg, összekötve a jelentéssel. Minél közelebb van a tényleges GPS hellyel, annál pontosabb és megbízhatóbb a Mozilla Location Service. A további letapogatások tovább fogják ezt javítani.\nViszont ez nem fogja lekérdezni a helyeket, ha az „%1$s” engedélyezett.</string>
+
+    <!-- This is an experimental option to enable offline location queries-->
+    <string name="enable_offline_geo">Offline helylekérdezések engedélyezése</string>
+
+    <string name="cell_plus_wifi_observation">Wi-Fi és mobilcella jelentés</string>
+    <string name="cell_only_observation">Csak mobilcella jelentés</string>
+    <string name="wifi_only_observation">Csak Wi-Fi jelentés</string>
+    <string name="mls_location_observation">MLS hely</string>
+    <string name="low_resolution_map">Alacsony részletességű térkép</string>
+    <string name="map_turned_off">Térkép megjelenítése ki</string>
+    <string name="map_tile_resolution_options_label">Térkép részletessége:</string>
+    <string name="map_tile_resolution_options_label_dynamic">Térkép részletessége: %1$s</string>
+    <string name="map_tile_resolution_options_summary">Az alacsony részletesség csökkenti az adathasználatot.</string>
+    <string name="enable_crash_reporting">Összeomlásjelentés engedélyezése</string>
+    <string name="enable_simulation">Szimuláció engedélyezés</string>
+    <string name="clear_simulation_start_location">Szimuláció kezdőhelyének törlése</string>
+    <string name="privacy_policy">Adatvédelmi nyilatkozat:</string>
+    <string name="satellites_separator">/</string>
+    <string name="must_uninstall_to_update">Először el kell távolítania a régit, mielőtt az új verziót telepíti.</string>
+    <string name="category_leaderboard">Ranglista</string>
+    <string name="category_network_usage">Adathasználat</string>
+    <string name="category_display">Megjelenítés</string>
+    <string name="reset_simulation_start">A szimuláció kezdőpontja vissza lett állítva</string>
+    <string name="category_crashreport">Összeomlásjelentés</string>
+
+    <string-array name="map_tile_resolution_options">
+        <item>Magas (Wi-Fi) / alacsony (mobil)</item>
+        <item>Csak magas részletesség</item>
+        <item>Csak alacsony részletesség</item>
+        <item>Nincs térkép</item>
+    </string-array>
+
+    <string name="low_battery_title">Letapogatás leállítása alacsony töltöttségnél</string>
+    <string name="battery_percent_options_label">Leállítás, ha a töltöttség ennél kisebb:</string>
+    <string name="motion_detection_title">Mozgásérzékelés</string>
+    <string name="motion_detection_options_label">Letapogatás leállítása, ha nem mozog</string>
+    <string name="motion_detection_options_conjunction">in</string>
+    <string name="motion_detection_minimum_pause_time">Minimális szüneteltetési idő:</string>
+    <string name="map_scanning_paused_no_motion">A hely nem változik, letapogatás szüneteltetve.</string>
+    <string name="save_stumble_logs">Stumble naplók mentése</string>
+    <string name="create_log_archive_failure">Nem hozható létre archív könyvtár a naplóknak</string>
+    <string name="create_log_archive_success">Naplók mentési helye:</string>
+    <string name="power_saving_mode_summary">Szünetelteti a letapogatást, ha nem mozog, és újraindul ha mozgást észlel.</string>
+    <string name="power_saving_title">Energiatakarékosság</string>
+    <string name="stop_at_x_battery">Leállítás %1$d%% töltöttségnél</string>
+    <string name="motion_detection_onoff">Mozgásérzékelés %1$s</string>
+    <string name="change_power_saving">Módosítás</string>
+    <string name="on">Be</string>
+    <string name="off">Ki</string>
+
+    <string name="title_activity_power_saving_screen">Energiatakarékossági beállítások</string>
+    <string name="sensor_type_legacy">Az eszközének nincs jelentős mozgás érzékelője.</string>
+    <string name="sensor_type_significant_motion">A jelentős mozgás érzékelő biztosítja a legjobb energiatakarékosságot, de lehet hogy nem működik minden eszközön.</string>
+
+    <string name="ok">OK</string>
+    <string name="unlimited_map_zoom">Végtelen térkép nagyítás</string>
+    <string name="unlimited_map_zoom_summary">A nagyítás korlátozása csökkentheti a térképnézet adathasználatát. A végtelen térkép nagyítás csak a magas részletességű térképre vonatkozik.</string>
+    <string name="use_passive_scanning">Passzív letapogatás tesztelése</string>
+    <string name="use_high_power_mode">Nagy teljesítményű mód</string>
+    <string name="test_significant_sensor_dialog_title">Jelentős mozgás érzékelő tesztelése</string>
+    <string name="test_significant_sensor_dialog_message">Álljon meg, aztán sétáljon 1 percig.\n\Mozgás észlelése &#8230;</string>
+    <string name="test_significant_sensor_confirmed_working">Mozgás észlelve.\nAz érzékelő normálisan működik.</string>
+    <string name="button_test_significant_motion_sensor">Jelentős mozgás érzékelő tesztelése</string>
+    <string name="sensor_name_significant_motion">Jelentős mozgás</string>
+    <string name="sensor_name_accelerometer">Gyorsulásmérő</string>
+    <string name="title_use_sensor">Érzékelő használata:</string>
+
+    <string name="fxaDescription">Használja a Firefox fiókját a ranglistára kerüléshez</string>
+    <string name="fxaDescriptionLoggedIn">Bejelentkezve:\n%1$s</string>
+    <string name="fxaPromptLogout">Kijelentkezés a Firefox fiókból</string>
+    <string name="fxa_is_logged_out">Kijelentkezve a Firefox fiókból</string>
+    <string name="fxa_settings_title">Firefox fiókok</string>
+    <string name="fxa_needs_network">Adatkapcsolat szükséges.</string>
+    <string name="fxa_no_config">A Firefox fiók beállításai nem tölthetőek be</string>
+    <string name="fxa_loading_config">A Firefox fiók beállításainak betöltési kísérlete</string>
+    <string name="fxa_config_loaded">A Firefox fiók beállításai betöltve</string>
+
+</resources>

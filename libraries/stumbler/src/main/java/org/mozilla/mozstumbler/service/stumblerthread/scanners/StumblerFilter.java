@@ -5,6 +5,7 @@
 package org.mozilla.mozstumbler.service.stumblerthread.scanners;
 
 import android.location.Location;
+import android.os.Build;
 import android.util.Log;
 
 import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
@@ -21,7 +22,7 @@ public final class StumblerFilter {
     private static final double MIN_ALTITUDE = -418;      // Dead Sea's altitude in meters
     private static final float MAX_SPEED = 340.29f;   // Mach 1 in meters/second
     private static final float MIN_ACCURACY = 500;       // meter radius
-    private static final long MIN_TIMESTAMP = 946684801; // 2000-01-01 00:00:01
+    private static final long MIN_TIMESTAMP = Build.TIME; // The build time of the application
     private static final long MILLISECONDS_PER_DAY = 86400000;
 
     public boolean blockLocation(Location location) {

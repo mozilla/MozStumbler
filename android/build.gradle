@@ -62,7 +62,6 @@ android {
 
         buildConfigField "boolean", "ROBOLECTRIC", "false"
         buildConfigField "String", "MOZILLA_API_KEY", "\"\""
-        buildConfigField "String", "TILE_SERVER_URL", "\"\""
 
         buildConfigField "boolean", "LABEL_MAP_TILES", "false"
 

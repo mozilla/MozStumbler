@@ -26,7 +26,6 @@ import android.widget.TextView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.mozilla.mozstumbler.BuildConfig;
 import org.mozilla.mozstumbler.R;
 import org.mozilla.mozstumbler.client.ClientPrefs;
 import org.mozilla.mozstumbler.client.MainApp;
@@ -53,7 +52,6 @@ import org.mozilla.osmdroid.tileprovider.BitmapPool;
 import org.mozilla.osmdroid.tileprovider.MapTile;
 import org.mozilla.osmdroid.tileprovider.tilesource.ITileSource;
 import org.mozilla.osmdroid.tileprovider.tilesource.OnlineTileSourceBase;
-import org.mozilla.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.mozilla.osmdroid.tileprovider.tilesource.XYTileSource;
 import org.mozilla.osmdroid.util.GeoPoint;
 import org.mozilla.osmdroid.views.MapView;
@@ -362,7 +360,6 @@ public class MapFragment extends android.support.v4.app.Fragment
             isHighBandwidth = true; // use this as initial default
         }
 
-        final boolean isMLSTileStore = (BuildConfig.TILE_SERVER_URL != null);
         final boolean hasHighResMap = mLowResMapOverlayHighZoom == null && mMap.getTileProvider().getTileSource() == mHighResMapSource;
         final boolean hasLowResMap = mLowResMapOverlayHighZoom != null;
 
@@ -381,16 +378,17 @@ public class MapFragment extends android.support.v4.app.Fragment
             // Force GC to cleanup underlying LRU caches in overlay
             System.gc();
 
-            if (!isMLSTileStore) {
-                mHighResMapSource = TileSourceFactory.MAPQUESTOSM;
-            } else {
-                mHighResMapSource = new XYTileSource(AbstractMapOverlay.MLS_MAP_TILE_BASE_NAME,
+
+            mHighResMapSource = new XYTileSource(AbstractMapOverlay.MLS_MAP_TILE_BASE_NAME,
                         null, 1, AbstractMapOverlay.MAX_ZOOM_LEVEL_OF_MAP,
                         AbstractMapOverlay.TILE_PIXEL_SIZE,
                         AbstractMapOverlay.FILE_TYPE_SUFFIX_PNG,
-                        new String[]{BuildConfig.TILE_SERVER_URL});
-            }
-            System.gc();
+                        AppGlobals.MAPBOX_TILE_URLS) {
+                public String getTileURLString(MapTile aTile) {
+                    return super.getTileURLString(aTile) + "?access_token=" + AppGlobals.MAPBOX_ACCESS_CODE;
+                }
+            };
+      System.gc();
             mMap.setTileSource(mHighResMapSource);
         } else if (!isHighBandwidth && !hasLowResMap) {
             // Unhooking the highres map means we should nullify it and force GC
@@ -401,9 +399,9 @@ public class MapFragment extends android.support.v4.app.Fragment
             mMap.setTileSource(new BlankTileSource());
 
             mLowResMapOverlayLowZoom = new LowResMapOverlay(AbstractMapOverlay.TileResType.LOWER_ZOOM,
-                    this.getActivity(), isMLSTileStore, mMap);
+                    this.getActivity(), mMap);
             mLowResMapOverlayHighZoom = new LowResMapOverlay(AbstractMapOverlay.TileResType.HIGHER_ZOOM,
-                    this.getActivity(), isMLSTileStore, mMap);
+                    this.getActivity(), mMap);
 
             updateOverlayBaseLayer(mMap.getZoomLevel());
         }
@@ -508,11 +506,7 @@ public class MapFragment extends android.support.v4.app.Fragment
 
     private void showCopyright() {
         TextView copyrightArea = (TextView) mRootView.findViewById(R.id.copyright_area);
-        if (BuildConfig.TILE_SERVER_URL == null) {
-            copyrightArea.setText(getActivity().getString(R.string.map_copyright_fdroid));
-        } else {
-            copyrightArea.setText(getActivity().getString(R.string.map_copyright_moz));
-        }
+        copyrightArea.setText(getActivity().getString(R.string.map_copyright_moz));
     }
 
     private void updateCenterButtonIcon() {

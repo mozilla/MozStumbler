@@ -1,45 +1,224 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Mozilla Stumbler</string>
-    <string name="action_about">О программе</string>
+
+    <string name="app_name">Stumbler</string>
+    <string name="action_about">О Mozilla Stumbler</string>
     <string name="action_preferences">Настройки</string>
-    <string name="start_scanning">Начать сканирование</string>
-    <string name="stop_scanning">Остановить сканирование</string>
-    <string name="view_leaderboard">Открыть таблицу лидеров</string>
+    <string name="start_scanning">Сканировать</string>
+    <string name="stop_scanning">Остановить</string>
+    <string name="view_leaderboard">Таблица лидеров</string>
     <string name="service_name">Mozilla Stumbler</string>
-    <!--<string name="wifi_disabled">0 (Wi-Fi disabled)</string> translation missing-->
-    <string name="enter_nickname">Укажите свой псевдоним (не обязательно)</string>
-    <string name="enter_nickname_title">Псевдоним: %1$s</string>
-    <string name="enter_nickname_longtext">Ваш псевдоним появится в таблице лидеров.</string>
+    <string name="notification_scanning">%1$s сканирует</string>
+    <string name="notification_paused">%1$s бездействует</string>
+    <string name="enter_nickname">Никнейм (не обязательно)</string>
+    <string name="enter_nickname_title">Никнейм: %1$s</string>
+    <string name="enter_nickname_longtext">Ник будет показан в таблице лидеров</string>
     <string name="update_title">Загрузить обновление Mozilla Stumbler?</string>
-    <string name="update_message">Установленная версия: %1$s\nПоследняя версия: %2$s</string>
-    <string name="update_now">Обновить сейчас</string>
-    <string name="update_later">Обновить позже</string>
+    <string name="update_message">Установленная версия: %1$s\nДоступная версия: %2$s</string>
+    <string name="update_now">Обновить</string>
+    <string name="update_later">Позже</string>
     <string name="yes">Да</string>
     <string name="no">Нет</string>
     <string name="about_version">Версия %1$s</string>
-    <!--translations missing
-    <string name="about_openstreetmap">Map view tiles © OpenStreetMap contributors\nhttp://www.openstreetmap.org</string>
-    <string name="about_mapbox_title">MapBox</string>-->
-    <string name="about_mapbox">Информация о картографическом провайдере…</string>
-    <string name="about_legal_aosp">Некоторые изображения в этом приложении созданы и опубликованы под лицензией AOSP (Android Open Source Project) и используются в соответствии с условиями, описанными в лицензии Creative Commons 2.5</string>
-    <string name="upload_observations_sent_title">Уже оправлено</string>
-    <string name="metrics_observations_last_upload_time_title">Время отправки:</string>
-    <string name="metrics_observations_title">Измерений:</string>
-    <string name="metrics_observations_wifis_title">Wi-Fi точки:</string>
-    <string name="metrics_observations_cell_towers_title">GSM соты:</string>
+    <string name="about_openstreetmap">Фрагменты карт\n© Участники OpenStreetMap\nhttp://www.openstreetmap.org</string>
+    <string name="about_mapbox_title">MapBox</string>
+    <string name="about_mapbox">Подробнее на http://www.mapbox.com</string>
+    <string name="about_legal_aosp">Некоторые графические элементы этого приложения созданы на основе содержимого, опубликованного Android Open Source Project и используются согласно лицензии Creative Commons Attribution 2.5</string>
+    <string name="about_legal_flaticons">Значки GPS, вышки, WiFi и бинокля созданы Freepik на сайте http://www.flaticon.com под лицензией http://creativecommons.org/licenses/by-nd/3.0</string>
+    <string name="upload_observations_sent_title">Отправлено</string>
+    <string name="metrics_observations_last_upload_time_title">Последний:</string>
+    <string name="metrics_observations_last_upload_time_never">никогда</string>
+
+    <plurals name="time_diff_seconds">
+        <item quantity="one">только что</item>
+        <item quantity="other">менее минуты</item>
+    </plurals>
+    <plurals name="time_diff_minutes">
+        <item quantity="one">%d мин. назад</item>
+        <item quantity="few">%d мин. назад</item>
+        <item quantity="many">%d мин. назад</item>
+        <item quantity="other">%d мин. назад</item>
+    </plurals>
+    <plurals name="time_diff_hours">
+        <item quantity="one">%d ч. назад</item>
+        <item quantity="few">%d ч. назад</item>
+        <item quantity="many">%d ч. назад</item>
+        <item quantity="other">%d ч. назад</item>
+    </plurals>
+    <plurals name="time_diff_days">
+        <item quantity="one">%d день назад</item>
+        <item quantity="few">%d дня назад</item>
+        <item quantity="many">%d дней назад</item>
+        <item quantity="other">%d дн. назад</item>
+    </plurals>
+
+    <string name="metrics_notification_text">Отчёты: %1$d, GSM: %2$d, WiFi: %3$d</string>
+    <string name="metrics_notification_extraline">Отправка: %1$s</string>
+    <string name="metrics_observations_title">Отчётов:</string>
+    <string name="metrics_observations_wifis_title">ТД WiFi:</string>
+    <string name="metrics_observations_cell_towers_title">БС GSM:</string>
     <string name="upload_observations_in_queue_title">В очереди</string>
+    <string name="upload_wifi_only_title">Автоотправка по WiFi</string>
+    <string name="upload_wifi_only_summary">Позволяет снизить потребление мобильного трафика. Нажатие кнопки отправки в боковой панели отправляет отчёты всегда</string>
+    <string name="metrics_activity_title">Сканирование</string>
+    <string name="metrics_this_session">За сессию</string>
+    <string name="drawer_map_option_show_mls_locations">Показать MLS-местоположение</string>
+    <string name="title_activity_log">Журнал</string>
+    <string name="action_file_bug">Отчёт об ошибке (EN)</string>
+    <string name="file_bug_sender_name">Ваше имя:</string>
+    <string name="file_bug_sender_name_hint">не обязательно</string>
+    <string name="file_bug_sender_email">Ваш e-mail:</string>
+    <string name="file_bug_sender_email_hint">обязательно</string>
+    <string name="file_bug_name">Название ошибки:</string>
+    <string name="file_bug_name_hint">содержательное название</string>
+    <string name="file_bug_description">Описание ошибки:</string>
+    <string name="file_bug_description_hint">подробные сведения об отправляемой ошибке (что происходит, когда происходит)</string>
+    <string name="file_bug_reproduction">Воспроизведение ошибки:</string>
+    <string name="file_bug_reproduction_hint">последовательность действий, вызывающих ошибку</string>
+    <!-- file_bug_report_info: %1$s refers to enable_crash_reporting -->
+    <string name="file_bug_report_info">Вместе с этим отчётом также будут отправлены сведения о текущем состоянии устройства. Эти сведения необходимы для поиска источника ошибки.\n\nОбратите внимание, что для ошибок, приводящих к падению программы, отчёты отправляются автоматически, если включено \"%1$s\". Для сообщений об ошибках, не приводящих к падениям программы, просим использовать этот диалог.</string>
+    <string name="file_bug_send">Отправить отчёт</string>
+    <string name="file_bug_type">Тип ошибки:</string>
 
+    <string-array name="file_bug_type_list">
+        <item>Внешний вид</item>
+        <item>Производительность</item>
+        <item>Совместимость</item>
+        <item>Использование</item>
+        <item>Запрос возможностей</item>
+        <item>Другое</item>
+    </string-array>
 
-    <string name="upload_wifi_only_title">Передача данных только через Wi-Fi</string>
-    <string name="upload_wifi_only_summary">Эта опция позволяет экономить мобильный трафик.</string>
-    <!--translations missing
+    <string name="file_bug_toast_success">Отчёт отправлен. Спасибо!</string>
+    <string name="file_bug_missing_field">Обязательное поле!</string>
+    <string name="action_view_log">Журнал работы</string>
+    <string name="scroll_to_start">Прокрутка в начало</string>
+    <string name="scroll_to_end">Прокрутка в конец</string>
 
+    <string name="kml_file_title">KML-отчёт</string>
+    <string name="kml_file_load">Загрузить KML</string>
+    <string name="kml_file_save">Выгрузить KML</string>
+    <string name="kml_file_description">Выгрузка и загрузка отчётов (местоположения, счётчики WiFi и GSM, сегмент трека) для отладки</string>
+    <string name="kml_file_saved_name">Файл:</string>
+    <string name="loading_kml">Загрузка KML</string>
+    <string name="saving_kml">Сохранение KML</string>
+    <string name="mozstumbler_kml_file">KML-файл Stumbler</string>
+    <string name="kml_file_saved">KML выгружен</string>
+    <string name="share_after_kml_saved">Файл был сохранён в памяти, хотите им поделиться?</string>
 
+    <string name="gpx_file_title">GPX-трек</string>
+    <string name="gpx_file_save">Выгрузить GPX</string>
+    <string name="gpx_file_list">Список GPX</string>
+    <string name="gpx_file_description">Выгрузка местоположений в GPX</string>
+    <string name="gpx_file_saved_name">Файл:</string>
+    <string name="saving_gpx">Сохранение GPX в %1$s</string>
+    <string name="mozstumbler_gpx_file">GPX-файл Stumbler</string>
+    <string name="gpx_file_saved">GPX выгружен</string>
+    <string name="share_after_gpx_saved">Файл был сохранён в памяти, хотите им поделиться?</string>
 
-	
-	<string name="title_activity_log">Log</string>
-    <string name="action_view_log">View Log</string>
-    <string name="scroll_to_start">Scroll to Top</string>
-    <string name="scroll_to_end">Scroll to End</string>-->
+    <string name="keep_screen_on_title">Держать подсветку</string>
+    <string name="keep_screen_on_summary">Не отключать подсветку экрана, если выполняется сканирование и приложение работает на переднем плане</string>
+    <string name="delete_all">Удалить всё</string>
+    <string name="are_you_sure">Вы уверены?</string>
+    <string name="select_file">Выберите файл</string>
+    <string name="share_file">Поделиться</string>
+    <string name="load_file">Загрузить</string>
+    <string name="delete_file">Удалить</string>
+
+    <string name="drawer_open">Открыть боковую панель</string>
+    <string name="drawer_close">Закрыть боковую панель</string>
+    <string name="title_activity_leaderboard">Таблица лидеров</string>
+    <string name="drawer_map_layers_title">Легенда</string>
+    <string name="first_run_message_part1">Mozilla Location Service – открытая служба геолокации на основе сведений о точках доступа WiFi и базовых станциях GSM.</string>
+    <string name="first_run_message_part2">Ознакомьтесь с нашей <a href="https://location.services.mozilla.com/privacy">политикой конфиденциальности</a> и приступайте к сканированию, чтобы повысить точность геолокации там, где Вы находитесь.</string>
+    <string name="first_run_start_stumbling">Начать сканирование</string>
+    <string name="first_run_welcome_to_mozstumbler">Mozilla Stumbler</string>
+    <string name="map_unavailable">Карта недоступна из-за отсутствия SD-носителя.\nСканирование по-прежнему возможно</string>
+    <string name="map_offline_mode">Карта не будет обновляться без интернет-соединения,\nно сканирование по-прежнему возможно</string>
+    <string name="map_copyright_fdroid">Предоставлено MapQuest\n© Участники OpenStreetMap</string>
+    <string name="map_copyright_moz">© MapBox © Участники OpenStreetMap</string>
+    <string name="action_developer">Для разработчиков</string>
+    <string name="developer_title">Для разработчиков</string>
+
+    <string name="enable_option_show_mls_on_map">Запросы MLS-местоположения</string>
+    <string name="enable_option_show_mls_on_map_summary">Запрашивать и отображать местоположение из базы Mozilla Location Service (MLS) для каждого отчёта</string>
+    <!-- enable_option_show_mls_on_map_detailed_info: %1$s refers to upload_wifi_only_title -->
+    <string name="enable_option_show_mls_on_map_detailed_info">MLS-местоположение будет показано для каждого отчёта - то есть, Ваше расчётное местоположение на основе текущих сведений MLS в точке создания отчёта.\n\nMLS-местоположения отображаются в виде красных точек с линиями, ведущими к отчётам. Чем они ближе к текущему GPS-местоположению, тем надёжнее и точнее геолокация на основе сведений MLS. Точность в этом районе можно улучшить, чаще выполняя сканирование.\n\nЗапросы местоположения не используют мобильное соединение, если включена \"%1$s\"</string>
+
+    <!-- This is an experimental option to enable offline location queries-->
+    <string name="enable_offline_geo">Оффлайн-запросы местоположения</string>
+
+    <string name="cell_plus_wifi_observation">WiFi- и GSM-отчёт</string>
+    <string name="cell_only_observation">GSM-отчёт</string>
+    <string name="wifi_only_observation">WiFi-отчёт</string>
+    <string name="mls_location_observation">MLS-местополож.</string>
+    <string name="low_resolution_map">Низкая детализация</string>
+    <string name="map_turned_off">Карта отключена</string>
+    <string name="map_tile_resolution_options_label">Детализация карты</string>
+    <string name="map_tile_resolution_options_label_dynamic">Детализация: %1$s</string>
+    <string name="map_tile_resolution_options_summary">Низкая детализация экономит трафик</string>
+    <string name="enable_crash_reporting">Сообщать о падениях</string>
+    <string name="enable_simulation">Включить симуляцию</string>
+    <string name="clear_simulation_start_location">Сброс начального местоположения симуляции</string>
+    <string name="privacy_policy">Конфиденциальность:</string>
+    <string name="satellites_separator">/</string>
+    <string name="must_uninstall_to_update">Необходимо удалить старую версию перед обновлением</string>
+    <string name="category_leaderboard">Таблица лидеров</string>
+    <string name="category_network_usage">Сеть</string>
+    <string name="category_display">Отображение</string>
+    <string name="reset_simulation_start">Начальное местоположение симуляции сброшено</string>
+    <string name="category_crashreport">Отчёты о падениях</string>
+
+    <string-array name="map_tile_resolution_options">
+        <item>WiFi ↑, GSM ↓</item>
+        <item>высокая ↑</item>
+        <item>низкая ↓</item>
+        <item>отключить карту</item>
+    </string-array>
+
+    <string name="low_battery_title">Остановить при разряде</string>
+    <string name="battery_percent_options_label">Уровень батареи:</string>
+    <string name="motion_detection_title">Детектор движения</string>
+    <string name="motion_detection_options_label">Не сканировать без перемещения</string>
+    <string name="motion_detection_options_conjunction">за</string>
+    <string name="motion_detection_minimum_pause_time">Бездействие, не менее:</string>
+    <string name="map_scanning_paused_no_motion">Местоположение не изменилось, сканер бездействует</string>
+    <string name="save_stumble_logs">Сохранять отчёты сканирования</string>
+    <string name="create_log_archive_failure">Не удалось создать папку для хранения отчётов</string>
+    <string name="create_log_archive_success">Отчёты будут сохраняться в папке:\n</string>
+    <string name="power_saving_mode_summary">Остановить сканирование при неподвижности и возобновить при движении</string>
+    <string name="power_saving_title">Энергосбережение</string>
+    <string name="stop_at_x_battery">Батарея не ниже %1$d%%</string>
+    <string name="motion_detection_onoff">Детектор движ.: %1$s</string>
+    <string name="change_power_saving">Изменить</string>
+    <string name="on">вкл.</string>
+    <string name="off">откл.</string>
+
+    <string name="title_activity_power_saving_screen">Энергосбережение</string>
+    <string name="sensor_type_legacy">На этом устройстве нет SMD-датчика.</string>
+    <string name="sensor_type_significant_motion">SMD-датчик наиболее экономичен, но может работать не на всех устройствах.</string>
+
+    <string name="ok">ОК</string>
+    <string name="unlimited_map_zoom">Бесконечное увеличение</string>
+    <string name="unlimited_map_zoom_summary">Ограниченное увеличение экономит трафик. Бесконечное увеличение – только для высокой детализации карты</string>
+    <string name="use_passive_scanning">Пассивное сканирование</string>
+    <string name="use_high_power_mode">Интенсивное сканирование</string>
+    <string name="test_significant_sensor_dialog_title">Проверка SMD-датчика</string>
+    <string name="test_significant_sensor_dialog_message">Стойте, затем идите в течение минуты.\n\nОбнаружение движения&#8230;</string>
+    <string name="test_significant_sensor_confirmed_working">Обнаружено движение.\nSMD-датчик работает нормально.</string>
+    <string name="button_test_significant_motion_sensor">Проверка SMD-датчика</string>
+    <string name="sensor_name_significant_motion">SMD (датчик явного движения)</string>
+    <string name="sensor_name_accelerometer">Акселерометр</string>
+    <string name="title_use_sensor">Использовать датчик:</string>
+
+    <string name="fxaDescription">Используйте Аккаунт Firefox, чтобы быть в таблице лидеров</string>
+    <string name="fxaDescriptionLoggedIn">Выполнен вход в аккаунт:\n%1$s</string>
+    <string name="fxaPromptLogout">Выйти из Аккаунта Firefox?</string>
+    <string name="fxa_is_logged_out">Выполнен выход из Аккаунта Firefox</string>
+    <string name="fxa_settings_title">Аккаунт Firefox</string>
+    <string name="fxa_needs_network">Требуется подключение к сети</string>
+    <string name="fxa_no_config">Не удалось загрузить конфигурацию Аккаунтов Firefox</string>
+    <string name="fxa_loading_config">Загрузка конфигурации Аккаунтов Firefox…</string>
+    <string name="fxa_config_loaded">Конфигурация Аккаунтов Firefox загружена</string>
+
 </resources>

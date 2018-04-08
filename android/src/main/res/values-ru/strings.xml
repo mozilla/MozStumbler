@@ -155,7 +155,7 @@
     <string name="low_resolution_map">Низкая детализация</string>
     <string name="map_turned_off">Карта отключена</string>
     <string name="map_tile_resolution_options_label">Детализация карты</string>
-    <string name="map_tile_resolution_options_label_dynamic">Детализация: %1$s</string>
+    <string name="map_tile_resolution_options_label_dynamic">Карта: %1$s</string>
     <string name="map_tile_resolution_options_summary">Низкая детализация экономит трафик</string>
     <string name="enable_crash_reporting">Сообщать о падениях</string>
     <string name="enable_simulation">Включить симуляцию</string>
@@ -170,10 +170,10 @@
     <string name="category_crashreport">Отчёты о падениях</string>
 
     <string-array name="map_tile_resolution_options">
-        <item>WiFi ↑, GSM ↓</item>
-        <item>высокая ↑</item>
-        <item>низкая ↓</item>
-        <item>отключить карту</item>
+        <item>↑ (WiFi), ↓ (GSM)</item>
+        <item>Высокая детализация</item>
+        <item>Низкая детализация</item>
+        <item>Отключено</item>
     </string-array>
 
     <string name="low_battery_title">Остановить при разряде</string>

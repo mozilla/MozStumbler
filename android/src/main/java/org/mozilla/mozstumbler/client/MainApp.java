@@ -26,7 +26,6 @@ import org.acra.annotation.ReportsCrashes;
 import org.acra.sender.HttpSender;
 import org.mozilla.mozstumbler.BuildConfig;
 import org.mozilla.mozstumbler.R;
-import org.mozilla.mozstumbler.client.leaderboard.LBStumblerBundleReceiver;
 import org.mozilla.mozstumbler.client.subactivities.DeveloperActivity;
 import org.mozilla.mozstumbler.client.subactivities.LogActivity;
 import org.mozilla.mozstumbler.client.util.NotificationUtil;
@@ -97,7 +96,6 @@ public class MainApp extends Application
 
     // These track the state of the currently running service
     private ScanManager.ScannerState scannerState = ScannerState.STOPPED;
-    private LBStumblerBundleReceiver mLeaderboard;
 
 
     boolean isStumblerStopped() {
@@ -290,7 +288,6 @@ public class MainApp extends Application
         Intent intent = new Intent(this, ClientStumblerService.class);
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
 
-        mLeaderboard = new LBStumblerBundleReceiver(this);
     }
 
     private void checkSimulationPermission() {
@@ -342,9 +339,7 @@ public class MainApp extends Application
         AsyncUploader uploader = new AsyncUploaderMLS((DataStorageManager)DataStorageManager.getInstance(), this);
         AsyncUploadParam param = new AsyncUploadParam(
                 ClientPrefs.getInstance(this).getUseWifiOnly(),
-                new NetworkInfo(this).isWifiAvailable(),
-                Prefs.getInstance(this).getNickname(),
-                Prefs.getInstance(this).getEmail());
+                new NetworkInfo(this).isWifiAvailable());
 
         uploader.execute(param);
     }

@@ -104,9 +104,7 @@ public class MetricsView {
                 Context c = mView.getContext();
                 AsyncUploader uploader = new AsyncUploaderMLS((DataStorageManager)DataStorageManager.getInstance(), c);
                 AsyncUploadParam param = new AsyncUploadParam(false /* useWifiOnly */,
-                        new NetworkInfo(mView.getContext()).isWifiAvailable(),
-                        Prefs.getInstance(mView.getContext()).getNickname(),
-                        Prefs.getInstance(mView.getContext()).getEmail());
+                        new NetworkInfo(mView.getContext()).isWifiAvailable());
                 uploader.execute(param);
 
                 setUploadButtonToSyncing(true);

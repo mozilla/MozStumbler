@@ -50,16 +50,6 @@
         </activity>
 
         <activity
-            android:name=".client.subactivities.LeaderboardActivity"
-            android:configChanges="orientation|screenSize|keyboard"
-            android:label="@string/title_activity_leaderboard"
-            android:parentActivityName=".client.navdrawer.MainDrawerActivity">
-            <!-- Parent activity meta-data to support 4.0 and lower -->
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="org.mozilla.mozstumbler.client.navdrawer.MainDrawerActivity" />
-        </activity>
-        <activity
             android:name=".client.subactivities.DeveloperActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:parentActivityName=".client.navdrawer.MainDrawerActivity">

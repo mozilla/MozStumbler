@@ -1,29 +1,29 @@
 test: libtest unittest
 	./gradlew copyTestResources
-	./gradlew testGithubLbprodUnittest --info
+	./gradlew testGithubUnittest --info
 
 libtest:
 	cd libraries/stumbler; ./gradlew test
 
 unittest:
-	./gradlew assembleGithubLbprodUnittest
+	./gradlew assembleGithubUnittest
 
 debug:
-	./gradlew assembleGithubLbstageDebug
+	./gradlew assembleGithubDebug
 
 github:
 	./release_check.py github
-	./gradlew assembleGithubLbprodRelease
-	sh rename_release.sh github-lbprod-release
+	./gradlew assembleGithubRelease
+	sh rename_release.sh github-release
 
 playstore:
 	./release_check.py playstore
-	./gradlew assemblePlaystoreLbprodRelease
-	sh rename_release.sh playstore-lbprod-release
+	./gradlew assemblePlaystoreRelease
+	sh rename_release.sh playstore-release
 
 fdroid:
-	./gradlew assembleFdroidLbprodRelease
-	sh rename_release.sh fdroid-lbprod-release
+	./gradlew assembleFdroidRelease
+	sh rename_release.sh fdroid-release
 
 clean:
 	rm -rf outputs
@@ -31,4 +31,4 @@ clean:
 	./gradlew clean
 
 install_debug:
-	./gradlew installGithubLbstageDebug
+	./gradlew installGithubDebug

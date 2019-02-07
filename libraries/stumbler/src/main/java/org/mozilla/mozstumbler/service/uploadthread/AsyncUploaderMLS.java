@@ -32,8 +32,6 @@ public class AsyncUploaderMLS extends AsyncUploader {
     @Override
     protected HashMap<String,String> getHeaders(AsyncUploadParam param) {
         HashMap<String,String> headers = new HashMap<String, String>();
-        headers.put(MLSLocationService.EMAIL_HEADER, param.emailAddress);
-        headers.put(MLSLocationService.NICKNAME_HEADER, param.nickname);
         return headers;
     }
 

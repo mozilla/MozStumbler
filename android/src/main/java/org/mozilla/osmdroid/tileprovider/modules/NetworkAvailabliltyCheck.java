@@ -41,8 +41,10 @@ public class NetworkAvailabliltyCheck implements INetworkAvailablityCheck {
     }
 
     @Override
+    @Deprecated
     public boolean getRouteToPathExists(final int hostAddress) {
-        return (mConnectionManager.requestRouteToHost(ConnectivityManager.TYPE_WIFI, hostAddress) || mConnectionManager
-                .requestRouteToHost(ConnectivityManager.TYPE_MOBILE, hostAddress));
+        return true;
+        //return (mConnectionManager.requestRouteToHost(ConnectivityManager.TYPE_WIFI, hostAddress) || mConnectionManager
+        //        .requestRouteToHost(ConnectivityManager.TYPE_MOBILE, hostAddress));
     }
 }

@@ -8,5 +8,6 @@ public interface INetworkAvailablityCheck {
 
     boolean getCellularDataNetworkAvailable();
 
+    @Deprecated
     boolean getRouteToPathExists(int hostAddress);
 }

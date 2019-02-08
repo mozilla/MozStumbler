@@ -278,8 +278,8 @@ String getMozillaApiKey(String scope) {
         println "Writing custom MozAPIKey: ["+result+"]";
         return result;
     }
-    println "No "+signFile.getAbsolutePath()+" for Mozilla API Key configuration."
-    return "null";
+    String msg = "No "+signFile.getAbsolutePath()+" for Mozilla API Key configuration.";
+    throw new GradleException(msg);
 }
 
 String getTileServerUrl(String scope) {

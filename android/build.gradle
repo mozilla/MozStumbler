@@ -77,9 +77,6 @@ android {
         buildConfigField "String", "GIT_DESCRIPTION", "\"${gitDescription}\""
         buildConfigField "String", "GIT_VERSION", "\"${versionName} ${gitDescription}\""
 
-        // Need a stub LB_CONFIG_URL which gets clobbered by the
-        // leaderboard build flavor
-        buildConfigField "String", "LB_CONFIG_URL", "\"\""
     }
 
     signingConfigs {
@@ -87,7 +84,7 @@ android {
     }
 
     productFlavors {
-        flavorDimensions "appstore", "leaderboard"
+        flavorDimensions "appstore"
 
         github {
             flavorDimension "appstore"
@@ -113,20 +110,6 @@ android {
             buildConfigField "boolean", "FDROID", "true"
         }
 
-        lbdev {
-            flavorDimension "leaderboard"
-            buildConfigField "String", "LB_CONFIG_URL", "\"http://leaderboard-dev.jaredkerim.com/api/v1/fxa/config/\""
-        }
-
-        lbstage {
-            flavorDimension "leaderboard"
-            buildConfigField "String", "LB_CONFIG_URL", "\"https://loc-leaders.stage.mozaws.net/api/v1/fxa/config/\""
-        }
-
-        lbprod {
-            flavorDimension "leaderboard"
-            buildConfigField "String", "LB_CONFIG_URL", "\"https://location-leaderboard.services.mozilla.com/api/v1/fxa/config/\""
-        }
     }
 
     buildTypes {
@@ -254,10 +237,6 @@ dependencies {
     compile "org.apache.httpcomponents:httpmime:4.0.1"
     compile "org.apache.james:apache-mime4j:0.6"
 
-    // Firefox Accounts library code
-    compile 'org.mozilla.accounts.fxa:fxa:0.10.2'
-    testCompile 'org.mozilla.accounts.fxa:fxa:0.10.2'
-
     // org.apache.http.httpclient
     compile 'org.apache.httpcomponents:httpclient-android:4.3.5.1'
     testCompile 'org.apache.httpcomponents:httpclient-android:4.3.5.1'
@@ -299,8 +278,8 @@ String getMozillaApiKey(String scope) {
         println "Writing custom MozAPIKey: ["+result+"]";
         return result;
     }
-    println "No "+signFile.getAbsolutePath()+" for Mozilla API Key configuration."
-    return "null";
+    String msg = "No "+signFile.getAbsolutePath()+" for Mozilla API Key configuration.";
+    throw new GradleException(msg);
 }
 
 String getTileServerUrl(String scope) {
@@ -342,6 +321,6 @@ project.archivesBaseName = "MozStumbler";
 
 task copyTestResources(type: Copy) {
     from "${projectDir}/src/test/res"
-    into "${buildDir}/test-classes/githublbprod/unittest"
+    into "${buildDir}/test-classes/github/unittest"
 }
 check.dependsOn copyTestResources

@@ -34,7 +34,6 @@ import org.mozilla.mozstumbler.client.MainApp;
 import org.mozilla.mozstumbler.client.Updater;
 import org.mozilla.mozstumbler.client.mapview.MapFragment;
 import org.mozilla.mozstumbler.client.subactivities.FirstRunFragment;
-import org.mozilla.mozstumbler.client.subactivities.LeaderboardActivity;
 import org.mozilla.mozstumbler.service.stumblerthread.StumblerServiceIntentActions;
 import org.mozilla.mozstumbler.svclocator.ServiceLocator;
 import org.mozilla.mozstumbler.svclocator.services.log.ILogger;
@@ -249,19 +248,6 @@ public class MainDrawerActivity
         mMapFragment.dimToolbar();
     }
 
-    @Override
-    public synchronized boolean onPrepareOptionsMenu (Menu menu) {
-        if (menu == null) { return true; }
-
-        ClientPrefs prefs = ClientPrefs.getInstance(this);
-        for (int i = 0; i < menu.size(); i++ ) {
-            MenuItem item = menu.getItem(i);
-            if (item.getItemId() == R.id.action_view_leaderboard) {
-                item.setEnabled(prefs.isFxaEnabled());
-            }
-        }
-        return true;
-    }
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
@@ -323,9 +309,6 @@ public class MainDrawerActivity
             case MENU_START_STOP:
                 mMapFragment.toggleScanning(item);
                 return true;
-            case R.id.action_view_leaderboard:
-                startActivity(new Intent(getApplication(), LeaderboardActivity.class));
-                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -335,9 +318,6 @@ public class MainDrawerActivity
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-
-                // Force the leaderboard menu item to update it's enabled status
-                supportInvalidateOptionsMenu();
 
                 if (mMapFragment == null || mMapFragment.getActivity() == null) {
                     return;

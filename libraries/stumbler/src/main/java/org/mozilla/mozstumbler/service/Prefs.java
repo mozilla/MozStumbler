@@ -18,9 +18,6 @@ import org.mozilla.mozstumbler.svclocator.services.log.LoggerUtil;
 import java.util.regex.Pattern;
 
 public class Prefs {
-    public static final String NICKNAME_PREF = "nickname";
-    public static final String EMAIL_PREF = "email";
-
     public static final String WIFI_ONLY = "wifi_only";
     public static final String MOTION_SENSOR_IS_SIGNIFICANT_TYPE = "motion_sensor_is_significant";
     public static final String MOTION_SENSOR_ENABLED = "motion_sensor_enabled";
@@ -46,8 +43,6 @@ public class Prefs {
 
     private static final String USE_OFFLINE_GEO = "use_offline_geo";
     private static final String USE_HIGH_POWER = "use_high_power";
-    public static final String FXA_LOGIN_PREF = "fxaLogin";
-    public static final String UID_PREF = "leaderboard_uid";
 
     protected static Prefs sInstance;
     private final SharedPreferences mSharedPrefs;
@@ -148,49 +143,6 @@ public class Prefs {
         apply(editor);
     }
 
-    public synchronized String getNickname() {
-        String nickname = getStringPref(NICKNAME_PREF);
-        if (!TextUtils.isEmpty(nickname)) {
-            return nickname.trim();
-        }
-        return TextUtils.isEmpty(nickname) ? "" : nickname;
-    }
-
-    public synchronized void setNickname(String nick) {
-        if (nick != null) {
-            nick = nick.trim();
-            setStringPref(NICKNAME_PREF, nick);
-        }
-    }
-
-    public synchronized String getLeaderboardUID() {
-        String uid = getStringPref(UID_PREF);
-        if (!TextUtils.isEmpty(uid)) {
-            return uid;
-        }
-        return "";
-    }
-
-    public synchronized void setLeaderboardUID(String uid) {
-        if (!TextUtils.isEmpty(uid)) {
-            setStringPref(UID_PREF, uid);
-        }
-    }
-
-    public synchronized String getEmail() {
-        String email = getStringPref(EMAIL_PREF);
-        if (!TextUtils.isEmpty(email)) {
-            email = email.trim();
-        }
-        return TextUtils.isEmpty(email) ? "" : email;
-    }
-
-    public synchronized void setEmail(String email) {
-        if (email != null) {
-            email = email.trim();
-            setStringPref(EMAIL_PREF, email);
-        }
-    }
 
     public synchronized boolean getUseWifiOnly() {
         return getBoolPrefWithDefault(WIFI_ONLY, true);
@@ -344,18 +296,4 @@ public class Prefs {
         setBoolPref(USE_HIGH_POWER, highPower);
     }
 
-    public void setBearerToken(String bearerToken) {
-        if (bearerToken != null) {
-            bearerToken = bearerToken.trim();
-            setStringPref(FXA_LOGIN_PREF, bearerToken);
-        }
-    }
-
-    public String getBearerToken() {
-        String bearerToken = getStringPref(FXA_LOGIN_PREF);
-        if (!TextUtils.isEmpty(bearerToken)) {
-            bearerToken = bearerToken.trim();
-        }
-        return TextUtils.isEmpty(bearerToken) ? "" : bearerToken;
-    }
 }

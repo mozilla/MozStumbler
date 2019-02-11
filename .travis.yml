@@ -1,16 +1,5 @@
 sudo: false
 language: android
 
-android:
-    components:
-        - platform-tools
-        - tools
-        - android-26
-        - build-tools-26.0.2
-        - extra-android-support
-        - extra-android-m2repository
-    licenses:
-        - 'android-sdk-license-.+'
-        - 'google-gdk-license-.+'
 script:
     - make test

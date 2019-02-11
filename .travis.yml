@@ -1,10 +1,35 @@
-sudo: false
+# From:
+# https://raw.githubusercontent.com/edx/edx-app-android/master/.travis.yml
 language: android
+jdk: oraclejdk8
 
+env:
+  matrix:
+    - ANDROID_TARGET=android-27
+  global:
+    - ADB_INSTALL_TIMEOUT=12
 android:
-    components:
-        - extra-android-support
-        - extra-android-m2repository
+  components:
+    - tools
+    - platform-tools
+    # The BuildTools version used
+    - build-tools-27.0.3
+    # The SDK version used to compile the project
+    - android-27
+    # Additional components
+    - extra-android-m2repository
+    - extra-android-support
+
+licenses:
+  - 'android-sdk-license-.+'
+  - '.+'
 
 script:
-    - make test
+  - make test
+
+before_install:
+  - mkdir "$ANDROID_HOME/licenses" || true
+  # Added cuz Travis doesn't accept license agreements of ConstraintLayout.
+  # To fix it, we are copying the licenses that come with the SDK to Travis's directory.
+  # Reference: https://github.com/wolkenschieber/License/blob/master/.travis.yml#L35
+  - cp ./android-sdk-licenses/* "$ANDROID_HOME/licenses/"

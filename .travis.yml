@@ -1,5 +1,10 @@
 sudo: false
 language: android
 
+android:
+    components:
+        - extra-android-support
+        - extra-android-m2repository
+
 script:
     - make test

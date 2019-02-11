@@ -1,7 +1,7 @@
 // each of the version numbers must be 0-99
 def versionMajor = 1
 def versionMinor = 8 // minor feature releases
-def versionPatch = 6 // This should be bumped for hot fixes
+def versionPatch = 8 // This should be bumped for hot fixes
 
 // Double check the versioning
 for (versionPart in [versionPatch, versionMinor, versionMajor]) {
@@ -32,6 +32,8 @@ repositories {
 android {
     compileSdkVersion 28
     buildToolsVersion "28.0.3"
+    useLibrary 'org.apache.http.legacy'
+
 
     def gitHash = "git rev-parse --short HEAD".execute().text.trim()
     def hasModifiedDeletedOrOtherFiles = !"git ls-files -mdo --exclude-standard".execute().text.trim().isEmpty()
@@ -49,8 +51,8 @@ android {
     }
 
     defaultConfig {
-        minSdkVersion 10
-        targetSdkVersion 22
+        minSdkVersion 14
+        targetSdkVersion 26
 
         applicationId "org.mozilla.mozstumbler"
 

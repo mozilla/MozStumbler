@@ -9,9 +9,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
+import android.Manifest;
 import android.os.Build;
 import android.os.Bundle;
+import android.content.pm.PackageManager;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -25,6 +28,8 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.CompoundButton;
 import android.widget.Switch;
+
+import java.util.LinkedList;
 
 import org.mozilla.mozstumbler.BuildConfig;
 import org.mozilla.mozstumbler.R;
@@ -43,10 +48,14 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class MainDrawerActivity
         extends ActionBarActivity
-        implements IMainActivity {
+        implements IMainActivity,
+                   ActivityCompat.OnRequestPermissionsResultCallback
+{
 
     private ILogger Log = (ILogger) ServiceLocator.getInstance().getService(ILogger.class);
     private static final String LOG_TAG = LoggerUtil.makeLogTag(MainDrawerActivity.class);
+
+    private static boolean GOT_PERMS = false;
 
     private static final int MENU_START_STOP = 1;
     private DrawerLayout mDrawerLayout;
@@ -54,6 +63,17 @@ public class MainDrawerActivity
     private MetricsView mMetricsView;
     private MapFragment mMapFragment;
     private MenuItem mMenuItemStartStop;
+
+    String[] PERMS = {Manifest.permission.ACCESS_COARSE_LOCATION
+                     ,Manifest.permission.ACCESS_FINE_LOCATION
+                     ,Manifest.permission.ACCESS_NETWORK_STATE
+                     ,Manifest.permission.ACCESS_WIFI_STATE
+                     ,Manifest.permission.CHANGE_NETWORK_STATE
+                     ,Manifest.permission.CHANGE_WIFI_STATE
+                     ,Manifest.permission.INTERNET
+                     ,Manifest.permission.WAKE_LOCK
+                     ,Manifest.permission.WRITE_EXTERNAL_STORAGE};
+
     final CompoundButton.OnCheckedChangeListener mStartStopButtonListener =
             new CompoundButton.OnCheckedChangeListener() {
                 @Override
@@ -169,18 +189,7 @@ public class MainDrawerActivity
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
 
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        Fragment fragment = fragmentManager.findFragmentById(R.id.content_frame);
-        if (fragment == null) {
-            mMapFragment = new MapFragment();
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.add(R.id.content_frame, mMapFragment);
-            fragmentTransaction.commit();
-        } else {
-            mMapFragment = (MapFragment) fragment;
-        }
 
-        getApp().setMainActivity(this);
 
         if (BuildConfig.GITHUB) {
             Updater upd = new Updater();
@@ -188,6 +197,19 @@ public class MainDrawerActivity
         }
 
         mMetricsView = new MetricsView(findViewById(R.id.left_drawer));
+
+        // Request all permissions
+        ActivityCompat.requestPermissions(this,
+                PERMS,
+                100);
+
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        Fragment fragment = fragmentManager.findFragmentById(R.id.content_frame);
+        if (fragment != null) {
+            mMapFragment = (MapFragment) fragment;
+        }
+
+        getApp().setMainActivity(this);
     }
 
     @Override
@@ -245,7 +267,9 @@ public class MainDrawerActivity
             }
         }
 
-        mMapFragment.dimToolbar();
+        if (mMapFragment != null) {
+            mMapFragment.dimToolbar();
+        }
     }
 
 
@@ -254,7 +278,10 @@ public class MainDrawerActivity
         super.onPostCreate(savedInstanceState);
         // Sync the toggle state after onRestoreInstanceState has occurred.
         mDrawerToggle.syncState();
-        mMetricsView.setMapLayerToggleListener(mMapFragment);
+
+        if (mMapFragment != null) { 
+            mMetricsView.setMapLayerToggleListener(mMapFragment);
+        }
     }
 
     @Override
@@ -282,7 +309,11 @@ public class MainDrawerActivity
             findViewById(android.R.id.content).postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    getApp().startScanning();
+                    if (GOT_PERMS) {
+                        getApp().startScanning();
+                    } else {
+                        getApp().stopScanning();
+                    }
                 }
             }, 750);
         }
@@ -307,7 +338,9 @@ public class MainDrawerActivity
         }
         switch (item.getItemId()) {
             case MENU_START_STOP:
-                mMapFragment.toggleScanning(item);
+                if (mMapFragment != null) {
+                    mMapFragment.toggleScanning(item);
+                }
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -330,6 +363,10 @@ public class MainDrawerActivity
     }
 
     private void updateNumberDisplay(boolean updateMetrics) {
+        if (mMapFragment == null) {
+            return;
+        }
+
         // TODO: this is silly.  we can just ask for everything in one
         // request.
         broadcastSvcDataRequest(StumblerServiceIntentActions.SVC_REQ_VISIBLE_CELL);
@@ -377,6 +414,7 @@ public class MainDrawerActivity
 
     @Override
     public void isPausedDueToNoMotion(boolean isPaused) {
+        if (mMapFragment == null) { return; }
         mMapFragment.showPausedDueToNoMotionMessage(isPaused);
     }
 
@@ -386,11 +424,43 @@ public class MainDrawerActivity
 
     @Override
     public void stop() {
+        if (mMapFragment == null) { return; }
         mMapFragment.stop();
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         mMetricsView.update();
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) 
+    {
+        LinkedList<String> where = new LinkedList<String>();
+        for (int idx = 0; idx < permissions.length; idx++) {
+            int grantResult = grantResults[idx];
+            String perm = permissions[idx];
+
+            if (grantResult != PackageManager.PERMISSION_GRANTED) {
+                where.add(perm);
+            }
+        }
+
+        if (where.size() > 0) {
+            ActivityCompat.requestPermissions(this,
+                    PERMS,
+                    100);
+
+        } else {
+            // Initialize the map fragment 
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            mMapFragment = new MapFragment();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.add(R.id.content_frame, mMapFragment);
+            fragmentTransaction.commit();
+
+            GOT_PERMS = true;
+        }
     }
 }
 

@@ -3,22 +3,18 @@
 language: android
 jdk: oraclejdk8
 
-env:
-  matrix:
-    - ANDROID_TARGET=android-27
-  global:
-    - ADB_INSTALL_TIMEOUT=12
 android:
   components:
-    - tools
+    - tools # to get the new `repository-11.xml`
+    - tools # see https://github.com/travis-ci/travis-ci/issues/6040#issuecomment-219367943)
     - platform-tools
-    # The BuildTools version used
     - build-tools-27.0.3
-    # The SDK version used to compile the project
     - android-27
-    # Additional components
     - extra-android-m2repository
     - extra-android-support
+
+before_install:
+  - yes | sdkmanager "platforms;android-27"
 
 licenses:
   - 'android-sdk-license-.+'
@@ -26,10 +22,3 @@ licenses:
 
 script:
   - make test
-
-# before_install:
-#   - mkdir "$ANDROID_HOME/licenses" || true
-#   # Added cuz Travis doesn't accept license agreements of ConstraintLayout.
-#   # To fix it, we are copying the licenses that come with the SDK to Travis's directory.
-#   # Reference: https://github.com/wolkenschieber/License/blob/master/.travis.yml#L35
-#   - cp ./android-sdk-licenses/* "$ANDROID_HOME/licenses/"

@@ -184,4 +184,25 @@
     <string name="sensor_type_significant_motion">Vaše zařízení má senzor pohybu, doporučené nastavení detekce pohybu je \'Zapnuto\'.</string>
     -->
     <string name="ok">OK</string>
+    <string name="unlimited_map_zoom">Neomezené přiblížení mapy</string>
+    <string name="unlimited_map_zoom_summary">Pokud omezíte priblížení, snížíte tím objem dat vyžitých pro prohlížení mapy. Neomezené přiblížení se vztahuje pouze na režim s vysokým rozlišením.</string>
+    <string name="use_passive_scanning">Otestovat pasivní skenování</string>
+    <string name="use_high_power_mode">Režim vysokého výkonu</string>
+    <string name="test_significant_sensor_dialog_title">Testování hlavního senzor pohybu</string>
+    <string name="test_significant_sensor_dialog_message">Zůstaňte stát, poté po dobu 1 minuty jděte.\n\nDetekce pohybu &#8230;</string>
+    <string name="test_significant_sensor_confirmed_working">Pohyb detekován.\nSenzor funguje správně.</string>
+    <string name="button_test_significant_motion_sensor">Otestovat hlavní senzor pohybu</string>
+    <string name="sensor_name_significant_motion">Hlavní pohyb</string>
+    <string name="sensor_name_accelerometer">Akcelometr</string>
+    <string name="title_use_sensor">Použít senzor:</string>
+
+    <string name="fxaDescription">Použijte Firefox Accounts k připojení k žebříčku</string>
+    <string name="fxaDescriptionLoggedIn">Právě jste přihlášen v:\n%1$s</string>
+    <string name="fxaPromptLogout">Odhlaste se z Firefox Accounts</string>
+    <string name="fxa_is_logged_out">Jste odhlášen z Firefox Accounts</string>
+    <string name="fxa_settings_title">Firefox Accounts</string>
+    <string name="fxa_needs_network">Je nutné připojení k datové síti.</string>
+    <string name="fxa_no_config">Nemohu nahrát nastavení Firefox Accounts</string>
+    <string name="fxa_loading_config">Pokouším se nahrát nastavení Firefox Accounts</string>
+    <string name="fxa_config_loaded">Nahrávám nastavení Firefox Accounts</string>
 </resources>

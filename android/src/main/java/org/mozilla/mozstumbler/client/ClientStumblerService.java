@@ -164,6 +164,7 @@ public class ClientStumblerService extends StumblerService {
 
     private void foregroundNotification() {
         NotificationUtil nm = new NotificationUtil(this.getApplicationContext());
+        nm.createAndRegisterNotificationChannels();
         Notification notification = nm.buildNotification(getString(R.string.stop_scanning));
         startForeground(NotificationUtil.NOTIFICATION_ID, notification);
     }

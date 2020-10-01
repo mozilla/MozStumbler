@@ -12,7 +12,7 @@ Please refer to the [wiki](https://github.com/mozilla/MozStumbler/wiki) for deta
 
 The build system is smart enough to automatically download and install
 all the parts of the Android SDK for you.  If you cannot build, you
-can either try to fix your Android dev enviroment to fit the
+can either try to fix your Android Dev enviroment to fit the
 android/build.gradle requirements - or you can simply remove
 ANDROID_HOME, and all traces of your Android SDK from your PATH.
 

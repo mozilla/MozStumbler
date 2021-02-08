@@ -1,12 +1,12 @@
 MozStumbler [![Build Status](https://travis-ci.org/mozilla/MozStumbler.png?branch=dev)](https://travis-ci.org/mozilla/MozStumbler)
 ===========
 
-Please refer to the [wiki](https://github.com/mozilla/MozStumbler/wiki) for detailed documentation.
+**Note:**
+*Mozilla Stumbler was
+[retired on February 8, 2021](https://discourse.mozilla.org/t/retiring-mozilla-stumbler/75206).
+This code works on Android 9, but not Android 10 or later.*
 
-<a href="https://f-droid.org/packages/org.mozilla.mozstumbler/" target="_blank">
-<img src="https://f-droid.org/badge/get-it-on.png" alt="Get it on F-Droid" height="80"/></a>
-<a href="https://play.google.com/store/apps/details?id=org.mozilla.mozstumbler" target="_blank">
-<img src="https://play.google.com/intl/en_us/badges/images/generic/en-play-badge.png" alt="Get it on Google Play" height="80"/></a>
+Please refer to the [wiki](https://github.com/mozilla/MozStumbler/wiki) for detailed documentation.
 
 # Building a debug version from command line #
 

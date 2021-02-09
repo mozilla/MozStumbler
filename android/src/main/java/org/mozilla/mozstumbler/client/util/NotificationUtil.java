@@ -1,11 +1,13 @@
 package org.mozilla.mozstumbler.client.util;
 
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
+import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationCompat;
 
 import org.mozilla.mozstumbler.R;
@@ -26,6 +28,7 @@ public class NotificationUtil {
 
     public static final int NOTIFICATION_ID = 1;
     private static final long UPDATE_FREQUENCY = 60 * 1000;
+    private static final String CHANNEL_ID_FOREGROUND = "mozstumbler-notifications-foreground";
     private static String sStopTitle;
     private static int sObservations, sCells, sWifis;
     private static long sUploadTime, sDisplayTime, sLastUpdateTime;
@@ -68,19 +71,38 @@ public class NotificationUtil {
 
         sLastUpdateTime = clock.currentTimeMillis();
 
-        return new NotificationCompat.Builder(mContext)
-                .setSmallIcon(R.drawable.ic_status_scanning)
-                .setContentTitle(title)
-                .setContentText(metrics)
-                .setWhen(sDisplayTime)
-                .setContentIntent(contentIntent)
-                .setOngoing(true)
-                .setPriority(NotificationCompat.PRIORITY_LOW)
-                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-                .setStyle(new NotificationCompat.BigTextStyle()
-                        .bigText(metrics + "\n" + uploadLine))
-                .addAction(R.drawable.ic_action_cancel, sStopTitle, notificationStopIntent)
-                .build();
+        Notification.Builder builder;
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            Notification.Action stopScanningAction = new Notification.Action.Builder(
+                    R.drawable.ic_action_cancel, sStopTitle, notificationStopIntent).build();
+            return new Notification.Builder(mContext, CHANNEL_ID_FOREGROUND)
+                    .setSmallIcon(R.drawable.ic_status_scanning)
+                    .setContentTitle(title)
+                    .setContentText(metrics)
+                    .setWhen(sDisplayTime)
+                    .setContentIntent(contentIntent)
+                    .setOngoing(true)
+                    .setVisibility(Notification.VISIBILITY_PUBLIC)
+                    .setStyle(new Notification.BigTextStyle()
+                            .bigText(metrics + "\n" + uploadLine))
+                    .addAction(stopScanningAction)
+                    .build();
+        } else {
+            return new NotificationCompat.Builder(mContext)
+                    .setSmallIcon(R.drawable.ic_status_scanning)
+                    .setContentTitle(title)
+                    .setContentText(metrics)
+                    .setWhen(sDisplayTime)
+                    .setContentIntent(contentIntent)
+                    .setOngoing(true)
+                    .setPriority(NotificationCompat.PRIORITY_LOW)
+                    .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                    .setStyle(new NotificationCompat.BigTextStyle()
+                            .bigText(metrics + "\n" + uploadLine))
+                    .addAction(R.drawable.ic_action_cancel, sStopTitle, notificationStopIntent)
+                    .build();
+        }
     }
 
     void update() {
@@ -93,7 +115,6 @@ public class NotificationUtil {
             return;
         }
         nm.notify(NOTIFICATION_ID, notification);
-
     }
 
     public Notification buildNotification(String stopTitle) {
@@ -127,5 +148,25 @@ public class NotificationUtil {
     public void updateLastUploadedLabel(long value) {
         sUploadTime = value;
         update();
+    }
+
+    public void createAndRegisterNotificationChannels() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence channelForegroundName = mContext.getString(R.string.notification_channel_foreground_name);
+            String channelForegroundDescription = mContext.getString(R.string.notification_channel_foreground_description);
+            int channelForegroundImportance = NotificationManager.IMPORTANCE_LOW;
+
+            NotificationChannel channelForeground = new NotificationChannel(
+                    CHANNEL_ID_FOREGROUND, channelForegroundName, channelForegroundImportance);
+            channelForeground.setDescription(channelForegroundDescription);
+
+
+            NotificationManager notificationManager = this.mContext.getSystemService(NotificationManager.class);
+            if (notificationManager == null) {
+                Log.w(LOG_TAG, "Couldn't acquire system service NotificationManager. Not registering channels.");
+            } else {
+                notificationManager.createNotificationChannel(channelForeground);
+            }
+        }
     }
 }

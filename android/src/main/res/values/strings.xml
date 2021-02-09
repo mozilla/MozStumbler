@@ -217,5 +217,8 @@
     <string name="fxa_no_config">Firefox Accounts configuration could not be loaded</string>
     <string name="fxa_loading_config">Trying to load Firefox Accounts configuration</string>
     <string name="fxa_config_loaded">Firefox Accounts configuration is loaded</string>
+    <string name="notification_channel_name">mozstumbler-notifications-foreground</string>
+    <string name="notification_channel_foreground_description">Shows the persistent notification while stumbling.</string>
+    <string name="notification_channel_foreground_name">Foreground service</string>
 
 </resources>

@@ -32,7 +32,15 @@ public class GlobalConstants {
     public static final String[] DEFAULT_PROTOCOLS;
 
     static {
-        if (Build.VERSION.SDK_INT >= 20) {
+        if (Build.VERSION.SDK_INT >= 29) {
+            DEFAULT_CIPHER_SUITES = new String[]
+                    {
+                            "TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384",     // 20+
+                            "TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA",        // 11+
+                            "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256",     // 20+
+                            "TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA",        // 11+
+                    };
+        } else if (Build.VERSION.SDK_INT >= 20) {
             DEFAULT_CIPHER_SUITES = new String[]
                     {
                             "TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384",     // 20+
